@@ -1,0 +1,38 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert changes made to the `invitations` table, specifically removing the `organization_id` column and re-adding the `referral_tokens` column.
+
+## Table of contents
+- Remove `organization_id` column
+- Add `referral_tokens` column
+
+## Symbols
+
+### ALTER TABLE invitations DROP COLUMN IF EXISTS organization_id
+#### Description
+This SQL command removes the `organization_id` column from the `invitations` table if it exists.
+
+#### Internal Logic
+- The `IF EXISTS` clause ensures that the operation will not fail if the column doesn't exist.
+- This operation is likely reverting a previous addition of the `organization_id` column.
+
+### ALTER TABLE invitations ADD COLUMN referral_tokens TEXT
+#### Description
+This SQL command adds a new column named `referral_tokens` of type TEXT to the `invitations` table.
+
+#### Internal Logic
+- The new column `referral_tokens` is added without any constraints or default values.
+- This operation is likely restoring a column that was previously removed in the corresponding `up.sql` migration.
+
+## Side Effects
+- The structure of the `invitations` table is modified.
+- Any data that was stored in the `organization_id` column will be lost.
+- Applications or queries relying on the `organization_id` column will need to be updated.
+- The `referral_tokens` column is reintroduced, potentially affecting existing queries or application logic.
+
+## Future Improvements
+- Consider adding a data migration step to preserve any important information from the `organization_id` column before dropping it.
+- If `referral_tokens` is expected to have specific constraints or a default value, these could be added to the column definition.

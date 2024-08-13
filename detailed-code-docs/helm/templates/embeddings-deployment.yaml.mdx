@@ -1,0 +1,64 @@
+---
+title: "embeddings-deployment.yaml"
+---
+
+## High-level description
+This Helm template generates Kubernetes Deployment manifests for embedding services. It iterates over a list of embedding configurations, creating a separate Deployment for each embedding service with specific settings for model, revision, and other parameters.
+
+## Table of contents
+- Range loop over embedding services
+- Deployment metadata
+- Deployment spec
+- Pod template
+- Container specification
+- Resource limits (for GPU)
+
+## Code Structure
+The template uses a range loop to iterate over `.Values.embeddings`, creating a Deployment for each embedding service. It extracts values for `revision`, `model`, `name`, and `args` from each service configuration and uses them to populate the Deployment manifest.
+
+## Symbols
+
+### Embedding Deployment Template
+#### Description
+This template generates a Kubernetes Deployment manifest for each embedding service defined in `.Values.embeddings`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.embeddings | List | List of embedding service configurations |
+| .Values.environment | String | Deployment environment (e.g., "gcloud") |
+| .Values.useGpu | Boolean | Flag to indicate if GPU should be used |
+| .Release.Name | String | Helm release name |
+
+#### Internal Logic
+1. Iterates over each embedding service in `.Values.embeddings`
+2. Extracts `revision`, `model`, `name`, and `args` for each service
+3. Generates a Deployment manifest with:
+   - Metadata and labels
+   - Selector for pod management
+   - Pod template with container specification
+   - Node selector for GPU (if environment is "gcloud")
+   - Readiness probe configuration
+   - Container image selection based on GPU usage
+   - Container arguments including model ID and revision
+   - Resource limits for GPU (if enabled)
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Kubernetes | Target platform for deployment |
+| Helm | Templating engine for generating Kubernetes manifests |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.embeddings | List | N/A | List of embedding service configurations |
+| .Values.environment | String | N/A | Deployment environment |
+| .Values.useGpu | Boolean | N/A | Flag to enable GPU usage |
+
+## Future Improvements
+- Consider adding support for multiple GPU allocation per container
+- Implement configurable resource requests and limits for CPU and memory
+- Add support for custom node selectors and tolerations
+- Implement configurable probes (liveness, startup) in addition to readiness probe
+- Consider using a ConfigMap or Secret for storing model-specific configurations

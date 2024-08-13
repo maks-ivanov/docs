@@ -1,0 +1,98 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates tables and triggers to track usage counts for organizations and datasets. It implements automatic updating of various counts (datasets, users, file storage, messages, chunks) when related operations occur in the database.
+
+## Table of contents
+- Creation of organization_usage_counts table
+- Creation of dataset_usage_counts table
+- Function and trigger for updating chunk metadata counts
+- Function and trigger for updating file storage counts
+- Function and trigger for updating message counts
+- Function and trigger for updating dataset counts
+- Function and trigger for updating user counts
+- Cleanup of obsolete trigger and table
+
+## Code Structure
+The script creates two main tables: `organization_usage_counts` and `dataset_usage_counts`. It then defines several functions and corresponding triggers to automatically update these tables when changes occur in related tables (chunk_metadata, files, messages, datasets, and user_organizations).
+
+## Symbols
+
+### `organization_usage_counts` table
+#### Description
+Stores usage statistics for each organization.
+
+#### Columns
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key, auto-generated |
+| org_id | UUID | Foreign key to organizations table |
+| dataset_count | INTEGER | Number of datasets |
+| user_count | INTEGER | Number of users |
+| file_storage | INTEGER | Total file storage used |
+| message_count | INTEGER | Number of messages |
+
+### `dataset_usage_counts` table
+#### Description
+Stores usage statistics for each dataset.
+
+#### Columns
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key, auto-generated |
+| dataset_id | UUID | Foreign key to datasets table |
+| chunk_count | INTEGER | Number of chunks in the dataset |
+
+### `update_chunk_metadata_counts()` function
+#### Description
+Updates the chunk count for a dataset when chunks are added or removed.
+
+#### Internal Logic
+- On INSERT: Increments the chunk count for the dataset
+- On DELETE: Decrements the chunk count for the dataset
+
+### `update_files_storage_counts()` function
+#### Description
+Updates the file storage count for an organization when files are added or removed.
+
+#### Internal Logic
+- On INSERT: Increases the file storage count for the organization
+- On DELETE: Decreases the file storage count for the organization
+
+### `update_messages_counts()` function
+#### Description
+Updates the message count for an organization when messages are added or removed.
+
+#### Internal Logic
+- On INSERT: Increments the message count for the organization
+- On DELETE: Decrements the message count for the organization
+
+### `update_datasets_counts()` function
+#### Description
+Updates the dataset count for an organization when datasets are added or removed.
+
+#### Internal Logic
+- On INSERT: Increments the dataset count for the organization
+- On DELETE: Decrements the dataset count for the organization
+
+### `update_users_counts()` function
+#### Description
+Updates the user count for an organization when users are added or removed.
+
+#### Internal Logic
+- On INSERT: Increments the user count for the organization
+- On DELETE: Decrements the user count for the organization
+
+## Side Effects
+The triggers created in this script will automatically update the count tables whenever related operations occur in the database. This ensures that the usage statistics are always up-to-date.
+
+## Performance Considerations
+The use of triggers may impact the performance of insert and delete operations on the affected tables. However, the counters provide efficient access to usage statistics without the need for expensive aggregate queries.
+
+## Future Improvements
+1. Consider adding error handling within the trigger functions to manage potential issues, such as negative counts.
+2. Implement periodic consistency checks to ensure the accuracy of the count tables.
+3. Add update operations to the trigger functions to handle scenarios where existing rows are modified.
+4. Consider adding indexes on foreign key columns to improve query performance.

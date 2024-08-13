@@ -1,0 +1,53 @@
+---
+title: "values.schema.json"
+---
+
+## High-level description
+This JSON Schema file, `values.schema.json`, defines the structure and validation rules for the `values.yaml` file used in a Helm chart for deploying PostgreSQL. It specifies the data types, default values, and descriptions for configurable parameters, ensuring consistent and valid input during deployment.
+
+## Table of contents
+- architecture
+- auth
+- persistence
+- resources
+- replication
+- volumePermissions
+- metrics
+
+## Symbols
+### `values.schema.json`
+#### Description
+This JSON Schema defines the structure and validation rules for the `values.yaml` file used to configure the PostgreSQL Helm chart.
+
+#### Inputs
+This schema does not take direct inputs. It is used to validate a separate `values.yaml` file.
+
+#### Outputs
+This schema does not produce outputs. It defines the expected structure and data types for configuration parameters.
+
+#### Internal Logic
+The schema uses JSON Schema syntax to define properties and their allowed values. It includes descriptions and form elements for user-friendliness.
+
+## Configuration
+This schema defines the configuration options for the PostgreSQL Helm chart. The following table describes each option:
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `architecture` | string |  | Allowed values: `standalone` or `replication`. Defines the PostgreSQL architecture to deploy. |
+| `auth.enablePostgresUser` | boolean |  | Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user. |
+| `auth.postgresPassword` | string |  | Password for the "postgres" admin user. Defaults to a random 10-character alphanumeric string if not set. |
+| `auth.database` | string |  | Name of the custom database to be created during the 1st initialization of PostgreSQL. |
+| `auth.username` | string |  | Name of the custom user to be created during the 1st initialization of PostgreSQL. This user only has permissions on the PostgreSQL custom database. |
+| `auth.password` | string |  | Password for the custom user to create. Defaults to a random 10-character alphanumeric string if not set. |
+| `auth.replicationUsername` | string |  | Name of user used to manage replication. Hidden if `architecture` is `standalone`. |
+| `auth.replicationPassword` | string |  | Password for PostgreSQL replication user. Defaults to a random 10-character alphanumeric string if not set. Hidden if `architecture` is `standalone`. |
+| `persistence.size` | string |  | Persistent Volume Size. |
+| `resources.requests.memory` | string |  | Memory Request. |
+| `resources.requests.cpu` | string |  | CPU Request. |
+| `replication.enabled` | boolean |  | Enable Replication. |
+| `replication.readReplicas` | integer |  | Number of read replicas. Hidden if `architecture` is `standalone`. |
+| `volumePermissions.enabled` | boolean |  | Enable Init Containers. Change the owner of the persist volume mountpoint to RunAsUser:fsGroup. |
+| `metrics.enabled` | boolean |  | Configure metrics exporter. |
+
+## References
+This schema references the `architecture` property in the `auth` and `replication` sections to conditionally show/hide properties based on the chosen architecture.

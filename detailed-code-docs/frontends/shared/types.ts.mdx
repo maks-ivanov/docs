@@ -1,0 +1,242 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+This file defines various TypeScript interfaces and enums used across different frontends of the Trieve application. It includes data structures for users, organizations, datasets, API keys, search analytics, and other shared components.
+
+## Table of contents
+- Interfaces: `ChunkMetadataStringTagSet`, `SlimUser`, `UserOrganization`, `Organization`, `OrganizationAndSubAndPlan`, `StripeSubscription`, `StripePlan`, `OrganizationUsageCount`, `Dataset`, `DatasetUsageCount`, `DatasetAndUsage`, `ServerEnvsConfiguration`, `DefaultError`, `ComboboxItem`, `ComboboxSection`, `SetUserApiKeyResponse`, `EventDTO`, `Event`, `Invitation`, `SearchClusterTopics`, `DateRangeFilter`, `AnalyticsFilter`, `RequiredAnalyticsFilter`, `AnalyticsParams`, `LatencyDatapoint`, `UsageDatapoint`, `SearchQueryEvent`, `HeadQuery`, `SearchTypeCount`, `RequiredRAGAnalyticsFilter`, `RAGAnalyticsFilter`, `RagQueryEvent`, `RAGUsageResponse`, `QueryCountResponse`, `HeadQueryResponse`, `SearchQueryResponse`, `SearchClusterResponse`, `UsageGraphResponse`, `LatencyGraphResponse`, `RagQueryResponse`
+- Enums: `UserRole`, `ApiKeyRole`
+- Constants: `availableEmbeddingModels`, `availableDistanceMetrics`
+- Type Guards: `isComboboxValues`, `isEventDTO`, `isEvent`, `isInvitation`
+- Helper Functions: `fromI32ToUserRole`, `fromUserRoleToI32`, `stringToUserRole`, `fromI32ToApiKeyRole`, `fromApiKeyRoleToI32`, `stringToApiKeyRole`
+
+## References
+This file is referenced by various other files in the `frontends/analytics` directory, including:
+- `frontends/analytics/src/api/analytics.ts`
+- `frontends/analytics/src/api/ctr.ts`
+- `frontends/analytics/src/api/tables.ts`
+- `frontends/analytics/src/api/trends.ts`
+- `frontends/analytics/src/components/FilterBar.tsx`
+- `frontends/analytics/src/components/Sidebar.tsx`
+- `frontends/analytics/src/components/SimpleTimeRangeSelector.tsx`
+- `frontends/analytics/src/components/charts/CTRSummary.tsx`
+- `frontends/analytics/src/components/charts/HeadQueries.tsx`
+- `frontends/analytics/src/components/charts/LatencyGraph.tsx`
+- `frontends/analytics/src/components/charts/LowConfidenceQueries.tsx`
+- `frontends/analytics/src/components/charts/NoResultQueries.tsx`
+- `frontends/analytics/src/components/charts/QueryCounts.tsx`
+- `frontends/analytics/src/components/charts/RAGUsageGraph.tsx`
+- `frontends/analytics/src/components/charts/RagQueries.tsx`
+- `frontends/analytics/src/components/charts/SearchUsageGraph.tsx`
+- `frontends/analytics/src/contexts/OrgContext.tsx`
+- `frontends/analytics/src/contexts/UserAuthContext.tsx`
+- `frontends/analytics/src/layouts/TopBarLayout.tsx`
+- `frontends/analytics/src/pages/CTRAnalyticsPage.tsx`
+- `frontends/analytics/src/pages/RagAnalyticsPage.tsx`
+- `frontends/analytics/src/pages/SearchAnalyticsPage.tsx`
+- `frontends/analytics/src/pages/TrendExplorer.tsx`
+- `frontends/analytics/src/pages/tablePages/SearchTablePage.tsx`
+- `frontends/analytics/src/utils/formatDate.ts`
+
+It is also referenced by:
+- `frontends/chat/package.json`
+- `frontends/dashboard/package.json`
+- `frontends/dashboard/src/api/createDataset.ts`
+- `frontends/dashboard/src/components/ApiKeyGenerateModal.tsx`
+- `frontends/dashboard/src/components/ApiKeys.tsx`
+- `frontends/dashboard/src/components/CreateNewOrgModal.tsx`
+- `frontends/dashboard/src/components/DatasetOverview.tsx`
+- `frontends/dashboard/src/components/EditUserModal.tsx`
+- `frontends/dashboard/src/components/InviteUserModal.tsx`
+- `frontends/dashboard/src/components/NewDatasetModal.tsx`
+- `frontends/dashboard/src/components/OrganizationUsageOverview.tsx`
+- `frontends/dashboard/src/components/PlansTable.tsx`
+- `frontends/dashboard/src/contexts/DatasetContext.tsx`
+- `frontends/dashboard/src/contexts/UserContext.tsx`
+- `frontends/dashboard/src/hooks/useDatasetPages.ts`
+- `frontends/dashboard/src/pages/Dashboard/Dataset/DatasetEvents.tsx`
+- `frontends/dashboard/src/pages/Dashboard/Dataset/DatasetSettingsPage.tsx`
+- `frontends/dashboard/src/pages/Dashboard/Dataset/DatasetStart.tsx`
+- `frontends/dashboard/src/pages/Dashboard/Overview.tsx`
+- `frontends/dashboard/src/pages/Dashboard/UserManagment.tsx`
+- `frontends/dashboard/src/types/apiTypes.ts`
+- `frontends/shared/ui/DateRangePicker.tsx`
+
+## Symbols
+
+### `ChunkMetadataStringTagSet`
+#### Description
+Represents metadata associated with a chunk of data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the chunk |
+| chunk_html | `string` | HTML representation of the chunk |
+| link | `string` \| `null` | Link associated with the chunk |
+| qdrant_point_id | `string` | ID of the chunk in the Qdrant vector database |
+| created_at | `string` | Timestamp of chunk creation |
+| updated_at | `string` | Timestamp of last chunk update |
+| tag_set | `string` \| `null` | Set of tags associated with the chunk |
+| tracking_id | `string` \| `null` | Tracking ID associated with the chunk |
+| time_stamp | `string` \| `null` | Timestamp associated with the chunk |
+| metadata | `Record&lt;string, never&gt;` \| `null` | Additional metadata associated with the chunk |
+| dataset_id | `string` | ID of the dataset the chunk belongs to |
+| weight | `number` | Weight of the chunk |
+| location | `{ lat: number; lon: number; }` \| `null` | Location coordinates of the chunk |
+| num_value | `number` \| `null` | Numerical value associated with the chunk |
+| image_urls | `string[]` \| `null` | URLs of images associated with the chunk |
+
+### `SlimUser`
+#### Description
+Represents a simplified user object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the user |
+| name | `string` | Name of the user |
+| email | `string` | Email address of the user |
+| user_orgs | `UserOrganization[]` | List of user-organization associations |
+| orgs | `Organization[]` | List of organizations the user belongs to |
+
+### `UserOrganization`
+#### Description
+Represents an association between a user and an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the association |
+| user_id | `string` | ID of the user |
+| organization_id | `string` | ID of the organization |
+| role | `number` | Role of the user in the organization |
+| created_at | `string` | Timestamp of association creation |
+| updated_at | `string` | Timestamp of last association update |
+
+### `Organization`
+#### Description
+Represents an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the organization |
+| name | `string` | Name of the organization |
+| configuration | `[key: string]` | Configuration settings of the organization |
+| created_at | `string` | Timestamp of organization creation |
+| updated_at | `string` | Timestamp of last organization update |
+| registerable | `boolean` | Whether the organization is open for registration |
+
+### `OrganizationAndSubAndPlan`
+#### Description
+Represents an organization along with its Stripe subscription and plan information.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| organization | `Organization` | Organization object |
+| plan | `StripePlan` \| `null` | Stripe plan associated with the organization |
+| subscription | `StripeSubscription` \| `null` | Stripe subscription associated with the organization |
+
+### `StripeSubscription`
+#### Description
+Represents a Stripe subscription.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the subscription |
+| stripe_id | `string` | Stripe ID of the subscription |
+| plan_id | `string` | ID of the Stripe plan |
+| organization_id | `string` | ID of the organization |
+| created_at | `string` | Timestamp of subscription creation |
+| updated_at | `string` | Timestamp of last subscription update |
+| current_period_end | `string` \| `null` | Timestamp of the end of the current billing period |
+
+### `StripePlan`
+#### Description
+Represents a Stripe plan.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the plan |
+| stripe_id | `string` | Stripe ID of the plan |
+| chunk_count | `number` | Maximum number of chunks allowed |
+| file_storage | `number` | Maximum file storage allowed in bytes |
+| user_count | `number` | Maximum number of users allowed |
+| dataset_count | `number` | Maximum number of datasets allowed |
+| message_count | `number` | Maximum number of messages allowed |
+| amount | `number` | Price of the plan in cents |
+| created_at | `string` | Timestamp of plan creation |
+| updated_at | `string` | Timestamp of last plan update |
+| name | `string` | Name of the plan |
+
+### `OrganizationUsageCount`
+#### Description
+Represents the usage statistics of an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the usage record |
+| org_id | `string` | ID of the organization |
+| dataset_count | `number` | Number of datasets used |
+| user_count | `number` | Number of users |
+| file_storage | `number` | Total file storage used in bytes |
+| message_count | `number` | Total number of messages used |
+| chunk_count | `number` | Total number of chunks used |
+
+### `Dataset`
+#### Description
+Represents a dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the dataset |
+| tracking_id | `string` | Tracking ID associated with the dataset |
+| name | `string` | Name of the dataset |
+| created_at | `string` | Timestamp of dataset creation |
+| updated_at | `string` | Timestamp of last dataset update |
+| organization_id | `string` | ID of the organization the dataset belongs to |
+| server_configuration | `ServerEnvsConfiguration` | Server-side configuration settings of the dataset |
+
+### `DatasetUsageCount`
+#### Description
+Represents the usage statistics of a dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | `string` | Unique identifier of the usage record |
+| dataset_id | `string` | ID of the dataset |
+| chunk_count | `number` | Total number of chunks used |
+
+### `DatasetAndUsage`
+#### Description
+Represents a dataset along with its usage statistics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dataset | `Dataset` | Dataset object |
+| dataset_usage | `DatasetUsageCount` | Dataset usage statistics |
+
+### `ServerEnvsConfiguration`
+#### Description
+Represents the server-side configuration settings of a dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| LLM_BASE_URL | `string` | Base URL of the LLM service |
+| LLM_DEFAULT_MODEL | `string` | Default LLM model to use |
+| LLM_API_KEY | `string` | API key for the LLM service |
+| EMBEDDING_BASE_URL | `string` | Base URL of the embedding service |
+| EMBEDDING_MODEL_NAME | `string` | Name of the embedding model to use |
+| MESSAGE_TO_QUERY_PROMPT | `string` | Prompt to convert a message to a query |
+| RAG_PROMPT | `string` | Prompt for RAG (Retrieval Augmented Generation

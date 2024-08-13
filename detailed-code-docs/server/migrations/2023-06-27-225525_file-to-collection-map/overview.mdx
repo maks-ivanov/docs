@@ -1,0 +1,46 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for managing the relationship between files and collections in a database. The migration introduces a new table called `collections_from_files` to establish a many-to-many relationship between the `card_collection` and `files` tables.
+
+## What does it do?
+These migration scripts modify the database structure to allow tracking of which files are associated with which card collections. This is achieved by:
+
+1. Creating a new table (`collections_from_files`) that links files to collections.
+2. Providing a way to remove this table if needed.
+
+This setup enables the application to maintain a flexible association between files and collections, which can be useful for organizing and managing content within the system.
+
+## Key Files
+1. `up.sql`: This file contains the SQL commands to create the new `collections_from_files` table. It defines the structure of the table, including columns for unique identifiers, foreign keys to related tables, and timestamps for record creation and updates.
+
+2. `down.sql`: This file contains the SQL command to drop the `collections_from_files` table, effectively reversing the changes made by the `up.sql` script.
+
+## Configuration
+The migration scripts use the following configuration:
+
+1. Table name: `collections_from_files`
+2. Columns:
+   - `id`: UUID, primary key
+   - `collection_id`: UUID, foreign key referencing `card_collection` table
+   - `file_id`: UUID, foreign key referencing `files` table
+   - `created_at`: Timestamp with time zone, default set to current timestamp
+   - `updated_at`: Timestamp with time zone, default set to current timestamp
+
+Foreign key constraints are set to cascade on delete, meaning that if a record in the referenced table (either `card_collection` or `files`) is deleted, the corresponding records in `collections_from_files` will also be deleted automatically.
+
+Here's the SQL code for creating the `collections_from_files` table:
+
+```sql
+CREATE TABLE collections_from_files (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    collection_id UUID NOT NULL REFERENCES card_collection(id) ON DELETE CASCADE,
+    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+```
+
+This structure allows for efficient querying of file-collection relationships while maintaining data integrity through foreign key constraints and automatic timestamp management.

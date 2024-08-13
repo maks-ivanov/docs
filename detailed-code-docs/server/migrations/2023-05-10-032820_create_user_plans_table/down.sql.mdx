@@ -1,0 +1,34 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration file is designed to undo the changes made by the corresponding `up.sql` file. It drops the `user_plans` table and its associated index, effectively removing the user plans data structure from the database.
+
+## Table of contents
+- Drop `user_plans` table
+- Drop index on `stripe_customer_id`
+
+## Symbols
+
+### DROP TABLE IF EXISTS user_plans
+#### Description
+This SQL command removes the `user_plans` table from the database if it exists.
+
+#### Internal Logic
+The `IF EXISTS` clause ensures that the command will not throw an error if the table doesn't exist, making the migration more robust and idempotent.
+
+### DROP INDEX IF EXISTS idx_user_plans_stripe_customer_id
+#### Description
+This SQL command removes the index named `idx_user_plans_stripe_customer_id` if it exists.
+
+#### Internal Logic
+The `IF EXISTS` clause ensures that the command will not throw an error if the index doesn't exist, making the migration more robust and idempotent.
+
+## Side Effects
+- Permanent deletion of the `user_plans` table and all its data
+- Removal of the index on the `stripe_customer_id` column, which may impact query performance if the table is recreated without this index
+
+## Future Improvements
+- Consider adding a backup mechanism before dropping the table to prevent accidental data loss
+- If the application relies heavily on this table, implement a more granular migration strategy that allows for data preservation or transformation instead of complete removal

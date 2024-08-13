@@ -1,0 +1,55 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a table named `recommendations` in a ClickHouse database. The table is designed to store recommendation data with various attributes, including recommendation types, positive and negative IDs, tracking IDs, request parameters, results, and associated metadata.
+
+## Table of contents
+- Table creation
+- Table structure
+- Table engine and ordering
+- Partitioning
+- TTL (Time-to-Live) configuration
+
+## Code Structure
+The SQL script defines a single `CREATE TABLE` statement that specifies the structure, engine, ordering, partitioning, and TTL for the `recommendations` table.
+
+## Symbols
+
+### recommendations
+#### Description
+This is the main table being created to store recommendation data. It uses the MergeTree engine, which is optimized for insert and select queries in ClickHouse.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Unique identifier for each recommendation |
+| recommendation_type | String | Type of recommendation |
+| positive_ids | Array(String) | Array of positive IDs associated with the recommendation |
+| negative_ids | Array(String) | Array of negative IDs associated with the recommendation |
+| positive_tracking_ids | Array(String) | Array of positive tracking IDs |
+| negative_tracking_ids | Array(String) | Array of negative tracking IDs |
+| request_params | String | Parameters of the request that generated the recommendation |
+| results | Array(String) | Array of results for the recommendation |
+| top_score | Float32 | Highest score associated with the recommendation |
+| dataset_id | UUID | Identifier for the dataset used in the recommendation |
+| created_at | DateTime | Timestamp of when the recommendation was created |
+
+#### Internal Logic
+1. The table uses the MergeTree engine, which is efficient for both inserts and reads.
+2. The table is ordered by `id` and `created_at`, which optimizes queries that filter or sort by these columns.
+3. The table is partitioned by month (derived from `created_at`) and `dataset_id`, which can improve query performance and data management.
+4. A TTL (Time-to-Live) of 30 days is set based on the `created_at` column, automatically removing old data.
+
+## Performance Considerations
+1. The MergeTree engine is used for efficient data storage and retrieval.
+2. Ordering by `id` and `created_at` allows for fast lookups and range queries on these columns.
+3. Partitioning by month and `dataset_id` can significantly improve query performance for time-based and dataset-specific queries.
+4. The TTL configuration automatically manages data retention, potentially improving overall system performance by removing old data.
+
+## Future Improvements
+1. Consider adding indices on frequently queried columns to improve query performance further.
+2. Evaluate if the 30-day TTL is appropriate for the use case; adjust if necessary.
+3. Monitor the performance of queries using `Array` type columns (e.g., `positive_ids`, `results`) and consider normalizing if they become a bottleneck.
+4. If the `request_params` column often contains large strings, consider storing it in a separate table to improve the main table's performance.

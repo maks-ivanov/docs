@@ -1,0 +1,90 @@
+---
+title: "RagQueries.tsx"
+---
+
+## High-level description
+The `RagQueries` component displays a table of RAG queries for a specific dataset, allowing users to sort and filter the results. It fetches data from the backend API and uses Solid Query for caching and pagination.
+
+## Table of contents
+- Component: `RagQueries`
+- Helper functions:
+    - `formatSortBy`
+    - `formatSortOrder`
+
+## References
+- `getRAGQueries` from `../../api/analytics`
+- `DatasetContext` from `../../layouts/TopBarLayout`
+- `usePagination` from `../../hooks/usePagination`
+- Components: `ChartCard`, `Select`, `Table`, `Td`, `Tr` from `shared/ui`
+
+## Symbols
+
+### Symbol Name: `RagQueries`
+#### Description
+This component fetches and displays a table of RAG queries for the selected dataset. It allows users to filter queries by date range and RAG type, and sort them by creation date, latency, or top score. The component also handles pagination of the results.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filter | `RAGAnalyticsFilter` | An object containing filter options for the RAG queries. |
+
+#### Outputs
+JSX Element representing the RAG queries table.
+
+#### Internal Logic
+1. **Retrieves dataset ID:** Gets the ID of the currently selected dataset from the `DatasetContext`.
+2. **Initializes state:**
+    - Sets up signals for sort by (`sortBy`) and sort order (`sortOrder`) with default values.
+    - Initializes the `usePagination` hook to manage pagination.
+3. **Prefetches next page data:** Uses `createQuery` from `solid-query` to fetch and cache RAG query data from the backend API. It also prefetches the next page of data for smoother navigation.
+4. **Renders UI:**
+    - Displays a `ChartCard` component with the title "RAG Queries".
+    - Includes controls for sorting (sort by and sort order) using `Select` components.
+    - Renders a `Table` component to display the RAG queries.
+    - Uses `Show` components to conditionally render loading and empty states.
+
+## Side Effects
+- Fetches data from the backend API using `getRAGQueries`.
+- Updates the query client cache with fetched data.
+
+#### Performance Considerations
+- Uses `prefetchQuery` to prefetch the next page of data, improving perceived performance.
+- Employs `solid-query` for caching query results, reducing unnecessary API calls.
+
+___
+
+### Symbol Name: `formatSortBy`
+#### Description
+This helper function formats the `RAGSortBy` enum value into a human-readable string for display in the sort by dropdown.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sortBy | `RAGSortBy` | The sort by value to format. |
+
+#### Outputs
+`string` - The formatted sort by string.
+
+___
+
+### Symbol Name: `formatSortOrder`
+#### Description
+This helper function formats the `SortOrder` enum value into a human-readable string for display in the sort order dropdown.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sortOrder | `SortOrder` | The sort order value to format. |
+
+#### Outputs
+`string` - The formatted sort order string.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| @tanstack/solid-query | Used for data fetching, caching, and pagination. |
+| solid-js | The core library for building the user interface. |
+| shared/ui | Provides reusable UI components like `Select`, `Table`, etc. |
+| ../../api/analytics | Provides the `getRAGQueries` function to fetch data from the backend. |
+| ../../layouts/TopBarLayout | Provides the `DatasetContext` for accessing the selected dataset. |
+| ../../hooks/usePagination | Provides the `usePagination` hook for managing pagination. |

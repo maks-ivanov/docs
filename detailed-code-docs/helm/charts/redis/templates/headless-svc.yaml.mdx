@@ -1,0 +1,55 @@
+---
+title: "headless-svc.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes Headless Service for Redis, which is used to provide a stable network identity for Redis instances, particularly useful in clustered or sentinel configurations.
+
+## Table of contents
+- Service metadata
+- Service specification
+- Port configurations
+- Selector
+
+## Code Structure
+The YAML file defines a single Kubernetes Service resource with metadata and spec sections. It uses Helm templating to dynamically generate values based on the chart's configuration.
+
+## Symbols
+
+### Service
+#### Description
+Defines a Kubernetes Service of type ClusterIP with a null IP, making it a headless service. This is used to create DNS entries for Redis pods without load balancing.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Values passed to the Helm chart |
+| $ | Object | The root context of the Helm chart |
+
+#### Internal Logic
+1. Sets the service name using a template function
+2. Defines labels and annotations using helper templates
+3. Configures ports based on whether Redis Sentinel is enabled
+4. Sets the selector for pod discovery
+
+## Side Effects
+Creates a Kubernetes Service resource when the Helm chart is deployed.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper templates for naming, labels, and annotations |
+| redis | Provides helper templates for Redis-specific configurations |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.sentinel.enabled | boolean | - | Determines if Redis Sentinel is enabled |
+| .Values.sentinel.service.ports.redis | integer | - | Redis port when Sentinel is enabled |
+| .Values.sentinel.service.ports.sentinel | integer | - | Sentinel port |
+| .Values.master.service.ports.redis | integer | - | Redis port when Sentinel is disabled |
+
+## Future Improvements
+- Consider adding support for custom port names
+- Implement optional TLS port configuration
+- Add support for custom selectors beyond the common labels

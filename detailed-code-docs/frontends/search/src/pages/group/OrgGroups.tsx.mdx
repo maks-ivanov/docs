@@ -1,0 +1,68 @@
+---
+title: "OrgGroups.tsx"
+---
+
+## High-level description
+The `OrgGroups` component displays a paginated list of chunk groups associated with a dataset. It allows users to view the group details, delete groups, and download associated files (if enabled).
+
+## Table of contents
+- Imports
+- `OrgGroups` component
+
+## Symbols
+
+### `OrgGroups`
+#### Description
+This component renders a page displaying a list of chunk groups for the current dataset. It handles fetching the groups, displaying them in a table, and provides functionalities for pagination, group deletion confirmation, and file downloads.
+
+#### Inputs
+This component does not take any props.
+
+#### Outputs
+This component renders the JSX for the organization groups page.
+
+#### Internal Logic
+1. **Fetching Groups:**
+   - Retrieves the user ID and current dataset from context.
+   - Fetches the list of chunk groups for the current dataset from the API using the `groupPage` state.
+   - Updates the `groups` and `groupPageCount` states based on the API response.
+2. **Displaying Groups:**
+   - If loading, shows a "Loading..." message.
+   - If no groups are found, displays a "No groups found" message.
+   - If groups exist, renders a table displaying the group name, description, creation date, and actions (download, delete).
+3. **Pagination:**
+   - Displays the current page number and total pages.
+   - Provides buttons for navigating to the previous and next pages.
+4. **Group Deletion:**
+   - When the delete button is clicked:
+     - Sets up a callback function to handle the actual deletion when confirmed.
+     - Shows a confirmation modal (`FullScreenModal`) to confirm the deletion.
+   - The confirmation modal allows the user to choose whether to delete associated chunks.
+   - Upon confirmation, sends a DELETE request to the API to delete the group and optionally its chunks.
+   - Updates the group list if the deletion is successful.
+5. **File Download:**
+   - If the `DOCUMENT_DOWNLOAD_FEATURE` is enabled in the server configuration and the group has an associated file:
+     - Displays a download button next to the group.
+     - When the download button is clicked, downloads the file using the `downloadFile` utility function.
+
+## Side Effects
+- Fetches data from the API to retrieve chunk groups.
+- Sends DELETE requests to the API to delete groups.
+- Downloads files from the server.
+
+## References
+- `SearchLayout`: Used as the layout for the page.
+- `GroupUserPageView`: Displays the list of groups and handles group-related actions.
+- `FullScreenModal`: Used for the group deletion confirmation modal.
+- `Footer`: Renders the footer of the page.
+- `BiRegularXCircle`, `FiTrash`: Icons used for the delete button and confirmation modal.
+
+## Dependencies
+- `solid-js`: Used for creating signals, effects, and rendering components.
+- `@solidjs/router`: Used for routing.
+
+### Configuration
+- `VITE_API_HOST`: Environment variable specifying the API host.
+
+## Logging
+- Logs an error message to the console if the API response is invalid.

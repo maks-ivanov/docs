@@ -1,0 +1,24 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains Kubernetes YAML manifests and Helm templates for managing PostgreSQL database backups. It provides a configurable solution for scheduling backups using `pg_dumpall`, storing them on persistent volumes, and controlling network access for the backup process.
+
+## What does it do?
+This code defines the infrastructure and processes for automatically backing up a PostgreSQL database within a Kubernetes cluster. 
+
+Here's how it works:
+
+1. **Scheduling:** A CronJob is set up to run `pg_dumpall` at specified intervals, creating a complete backup of the database.
+2. **Storage:** Backups can be stored on a dedicated Persistent Volume Claim, ensuring data durability and persistence.
+3. **Network Security:** A NetworkPolicy restricts the backup pod's network access, limiting outbound connections to the PostgreSQL server only.
+
+This setup ensures regular backups, safe storage, and minimizes potential security risks during the backup process.
+
+## Key Files
+- **cronjob.yaml:** Defines the CronJob responsible for scheduling and executing the backup process using `pg_dumpall`. It includes configuration options for scheduling, resource limits, and security contexts.
+- **networkpolicy.yaml:** Defines a NetworkPolicy that restricts the backup pod's network traffic, allowing outbound connections only to the PostgreSQL database port (5432).
+- **pvc.yaml:** Defines a Persistent Volume Claim used for storing the database backups. It includes options for storage size, access modes, and storage class.
+
+These files work together to provide a comprehensive and secure backup solution for PostgreSQL databases running in Kubernetes. 

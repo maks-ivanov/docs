@@ -1,0 +1,65 @@
+---
+title: "hpa.yaml"
+---
+
+## High-level description
+This YAML file defines a Horizontal Pod Autoscaler (HPA) for Redis replica nodes in a Kubernetes cluster. It's designed to automatically scale the number of Redis replica pods based on CPU and memory utilization when both autoscaling and sentinel mode are enabled.
+
+## Table of contents
+- HorizontalPodAutoscaler definition
+- Metadata
+- Spec
+  - Scale target reference
+  - Replica limits
+  - Metrics (CPU and Memory)
+
+## Code Structure
+The file is a single YAML template for a Kubernetes HorizontalPodAutoscaler resource. It uses various Helm template functions and conditionals to generate the appropriate configuration based on the provided values.
+
+## Symbols
+
+### HorizontalPodAutoscaler
+#### Description
+Defines a Kubernetes HorizontalPodAutoscaler resource for Redis replica nodes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.replica.autoscaling | Object | Contains autoscaling configuration for replica nodes |
+| .Values.sentinel.enabled | Boolean | Indicates if sentinel mode is enabled |
+| .Values.commonLabels | Object | Common labels to be applied to the resource |
+| .Values.commonAnnotations | Object | Common annotations to be applied to the resource |
+
+#### Internal Logic
+1. Checks if autoscaling and sentinel mode are enabled
+2. Sets metadata including name, namespace, labels, and annotations
+3. Defines the scale target as a StatefulSet
+4. Sets min and max replicas
+5. Configures CPU and memory metrics for scaling decisions, with version-specific syntax
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.capabilities.hpa.apiVersion | Determines the appropriate HPA API version |
+| common.names.fullname | Generates the full name for the resource |
+| common.names.namespace | Retrieves the namespace |
+| common.labels.standard | Generates standard labels |
+| common.tplvalues.render | Renders template values |
+| common.capabilities.deployment.apiVersion | Determines the appropriate Deployment API version |
+| common.capabilities.kubeVersion | Retrieves the Kubernetes version |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| replica.autoscaling.enabled | Boolean | - | Enables autoscaling for replica nodes |
+| sentinel.enabled | Boolean | - | Enables sentinel mode |
+| replica.autoscaling.minReplicas | Integer | - | Minimum number of replica pods |
+| replica.autoscaling.maxReplicas | Integer | - | Maximum number of replica pods |
+| replica.autoscaling.targetMemory | Integer | - | Target memory utilization percentage |
+| replica.autoscaling.targetCPU | Integer | - | Target CPU utilization percentage |
+
+## Future Improvements
+1. Consider adding support for custom metrics in addition to CPU and memory.
+2. Implement more advanced scaling policies, such as time-based scaling or scaling based on Redis-specific metrics.
+3. Add the ability to configure scaling behavior, such as scale-up and scale-down delays or cooldown periods.
+4. Include options for configuring behavior-based autoscaling, which could be more suitable for stateful applications like Redis.

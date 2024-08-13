@@ -1,0 +1,88 @@
+---
+title: "application.yaml"
+---
+
+## High-level description
+This Kubernetes manifest file defines the deployment of a Redis master node using Helm. It creates a StatefulSet or Deployment (based on configuration) for the Redis master, including container specifications, volume mounts, and optional metrics exporter.
+
+## Table of contents
+- Metadata and labels
+- Pod template specification
+- Container definitions (Redis and optional metrics exporter)
+- Volume definitions
+- Persistent volume claim template (if applicable)
+
+## Code Structure
+The main structure is a Kubernetes resource definition (StatefulSet or Deployment) for the Redis master. It includes nested structures for pod template, containers, volumes, and persistent volume claims. The code extensively uses Helm templating to allow for customization of various aspects of the deployment.
+
+## Symbols
+
+### Redis Master Resource
+#### Description
+Defines the main Kubernetes resource (StatefulSet or Deployment) for the Redis master.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Values passed to the Helm chart |
+| .Release | Object | Information about the Helm release |
+| .Chart | Object | Information about the Helm chart |
+
+#### Internal Logic
+1. Checks if master count is greater than 0 and if architecture is not replication or sentinel is not enabled
+2. Sets up metadata, labels, and annotations
+3. Defines pod template with security context, affinity rules, and tolerations
+4. Specifies containers (Redis and optional metrics exporter)
+5. Configures volume mounts and persistent storage
+
+### Redis Container
+#### Description
+Defines the main Redis container within the pod template.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.image | Object | Redis image configuration |
+| .Values.master | Object | Master-specific configuration |
+
+#### Internal Logic
+1. Sets up environment variables for Redis configuration
+2. Configures probes (liveness, readiness, startup)
+3. Mounts necessary volumes (config, data, TLS certificates if enabled)
+
+### Metrics Exporter Container (Optional)
+#### Description
+Defines an optional metrics exporter container for monitoring Redis.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics | Object | Metrics exporter configuration |
+
+#### Internal Logic
+1. Sets up environment variables for connecting to Redis
+2. Configures probes and ports for metrics collection
+3. Mounts necessary volumes (e.g., TLS certificates)
+
+## Dependencies
+- Bitnami Redis image
+- Redis Exporter image (if metrics are enabled)
+
+## Configuration
+The manifest uses numerous configuration options from the Helm values, including:
+- Redis image and version
+- Authentication settings
+- TLS configuration
+- Persistence settings
+- Resource limits and requests
+- Affinity and anti-affinity rules
+- Metrics exporter configuration
+
+## Error Handling
+Error handling is primarily managed through Kubernetes probes (liveness, readiness, and startup) defined for both the Redis and metrics containers.
+
+## Future Improvements
+1. Consider adding support for Redis Cluster mode
+2. Implement more granular control over security settings
+3. Add options for custom init containers or sidecars
+4. Enhance metrics collection with custom Prometheus rules or Grafana dashboards

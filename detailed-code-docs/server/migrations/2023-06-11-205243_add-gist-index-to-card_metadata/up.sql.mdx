@@ -1,0 +1,44 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds full-text search capabilities to the `card_metadata` table by creating a TSVECTOR column and a GIN index on it. This enables efficient text search operations on the content of card metadata.
+
+## Table of contents
+- Add TSVECTOR column to card_metadata table
+- Update existing rows with TSVECTOR data
+- Create GIN index on TSVECTOR column
+
+## Symbols
+
+### ALTER TABLE card_metadata
+#### Description
+Adds a new column `card_metadata_tsvector` of type TSVECTOR to the `card_metadata` table.
+
+#### Internal Logic
+The `ALTER TABLE` statement is used to modify the structure of an existing table by adding a new column.
+
+### UPDATE card_metadata
+#### Description
+Populates the newly created `card_metadata_tsvector` column with TSVECTOR data generated from the `content` column.
+
+#### Internal Logic
+The `to_tsvector` function is used to convert the text in the `content` column to a TSVECTOR, using the 'english' text search configuration.
+
+### CREATE INDEX idx_card_metadata_tsvector
+#### Description
+Creates a GIN (Generalized Inverted Index) index on the `card_metadata_tsvector` column to optimize full-text search operations.
+
+#### Internal Logic
+The `CREATE INDEX` statement is used with the `USING GIN` clause to create a GIN index, which is particularly efficient for full-text search on TSVECTOR data.
+
+## Performance Considerations
+- The GIN index creation may take some time, especially if the `card_metadata` table contains a large number of rows.
+- Full-text search queries using this index will be significantly faster compared to regular text matching operations.
+- The TSVECTOR column will increase the storage size of the table, but it allows for more efficient text search operations.
+
+## Future Improvements
+- Consider adding a trigger to automatically update the `card_metadata_tsvector` column when the `content` column is updated or new rows are inserted.
+- Evaluate the need for custom text search configurations if the default 'english' configuration is not sufficient for the specific use case.
+- Monitor the performance impact of the GIN index and consider partitioning the table if it grows very large.

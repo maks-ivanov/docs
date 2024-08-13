@@ -1,0 +1,49 @@
+---
+title: "extended-configmap.yaml"
+---
+
+## High-level description
+This Kubernetes ConfigMap template is designed to create an extended configuration for the primary PostgreSQL instance in a Helm chart. It generates a ConfigMap with additional configuration options that can be used to customize the PostgreSQL server's behavior.
+
+## Table of contents
+- ConfigMap metadata
+- ConfigMap data
+
+## Code Structure
+The template uses conditional logic to determine whether to create the ConfigMap and includes several helper functions to generate values for labels, annotations, and configuration data.
+
+## Symbols
+
+### ConfigMap
+#### Description
+Defines a Kubernetes ConfigMap resource for extended PostgreSQL configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Release.Namespace | String | Kubernetes namespace for the release |
+| .Values.commonLabels | Object | Common labels to apply to the ConfigMap |
+| .Values.commonAnnotations | Object | Common annotations to apply to the ConfigMap |
+| .Values.primary.extendedConfiguration | String | Extended configuration for PostgreSQL primary instance |
+
+#### Internal Logic
+1. Checks if the ConfigMap should be created using the `postgresql.v1.primary.createExtendedConfigmap` helper function.
+2. Sets the ConfigMap name using the `postgresql.v1.primary.fullname` helper function.
+3. Applies standard labels and custom labels using the `common.labels.standard` helper function.
+4. Conditionally applies common annotations if provided.
+5. Includes the extended configuration in the `override.conf` data field.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper functions for rendering templates and generating standard labels |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.primary.extendedConfiguration | String | N/A | Extended configuration for PostgreSQL primary instance |
+
+## Future Improvements
+- Consider adding support for multiple configuration files within the same ConfigMap.
+- Implement validation for the extended configuration to ensure it contains valid PostgreSQL settings.
+- Add the ability to specify the configuration file name (currently hardcoded as `override.conf`).

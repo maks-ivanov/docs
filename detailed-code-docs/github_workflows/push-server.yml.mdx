@@ -1,0 +1,111 @@
+---
+title: "push-server.yml"
+---
+
+## High-level description
+This GitHub Actions workflow file defines a series of jobs to build and push Docker images for various components of the Trieve application to Docker Hub. It leverages build caching for faster builds and uses a matrix strategy to build for different platforms.
+
+## Table of contents
+- Workflow triggers
+- Jobs
+    - build_server
+    - ingest_worker
+    - delete_worker
+    - file_worker
+    - group_worker
+    - sync_qdrant
+    - queue_bm25
+    - reindex-worker
+
+## References
+This workflow references the following Dockerfiles located in the `server/` directory:
+- `Dockerfile.server`
+- `Dockerfile.ingestion-worker`
+- `Dockerfile.delete-worker`
+- `Dockerfile.file-worker`
+- `Dockerfile.group-worker`
+- `Dockerfile.sync-qdrant`
+- `Dockerfile.queue-bm25`
+- `Dockerfile.reindex-worker`
+
+## Symbols
+### `name`
+#### Description
+Defines the name of the workflow, displayed on the Actions tab in the GitHub repository.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `concurrency`
+#### Description
+Configures concurrent workflow runs. This workflow uses a concurrency group based on the workflow name and branch name, canceling any in-progress runs from the same group.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `on`
+#### Description
+Specifies the events that trigger the workflow.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+This workflow is triggered on:
+- `workflow_dispatch`: Allows manual triggering from the Actions tab.
+- `push`: Automatically triggers on push events to the `main` branch, but only for changes within the `server/` directory or the workflow file itself.
+
+### `jobs`
+#### Description
+Defines a set of jobs that run in parallel. Each job builds and pushes a different Docker image.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+Each job follows a similar structure:
+1. **Checkout the repo:** Uses the `actions/checkout@v4` action to checkout the repository's code.
+2. **Setup buildx:** Uses the `docker/setup-buildx-action@v3` action to set up the Docker Buildx builder.
+3. **Login to Docker Hub:** Uses the `docker/login-action@v3` action to log in to Docker Hub using credentials stored in GitHub secrets.
+4. **Docker meta:** Uses the `docker/metadata-action@v5` action to generate image tags based on the commit SHA and "latest".
+5. **Build and push Docker image:** Uses the `docker/build-push-action@v5` action to build and push the Docker image. This step utilizes build caching and specifies the appropriate Dockerfile and context.
+
+## Dependencies
+This workflow relies on the following GitHub Actions:
+| Dependency | Purpose |
+|:-----------|:--------|
+| `actions/checkout@v4` | Checks out the repository's code. |
+| `docker/setup-buildx-action@v3` | Sets up the Docker Buildx builder. |
+| `docker/login-action@v3` | Logs in to Docker Hub. |
+| `docker/metadata-action@v5` | Generates image tags. |
+| `docker/build-push-action@v5` | Builds and pushes Docker images. |
+
+## Configuration
+This workflow uses the following GitHub secrets:
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `DOCKER_USERNAME` | `string` | N/A | Docker Hub username. |
+| `DOCKER_PASSWORD` | `string` | N/A | Docker Hub password or access token. |
+
+## Future Improvements
+- **Centralize common steps:** The workflow contains repetitive steps for each job. These steps could be extracted into a reusable workflow to improve maintainability.
+- **Add image tagging strategy:** The workflow currently uses `latest` and commit SHA for tagging. Consider implementing a more robust tagging strategy, such as semantic versioning.
+- **Implement automated image vulnerability scanning:** Integrate a security scanner to identify and report vulnerabilities in the built images.

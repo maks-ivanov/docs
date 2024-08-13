@@ -1,0 +1,52 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a table named `ctr_data` in ClickHouse, designed to store and manage data related to CTR (Click-Through Rate) or similar metrics. The table is optimized for efficient querying and data retention with a specific storage engine, ordering, partitioning, and TTL (Time-To-Live) configuration.
+
+## Table of contents
+- Table creation
+- Table structure
+- Storage engine
+- Ordering
+- Partitioning
+- TTL configuration
+
+## Code Structure
+The SQL script consists of a single `CREATE TABLE` statement that defines the structure and properties of the `ctr_data` table.
+
+## Symbols
+
+### ctr_data
+#### Description
+A ClickHouse table designed to store CTR-related data with specific columns for identification, metadata, and timestamps.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Unique identifier for each record |
+| request_id | UUID | Identifier for the associated request |
+| chunk_id | UUID | Identifier for the associated chunk |
+| dataset_id | UUID | Identifier for the associated dataset |
+| position | Int32 | Integer representing the position |
+| metadata | String | String containing metadata information |
+| created_at | DateTime | Timestamp of record creation |
+
+#### Internal Logic
+1. The table is created using the `CREATE TABLE IF NOT EXISTS` statement to avoid errors if the table already exists.
+2. The table uses the MergeTree engine for efficient data storage and retrieval.
+3. The table is ordered by `(dataset_id, created_at, request_id, id)` for optimized querying.
+4. Data is partitioned by month and dataset_id using the `toYYYYMM(created_at)` function and `dataset_id` column.
+5. A TTL (Time-To-Live) of 30 days is set based on the `created_at` column.
+
+## Performance Considerations
+1. The MergeTree engine is used for high insert and query performance.
+2. The ordering by `(dataset_id, created_at, request_id, id)` allows for efficient data retrieval when querying by these columns.
+3. Partitioning by month and dataset_id enables faster queries on specific time ranges and datasets, as well as more efficient data management.
+4. The TTL configuration automatically removes data older than 30 days, helping to manage storage and maintain performance.
+
+## Future Improvements
+1. Consider adding indexes on frequently queried columns if query performance needs improvement.
+2. Evaluate the TTL period and adjust if necessary based on data retention requirements and storage constraints.
+3. Monitor the effectiveness of the current partitioning scheme and adjust if needed for better query performance or data management.

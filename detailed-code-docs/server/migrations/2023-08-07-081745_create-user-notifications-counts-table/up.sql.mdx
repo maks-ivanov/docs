@@ -1,0 +1,61 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script creates a new table to track user notification counts and implements triggers to automatically update these counts when notifications are added or removed. It also initializes the table with existing notification data.
+
+## Table of contents
+- Creation of `user_notification_counts` table
+- Definition of `update_notification_count()` function
+- Creation of triggers for notification tables
+- Initialization of `user_notification_counts` with existing data
+
+## Code Structure
+The script creates a table, defines a function, sets up triggers, and initializes data. The function is used by the triggers to update the notification count when notifications are added or removed.
+
+## Symbols
+
+### `user_notification_counts` table
+#### Description
+This table stores the notification count for each user.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key, auto-generated |
+| user_uuid | UUID | Foreign key referencing users table |
+| notification_count | INTEGER | Count of notifications for the user |
+
+### `update_notification_count()` function
+#### Description
+This function updates the notification count for a user when a notification is added or removed.
+
+#### Internal Logic
+1. Checks if the operation is INSERT or DELETE
+2. For INSERT, increments the notification count
+3. For DELETE, decrements the notification count
+
+### Triggers
+#### Description
+Two triggers are created to automatically call the `update_notification_count()` function when notifications are added or removed.
+
+1. `update_verification_notification_count`
+2. `update_file_upload_notification_count`
+
+### Data Initialization
+#### Description
+Initializes the `user_notification_counts` table with existing notification data from `verification_notifications` and `file_upload_completed_notifications` tables.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| users | Referenced in `user_notification_counts` table |
+| verification_notifications | Used for trigger and data initialization |
+| file_upload_completed_notifications | Used for trigger and data initialization |
+
+## Future Improvements
+1. Consider adding an index on the `user_uuid` column in the `user_notification_counts` table for faster lookups.
+2. Implement error handling in the `update_notification_count()` function to manage potential issues like negative counts.
+3. Add a constraint to ensure `notification_count` is non-negative.
+4. Consider adding a timestamp column to track when the count was last updated.

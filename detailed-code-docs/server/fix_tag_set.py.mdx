@@ -1,0 +1,56 @@
+---
+title: "fix_tag_set.py"
+---
+
+## High-level description
+The Python script `fix_tag_set.py` connects to a PostgreSQL database and updates the `tag_set_array` column in the `chunk_metadata`, `chunk_group`, and `files` tables. It converts the existing `tag_set` column, which stores tags as a comma-separated string, into an array of strings.
+
+## Table of contents
+- Database Connection
+- Data Retrieval and Processing
+- Data Update and Commit
+- Connection Closure
+
+## References
+- The script references the `uuid` module for working with UUIDs.
+- It also references the `psycopg2` module for interacting with the PostgreSQL database.
+
+## Symbols
+### `fix_tag_set.py`
+#### Description
+This script iterates through three tables (`chunk_metadata`, `chunk_group`, and `files`) in a PostgreSQL database and updates the `tag_set_array` column by converting the existing `tag_set` string into an array of strings.
+
+#### Inputs
+This script does not take any explicit inputs. It relies on environment variables for database connection details.
+
+#### Outputs
+This script does not have any explicit outputs. It modifies the database directly.
+
+#### Internal Logic
+1. **Database Connection:** Establishes a connection to the PostgreSQL database using connection details from environment variables.
+2. **Data Retrieval and Processing:**
+    - Iterates through the specified tables.
+    - For each table, it retrieves rows where `tag_set_array` is NULL and `tag_set` is not empty, ordered by `id`.
+    - It processes the retrieved rows in batches of 1000.
+    - For each row, it splits the `tag_set` string into an array of strings.
+3. **Data Update and Commit:**
+    - Updates the `tag_set_array` column with the newly created array of tags.
+    - Commits the changes to the database after processing each batch.
+4. **Connection Closure:** Closes the database connection.
+
+## Side Effects
+- **Database Modification:** The script directly modifies the `tag_set_array` column in the specified tables of the PostgreSQL database.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `psycopg2` | Interacting with the PostgreSQL database |
+| `os` | Operating system related functions (likely for environment variables) |
+| `dotenv` | Loading environment variables from a `.env` file |
+| `uuid` | Generating and working with UUIDs |
+
+## Error Handling
+The script does not implement specific error handling beyond basic exception raising.
+
+## Logging
+The script prints the `tag_set` and `id` of each processed row to the console, as well as a message indicating when changes are committed.

@@ -1,0 +1,49 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a trigram index to the `card_metadata` table using the GIN (Generalized Inverted Index) method. It's designed to improve the performance of pattern matching queries on the `oc_file_path` column.
+
+## Table of contents
+- Create PostgreSQL trigram extension
+- Create GIN index on `card_metadata` table
+
+## Symbols
+
+### `CREATE EXTENSION pg_trgm;`
+#### Description
+This command creates the PostgreSQL trigram extension, which enables trigram matching functionality in the database.
+
+#### Side Effects
+- Adds trigram support to the PostgreSQL database
+- Enables trigram-based operations and indexing
+
+### `CREATE INDEX idx_gist ON card_metadata USING gin (oc_file_path gin_trgm_ops);`
+#### Description
+This command creates a GIN index named `idx_gist` on the `card_metadata` table, specifically on the `oc_file_path` column using trigram operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| card_metadata | table | The table on which the index is created |
+| oc_file_path | column | The column being indexed |
+
+#### Side Effects
+- Creates a new index in the database
+- Improves query performance for pattern matching on `oc_file_path`
+
+#### Performance Considerations
+- GIN indexes are optimized for full-text search and can significantly improve the performance of LIKE and ILIKE queries
+- The index may slightly slow down INSERT and UPDATE operations on the `card_metadata` table
+- The index will consume additional disk space
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| pg_trgm | PostgreSQL extension for trigram matching and indexing |
+
+## Future Improvements
+- Monitor the performance impact of this index and adjust if necessary
+- Consider adding similar indexes on other text columns if pattern matching queries are frequent
+- Evaluate the need for index maintenance operations like VACUUM or REINDEX periodically

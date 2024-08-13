@@ -1,0 +1,44 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert the changes made by the corresponding `up.sql` migration. It removes several indexes that were previously created for the `file_upload_completed_notifications` and `verification_notifications` tables in the database.
+
+## Table of contents
+- Removal of indexes for `file_upload_completed_notifications` table
+- Removal of indexes for `verification_notifications` table
+
+## Symbols
+
+### DROP INDEX idx_file_upload_completed_notifications_user_uuid
+#### Description
+Removes the index on the `user_uuid` column of the `file_upload_completed_notifications` table.
+
+### DROP INDEX idx_file_upload_completed_notifications_collection_uuid
+#### Description
+Removes the index on the `collection_uuid` column of the `file_upload_completed_notifications` table.
+
+### DROP INDEX idx_verification_notifications_user_uuid
+#### Description
+Removes the index on the `user_uuid` column of the `verification_notifications` table.
+
+### DROP INDEX idx_verification_notifications_card_uuid
+#### Description
+Removes the index on the `card_uuid` column of the `verification_notifications` table.
+
+### DROP INDEX idx_verification_notifications_verification_uuid
+#### Description
+Removes the index on the `verification_uuid` column of the `verification_notifications` table.
+
+## Side Effects
+- Removing these indexes will likely decrease query performance for operations that were previously using these indexes.
+- The database size may slightly decrease due to the removal of index structures.
+
+## Performance Considerations
+- Queries that were previously utilizing these indexes may experience slower performance after this migration is applied.
+- The impact on performance will depend on the size of the tables and the frequency of queries that were using these indexes.
+
+## Future Improvements
+- Before applying this migration in a production environment, it's crucial to assess the impact on query performance and ensure that the removal of these indexes doesn't significantly degrade the application's performance.
+- If these indexes are being removed due to changes in query patterns or table structure, consider analyzing current query patterns to determine if new indexes should be created to maintain optimal performance.

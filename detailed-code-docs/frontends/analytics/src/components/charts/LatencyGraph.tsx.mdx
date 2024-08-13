@@ -1,0 +1,60 @@
+---
+title: "LatencyGraph.tsx"
+---
+
+## High-level description
+The `LatencyGraph` component displays a line chart of average latency over time for a given dataset. It fetches latency data based on provided filters and granularity, then renders the chart using Chart.js.
+
+## Table of contents
+- `LatencyGraph` component
+
+## References
+- `createQuery` from "@tanstack/solid-query"
+- `AnalyticsFilter`, `AnalyticsParams` from "shared/types"
+- `enUS` from "date-fns/locale"
+- `createEffect`, `createSignal`, `onCleanup`, `useContext` from "solid-js"
+- `DatasetContext` from "../../layouts/TopBarLayout"
+- `getLatency` from "../../api/analytics"
+- `Chart` from "chart.js"
+- `parseCustomDateString` from "../../utils/formatDate"
+
+## Symbols
+
+### Symbol Name
+`LatencyGraph`
+
+#### Description
+This component fetches latency data and renders a line chart visualizing the average latency over time. It uses the `createQuery` hook to fetch data and updates the chart whenever the data or props change.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `LatencyGraphProps` | An object containing filter and granularity settings for the latency data. |
+
+#### Outputs
+Renders a canvas element containing the latency graph.
+
+#### Internal Logic
+1. Fetches the dataset ID from the `DatasetContext`.
+2. Defines a `latencyQuery` using `createQuery` to fetch latency data based on provided filters, granularity, and dataset ID.
+3. Uses `createEffect` to:
+    - Access the canvas element and latency data.
+    - Create a new Chart.js instance if one doesn't exist, initializing it with basic line chart options.
+    - Update the chart's time unit based on the selected granularity.
+    - Update the chart's data with fetched latency data points and their corresponding timestamps.
+4. Uses `onCleanup` to destroy the Chart.js instance when the component unmounts.
+
+## Side Effects
+- Fetches data from the `/analytics/search` endpoint.
+- Creates and manages a Chart.js instance, updating its data and configuration dynamically.
+- Destroys the Chart.js instance on component unmount.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| @tanstack/solid-query | Used for data fetching and caching. |
+| date-fns | Used for date formatting and manipulation. |
+| solid-js | The core library used for building the component. |
+| chart.js | Used for rendering the line chart. |
+| chartjs-adapter-date-fns | Adapter for using date-fns with Chart.js. |
+

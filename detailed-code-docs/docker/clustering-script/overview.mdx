@@ -1,0 +1,133 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This script performs clustering on search queries from multiple datasets stored in ClickHouse. It uses HDBSCAN for clustering, generates topic names for each cluster using Claude AI, and stores the results back in the database.
+
+## Table of contents
+- Imports and setup
+- Data fetching function
+- Clustering functions
+- Dataset retrieval function
+- Topic generation function
+- Database insertion function
+- Main script execution
+
+## Code Structure
+The script is structured around several functions that handle different aspects of the clustering process. These functions are called sequentially in the main execution block to process each dataset.
+
+## Symbols
+
+### `fetch_dataset_vectors`
+#### Description
+Fetches search query data from ClickHouse for a given dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | clickhouse_connect.driver.client.Client | ClickHouse client |
+| dataset_id | uuid.UUID | ID of the dataset to fetch |
+| limit | int | Maximum number of rows to fetch (default: 5000) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rows | list | List of tuples containing query data |
+
+### `get_clusters`
+#### Description
+Organizes clustered data into a dictionary based on cluster labels.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hdbscan | HDBSCAN | Fitted HDBSCAN object |
+| data | list | List of data points |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clusters | dict | Dictionary of clusters with labels as keys |
+
+### `get_datasets`
+#### Description
+Retrieves all unique dataset IDs from the ClickHouse database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | clickhouse_connect.driver.client.Client | ClickHouse client |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rows | list | List of tuples containing dataset IDs |
+
+### `hdbscan_clustering`
+#### Description
+Performs HDBSCAN clustering on the input data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | list | List of data points to cluster |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hdb | HDBSCAN | Fitted HDBSCAN object |
+
+### `get_topics`
+#### Description
+Generates topic names for each cluster using Claude AI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hdbscan | HDBSCAN | Fitted HDBSCAN object |
+| clusters | dict | Dictionary of clusters |
+| data | list | Original data points |
+| top_n | int | Number of top queries to use for topic generation (default: 5) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| topics | dict | Dictionary of topic names for each cluster |
+
+### `insert_centroids`
+#### Description
+Inserts cluster topics and search query memberships into the ClickHouse database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | clickhouse_connect.driver.client.Client | ClickHouse client |
+| data | list | Original data points |
+| dataset_id | tuple | Dataset ID |
+| topics | dict | Dictionary of topic names for each cluster |
+| clusters | dict | Dictionary of clusters |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| datetime | Handling dates and times |
+| os | Accessing environment variables |
+| uuid | Generating unique identifiers |
+| anthropic | Interacting with Claude AI |
+| clickhouse_connect | Connecting to and querying ClickHouse database |
+| numpy | Numerical operations and array handling |
+| sklearn.cluster | HDBSCAN clustering algorithm |
+| scipy.spatial.distance | Cosine distance calculation |
+| dotenv | Loading environment variables from .env file |
+
+## Error Handling
+The main script execution is wrapped in a try-except block for each dataset, catching and printing any exceptions that occur during processing.
+
+## Future Improvements
+1. Implement parallel processing for multiple datasets to improve performance.
+2. Add logging instead of print statements for better error tracking and monitoring.
+3. Implement a more robust error handling mechanism, possibly with retries for transient errors.
+4. Consider adding command-line arguments for configurable parameters like clustering settings and data limits.
+5. Optimize the database insertion process, possibly by batching inserts for better performance.
+6. Implement a caching mechanism for Claude AI responses to reduce API calls and improve speed.

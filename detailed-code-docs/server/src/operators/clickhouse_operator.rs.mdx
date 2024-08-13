@@ -1,0 +1,153 @@
+---
+title: "clickhouse_operator.rs"
+---
+
+## High-level description
+This code defines a service for sending events to ClickHouse, a column-oriented database management system. It uses a channel to queue events and periodically sends them to ClickHouse in batches. It also includes functions for extracting latency from headers and sending different types of events to ClickHouse.
+
+## Table of contents
+- `ClickHouseEvent` enum
+- `get_latency_from_header` function
+- `send_to_clickhouse` function
+- `EventQueue` struct
+    - `new` method
+    - `start_service` method
+    - `send` method
+
+## Code Structure
+The `EventQueue` struct is the main component of this code. It holds a sender for the event channel and a ClickHouse client. The `start_service` method creates a channel and spawns a task that listens for events on the channel and periodically sends them to ClickHouse. The `send` method sends an event to the channel.
+
+## References
+- `clickhouse::Client`
+- `tokio::sync::mpsc`
+- `time::Instant`
+
+## Symbols
+
+### `ClickHouseEvent`
+#### Description
+An enum representing different types of events that can be sent to ClickHouse.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+The enum has the following variants:
+- `SearchQueryEvent`: Represents a search query event.
+- `RecommendationEvent`: Represents a recommendation event.
+- `RagQueryEvent`: Represents a RAG query event.
+- `WorkerEvent`: Represents a worker event.
+
+### `get_latency_from_header`
+#### Description
+Extracts the latency value from a header string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| header | String | The header string to extract the latency from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| latency | f32 | The latency value extracted from the header. |
+
+#### Internal Logic
+The function splits the header string by commas and semicolons, filters for the "dur=" substring, and parses the following value as an f32. It then sums all the latency values found in the header.
+
+### `send_to_clickhouse`
+#### Description
+Sends a batch of events to ClickHouse.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| events | Vec&lt;ClickHouseEvent&gt; | The batch of events to send. |
+| clickhouse_client | &clickhouse::Client | The ClickHouse client to use. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;(), ServiceError&gt; |  | Returns `Ok(())` if the events were sent successfully, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+The function first checks if analytics is enabled. If not, it returns `Ok(())`. If analytics is enabled, it creates inserters for each event type and iterates through the events, writing them to the corresponding inserter. It then ends the inserters and returns `Ok(())`.
+
+### `EventQueue`
+#### Description
+A struct representing a queue for sending events to ClickHouse.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+The struct has the following fields:
+- `sender`: An optional sender for the event channel.
+- `clickhouse_client`: The ClickHouse client to use.
+
+### `EventQueue::new`
+#### Description
+Creates a new `EventQueue` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clickhouse_client | clickhouse::Client | The ClickHouse client to use. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| EventQueue |  | A new `EventQueue` instance. |
+
+#### Internal Logic
+The function creates a new `EventQueue` instance with the given ClickHouse client.
+
+### `EventQueue::start_service`
+#### Description
+Starts the event queue service.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+The function creates a channel and spawns a task that listens for events on the channel and periodically sends them to ClickHouse.
+
+### `EventQueue::send`
+#### Description
+Sends an event to the event queue.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| event | ClickHouseEvent | The event to send. |
+
+#### Outputs
+None
+
+#### Internal Logic
+The function sends the event to the channel. If the sender is not initialized, it logs an error.
+
+## Dependencies
+- `clickhouse`
+
+## Error Handling
+The code uses the `Result` type and the `ServiceError` enum to handle errors. Errors are logged and reported to Sentry.
+
+## Logging
+The code uses the `log` crate for logging.
+
+## Future Improvements
+- The code could be refactored to use a single inserter for all event types.
+- The code could be made more robust by handling errors that occur when sending events to ClickHouse.
+- The code could be made more efficient by using a more sophisticated batching strategy.
+- The code could be made more configurable by allowing the user to specify the batch size and the interval between batches.
+- The code could be made more testable by extracting the logic for sending events to ClickHouse into a separate function.

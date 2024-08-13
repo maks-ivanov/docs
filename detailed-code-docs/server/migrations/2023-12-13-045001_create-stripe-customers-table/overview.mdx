@@ -1,0 +1,41 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for managing database changes related to Stripe customer integration. The scripts handle creating and reverting changes to the database schema, specifically focusing on the `stripe_customers` table and its relationship with the `users` table.
+
+## What does it do?
+These SQL scripts are designed to be run by a database migration tool. They modify the database structure to accommodate information about Stripe customers and their association with existing users in the system. The `up.sql` script adds a new table for Stripe customers and enforces email uniqueness across users, while the `down.sql` script undoes these changes. This allows for controlled and reversible updates to the database schema as the application evolves and integrates with Stripe for payment processing.
+
+## Key Files
+### 2023-12-13-045001_create-stripe-customers-table/up.sql
+This script makes the following changes to the database:
+1. **Adds a unique constraint to the `users` table:** 
+   ```sql
+   ALTER TABLE users ADD CONSTRAINT users_email_unique UNIQUE (email);
+   ```
+   This ensures that each email address in the `users` table is unique.
+2. **Creates the `stripe_customers` table:**
+   ```sql
+   CREATE TABLE stripe_customers (
+       id UUID PRIMARY KEY,
+       stripe_id TEXT UNIQUE,
+       email TEXT UNIQUE REFERENCES users(email),
+       created_at TIMESTAMP,
+       updated_at TIMESTAMP
+   );
+   ```
+   This table stores information about Stripe customers and links them to users in the `users` table via the `email` column.
+
+### 2023-12-13-045001_create-stripe-customers-table/down.sql
+This script reverts the changes made by `up.sql`:
+1. **Removes the unique constraint from the `users` table:**
+   ```sql
+   ALTER TABLE users DROP CONSTRAINT users_email_unique;
+   ```
+2. **Drops the `stripe_customers` table:**
+   ```sql
+   DROP TABLE IF EXISTS stripe_customers;
+   ```
+   This removes the table and all its data.

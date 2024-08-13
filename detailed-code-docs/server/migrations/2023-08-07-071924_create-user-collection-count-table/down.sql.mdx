@@ -1,0 +1,48 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to undo the changes made by the corresponding `up.sql` migration. It removes a trigger, a function, and a table related to user collection counts in a database system.
+
+## Table of contents
+- Drop trigger
+- Drop function
+- Drop table
+
+## Symbols
+
+### DROP TRIGGER IF EXISTS update_collection_counts_trigger ON card_collection
+#### Description
+This command removes the trigger named `update_collection_counts_trigger` from the `card_collection` table if it exists.
+
+#### Internal Logic
+The `IF EXISTS` clause ensures that the command doesn't throw an error if the trigger doesn't exist.
+
+### DROP FUNCTION IF EXISTS update_collection_counts()
+#### Description
+This command removes the function named `update_collection_counts()` if it exists in the database.
+
+#### Internal Logic
+The `IF EXISTS` clause prevents errors if the function is not present.
+
+### DROP TABLE IF EXISTS user_collection_counts
+#### Description
+This command removes the `user_collection_counts` table from the database if it exists.
+
+#### Internal Logic
+The `IF EXISTS` clause allows the command to execute without errors even if the table is not present.
+
+## Dependencies
+This script doesn't explicitly depend on external libraries, but it assumes the existence of certain database objects:
+| Dependency | Purpose |
+|:-----------|:--------|
+| card_collection table | The table on which the trigger was originally created |
+| update_collection_counts_trigger | The trigger being dropped |
+| update_collection_counts() function | The function being dropped |
+| user_collection_counts table | The table being dropped |
+
+## Future Improvements
+- Consider adding comments to explain the purpose of each drop operation.
+- If there are any foreign key constraints or dependencies on the `user_collection_counts` table, consider adding commands to remove these constraints before dropping the table.
+- If the order of operations is critical, consider adding comments to explain why this specific order is chosen.

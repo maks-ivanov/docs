@@ -1,0 +1,59 @@
+---
+title: "servicemonitor.yaml"
+---
+
+## High-level description
+This YAML template defines a ServiceMonitor resource for Prometheus monitoring in a Kubernetes environment. It's specifically designed to monitor Redis metrics when metrics and ServiceMonitor are enabled in the Helm chart values.
+
+## Table of contents
+- ServiceMonitor metadata
+- ServiceMonitor spec
+  - Endpoints configuration
+  - Namespace and label selectors
+
+## Code Structure
+The template uses conditional statements and helper functions to dynamically generate the ServiceMonitor configuration based on the provided Helm values.
+
+## Symbols
+
+### ServiceMonitor Resource
+#### Description
+Defines a ServiceMonitor custom resource for Prometheus Operator to scrape Redis metrics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics.enabled | boolean | Enables metrics collection |
+| .Values.metrics.serviceMonitor.enabled | boolean | Enables ServiceMonitor creation |
+| .Values.metrics.serviceMonitor.* | various | Configuration options for ServiceMonitor |
+
+#### Internal Logic
+1. Checks if metrics and ServiceMonitor are enabled
+2. Defines metadata (name, namespace, labels, annotations)
+3. Configures endpoints for metrics scraping
+4. Sets up namespace and label selectors
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| monitoring.coreos.com/v1 | API version for ServiceMonitor resource |
+
+### Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.metrics.serviceMonitor.namespace | string | - | Namespace for ServiceMonitor |
+| .Values.metrics.serviceMonitor.interval | string | - | Scrape interval |
+| .Values.metrics.serviceMonitor.scrapeTimeout | string | - | Scrape timeout |
+| .Values.metrics.serviceMonitor.honorLabels | boolean | - | Honor labels configuration |
+| .Values.metrics.serviceMonitor.relabellings | list | - | Relabeling configurations |
+| .Values.metrics.serviceMonitor.metricRelabelings | list | - | Metric relabeling configurations |
+| .Values.metrics.serviceMonitor.additionalEndpoints | list | - | Additional endpoints to scrape |
+| .Values.metrics.serviceMonitor.podTargetLabels | list | - | Pod labels to transfer to metrics |
+| .Values.metrics.serviceMonitor.sampleLimit | integer | - | Sample limit for scraping |
+| .Values.metrics.serviceMonitor.targetLimit | integer | - | Target limit for scraping |
+
+## Future Improvements
+1. Consider adding support for TLS configuration in the ServiceMonitor spec.
+2. Implement more granular control over endpoint configurations, such as scheme and TLS settings.
+3. Add support for jobLabel and targetLabels in the ServiceMonitor spec for more flexible label management.
+4. Consider adding an option to specify multiple namespaces in the namespaceSelector for cross-namespace monitoring.

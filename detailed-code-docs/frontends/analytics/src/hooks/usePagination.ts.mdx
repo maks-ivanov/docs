@@ -1,0 +1,45 @@
+---
+title: "usePagination.ts"
+---
+
+## High-level description
+The `usePagination` hook provides functionality for managing pagination state and actions within a SolidJS component. It offers signals for tracking the current page and the maximum discovered page, as well as methods for navigating pages and resetting the maximum page.
+
+## Table of contents
+- `usePagination`
+
+## Symbols
+
+### `usePagination`
+#### Description
+This hook manages the pagination state and provides functions to interact with it.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | `Accesser&lt;number&gt;` | A signal representing the current page number. |
+| nextPage | `() =&gt; void` | A function to increment the current page number. |
+| prevPage | `() =&gt; void` | A function to decrement the current page number, only if the current page is greater than 1. |
+| canGoNext | `Accessor&lt;boolean&gt;` | A computed value indicating whether there are potentially more pages to fetch. It checks if `maxPageDiscovered` is null or if the current page is less than `maxPageDiscovered`. |
+| setMaxPageDiscovered | `(page: number \| null) =&gt; void` | A function to set the `maxPageDiscovered` signal. |
+| resetMaxPageDiscovered | `() =&gt; void` | A function to reset the `maxPageDiscovered` signal to null. |
+| maxPageDiscovered | `Accessor&lt;number \| null&gt;` | A signal representing the highest page number that has been successfully fetched data from. A value of null indicates that there is no known maximum page yet. |
+
+#### Internal Logic
+The hook uses SolidJS's `createSignal` and `createMemo` to manage state and compute derived values. 
+- `page` signal is initialized to 1.
+- `maxPageDiscovered` signal is initialized to null.
+- `nextPage` increments the `page` signal.
+- `prevPage` decrements the `page` signal, only if the current page is greater than 1.
+- `canGoNext` checks if `maxPageDiscovered` is null or if the current page is less than `maxPageDiscovered`.
+- `setMaxPageDiscovered` sets the value of the `maxPageDiscovered` signal.
+- `resetMaxPageDiscovered` sets the value of the `maxPageDiscovered` signal to null.
+
+## Side Effects
+This hook has no side effects on its own. However, the functions it returns (e.g., `nextPage`, `prevPage`, `setMaxPageDiscovered`) will cause updates to the component's state when called, potentially triggering re-renders.
+
+## References
+This hook is used by several components related to displaying paginated data, such as `PaginationButtons`, `HeadQueries`, `LowConfidenceQueries`, `NoResultQueries`, `RagQueries`, and `SearchTablePage`. These components use the provided functions to navigate between pages and display relevant information based on the current pagination state.

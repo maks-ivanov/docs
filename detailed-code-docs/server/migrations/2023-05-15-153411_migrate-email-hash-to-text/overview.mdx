@@ -1,0 +1,27 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for altering the `users` table schema. Specifically, it focuses on changing the data types of the `email` and `hash` columns.
+
+## What does it do?
+The `up.sql` script modifies the `users` table, changing the data type of both the `email` and `hash` columns to `TEXT`. This allows for more flexibility in storing potentially long email addresses and hashes.
+
+Conversely, the `down.sql` script reverts these changes. It alters the `users` table back to its previous state, setting the `email` column to `VARCHAR(100)` and the `hash` column to `VARCHAR(122)`.
+
+These scripts are intended to be run sequentially as part of a database migration process. The `up.sql` script is executed to apply the schema changes, while the `down.sql` script can be used to revert to the previous schema if needed.
+
+```sql
+-- up.sql
+ALTER TABLE users
+ALTER COLUMN email TYPE TEXT,
+ALTER COLUMN hash TYPE TEXT;
+```
+
+```sql
+-- down.sql
+ALTER TABLE users
+ALTER COLUMN email TYPE VARCHAR(100),
+ALTER COLUMN hash TYPE VARCHAR(122);
+```

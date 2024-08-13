@@ -1,0 +1,64 @@
+---
+title: "tika-deployment.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes Deployment for Apache Tika, a content analysis toolkit. It sets up a single container running the Apache Tika server, exposing port 9998 for incoming requests.
+
+## Table of contents
+- Deployment metadata
+- Deployment specification
+- Pod template
+- Container specification
+
+## Code Structure
+The YAML file defines a single Kubernetes Deployment resource with nested specifications for the pod template and container.
+
+## Symbols
+
+### Deployment
+#### Description
+Defines a Kubernetes Deployment for Apache Tika, ensuring that a specified number of pod replicas are running the Tika server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Release.Name | String | The name of the Helm release |
+| .Values.containers.tika.tag | String | The tag of the Apache Tika Docker image to use |
+
+#### Internal Logic
+1. Sets up metadata for the deployment, including labels for Kubernetes resource management.
+2. Defines a selector to match pods managed by this deployment.
+3. Specifies a pod template with appropriate labels.
+4. Configures a single container running the Apache Tika image.
+
+### Container
+#### Description
+Specifies the configuration for the Apache Tika container within the pod.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.containers.tika.tag | String | The tag of the Apache Tika Docker image to use |
+
+#### Internal Logic
+1. Sets the container name to "tika".
+2. Constructs the image name using the Apache Tika base image and the provided tag.
+3. Exposes port 9998 for the Tika server.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Apache Tika | Content analysis toolkit running as a server |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.containers.tika.tag | String | N/A | Specifies the version tag for the Apache Tika Docker image |
+
+## Future Improvements
+1. Add resource limits and requests for the Tika container to ensure proper resource allocation.
+2. Implement health checks (readiness and liveness probes) for the Tika container to improve reliability.
+3. Consider adding environment variables or configuration maps to customize Tika server settings.
+4. Implement security contexts and pod security policies to enhance the deployment's security posture.
+5. Add annotations for monitoring and logging integrations if required in the target environment.

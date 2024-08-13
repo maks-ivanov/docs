@@ -1,0 +1,44 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a new floating-point column to the `chunk_metadata` table and creates an index on this new column for improved query performance.
+
+## Table of contents
+- Add new column to chunk_metadata table
+- Create index on the new column
+
+## Symbols
+
+### ALTER TABLE chunk_metadata ADD COLUMN num_value float8
+#### Description
+This SQL command adds a new column named `num_value` of type `float8` (64-bit floating-point) to the existing `chunk_metadata` table.
+
+#### Internal Logic
+- The `ALTER TABLE` statement is used to modify the structure of an existing table.
+- `chunk_metadata` is the target table being altered.
+- `ADD COLUMN` specifies that a new column is being added.
+- `num_value` is the name of the new column.
+- `float8` is the data type of the new column, which is a PostgreSQL-specific type for double precision floating-point numbers.
+
+### CREATE INDEX idx_num_val_chunk_metadata ON chunk_metadata USING btree (num_value)
+#### Description
+This SQL command creates a new index on the `num_value` column of the `chunk_metadata` table using a B-tree data structure.
+
+#### Internal Logic
+- `CREATE INDEX` is the SQL command to create a new index.
+- `idx_num_val_chunk_metadata` is the name given to the new index.
+- `ON chunk_metadata` specifies the table on which the index is being created.
+- `USING btree` indicates that the index should use a B-tree data structure, which is efficient for equality and range queries.
+- `(num_value)` specifies the column on which the index is being created.
+
+## Performance Considerations
+1. Adding the `num_value` column may require a table rewrite, depending on the database system and configuration. This operation could be slow for large tables.
+2. Creating an index on `num_value` will improve query performance for operations that filter or sort by this column. However, the index creation itself may take time, especially for large tables.
+3. The B-tree index is particularly useful for range queries and equality comparisons on the `num_value` column.
+
+## Future Improvements
+1. Consider adding a `NOT NULL` constraint to the `num_value` column if appropriate for the application's data model.
+2. If the `num_value` column is expected to have many duplicate values, consider using a more specialized index type like a hash index for equality comparisons.
+3. Depending on the usage patterns, it might be beneficial to create a composite index that includes `num_value` and other frequently queried columns.

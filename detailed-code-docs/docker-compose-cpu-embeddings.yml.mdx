@@ -1,0 +1,141 @@
+---
+title: "docker-compose-cpu-embeddings.yml"
+---
+
+## High-level description
+This Docker Compose file defines a multi-container application for running various text embedding and reranking models using CPU-based images. It sets up five different services, each running a specific model for text processing tasks.
+
+## Table of contents
+- Service: splade-doc
+- Service: splade-query
+- Service: jina
+- Service: bgem3
+- Service: reranker
+
+## Code Structure
+The file defines five services, each following a similar structure with slight variations in the model used, port mapping, and specific commands.
+
+## Symbols
+
+### `version`
+#### Description
+Specifies the version of the Docker Compose file format being used.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| version | string | The version number of the Docker Compose file format |
+
+### `services`
+#### Description
+Defines the services that make up the application.
+
+#### Internal Logic
+Each service is defined with its own configuration, including image, command, ports, and volumes.
+
+### Service: `splade-doc`
+#### Description
+Runs the SPLADE (Sparse Lexical and Expansion) model for document embedding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | The Docker image to use |
+| command | string | The command to run the model |
+| ports | array | Port mapping from host to container |
+| volumes | array | Volume mapping from host to container |
+
+#### Internal Logic
+- Uses the `naver/efficient-splade-VI-BT-large-doc` model
+- Maps port 4000 on the host to port 80 in the container
+- Mounts the `./data` directory to `/data` in the container
+
+### Service: `splade-query`
+#### Description
+Runs the SPLADE model for query embedding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | The Docker image to use |
+| command | string | The command to run the model |
+| ports | array | Port mapping from host to container |
+| volumes | array | Volume mapping from host to container |
+
+#### Internal Logic
+- Uses the `naver/efficient-splade-VI-BT-large-query` model
+- Maps port 5000 on the host to port 80 in the container
+- Mounts the `./data` directory to `/data` in the container
+
+### Service: `jina`
+#### Description
+Runs the Jina AI embeddings model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | The Docker image to use |
+| command | string | The command to run the model |
+| ports | array | Port mapping from host to container |
+| volumes | array | Volume mapping from host to container |
+
+#### Internal Logic
+- Uses the `jinaai/jina-embeddings-v2-base-en` model
+- Maps port 6000 on the host to port 80 in the container
+- Mounts the `./data` directory to `/data` in the container
+
+### Service: `bgem3`
+#### Description
+Runs the BGE-M3 embeddings model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | The Docker image to use |
+| command | string | The command to run the model |
+| ports | array | Port mapping from host to container |
+| volumes | array | Volume mapping from host to container |
+
+#### Internal Logic
+- Uses the `BAAI/bge-m3` model
+- Maps port 7000 on the host to port 80 in the container
+- Mounts the `./data` directory to `/data` in the container
+
+### Service: `reranker`
+#### Description
+Runs a reranker model for improving search results.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | The Docker image to use |
+| command | string | The command to run the model |
+| ports | array | Port mapping from host to container |
+| volumes | array | Volume mapping from host to container |
+
+#### Internal Logic
+- Uses the `BAAI/bge-reranker-base` model
+- Maps port 8000 on the host to port 80 in the container
+- Mounts the `./data` directory to `/data` in the container
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Docker | Container runtime for running the services |
+| Docker Compose | Orchestration tool for defining and running multi-container applications |
+
+## Configuration
+Each service is configured with specific settings:
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| image | string | varies | Specifies the Docker image to use for each service |
+| command | string | varies | Defines the command to run the model with specific parameters |
+| ports | array | varies | Maps host ports to container ports |
+| volumes | array | ./data:/data | Mounts the local `./data` directory to `/data` in the container |
+
+## Future Improvements
+1. Consider using environment variables for model versions and port mappings to make the configuration more flexible and easier to update.
+2. Implement health checks for each service to ensure they are running correctly.
+3. Add resource constraints (CPU and memory limits) to each service for better resource management.
+4. Consider using Docker networks to isolate services if they don't need to be publicly accessible.
+5. Implement logging configurations to centralize log management for all services.

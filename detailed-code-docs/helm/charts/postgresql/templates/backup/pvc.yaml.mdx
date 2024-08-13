@@ -1,0 +1,61 @@
+---
+title: "pvc.yaml"
+---
+
+## High-level description
+This Helm template defines a Persistent Volume Claim (PVC) for PostgreSQL backups using pg_dumpall. It's conditionally created based on specific configuration values and includes customizable labels, annotations, and storage specifications.
+
+## Table of contents
+- PVC definition
+- Metadata
+- Labels
+- Annotations
+- Spec (access modes, storage size, storage class)
+
+## Code Structure
+The template is a single Kubernetes resource definition (PersistentVolumeClaim) with nested conditional blocks for various configuration options.
+
+## Symbols
+
+### PersistentVolumeClaim
+#### Description
+Defines a Kubernetes PersistentVolumeClaim resource for storing PostgreSQL backups created by pg_dumpall.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.backup.enabled | boolean | Enables/disables backup functionality |
+| .Values.backup.cronjob.storage.enabled | boolean | Enables/disables storage for backup cronjob |
+| .Values.backup.cronjob.storage.existingClaim | string | Name of an existing PVC to use |
+| .Values.backup.cronjob.labels | map | Custom labels for the PVC |
+| .Values.commonLabels | map | Common labels to apply to all resources |
+| .Values.backup.cronjob.annotations | map | Custom annotations for the PVC |
+| .Values.commonAnnotations | map | Common annotations to apply to all resources |
+| .Values.backup.cronjob.storage.resourcePolicy | string | Helm resource policy for the PVC |
+| .Values.backup.cronjob.storage.accessModes | list | Access modes for the PVC |
+| .Values.backup.cronjob.storage.size | string | Requested storage size for the PVC |
+
+#### Internal Logic
+1. Checks if backup is enabled, storage is enabled, and no existing claim is specified.
+2. Generates metadata including name, namespace, labels, and annotations.
+3. Defines spec with access modes, storage size, and storage class.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper templates for labels, annotations, and storage class |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| backup.enabled | boolean | - | Enables backup functionality |
+| backup.cronjob.storage.enabled | boolean | - | Enables storage for backup cronjob |
+| backup.cronjob.storage.existingClaim | string | - | Name of an existing PVC to use |
+| backup.cronjob.storage.accessModes | list | - | Access modes for the PVC |
+| backup.cronjob.storage.size | string | - | Requested storage size for the PVC |
+| backup.cronjob.storage.resourcePolicy | string | - | Helm resource policy for the PVC |
+
+## Future Improvements
+- Consider adding support for multiple PVCs if needed for different backup types or schedules.
+- Implement logic to handle storage class selection based on cloud provider or environment.
+- Add options for configuring volume expansion or retention policies.

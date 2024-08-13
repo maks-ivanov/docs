@@ -1,0 +1,15 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for managing the `card_collisions` table and its associated constraints in the database. The scripts handle both the creation and removal of the table and its related indexes.
+
+## What does it do?
+The SQL scripts in this directory manage the lifecycle of a database table called `card_collisions`. This table is used to track instances where cards "collide" based on some criteria, likely related to their content or metadata. 
+
+- The `up.sql` script creates the `card_collisions` table. This table stores a link between a `card_id` and a `collision_qdrant_id`, indicating a collision between these two entities. The script also enforces data integrity by adding a unique constraint to the `card_metadata` table, ensuring each card has a unique `qdrant_point_id`.
+
+- The `down.sql` script reverses the changes made by `up.sql`. It drops the `card_collisions` table, removing all collision data. It also removes the unique constraint on the `card_metadata` table, allowing for potential duplicates in the `qdrant_point_id` column. 
+
+These scripts are likely used as part of a database migration framework, allowing developers to easily manage changes to the database schema over time. 

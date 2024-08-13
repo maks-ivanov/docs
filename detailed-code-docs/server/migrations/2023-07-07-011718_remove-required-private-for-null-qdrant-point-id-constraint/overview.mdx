@@ -1,0 +1,51 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the structure of the `card_metadata` table in a database. The migration focuses on adding and removing a constraint related to the `private` and `qdrant_point_id` columns.
+
+## What does it do?
+These migration scripts manage a database constraint for the `card_metadata` table. The constraint ensures that public cards (where `private` is false) must have a non-null `qdrant_point_id`, while private cards can have a null `qdrant_point_id`. The "up" script removes this constraint, while the "down" script adds it back.
+
+## Key Files
+
+1. `up.sql`:
+   - Removes the `qdrant_point_nullable_constraint` from the `card_metadata` table.
+   - SQL command:
+     ```sql
+     ALTER TABLE card_metadata DROP CONSTRAINT qdrant_point_nullable_constraint;
+     ```
+
+2. `down.sql`:
+   - Adds the `qdrant_point_nullable_constraint` to the `card_metadata` table.
+   - SQL command:
+     ```sql
+     ALTER TABLE card_metadata
+     ADD CONSTRAINT qdrant_point_nullable_constraint
+     CHECK (private = true OR qdrant_point_id IS NOT NULL);
+     ```
+
+## Dependencies
+These scripts rely on the existence of the `card_metadata` table and its columns `private` and `qdrant_point_id`.
+
+## Configuration
+No specific configuration files or environment variables are used in these migration scripts. However, the database connection details should be properly configured in the application or migration tool that executes these scripts.
+
+The migration scripts are designed to be reversible, allowing for easy rollback of changes if needed. The `up.sql` script removes the constraint, while the `down.sql` script adds it back, ensuring that the database can be migrated both forward and backward.
+
+When applying these migrations, it's important to consider the following:
+
+1. Data Integrity: Removing the constraint in the `up.sql` script may affect data integrity rules previously enforced on the `card_metadata` table. Ensure that any application logic that relies on this constraint is updated accordingly.
+
+2. Application Impact: Any queries or operations that relied on this constraint being present may need to be reviewed and potentially updated after applying the `up.sql` migration.
+
+3. Performance: Adding or removing constraints can have performance implications, especially on large tables. Consider the size of the `card_metadata` table and the potential impact on database operations.
+
+4. Error Handling: While not explicitly included in the provided scripts, it's advisable to add error handling or validation to ensure the table and columns exist before applying or removing the constraint.
+
+5. Documentation: Consider adding comments to the migration scripts to explain the reasoning behind the constraint changes and any implications they might have on the application logic.
+
+6. Testing: After applying these migrations, thoroughly test the application to ensure that the changes don't negatively impact existing functionality, especially around the handling of public and private cards and their relationship with the `qdrant_point_id`.
+
+In summary, these migration scripts provide a mechanism to modify the data integrity rules for the `card_metadata` table, specifically around the relationship between the `private` status of a card and its associated `qdrant_point_id`. The changes allow for more flexibility in how these fields are used while maintaining the ability to revert to the previous constraint if needed.

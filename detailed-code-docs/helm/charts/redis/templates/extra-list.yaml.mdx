@@ -1,0 +1,48 @@
+---
+title: "extra-list.yaml"
+---
+
+## High-level description
+This YAML template file is part of a Helm chart for Redis. It allows for the inclusion of additional Kubernetes resources defined in the `extraDeploy` section of the chart's values.
+
+## Table of contents
+- Range loop over `extraDeploy` values
+- Rendering of additional resources
+
+## Code Structure
+The file consists of a single range loop that iterates over the `extraDeploy` values and renders each item using a common template function.
+
+## Symbols
+
+### Range Loop
+#### Description
+Iterates over the `extraDeploy` list from the chart's values, rendering each item as a separate Kubernetes resource.
+
+#### Internal Logic
+1. Starts a range loop over `.Values.extraDeploy`
+2. For each item, renders the content using the `common.tplvalues.render` function
+3. Separates each rendered item with a YAML document separator (`---`)
+
+### `common.tplvalues.render` Function
+#### Description
+A helper function that renders the provided value as a template, allowing for dynamic content generation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | any | The value to be rendered |
+| context | object | The current template context (`$`) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rendered content | string | The rendered Kubernetes resource definition |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common library | Provides the `common.tplvalues.render` function for template rendering |
+
+## Future Improvements
+- Consider adding validation or error handling for the `extraDeploy` values to ensure they are properly formatted Kubernetes resources.
+- Implement a mechanism to allow for conditional rendering of extra resources based on chart configuration or cluster environment.

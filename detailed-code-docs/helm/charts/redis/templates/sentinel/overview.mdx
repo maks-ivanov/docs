@@ -1,0 +1,28 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory provides the Kubernetes configuration for deploying Redis Sentinel in a replication architecture using Helm charts. It includes templates for StatefulSets, Services, ConfigMaps, and Horizontal Pod Autoscalers, allowing for flexible and scalable Redis deployments.
+
+## What does it do?
+This code defines the infrastructure for a resilient Redis setup in a Kubernetes cluster. It ensures that a specified number of Redis instances are always running, with Sentinel monitoring their health and electing a leader for write operations. The configuration enables automatic scaling based on CPU and memory usage, ensuring optimal performance. Additionally, it dynamically manages NodePort assignments to avoid conflicts and provides options for persistence, security, and monitoring.
+
+## Entry points
+The primary entry point for understanding this codebase is the `statefulset.yaml` file. It defines the core components of the Redis Sentinel deployment, including the Redis and Sentinel containers, volume mounts, and resource configurations. The remaining files (`hpa.yaml`, `node-services.yaml`, `ports-configmap.yaml`, and `service.yaml`) provide supplementary configurations for autoscaling, service discovery, and port management.
+
+## Key Files
+### helm/charts/redis/templates/sentinel/hpa.yaml
+This file defines the Horizontal Pod Autoscaler for Redis replicas, enabling automatic scaling based on CPU and memory utilization. It integrates with the StatefulSet defined in `statefulset.yaml` to adjust the number of replicas based on predefined thresholds.
+
+### helm/charts/redis/templates/sentinel/node-services.yaml
+This template creates NodePort services for each Redis Sentinel node, exposing both Sentinel and Redis ports. It dynamically generates services based on the replica count defined in the `statefulset.yaml` and uses the ConfigMap defined in `ports-configmap.yaml` for consistent port assignments.
+
+### helm/charts/redis/templates/sentinel/ports-configmap.yaml
+This file defines a ConfigMap that dynamically manages NodePort assignments for Redis and Sentinel services. It ensures that each service receives a unique NodePort, preventing conflicts and ensuring consistent deployments. The ConfigMap is used by the services defined in `node-services.yaml` and `service.yaml`.
+
+### helm/charts/redis/templates/sentinel/service.yaml
+This file defines the main Kubernetes Service for Redis Sentinel, exposing both Redis and Sentinel ports. It provides flexibility in configuring the service type, port numbers, and other parameters. It can utilize the dynamically assigned NodePorts from the ConfigMap defined in `ports-configmap.yaml`.
+
+### helm/charts/redis/templates/sentinel/statefulset.yaml
+This file defines the StatefulSet for Redis Sentinel nodes, which is the core component of the deployment. It specifies the Redis and Sentinel containers, volume mounts for persistence, resource limits, and other configurations. This file is the primary entry point for understanding the overall architecture and configuration of the Redis Sentinel deployment.

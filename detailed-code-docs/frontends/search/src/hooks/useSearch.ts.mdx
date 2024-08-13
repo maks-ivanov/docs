@@ -1,0 +1,103 @@
+---
+title: "useSearch.ts"
+---
+
+## High-level description
+The `useSearch` hook manages the search state and parameters for the search functionality. It synchronizes the search state with URL parameters, allowing users to share and bookmark specific search configurations. The hook also provides a debounced state for delayed updates to avoid excessive API calls.
+
+## Table of contents
+- `isSortByField`
+- `isSortBySearchType`
+- `isHighlightStrategy`
+- `useSearch`
+
+## Code Structure
+The code defines several type guards (`isSortByField`, `isSortBySearchType`, `isHighlightStrategy`) to determine the type of the `sort_by` and `highlightStrategy` options. The main functionality is encapsulated in the `useSearch` hook, which uses Solid.js's `createStore` and `useSearchParams` to manage the search state and URL parameters.
+
+## References
+- `Filters` type from `../components/FilterModal`
+
+## Symbols
+
+### `isSortByField`
+#### Description
+Type guard function that checks if the provided `sortBy` object is of type `SortByField`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sortBy | `SortByField | SortBySearchType` | The object to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isSortByField | `boolean` | `true` if `sortBy` is a `SortByField`, `false` otherwise. |
+
+#### Internal Logic
+Checks if the `field` property is defined in the `sortBy` object.
+
+### `isSortBySearchType`
+#### Description
+Type guard function that checks if the provided `sortBy` object is of type `SortBySearchType`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sortBy | `SortByField | SortBySearchType` | The object to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isSortBySearchType | `boolean` | `true` if `sortBy` is a `SortBySearchType`, `false` otherwise. |
+
+#### Internal Logic
+Checks if the `rerank_type` property is defined in the `sortBy` object.
+
+### `isHighlightStrategy`
+#### Description
+Type guard function that checks if the provided `value` is a valid `HighlightStrategy`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | `string | undefined` | The value to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isHighlightStrategy | `boolean` | `true` if `value` is a valid `HighlightStrategy`, `false` otherwise. |
+
+#### Internal Logic
+Checks if the `value` is either "v1" or "exactmatch".
+
+### `useSearch`
+#### Description
+A custom hook that manages the search state and parameters. It synchronizes the search state with URL parameters and provides a debounced state for delayed updates.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| debounced | `Store&lt;SearchOptions&gt;` | A debounced version of the search state, updated after a delay. |
+| state | `Store&lt;SearchOptions&gt;` | The current search state. |
+| setSearch | `(…args: Parameters&lt;typeof setSearch&gt;) =&gt; void` | A function to update the search state. |
+
+#### Internal Logic
+1. Initializes the search state with default values and values from URL parameters.
+2. Creates a debounced state with the same initial values.
+3. Uses `createEffect` to synchronize the search state with URL parameters whenever the `version` property of the state changes.
+4. Sets a timeout to update the debounced state after a 200ms delay.
+5. Provides a proxied `setSearch` function that increments the `version` property after each update to trigger the synchronization effect.
+
+## Side Effects
+- Modifies URL parameters based on the search state.
+
+## Dependencies
+- `@solidjs/router`
+- `solid-js`
+- `solid-js/store`
+
+## Future Improvements
+- Consider adding a mechanism to validate the filter values before applying them to the search state.
+- Explore using a more robust debouncing library for improved performance and control over debouncing behavior.
+- Implement a loading state indicator while fetching search results to provide visual feedback to the user.
+- Add error handling to gracefully manage API request failures and display appropriate messages to the user.

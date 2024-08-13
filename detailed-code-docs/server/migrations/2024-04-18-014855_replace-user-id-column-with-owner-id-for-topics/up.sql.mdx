@@ -1,0 +1,62 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script modifies the `topics` table by replacing the `user_id` column with an `owner_id` column. It also creates an index on the `dataset_id` and `owner_id` columns for improved query performance.
+
+## Table of contents
+- Add `owner_id` column
+- Update `owner_id` with existing `user_id` values
+- Drop `user_id` column
+- Create index on `dataset_id` and `owner_id`
+
+## Code Structure
+The migration script consists of four main SQL statements that are executed sequentially to modify the `topics` table structure.
+
+## Symbols
+
+### ALTER TABLE topics ADD COLUMN owner_id
+#### Description
+This statement adds a new column `owner_id` to the `topics` table.
+
+#### Internal Logic
+- Adds a new column named `owner_id` of type TEXT
+- Sets the column as NOT NULL
+- Provides a default value of '00000000-0000-0000-0000-000000000000' (a UUID)
+
+### UPDATE topics SET owner_id = user_id
+#### Description
+This statement populates the newly added `owner_id` column with existing values from the `user_id` column.
+
+#### Internal Logic
+- Updates all rows in the `topics` table
+- Sets `owner_id` to the value of `user_id` where `user_id` is not NULL
+
+### ALTER TABLE topics DROP COLUMN user_id
+#### Description
+This statement removes the `user_id` column from the `topics` table.
+
+#### Internal Logic
+- Drops the `user_id` column from the `topics` table
+
+### CREATE INDEX topics_dataset_id_owner_id_idx
+#### Description
+This statement creates a new index on the `topics` table for improved query performance.
+
+#### Internal Logic
+- Creates an index named `topics_dataset_id_owner_id_idx`
+- The index is created on the `dataset_id` and `owner_id` columns of the `topics` table
+
+## Side Effects
+- The structure of the `topics` table is permanently modified
+- Existing data in the `user_id` column is migrated to the new `owner_id` column
+- A new index is created, which may impact storage and query performance
+
+## Performance Considerations
+- The creation of the new index (`topics_dataset_id_owner_id_idx`) may improve query performance for operations involving `dataset_id` and `owner_id`
+- The migration process, especially the UPDATE statement, may take some time depending on the size of the `topics` table
+
+## Future Improvements
+- Consider adding a foreign key constraint on the `owner_id` column if it references a user table
+- If the default UUID for `owner_id` is meant to represent a system or anonymous user, consider creating a constant or configuration value for this UUID to ensure consistency across the application

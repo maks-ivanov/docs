@@ -1,0 +1,48 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script creates a new table `user_api_key` for managing API keys and removes the `api_key_hash` column from the `users` table, effectively separating API key management from user data.
+
+## Table of contents
+- Create `user_api_key` table
+- Alter `users` table
+
+## Code Structure
+The script consists of two main SQL operations: creating a new table and altering an existing table.
+
+## Symbols
+
+### CREATE TABLE user_api_key
+#### Description
+Creates a new table named `user_api_key` to store API key information for users.
+
+#### Internal Logic
+- Defines columns for the table:
+  - `id`: A UUID primary key with a default value generated using `gen_random_uuid()`
+  - `user_id`: A UUID linking to the `users` table
+  - `api_key_hash`: A unique text field to store hashed API keys
+  - `name`: A text field with a default value of 'default'
+  - `created_at` and `updated_at`: Timestamp fields with default values set to the current time
+- Establishes a foreign key relationship with the `users` table
+- Implements cascading deletion for related records when a user is deleted
+
+### ALTER TABLE users
+#### Description
+Removes the `api_key_hash` column from the `users` table.
+
+#### Internal Logic
+Drops the `api_key_hash` column from the `users` table, likely because this information is now stored in the new `user_api_key` table.
+
+## Side Effects
+- Creates a new table in the database
+- Modifies the structure of an existing table
+- Establishes a new foreign key relationship
+- Potentially affects existing queries or applications that relied on the `api_key_hash` column in the `users` table
+
+## Future Improvements
+- Consider adding indexes on frequently queried columns like `user_id` or `api_key_hash` for performance optimization.
+- Implement a trigger or function to automatically update the `updated_at` column when a record is modified.
+- Add constraints or checks to ensure the `name` field is not empty or follows a specific format.
+- Consider adding a `last_used_at` column to track API key usage.

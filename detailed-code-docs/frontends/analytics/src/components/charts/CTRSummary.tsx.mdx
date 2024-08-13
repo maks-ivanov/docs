@@ -1,0 +1,61 @@
+---
+title: "CTRSummary.tsx"
+---
+
+## High-level description
+The `CTRSummary` component displays a table of key click-through rate (CTR) statistics for searches within a specified dataset, including searches with clicks, percentage of searches with clicks, and average click position. It conditionally renders the table based on data availability and whether CTR tracking is enabled for the dataset.
+
+## Table of contents
+- Imports
+- `SearchCTRStatsProps` interface
+- `CTRSummary` component
+
+## References
+- `getSearchCTRSummary` (from `../../api/ctr`)
+- `useCTRNeedsSetup` (from `../../hooks/useCTRNeedsSetup`)
+- `DatasetContext` (from `../../layouts/TopBarLayout`)
+
+## Symbols
+
+### Symbol Name: `SearchCTRStatsProps`
+#### Description
+An interface defining the properties expected by the `CTRSummary` component.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filter | AnalyticsFilter | An object containing filter parameters for analytics data, including date range, search method, and search type. |
+
+### Symbol Name: `CTRSummary`
+#### Description
+A SolidJS component that fetches and displays a summary of CTR statistics for searches within a dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | SearchCTRStatsProps | An object containing the component's properties, including the `filter` object for analytics data. |
+
+#### Outputs
+JSX Element: A conditionally rendered table of CTR statistics or a loading indicator.
+
+#### Internal Logic
+1. **Retrieves Dataset Context:** Uses the `useContext` hook to access the currently selected dataset from the `DatasetContext`.
+2. **Fetches CTR Summary Data:** Utilizes the `createQuery` hook from `@tanstack/solid-query` to fetch CTR summary data from the API using the `getSearchCTRSummary` function. The query depends on the selected dataset and the provided `filter` prop.
+3. **Checks CTR Setup:** Employs the `useCTRNeedsSetup` hook to determine if CTR tracking is properly configured for the dataset.
+4. **Conditional Rendering:**
+   - Displays a "Loading..." message while the query is in progress.
+   - If the query is successful and CTR tracking is set up:
+     - Renders a table with the following CTR statistics:
+       - Searches With Clicks
+       - Percent Searches With Clicks
+       - Average Click Position (displays "No Data" if unavailable)
+   - If CTR tracking is not set up, the table is not displayed.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| @tanstack/solid-query | Used for data fetching and caching. |
+| shared/types | Provides the `AnalyticsFilter` type. |
+
+## Error Handling
+The component relies on the `createQuery` hook for error handling during data fetching. If the API request fails, the query will enter an error state, which can be handled to display an error message.

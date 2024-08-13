@@ -1,0 +1,35 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made by the corresponding `up.sql` file. It removes the `location` column from the `chunk_metadata` table if it exists.
+
+## Table of contents
+- SQL statement to drop the `location` column
+
+## Symbols
+
+### ALTER TABLE chunk_metadata DROP COLUMN IF EXISTS location
+#### Description
+This SQL statement removes the `location` column from the `chunk_metadata` table if it exists. It's a reversible migration operation that undoes the addition of the `location` field.
+
+#### Inputs
+This SQL statement doesn't take any direct inputs. It operates on the existing database schema.
+
+#### Outputs
+The execution of this statement modifies the database schema by removing the `location` column from the `chunk_metadata` table, if it exists.
+
+#### Internal Logic
+1. The `ALTER TABLE` command is used to modify the structure of the `chunk_metadata` table.
+2. `DROP COLUMN` specifies that a column should be removed from the table.
+3. `IF EXISTS` is used as a safety measure to prevent errors if the column doesn't exist. If the column is not present, the statement will not throw an error and will simply do nothing.
+4. `location` is the name of the column to be dropped.
+
+## Side Effects
+- Modifies the database schema by removing the `location` column from the `chunk_metadata` table.
+- Any data stored in the `location` column will be permanently lost when this migration is applied.
+
+## Future Improvements
+- Consider adding a backup mechanism before dropping the column to preserve data if needed.
+- If the `location` data is critical, consider implementing a data archiving process before running this migration.

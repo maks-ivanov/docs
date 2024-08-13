@@ -1,0 +1,104 @@
+---
+title: "statefulset.yaml"
+---
+
+## High-level description
+This file defines a Kubernetes StatefulSet for Redis Sentinel nodes in a replication architecture. It sets up Redis and Sentinel containers, along with optional metrics and sidecar containers, with various configuration options for persistence, security, and monitoring.
+
+## Table of contents
+- Metadata and labels
+- Pod template
+- Container definitions (Redis, Sentinel, Metrics)
+- Volume mounts and definitions
+- Persistent volume claims
+- Init containers
+- Probes and lifecycle hooks
+
+## Code Structure
+The main components of this StatefulSet definition are:
+1. Metadata and labels for the StatefulSet
+2. Pod template specification
+3. Container definitions for Redis, Sentinel, and optional Metrics
+4. Volume mounts and definitions
+5. Persistent volume claim templates
+6. Init containers for volume permissions and sysctl configurations
+
+## Symbols
+
+### StatefulSet
+#### Description
+Defines a Kubernetes StatefulSet for Redis Sentinel nodes.
+
+#### Inputs
+- Various Helm chart values and templates
+
+#### Internal Logic
+1. Sets up metadata, labels, and annotations
+2. Defines pod template with containers, volumes, and init containers
+3. Configures persistent storage if enabled
+4. Sets up probes, security contexts, and resource limits
+
+### Redis Container
+#### Description
+Main Redis container running in the pod.
+
+#### Inputs
+- Redis configuration values
+- Secrets for authentication
+- TLS certificates (if enabled)
+
+#### Internal Logic
+1. Sets up Redis with proper configuration
+2. Configures authentication if enabled
+3. Sets up TLS if enabled
+4. Configures probes and lifecycle hooks
+
+### Sentinel Container
+#### Description
+Redis Sentinel container running alongside the Redis container.
+
+#### Inputs
+- Sentinel configuration values
+- Secrets for authentication
+- TLS certificates (if enabled)
+
+#### Internal Logic
+1. Sets up Sentinel with proper configuration
+2. Configures authentication if enabled
+3. Sets up TLS if enabled
+4. Configures probes and lifecycle hooks
+
+### Metrics Container (Optional)
+#### Description
+Optional container for Redis metrics exporter.
+
+#### Inputs
+- Metrics configuration values
+- Redis authentication details
+- TLS certificates (if enabled)
+
+#### Internal Logic
+1. Sets up metrics exporter with proper configuration
+2. Configures authentication if enabled
+3. Sets up TLS if enabled
+4. Configures probes
+
+## Dependencies
+This StatefulSet definition relies on various Helm templates and values defined elsewhere in the chart, such as:
+- Common labels and annotations
+- TLS secret names and paths
+- Redis and Sentinel image references
+- Various configuration options set in the values.yaml file
+
+## Error Handling
+Error handling is primarily managed through Kubernetes probes (liveness, readiness, and startup) defined for each container.
+
+## Performance Considerations
+Performance can be tuned through resource requests and limits, persistence configurations, and various Redis and Sentinel-specific settings defined in the values.yaml file.
+
+## Future Improvements
+Potential improvements could include:
+1. Enhanced support for custom configurations
+2. More granular control over individual Sentinel instances
+3. Integration with external monitoring systems
+4. Support for additional Redis features or extensions

@@ -1,0 +1,78 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the structure of the `dataset_tags` table in a database. The migrations are designed to change the uniqueness constraints on the table, altering how dataset tags are stored and validated.
+
+## What does it do?
+These migration scripts perform the following actions:
+
+1. Up migration (2024-06-08-003433_unique-dataset-tag-constraint/up.sql):
+   - Removes existing constraints on the `dataset_tags` table.
+   - Adds a new unique constraint to ensure that the combination of `dataset_id` and `tag` is unique within the table.
+
+2. Down migration (2024-06-08-003433_unique-dataset-tag-constraint/down.sql):
+   - Reverts the changes made by the up migration.
+   - Removes the unique constraint on `dataset_id` and `tag`.
+   - Adds separate unique constraints on `id` and `dataset_id`, and on `tag`.
+
+These changes affect how dataset tags are stored and validated in the database. The up migration ensures that each dataset can have unique tags, while the down migration reverts to a different uniqueness model.
+
+## Key Files
+1. `up.sql`:
+   - Removes existing constraints `dataset_tags_tag` and `dataset_tags_id_dataset_id`.
+   - Adds a new unique constraint `dataset_tags_dataset_id_tag_key` on `(dataset_id, tag)`.
+
+2. `down.sql`:
+   - Removes the unique constraint `dataset_tags_dataset_id_tag_key`.
+   - Adds unique constraints `dataset_tags_id_dataset_id` on `(id, dataset_id)` and `dataset_tags_tag` on `tag`.
+
+## Dependencies
+These migration scripts are designed to be executed on a SQL database that supports ALTER TABLE statements and constraints. The specific database system is not mentioned, but it's likely a relational database such as PostgreSQL or MySQL.
+
+## Configuration
+No explicit configuration files or environment variables are mentioned in the provided summaries. However, the migration scripts themselves serve as a form of configuration, defining the desired state of the database schema.
+
+Key configurable fields in the migrations:
+
+- Table name: `dataset_tags`
+- Constraint names:
+  - `dataset_tags_dataset_id_tag_key`
+  - `dataset_tags_id_dataset_id`
+  - `dataset_tags_tag`
+- Columns involved in constraints:
+  - `dataset_id`
+  - `tag`
+  - `id`
+
+Example of adding the unique constraint in `up.sql`:
+
+```sql
+ALTER TABLE dataset_tags
+ADD CONSTRAINT dataset_tags_dataset_id_tag_key UNIQUE (dataset_id, tag);
+```
+
+Example of removing a constraint in `down.sql`:
+
+```sql
+ALTER TABLE dataset_tags
+DROP CONSTRAINT IF EXISTS dataset_tags_dataset_id_tag_key;
+```
+
+These migrations are likely part of a larger database migration system used to manage schema changes in a version-controlled manner. The timestamp in the directory name (2024-06-08-003433) suggests that these migrations are organized chronologically, allowing for systematic application and rollback of database changes.
+
+When applying these migrations, developers should be aware of potential side effects:
+
+1. The up migration may prevent duplicate entries for the same dataset and tag combination.
+2. Existing data in the `dataset_tags` table may need to be cleaned up before applying the up migration to avoid constraint violations.
+3. The down migration reintroduces the possibility of having duplicate tags across different datasets.
+
+Future improvements for these migrations could include:
+
+1. Adding appropriate indexes to support the new unique constraints for better query performance.
+2. Implementing data cleanup steps before applying migrations to handle existing entries that might violate new constraints.
+3. Using transactional DDL (if supported by the database system) to ensure atomicity of the changes.
+4. Adding error handling or logging to capture any issues during migration execution.
+
+These migration scripts play a crucial role in maintaining data integrity and consistency in the application's dataset tagging system. They reflect an evolution in how the application manages the relationship between datasets and their tags, moving towards a more stringent uniqueness requirement for dataset-tag combinations.

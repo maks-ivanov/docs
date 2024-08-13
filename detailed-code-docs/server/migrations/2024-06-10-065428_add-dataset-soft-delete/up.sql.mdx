@@ -1,0 +1,38 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a soft delete functionality to the datasets table by introducing a 'deleted' column and creating an index on it for improved query performance.
+
+## Table of contents
+- Add 'deleted' column to datasets table
+- Create index on 'deleted' column
+
+## Symbols
+
+### ALTER TABLE datasets
+#### Description
+This SQL command modifies the structure of the existing 'datasets' table by adding a new column named 'deleted'.
+
+#### Internal Logic
+- Adds a new column 'deleted' to the 'datasets' table
+- Sets the data type of the column to INT
+- Sets a default value of 0 for the column
+- Makes the column NOT NULL, ensuring it always has a value
+
+### CREATE INDEX idx_dataset_deleted
+#### Description
+This SQL command creates an index on the newly added 'deleted' column to optimize queries that filter or sort by this column.
+
+#### Internal Logic
+- Creates an index named 'idx_dataset_deleted' on the 'datasets' table
+- The index is created on the 'deleted' column
+- Uses the 'IF NOT EXISTS' clause to prevent errors if the index already exists
+
+## Performance Considerations
+The addition of the index on the 'deleted' column will improve the performance of queries that filter or sort datasets based on their deletion status. This is particularly beneficial for large tables where frequent queries on the 'deleted' column are expected.
+
+## Future Improvements
+- Consider adding a timestamp column for when the soft delete occurred, which could be useful for auditing or potential data recovery processes.
+- Depending on the application's needs, you might want to add triggers or constraints to ensure data integrity when working with soft-deleted records.

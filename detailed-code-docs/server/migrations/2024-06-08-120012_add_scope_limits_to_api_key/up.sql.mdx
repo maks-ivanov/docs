@@ -1,0 +1,45 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds two new columns to the `user_api_key` table to implement scope limits for API keys. The new columns allow for specifying dataset and organization access restrictions.
+
+## Table of contents
+- Add `dataset_ids` column to `user_api_key` table
+- Add `organization_ids` column to `user_api_key` table
+
+## Symbols
+
+### ALTER TABLE user_api_key ADD COLUMN dataset_ids TEXT[] DEFAULT NULL
+#### Description
+This SQL command adds a new column named `dataset_ids` to the `user_api_key` table. The column is designed to store an array of dataset identifiers that the API key has access to.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dataset_ids | TEXT[] | An array of text values representing dataset identifiers |
+
+#### Internal Logic
+- The column is added to the existing `user_api_key` table.
+- The data type is set to `TEXT[]`, which represents an array of text values.
+- The default value is set to `NULL`, meaning if no value is specified, the column will contain a null value.
+
+### ALTER TABLE user_api_key ADD COLUMN organization_ids TEXT[] DEFAULT NULL
+#### Description
+This SQL command adds a new column named `organization_ids` to the `user_api_key` table. The column is designed to store an array of organization identifiers that the API key has access to.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| organization_ids | TEXT[] | An array of text values representing organization identifiers |
+
+#### Internal Logic
+- The column is added to the existing `user_api_key` table.
+- The data type is set to `TEXT[]`, which represents an array of text values.
+- The default value is set to `NULL`, meaning if no value is specified, the column will contain a null value.
+
+## Future Improvements
+- Consider adding a check constraint to ensure that the values in `dataset_ids` and `organization_ids` are valid and exist in their respective tables.
+- Implement an index on these columns if they will be frequently used in queries to improve performance.
+- If the number of datasets or organizations per API key is expected to be large, consider creating separate junction tables instead of using arrays to normalize the data structure.

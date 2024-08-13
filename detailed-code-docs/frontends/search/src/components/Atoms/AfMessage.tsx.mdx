@@ -1,0 +1,55 @@
+---
+title: "AfMessage.tsx"
+---
+
+## High-level description
+The `AfMessage` component renders a single message in a chat-like interface, displaying either user input or assistant/system responses. It supports streaming completions and can display associated score chunks.
+
+## Table of contents
+- `AfMessage` component
+
+## Symbols
+
+### Symbol Name: `AfMessage`
+#### Description
+This component renders a single message bubble in a chat interface. It dynamically styles the message based on the role (user, assistant, or system) and handles content display, loading states, and score chunk visualization for assistant responses.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| role | "user" \| "assistant" \| "system" | The role of the message sender. |
+| content | string | The text content of the message. |
+| streamingCompletion | Accessor&lt;boolean&gt; | Indicates if a completion is being streamed. |
+| chunks | Accessor&lt;ScoreChunkDTO[]&gt; | An array of score chunks associated with the message. |
+| order | number | The order of the message in the conversation. |
+
+#### Outputs
+This component renders JSX elements and doesn't return any specific value.
+
+#### Internal Logic
+1. **Content Management:** Uses `createSignal` to manage the message content, updating it when `props.content` changes or when streaming is not active.
+2. **Role-based Styling:** Applies different CSS classes based on the message `role` to style user and assistant messages distinctly.
+3. **Loading State:** Displays a loading spinner when `props.content` is empty, indicating an ongoing process.
+4. **Score Chunk Rendering:** If the `role` is "assistant", it iterates through `props.chunks` and renders each chunk using the `ScoreChunk` component.
+5. **Streaming Completion Handling:** Conditionally renders elements and updates content based on the `streamingCompletion` state.
+
+## Side Effects
+- This component interacts with the DOM to render message content and dynamically apply styles.
+
+#### Performance Considerations
+- The component uses `createEffect` to efficiently update the content and avoid unnecessary re-renders.
+- The `ScoreChunk` component, responsible for rendering individual chunks, might have its own performance implications depending on its implementation.
+
+## References
+- `ScoreChunk`: Used to render individual score chunks associated with assistant messages.
+- `ScoreChunkDTO`:  Defines the structure of a score chunk object.
+- `sanitizeHtml`: Used to sanitize HTML content before rendering.
+- `sanitzerOptions`: Defines the sanitization options for `sanitizeHtml`.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Provides core reactivity and rendering functionalities. |
+| solid-icons | Offers a collection of SVG icons. |
+| sanitize-html | Used for sanitizing HTML content. |
+

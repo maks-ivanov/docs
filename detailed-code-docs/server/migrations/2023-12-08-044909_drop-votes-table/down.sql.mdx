@@ -1,0 +1,53 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is a database migration file designed to recreate the `card_votes` table and its associated indexes. It's intended to reverse the actions performed in the corresponding `up.sql` file, which presumably dropped this table.
+
+## Table of contents
+- Create `card_votes` table
+- Create index on `voted_user_id`
+- Create index on `card_metadata_id`
+
+## Symbols
+
+### CREATE TABLE card_votes
+#### Description
+This SQL command creates a new table named `card_votes` to store information about votes cast on cards by users.
+
+#### Internal Logic
+The table is created with the following columns:
+- `id`: A UUID serving as the primary key
+- `voted_user_id`: A UUID referencing the `users` table
+- `card_metadata_id`: A UUID referencing the `card_metadata` table
+- `vote`: A boolean indicating the vote (likely true for upvote, false for downvote)
+- `created_at`: A timestamp for when the vote was created
+- `updated_at`: A timestamp for when the vote was last updated
+
+Both `created_at` and `updated_at` columns have a default value of the current timestamp (`NOW()`).
+
+### CREATE INDEX idx_card_votes_voted_user_id
+#### Description
+This command creates an index on the `voted_user_id` column of the `card_votes` table.
+
+#### Internal Logic
+The index is created to improve query performance when searching or filtering votes by user.
+
+### CREATE INDEX idx_card_votes_card_metadata_id
+#### Description
+This command creates an index on the `card_metadata_id` column of the `card_votes` table.
+
+#### Internal Logic
+The index is created to improve query performance when searching or filtering votes by card metadata.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| users table | Referenced by `voted_user_id` foreign key |
+| card_metadata table | Referenced by `card_metadata_id` foreign key |
+
+## Future Improvements
+1. Consider adding a unique constraint on (`voted_user_id`, `card_metadata_id`) to prevent duplicate votes.
+2. Depending on the application's needs, consider adding a `vote_value` column of type INTEGER instead of the boolean `vote` column to allow for more nuanced voting systems (e.g., -1, 0, 1).
+3. If vote history is important, consider implementing a separate `vote_history` table instead of using `updated_at`, which only tracks the last update.

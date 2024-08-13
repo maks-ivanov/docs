@@ -1,0 +1,67 @@
+---
+title: "servicemonitor.yaml"
+---
+
+## High-level description
+This YAML template defines a ServiceMonitor resource for monitoring PostgreSQL metrics in a Kubernetes environment. It's designed to work with Prometheus Operator and is conditionally created based on specific configuration values.
+
+## Table of contents
+- ServiceMonitor metadata
+- ServiceMonitor spec
+  - Job label
+  - Selector
+  - Endpoints
+  - Namespace selector
+
+## Code Structure
+The template uses various Helm functions and conditionals to dynamically generate the ServiceMonitor configuration based on the values provided in the Helm chart.
+
+## Symbols
+
+### ServiceMonitor Resource
+#### Description
+Defines a ServiceMonitor custom resource for Prometheus Operator to scrape PostgreSQL metrics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics.enabled | boolean | Enables metrics collection |
+| .Values.metrics.serviceMonitor.enabled | boolean | Enables ServiceMonitor creation |
+| .Values.metrics.serviceMonitor.namespace | string | Namespace for the ServiceMonitor |
+| .Values.metrics.serviceMonitor.labels | map | Additional labels for the ServiceMonitor |
+| .Values.commonLabels | map | Common labels to be applied |
+| .Values.commonAnnotations | map | Common annotations to be applied |
+| .Values.metrics.serviceMonitor.jobLabel | string | Job label for the ServiceMonitor |
+| .Values.metrics.serviceMonitor.selector | map | Selector for targeting services |
+| .Values.metrics.serviceMonitor.interval | string | Scrape interval |
+| .Values.metrics.serviceMonitor.scrapeTimeout | string | Scrape timeout |
+| .Values.metrics.serviceMonitor.relabelings | list | Relabeling configurations |
+| .Values.metrics.serviceMonitor.metricRelabelings | list | Metric relabeling configurations |
+| .Values.metrics.serviceMonitor.honorLabels | boolean | Honor labels configuration |
+
+#### Internal Logic
+1. Checks if metrics and ServiceMonitor are enabled
+2. Sets metadata including name, namespace, labels, and annotations
+3. Configures the spec with job label, selector, endpoints, and namespace selector
+4. Applies various conditional configurations based on provided values
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| monitoring.coreos.com/v1 | API version for ServiceMonitor resource |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| metrics.enabled | boolean | - | Enables metrics collection |
+| metrics.serviceMonitor.enabled | boolean | - | Enables ServiceMonitor creation |
+| metrics.serviceMonitor.namespace | string | .Release.Namespace | Namespace for the ServiceMonitor |
+| metrics.serviceMonitor.jobLabel | string | - | Job label for the ServiceMonitor |
+| metrics.serviceMonitor.interval | string | - | Scrape interval |
+| metrics.serviceMonitor.scrapeTimeout | string | - | Scrape timeout |
+| metrics.serviceMonitor.honorLabels | boolean | - | Honor labels configuration |
+
+## Future Improvements
+1. Consider adding support for additional endpoint configurations, such as TLS settings or authentication.
+2. Implement more flexible namespace selection for multi-namespace monitoring scenarios.
+3. Add support for additional ServiceMonitor features like sampleLimit or targetLimit if needed for advanced use cases.

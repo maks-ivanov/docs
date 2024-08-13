@@ -1,0 +1,252 @@
+---
+title: "group_operator.rs"
+---
+
+## High-level description
+This code defines a set of database queries and functions related to managing chunk groups within a dataset. It includes operations for creating, retrieving, updating, and deleting groups, as well as managing chunk bookmarks within groups.
+
+## Table of contents
+- `get_group_from_tracking_id_query`
+- `get_group_ids_from_tracking_ids_query`
+- `update_group_by_tracking_id_query`
+- `create_groups_query`
+- `get_groups_for_dataset_query`
+- `get_group_by_id_query`
+- `delete_group_by_id_query`
+- `update_chunk_group_query`
+- `create_chunk_bookmark_query`
+- `get_bookmarks_for_group_query`
+- `GroupsForChunk`
+- `get_groups_for_bookmark_query`
+- `delete_chunk_from_group_query`
+- `create_group_from_file_query`
+- `get_point_ids_from_unified_group_ids`
+- `get_groups_from_group_ids_query`
+- `check_group_ids_exist_query`
+- `GroupUpdateMessage`
+- `soft_update_grouped_chunks_query`
+- `update_grouped_chunks_query`
+- `get_chunk_point_ids_in_chunk_group_query`
+- `get_chunk_metadata_count_in_chunk_group_query`
+
+## References
+- `crate::data::models`
+- `crate::data::schema`
+- `crate::errors::ServiceError`
+- `crate::operators::chunk_operator`
+- `crate::operators::qdrant_operator`
+
+## Symbols
+
+### `get_group_from_tracking_id_query`
+#### Description
+Retrieves a chunk group and its associated file ID from the database based on the provided tracking ID and dataset UUID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tracking_id` | `String` | The tracking ID of the chunk group to retrieve. |
+| `dataset_uuid` | `uuid::Uuid` | The UUID of the dataset the group belongs to. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;ChunkGroupAndFileId, ServiceError&gt;` |  | A `Result` containing the retrieved `ChunkGroupAndFileId` if successful, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Executes a database query to retrieve the chunk group and its associated file ID from the `chunk_group` and `groups_from_files` tables, respectively.
+- Returns a `ServiceError::NotFound` if no group is found with the provided tracking ID.
+
+### `get_group_ids_from_tracking_ids_query`
+#### Description
+Retrieves a list of chunk group IDs and their associated tracking IDs from the database based on the provided list of tracking IDs and dataset UUID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tracking_ids` | `Vec&lt;String&gt;` | A list of tracking IDs to retrieve group IDs for. |
+| `dataset_uuid` | `uuid::Uuid` | The UUID of the dataset the groups belong to. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;Vec&lt;(uuid::Uuid, Option&lt;String&gt;)&gt;, ServiceError&gt;` |  | A `Result` containing a vector of tuples, each containing a group ID and its associated tracking ID, if successful, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Executes a database query to retrieve the group IDs and tracking IDs from the `chunk_group` table.
+- Returns a `ServiceError::BadRequest` if no groups are found with the provided tracking IDs.
+
+### `update_group_by_tracking_id_query`
+#### Description
+Updates the name and description of a chunk group in the database based on the provided tracking ID and dataset UUID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tracking_id` | `String` | The tracking ID of the chunk group to update. |
+| `dataset_uuid` | `uuid::Uuid` | The UUID of the dataset the group belongs to. |
+| `new_name` | `Option&lt;String&gt;` | The new name for the group. |
+| `new_description` | `Option&lt;String&gt;` | The new description for the group. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;(), ServiceError&gt;` |  | A `Result` indicating success or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Executes a database query to update the name and description of the group in the `chunk_group` table.
+
+### `create_groups_query`
+#### Description
+Creates new chunk groups in the database, optionally upserting existing groups based on their tracking ID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `new_groups` | `Vec&lt;ChunkGroup&gt;` | A list of chunk groups to create. |
+| `upsert_by_tracking_id` | `bool` | Whether to upsert existing groups based on their tracking ID. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;Vec&lt;ChunkGroup&gt;, ServiceError&gt;` |  | A `Result` containing a vector of the created chunk groups, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- If `upsert_by_tracking_id` is true, performs an upsert operation, updating existing groups with matching tracking IDs and dataset IDs.
+- Otherwise, performs a regular insert operation, ignoring conflicts.
+- Returns a `ServiceError::BadRequest` if an error occurs during the database operation.
+
+### `get_groups_for_dataset_query`
+#### Description
+Retrieves a paginated list of chunk groups and their associated file IDs for a given dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `page` | `u64` | The page number to retrieve. |
+| `dataset_uuid` | `uuid::Uuid` | The UUID of the dataset to retrieve groups for. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;(Vec&lt;ChunkGroupAndFileId&gt;, Option&lt;i32&gt;), ServiceError&gt;` |  | A `Result` containing a tuple with a vector of `ChunkGroupAndFileId` objects and an optional count of total groups, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Executes a database query to retrieve the chunk groups and their associated file IDs from the `chunk_group` and `groups_from_files` tables, respectively.
+- Retrieves the total count of groups for the dataset from the `dataset_group_counts` table.
+- Returns a `ServiceError::BadRequest` if an error occurs during the database operation.
+
+### `get_group_by_id_query`
+#### Description
+Retrieves a chunk group and its associated file ID from the database based on the provided group ID and dataset UUID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `group_id` | `uuid::Uuid` | The ID of the chunk group to retrieve. |
+| `dataset_uuid` | `uuid::Uuid` | The UUID of the dataset the group belongs to. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;ChunkGroupAndFileId, ServiceError&gt;` |  | A `Result` containing the retrieved `ChunkGroupAndFileId` if successful, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Executes a database query to retrieve the chunk group and its associated file ID from the `chunk_group` and `groups_from_files` tables, respectively.
+- Returns a `ServiceError::NotFound` if no group is found with the provided ID.
+
+### `delete_group_by_id_query`
+#### Description
+Deletes a chunk group from the database based on the provided group ID and dataset. Optionally deletes the associated chunks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `group_id` | `uuid::Uuid` | The ID of the chunk group to delete. |
+| `dataset` | `Dataset` | The dataset the group belongs to. |
+| `deleted_at` | `chrono::NaiveDateTime` | The timestamp to mark the group as deleted. |
+| `delete_chunks` | `Option&lt;bool&gt;` | Whether to delete the associated chunks. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+| `dataset_config` | `DatasetConfiguration` | The configuration of the dataset. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;(), ServiceError&gt;` |  | A `Result` indicating success or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Retrieves the chunks associated with the group from the database.
+- Performs a database transaction to delete the group and its associated bookmarks from the `groups_from_files`, `chunk_group_bookmarks`, and `chunk_group` tables.
+- If `delete_chunks` is true, deletes the associated chunks from the database and Qdrant.
+- Otherwise, removes the group ID from the Qdrant points associated with the chunks.
+- Returns a `ServiceError::BadRequest` if an error occurs during the database operation.
+
+### `update_chunk_group_query`
+#### Description
+Updates a chunk group in the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `group` | `ChunkGroup` | The chunk group to update. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;ChunkGroup, ServiceError&gt;` |  | A `Result` containing the updated chunk group, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Executes a database query to update the group in the `chunk_group` table.
+- Returns a `ServiceError::BadRequest` if an error occurs during the database operation.
+
+### `create_chunk_bookmark_query`
+#### Description
+Creates a new chunk bookmark in the database, associating a chunk with a group.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+| `bookmark` | `ChunkGroupBookmark` | The chunk bookmark to create. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;uuid::Uuid, ServiceError&gt;` |  | A `Result` containing the Qdrant point ID of the associated chunk, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Inserts the bookmark into the `chunk_group_bookmarks` table, ignoring conflicts.
+- Retrieves the Qdrant point ID of the associated chunk from the `chunk_metadata` table.
+- Returns a `ServiceError::BadRequest` if an error occurs during the database operation.
+
+### `get_bookmarks_for_group_query`
+#### Description
+Retrieves a paginated list of chunk bookmarks for a given group.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `group_id` | `UnifiedId` | The ID of the group to retrieve bookmarks for. |
+| `page` | `u64` | The page number to retrieve. |
+| `limit` | `Option&lt;u64&gt;` | The maximum number of bookmarks to retrieve per page. |
+| `dataset_uuid` | `uuid::Uuid` | The UUID of the dataset the group belongs to. |
+| `pool` | `web::Data&lt;Pool&gt;` | A database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;GroupsBookmarkQueryResult, ServiceError&gt;` |  | A `Result` containing a `GroupsBookmarkQueryResult` object with the retrieved bookmarks, group information, and total pages, or a `ServiceError` if an error occurred. |
+
+#### Internal Logic
+- Retrieves the group UUID from the database based on the provided `group_id`.
+- Retrieves the chunk point IDs associated with the group from the database.
+- Retrieves the chunk metadata for the retrieved point IDs.
+- Retrieves the total count of chunks associated with the group.
+- Retrieves the group

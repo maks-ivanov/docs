@@ -1,0 +1,57 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for dropping the `stripe_customers` table from the database. It consists of two files: `up.sql` for removing the table and `down.sql` for recreating it if needed. These migrations are part of a database schema change, likely related to modifying how Stripe customer information is stored or managed in the application.
+
+## What does it do?
+The migration scripts perform the following actions:
+
+1. The `up.sql` script removes the `stripe_customers` table from the database if it exists. This is typically done when the table is no longer needed or when its structure is being significantly changed.
+
+2. The `down.sql` script recreates the `stripe_customers` table with a specific structure. This serves as a rollback mechanism in case the migration needs to be reversed. The recreated table includes columns for storing Stripe customer information, such as their unique identifiers, email, and timestamps.
+
+These scripts allow developers to manage database schema changes in a controlled and reversible manner, ensuring that the application's data structure can be updated or rolled back as needed.
+
+## Key Files
+
+1. `up.sql`:
+   - Contains a single SQL command: `DROP TABLE IF EXISTS stripe_customers`
+   - Removes the `stripe_customers` table from the database schema
+   - Executes without error even if the table doesn't exist
+
+2. `down.sql`:
+   - Contains a `CREATE TABLE` statement to recreate the `stripe_customers` table
+   - Defines the table structure with columns for id, stripe_id, email, created_at, and updated_at
+   - Sets up constraints including primary key, unique constraints, and a foreign key reference to the `users` table
+
+## Dependencies
+The `down.sql` script assumes the existence of a `users` table with an `email` column, as it references it in the foreign key constraint. This indicates that the `stripe_customers` table is designed to be linked to user accounts in the application.
+
+## Configuration
+While there are no explicit configuration files or environment variables used in these migration scripts, they do define the structure of the `stripe_customers` table, which can be considered a form of configuration for the application's data model. The key configurable fields in the table structure are:
+
+- `id`: UUID, serves as the primary key
+- `stripe_id`: TEXT, stores Stripe's customer identifier
+- `email`: TEXT, links to the user's email and references the `users` table
+- `created_at` and `updated_at`: TIMESTAMP fields for tracking record creation and updates
+
+Developers should ensure that this table structure aligns with the application's requirements for storing Stripe customer information and its relationship to user accounts.
+
+## Future Improvements
+Several potential improvements could be considered for these migration scripts:
+
+1. Add comments in the `up.sql` script explaining why the table is being dropped, which could be helpful for future maintenance.
+
+2. In the `down.sql` script, consider adding indexes on frequently queried columns, such as `stripe_id` or `email`, to improve query performance.
+
+3. Evaluate if additional columns are needed in the `stripe_customers` table to store more customer information from Stripe, based on the application's evolving needs.
+
+4. If the `users` table uses a different primary key than `email`, update the foreign key reference in the `down.sql` script accordingly.
+
+5. For the `up.sql` script, consider adding steps to drop any foreign key constraints referencing the `stripe_customers` table before dropping the table itself, ensuring a clean removal.
+
+6. After executing the `up.sql` script, it might be beneficial to run VACUUM (for PostgreSQL) or similar optimization commands for other database systems to reclaim storage and update statistics.
+
+These improvements would enhance the robustness, performance, and maintainability of the database schema and its migration process.

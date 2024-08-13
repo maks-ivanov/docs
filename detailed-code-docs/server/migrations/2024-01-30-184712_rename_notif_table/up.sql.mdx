@@ -1,0 +1,46 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script renames the `file_upload_completed_notifications` table to `events`, removes two columns, and adds two new columns. It's designed to transform a specific notification table into a more generic events table.
+
+## Table of contents
+- Rename table
+- Drop columns
+- Add new columns
+
+## Symbols
+
+### ALTER TABLE file_upload_completed_notifications RENAME TO events
+#### Description
+This command renames the existing `file_upload_completed_notifications` table to `events`.
+
+#### Internal Logic
+The database engine updates its internal metadata to reflect the new table name without modifying the table's contents.
+
+### ALTER TABLE events DROP COLUMN user_read
+#### Description
+This command removes the `user_read` column from the newly renamed `events` table.
+
+### ALTER TABLE events DROP COLUMN group_uuid
+#### Description
+This command removes the `group_uuid` column from the `events` table.
+
+### ALTER TABLE events ADD COLUMN event_type VARCHAR(255) NOT NULL
+#### Description
+This command adds a new column named `event_type` to the `events` table. The column is defined as a non-nullable VARCHAR with a maximum length of 255 characters.
+
+### ALTER TABLE events ADD COLUMN event_data JSONB NOT NULL
+#### Description
+This command adds a new column named `event_data` to the `events` table. The column is defined as a non-nullable JSONB (JSON Binary) type, which allows for storing structured JSON data.
+
+## Side Effects
+- The `file_upload_completed_notifications` table will no longer exist after this migration.
+- Any existing data in the `user_read` and `group_uuid` columns will be permanently lost.
+- Applications or queries that relied on the old table name or the dropped columns will need to be updated.
+
+## Future Improvements
+- Consider adding indexes on the new `event_type` column if it will be frequently used in queries.
+- If there's valuable data in the dropped columns, consider migrating it to the new `event_data` JSONB column before applying this migration.
+- Implement a corresponding down migration to reverse these changes if needed.

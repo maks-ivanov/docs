@@ -1,0 +1,53 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to undo the changes made in a corresponding `up.sql` file. It removes triggers, functions, and columns related to automatic timestamp updates in various database tables.
+
+## Table of contents
+- Removal of columns from `card_verification` table
+- Dropping of functions
+- Removal of triggers from multiple tables
+
+## Code Structure
+The script is structured in three main parts:
+1. Altering the `card_verification` table
+2. Dropping functions
+3. Dropping triggers from various tables
+
+## Symbols
+
+### ALTER TABLE card_verification
+#### Description
+Removes the `created_at` and `updated_at` columns from the `card_verification` table.
+
+#### Internal Logic
+- Drops the `created_at` column
+- Drops the `updated_at` column
+
+### DROP FUNCTION
+#### Description
+Removes two functions: `update_updated_at()` and `update_main_table_updated_at()`.
+
+#### Internal Logic
+- Uses `IF EXISTS` to avoid errors if the functions don't exist
+- Includes `CASCADE` to remove any dependencies
+
+### DROP TRIGGER
+#### Description
+Removes the `update_updated_at` trigger from multiple tables.
+
+#### Internal Logic
+- Uses `IF EXISTS` to avoid errors if the triggers don't exist
+- Applies to 17 different tables
+
+## Side Effects
+- Removes automatic timestamp updates from affected tables
+- May impact any queries or processes relying on the `created_at` and `updated_at` columns in the `card_verification` table
+- Eliminates any functionality provided by the dropped functions and triggers
+
+## Future Improvements
+- Consider adding comments to explain the purpose of each section or group of operations
+- If certain tables are related, consider grouping the trigger removals for better organization
+- Add error handling or transaction management to ensure all operations succeed or fail as a unit

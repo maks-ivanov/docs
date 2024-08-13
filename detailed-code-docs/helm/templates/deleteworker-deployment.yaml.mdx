@@ -1,0 +1,76 @@
+---
+title: "deleteworker-deployment.yaml"
+---
+
+## High-level description
+This Kubernetes Deployment YAML file defines the configuration for a "delete-worker" service in a Helm chart. It sets up a deployment with environment variables and container specifications, including optional configurations for Google Cloud and database connectivity.
+
+## Table of contents
+- Metadata and labels
+- Selector and template
+- Container specifications
+- Environment variables
+- Google Cloud SQL Proxy (conditional)
+
+## Code Structure
+The main structure is a Kubernetes Deployment resource with metadata, spec, and template sections. The template section contains the pod specification with container definitions and environment variables.
+
+## Symbols
+
+### Deployment
+#### Description
+Defines a Kubernetes Deployment for the "delete-worker" service.
+
+#### Internal Logic
+- Sets up metadata and labels for the deployment
+- Defines selector for pod management
+- Specifies pod template with labels and container specifications
+- Conditionally includes Google Cloud SQL Proxy container
+
+### Container: delete-worker
+#### Description
+Main container for the delete-worker service.
+
+#### Internal Logic
+- Specifies the container image based on the environment
+- Sets up numerous environment variables for configuration
+
+### Container: cloud-sql-proxy (conditional)
+#### Description
+Google Cloud SQL Proxy container, included only when the environment is "gcloud".
+
+#### Internal Logic
+- Sets up the Cloud SQL Auth Proxy with specific arguments
+- Configures security context and resource requests
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Helm | Template rendering and value substitution |
+| Kubernetes | Deployment resource definition |
+| Google Cloud SQL Proxy | Database connectivity in Google Cloud environment |
+
+### Configuration
+The deployment uses numerous configuration options defined in the Helm values file. Key configurations include:
+
+| Option | Type | Description |
+|:-------|:-----|:------------|
+| environment | string | Determines deployment environment (e.g., "gcloud", "local") |
+| containers.delete_worker.tag | string | Tag for the delete-worker container image |
+| config.trieve.* | various | Various Trieve-specific configurations |
+| config.redis.* | various | Redis configuration options |
+| config.qdrant.* | various | Qdrant configuration options |
+| config.smtp.* | various | SMTP configuration for email services |
+| config.openai.* | various | OpenAI API configuration |
+| config.s3.* | various | S3 storage configuration |
+| config.stripe.* | various | Stripe payment integration configuration |
+| config.oidc.* | various | OpenID Connect authentication configuration |
+| config.analytics.* | various | Analytics configuration (ClickHouse) |
+
+## Future Improvements
+1. Consider using Kubernetes Secrets for sensitive information like API keys and passwords.
+2. Implement resource limits for the delete-worker container to ensure proper resource allocation.
+3. Use a more specific serviceAccountName instead of the generic "cloud-postgres-service-account" for better security isolation.
+4. Consider breaking down the large list of environment variables into logical groups using ConfigMaps for better manageability.
+5. Implement health checks (readiness and liveness probes) for the delete-worker container to ensure proper functioning.
+6. Consider using Helm's built-in capability to generate unique names for resources to avoid potential naming conflicts in multi-instance deployments.

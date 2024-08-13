@@ -1,0 +1,46 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file creates a GIN (Generalized Inverted Index) index on the `link` column of the `card_metadata` table using the trigram (trgm) operator class. This index is designed to improve the performance of similarity searches and pattern matching queries on the `link` column.
+
+## Table of contents
+- Create GIN index on `link` column
+
+## Symbols
+
+### CREATE INDEX idx_link_gin
+#### Description
+This SQL command creates a new index named `idx_link_gin` on the `card_metadata` table. The index uses the GIN index type with the trigram operator class (`gin_trgm_ops`) on the `link` column.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| card_metadata | table | The table on which the index is created |
+| link | column | The column of the `card_metadata` table being indexed |
+
+#### Internal Logic
+1. The `CREATE INDEX` statement initiates the index creation process.
+2. `idx_link_gin` is the name given to the new index.
+3. `ON card_metadata` specifies the table on which the index is created.
+4. `USING gin` indicates that a GIN index type is being used.
+5. `(link gin_trgm_ops)` specifies that the index is created on the `link` column using the trigram operator class.
+
+## Performance Considerations
+- GIN indexes are particularly useful for full-text search and pattern matching queries.
+- The trigram operator class (`gin_trgm_ops`) allows for efficient similarity searches and LIKE queries with wildcards at the beginning of the pattern.
+- This index can significantly improve the performance of queries that search for similar or partially matching links in the `card_metadata` table.
+- However, the index will increase storage requirements and may slightly slow down insert, update, and delete operations on the `card_metadata` table.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| pg_trgm | PostgreSQL extension that provides trigram-based operations and index support |
+
+Note: The `pg_trgm` extension must be enabled in the database for this index to work correctly.
+
+## Future Improvements
+- Monitor the performance impact of this index on write operations (INSERT, UPDATE, DELETE) to ensure it doesn't negatively affect overall system performance.
+- Consider adding similar indexes on other text columns if they are frequently used in similarity or pattern matching queries.
+- Evaluate the need for partial indexes if only a subset of the `link` values are typically searched.

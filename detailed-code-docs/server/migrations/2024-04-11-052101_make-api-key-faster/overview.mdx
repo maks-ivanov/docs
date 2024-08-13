@@ -1,0 +1,13 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for the `user_api_key` table. The migration aims to improve the performance of API key operations by introducing BLAKE3 hashing.
+
+## What does it do?
+The migration script `up.sql` introduces a new column `blake3_hash` to the `user_api_key` table for storing BLAKE3 hashes of API keys. It also makes the existing `api_key_hash` column nullable. This suggests a transition to using BLAKE3 hashes for API key verification.
+
+The corresponding rollback script `down.sql` reverts these changes. It removes the `blake3_hash` column and makes the `api_key_hash` column non-nullable again.
+
+This approach allows for a safe rollback in case issues arise during or after the migration. 

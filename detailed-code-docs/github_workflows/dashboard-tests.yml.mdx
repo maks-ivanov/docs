@@ -1,0 +1,92 @@
+---
+title: "dashboard-tests.yml"
+---
+
+## High-level description
+This YAML file defines a GitHub Actions workflow named "dashboard test suite" that runs on pull requests modifying the dashboard frontend code. It performs two jobs: "build-test" which builds the dashboard frontend and "eslint" which runs linting checks on the dashboard code.
+
+## Table of contents
+- concurrency
+- on
+- jobs
+  - build-test
+  - eslint
+
+## References
+This workflow references the following:
+- `blacksmith-2vcpu-ubuntu-2204`: This likely refers to a self-hosted runner environment.
+- `secrets.GITHUB_TOKEN`: This refers to a secret GitHub token used for authentication.
+
+## Symbols
+### `name: dashboard test suite`
+#### Description
+Defines the name of the workflow as "dashboard test suite".
+
+### `concurrency`
+#### Description
+This section configures concurrency for the workflow, ensuring that only one workflow run is active for the same workflow and branch.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| group | string | Specifies the concurrency group. It uses an expression to create a group based on the workflow name and branch name. |
+| cancel-in-progress | boolean | If set to true, it cancels any in-progress workflow runs that belong to the same concurrency group. |
+
+### `on`
+#### Description
+Specifies the events that trigger the workflow.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pull_request | event | Triggers the workflow on pull request events. |
+    | paths | array | An array of file paths that, when modified in a pull request, will trigger the workflow. |
+
+### `jobs`
+#### Description
+Defines a set of jobs that run in parallel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| build-test | job | A job named "build-test" that builds the dashboard frontend. |
+| eslint | job | A job named "eslint" that runs linting checks on the dashboard code. |
+
+### `build-test`
+#### Description
+This job builds the dashboard frontend.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runs-on | string | Specifies the runner type to use for this job, likely a self-hosted runner named "blacksmith-2vcpu-ubuntu-2204". |
+
+#### Internal Logic
+1. Checks out the repository code.
+2. Navigates to the "frontends" directory.
+3. Installs project dependencies using `yarn --frozen-lockfile`.
+4. Builds the dashboard frontend using `yarn build --filter dashboard`.
+
+### `eslint`
+#### Description
+This job runs ESLint on the dashboard code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runs-on | string | Specifies the runner type to use for this job, likely a self-hosted runner named "blacksmith-2vcpu-ubuntu-2204". |
+
+#### Internal Logic
+1. Checks out the repository code.
+2. Navigates to the "frontends" directory.
+3. Installs project dependencies using `yarn --frozen-lockfile`.
+4. Runs ESLint with the CI configuration on the dashboard code using `yarn lint:CI --filter dashboard`.
+5. Uses the `eslint-annotate-action` to annotate code linting results directly in the pull request.
+6. The `eslint-annotate-action` uses the `GITHUB_TOKEN` to authenticate and access the repository.
+
+## Dependencies
+This workflow uses the following GitHub Actions:
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | Checks out the repository code. |
+| ataylorme/eslint-annotate-action@1.0.4 | Annotates code linting results in the pull request. | 

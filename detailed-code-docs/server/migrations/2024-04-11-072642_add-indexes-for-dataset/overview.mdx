@@ -1,0 +1,13 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `server/migrations/2024-04-11-072642_add-indexes-for-dataset` directory contains SQL migration files for adding and removing indexes on the `datasets` and `stripe_subscriptions` tables. These migrations aim to improve query performance by creating indexes on frequently accessed columns.
+
+## What does it do?
+This directory manages a database migration. It contains two SQL files:
+- `up.sql`: This file is executed to apply the migration, which involves creating indexes on the `organization_id` column of the `datasets` table and the `plan_id` column of the `stripe_subscriptions` table. These indexes are expected to speed up queries that filter or join on these columns.
+- `down.sql`: This file reverts the changes made by `up.sql`. It drops the indexes created by the `up.sql` file, effectively reverting the database schema to its previous state.
+
+The migration files use `IF NOT EXISTS` clauses to ensure that the indexes are only created or dropped if they don't already exist, preventing errors on subsequent runs of the migration.

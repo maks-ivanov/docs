@@ -1,0 +1,64 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the `chunk_metadata` table in a database. The migration introduces a change in the uniqueness constraint for the `tracking_id` and `dataset_id` columns.
+
+## What does it do?
+The migration scripts perform the following actions:
+
+1. Up migration:
+   - Removes the existing unique constraint on the `tracking_id` column.
+   - Adds a new composite unique constraint on both `tracking_id` and `dataset_id` columns.
+
+2. Down migration:
+   - Removes the composite unique constraint on `tracking_id` and `dataset_id`.
+   - Reinstates the original unique constraint on the `tracking_id` column alone.
+
+These changes allow multiple rows to have the same `tracking_id` as long as they have different `dataset_id` values, while previously `tracking_id` had to be unique across the entire table.
+
+## Key Files
+1. `up.sql`: This file contains the SQL commands to apply the new schema changes.
+2. `down.sql`: This file contains the SQL commands to revert the changes made by the up migration.
+
+## Configuration
+The migration uses the following table and constraint names:
+
+- Table name: `chunk_metadata`
+- Old constraint name: `card_metadata_tracking_id_key`
+- New constraint name: `chunk_metadata_tracking_id_dataset_id_key`
+
+It's worth noting that there seems to be an inconsistency in naming conventions between "card_metadata" and "chunk_metadata". This might be due to a recent table rename or a naming error that should be addressed in future migrations.
+
+Here are the key SQL commands used in the migration:
+
+Up migration:
+```sql
+ALTER TABLE chunk_metadata DROP CONSTRAINT card_metadata_tracking_id_key;
+ALTER TABLE chunk_metadata ADD CONSTRAINT chunk_metadata_tracking_id_dataset_id_key UNIQUE (tracking_id, dataset_id);
+```
+
+Down migration:
+```sql
+ALTER TABLE chunk_metadata DROP CONSTRAINT chunk_metadata_tracking_id_dataset_id_key;
+ALTER TABLE chunk_metadata ADD CONSTRAINT card_metadata_tracking_id_key UNIQUE (tracking_id);
+```
+
+## Side Effects
+The migration will have the following effects on the database:
+
+1. After applying the up migration:
+   - The `tracking_id` column will no longer be unique across the entire table.
+   - The combination of `tracking_id` and `dataset_id` will be enforced as unique.
+   - This allows for the same `tracking_id` to be used multiple times as long as it's associated with different `dataset_id` values.
+
+2. After applying the down migration:
+   - The `tracking_id` column will once again be unique across the entire table, regardless of `dataset_id`.
+   - The composite uniqueness of `tracking_id` and `dataset_id` will no longer be enforced.
+
+## Future Improvements
+1. Resolve the naming inconsistency between "card_metadata" and "chunk_metadata" to ensure all references are updated correctly.
+2. Consider adding appropriate indexes to support the unique constraint efficiently, especially if the `chunk_metadata` table is expected to grow large.
+3. If frequent queries use the combination of `tracking_id` and `dataset_id`, consider adding a composite index on these columns to improve query performance.
+4. Ensure that all related application code and database queries are updated to reflect the new uniqueness constraints, particularly when inserting or updating records in the `chunk_metadata` table.

@@ -1,0 +1,61 @@
+---
+title: "svc-headless.yaml"
+---
+
+## High-level description
+This YAML file defines a headless Kubernetes Service for the primary PostgreSQL instance in a Helm chart. It's designed to enable direct communication between PostgreSQL pods, even before they're fully ready, which is crucial for the database cluster's initialization and operation.
+
+## Table of contents
+- Metadata
+- Spec
+  - Service type and ClusterIP
+  - Publish not ready addresses
+  - Ports
+  - Selector
+
+## Code Structure
+The YAML file defines a single Kubernetes Service resource with metadata and spec sections. It uses Helm templating to dynamically generate values and includes labels and annotations from common templates.
+
+## Symbols
+
+### Service
+#### Description
+Defines a headless Kubernetes Service for the primary PostgreSQL instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Release.Namespace | String | Namespace where the service will be created |
+| .Values.commonLabels | Map | Common labels to be applied to the service |
+| .Values.primary.service.headless.annotations | Map | Annotations specific to the headless service |
+| .Values.commonAnnotations | Map | Common annotations to be applied to the service |
+| .Values.primary.podLabels | Map | Labels for the primary PostgreSQL pods |
+
+#### Internal Logic
+1. Sets the service name using a template function
+2. Applies labels and annotations using common templates
+3. Configures the service as headless (ClusterIP: None)
+4. Enables publishing of not ready addresses
+5. Defines a port for PostgreSQL traffic
+6. Sets the selector to match primary PostgreSQL pods
+
+## Side Effects
+This service affects pod discovery and networking within the Kubernetes cluster, allowing direct communication between PostgreSQL pods.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.labels.standard | Generates standard labels |
+| common.tplvalues.merge | Merges multiple values |
+| common.tplvalues.render | Renders template values |
+| common.labels.matchLabels | Generates matching labels for selectors |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| postgresql.v1.service.port | Integer | N/A | Port number for PostgreSQL service |
+
+## Future Improvements
+- Consider adding support for multiple ports if needed for different PostgreSQL protocols or metrics exposure.
+- Evaluate the need for the `service.alpha.kubernetes.io/tolerate-unready-endpoints` annotation in future Kubernetes versions and remove if no longer necessary.
+- Explore options for configuring additional service properties like `sessionAffinity` or `topologyKeys` if advanced networking features are required.

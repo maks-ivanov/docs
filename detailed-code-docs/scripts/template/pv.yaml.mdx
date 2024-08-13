@@ -1,0 +1,60 @@
+---
+title: "pv.yaml"
+---
+
+## High-level description
+This code defines a Kubernetes PersistentVolume (PV) template using Helm templating. It creates a hostPath-based PV specifically for the "local" environment, with storage size determined by the environment.
+
+## Table of contents
+- Conditional block for "local" environment
+- PersistentVolume definition
+    - Metadata
+    - Spec
+
+## Symbols
+### `pv.yaml`
+#### Description
+This code defines a Kubernetes PersistentVolume (PV) tailored for a "local" environment. It uses Helm templating to dynamically set the PV name and storage size. The PV uses `hostPath` for storage, making it suitable for development or single-node clusters.
+
+#### Inputs
+This template uses values from a Helm values file, notably:
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `.Values.environment` | string | The target environment. The PV is created only if this value is "local". |
+| `.Values.environment` | string | Used to determine the storage size. If "local", the size is "10Gi"; otherwise, it's "500Gi". |
+| `$NAME` | string |  This value seems to come from outside the provided code snippet. It's used as part of the PV name. |
+
+#### Outputs
+A Kubernetes PersistentVolume manifest in YAML format.
+
+#### Internal Logic
+1. **Conditional Block:** The template starts with a conditional block that checks if `.Values.environment` is "local". The PV is defined only if this condition is true.
+2. **Variable Definitions:** Inside the conditional block, two variables are defined using Helm's templating engine:
+    - `${p}name`: This variable constructs the PV name by combining the value of `$NAME` (which is expected to be defined externally) with "-pv".
+    - `${p}storage`: This variable sets the storage size based on the `.Values.environment`. If it's "local", the size is "10Gi"; otherwise, it's "500Gi".
+3. **PersistentVolume Definition:** The code then defines a Kubernetes PersistentVolume object with the following specifications:
+    - `apiVersion`: v1
+    - `kind`: PersistentVolume
+    - `metadata.name`: The name of the PV, dynamically generated using the `${p}name` variable.
+    - `spec`:
+        - `capacity.storage`: The storage capacity of the PV, set using the `${p}storage` variable.
+        - `accessModes`: Set to "ReadWriteOnce", allowing the volume to be mounted by only one node at a time.
+        - `persistentVolumeReclaimPolicy`: Set to "Retain", meaning the PV will not be automatically deleted when its associated PersistentVolumeClaim is deleted.
+        - `storageClassName`: Left empty, indicating the PV doesn't belong to any specific storage class.
+        - `hostPath.path`: Specifies the path on the host node where the volume will be mounted, using the `${p}name` variable to create a directory named after the PV.
+
+## Side Effects
+This code, when applied to a Kubernetes cluster, will create a PersistentVolume. The volume will be backed by a directory on the host node's filesystem at the path specified by `hostPath`.
+
+## Configuration
+The PV's configuration is controlled by the following:
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `.Values.environment` | string | N/A | Determines whether the PV is created and influences the storage size. |
+| `$NAME` | string | N/A | Used in constructing the PV name and the host path. This value is expected to be passed externally. |
+
+## Future Improvements
+- **Externalize Configuration:** Instead of hardcoding the storage sizes ("10Gi" and "500Gi"), consider passing them as parameters in the Helm values file. This would make the template more flexible.
+- **StorageClass:** For production environments, consider using a StorageClass instead of `hostPath`. This would allow for more robust and scalable storage provisioning.
+- **Documentation:** Add comments to the template to explain the purpose of the variables and the logic behind the conditional block and storage size selection. 

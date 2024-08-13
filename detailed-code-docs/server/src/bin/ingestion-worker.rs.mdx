@@ -1,0 +1,229 @@
+---
+title: "ingestion-worker.rs"
+---
+
+## High-level description
+This code defines an ingestion worker that processes messages from a Redis queue, performs necessary operations like embedding and indexing, and stores the data in a PostgreSQL database and a Qdrant vector database. It handles both bulk uploads and updates of chunks, ensuring data integrity and managing potential collisions.
+
+## Table of contents
+- `main` function
+- `ingestion_worker` function
+- `bulk_upload_chunks` function
+- `upload_chunk` function
+- `update_chunk` function
+- `readd_error_to_queue` function
+
+## References
+- `models`: Module containing data models and structures.
+- `ServiceError`: Enum representing service errors.
+- `get_env`: Macro for retrieving environment variables.
+- `establish_connection`: Function for establishing a database connection.
+- `get_dataset_by_id_query`: Function for retrieving a dataset by its ID.
+- `bulk_insert_chunk_metadata_query`: Function for bulk inserting chunk metadata.
+- `bulk_revert_insert_chunk_metadata_query`: Function for reverting bulk inserted chunk metadata.
+- `insert_chunk_metadata_query`: Function for inserting chunk metadata.
+- `update_chunk_metadata_query`: Function for updating chunk metadata.
+- `get_dense_vector`: Function for retrieving a dense vector embedding.
+- `get_dense_vectors`: Function for retrieving multiple dense vector embeddings.
+- `get_sparse_vectors`: Function for retrieving sparse vector embeddings.
+- `get_bm25_embeddings`: Function for retrieving BM25 embeddings.
+- `bulk_upsert_qdrant_points_query`: Function for bulk upserting points in Qdrant.
+- `update_qdrant_point_query`: Function for updating a point in Qdrant.
+- `dataset_owns_group`: Function for checking if a dataset owns a group.
+- `get_groups_from_group_ids_query`: Function for retrieving groups from group IDs.
+- `convert_html_to_text`: Function for converting HTML to plain text.
+- `coarse_doc_chunker`: Function for chunking documents.
+- `average_embeddings`: Function for averaging embeddings.
+
+## Symbols
+
+### `main`
+#### Description
+This function initializes the ingestion worker, setting up logging, Sentry monitoring, database and Redis connections, and an event queue for analytics. It then starts the `ingestion_worker` in a Tokio runtime.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Initializes environment variables and Sentry monitoring.
+2. Establishes a connection pool for the PostgreSQL database.
+3. Creates a Redis connection pool.
+4. Initializes an event queue for analytics if enabled.
+5. Starts the `ingestion_worker` in a Tokio runtime.
+
+### `ingestion_worker`
+#### Description
+This function continuously processes ingestion messages from a Redis queue. It retrieves messages, deserializes them, performs necessary operations based on the message type (bulk upload or update), and manages the message queue.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| should_terminate | Arc&lt;AtomicBool&gt; | Flag indicating whether the worker should terminate. |
+| redis_pool | actix_web::web::Data&lt;models::RedisPool&gt; | Redis connection pool. |
+| web_pool | actix_web::web::Data&lt;models::Pool&gt; | Database connection pool. |
+| event_queue | actix_web::web::Data&lt;EventQueue&gt; | Event queue for analytics. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Connects to Redis.
+2. Enters a loop that continues until the `should_terminate` flag is set.
+3. Retrieves a message from the "ingestion" queue in Redis, moving it to the "processing" queue.
+4. Deserializes the message into an `IngestionMessage`.
+5. Retrieves the dataset associated with the message.
+6. Processes the message based on its type:
+    - `BulkUpload`: Calls `bulk_upload_chunks` to handle bulk chunk uploads.
+    - `Update`: Calls `update_chunk` to handle chunk updates.
+7. Removes the processed message from the "processing" queue in Redis.
+8. Handles errors by calling `readd_error_to_queue`.
+
+### `bulk_upload_chunks`
+#### Description
+This function handles bulk uploads of chunks. It preprocesses the chunk data, inserts metadata into the database, generates embeddings, creates Qdrant points, and upserts them into Qdrant.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| payload | BulkUploadIngestionMessage | Message containing chunk data and dataset ID. |
+| dataset_config | DatasetConfiguration | Dataset configuration. |
+| web_pool | actix_web::web::Data&lt;models::Pool&gt; | Database connection pool. |
+| reqwest_client | reqwest::Client | HTTP client for making requests. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chunk_ids | Result&lt;Vec&lt;uuid::Uuid&gt;, ServiceError&gt; | Vector of chunk IDs that were successfully uploaded. |
+
+#### Internal Logic
+1. Preprocesses chunk data, converting HTML to text and creating `ChunkMetadata` objects.
+2. Inserts chunk metadata into the database using `bulk_insert_chunk_metadata_query`.
+3. Generates embedding vectors for the chunks using `get_dense_vectors` if semantic search is enabled.
+4. Generates sparse vectors for the chunks using `get_sparse_vectors` if full-text search is enabled.
+5. Generates BM25 vectors for the chunks using `get_bm25_embeddings` if BM25 search is enabled.
+6. Creates `QdrantPayload` objects for each chunk, combining metadata and embeddings.
+7. Creates `PointStruct` objects for each chunk, combining Qdrant payload and point ID.
+8. Upserts the points into Qdrant using `bulk_upsert_qdrant_points_query`.
+9. If any errors occur during embedding or Qdrant upsert, reverts the database insertion using `bulk_revert_insert_chunk_metadata_query`.
+
+### `upload_chunk`
+#### Description
+This function handles the upload of a single chunk. It preprocesses the chunk data, inserts metadata into the database, generates embeddings, creates a Qdrant point, and upserts it into Qdrant.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| payload | UploadIngestionMessage | Message containing chunk data, dataset ID, and upsert flag. |
+| dataset_config | DatasetConfiguration | Dataset configuration. |
+| ingestion_data | ChunkDataWithEmbeddingText | Chunk data with preprocessed embedding text. |
+| web_pool | actix_web::web::Data&lt;models::Pool&gt; | Database connection pool. |
+| reqwest_client | reqwest::Client | HTTP client for making requests. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chunk_metadata_id | Result&lt;uuid::Uuid&gt;, ServiceError&gt; | ID of the chunk metadata that was successfully uploaded. |
+
+#### Internal Logic
+1. Preprocesses chunk data, converting HTML to text and creating a `ChunkMetadata` object.
+2. Generates an embedding vector for the chunk using `get_dense_vector` if semantic search is enabled.
+3. Generates a sparse vector for the chunk using `get_sparse_vectors` if full-text search is enabled.
+4. Generates a BM25 vector for the chunk using `get_bm25_embeddings` if BM25 search is enabled.
+5. Inserts chunk metadata into the database using `insert_chunk_metadata_query`.
+6. Creates a `QdrantPayload` object for the chunk, combining metadata and embeddings.
+7. Creates a `PointStruct` object for the chunk, combining Qdrant payload and point ID.
+8. Upserts the point into Qdrant using `bulk_upsert_qdrant_points_query`.
+9. If any errors occur during embedding or Qdrant upsert, reverts the database insertion using `bulk_revert_insert_chunk_metadata_query`.
+
+### `update_chunk`
+#### Description
+This function handles the update of a single chunk. It retrieves the existing chunk metadata, updates it with the provided data, generates new embeddings if necessary, and updates the corresponding Qdrant point.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| payload | UpdateIngestionMessage | Message containing updated chunk data, dataset ID, and group IDs. |
+| web_pool | actix_web::web::Data&lt;models::Pool&gt; | Database connection pool. |
+| dataset_config | DatasetConfiguration | Dataset configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Result&lt;(), ServiceError&gt; | Result of the update operation. |
+
+#### Internal Logic
+1. Retrieves the existing chunk metadata from the database.
+2. Updates the chunk metadata with the provided data, including group IDs.
+3. Generates a new embedding vector using `get_dense_vector` if semantic search is enabled and the chunk HTML has changed.
+4. Generates a new sparse vector using `get_sparse_vectors` if full-text search is enabled and the chunk HTML has changed.
+5. Generates a new BM25 vector using `get_bm25_embeddings` if BM25 search is enabled and the chunk HTML has changed.
+6. Updates the chunk metadata in the database using `update_chunk_metadata_query`.
+7. Updates the corresponding Qdrant point using `update_qdrant_point_query`.
+
+### `readd_error_to_queue`
+#### Description
+This function handles errors encountered during chunk upload or update. It re-adds the failed message to the ingestion queue in Redis, incrementing the attempt counter. If the attempt counter reaches a certain threshold, the message is moved to a dead letter queue and an error event is logged.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | IngestionMessage | The original ingestion message that failed. |
+| error | ServiceError | The error that occurred. |
+| redis_pool | actix_web::web::Data&lt;models::RedisPool&gt; | Redis connection pool. |
+| event_queue | actix_web::web::Data&lt;EventQueue&gt; | Event queue for analytics. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Result&lt;(), ServiceError&gt; | Result of the re-add operation. |
+
+#### Internal Logic
+1. Checks if the error is a `DuplicateTrackingId` error, in which case it logs a message and returns early.
+2. If the message is a `BulkUpload` message:
+    - Removes the original message from the "processing" queue in Redis.
+    - Increments the attempt counter.
+    - If the attempt counter reaches 10:
+        - Logs an error message.
+        - Sends a `BulkChunkUploadFailed` event to the analytics queue.
+        - Moves the message to the "dead_letters" queue in Redis.
+        - Returns an error.
+    - Otherwise, re-serializes the message and re-adds it to the "ingestion" queue in Redis.
+3. Returns a successful result.
+
+## Dependencies
+- `chrono`: Date and time library.
+- `dateparser`: Date and time parsing library.
+- `diesel_async`: Asynchronous Diesel library for database interactions.
+- `futures_util`: Utilities for working with futures.
+- `itertools`: Iterator tools.
+- `qdrant_client`: Qdrant client library.
+- `sentry`: Sentry monitoring library.
+- `signal_hook`: Signal handling library.
+- `tracing_subscriber`: Tracing subscriber for logging.
+- `trieve_server`: Internal server library containing data models, error handling, and operators.
+- `actix_web`: Actix web framework.
+- `bb8_redis`: Redis connection pool library.
+- `clickhouse`: ClickHouse client library.
+- `reqwest`: HTTP client library.
+
+## Configuration
+- `DATABASE_URL`: URL for the PostgreSQL database.
+- `REDIS_URL`: URL for the Redis server.
+- `REDIS_CONNECTIONS`: Number of Redis connections to use (default: 2).
+- `USE_ANALYTICS`: Whether to enable analytics (default: false).
+- `CLICKHOUSE_URL`: URL for the ClickHouse server.
+- `CLICKHOUSE_USER`: Username for the ClickHouse server.
+- `CLICKHOUSE_PASSWORD`: Password for the ClickHouse server.
+- `CLICKHOUSE_DATABASE`: Database name for the ClickHouse server.
+- `SENTRY_URL`: URL for the Sentry monitoring service.
+- `OPENAI_API_KEY`: API key for the OpenAI embedding service.
+- `OPENAI_BASE_URL`: Base URL for the OpenAI embedding service.
+- `EMBEDDING_SERVER_ORIGIN`: Base URL for the Trieve embedding service.
+- `EMBEDDING_SERVER_ORIGIN_BGEM3`: Base URL for the Trieve BGE-M3 embedding service.
+- `EMBEDDING_SERVER_ORIGIN_JINA_CODE`: Base URL for the Trieve Jina Code embedding service.
+- `JINA_CODE_API_KEY`: API key for the Trieve Jina Code embedding service.
+- `SPARSE_SERVER_DOC_ORIGIN`: Base URL for the sparse vector embedding service for documents.
+- `

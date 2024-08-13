@@ -1,0 +1,396 @@
+---
+title: "chunk_handler.rs"
+---
+
+## High-level description
+This code defines a set of API endpoints for managing and interacting with chunks of data. It includes functionality for creating, updating, deleting, searching, and recommending chunks, as well as handling file uploads and managing groups of chunks.
+
+## Table of contents
+- `ChunkReqPayload`
+- `FailedChunk`
+- `ReturnQueuedChunk`
+- `SingleQueuedChunkResponse`
+- `BatchQueuedChunkResponse`
+- `UploadIngestionMessage`
+- `BulkUploadIngestionMessage`
+- `CreateSingleChunkReqPayload`
+- `CreateBatchChunkReqPayload`
+- `CreateChunkReqPayloadEnum`
+- `create_chunk`
+- `delete_chunk`
+- `delete_chunk_by_tracking_id`
+- `UpdateChunkReqPayload`
+- `UpdateIngestionMessage`
+- `update_chunk`
+- `UpdateChunkByTrackingIdData`
+- `update_chunk_by_tracking_id`
+- `ChunkFilter`
+- `SearchChunksReqPayload`
+- `SearchChunkQueryResponseBody`
+- `SearchResponseBody`
+- `SearchResponseTypes`
+- `ParsedQuery`
+- `ParsedQueryTypes`
+- `parse_query`
+- `search_chunks`
+- `AutocompleteReqPayload`
+- `autocomplete`
+- `ChunkReturnTypes`
+- `ScrollChunksResponseBody`
+- `ScrollChunksReqPayload`
+- `scroll_dataset_chunks`
+- `get_chunk_by_id`
+- `CountChunksReqPayload`
+- `CountChunkQueryResponseBody`
+- `count_chunks`
+- `get_chunk_by_tracking_id`
+- `GetChunksData`
+- `get_chunks_by_ids`
+- `GetTrackingChunksData`
+- `get_chunks_by_tracking_ids`
+- `RecommendChunksRequest`
+- `RecommendChunksResponseBody`
+- `RecommendResponseTypes`
+- `get_recommended_chunks`
+- `GenerateChunksRequest`
+- `generate_off_chunks`
+- `check_completion_param_validity`
+
+## References
+- `crate::data::models`
+- `crate::errors::ServiceError`
+- `crate::get_env`
+- `crate::middleware::api_version::APIVersion`
+- `crate::operators::chunk_operator`
+- `crate::operators::clickhouse_operator`
+- `crate::operators::dataset_operator`
+- `crate::operators::parse_operator`
+- `crate::operators::qdrant_operator`
+- `crate::operators::search_operator`
+
+## Symbols
+
+### `ChunkReqPayload`
+#### Description
+Defines the structure of a chunk request payload, containing information about the chunk's content, link, tags, metadata, tracking ID, and other relevant details.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `FailedChunk`
+#### Description
+Represents a chunk that failed to be processed, including its index and an error message.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `ReturnQueuedChunk`
+#### Description
+An enum representing the response for a queued chunk, either a single chunk or a batch of chunks.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `SingleQueuedChunkResponse`
+#### Description
+Represents the response for a single queued chunk, including the chunk metadata and its position in the queue.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `BatchQueuedChunkResponse`
+#### Description
+Represents the response for a batch of queued chunks, including the metadata for all chunks and the position of the last chunk in the queue.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `UploadIngestionMessage`
+#### Description
+Defines the structure of a message for uploading a single chunk, containing ingestion-specific metadata, the chunk payload, the dataset ID, and whether to upsert by tracking ID.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `BulkUploadIngestionMessage`
+#### Description
+Defines the structure of a message for uploading multiple chunks, containing the attempt number, dataset ID, and a vector of `UploadIngestionMessage` objects.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `CreateSingleChunkReqPayload`
+#### Description
+A wrapper struct for a single `ChunkReqPayload` used for creating a single chunk.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `CreateBatchChunkReqPayload`
+#### Description
+A wrapper struct for a vector of `ChunkReqPayload` objects used for creating multiple chunks.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `CreateChunkReqPayloadEnum`
+#### Description
+An enum representing the payload for creating chunks, either a single chunk or a batch of chunks.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `create_chunk`
+#### Description
+Handles the creation of new chunk(s). It checks for duplicate tracking IDs, enforces chunk count limits based on the user's plan, and queues the chunks for ingestion.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `create_chunk_data` | `web::Json&lt;CreateChunkReqPayloadEnum&gt;` | The JSON payload containing the chunk data. |
+| `pool` | `web::Data&lt;Pool&gt;` | The database connection pool. |
+| `_user` | `AdminOnly` | The authenticated user with admin privileges. |
+| `dataset_org_plan_sub` | `DatasetAndOrgWithSubAndPlan` | The dataset, organization, plan, and subscription information. |
+| `redis_pool` | `web::Data&lt;RedisPool&gt;` | The Redis connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `HttpResponse` | `Result&lt;HttpResponse, actix_web::Error&gt;` | The HTTP response indicating success or failure. |
+
+#### Internal Logic
+1. Extracts the chunk(s) from the request payload.
+2. Checks if the user's plan allows for the creation of the new chunk(s).
+3. Creates metadata for the chunk(s).
+4. Queues the chunk(s) for ingestion using Redis.
+5. Returns an HTTP response indicating success or failure.
+
+### `delete_chunk`
+#### Description
+Handles the deletion of a chunk by its ID. It updates the chunk's `deleted_at` timestamp and removes it from the search index.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `chunk_id` | `web::Path&lt;uuid::Uuid&gt;` | The ID of the chunk to delete. |
+| `pool` | `web::Data&lt;Pool&gt;` | The database connection pool. |
+| `_user` | `AdminOnly` | The authenticated user with admin privileges. |
+| `dataset_org_plan_sub` | `DatasetAndOrgWithSubAndPlan` | The dataset, organization, plan, and subscription information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `HttpResponse` | `Result&lt;HttpResponse, actix_web::Error&gt;` | The HTTP response indicating success or failure. |
+
+#### Internal Logic
+1. Sets the chunk's `deleted_at` timestamp to the current time.
+2. Deletes the chunk metadata from the database.
+3. Returns an HTTP response indicating success.
+
+### `delete_chunk_by_tracking_id`
+#### Description
+Handles the deletion of a chunk by its tracking ID. It retrieves the chunk's ID based on the tracking ID and then calls `delete_chunk_metadata_query` to delete the chunk.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tracking_id` | `web::Path&lt;String&gt;` | The tracking ID of the chunk to delete. |
+| `pool` | `web::Data&lt;Pool&gt;` | The database connection pool. |
+| `_user` | `AdminOnly` | The authenticated user with admin privileges. |
+| `dataset_org_plan_sub` | `DatasetAndOrgWithSubAndPlan` | The dataset, organization, plan, and subscription information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `HttpResponse` | `Result&lt;HttpResponse, actix_web::Error&gt;` | The HTTP response indicating success or failure. |
+
+#### Internal Logic
+1. Retrieves the chunk metadata based on the tracking ID.
+2. Sets the chunk's `deleted_at` timestamp to the current time.
+3. Deletes the chunk metadata from the database.
+4. Returns an HTTP response indicating success.
+
+### `UpdateChunkReqPayload`
+#### Description
+Defines the structure of a chunk update request payload, containing information about the chunk's ID, tracking ID, link, content, metadata, timestamp, weight, and group IDs.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `UpdateIngestionMessage`
+#### Description
+Defines the structure of a message for updating a chunk, containing the updated chunk metadata, dataset ID, group IDs, and whether to convert HTML to text.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `update_chunk`
+#### Description
+Handles the update of an existing chunk. It retrieves the chunk based on its ID or tracking ID, updates its information, and queues it for ingestion.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `update_chunk_data` | `web::Json&lt;UpdateChunkReqPayload&gt;` | The JSON payload containing the updated chunk data. |
+| `pool` | `web::Data&lt;Pool&gt;` | The database connection pool. |
+| `redis_pool` | `web::Data&lt;RedisPool&gt;` | The Redis connection pool. |
+| `_user` | `AdminOnly` | The authenticated user with admin privileges. |
+| `dataset_org_plan_sub` | `DatasetAndOrgWithSubAndPlan` | The dataset, organization, plan, and subscription information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `HttpResponse` | `Result&lt;HttpResponse, actix_web::Error&gt;` | The HTTP response indicating success or failure. |
+
+#### Internal Logic
+1. Retrieves the chunk metadata based on the provided ID or tracking ID.
+2. Updates the chunk metadata with the new information.
+3. Creates an `UpdateIngestionMessage` and queues it for ingestion using Redis.
+4. Returns an HTTP response indicating success.
+
+### `UpdateChunkByTrackingIdData`
+#### Description
+Defines the structure of a payload for updating a chunk by its tracking ID, containing information about the chunk's link, content, metadata, timestamp, weight, and group IDs.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `update_chunk_by_tracking_id`
+#### Description
+Handles the update of an existing chunk by its tracking ID. It retrieves the chunk based on the tracking ID, updates its information, and queues it for ingestion.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `update_chunk_data` | `web::Json&lt;UpdateChunkByTrackingIdData&gt;` | The JSON payload containing the updated chunk data. |
+| `pool` | `web::Data&lt;Pool&gt;` | The database connection pool. |
+| `redis_pool` | `web::Data&lt;RedisPool&gt;` | The Redis connection pool. |
+| `_user` | `AdminOnly` | The authenticated user with admin privileges. |
+| `dataset_org_plan_sub` | `DatasetAndOrgWithSubAndPlan` | The dataset, organization, plan, and subscription information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `HttpResponse` | `Result&lt;HttpResponse, actix_web::Error&gt;` | The HTTP response indicating success or failure. |
+
+#### Internal Logic
+1. Retrieves the chunk metadata based on the provided tracking ID.
+2. Updates the chunk metadata with the new information.
+3. Creates an `UpdateIngestionMessage` and queues it for ingestion using Redis.
+4. Returns an HTTP response indicating success.
+
+### `ChunkFilter`
+#### Description
+Defines the structure of a filter for chunks, allowing for filtering by various conditions using `should`, `must`, and `must_not` clauses.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `SearchChunksReqPayload`
+#### Description
+Defines the structure of a payload for searching chunks, containing information about the search type, query, pagination, filters, sorting options, highlighting options, and score threshold.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `SearchChunkQueryResponseBody`
+#### Description
+Defines the structure of a response body for a chunk search query, containing a vector of scored chunks and the total number of chunk pages.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `SearchResponseBody`
+#### Description
+Defines the structure of a search response body, containing the search ID, a vector of scored chunks, and the total number of pages.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `SearchResponseTypes`
+#### Description
+An enum representing the different types of search response bodies, either V1 or V2.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `ParsedQuery`
+#### Description
+Represents a parsed query, including the original query string, quoted words, and negated words.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `ParsedQueryTypes`
+#### Description
+An enum representing the different types of parsed queries, either a single query or multiple queries with weights.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `parse_query`
+#### Description
+Parses a query string, extracting quoted words and negated words if enabled.
+
+#### Inputs
+| Name | Type |

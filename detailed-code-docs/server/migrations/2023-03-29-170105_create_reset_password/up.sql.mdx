@@ -1,0 +1,43 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a table named `password_resets` to store information related to password reset requests. The table is designed to manage and track password reset tokens, including their expiration and associated user email.
+
+## Table of contents
+- Table creation
+- Column definitions
+- Primary key and constraints
+
+## Symbols
+
+### `password_resets` table
+#### Description
+The `password_resets` table is created to store password reset tokens and related information. It includes columns for unique identification, user email, expiration time, and timestamps for creation and updates.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | NOT NULL, UNIQUE, PRIMARY KEY | Unique identifier for each password reset entry |
+| email | VARCHAR(100) | NOT NULL | Email address of the user requesting a password reset |
+| expires_at | TIMESTAMP | NOT NULL | Expiration time of the password reset token |
+| created_at | TIMESTAMP | NOT NULL | Timestamp of when the password reset entry was created |
+| updated_at | TIMESTAMP | NOT NULL | Timestamp of when the password reset entry was last updated |
+
+#### Internal Logic
+The table is created with specific column types and constraints to ensure data integrity:
+1. `id` uses UUID for unique identification and serves as the primary key.
+2. `email` is limited to 100 characters and cannot be null.
+3. `expires_at` is used to set an expiration time for the password reset token.
+4. `created_at` and `updated_at` are used for tracking the lifecycle of the password reset entry.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| PostgreSQL | This SQL script is written for PostgreSQL database systems, utilizing PostgreSQL-specific data types like UUID |
+
+## Future Improvements
+- Consider adding an index on the `email` column to improve query performance when searching for reset tokens by email.
+- Implement a mechanism to automatically remove expired entries to keep the table size manageable.
+- Add a `used` boolean column to mark whether a reset token has been used, providing an additional layer of security.

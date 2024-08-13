@@ -1,0 +1,31 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script alters the `card_collisions` table to make the `collision_qdrant_id` column nullable. This change allows for more flexibility in storing card collision data, potentially accommodating scenarios where a Qdrant ID is not immediately available or applicable.
+
+## Table of contents
+- ALTER TABLE statement
+
+## Symbols
+
+### ALTER TABLE card_collisions
+#### Description
+This SQL command modifies the structure of the `card_collisions` table by changing the properties of the `collision_qdrant_id` column.
+
+#### Internal Logic
+The command performs the following operation:
+1. Targets the `card_collisions` table
+2. Selects the `collision_qdrant_id` column
+3. Removes the `NOT NULL` constraint from the column
+
+## Side Effects
+- The `collision_qdrant_id` column in the `card_collisions` table will now accept NULL values.
+- Existing data in the table is not affected, but future inserts can include NULL values for this column.
+- Any dependent applications or queries that assumed this column would always have a value may need to be updated to handle potential NULL values.
+
+## Future Improvements
+- Consider adding a corresponding DOWN migration to revert this change if needed.
+- Evaluate if any indexes or constraints related to this column need to be adjusted.
+- Review application code to ensure proper handling of potentially NULL values in this column.

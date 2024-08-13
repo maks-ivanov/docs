@@ -1,0 +1,123 @@
+---
+title: "errors.rs"
+---
+
+## High-level description
+This code defines a custom error type `ServiceError` for a server application and implements error handling logic for various scenarios, including database errors, UUID parsing errors, and JSON deserialization errors. It also provides a custom JSON error handler for `JsonPayloadError` and functions to handle specific error scenarios.
+
+## Table of contents
+- `ErrorResponseBody` struct
+- `ServiceError` enum
+- `ResponseError` implementation for `ServiceError`
+- `From&lt;ParseError&gt;` implementation for `ServiceError`
+- `From&lt;DBError&gt;` implementation for `ServiceError`
+- `custom_json_error_handler` function
+
+## References
+- `sentry` crate for error logging and monitoring.
+- `diesel` crate for database interactions.
+- `uuid` crate for UUID parsing.
+- `actix_web` crate for web framework functionalities.
+- `utoipa` crate for generating OpenAPI documentation.
+
+## Symbols
+### `ErrorResponseBody`
+#### Description
+A struct representing the response body for error responses, containing a message field.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `ServiceError`
+#### Description
+An enum representing various service errors that can occur in the application.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `impl ResponseError for ServiceError`
+#### Description
+Implements the `ResponseError` trait for `ServiceError`, allowing it to be converted into HTTP responses. It logs the error to Sentry and returns an appropriate HTTP response with a JSON body containing the error message.
+
+#### Inputs
+`&self`: A reference to the `ServiceError` instance.
+
+#### Outputs
+`HttpResponse`: An HTTP response representing the error.
+
+#### Internal Logic
+- Logs the error message to Sentry using `sentry::capture_message`.
+- Matches the specific `ServiceError` variant and constructs an appropriate `HttpResponse` with a JSON body containing the error message.
+
+### `impl From&lt;ParseError&gt; for ServiceError`
+#### Description
+Implements the `From` trait to convert a `ParseError` (from the `uuid` crate) into a `ServiceError`. This allows for early return in handlers if a provided UUID is invalid.
+
+#### Inputs
+`_: ParseError`: A `ParseError` instance.
+
+#### Outputs
+`ServiceError::BadRequest`: A `ServiceError` variant indicating an invalid UUID.
+
+### `impl From&lt;DBError&gt; for ServiceError`
+#### Description
+Implements the `From` trait to convert a `DBError` (from the `diesel` crate) into a `ServiceError`. Currently, it handles `UniqueViolation` errors by returning a `BadRequest` with the violation message. Other database errors are mapped to `InternalServerError`.
+
+#### Inputs
+`error: DBError`: A `DBError` instance.
+
+#### Outputs
+`ServiceError`: A `ServiceError` variant representing the database error.
+
+#### Internal Logic
+- Matches the `DBError` variant.
+- For `DatabaseError` of kind `UniqueViolation`, extracts the violation message and returns a `BadRequest`.
+- For other `DatabaseError` variants and other `DBError` types, returns an `InternalServerError`.
+
+### `custom_json_error_handler`
+#### Description
+A custom JSON error handler for `JsonPayloadError` from the `actix_web` crate. It provides detailed error messages and solutions based on the specific type of `JsonPayloadError`.
+
+#### Inputs
+- `err: JsonPayloadError`: The `JsonPayloadError` instance.
+- `_req: &actix_web::HttpRequest`: A reference to the HTTP request (unused in this implementation).
+
+#### Outputs
+`actix_web::Error`: An `actix_web::Error` representing the JSON deserialization error.
+
+#### Internal Logic
+- Matches the `JsonPayloadError` variant.
+- Constructs a detailed error message and solution based on the error type.
+- Returns a `ServiceError::JsonDeserializeError` with the detailed message.
+
+## Side Effects
+- Logs error messages to Sentry.
+- Modifies the HTTP response based on the error type.
+
+## Dependencies
+- `actix-web`: Web framework for handling HTTP requests and responses.
+- `diesel`: ORM for database interactions.
+- `derive_more`: Derive macros for simplifying code.
+- `sentry`: Error logging and monitoring.
+- `serde`: Serialization and deserialization.
+- `utoipa`: OpenAPI documentation generation.
+- `uuid`: UUID parsing.
+
+## Error Handling
+- Uses the `ResponseError` trait to convert `ServiceError` into HTTP responses.
+- Provides detailed error messages and solutions for `JsonPayloadError` in `custom_json_error_handler`.
+- Maps database errors to appropriate `ServiceError` variants.
+
+## Logging
+- Logs errors to Sentry using `sentry::capture_message`.
+
+## Future Improvements
+- Implement more granular error handling for different `DBError` variants.
+- Consider adding more specific `ServiceError` variants for other common error scenarios.
+- Implement a more robust logging strategy, potentially including request context and user information.

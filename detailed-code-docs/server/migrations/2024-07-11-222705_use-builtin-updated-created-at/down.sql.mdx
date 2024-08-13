@@ -1,0 +1,79 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert changes made in a previous migration. It removes triggers and functions related to automatic timestamp updates, and then recreates the original triggers and functions for managing `updated_at` columns in various tables.
+
+## Table of contents
+- Drop triggers created by diesel_manage_updated_at
+- Drop functions created in the up migration
+- Create update_updated_at function
+- Create update_main_table_updated_at function
+- Create triggers for various tables
+
+## Code Structure
+The script is structured in three main parts:
+1. Dropping triggers and functions created in the previous migration
+2. Creating new functions for updating timestamps
+3. Creating triggers that use these new functions for various tables
+
+## Symbols
+
+### DROP TRIGGER statements
+#### Description
+These statements remove triggers created by the `diesel_manage_updated_at` function for various tables.
+
+#### Internal Logic
+Iterates through different tables, dropping the `set_updated_at` trigger if it exists.
+
+### DROP FUNCTION statements
+#### Description
+Removes the functions `diesel_manage_updated_at` and `diesel_set_updated_at` that were created in the previous migration.
+
+### update_updated_at() function
+#### Description
+A PostgreSQL function that updates the `updated_at` column of a row to the current timestamp.
+
+#### Inputs
+None explicitly defined, but implicitly uses the `NEW` record in the trigger context.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NEW | trigger | The modified row with updated `updated_at` timestamp |
+
+#### Internal Logic
+Sets the `updated_at` column of the `NEW` record to the current timestamp and returns the modified record.
+
+### update_main_table_updated_at() function
+#### Description
+A PostgreSQL function that updates the `updated_at` column of the `main_table` based on changes in related tables.
+
+#### Inputs
+None explicitly defined, but implicitly uses the `NEW` record in the trigger context.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NEW | trigger | The unmodified row from the triggering table |
+
+#### Internal Logic
+Updates the `updated_at` column of the `main_table` where the `id` matches the `collection_id` of the `NEW` record.
+
+### CREATE TRIGGER statements
+#### Description
+Creates triggers for various tables that call either `update_updated_at()` or `update_main_table_updated_at()` functions before updates.
+
+#### Internal Logic
+For each table, creates a trigger that fires before an update operation and executes the appropriate function.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| PostgreSQL | The database system for which this SQL script is written |
+
+## Future Improvements
+- Consider using a more dynamic approach to create triggers, possibly using a loop or a function to reduce repetition in the script.
+- Evaluate if all tables require the same timestamp update logic or if some tables need special handling.
+- Consider adding error handling or logging to track successful execution of each step in the migration rollback.

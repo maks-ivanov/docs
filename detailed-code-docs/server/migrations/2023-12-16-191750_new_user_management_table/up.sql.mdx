@@ -1,0 +1,49 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script creates a new `user_organizations` table to manage user-organization relationships and roles, removing the `organization_id` column from the `users` table. It establishes a many-to-many relationship between users and organizations.
+
+## Table of contents
+- Drop `organization_id` column from `users` table
+- Create `user_organizations` table
+- Add foreign key constraints to `user_organizations` table
+
+## Code Structure
+The script consists of three main SQL operations: altering the `users` table, creating a new `user_organizations` table, and adding foreign key constraints to the new table.
+
+## Symbols
+
+### ALTER TABLE users
+#### Description
+Removes the `organization_id` column from the `users` table if it exists.
+
+#### Internal Logic
+Uses the `DROP COLUMN IF EXISTS` clause to safely remove the column without causing an error if it doesn't exist.
+
+### CREATE TABLE user_organizations
+#### Description
+Creates a new table to manage the relationships between users and organizations, including role information.
+
+#### Internal Logic
+Defines the structure of the `user_organizations` table with the following columns:
+- `id`: UUID, primary key
+- `user_id`: UUID, not null
+- `organization_id`: UUID, not null
+- `role`: integer, not null
+- `created_at`: TIMESTAMP, not null
+- `updated_at`: TIMESTAMP, not null
+
+### ALTER TABLE user_organizations (Foreign Key Constraints)
+#### Description
+Adds foreign key constraints to the `user_organizations` table to ensure referential integrity.
+
+#### Internal Logic
+- Adds a foreign key constraint `fk_user_id` referencing the `id` column in the `users` table
+- Adds a foreign key constraint `fk_organization_id` referencing the `id` column in the `organizations` table
+
+## Future Improvements
+- Consider adding indexes on `user_id` and `organization_id` columns for improved query performance
+- Implement a check constraint or enum for the `role` column to ensure valid role values
+- Add a unique constraint on the combination of `user_id` and `organization_id` to prevent duplicate relationships

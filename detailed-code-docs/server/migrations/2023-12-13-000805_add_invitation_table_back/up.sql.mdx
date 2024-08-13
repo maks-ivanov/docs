@@ -1,0 +1,45 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script creates a new table named `invitations` in the database. The table is designed to store information about invitations sent to users for accessing specific datasets.
+
+## Table of contents
+- Table creation
+- Column definitions
+- Constraints
+
+## Symbols
+
+### `invitations` table
+#### Description
+The `invitations` table is created to store invitation records. Each record represents an invitation sent to a user's email address for accessing a specific dataset. The table includes fields for tracking the invitation's status, expiration, and timestamps.
+
+#### Internal Logic
+The table is created with the following columns and constraints:
+
+1. `id`: A unique identifier for each invitation.
+2. `email`: The email address of the invited user.
+3. `dataset_id`: The identifier of the dataset the user is invited to access.
+4. `used`: A boolean flag indicating whether the invitation has been used.
+5. `expires_at`: The timestamp when the invitation expires.
+6. `created_at`: The timestamp when the invitation was created.
+7. `updated_at`: The timestamp when the invitation was last updated.
+
+#### Performance Considerations
+The `id` column is set as the primary key, which automatically creates an index on this column. This ensures efficient lookups and joins based on the invitation ID.
+
+## Dependencies
+This migration script relies on the SQL database system supporting the following features:
+| Dependency | Purpose |
+|:-----------|:--------|
+| UUID data type | Used for `id` and `dataset_id` columns |
+| TIMESTAMP data type | Used for storing date and time information |
+| BOOLEAN data type | Used for the `used` column |
+
+## Future Improvements
+1. Consider adding an index on the `email` column if there will be frequent lookups based on email addresses.
+2. If the `dataset_id` is expected to be used in JOIN operations or WHERE clauses, consider adding an index on this column as well.
+3. Depending on the application's requirements, you might want to add a foreign key constraint on the `dataset_id` column to ensure referential integrity with a `datasets` table (if it exists).
+4. If there's a need to track who created the invitation, consider adding a `created_by` column with appropriate data type (e.g., UUID or INTEGER, depending on your user identification system).

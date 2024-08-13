@@ -1,0 +1,55 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying database tables related to card collections and metadata. The scripts add a new `dataset_id` column to relevant tables and establish foreign key constraints to link these tables to a `datasets` table. The directory includes both "up" and "down" migration scripts, allowing for the application and reversal of these database changes.
+
+## What does it do?
+These migration scripts perform the following actions:
+
+1. In the "up" migration:
+   - Add a new `dataset_id` column of type UUID to the `card_metadata` and `card_collection` tables.
+   - Establish foreign key constraints linking the new `dataset_id` columns to the `id` column in the `datasets` table.
+   - Drop an existing `dataset_id` column from the `card_collection_bookmarks` table to avoid conflicts.
+
+2. In the "down" migration:
+   - Remove the `dataset_id` column from both the `card_metadata` and `card_collection` tables, effectively reverting the changes made in the "up" migration.
+
+These changes allow for associating card metadata and collections with specific datasets, improving data organization and relationships within the database.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL statements to apply the new changes to the database schema.
+   - It adds the `dataset_id` column to `card_metadata` and `card_collection` tables.
+   - It establishes foreign key constraints to link these tables to the `datasets` table.
+   - It drops an existing `dataset_id` column from `card_collection_bookmarks` to avoid conflicts.
+
+2. `down.sql`: This file contains the SQL statements to revert the changes made by the `up.sql` script.
+   - It removes the `dataset_id` column from both `card_metadata` and `card_collection` tables.
+
+Both files use SQL `ALTER TABLE` statements to modify the existing table structures. The `up.sql` file also uses `ADD CONSTRAINT` to establish foreign key relationships.
+
+## Configuration
+The migration scripts use the following table names, which should be consistent with the existing database schema:
+
+- `card_metadata`
+- `card_collection`
+- `card_collection_bookmarks`
+- `datasets`
+
+The `dataset_id` column is configured as a UUID type and is set to `NOT NULL`, indicating that it is a required field.
+
+Here's an example of how the `dataset_id` column is added and constrained in the `up.sql` file:
+
+```sql
+ALTER TABLE card_metadata
+ADD COLUMN dataset_id UUID NOT NULL;
+
+ALTER TABLE card_metadata
+ADD CONSTRAINT card_metadata_dataset_id_fkey
+FOREIGN KEY (dataset_id)
+REFERENCES datasets(id);
+```
+
+These configuration details ensure that the new `dataset_id` column is properly integrated into the existing database structure and maintains referential integrity with the `datasets` table.

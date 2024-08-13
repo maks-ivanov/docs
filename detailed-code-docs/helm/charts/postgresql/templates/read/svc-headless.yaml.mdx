@@ -1,0 +1,62 @@
+---
+title: "svc-headless.yaml"
+---
+
+## High-level description
+This YAML file defines a headless Kubernetes Service for PostgreSQL read replicas in a Helm chart. It's designed to facilitate communication between PostgreSQL pods in a replication architecture.
+
+## Table of contents
+- Service metadata
+- Service specification
+- Port configuration
+- Selector
+
+## Code Structure
+The file defines a single Kubernetes Service resource with metadata and spec sections. It uses Helm templating to dynamically generate values and includes conditional logic based on the PostgreSQL architecture.
+
+## Symbols
+
+### Service Definition
+#### Description
+Defines a headless Kubernetes Service for PostgreSQL read replicas.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.architecture | string | PostgreSQL deployment architecture |
+| .Values.commonLabels | map | Common labels to apply to resources |
+| .Values.readReplicas.service.headless.annotations | map | Annotations for the headless service |
+| .Values.commonAnnotations | map | Common annotations to apply to resources |
+| .Values.readReplicas.podLabels | map | Labels for read replica pods |
+
+#### Outputs
+A Kubernetes Service resource YAML definition.
+
+#### Internal Logic
+1. Checks if the architecture is "replication"
+2. Sets the service name using a template function
+3. Applies labels and annotations
+4. Configures the service as headless (clusterIP: None)
+5. Sets up a port for PostgreSQL communication
+6. Configures the selector to match read replica pods
+
+## Side Effects
+This Service definition affects how Kubernetes discovers and routes traffic to PostgreSQL read replica pods.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper templates for labels, annotations, and value merging |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.architecture | string | N/A | Must be "replication" for this service to be created |
+| .Values.readReplicas.service.headless.annotations | map | {} | Custom annotations for the headless service |
+
+## Error Handling
+No explicit error handling. Relies on Helm's template rendering process.
+
+## Future Improvements
+- Consider adding support for multiple ports if needed in future PostgreSQL versions
+- Evaluate if the `service.alpha.kubernetes.io/tolerate-unready-endpoints` annotation is still necessary in newer Kubernetes versions and remove if obsolete

@@ -1,0 +1,59 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for managing database schema changes related to API key handling in a user authentication system. The migration introduces a new `user_api_key` table and modifies the existing `users` table, separating API key management from user data.
+
+## What does it do?
+The migration scripts perform the following actions:
+
+1. Create a new table called `user_api_key` to store API key information for users.
+2. Remove the `api_key_hash` column from the `users` table.
+3. Provide a way to revert these changes if needed.
+
+This separation of concerns allows for more flexible API key management, potentially supporting multiple API keys per user and improved security practices.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL commands to create the new `user_api_key` table and remove the `api_key_hash` column from the `users` table.
+
+2. `down.sql`: This file contains the SQL commands to revert the changes made by `up.sql`. It drops the `user_api_key` table and adds the `api_key_hash` column back to the `users` table.
+
+## Configuration
+The migration scripts use SQL commands specific to the database system in use. They rely on the following database features:
+
+- UUID generation: The `gen_random_uuid()` function is used to generate default values for the `id` column in the `user_api_key` table.
+- Timestamp functions: The `now()` function is used to set default values for `created_at` and `updated_at` columns.
+
+Here's a breakdown of the `user_api_key` table structure created by the `up.sql` script:
+
+```sql
+CREATE TABLE user_api_key (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    api_key_hash TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL DEFAULT 'default',
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+Key points about this table:
+- It uses UUIDs for the primary key and user reference.
+- The `api_key_hash` column stores hashed API keys and must be unique.
+- It includes a `name` field for labeling API keys, defaulting to 'default'.
+- Timestamps are automatically set for creation and updates.
+- There's a foreign key relationship with the `users` table, with cascading deletion.
+
+The `down.sql` script provides the following reversion commands:
+
+```sql
+DROP TABLE IF EXISTS user_api_key;
+ALTER TABLE users ADD COLUMN api_key_hash TEXT;
+```
+
+These commands ensure that the database can be reverted to its previous state if needed.
+
+It's important to note that these migration scripts do not handle data migration. If there was existing API key data in the `users` table, a separate data migration script would be necessary to transfer that data to the new `user_api_key` table before applying these schema changes in a production environment.

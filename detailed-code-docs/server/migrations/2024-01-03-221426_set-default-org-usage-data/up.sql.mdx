@@ -1,0 +1,54 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script defines a trigger and a helper function to automatically create a corresponding record in the `organization_usage_counts` table whenever a new organization is added to the `organizations` table. It also drops a unique constraint on the `name` column of the `organizations` table.
+
+## Table of contents
+- Function: `set_default_org_usage_data`
+- Trigger: `set_default_org_usage_data_trigger`
+- Alter table statement
+
+## Code Structure
+The `set_default_org_usage_data` function is called by the `set_default_org_usage_data_trigger` which is defined to fire after an insert on the `organizations` table.
+
+## Symbols
+
+### Symbol Name: `set_default_org_usage_data`
+#### Description
+This function inserts a new row into the `organization_usage_counts` table with the `org_id` set to the newly inserted organization's ID. If a record with the same `org_id` already exists, it does nothing.
+
+#### Inputs
+This function takes no explicit inputs. It accesses the newly inserted organization's ID using `NEW.id`.
+
+#### Outputs
+Returns the newly inserted organization record (`NEW`).
+
+#### Internal Logic
+1. Attempts to insert a new row into `organization_usage_counts` with the `org_id`.
+2. If a conflict occurs due to a unique constraint violation on `org_id`, it does nothing (`ON CONFLICT DO NOTHING`).
+3. Returns the newly inserted organization record.
+
+### Symbol Name: `set_default_org_usage_data_trigger`
+#### Description
+This trigger calls the `set_default_org_usage_data` function after a new row is inserted into the `organizations` table.
+
+#### Inputs
+This trigger implicitly receives the newly inserted row in the `organizations` table.
+
+#### Outputs
+This trigger does not explicitly return any value.
+
+#### Internal Logic
+1. Executes the `set_default_org_usage_data` function for each row inserted into the `organizations` table.
+
+### Symbol Name: `ALTER TABLE organizations DROP CONSTRAINT organizations_name_key`
+#### Description
+This statement drops the unique constraint named `organizations_name_key` from the `organizations` table. This likely means that the `name` column of the `organizations` table is no longer required to be unique.
+
+#### Inputs
+This statement does not take any inputs.
+
+#### Outputs
+This statement does not return any value.

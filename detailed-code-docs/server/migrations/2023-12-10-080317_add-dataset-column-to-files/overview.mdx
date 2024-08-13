@@ -1,0 +1,17 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts for adding a `dataset_id` column to the `files` table. The `up.sql` script applies the migration, while the `down.sql` script reverts it.
+
+## What does it do?
+The migration scripts establish a relationship between files and datasets in the database. 
+
+- **Adding the column:** The `up.sql` script adds a new column called `dataset_id` to the `files` table. This column stores a Universally Unique Identifier (UUID) that references the `id` column of a corresponding entry in the `datasets` table. This link effectively categorizes each file under a specific dataset.
+
+- **Enforcing data integrity:** A foreign key constraint is also added to ensure data integrity. This constraint prevents a file from being associated with a dataset that doesn't exist. It also dictates how the database should behave if a dataset is deleted - in this case, it's not specified, meaning the default behavior is likely to prevent deletion of a dataset if it has associated files.
+
+- **Reverting the changes:** The `down.sql` script does the opposite. It removes the `dataset_id` column from the `files` table, effectively removing the relationship between files and datasets. Any data previously stored in the `dataset_id` column is lost.
+
+These scripts are designed to be run sequentially by a database migration tool, which ensures that the database schema is updated correctly and consistently.

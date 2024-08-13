@@ -1,0 +1,59 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert the changes made in a previous migration that renamed various database entities from "card" to "chunk". It renames tables, columns, and related entities back to their original "card" naming convention.
+
+## Table of contents
+- Rename column in stripe_plans table
+- Rename cut_chunks table and its column
+- Rename chunk_metadata table and its column
+- Rename chunk_metadata_counts table
+- Rename chunk_files table and its column
+- Rename chunk_collisions table and its column
+- Rename chunk_collection_bookmarks table and its column
+- Rename chunk_collection table
+
+## Symbols
+
+### ALTER TABLE statements
+#### Description
+Each ALTER TABLE statement in this script is used to rename a table or a column within a table, reverting the changes made in a previous migration.
+
+#### Inputs
+N/A (SQL statements don't have traditional inputs)
+
+#### Outputs
+N/A (SQL statements don't have traditional outputs)
+
+#### Internal Logic
+1. For renaming columns:
+   ```sql
+   ALTER TABLE table_name
+   RENAME COLUMN new_column_name TO old_column_name;
+   ```
+2. For renaming tables:
+   ```sql
+   ALTER TABLE new_table_name
+   RENAME TO old_table_name;
+   ```
+
+## Side Effects
+- This script will modify the database schema, reverting table and column names from "chunk" to "card".
+- Any existing data in these tables will be preserved, but the structure will be renamed.
+- Applications or queries using the "chunk" naming convention will need to be updated to use the "card" naming convention after this migration is applied.
+
+## Dependencies
+This script doesn't explicitly depend on external libraries or modules. However, it assumes:
+1. The existence of a database management system that supports SQL ALTER TABLE statements.
+2. The presence of the tables and columns mentioned in the script within the target database.
+
+## Error Handling
+This script doesn't include explicit error handling. If a table or column doesn't exist, or if there are any issues with permissions or database connectivity, the database management system will likely raise an error and stop execution.
+
+## Future Improvements
+- Add error handling or checks to ensure tables and columns exist before attempting to rename them.
+- Consider using transactions to ensure all changes are applied atomically.
+- Add comments explaining the reason for each rename operation for better maintainability.
+- Consider creating a separate function or procedure for each table rename operation to improve modularity.

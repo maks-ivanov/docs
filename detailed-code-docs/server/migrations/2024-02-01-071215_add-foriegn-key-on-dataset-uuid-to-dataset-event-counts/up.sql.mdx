@@ -1,0 +1,50 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a foreign key constraint, a unique constraint, and a NOT NULL constraint to the `dataset_event_counts` table, establishing a relationship with the `datasets` table and ensuring data integrity.
+
+## Table of contents
+- Add foreign key constraint
+- Add unique constraint
+- Set NOT NULL constraint
+
+## Code Structure
+The script consists of three ALTER TABLE statements, each modifying the `dataset_event_counts` table to enhance its relationship with the `datasets` table.
+
+## Symbols
+
+### ALTER TABLE dataset_event_counts (Foreign Key)
+#### Description
+This statement adds a foreign key constraint to the `dataset_event_counts` table, linking the `dataset_uuid` column to the `id` column in the `datasets` table.
+
+#### Internal Logic
+- Creates a foreign key named `dataset_event_counts_dataset_uuid_fkey`
+- References the `id` column in the `datasets` table
+- Specifies CASCADE behavior for both UPDATE and DELETE operations
+
+### ALTER TABLE dataset_event_counts (Unique Constraint)
+#### Description
+This statement adds a unique constraint to the `dataset_uuid` column in the `dataset_event_counts` table.
+
+#### Internal Logic
+- Creates a unique constraint named `dataset_event_counts_dataset_uuid_unique`
+- Ensures that each value in the `dataset_uuid` column is unique across the table
+
+### ALTER TABLE dataset_event_counts (NOT NULL Constraint)
+#### Description
+This statement modifies the `dataset_uuid` column to disallow NULL values.
+
+#### Internal Logic
+- Alters the `dataset_uuid` column
+- Sets the NOT NULL constraint, ensuring that every row must have a value for this column
+
+## Side Effects
+- Enforces referential integrity between `dataset_event_counts` and `datasets` tables
+- Prevents duplicate `dataset_uuid` values in the `dataset_event_counts` table
+- Ensures that every row in `dataset_event_counts` has a non-null `dataset_uuid` value
+
+## Future Improvements
+- Consider adding an index on the `dataset_uuid` column if it's frequently used in queries, to improve query performance
+- If there's a possibility of existing NULL values in the `dataset_uuid` column, a data cleanup step might be necessary before applying the NOT NULL constraint

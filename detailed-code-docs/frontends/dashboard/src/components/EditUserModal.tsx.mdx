@@ -1,0 +1,75 @@
+---
+title: "EditUserModal.tsx"
+---
+
+## High-level description
+The `EditUserModal` component displays a modal dialog for editing the role of a user within an organization. It allows users with sufficient permissions to change the role of another user to Owner, Admin, or User, up to their own role level.
+
+## Table of contents
+- Imports
+- Interface definitions
+- Component definition
+  - API host constant
+  - Context and signal initialization
+  - Effects for role initialization and data fetching
+  - Memo for determining current and editing user roles
+  - `inviteUser` function for updating user role
+  - JSX for rendering the modal dialog
+
+## References
+- `UserContext` from `../contexts/UserContext`
+- `SlimUser`, `UserRole`, `fromI32ToUserRole`, `fromUserRoleToI32`, `stringToUserRole`, `DefaultError` from `shared/types`
+- `createToast` from `./ShowToasts`
+
+## Symbols
+
+### `EditUserModal`
+#### Description
+This component renders a modal dialog that allows editing the role of a user within an organization. It fetches the current user's role and the role of the user being edited, and allows the user to select a new role from a dropdown. The component also handles submitting the role change to the backend and displays toasts for success or error messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editingUser | SlimUser \| null | The user whose role is being edited. |
+| closeModal | () =&gt; void | A function to close the modal dialog. |
+
+#### Outputs
+This component doesn't return any values directly.
+
+#### Internal Logic
+1. **Initialization:**
+   - Retrieves the API host from environment variables.
+   - Accesses the `UserContext` to get user and organization information.
+   - Initializes signals for the selected role and modal visibility.
+2. **Role Initialization:**
+   - Uses an effect to set the initial role based on the `editingUser` prop.
+3. **Role Determination:**
+   - Uses memos to determine the current user's role and the role of the user being edited within the selected organization.
+4. **`inviteUser` Function:**
+   - Defines an asynchronous function that sends a PUT request to the backend API to update the user's role.
+   - Handles the response by either closing the modal on success or displaying an error toast.
+5. **JSX Rendering:**
+   - Conditionally renders the modal dialog based on the presence of `editingUser`.
+   - Displays the user's name and current role.
+   - Provides a dropdown to select the new role, limiting options based on the current user's role.
+   - Includes buttons for canceling the operation and submitting the role change.
+
+## Side Effects
+- Modifies the user's role within the application state and persists the change to the backend database.
+- Displays success or error toasts to the user based on the outcome of the API request.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Core library for building the component and managing reactivity. |
+| terracotta | UI library for rendering the modal dialog and its components. |
+| shared/types | Provides type definitions for user and organization data. |
+
+## Error Handling
+- Uses a `try...catch` block within the `inviteUser` function to handle potential errors during the API request.
+- Displays an error toast to the user if the API request fails, providing the error message from the backend.
+
+## Future Improvements
+- Implement more robust error handling, potentially displaying different error messages based on the specific error code returned by the backend.
+- Consider adding a loading indicator while the API request is in progress to improve user experience.
+- Add input validation to prevent users from selecting a role higher than their own.

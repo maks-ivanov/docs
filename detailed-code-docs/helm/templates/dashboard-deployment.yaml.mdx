@@ -1,0 +1,58 @@
+---
+title: "dashboard-deployment.yaml"
+---
+
+## High-level description
+This Kubernetes Deployment manifest defines the configuration for deploying a dashboard application in a Kubernetes cluster. It specifies the container image, environment variables, and labels for the dashboard component of the Trieve application.
+
+## Table of contents
+- Metadata
+- Deployment Specification
+- Pod Template
+- Container Specification
+- Environment Variables
+
+## Code Structure
+The YAML file defines a single Kubernetes Deployment resource with nested specifications for the pod template and container.
+
+## Symbols
+
+### Deployment
+#### Description
+Defines a Kubernetes Deployment for the dashboard application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Release.Name | String | Helm release name, used in labels |
+| .Values.environment | String | Deployment environment (e.g., "local" or "aws") |
+| .Values.containers.dashboard.tag | String | Docker image tag for the dashboard container |
+| .Values.config.vite.apiHost | String | API host URL for the Vite configuration |
+| .Values.config.vite.searchUiUrl | String | Search UI URL for the Vite configuration |
+| .Values.config.vite.chatUiUrl | String | Chat UI URL for the Vite configuration |
+| .Values.config.vite.analyticsUiUrl | String | Analytics UI URL for the Vite configuration |
+
+#### Internal Logic
+1. Sets up metadata with name and labels
+2. Defines selector for matching pods
+3. Specifies pod template with labels
+4. Configures container with image, port, and environment variables
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Kubernetes | For deploying and managing the application |
+| Helm | For templating and value injection |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| app.kubernetes.io/name | String | "dashboard" | Label for identifying the application |
+| app.kubernetes.io/instance | String | {{ .Release.Name }} | Label for identifying the Helm release instance |
+
+## Future Improvements
+1. Consider adding resource limits and requests for the container to ensure proper resource allocation.
+2. Implement health checks (readiness and liveness probes) for the dashboard container to improve reliability.
+3. Add support for configurable replicas to allow easy scaling of the dashboard deployment.
+4. Consider using Kubernetes Secrets for sensitive environment variables instead of plain text values.
+5. Implement a strategy for rolling updates to minimize downtime during deployments.

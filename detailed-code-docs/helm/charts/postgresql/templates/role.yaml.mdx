@@ -1,0 +1,80 @@
+---
+title: "role.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes Role resource for PostgreSQL, which is used to manage permissions within a specific namespace. It's part of a Helm chart and includes conditional logic to create the role based on configuration values.
+
+## Table of contents
+- Role definition
+- Metadata
+- Rules
+
+## Code Structure
+The file uses Helm templating to dynamically generate a Kubernetes Role based on various configuration values. It includes common labels and annotations, and defines rules for the role, including optional Pod Security Policy (PSP) rules and custom rules defined in the values.
+
+## Symbols
+
+### Role Definition
+#### Description
+Defines a Kubernetes Role resource with conditional creation based on `.Values.rbac.create`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.rbac.create | boolean | Determines whether to create the role |
+
+#### Internal Logic
+- Checks if `.Values.rbac.create` is true before defining the role
+- Uses `common.capabilities.rbac.apiVersion` to determine the API version
+
+### Metadata
+#### Description
+Defines the metadata for the Role, including name, namespace, labels, and annotations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Release.Namespace | string | Namespace where the role will be created |
+| .Values.commonLabels | object | Custom labels to be applied |
+| .Values.commonAnnotations | object | Custom annotations to be applied |
+
+#### Internal Logic
+- Uses `common.names.fullname` to generate the role name
+- Applies standard labels using `common.labels.standard`
+- Conditionally adds annotations if `.Values.commonAnnotations` is defined
+
+### Rules
+#### Description
+Defines the permissions granted by the Role, including optional PSP rules and custom rules.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.psp.create | boolean | Determines whether to include PSP rules |
+| .Values.rbac.rules | array | Custom rules to be included in the role |
+
+#### Internal Logic
+- Conditionally includes PSP rules if PSP is supported and `.Values.psp.create` is true
+- Adds custom rules from `.Values.rbac.rules` if defined
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.capabilities.rbac.apiVersion | Determines the RBAC API version |
+| common.names.fullname | Generates the full name for resources |
+| common.labels.standard | Applies standard labels |
+| common.tplvalues.render | Renders template values |
+| common.capabilities.psp.supported | Checks if PSP is supported |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| rbac.create | boolean | - | Determines whether to create the role |
+| psp.create | boolean | - | Determines whether to include PSP rules |
+| rbac.rules | array | - | Custom rules to be included in the role |
+
+## Future Improvements
+- Consider adding support for ClusterRole in addition to Role
+- Implement more granular control over PSP rules
+- Add validation for custom rules to ensure they follow Kubernetes RBAC best practices

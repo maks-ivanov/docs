@@ -1,0 +1,40 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration files for a fix related to notification counts. It includes an `up.sql` file to apply the fix and a `down.sql` file to revert it.
+
+## What does it do?
+The `up.sql` file defines a PostgreSQL function called `update_notification_count()`. This function automatically manages the count of unread notifications for each user. When a new notification is added for a user, this function increases their notification count. When a notification is deleted, the function decreases the count. This ensures that the notification count displayed to users is always accurate.
+
+The `down.sql` file is intended to undo the changes made by `up.sql`, but it is currently empty and needs to be implemented.
+
+## Key Files
+### up.sql
+This file contains the SQL code for creating the `update_notification_count()` function. This function is the core of the notification count fix.
+
+```sql
+CREATE OR REPLACE FUNCTION update_notification_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+    -- Increment notification count for new notifications
+    INSERT INTO user_notification_counts (user_id, notification_count)
+    VALUES (NEW.user_id, 1)
+    ON CONFLICT (user_id) DO UPDATE
+    SET notification_count = user_notification_counts.notification_count + 1;
+  ELSIF (TG_OP = 'DELETE') THEN
+    -- Decrement notification count for deleted notifications
+    UPDATE user_notification_counts
+    SET notification_count = notification_count - 1
+    WHERE user_id = OLD.user_id;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### down.sql
+This file is intended to revert the changes made by `up.sql`. It should drop the `update_notification_count()` function. However, it is currently empty and needs to be implemented with the appropriate SQL command.

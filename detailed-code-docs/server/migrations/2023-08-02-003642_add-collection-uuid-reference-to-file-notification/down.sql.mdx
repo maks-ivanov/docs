@@ -1,0 +1,67 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to undo the changes made in the corresponding `up.sql` file. It removes a foreign key constraint from the `file_upload_completed_notifications` table, effectively reverting it to its original state without the reference to the `collections` table.
+
+## Table of contents
+- Create temporary table
+- Copy data to temporary table
+- Drop original table
+- Recreate original table without foreign key
+- Copy data back to original table
+- Drop temporary table
+
+## Code Structure
+The script follows a step-by-step process to safely remove the foreign key constraint while preserving the existing data:
+1. Create a temporary table
+2. Copy data to the temporary table
+3. Drop the original table
+4. Recreate the original table without the foreign key constraint
+5. Copy data back to the new original table
+6. Drop the temporary table
+
+## Symbols
+
+### `file_upload_completed_notifications_temp` table
+#### Description
+A temporary table created to hold the data from the original `file_upload_completed_notifications` table while structural changes are made.
+
+#### Columns
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key |
+| user_uuid | UUID | User identifier |
+| collection_uuid | UUID | Collection identifier |
+| user_read | boolean | Flag indicating if the user has read the notification |
+| created_at | TIMESTAMP | Timestamp of creation |
+| updated_at | TIMESTAMP | Timestamp of last update |
+
+### `file_upload_completed_notifications` table
+#### Description
+The main table for storing file upload completed notifications. This script removes the foreign key constraint on the `collection_uuid` column.
+
+#### Columns
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key |
+| user_uuid | UUID | User identifier |
+| collection_uuid | UUID | Collection identifier (foreign key constraint removed) |
+| user_read | boolean | Flag indicating if the user has read the notification |
+| created_at | TIMESTAMP | Timestamp of creation |
+| updated_at | TIMESTAMP | Timestamp of last update |
+
+## Side Effects
+- Temporarily duplicates data in the `file_upload_completed_notifications_temp` table
+- Drops and recreates the `file_upload_completed_notifications` table
+- Removes the foreign key constraint on the `collection_uuid` column
+
+## Performance Considerations
+- This migration may take longer to execute on tables with a large number of rows due to the data copying process.
+- The table will be locked during the migration, which may affect concurrent operations on the `file_upload_completed_notifications` table.
+
+## Future Improvements
+- Consider using a more efficient method for altering the table structure if supported by the database system, such as `ALTER TABLE ... DROP CONSTRAINT` if available.
+- Implement a rollback mechanism in case the migration fails midway through the process.
+- Add error handling and logging to track the progress of the migration and capture any issues that may occur during execution.

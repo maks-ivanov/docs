@@ -1,0 +1,153 @@
+---
+title: "parse_operator.rs"
+---
+
+## High-level description
+This code defines functions for parsing and processing text data, including converting HTML to text, chunking documents, and averaging embedding vectors. It also includes a test module for verifying the functionality of the `average_embeddings` function.
+
+## Table of contents
+- `convert_html_to_text`
+- `coarse_remove_large_chunks`
+- `build_chunking_regex`
+- `coarse_doc_chunker`
+- `average_embeddings`
+- `test` module
+
+## References
+- `ndarray` crate for array manipulation
+- `regex` and `regex_split` crates for regular expression operations
+- `scraper` crate for HTML parsing
+- `crate::errors::ServiceError` for error handling
+
+## Symbols
+### `convert_html_to_text`
+#### Description
+This function takes an HTML string as input and returns a plain text string by extracting the text content from the HTML.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | &str | The HTML string to convert to text |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | String | The extracted plain text string |
+
+#### Internal Logic
+- Parses the HTML string using the `scraper` crate.
+- Extracts the text content from the root element of the parsed HTML.
+- Returns the collected text as a string.
+
+### `coarse_remove_large_chunks`
+#### Description
+This function takes a vector of strings (chunks) as input and splits any chunks larger than 10,000 characters into smaller chunks, ensuring that no chunk exceeds the maximum length.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cur_chunks | Vec&lt;String&gt; | The vector of string chunks to process |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| new_chunks | Vec&lt;String&gt; | The vector of string chunks after splitting large chunks |
+
+#### Internal Logic
+- Iterates through the input chunks.
+- If a chunk is smaller than 10,000 characters, it is added to the output vector directly.
+- If a chunk is larger than 10,000 characters, it is split into smaller chunks of approximately equal size, ensuring that each new chunk respects character boundaries.
+- The output vector is filtered to remove any empty chunks.
+
+### `build_chunking_regex`
+#### Description
+This function takes a vector of delimiter strings as input and constructs a regular expression that matches any of the delimiters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| delimiters | Vec&lt;String&gt; | The vector of delimiter strings |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| re | Result&lt;Regex, regex::Error&gt; | The constructed regular expression or an error if the regex is invalid |
+
+#### Internal Logic
+- Escapes each delimiter string for use in a regular expression.
+- Joins the escaped delimiters with the "|" (OR) operator to create a regex pattern.
+- Compiles the regex pattern using the `regex` crate.
+
+### `coarse_doc_chunker`
+#### Description
+This function takes a document string, an optional regular expression for splitting, a boolean flag for rebalancing chunks, and a target number of splits per chunk as input. It chunks the document into smaller strings based on the provided parameters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| document | String | The document string to chunk |
+| split_pattern | Option&lt;Regex&gt; | An optional regular expression for splitting the document |
+| rebalance_chunks | bool | A flag indicating whether to rebalance chunks to distribute the remainder of splits evenly |
+| target_splits_per_chunk | usize | The target number of splits per chunk |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| groups | Vec&lt;String&gt; | The vector of string chunks after chunking the document |
+
+#### Internal Logic
+- Replaces newline characters in the document with spaces.
+- Parses the document as HTML using the `scraper` crate and extracts the text content.
+- If no split pattern is provided, uses a default regex to split on sentence boundaries.
+- Splits the document into substrings based on the split pattern.
+- If the number of splits is less than the target splits per chunk, returns the entire document as a single chunk.
+- If rebalancing is enabled, distributes the remainder of splits evenly across the chunks.
+- Groups the splits into chunks based on the target splits per chunk.
+- Splits any large chunks into smaller chunks using `coarse_remove_large_chunks`.
+
+### `average_embeddings`
+#### Description
+This function takes a vector of embedding vectors as input and returns the average embedding vector.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| embeddings | Vec&lt;Vec&lt;f32&gt;&gt; | The vector of embedding vectors to average |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| average_embedding | Result&lt;Vec&lt;f32&gt;, ServiceError&gt; | The average embedding vector or an error if no embeddings are provided |
+
+#### Internal Logic
+- Checks if any embeddings are provided, returning an error if not.
+- Creates an `ndarray::Array2` from the input embeddings.
+- Calculates the sum of the embeddings along the first axis (rows).
+- Divides the sum by the number of embeddings to get the average.
+- Returns the average embedding vector as a `Vec&lt;f32&gt;`.
+
+### `test` module
+#### Description
+This module contains a test function for verifying the functionality of the `average_embeddings` function.
+
+#### `test_average_embeddings`
+##### Description
+This test function creates a set of embedding vectors and calls the `average_embeddings` function to calculate the average. It then asserts that the calculated average matches the expected average.
+
+## Side Effects
+- `coarse_remove_large_chunks` modifies the input vector of chunks in place.
+
+## Dependencies
+- `ndarray`
+- `regex`
+- `regex_split`
+- `scraper`
+
+## Error Handling
+- `average_embeddings` returns a `ServiceError::BadRequest` if no embeddings are provided.
+- `build_chunking_regex` returns a `regex::Error` if the regex pattern is invalid.
+
+## Future Improvements
+- The `coarse_doc_chunker` function could be improved by using a more sophisticated chunking algorithm that takes into account the semantic content of the document.
+- The `average_embeddings` function could be optimized for performance by using a more efficient averaging algorithm.
+- The test module could be expanded to include more comprehensive tests for all functions in the module.

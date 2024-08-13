@@ -1,0 +1,62 @@
+---
+title: "TinyEditor.tsx"
+---
+
+## High-level description
+The `TinyEditor` component is a wrapper around TinyMCE, a rich text editor, providing a user interface for creating and editing HTML content. It allows for customization of appearance, functionality, and behavior through various options.
+
+## Table of contents
+- Imports
+- Interface `TinyEditorProps`
+- Component `TinyEditor`
+
+## References
+- `tinymce` (external library)
+
+## Symbols
+
+### Symbol Name: `TinyEditorProps`
+#### Description
+Defines the properties that can be passed to the `TinyEditor` component.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| htmlValue | string \| undefined | Initial HTML content of the editor. |
+| onHtmlChange | (value: string) =&gt; void \| undefined | Callback function triggered when the HTML content changes. |
+| onTextChange | (value: string) =&gt; void \| undefined | Callback function triggered when the plain text content changes. |
+
+### Symbol Name: `TinyEditor`
+#### Description
+A SolidJS component that renders a TinyMCE editor instance. It initializes the editor with specified options and handles content updates.
+
+#### Inputs
+See `TinyEditorProps`.
+
+#### Outputs
+Renders a `&lt;textarea&gt;` element that serves as the container for the TinyMCE editor.
+
+#### Internal Logic
+1. **Initialization:**
+   - An asynchronous `initEditor` function is called when the component mounts.
+   - It configures TinyMCE with options like plugins, appearance (skin, theme), toolbar buttons, and custom shortcuts.
+   - It sets up event listeners for content changes (`change` and `keyup`) to trigger the provided callback functions (`onHtmlChange`, `onTextChange`).
+   - It attempts to initialize TinyMCE and sets the initial content if `htmlValue` is provided.
+2. **Content Updates:**
+   - Event listeners trigger the respective callback functions, passing the current HTML or text content.
+3. **Cleanup:**
+   - A `destroyEditor` function is called when the component unmounts.
+   - It removes the TinyMCE editor instance to prevent memory leaks.
+
+## Side Effects
+- Modifies the DOM by creating and removing a TinyMCE editor instance within the provided `&lt;textarea&gt;` element.
+- Interacts with the `window` object to access the `tinymce` global variable.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| tinymce | Provides the rich text editing functionality. |
+
+## Error Handling
+- The `initEditor` function includes a `try...catch` block to handle potential errors during TinyMCE initialization.
+- Errors are logged to the console.

@@ -1,0 +1,52 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file adds new indexes to the `chunk_metadata` table and removes an existing index from the `card_metadata` table. The changes are designed to optimize query performance for specific columns.
+
+## Table of contents
+- Create index on `dataset_id` in `chunk_metadata` table
+- Create index on `created_at` in `chunk_metadata` table
+- Create index on `time_stamp` in `chunk_metadata` table
+- Drop index on `qdrant_point_id` in `card_metadata` table
+
+## Symbols
+
+### CREATE INDEX idx_chunk_metadata_dataset_id
+#### Description
+Creates a new index named `idx_chunk_metadata_dataset_id` on the `dataset_id` column of the `chunk_metadata` table.
+
+#### Internal Logic
+This index will improve query performance for operations that filter or sort by `dataset_id` in the `chunk_metadata` table.
+
+### CREATE INDEX idx_chunk_metadata_created_at
+#### Description
+Creates a new index named `idx_chunk_metadata_created_at` on the `created_at` column of the `chunk_metadata` table.
+
+#### Internal Logic
+This index will enhance query performance for operations that involve filtering or sorting by `created_at` in the `chunk_metadata` table.
+
+### CREATE INDEX idx_chunk_metadata_time_stamp
+#### Description
+Creates a new index named `idx_chunk_metadata_time_stamp` on the `time_stamp` column of the `chunk_metadata` table.
+
+#### Internal Logic
+This index will optimize query performance for operations that filter or sort by `time_stamp` in the `chunk_metadata` table.
+
+### DROP INDEX idx_card_metadata_qdrant_point_id
+#### Description
+Removes the existing index named `idx_card_metadata_qdrant_point_id` from the `card_metadata` table.
+
+#### Internal Logic
+This operation removes an index that is no longer needed or may be causing performance issues.
+
+## Performance Considerations
+1. The new indexes on `chunk_metadata` will improve query performance for operations involving `dataset_id`, `created_at`, and `time_stamp` columns.
+2. The removal of the `idx_card_metadata_qdrant_point_id` index may slightly decrease performance for queries that were using this index but will reduce the overhead of maintaining the index.
+3. Adding indexes can slightly slow down write operations (INSERT, UPDATE, DELETE) on the `chunk_metadata` table, as the indexes need to be updated along with the table data.
+
+## Future Improvements
+1. Monitor the performance impact of the new indexes and adjust if necessary.
+2. Consider adding composite indexes if queries frequently filter on combinations of these columns.
+3. Evaluate the need for the removed `idx_card_metadata_qdrant_point_id` index and consider recreating it if query performance degrades significantly for operations involving the `qdrant_point_id` column in the `card_metadata` table.

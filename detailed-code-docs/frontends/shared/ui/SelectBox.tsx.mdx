@@ -1,0 +1,69 @@
+---
+title: "SelectBox.tsx"
+---
+
+## High-level description
+The code defines a reusable `Select` component in TypeScript using the SolidJS library. It provides a dropdown menu with search functionality for selecting an option from a list. The component is designed to be customizable, allowing users to define the appearance, options, and behavior of the select box.
+
+## Table of contents
+- `Select` component
+
+## Symbols
+
+### Symbol Name: `Select`
+#### Description
+This component renders a customizable select box with search functionality. It allows users to select a single option from a provided list. The component uses the `Listbox` component from the `terracotta` library for the dropdown functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| options | `T[]` | An array of options to display in the select box. |
+| display | `(option: T) =&gt; string` | A function that takes an option as input and returns a string to display for that option. |
+| selected | `T` | The currently selected option. |
+| onSelected | `(option: T) =&gt; void` | A callback function that is called when the user selects an option. |
+| class? | `string` | Optional CSS class names to apply to the select box container. |
+| label? | `JSX.Element` | Optional label to display above the select box. |
+| id? | `string` | Optional ID for the search input field. |
+
+#### Outputs
+This component renders a select box element and does not return any direct output.
+
+#### Internal Logic
+1. **State Management:**
+   - `open`: A signal that controls the visibility of the dropdown menu.
+   - `searchTerm`: A signal that stores the current search term entered by the user.
+   - `searchResults`: A signal that stores the filtered list of options based on the search term.
+
+2. **Search Functionality:**
+   - When the `searchTerm` changes, the component uses the `@nozbe/microfuzz` library to perform fuzzy search on the `options` array based on the `display` function.
+   - The `searchResults` signal is updated with the filtered results.
+
+3. **Dropdown Menu:**
+   - The component uses the `Listbox` component from the `terracotta` library to render the dropdown menu.
+   - The `ListboxButton` component is used to toggle the visibility of the dropdown.
+   - The `ListboxOptions` component renders the list of options.
+   - The `ListboxOption` component renders each individual option.
+
+4. **Option Selection:**
+   - When the user selects an option, the `onSelected` callback function is called with the selected option.
+   - The dropdown menu is closed.
+
+#### Side Effects
+- The component focuses the search input field after a short delay when the dropdown menu is opened. This is done to improve the user experience by automatically focusing the input field for quick searching.
+
+#### Performance Considerations
+- The component uses the `unmount={false}` prop for the `ListboxOptions` component to prevent the options from being unmounted and remounted every time the dropdown menu is opened and closed. This can improve performance, especially for large lists of options.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Used for creating interactive UI components and managing state. |
+| terracotta | Provides UI components like `Listbox`, `ListboxButton`, `ListboxOptions`, and `ListboxOption` for building the dropdown menu. |
+| @nozbe/microfuzz | Used for fuzzy search functionality. |
+| solid-icons/fa | Provides the `FaSolidCheck` icon for indicating selected options. |
+| solid-icons/tb | Provides the `TbSelector` icon for the dropdown button. |
+
+## Future Improvements
+- Implement keyboard navigation for the dropdown menu to improve accessibility.
+- Add support for multiple selection.
+- Allow customization of the search algorithm and filtering logic.

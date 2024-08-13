@@ -1,0 +1,66 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for implementing and managing a user collection count system in a database. The migration introduces a new table, a trigger function, and a trigger to automatically track and update the number of collections each user has.
+
+## What does it do?
+The migration scripts perform the following tasks:
+
+1. Create a new table called `user_collection_counts` to store the count of collections for each user.
+2. Implement a trigger function `update_collection_counts()` that automatically updates the collection counts when changes occur in the `card_collection` table.
+3. Set up a trigger `update_collection_counts_trigger` on the `card_collection` table to execute the update function after INSERT, UPDATE, or DELETE operations.
+4. Initialize the `user_collection_counts` table with data from existing `card_collection` records.
+5. Provide a way to revert these changes if needed.
+
+This system allows for efficient tracking of how many collections each user has without the need for expensive COUNT queries every time this information is needed.
+
+## Key Files
+
+### up.sql
+This file contains the SQL commands to implement the user collection count system. It performs the following actions:
+
+1. Drops any existing objects with the same names to ensure a clean slate.
+2. Creates the `user_collection_counts` table with columns for `id`, `user_id`, and `collection_count`.
+3. Implements the `update_collection_counts()` function using PL/pgSQL. This function handles the logic for updating the counts based on changes in the `card_collection` table.
+4. Creates the `update_collection_counts_trigger` on the `card_collection` table.
+5. Initializes the `user_collection_counts` table with data from existing `card_collection` records.
+
+Here's a snippet of the `update_collection_counts()` function:
+
+```sql
+CREATE OR REPLACE FUNCTION update_collection_counts() RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
+        INSERT INTO user_collection_counts (user_id, collection_count)
+        VALUES (NEW.user_id, 1)
+        ON CONFLICT (user_id) DO UPDATE SET collection_count = user_collection_counts.collection_count + 1;
+    ELSIF (TG_OP = 'DELETE') THEN
+        UPDATE user_collection_counts
+        SET collection_count = collection_count - 1
+        WHERE user_id = OLD.user_id;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### down.sql
+This file contains the SQL commands to revert the changes made by the `up.sql` script. It performs the following actions:
+
+1. Drops the `update_collection_counts_trigger` from the `card_collection` table.
+2. Drops the `update_collection_counts()` function.
+3. Drops the `user_collection_counts` table.
+
+## Performance Considerations
+The implementation uses a trigger that operates on each row, which could impact performance for bulk operations on the `card_collection` table. Additionally, the initial data insertion in `up.sql` uses a subquery, which might be slow for large datasets.
+
+## Future Improvements
+1. Implement error handling within the `update_collection_counts()` function to manage potential issues like negative counts.
+2. Optimize the initial data insertion for large datasets using batch processing or a more efficient query structure.
+3. Implement a mechanism to periodically verify and correct the counts in case of any discrepancies that might occur due to concurrent operations or system failures.
+4. Add comments to the SQL scripts to explain the purpose of each operation for better maintainability.
+5. Consider adding a data export step before dropping the table in the `down.sql` script if there's a need to preserve data during rollback.
+
+By implementing this user collection count system, the database can efficiently track and update the number of collections each user has, providing quick access to this information without the need for expensive queries each time it's required.

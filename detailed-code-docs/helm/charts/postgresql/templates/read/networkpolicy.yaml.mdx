@@ -1,0 +1,59 @@
+---
+title: "networkpolicy.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes NetworkPolicy for PostgreSQL read replicas in a Helm chart. It configures ingress and egress rules for the read replica pods, controlling network access to and from these pods.
+
+## Table of contents
+- NetworkPolicy definition
+- Metadata
+- Spec
+  - Pod selector
+  - Policy types
+  - Egress rules
+  - Ingress rules
+
+## Code Structure
+The main structure is a Kubernetes NetworkPolicy resource. It uses various Helm template functions and conditionals to dynamically generate the policy based on the chart's values.
+
+## Symbols
+
+### NetworkPolicy
+#### Description
+Defines a Kubernetes NetworkPolicy resource for PostgreSQL read replicas.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Helm values for the chart |
+
+#### Internal Logic
+1. Checks if architecture is "replication" and if network policy is enabled for read replicas.
+2. Sets metadata including name, namespace, labels, and annotations.
+3. Defines pod selector for the policy.
+4. Specifies policy types (Ingress and Egress).
+5. Configures egress rules, including DNS resolution and connection to primary.
+6. Sets up ingress rules for PostgreSQL and metrics ports.
+7. Optionally adds extra ingress and egress rules based on chart values.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper templates for labels, capabilities, and value rendering |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.architecture | String | N/A | Must be "replication" for this policy to apply |
+| .Values.readReplicas.networkPolicy.enabled | Boolean | N/A | Enables the network policy |
+| .Values.readReplicas.networkPolicy.allowExternalEgress | Boolean | N/A | Allows all egress traffic if true |
+| .Values.readReplicas.networkPolicy.allowExternal | Boolean | N/A | Allows all ingress traffic if true |
+| .Values.containerPorts.postgresql | Number | N/A | PostgreSQL port number |
+| .Values.metrics.enabled | Boolean | N/A | Enables metrics port in ingress rules if true |
+| .Values.metrics.containerPorts.metrics | Number | N/A | Metrics port number |
+
+## Future Improvements
+1. Consider adding support for custom port configurations in egress and ingress rules.
+2. Implement more granular control over DNS resolution ports in egress rules.
+3. Add option to specify custom policy types instead of always using both Ingress and Egress.

@@ -1,0 +1,42 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory provides the Kubernetes YAML templates for deploying the Qdrant vector database using Helm. It includes templates for deploying the Qdrant StatefulSet, Services (headless and standard), Ingress, PodDisruptionBudget, ServiceAccount, ServiceMonitor, ConfigMaps, and a test suite.
+
+## What does it do?
+This code defines the desired state of Qdrant within a Kubernetes cluster. It specifies how the Qdrant application should be deployed, scaled, accessed, and monitored. The templates use Helm's templating language to allow for customization and configuration during deployment.
+
+## Entry points
+The primary entry point for a developer is the `statefulset.yaml` file, which defines the Qdrant StatefulSet. This file orchestrates the deployment of Qdrant pods, configures containers, volumes, and networking.
+
+The `values.yaml` file (not shown in the provided summaries) serves as the central configuration point for the Helm chart. Developers can modify this file to customize various aspects of the Qdrant deployment, such as the number of replicas, resource limits, storage configuration, and more.
+
+## Key Files
+### helm/charts/qdrant/templates/configmap.yaml
+This file defines a ConfigMap that holds the Qdrant configuration and an initialization script. The script is used to initialize Qdrant pods based on their role in the cluster, handling scenarios like snapshot restoration and multi-pod setups.
+
+### helm/charts/qdrant/templates/ingress.yaml
+This template defines an Ingress resource for exposing Qdrant to external traffic. It configures routing rules, TLS settings, and other Ingress-specific options based on the provided Helm values.
+
+### helm/charts/qdrant/templates/pdb.yaml
+This file defines a PodDisruptionBudget to ensure the availability of Qdrant pods during voluntary disruptions like node drains or upgrades. It allows specifying the minimum number of pods that must remain available during such events.
+
+### helm/charts/qdrant/templates/secret.yaml
+This template defines a Secret resource for storing sensitive information, such as API keys used by Qdrant. It conditionally creates the Secret based on the presence of API key values in the Helm chart.
+
+### helm/charts/qdrant/templates/service-headless.yaml
+This file defines a Headless Service for Qdrant, enabling direct communication with individual Qdrant pods without load balancing. This is useful for stateful applications or scenarios requiring direct pod access.
+
+### helm/charts/qdrant/templates/service.yaml
+This template defines a standard Kubernetes Service for Qdrant, providing a stable network endpoint for accessing the Qdrant pods. It supports various service types and configurations based on the provided Helm values.
+
+### helm/charts/qdrant/templates/serviceaccount.yaml
+This file defines a ServiceAccount for Qdrant, providing an identity for Qdrant pods to interact with the Kubernetes API server. It allows for customization of annotations and uses standard labels for consistency.
+
+### helm/charts/qdrant/templates/servicemonitor.yaml
+This template defines a ServiceMonitor resource for monitoring Qdrant using Prometheus Operator. It configures how metrics are scraped from the Qdrant service, including authentication and relabeling options.
+
+### helm/charts/qdrant/templates/tests
+This directory contains a test suite for Qdrant, including a Pod definition and a ConfigMap holding the test script. The test script interacts with the deployed Qdrant service, performing operations like creating collections, inserting points, and running queries to verify its functionality.

@@ -1,0 +1,100 @@
+---
+title: "configmap.yaml"
+---
+
+## High-level description
+This Kubernetes ConfigMap template for Redis defines configuration settings for Redis master, replica, and sentinel components. It allows for user-supplied configurations and includes specific settings for each component.
+
+## Table of contents
+- ConfigMap metadata
+- Redis common configuration
+- Redis master configuration
+- Redis replica configuration
+- Redis sentinel configuration (conditional)
+
+## Code Structure
+The main structure is a Kubernetes ConfigMap resource with data sections for common, master, replica, and optionally sentinel configurations. Each section incorporates user-supplied configurations and specific settings.
+
+## Symbols
+
+### ConfigMap
+#### Description
+Defines a Kubernetes ConfigMap resource for Redis configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Values from Helm chart |
+| $ | Object | The root context |
+
+#### Internal Logic
+1. Checks if ConfigMap should be created
+2. Sets metadata (name, namespace, labels, annotations)
+3. Defines data sections for Redis configurations
+
+### redis.conf
+#### Description
+Defines common Redis configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.commonConfiguration | String | User-supplied common configuration |
+
+### master.conf
+#### Description
+Defines Redis master configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.master.persistence.path | String | Persistence path for master |
+| .Values.master.configuration | String | User-supplied master configuration |
+| .Values.master.disableCommands | Array | Commands to disable on master |
+
+### replica.conf
+#### Description
+Defines Redis replica configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.replica.persistence.path | String | Persistence path for replica |
+| .Values.replica.configuration | String | User-supplied replica configuration |
+| .Values.replica.disableCommands | Array | Commands to disable on replica |
+
+### sentinel.conf
+#### Description
+Defines Redis sentinel configuration (conditional).
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.sentinel.enabled | Boolean | Whether sentinel is enabled |
+| .Values.sentinel.containerPorts.sentinel | Number | Sentinel port |
+| .Values.sentinel.masterSet | String | Sentinel master set name |
+| .Values.sentinel.quorum | Number | Sentinel quorum |
+| .Values.sentinel.downAfterMilliseconds | Number | Time to mark node as down |
+| .Values.sentinel.failoverTimeout | Number | Failover timeout |
+| .Values.sentinel.parallelSyncs | Number | Number of parallel syncs |
+| .Values.sentinel.configuration | String | User-supplied sentinel configuration |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.names.fullname | Generate full name for resources |
+| common.names.namespace | Get namespace |
+| common.labels.standard | Generate standard labels |
+| common.tplvalues.render | Render template values |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.commonLabels | Object | - | Common labels to apply |
+| .Values.commonAnnotations | Object | - | Common annotations to apply |
+| .Values.clusterDomain | String | - | Kubernetes cluster domain |
+
+## Future Improvements
+1. Consider adding support for custom ConfigMap names.
+2. Implement validation for user-supplied configurations to ensure they don't conflict with required settings.
+3. Add options for fine-grained control over which configurations are included in the ConfigMap.

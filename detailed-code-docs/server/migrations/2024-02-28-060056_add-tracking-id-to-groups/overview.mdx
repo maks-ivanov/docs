@@ -1,0 +1,21 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `/server/migrations/2024-02-28-060056_add-tracking-id-to-groups` directory contains SQL migration scripts for adding and removing a `tracking_id` column from the `chunk_group` table. These scripts are likely designed to be run by a database migration tool.
+
+## What does it do?
+This directory manages a database schema alteration. It adds a `tracking_id` column to the `chunk_group` table and ensures that the combination of `tracking_id` and `dataset_id` is unique. The other file reverts this change. This is a common pattern for database migrations, allowing for easy rollbacks if needed.
+
+## Key Files
+- **`up.sql`**: This script adds a new column named `tracking_id` to the `chunk_group` table and creates a unique constraint combining `tracking_id` and `dataset_id`.
+  ```sql
+  ALTER TABLE chunk_group ADD COLUMN tracking_id TEXT UNIQUE;
+  ALTER TABLE chunk_group ADD CONSTRAINT chunk_group_tracking_id_dataset_id_key UNIQUE (tracking_id, dataset_id);
+  ```
+- **`down.sql`**: This script reverts the changes made by `up.sql`. It removes the `tracking_id` column from the `chunk_group` table and drops the associated unique constraint.
+  ```sql
+  ALTER TABLE chunk_group DROP COLUMN tracking_id;
+  ALTER TABLE chunk_group DROP CONSTRAINT chunk_group_tracking_id_dataset_id_key;
+  ```

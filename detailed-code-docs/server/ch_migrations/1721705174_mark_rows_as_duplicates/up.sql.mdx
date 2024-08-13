@@ -1,0 +1,41 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script alters the `search_queries` table by adding a new column `is_duplicate` to mark duplicate rows. The column is of type `UInt8` and defaults to 0, indicating that rows are not duplicates by default.
+
+## Table of contents
+- Add `is_duplicate` column to `search_queries` table
+
+## Symbols
+
+### ALTER TABLE search_queries
+#### Description
+This SQL command modifies the structure of the `search_queries` table by adding a new column.
+
+#### Internal Logic
+1. Checks if the column `is_duplicate` doesn't already exist in the table.
+2. If the column doesn't exist, it adds the new column to the table.
+
+### ADD COLUMN IF NOT EXISTS is_duplicate UInt8 DEFAULT 0
+#### Description
+This clause specifies the details of the new column to be added to the `search_queries` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| is_duplicate | UInt8 | A column to indicate whether a row is a duplicate |
+
+#### Internal Logic
+1. Sets the column name as `is_duplicate`.
+2. Defines the column type as `UInt8` (8-bit unsigned integer).
+3. Sets the default value of the column to 0.
+
+## Dependencies
+This SQL script appears to be designed for a database system that supports the `UInt8` data type, which is commonly used in column-oriented database management systems like ClickHouse.
+
+## Future Improvements
+- Consider adding an index on the `is_duplicate` column if it will be frequently used in queries to improve query performance.
+- If the duplicate detection process is complex, consider adding a stored procedure or trigger to automatically set the `is_duplicate` flag based on certain criteria.
+- Depending on the use case, it might be beneficial to add a timestamp column to track when a row was marked as a duplicate.

@@ -1,0 +1,38 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to undo the changes made by the corresponding `up.sql` file. It removes three indexes that were previously created on the `created_at` columns of different tables in the database.
+
+## Table of contents
+- Drop index on chunk_metadata table
+- Drop index on groups table
+- Drop index on files table
+
+## Symbols
+
+### `DROP INDEX chunk_metadata_created_at_idx;`
+#### Description
+This SQL command removes the index named `chunk_metadata_created_at_idx` from the `chunk_metadata` table.
+
+### `DROP INDEX groups_created_at_idx;`
+#### Description
+This SQL command removes the index named `groups_created_at_idx` from the `groups` table.
+
+### `DROP INDEX files_created_at_idx;`
+#### Description
+This SQL command removes the index named `files_created_at_idx` from the `files` table.
+
+## Side Effects
+Removing these indexes will likely result in slower query performance for operations that were previously using these indexes, particularly for queries filtering or sorting on the `created_at` column of the affected tables.
+
+## Performance Considerations
+- Removing indexes will make certain queries slower, especially those that were utilizing these indexes for filtering or sorting on the `created_at` column.
+- However, removing indexes can slightly improve the performance of INSERT, UPDATE, and DELETE operations on the affected tables, as the database no longer needs to maintain these indexes.
+- The overall impact on performance will depend on the specific query patterns and data volume in the application.
+
+## Future Improvements
+- Before applying this migration in a production environment, it's crucial to assess the impact on query performance, especially for frequently used queries involving the `created_at` column on these tables.
+- If these indexes are found to be necessary for performance in certain scenarios, consider keeping them or creating more specific indexes tailored to the actual query patterns of the application.
+- It might be beneficial to add comments explaining why these indexes are being removed, especially if there are specific reasons or if it's part of a larger optimization strategy.

@@ -1,0 +1,54 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a new column to the `organization_usage_counts` table to store aggregated chunk counts, calculates these counts from the `dataset_usage_counts` table, and updates the `organization_usage_counts` table with the calculated values.
+
+## Table of contents
+- Add new column to `organization_usage_counts` table
+- Calculate aggregated chunk counts
+- Update `organization_usage_counts` table with calculated values
+
+## Code Structure
+The script is structured in three main steps, each building on the previous one to achieve the final result of updating the `organization_usage_counts` table with aggregated chunk counts.
+
+## Symbols
+
+### ALTER TABLE organization_usage_counts
+#### Description
+Adds a new column `chunk_count` to the `organization_usage_counts` table to store the aggregated chunk counts.
+
+#### Internal Logic
+- Adds an integer column named `chunk_count`
+- Sets a default value of 0 for the new column
+
+### WITH AggregatedCounts AS (...)
+#### Description
+Creates a Common Table Expression (CTE) that calculates the total chunk count for each organization by summing the chunk counts from the `dataset_usage_counts` table.
+
+#### Internal Logic
+- Joins `dataset_usage_counts` with `datasets` table on `dataset_id`
+- Groups the results by `organization_id`
+- Sums the `chunk_count` for each organization
+
+### UPDATE organization_usage_counts
+#### Description
+Updates the `chunk_count` column in the `organization_usage_counts` table with the calculated aggregated counts from the CTE.
+
+#### Internal Logic
+- Uses the `AggregatedCounts` CTE to match organizations
+- Updates the `chunk_count` column with the calculated `total_chunk_count`
+
+## Side Effects
+- Modifies the structure of the `organization_usage_counts` table by adding a new column
+- Updates existing rows in the `organization_usage_counts` table with calculated chunk counts
+
+## Performance Considerations
+- The script performs a join between `dataset_usage_counts` and `datasets` tables, which could be slow for large datasets
+- The update operation affects all rows in the `organization_usage_counts` table, which could be time-consuming for tables with many rows
+
+## Future Improvements
+- Consider adding an index on the `chunk_count` column if it will be frequently queried
+- If the data volume is large, consider implementing this update as a background job or breaking it into smaller batches to reduce the impact on database performance
+- Add error handling or logging to track the number of rows updated and catch any potential issues during the migration

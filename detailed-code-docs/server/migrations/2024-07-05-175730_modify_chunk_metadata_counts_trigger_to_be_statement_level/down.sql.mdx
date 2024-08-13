@@ -1,0 +1,66 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert changes made in a corresponding `up.sql` file. It drops newly created triggers and functions, then recreates the original function and trigger for updating chunk metadata counts in a PostgreSQL database.
+
+## Table of contents
+- Drop new triggers and function
+- Create function `update_chunk_metadata_counts`
+- Create trigger `update_chunk_metadata_counts_trigger`
+
+## Code Structure
+The script first removes the new triggers and function, then recreates the original function and trigger. The function `update_chunk_metadata_counts` is used by the trigger `update_chunk_metadata_counts_trigger`.
+
+## Symbols
+
+### `update_chunk_metadata_counts`
+#### Description
+This function updates the chunk count in the `dataset_usage_counts` table when a chunk is inserted or deleted from the `chunk_metadata` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NEW | record | New row data for INSERT operations |
+| OLD | record | Old row data for DELETE operations |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| RETURN | trigger | Always returns NULL |
+
+#### Internal Logic
+1. For INSERT operations:
+   - Attempts to insert a new row into `dataset_usage_counts` with a count of 1
+   - If the row already exists, increments the `chunk_count` by 1
+2. For DELETE operations:
+   - Decrements the `chunk_count` in `dataset_usage_counts`
+   - Ensures the count never goes below 0
+
+### `update_chunk_metadata_counts_trigger`
+#### Description
+This trigger executes the `update_chunk_metadata_counts` function after INSERT or DELETE operations on the `chunk_metadata` table.
+
+#### Inputs
+N/A (Trigger definition)
+
+#### Outputs
+N/A (Trigger definition)
+
+## Side Effects
+- Modifies the `dataset_usage_counts` table by updating chunk counts
+- Affects the behavior of INSERT and DELETE operations on the `chunk_metadata` table
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| PostgreSQL | Database system where this SQL script is executed |
+
+## Error Handling
+The script does not implement explicit error handling. It relies on PostgreSQL's built-in error handling mechanisms.
+
+## Future Improvements
+- Consider adding error handling for cases where the `dataset_usage_counts` table might not exist or have unexpected structure
+- Evaluate if additional logging or auditing of chunk count changes would be beneficial
+- Assess whether the trigger should handle UPDATE operations on `chunk_metadata`, if relevant to the application's logic

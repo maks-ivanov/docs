@@ -1,0 +1,57 @@
+---
+title: "servicemonitor.yaml"
+---
+
+## High-level description
+This YAML file defines a ServiceMonitor resource for Kubernetes, specifically for monitoring the Qdrant service using Prometheus Operator. It configures how metrics should be scraped from the Qdrant service, including authentication and relabeling options.
+
+## Table of contents
+- ServiceMonitor definition
+- Metadata
+- Spec
+  - Endpoints configuration
+  - Selector
+
+## Code Structure
+The file consists of a single ServiceMonitor resource definition with nested sections for metadata and spec. The spec section contains the main configuration for the monitoring endpoints and selector.
+
+## Symbols
+
+### ServiceMonitor
+#### Description
+Defines a ServiceMonitor resource for monitoring the Qdrant service using Prometheus Operator.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics.serviceMonitor | Object | Configuration values for the ServiceMonitor |
+| .Values.apiKey | String | API key for authentication |
+| .Values.readOnlyApiKey | String | Read-only API key for authentication |
+
+#### Internal Logic
+1. Checks if ServiceMonitor is enabled
+2. Defines metadata with labels
+3. Configures endpoints for scraping metrics
+4. Sets up authentication if API keys are provided
+5. Defines selector for targeting the Qdrant service
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| monitoring.coreos.com/v1 | API version for ServiceMonitor resource |
+
+### Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.metrics.serviceMonitor.enabled | Boolean | - | Enables/disables the ServiceMonitor |
+| .Values.metrics.serviceMonitor.scrapeInterval | String | - | Interval between metric scrapes |
+| .Values.metrics.serviceMonitor.targetPath | String | - | Path to scrape metrics from |
+| .Values.metrics.serviceMonitor.targetPort | String | - | Port to scrape metrics from |
+| .Values.metrics.serviceMonitor.scrapeTimeout | String | - | Timeout for metric scraping |
+| .Values.metrics.serviceMonitor.metricRelabelings | Object | - | Configuration for metric relabeling |
+| .Values.metrics.serviceMonitor.relabelings | Object | - | Configuration for relabeling |
+
+## Future Improvements
+1. Consider adding support for TLS/HTTPS scheme in the endpoint configuration.
+2. Implement conditional logic for different authentication methods beyond API keys.
+3. Add support for multiple endpoints if needed for more complex monitoring scenarios.

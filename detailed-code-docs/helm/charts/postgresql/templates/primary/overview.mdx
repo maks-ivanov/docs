@@ -1,0 +1,40 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory provides Kubernetes configurations for deploying a primary PostgreSQL instance using Helm. It includes templates for StatefulSets, Services, ConfigMaps, NetworkPolicies, and ServiceMonitors, allowing for customizable and production-ready PostgreSQL deployments.
+
+## What does it do?
+This code defines the necessary infrastructure and configurations to run a primary PostgreSQL database instance within a Kubernetes cluster. It allows users to specify various parameters like authentication, replication, resource limits, and more through Helm values. 
+
+The code ensures that the PostgreSQL instance is deployed as a StatefulSet, providing stable network identities and persistent storage. It also sets up services for internal and external access, configures network policies for security, and optionally deploys a metrics sidecar for monitoring.
+
+## Entry points
+The primary entry point for deploying the PostgreSQL instance is the `statefulset.yaml` file. This file defines the StatefulSet resource responsible for creating and managing the PostgreSQL pods.
+
+The other files in the directory provide supporting configurations for the PostgreSQL instance:
+
+- `svc.yaml` and `svc-headless.yaml` define Kubernetes Services for accessing the PostgreSQL instance.
+- `configmap.yaml`, `extended-configmap.yaml`, `initialization-configmap.yaml`, and `metrics-configmap.yaml` define ConfigMaps for storing PostgreSQL configuration files, initialization scripts, and custom metrics.
+- `networkpolicy.yaml` defines a NetworkPolicy to control network traffic to and from the PostgreSQL pods.
+- `servicemonitor.yaml` defines a ServiceMonitor for monitoring PostgreSQL metrics using Prometheus Operator.
+
+## Key Files
+### statefulset.yaml
+This file defines the StatefulSet for the primary PostgreSQL instance. It specifies the container image, resource limits, volumes, ports, and other configurations for the PostgreSQL pod. It also handles the creation of PersistentVolumeClaims for persistent data storage.
+
+### svc.yaml
+This file defines the main Kubernetes Service for accessing the PostgreSQL instance. It determines how the service is exposed (e.g., ClusterIP, NodePort, LoadBalancer) and configures port mappings.
+
+### svc-headless.yaml
+This file defines a headless service for the PostgreSQL instance. Headless services are used to discover PostgreSQL pods directly, which is useful for replication and other scenarios where direct pod access is required.
+
+### configmap.yaml
+This file defines a ConfigMap containing the main PostgreSQL configuration file (`postgresql.conf`) and the client authentication configuration file (`pg_hba.conf`).
+
+### networkpolicy.yaml
+This file defines a NetworkPolicy that controls network traffic to and from the PostgreSQL pods. It allows users to specify allowed ingress and egress rules, enhancing the security of the PostgreSQL deployment.
+
+### servicemonitor.yaml
+This file defines a ServiceMonitor for integrating PostgreSQL metrics with Prometheus Operator. It configures how Prometheus scrapes metrics from the PostgreSQL instance.

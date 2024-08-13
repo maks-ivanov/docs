@@ -1,0 +1,83 @@
+---
+title: "chat-tests.yml"
+---
+
+## High-level description
+This code defines a GitHub Actions workflow named "chat test suite" that runs on pull requests modifying files in specific directories of a frontend project. It performs build and linting checks on the codebase, specifically targeting the "chat" feature.
+
+## Table of contents
+- **Concurrency**
+- **On**
+- **Jobs**
+    - **build-test**
+    - **eslint**
+
+## Code Structure
+The workflow is triggered `on` pull requests and runs two `jobs`: `build-test` and `eslint`. Both jobs run on the `blacksmith-2vcpu-ubuntu-2204` runner. 
+
+## Symbols
+### `name: chat test suite`
+#### Description
+Defines the name of the workflow as "chat test suite".
+
+### `concurrency`
+#### Description
+Configures concurrency for the workflow, ensuring that only one workflow run is executed at a time for the same workflow and branch.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| group | string |  A string identifying the workflow group. Uses an expression combining the workflow name and head ref. |
+| cancel-in-progress | boolean | If true, cancels any in-progress workflow runs within the same concurrency group. |
+
+### `on`
+#### Description
+Specifies the events that trigger the workflow.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pull_request | object | Defines the workflow to trigger on pull request events. |
+| paths | array | An array of file paths that trigger the workflow when modified. |
+
+### `jobs`
+#### Description
+Defines a set of jobs that run in parallel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| build-test | object | A job that builds and tests the code. |
+| eslint | object | A job that runs ESLint on the code. |
+
+### `jobs.&lt;job_id&gt;.runs-on`
+#### Description
+Specifies the type of runner that the job will execute on.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runs-on | string | The name of the runner to use. In this case, it's "blacksmith-2vcpu-ubuntu-2204". |
+
+### `jobs.&lt;job_id&gt;.steps`
+#### Description
+A sequence of tasks that are executed as part of the job.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| uses | string | Uses an action defined in the same repository, a public repository, or a published Docker container image. |
+| name | string | A name for the step that will be displayed in the workflow log. |
+| working-directory | string | Specifies the working directory of the action. |
+| run | string | Runs command-line programs using the operating system's shell. |
+| if | string |  Runs a step only when the `if` conditional is met. |
+| with | object | A map of input parameters provided to the action. |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | Checks out the repository's code. |
+| ataylorme/eslint-annotate-action@1.0.4 | Annotates code with ESLint results. |
+
+## Error Handling
+The workflow relies on GitHub Actions' built-in error handling. If any step fails, the workflow run is marked as failed. The `eslint` job uses `if: always()` to ensure the annotation step runs even if linting fails. 

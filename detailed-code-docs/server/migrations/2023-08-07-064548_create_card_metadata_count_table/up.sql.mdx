@@ -1,0 +1,60 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a new table to store and maintain a count of rows in the `card_metadata` table. It also sets up a trigger to automatically update this count whenever rows are inserted or deleted from the `card_metadata` table.
+
+## Table of contents
+- Create `card_metadata_count` table
+- Insert initial count
+- Create trigger function `update_card_metadata_count()`
+- Create trigger `card_metadata_count_trigger`
+
+## Code Structure
+The script creates a new table, inserts an initial count, defines a trigger function, and sets up a trigger on the `card_metadata` table. These components work together to maintain an accurate count of rows in the `card_metadata` table.
+
+## Symbols
+
+### `card_metadata_count` table
+#### Description
+This table is created to store the total number of rows in the `card_metadata` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key, auto-generated using `gen_random_uuid()` |
+| total_rows | BIGINT | Stores the count of rows in `card_metadata` table |
+
+### Initial count insertion
+#### Description
+Inserts the initial count of rows from the `card_metadata` table into the `card_metadata_count` table.
+
+### `update_card_metadata_count()` function
+#### Description
+A trigger function that updates the `total_rows` count in the `card_metadata_count` table whenever a row is inserted or deleted from the `card_metadata` table.
+
+#### Internal Logic
+1. Checks the operation type (INSERT or DELETE)
+2. Updates the `total_rows` count accordingly:
+   - Increments by 1 for INSERT
+   - Decrements by 1 for DELETE
+
+### `card_metadata_count_trigger`
+#### Description
+A trigger that executes the `update_card_metadata_count()` function after INSERT or DELETE operations on the `card_metadata` table.
+
+## Side Effects
+- Creates a new table `card_metadata_count`
+- Modifies the behavior of INSERT and DELETE operations on the `card_metadata` table by adding a trigger
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| card_metadata | The main table whose row count is being tracked |
+
+## Future Improvements
+1. Consider adding error handling in the trigger function to manage potential race conditions or concurrent updates.
+2. Implement a mechanism to periodically verify and correct the count if it becomes out of sync with the actual number of rows in `card_metadata`.
+3. Add support for UPDATE operations if they can affect the row count (e.g., if updates can result in row deletions).
+4. Consider adding a timestamp column to `card_metadata_count` to track when the count was last updated.

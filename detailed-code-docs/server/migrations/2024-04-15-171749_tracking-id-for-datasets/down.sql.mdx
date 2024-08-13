@@ -1,0 +1,39 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert changes made to the `datasets` table, specifically removing the `tracking_id` column and its associated index. It's part of a database migration system, likely used in a version control context for database schema changes.
+
+## Table of contents
+- Removal of `tracking_id` column
+- Removal of `datasets_tracking_id_idx` index
+
+## Symbols
+
+### ALTER TABLE datasets DROP COLUMN IF EXISTS tracking_id;
+#### Description
+This SQL command removes the `tracking_id` column from the `datasets` table if it exists.
+
+#### Internal Logic
+- The `IF EXISTS` clause ensures that the operation will not fail if the column doesn't exist.
+- This command will undo the addition of the `tracking_id` column to the `datasets` table.
+
+### DROP INDEX IF EXISTS datasets_tracking_id_idx;
+#### Description
+This SQL command removes the index named `datasets_tracking_id_idx` if it exists.
+
+#### Internal Logic
+- The `IF EXISTS` clause ensures that the operation will not fail if the index doesn't exist.
+- This command will undo the creation of an index that was likely created to improve query performance on the `tracking_id` column.
+
+## Dependencies
+This script relies on the SQL database system being used (likely PostgreSQL, given the syntax), but no specific external libraries are required.
+
+## Error Handling
+The script uses `IF EXISTS` clauses to prevent errors if the column or index doesn't exist. This makes the migration more robust and idempotent.
+
+## Future Improvements
+- Consider adding comments to explain why the `tracking_id` column and its index are being removed.
+- If there are any data dependencies on the `tracking_id` column, consider adding steps to handle or migrate that data before removing the column.
+- If this change is part of a larger feature rollback, ensure that all related changes in other tables or application code are also reverted.

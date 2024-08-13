@@ -1,0 +1,51 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a function and a trigger to automatically update a tsvector column in the `card_metadata` table. The tsvector is generated from the `content` column, enabling efficient full-text search capabilities.
+
+## Table of contents
+- Function creation: `update_tsvector()`
+- Trigger creation: `update_tsvector_trigger`
+
+## Symbols
+
+### `update_tsvector()`
+#### Description
+This is a PostgreSQL function that generates a tsvector from the `content` column of the `card_metadata` table.
+
+#### Inputs
+This function doesn't take explicit inputs but operates on the `NEW` row in the context of a trigger.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NEW | record | The modified row with updated `card_metadata_tsvector` |
+
+#### Internal Logic
+1. The function uses `to_tsvector()` to convert the `content` column of the new row to a tsvector.
+2. It assigns the result to the `card_metadata_tsvector` column of the new row.
+3. The function returns the modified `NEW` row.
+
+### `update_tsvector_trigger`
+#### Description
+This is a PostgreSQL trigger that automatically calls the `update_tsvector()` function before each INSERT operation on the `card_metadata` table.
+
+#### Internal Logic
+1. The trigger is set to fire BEFORE INSERT operations.
+2. It applies to each row (FOR EACH ROW).
+3. When fired, it executes the `update_tsvector()` function.
+
+## Side Effects
+- This script modifies the `card_metadata` table by automatically updating the `card_metadata_tsvector` column whenever a new row is inserted.
+- It adds a new trigger to the database, which will be executed for every INSERT operation on the `card_metadata` table.
+
+## Performance Considerations
+- The tsvector generation happens automatically for each INSERT, which might slightly impact the performance of insert operations on the `card_metadata` table.
+- However, this approach ensures that the tsvector column is always up-to-date, enabling efficient full-text search without the need for manual updates or separate maintenance tasks.
+
+## Future Improvements
+1. Consider adding similar triggers for UPDATE operations if the `content` column can be modified after insertion.
+2. Evaluate the performance impact of this trigger on large-scale insertions and consider batch processing if necessary.
+3. If different languages are used in the `content` column, consider using language-specific text search configurations with `to_tsvector()`.

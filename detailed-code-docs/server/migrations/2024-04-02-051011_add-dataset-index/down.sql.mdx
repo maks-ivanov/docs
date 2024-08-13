@@ -1,0 +1,43 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made in the corresponding `up.sql` file. It removes specific indexes from the `chunk_metadata` table and recreates an index that was presumably dropped in the `up` migration.
+
+## Table of contents
+- Drop `idx_chunk_metadata_dataset_id` index
+- Drop `idx_chunk_metadata_created_at` index
+- Drop `idx_chunk_metadata_time_stamp` index
+- Create `idx_card_metadata_qdrant_point_id` index
+
+## Symbols
+
+### DROP INDEX idx_chunk_metadata_dataset_id
+#### Description
+This command removes the index named `idx_chunk_metadata_dataset_id` from the `chunk_metadata` table.
+
+### DROP INDEX idx_chunk_metadata_created_at
+#### Description
+This command removes the index named `idx_chunk_metadata_created_at` from the `chunk_metadata` table.
+
+### DROP INDEX idx_chunk_metadata_time_stamp
+#### Description
+This command removes the index named `idx_chunk_metadata_time_stamp` from the `chunk_metadata` table.
+
+### CREATE INDEX idx_card_metadata_qdrant_point_id
+#### Description
+This command creates a new index named `idx_card_metadata_qdrant_point_id` on the `qdrant_point_id` column of the `chunk_metadata` table.
+
+## Side Effects
+- The removal of indexes may impact query performance for operations that previously utilized these indexes.
+- The creation of the new index may improve query performance for operations involving the `qdrant_point_id` column.
+
+## Performance Considerations
+- Dropping indexes is generally a fast operation but may briefly lock the table.
+- Creating a new index can be resource-intensive, especially on large tables, and may temporarily impact write performance.
+
+## Future Improvements
+- Consider adding comments to explain why specific indexes are being dropped or created.
+- Ensure that the index names in this down migration script accurately reflect any changes made in future up migrations.
+- Verify that the `idx_card_metadata_qdrant_point_id` index is indeed the correct one to recreate, as its name suggests it might be for a different table (`card_metadata` instead of `chunk_metadata`).

@@ -1,0 +1,23 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `server/migrations/2024-01-03-070225_count_table` directory contains SQL migration scripts for managing database tables and functions related to usage counts for organizations and datasets. The `up.sql` script creates new tables and triggers to track these counts, while the `down.sql` script reverts these changes.
+
+## What does it do?
+This migration introduces a mechanism for tracking usage statistics at both the organization and dataset levels. It creates two primary tables: `organization_usage_counts` and `dataset_usage_counts`. The `organization_usage_counts` table stores metrics like the number of datasets, users, total file storage used, and message count for each organization. The `dataset_usage_counts` table tracks the number of chunks within each dataset.
+
+To keep these counts synchronized with the actual data, the migration sets up triggers that automatically update the count tables whenever changes occur in related tables. For instance, when a new chunk is added to a dataset, the corresponding dataset's chunk count in the `dataset_usage_counts` table is automatically incremented. Similarly, when a file is deleted, the file storage count for the associated organization is decremented.
+
+This approach ensures that the usage statistics are always current without requiring expensive queries to calculate them on demand. However, it's important to consider the potential performance impact of triggers on data modification operations.
+
+The `down.sql` migration script performs the reverse operation, removing the newly created tables, triggers, and functions, effectively reverting the database to its state before applying the `up.sql` migration.
+
+## Entry points
+- `up.sql`: This script is run to apply the migration, creating the new tables, functions, and triggers.
+- `down.sql`: This script is run to revert the migration, deleting the tables, functions, and triggers created by `up.sql`.
+
+The code is organized conceptually around the creation and deletion of database objects. The `up.sql` script focuses on building the new infrastructure for tracking usage counts, while the `down.sql` script systematically dismantles it. 
+
+Data flow is managed through triggers that capture changes in related tables and update the count tables accordingly. Control flow is straightforward, with SQL commands executed sequentially within each script.

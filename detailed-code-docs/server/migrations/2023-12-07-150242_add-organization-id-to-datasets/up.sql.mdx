@@ -1,0 +1,64 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds an `organization_id` column to the `datasets` table, populates it with the ID of the 'DEFAULT' organization, and establishes a foreign key relationship with the `organizations` table.
+
+## Table of contents
+- Add `organization_id` column to `datasets` table
+- Update `organization_id` with 'DEFAULT' organization's ID
+- Make `organization_id` column NOT NULL
+- Add foreign key constraint
+
+## Code Structure
+The script consists of four SQL statements that modify the `datasets` table structure and data.
+
+## Symbols
+
+### ALTER TABLE datasets ADD COLUMN
+#### Description
+Adds a new column `organization_id` of type UUID to the `datasets` table.
+
+#### Internal Logic
+- Adds `organization_id` column with UUID data type
+- Sets the default value to NULL
+
+### UPDATE datasets
+#### Description
+Populates the newly added `organization_id` column with the ID of the 'DEFAULT' organization.
+
+#### Internal Logic
+- Joins `datasets` with `organizations` table
+- Sets `organization_id` to the ID of the organization with name 'DEFAULT'
+
+### ALTER TABLE datasets ALTER COLUMN
+#### Description
+Modifies the `organization_id` column to disallow NULL values.
+
+#### Internal Logic
+- Changes the `organization_id` column constraint to NOT NULL
+
+### ALTER TABLE datasets ADD CONSTRAINT
+#### Description
+Adds a foreign key constraint to the `organization_id` column.
+
+#### Internal Logic
+- Creates a foreign key named `datasets_organization_id_fkey`
+- References the `id` column in the `organizations` table
+
+## Side Effects
+- Modifies the structure of the `datasets` table
+- Updates existing rows in the `datasets` table
+- Establishes a relationship between `datasets` and `organizations` tables
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| datasets table | Target table for modifications |
+| organizations table | Source of 'DEFAULT' organization ID and foreign key reference |
+
+## Future Improvements
+- Consider adding an index on the `organization_id` column for improved query performance
+- Implement a rollback strategy in case the 'DEFAULT' organization doesn't exist
+- Add error handling for cases where existing datasets can't be associated with the 'DEFAULT' organization

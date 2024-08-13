@@ -1,0 +1,59 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script modifies the trigger mechanism for updating chunk metadata counts in a PostgreSQL database. It replaces a row-level trigger with statement-level triggers for both INSERT and DELETE operations on the `chunk_metadata` table, improving efficiency for bulk operations.
+
+## Table of contents
+- Drop existing trigger and function
+- Create new `update_chunk_metadata_counts` function
+- Create new INSERT trigger
+- Create new DELETE trigger
+
+## Code Structure
+The script first removes the existing trigger and function, then creates a new function `update_chunk_metadata_counts()`. This function is then used in two new statement-level triggers: one for INSERT operations and another for DELETE operations on the `chunk_metadata` table.
+
+## Symbols
+
+### `update_chunk_metadata_counts()`
+#### Description
+This function updates the `dataset_usage_counts` table based on changes in the `chunk_metadata` table. It handles both INSERT and DELETE operations.
+
+#### Inputs
+This function doesn't take explicit inputs but uses the `modified` table, which is implicitly provided by the trigger mechanism.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| RETURN | NULL | The function always returns NULL |
+
+#### Internal Logic
+1. Retrieves the `dataset_id` from the `modified` table.
+2. Counts the number of affected rows in the `modified` table.
+3. For INSERT operations:
+   - Inserts or updates the `dataset_usage_counts` table, incrementing the `chunk_count`.
+4. For DELETE operations:
+   - Updates the `dataset_usage_counts` table, decrementing the `chunk_count`.
+
+### `increase_chunk_metadata_counts_trigger`
+#### Description
+A statement-level trigger that fires after INSERT operations on the `chunk_metadata` table.
+
+#### Internal Logic
+Executes the `update_chunk_metadata_counts()` function for each INSERT statement.
+
+### `delete_chunk_metadata_counts_trigger`
+#### Description
+A statement-level trigger that fires after DELETE operations on the `chunk_metadata` table.
+
+#### Internal Logic
+Executes the `update_chunk_metadata_counts()` function for each DELETE statement.
+
+## Performance Considerations
+The use of statement-level triggers instead of row-level triggers can significantly improve performance for bulk insert or delete operations, as the trigger function is called once per statement rather than once per affected row.
+
+## Future Improvements
+- Consider adding error handling within the `update_chunk_metadata_counts()` function to manage potential issues like division by zero or data inconsistencies.
+- If the system frequently performs both INSERT and UPDATE operations in the same transaction, consider combining the two triggers into a single trigger that handles both operations.
+- Implement logging or auditing within the function to track large-scale changes for debugging or monitoring purposes.

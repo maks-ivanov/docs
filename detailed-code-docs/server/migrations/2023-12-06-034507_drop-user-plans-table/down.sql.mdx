@@ -1,0 +1,51 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is a migration file designed to recreate the `user_plans` table and its associated index. It's intended to reverse the actions performed by a corresponding `up.sql` file that likely dropped this table.
+
+## Table of contents
+- Create `user_plans` table
+- Create index on `stripe_customer_id`
+
+## Symbols
+
+### CREATE TABLE user_plans
+#### Description
+This SQL command creates a new table named `user_plans` to store information about user subscription plans.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Unique identifier for each user plan |
+| stripe_customer_id | TEXT | Stripe customer ID associated with the user |
+| stripe_subscription_id | TEXT | Stripe subscription ID for the user's plan |
+| plan | TEXT | The type of plan the user is subscribed to |
+| status | TEXT | Current status of the user's plan |
+| created_at | TIMESTAMP | Timestamp when the record was created |
+| updated_at | TIMESTAMP | Timestamp when the record was last updated |
+
+#### Internal Logic
+- Creates a table with specified columns
+- Sets `id` as the primary key
+- Enforces uniqueness on `id`, `stripe_customer_id`, and `stripe_subscription_id`
+- All fields are set as NOT NULL, ensuring data integrity
+
+### CREATE INDEX idx_user_plans_stripe_customer_id
+#### Description
+This SQL command creates an index on the `stripe_customer_id` column of the `user_plans` table to improve query performance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stripe_customer_id | TEXT | The column on which the index is created |
+
+#### Internal Logic
+Creates a B-tree index on the `stripe_customer_id` column, which will speed up queries that filter or join on this column.
+
+## Future Improvements
+- Consider adding foreign key constraints if the `stripe_customer_id` or `stripe_subscription_id` reference other tables in the database.
+- Evaluate the need for additional indexes based on common query patterns, such as on the `plan` or `status` columns if they are frequently used in WHERE clauses.
+- If the application requires temporal queries, consider adding indexes on `created_at` and `updated_at` columns.
+- Depending on the usage patterns, consider using an ENUM type for the `plan` and `status` columns instead of TEXT to enforce a predefined set of values and potentially improve performance.

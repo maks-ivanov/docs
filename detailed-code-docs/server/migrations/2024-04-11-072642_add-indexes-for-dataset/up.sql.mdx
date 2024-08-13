@@ -1,0 +1,49 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file creates two indexes to improve query performance on the `datasets` and `stripe_subscriptions` tables, specifically for the `organization_id` and `plan_id` columns respectively.
+
+## Table of contents
+- Creation of index on `datasets` table
+- Creation of index on `stripe_subscriptions` table
+
+## Symbols
+
+### `CREATE INDEX IF NOT EXISTS datasets_organization_id_index`
+#### Description
+This SQL command creates an index named `datasets_organization_id_index` on the `organization_id` column of the `datasets` table, if it doesn't already exist.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| datasets | table | The table on which the index is being created |
+| organization_id | column | The column being indexed |
+
+#### Internal Logic
+The `IF NOT EXISTS` clause ensures that the index is only created if it doesn't already exist, preventing errors on subsequent runs of the migration.
+
+### `CREATE INDEX IF NOT EXISTS stripe_subscriptions_plan_id_index`
+#### Description
+This SQL command creates an index named `stripe_subscriptions_plan_id_index` on the `plan_id` column of the `stripe_subscriptions` table, if it doesn't already exist.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stripe_subscriptions | table | The table on which the index is being created |
+| plan_id | column | The column being indexed |
+
+#### Internal Logic
+Similar to the previous index, the `IF NOT EXISTS` clause is used to prevent errors if the index already exists.
+
+## Performance Considerations
+Creating indexes on frequently queried columns can significantly improve query performance, especially for large tables. However, indexes also have maintenance overhead during insert, update, and delete operations, so they should be used judiciously.
+
+1. The index on `datasets.organization_id` will likely improve queries that filter or join on the organization ID, which is probably a common operation.
+2. The index on `stripe_subscriptions.plan_id` will enhance performance for queries that search or filter subscriptions based on the plan ID.
+
+## Future Improvements
+1. Consider adding composite indexes if queries frequently combine these columns with others.
+2. Monitor the usage of these indexes to ensure they are beneficial and not causing unnecessary overhead.
+3. If these tables grow very large, consider partitioning strategies in addition to indexing.

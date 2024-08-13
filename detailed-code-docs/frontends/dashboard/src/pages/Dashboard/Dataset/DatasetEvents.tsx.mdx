@@ -1,0 +1,75 @@
+---
+title: "DatasetEvents.tsx"
+---
+
+## High-level description
+This code defines a SolidJS component called `DatasetEvents` that displays a table of events logged by the server for a specific dataset. It allows users to filter events by type and provides pagination to navigate through large lists of events. The component fetches event data from the server every 5 seconds to keep the display updated.
+
+## Table of contents
+- Imports
+- Component Definition (`DatasetEvents`)
+  - State variables
+  - `getEvents` function
+  - Event listener setup and cleanup
+  - Effects
+  - JSX Structure
+
+## References
+- `DatasetContext` from "../../../contexts/DatasetContext"
+- `Event`, `isEvent`, `isEventDTO` from "shared/types"
+
+## Symbols
+
+### `DatasetEvents`
+#### Description
+This component fetches, stores, and displays events associated with a specific dataset. It allows filtering these events by type and provides pagination for navigating the results. The displayed event data is refreshed every 5 seconds.
+
+#### Inputs
+This component does not take any explicit inputs.
+
+#### Outputs
+This component renders a section on the page that displays a table of events.
+
+#### Internal Logic
+1. **Retrieves Contextual Data:** Uses the `DatasetContext` and `useParams` hook to determine the active dataset ID.
+2. **Fetches Event Data:** 
+    - Calls the `getEvents` function to fetch event data from the server.
+    - The `getEvents` function makes a POST request to the `/events` endpoint, sending the selected event types and current page number in the request body.
+    - It updates the component's state with the fetched events, total page count, and loading status.
+3. **Sets up Polling:**
+    - An interval is set up to call `getEvents` every 5 seconds to refresh the event data.
+4. **Filters Events:**
+    - Uses the `selected` state variable to filter the displayed events based on the selected event types.
+5. **Pagination:**
+    - Implements pagination to allow users to navigate through large sets of events.
+6. **Renders JSX:**
+    - Conditionally renders the event table, loading indicator, or a "no events found" message based on the component's state.
+    - Each event is displayed with its level (INFO or ERROR), type, timestamp, and associated metadata.
+    - The metadata for each event can be expanded and collapsed by the user.
+
+## Side Effects
+- This component makes API calls to fetch event data.
+- It updates the component's state, causing re-renders to reflect the changes in the displayed data.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Provides core functionalities for building the component. |
+| shared/types | Imports type definitions for events and data structures. |
+| solid-icons/bi | Provides icons used in the component. |
+| "../../../components/MultiSelect" | Imports a multi-select component for filtering events. |
+| solid-icons/fi | Provides icons used in the component. |
+| @solidjs/router | Used for accessing route parameters. |
+
+## Error Handling
+The code includes basic error handling for the `fetch` call in `getEvents`. If the fetch request fails or the response data is not in the expected format, it logs an error message to the console. However, it does not implement robust error handling or display user-friendly error messages.
+
+## Logging
+The code does not implement any specific logging mechanisms.
+
+## Future Improvements
+- **Robust Error Handling:** Implement more robust error handling for the `fetch` call and other potential error points. Display user-friendly error messages to the user in case of failures.
+- **User Feedback During Refresh:** Provide visual feedback to the user when the event list is being refreshed, such as a loading spinner or a "Last updated at" timestamp.
+- **Optimize Metadata Display:** The metadata display could be optimized for better readability and user experience. Consider using a dedicated JSON viewer component or formatting the JSON data before displaying it.
+- **Implement Search Functionality:** Add a search bar to allow users to search for specific events within the displayed list.
+- **Add Sorting Options:** Allow users to sort the event list by different columns, such as timestamp, event type, or level.

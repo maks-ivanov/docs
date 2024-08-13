@@ -1,0 +1,54 @@
+---
+title: "service-headless.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes Headless Service for Qdrant, a vector database. It's designed to allow direct communication with individual Qdrant pods without load balancing, which is useful for stateful applications.
+
+## Table of contents
+- Service metadata
+- Service specification
+- Port configuration
+- Selector
+
+## Code Structure
+The YAML file defines a single Kubernetes Service resource with metadata and spec sections. The spec section includes port configurations and a selector for pod discovery.
+
+## Symbols
+
+### Service
+#### Description
+Defines a Kubernetes Headless Service for Qdrant pods.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.service.additionalLabels | map | Additional labels to apply to the service |
+| .Values.service.ports | list | List of port configurations for the service |
+
+#### Internal Logic
+1. Sets the service name using the `qdrant.fullname` template with a "-headless" suffix
+2. Applies labels using the `qdrant.labels` template
+3. Adds any additional labels specified in `.Values.service.additionalLabels`
+4. Configures the service as headless by setting `clusterIP: None`
+5. Enables `publishNotReadyAddresses` for faster pod discovery
+6. Defines ports based on the `.Values.service.ports` list
+7. Sets the selector using the `qdrant.selectorLabels` template
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| qdrant.fullname | Generates the full name for the Qdrant service |
+| qdrant.labels | Provides common labels for Qdrant resources |
+| qdrant.selectorLabels | Provides selector labels for Qdrant pods |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.service.additionalLabels | map | - | Additional labels to apply to the service |
+| .Values.service.ports | list | - | List of port configurations for the service |
+
+## Future Improvements
+1. Consider adding support for custom annotations on the service.
+2. Implement conditional logic to optionally disable `publishNotReadyAddresses` if not needed for all use cases.
+3. Add support for custom selectors in addition to the default `qdrant.selectorLabels`.

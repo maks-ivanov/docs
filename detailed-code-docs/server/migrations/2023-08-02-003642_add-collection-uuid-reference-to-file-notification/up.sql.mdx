@@ -1,0 +1,53 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a foreign key constraint to the `collection_uuid` column in the `file_upload_completed_notifications` table, referencing the `id` column of the `card_collection` table. The process involves creating a temporary table, transferring data, recreating the original table with the new constraint, and then moving the data back.
+
+## Table of contents
+- Create temporary table
+- Copy data to temporary table
+- Drop original table
+- Recreate original table with foreign key constraint
+- Copy data back to original table
+- Drop temporary table
+
+## Code Structure
+The script is structured as a series of SQL commands executed sequentially to achieve the migration goal. Each step is clearly commented, making the process easy to follow.
+
+## Symbols
+
+### Step 1: Create temporary table
+#### Description
+Creates a new temporary table `file_upload_completed_notifications_temp` with the same structure as the original table but without the foreign key constraint.
+
+### Step 2: Copy data to temporary table
+#### Description
+Copies all data from the original `file_upload_completed_notifications` table to the temporary table.
+
+### Step 3: Drop original table
+#### Description
+Drops the original `file_upload_completed_notifications` table.
+
+### Step 4: Recreate original table
+#### Description
+Recreates the `file_upload_completed_notifications` table with the new foreign key constraint on `collection_uuid` referencing `card_collection(id)`.
+
+### Step 5: Copy data back to original table
+#### Description
+Copies all data from the temporary table back to the newly recreated original table.
+
+### Step 6: Drop temporary table
+#### Description
+Drops the temporary `file_upload_completed_notifications_temp` table.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| card_collection table | The `id` column is referenced by the new foreign key constraint |
+
+## Future Improvements
+- Consider adding indexes on frequently queried columns like `user_uuid` and `collection_uuid` for improved query performance.
+- If the `file_upload_completed_notifications` table is expected to grow large, consider implementing partitioning based on creation date or user_uuid for better performance.
+- Implement a rollback script (down.sql) to revert these changes if needed.

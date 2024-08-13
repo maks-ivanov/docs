@@ -1,0 +1,62 @@
+---
+title: "chat-deployment.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes Deployment for a chat application. It specifies the deployment configuration, including container image, ports, and environment variables, managed by Helm.
+
+## Table of contents
+- Metadata
+- Spec
+  - Selector
+  - Template
+    - Metadata
+    - Spec
+      - Containers
+
+## Code Structure
+The YAML file follows the standard Kubernetes Deployment structure, with metadata, spec, and template sections. It uses Helm templating to inject values dynamically.
+
+## Symbols
+
+### Deployment
+#### Description
+Defines a Kubernetes Deployment for the chat application, ensuring that a specified number of pod replicas are running.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Release.Name | String | The name of the Helm release |
+| .Values.environment | String | The deployment environment |
+| .Values.containers.chat.tag | String | The tag for the chat container image |
+| .Values.config.vite.apiHost | String | The API host for the Vite configuration |
+| .Values.config.vite.searchUiUrl | String | The search UI URL for the Vite configuration |
+| .Values.config.vite.dashboardUrl | String | The dashboard URL for the Vite configuration |
+
+#### Internal Logic
+1. Sets up metadata with labels for Kubernetes and Helm management.
+2. Defines a selector to match pods with specific labels.
+3. Specifies a template for creating pods, including labels and container configuration.
+4. Configures a single container with the chat application image, exposed port, and environment variables.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Kubernetes | For deploying and managing the application |
+| Helm | For templating and managing the Kubernetes resources |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| image | String | Dynamically set | The container image to use for the chat application |
+| containerPort | Integer | 80 | The port exposed by the container |
+| VITE_API_HOST | String | Set by .Values.config.vite.apiHost | The API host for the Vite configuration |
+| VITE_SEARCH_UI_URL | String | Set by .Values.config.vite.searchUiUrl | The search UI URL for the Vite configuration |
+| VITE_DASHBOARD_URL | String | Set by .Values.config.vite.dashboardUrl | The dashboard URL for the Vite configuration |
+
+## Future Improvements
+1. Consider adding resource limits and requests for the container to ensure proper resource allocation.
+2. Implement health checks (readiness and liveness probes) for the container to improve reliability.
+3. Add support for horizontal pod autoscaling to handle varying loads efficiently.
+4. Consider using secrets for sensitive environment variables instead of plain text values.
+5. Implement a rolling update strategy to minimize downtime during deployments.

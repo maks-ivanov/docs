@@ -1,0 +1,41 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert changes made to the `dataset_tags` table, specifically removing a unique constraint and adding two separate unique constraints. It's part of a database migration system, likely used to manage schema changes in a version-controlled manner.
+
+## Table of contents
+- Drop unique constraint on dataset_id and tag
+- Add unique constraint on id and dataset_id
+- Add unique constraint on tag
+
+## Code Structure
+The script consists of three SQL ALTER TABLE statements, each modifying the `dataset_tags` table structure.
+
+## Symbols
+
+### ALTER TABLE dataset_tags DROP CONSTRAINT
+#### Description
+This statement removes the unique constraint named `dataset_tags_dataset_id_tag_key` from the `dataset_tags` table if it exists.
+
+#### Internal Logic
+The `IF EXISTS` clause ensures that the statement doesn't fail if the constraint doesn't exist.
+
+### ALTER TABLE dataset_tags ADD CONSTRAINT dataset_tags_id_dataset_id
+#### Description
+This statement adds a new unique constraint named `dataset_tags_id_dataset_id` to the `dataset_tags` table, ensuring that the combination of `id` and `dataset_id` columns is unique.
+
+### ALTER TABLE dataset_tags ADD CONSTRAINT dataset_tags_tag
+#### Description
+This statement adds another unique constraint named `dataset_tags_tag` to the `dataset_tags` table, ensuring that the `tag` column contains only unique values.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| SQL Database | The script is designed to be executed on a SQL database that supports ALTER TABLE statements and constraints. |
+
+## Future Improvements
+- Consider adding error handling or logging to capture any issues that might occur during the execution of these statements.
+- If the database system supports it, consider using transactional DDL to ensure atomicity of these changes.
+- Depending on the size of the `dataset_tags` table, adding these constraints might require careful consideration of performance impacts. Future improvements could include optimizing the table or indexes before adding constraints.

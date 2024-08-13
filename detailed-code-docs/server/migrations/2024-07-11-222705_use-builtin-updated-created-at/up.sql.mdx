@@ -1,0 +1,62 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script updates the database to use built-in `updated_at` functionality. It removes custom triggers and functions for updating timestamps and replaces them with Diesel's built-in timestamp management system.
+
+## Table of contents
+- Drop existing triggers
+- Drop existing functions
+- Create new Diesel functions
+- Apply new triggers to tables
+
+## Code Structure
+The script is structured in four main parts:
+1. Dropping existing triggers
+2. Dropping existing functions
+3. Creating new Diesel functions for managing timestamps
+4. Applying the new triggers to specific tables
+
+## Symbols
+
+### DROP TRIGGER statements
+#### Description
+These statements remove existing triggers that were previously used to update the `updated_at` column for various tables.
+
+### DROP FUNCTION statements
+#### Description
+These statements remove the custom functions that were previously used to update the `updated_at` column.
+
+### diesel_manage_updated_at function
+#### Description
+This function creates a trigger on a specified table to manage the `updated_at` column using Diesel's built-in functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _tbl | regclass | The table on which to create the trigger |
+
+#### Internal Logic
+The function executes a dynamic SQL statement to create a trigger named `set_updated_at` on the specified table. This trigger calls the `diesel_set_updated_at()` function before each update operation.
+
+### diesel_set_updated_at function
+#### Description
+This function is called by the trigger to update the `updated_at` column when a row is modified.
+
+#### Internal Logic
+The function checks if the NEW row is different from the OLD row and if the `updated_at` column hasn't been explicitly changed. If these conditions are met, it sets the `updated_at` column to the current timestamp.
+
+### SELECT diesel_manage_updated_at statements
+#### Description
+These statements apply the new `diesel_manage_updated_at` function to specific tables in the database.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Diesel | ORM and query builder for Rust, used here for managing database migrations and timestamps |
+
+## Future Improvements
+- Consider adding error handling or logging to the `diesel_manage_updated_at` and `diesel_set_updated_at` functions to track any issues during execution.
+- If there are any tables not included in this migration that also need timestamp management, they should be added to the list of `SELECT diesel_manage_updated_at` statements.
+- Ensure that all applications and services using this database are compatible with the new timestamp management system before applying this migration in production.

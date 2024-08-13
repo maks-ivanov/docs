@@ -1,0 +1,21 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for adding and removing metadata and tag set functionality to the `chunk_group` table in a PostgreSQL database. The scripts provide a way to upgrade and downgrade the database schema, enabling version control and consistent database structure across different environments.
+
+## What does it do?
+The scripts in this directory manage changes to how groups of chunks are stored in the database. One script adds the ability to store additional information about each group, like tags and other data, while the other script removes this functionality. This is like adding and removing sticky notes with extra details on folders in a filing cabinet.
+
+## Key Files
+### 2024-04-09-001819_add-metadata-and-tag-set-to-groups/up.sql
+This script upgrades the database schema by adding two new columns to the `chunk_group` table:
+
+- `metadata`: Stores additional information about the chunk group in JSON format.
+- `tag_set`: Stores tags associated with the chunk group as text.
+
+It also creates indexes on both columns to improve query performance.
+
+### 2024-04-09-001819_add-metadata-and-tag-set-to-groups/down.sql
+This script reverts the changes made by `up.sql`. It removes the `metadata` and `tag_set` columns from the `chunk_group` table and drops the associated indexes. This effectively rolls back the database schema to its previous state.

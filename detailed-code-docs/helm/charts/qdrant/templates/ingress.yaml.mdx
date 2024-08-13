@@ -1,0 +1,58 @@
+---
+title: "ingress.yaml"
+---
+
+## High-level description
+This Helm chart template defines a Kubernetes Ingress resource for the Qdrant application. It configures routing rules and TLS settings based on the values provided in the Helm chart.
+
+## Table of contents
+- Ingress resource definition
+- Metadata configuration
+- Ingress spec configuration
+- Host rules and path configurations
+- TLS configuration
+
+## Code Structure
+The template uses conditional statements and loops to generate the Ingress resource based on the provided values. It references helper templates for generating labels and names.
+
+## Symbols
+
+### Ingress Resource
+#### Description
+Defines a Kubernetes Ingress resource to manage external access to the Qdrant service.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.ingress | Object | Contains all ingress-related configuration values |
+| .Values.ingress.enabled | Boolean | Determines if the Ingress resource should be created |
+| .Values.ingress.additionalLabels | Object | Additional labels to apply to the Ingress |
+| .Values.ingress.annotations | Object | Annotations to apply to the Ingress |
+| .Values.ingress.ingressClassName | String | The Ingress class to use |
+| .Values.ingress.hosts | Array | List of host configurations |
+| .Values.ingress.tls | Array | TLS configurations for the Ingress |
+
+#### Internal Logic
+1. Checks if ingress is enabled
+2. Sets metadata including name, labels, and annotations
+3. Configures ingress class if specified
+4. Defines rules for each host, including paths and backend services
+5. Configures TLS settings if provided
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| networking.k8s.io/v1 | Kubernetes API version for Ingress resources |
+
+### Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| ingress.enabled | Boolean | - | Enables or disables the Ingress resource |
+| ingress.ingressClassName | String | - | Specifies the Ingress class |
+| ingress.hosts | Array | - | Configures host rules and paths |
+| ingress.tls | Array | - | Configures TLS settings |
+
+## Future Improvements
+- Consider adding support for multiple backend services within a single Ingress resource
+- Implement more flexible path matching options (e.g., regex-based paths)
+- Add support for rate limiting annotations or other advanced Ingress features

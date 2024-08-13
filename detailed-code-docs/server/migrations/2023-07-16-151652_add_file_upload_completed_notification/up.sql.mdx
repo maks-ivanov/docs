@@ -1,0 +1,49 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a new table named `file_upload_completed_notifications` to store notifications related to completed file uploads. The table is designed to track user-specific notifications for file uploads in collections.
+
+## Table of contents
+- Table creation
+- Column definitions
+- Default values and constraints
+
+## Code Structure
+The code consists of a single SQL statement that creates a table with specific columns and constraints.
+
+## Symbols
+
+### `file_upload_completed_notifications` (Table)
+#### Description
+This table is designed to store notifications for completed file uploads. It includes information about the user, the collection, the read status of the notification, and timestamps for creation and updates.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | PRIMARY KEY | Unique identifier for each notification |
+| user_uuid | UUID | NOT NULL | Identifier of the user associated with the notification |
+| collection_uuid | UUID | NOT NULL | Identifier of the collection associated with the file upload |
+| user_read | boolean | NOT NULL, DEFAULT false | Indicates whether the user has read the notification |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the notification was created |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the notification was last updated |
+
+#### Internal Logic
+The table uses UUIDs for primary key and foreign key-like columns (user_uuid and collection_uuid). This suggests that the application likely uses UUIDs for user and collection identifiers in other tables as well.
+
+The `user_read` column is a boolean with a default value of `false`, indicating that new notifications are unread by default.
+
+Both `created_at` and `updated_at` columns use the `NOW()` function as the default value, automatically setting the current timestamp when a row is inserted or updated.
+
+## Dependencies
+This SQL script doesn't explicitly depend on any external libraries or modules. However, it assumes the existence of a database system that supports:
+- UUID data type
+- TIMESTAMP data type
+- NOW() function
+
+## Future Improvements
+1. Consider adding indexes on `user_uuid` and `collection_uuid` columns if frequent queries will be performed using these fields.
+2. If the system requires tracking who created the notification, an additional `created_by` column could be added.
+3. Depending on the application's needs, a `notification_type` column could be added to differentiate between various types of file upload notifications.
+4. If there's a need to store additional information about the file upload, consider adding columns like `file_name` or `file_size`.

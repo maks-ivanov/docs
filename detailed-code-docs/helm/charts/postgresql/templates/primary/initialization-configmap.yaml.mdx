@@ -1,0 +1,54 @@
+---
+title: "initialization-configmap.yaml"
+---
+
+## High-level description
+This Helm template generates a Kubernetes ConfigMap for PostgreSQL initialization scripts. It's used to store custom scripts that will be executed when initializing the primary PostgreSQL instance.
+
+## Table of contents
+- ConfigMap definition
+- Metadata
+- Data
+
+## Code Structure
+The template creates a single Kubernetes ConfigMap resource with metadata and data sections. The creation of this ConfigMap is conditional based on the presence of initialization scripts and the absence of a pre-existing ConfigMap.
+
+## Symbols
+
+### ConfigMap Resource
+#### Description
+Defines a Kubernetes ConfigMap resource to store PostgreSQL initialization scripts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.primary.initdb.scripts | map | Custom initialization scripts |
+| .Values.primary.initdb.scriptsConfigMap | string | Name of an existing ConfigMap containing initialization scripts |
+| .Values.commonLabels | map | Common labels to be applied to the resource |
+| .Values.commonAnnotations | map | Common annotations to be applied to the resource |
+
+#### Internal Logic
+1. Checks if initialization scripts are provided and a pre-existing ConfigMap is not specified.
+2. If condition is met, creates a ConfigMap with the following:
+   - Metadata: name, namespace, labels, and annotations
+   - Data: The initialization scripts
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.labels.standard | Generates standard Kubernetes labels |
+| common.tplvalues.render | Renders template values |
+| postgresql.v1.primary.fullname | Generates the full name for the primary PostgreSQL instance |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.primary.initdb.scripts | map | nil | Custom initialization scripts to be executed |
+| .Values.primary.initdb.scriptsConfigMap | string | nil | Name of an existing ConfigMap containing initialization scripts |
+| .Values.commonLabels | map | nil | Common labels to be applied to the resource |
+| .Values.commonAnnotations | map | nil | Common annotations to be applied to the resource |
+
+## Future Improvements
+- Consider adding support for multiple initialization ConfigMaps.
+- Implement validation for the script content to ensure they are valid SQL or shell scripts.
+- Add an option to specify the execution order of the initialization scripts.

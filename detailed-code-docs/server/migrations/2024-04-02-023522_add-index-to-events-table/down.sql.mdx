@@ -1,0 +1,35 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made in the corresponding `up.sql` file. It removes two indexes from the `events` table that were likely created to improve query performance.
+
+## Table of contents
+- Drop index on dataset_id
+- Drop index on event_type
+
+## Symbols
+
+### `DROP INDEX IF EXISTS idx_events_dataset_id`
+#### Description
+This SQL command removes the index named `idx_events_dataset_id` from the `events` table if it exists.
+
+#### Side Effects
+- Removes the index on the `dataset_id` column of the `events` table
+- May impact query performance for queries that filter or join on the `dataset_id` column
+
+### `DROP INDEX IF EXISTS idx_events_event_type`
+#### Description
+This SQL command removes the index named `idx_events_event_type` from the `events` table if it exists.
+
+#### Side Effects
+- Removes the index on the `event_type` column of the `events` table
+- May impact query performance for queries that filter or join on the `event_type` column
+
+## Performance Considerations
+Removing these indexes may decrease the performance of queries that previously utilized them. However, it will also reduce the storage space required for the table and potentially improve the performance of insert, update, and delete operations on the `events` table.
+
+## Future Improvements
+- Consider adding a comment explaining why these indexes are being removed and any potential impact on the application's performance.
+- If these indexes are frequently created and dropped, consider implementing a more dynamic indexing strategy based on query patterns and data volume.

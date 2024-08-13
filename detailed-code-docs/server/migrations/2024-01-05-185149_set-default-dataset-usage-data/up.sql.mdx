@@ -1,0 +1,50 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file creates a function and a trigger to automatically initialize usage data for newly inserted datasets. It ensures that each new dataset has a corresponding entry in the `dataset_usage_counts` table.
+
+## Table of contents
+- Function creation: `set_default_dataset_usage_data()`
+- Trigger creation: `set_default_dataset_usage_data_trigger`
+
+## Symbols
+
+### `set_default_dataset_usage_data()`
+#### Description
+This function is a PostgreSQL trigger function that inserts a new row into the `dataset_usage_counts` table whenever a new dataset is created. It uses the `id` of the newly inserted dataset as the `dataset_id` in the `dataset_usage_counts` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NEW | record | Automatically provided by PostgreSQL, represents the new row being inserted into the `datasets` table |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NEW | record | Returns the NEW record unchanged |
+
+#### Internal Logic
+1. Attempts to insert a new row into `dataset_usage_counts` with the `dataset_id` set to the `id` of the newly inserted dataset.
+2. Uses `ON CONFLICT (dataset_id) DO NOTHING` to handle cases where an entry for this dataset might already exist, preventing duplicate entries.
+3. Returns the NEW record, allowing the original insert operation to proceed.
+
+### `set_default_dataset_usage_data_trigger`
+#### Description
+This is a PostgreSQL trigger that automatically executes the `set_default_dataset_usage_data()` function after each INSERT operation on the `datasets` table.
+
+#### Internal Logic
+1. Triggered AFTER INSERT operations on the `datasets` table.
+2. Executes for EACH ROW inserted.
+3. Calls the `set_default_dataset_usage_data()` function.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| PostgreSQL | This SQL is specific to PostgreSQL and uses its procedural language, PL/pgSQL |
+
+## Future Improvements
+- Consider adding error handling within the trigger function to log any issues that might occur during the insertion into `dataset_usage_counts`.
+- If dataset deletion is implemented, a corresponding trigger to remove entries from `dataset_usage_counts` might be necessary.
+- Depending on the application's needs, you might want to initialize other default values or perform additional operations when a new dataset is created.

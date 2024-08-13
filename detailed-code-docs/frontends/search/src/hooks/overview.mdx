@@ -1,0 +1,56 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains two important hooks for managing search functionality and dataset configuration in a SolidJS-based application. The `useSearch` hook handles search state management and URL synchronization, while the `useDatasetServerConfig` hook fetches and provides server configuration for a specific dataset.
+
+## What does it do?
+These hooks work together to provide a robust search experience:
+
+1. `useSearch` manages the search state, including query parameters, filters, and sorting options. It synchronizes this state with URL parameters, allowing users to share or bookmark specific search configurations. It also implements debouncing to prevent excessive API calls during rapid user input.
+
+2. `useDatasetServerConfig` fetches the server configuration for a given dataset. This configuration likely contains important settings that influence how the search functionality behaves for that specific dataset.
+
+Together, these hooks enable a dynamic and configurable search interface that can adapt to different datasets and user interactions.
+
+## Key Files
+
+### useSearch.ts
+This file contains the `useSearch` hook, which is central to the search functionality. It manages:
+- Search state (query, filters, sorting, etc.)
+- URL parameter synchronization
+- Debounced updates to prevent excessive API calls
+
+The hook provides:
+- A current search state
+- A debounced search state
+- A function to update the search state
+
+It uses type guards to ensure type safety for sort options and highlight strategies.
+
+### useDatasetServerConfig.ts
+This file contains the `useDatasetServerConfig` hook, which:
+- Fetches the server configuration for a specific dataset
+- Uses the SolidJS `createResource` for efficient data fetching and caching
+- Retrieves the dataset ID from a context
+- Returns the server configuration as a SolidJS resource
+
+## Dependencies
+- SolidJS: The application is built using the SolidJS framework, utilizing its reactive primitives like `createResource`, `createStore`, and `createEffect`.
+- `@solidjs/router`: Used for managing URL parameters in the `useSearch` hook.
+
+## Configuration
+- `VITE_API_HOST`: An environment variable used in `useDatasetServerConfig` to specify the base URL for API requests.
+
+The `useSearch` hook manages several configurable search parameters:
+- `query`: The search query string
+- `filters`: An object containing various filter options
+- `sort_by`: Sorting configuration (either by field or search type)
+- `highlightStrategy`: Strategy for highlighting search results
+- `page`: Current page number
+- `limit`: Number of results per page
+
+These parameters are synchronized with URL parameters, allowing for easy sharing and bookmarking of search configurations.
+
+In summary, this directory provides crucial hooks for managing search functionality and dataset configuration in a SolidJS application. The `useSearch` hook offers a flexible and user-friendly way to manage search state, while `useDatasetServerConfig` ensures that the application has access to the correct server configuration for each dataset. Together, they form the backbone of a powerful and adaptable search interface.

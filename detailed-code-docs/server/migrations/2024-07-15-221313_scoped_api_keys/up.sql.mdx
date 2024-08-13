@@ -1,0 +1,30 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a new column named `scopes` of type `text[]` (array of text) to the `user_api_key` table if it doesn't already exist. This allows for the implementation of scoped API keys, enabling more granular control over API access permissions.
+
+## Table of contents
+- ALTER TABLE statement
+
+## Symbols
+
+### ALTER TABLE statement
+#### Description
+This SQL statement modifies the structure of the `user_api_key` table by adding a new column `scopes`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| user_api_key | table | The existing table to be altered |
+| scopes | text[] | The new column to be added, an array of text values |
+
+#### Internal Logic
+1. The `IF NOT EXISTS` clause ensures that the column is only added if it doesn't already exist in the table.
+2. The `text[]` data type allows for storing multiple text values in a single column, which is suitable for storing multiple API scopes.
+
+## Future Improvements
+- Consider adding a default value or constraint to the `scopes` column if there are specific requirements for its content.
+- If needed, create an index on the `scopes` column to improve query performance when filtering or searching by scopes.
+- Implement a corresponding down migration to remove the column if the change needs to be reverted.

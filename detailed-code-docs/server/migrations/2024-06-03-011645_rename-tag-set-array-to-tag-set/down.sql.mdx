@@ -1,0 +1,42 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert changes made to the database schema, specifically undoing the renaming of the `tag_set_array` column to `tag_set` in multiple tables and re-adding the original `tag_set` column.
+
+## Table of contents
+- Rename `tag_set` back to `tag_set_array` in `chunk_metadata` table
+- Add `tag_set` column to `chunk_metadata` table
+- Rename `tag_set` back to `tag_set_array` in `files` table
+- Add `tag_set` column to `files` table
+- Rename `tag_set` back to `tag_set_array` in `chunk_group` table
+- Add `tag_set` column to `chunk_group` table
+
+## Code Structure
+The script consists of a series of SQL ALTER TABLE statements that modify the schema of three tables: `chunk_metadata`, `files`, and `chunk_group`. For each table, it renames the `tag_set` column back to `tag_set_array` and adds a new `tag_set` column.
+
+## Symbols
+
+### ALTER TABLE statements
+#### Description
+Each ALTER TABLE statement modifies the structure of a specific table in the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| table_name | string | The name of the table being altered |
+| old_column_name | string | The current name of the column to be renamed |
+| new_column_name | string | The new name for the column |
+
+#### Internal Logic
+1. Rename the `tag_set` column back to `tag_set_array`.
+2. Add a new `tag_set` column with TEXT data type and DEFAULT NULL constraint.
+
+## Dependencies
+This script relies on the SQL database system supporting ALTER TABLE statements for renaming columns and adding new columns.
+
+## Future Improvements
+- Consider adding error handling or transaction management to ensure all changes are applied atomically.
+- If the original migration included any data migration, consider adding corresponding data migration steps in this down migration to preserve data integrity.
+- Add comments explaining the purpose of each alteration for better maintainability.

@@ -1,0 +1,86 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the database schema, specifically focusing on transitioning from a user-based to a dataset-based collection management system. The migration involves altering table structures, renaming tables, and updating a trigger function to maintain collection counts.
+
+## What does it do?
+The migration scripts in this directory perform the following tasks:
+
+1. In the "up" migration:
+   - Removes user-specific columns from existing tables
+   - Adds dataset-related columns to tables
+   - Renames the `user_collection_counts` table to `dataset_collection_counts`
+   - Updates the `update_collection_counts()` trigger function to work with the new table structure
+
+2. In the "down" migration:
+   - Reverts the changes made in the "up" migration
+   - Restores user-specific columns
+   - Removes dataset-related columns
+   - Renames the `dataset_collection_counts` table back to `user_collection_counts`
+
+These changes reflect a shift in the application's data model, moving from organizing collections by users to organizing them by datasets.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL commands to perform the migration from user-based to dataset-based collection management. Key operations include:
+
+   ```sql
+   ALTER TABLE chunk_collections DROP COLUMN author_id;
+   ALTER TABLE user_collection_counts DROP COLUMN user_id;
+   ALTER TABLE user_collection_counts ADD COLUMN dataset_id uuid;
+   ALTER TABLE user_collection_counts RENAME TO dataset_collection_counts;
+   ```
+
+   It also updates the `update_collection_counts()` function to work with the new structure:
+
+   ```sql
+   CREATE OR REPLACE FUNCTION update_collection_counts()
+   RETURNS TRIGGER AS $$
+   BEGIN
+     IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
+       INSERT INTO dataset_collection_counts (dataset_id, collection_count)
+       VALUES (NEW.dataset_id, 1)
+       ON CONFLICT (dataset_id) DO UPDATE
+       SET collection_count = dataset_collection_counts.collection_count + 1;
+     ELSIF (TG_OP = 'DELETE') THEN
+       UPDATE dataset_collection_counts
+       SET collection_count = dataset_collection_counts.collection_count - 1
+       WHERE dataset_id = OLD.dataset_id;
+     END IF;
+     RETURN NULL;
+   END;
+   $$ LANGUAGE plpgsql;
+   ```
+
+2. `down.sql`: This file contains the SQL commands to revert the changes made in the "up" migration. Key operations include:
+
+   ```sql
+   ALTER TABLE chunk_collections ADD COLUMN author_id uuid;
+   ALTER TABLE user_collection_counts ADD COLUMN user_id uuid;
+   ALTER TABLE chunk_collections DROP COLUMN dataset_id;
+   ALTER TABLE dataset_collection_counts RENAME TO user_collection_counts;
+   ```
+
+## Dependencies
+The migration scripts depend on the existence of the following database tables:
+- `chunk_collections`
+- `user_collection_counts`
+- `dataset_collection_counts`
+
+The scripts also assume the presence of a PostgreSQL database system capable of executing these SQL commands.
+
+## Configuration
+These migration scripts do not require explicit configuration. However, they should be run in the context of a database migration system (such as Diesel for Rust applications) that can manage the execution order and track the state of migrations.
+
+## Future Improvements
+1. Add data migration steps in the "down" migration to ensure data integrity when reverting changes.
+2. Implement checks to verify if columns or tables exist before attempting modifications to prevent potential errors.
+3. Add indexes on the `dataset_id` column in the `dataset_collection_counts` table for improved query performance.
+4. Update the `update_collection_counts()` function in the "up" migration to fully align with the new dataset-based structure by replacing references to `user_id` and `author_id` with `dataset_id`.
+5. Create a data migration script to populate the new `dataset_id` column with appropriate values based on the old `user_id` data.
+6. Update any application code that interacts with these tables to use the new column names and table structure.
+7. Add constraints (e.g., NOT NULL) to the new `dataset_id` column to ensure data integrity.
+
+These improvements would enhance the robustness, performance, and consistency of the database schema changes implemented by these migration scripts.

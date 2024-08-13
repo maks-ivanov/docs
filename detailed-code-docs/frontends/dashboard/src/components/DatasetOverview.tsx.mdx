@@ -1,0 +1,96 @@
+---
+title: "DatasetOverview.tsx"
+---
+
+## High-level description
+The `DatasetOverview` component displays a list of datasets for the selected organization, allowing users to interact with and manage these datasets. It provides functionalities like creating new datasets, searching existing ones, viewing chunk counts, and performing actions like deleting or clearing a dataset.
+
+## Table of contents
+- Imports
+- Interface `DatasetOverviewProps`
+- Component `DatasetOverview`
+- Component `PaginationArrows`
+
+## References
+- `useDatasetPages`: A custom hook used for fetching and managing datasets.
+- `createToast`: A function used to display toast notifications.
+
+## Symbols
+
+### Symbol Name: `DatasetOverviewProps`
+#### Description
+Defines the properties that the `DatasetOverview` component expects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| setOpenNewDatasetModal | Setter&lt;boolean&gt; |  A setter function to control the visibility of the new dataset modal. |
+| selectedOrganization | Accessor&lt;Organization \| undefined&gt; | An accessor function to retrieve the currently selected organization. |
+
+### Symbol Name: `DatasetOverview`
+#### Description
+A SolidJS component that renders an overview of datasets within a selected organization. It fetches dataset information, displays them in a table, and provides functionalities for interacting with them.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | DatasetOverviewProps |  Properties passed to the component, including functions to manage modal visibility and access the selected organization. |
+
+#### Outputs
+Renders the dataset overview section, including a table of datasets and functionalities to interact with them.
+
+#### Internal Logic
+1. **Initialization:**
+   - Imports necessary icons, components, and hooks.
+   - Defines URLs for external tools (analytics, search, chat).
+   - Initializes signals for page number, search query, and dataset usage.
+   - Utilizes the `useDatasetPages` hook to fetch and manage datasets based on organization, search query, and pagination.
+
+2. **Data Fetching and Management:**
+   - Uses a `createEffect` to fetch dataset usage data when datasets are loaded.
+   - Implements functions for deleting a dataset (`deleteDataset`), clearing a dataset (`clearDataset`), and reloading chunk counts (`reloadChunkCount`).
+
+3. **UI Rendering:**
+   - Renders a heading, a search bar, and a button to create a new dataset.
+   - Conditionally renders a placeholder if no datasets exist or while loading.
+   - Displays a table of datasets with details like name, ID, chunk count, creation date, and actions (settings, delete, clear).
+   - Implements pagination using the `PaginationArrows` component.
+
+4. **Event Handling:**
+   - Handles click events on datasets to navigate to their respective detail pages.
+   - Handles click events on action buttons (search, chat, analytics) to open corresponding tools in new tabs.
+   - Manages search input to update the dataset list based on the query.
+
+### Symbol Name: `PaginationArrows`
+#### Description
+A SolidJS component that renders pagination arrows to navigate between pages of datasets.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Accessor&lt;number&gt; | An accessor function to retrieve the current page number. |
+| setPage | Setter&lt;number&gt; | A setter function to update the current page number. |
+| maxPageDiscovered | Accessor&lt;number \| null&gt; | An accessor function to retrieve the maximum page number discovered. |
+
+#### Outputs
+Renders pagination arrows with logic to disable them at the beginning or end of the pages.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Core library for building the user interface. |
+| @solidjs/router | Provides routing functionalities for navigation. |
+| solid-icons/* | Provides various icons used in the component. |
+| shared/types | Imports type definitions shared across the application. |
+| shared/ui | Imports UI components shared across the application. |
+
+## Error Handling
+- Employs toast notifications to inform the user about errors encountered during dataset deletion, clearing, or chunk count reloading.
+- Provides specific error messages based on the API response.
+
+## Future Improvements
+- **Implement optimistic updates:** When deleting or clearing a dataset, update the UI immediately and reflect the changes from the API call later. This would make the UI feel more responsive.
+- **Add loading indicators:** Display loading indicators while fetching datasets, deleting, or clearing them to improve the user experience.
+- **Improve error handling:** Provide more informative error messages and potentially implement retry mechanisms for failed API calls.
+- **Add sorting functionality:** Allow users to sort datasets by name, chunk count, or creation date.
+- **Implement filtering options:** Allow users to filter datasets based on criteria like creation date range or chunk count range.

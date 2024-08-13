@@ -1,0 +1,77 @@
+---
+title: "PlansTable.tsx"
+---
+
+## High-level description
+The `PlansTable` component displays a table of available subscription plans for the Trieve platform, allowing users to view plan details, compare features, and upgrade, downgrade, or cancel their current subscription. It also handles communication with the backend API for fetching plan data and updating subscriptions.
+
+## Table of contents
+- Imports
+- `ActiveTag` component
+- `PlansTable` component
+
+## Code Structure
+The `PlansTable` component utilizes several SolidJS signals and effects to manage its state and interact with the backend API. The `availablePlans` signal stores the fetched list of plans, while `currentPlan` and `currentSubscription` track the user's active plan and subscription details. The `processingPlanId` signal is used to indicate when a plan update is in progress. The component also includes functions for fetching plan data, creating a Stripe checkout session, canceling the current plan, and updating to a different plan.
+
+## References
+- `createToast` from "./ShowToasts.tsx"
+- `OrganizationAndSubAndPlan`, `StripePlan`, `StripeSubscription` from "shared/types"
+- `formatBytesDecimal`, `numberFormatter`, `usdFormatter` from "../formatters"
+
+## Symbols
+
+### Symbol Name: `ActiveTag`
+#### Description
+This component renders a simple tag with a given text, styled to indicate the current subscription tier.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | string | The text to display within the tag |
+
+#### Outputs
+- JSX Element: A `&lt;p&gt;` tag styled to represent an active tag.
+
+### Symbol Name: `PlansTable`
+#### Description
+This component fetches and displays a table of available subscription plans, allowing users to manage their subscription.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| currentOrgSubPlan | OrganizationAndSubAndPlan | An object containing the user's current organization, subscription, and plan details |
+
+#### Outputs
+- JSX Element: A `&lt;div&gt;` containing the rendered plans table and related UI elements.
+
+#### Internal Logic
+1. **Fetches available plans:** On component mount, fetches the list of available Stripe plans from the backend API.
+2. **Tracks current plan and subscription:** Uses `createEffect` to update the `currentPlan` and `currentSubscription` signals based on the `currentOrgSubPlan` prop.
+3. **Renders plan table:** Iterates through the `availablePlansWithCurrent` memo, which combines the fetched plans with the user's current plan status, and renders a table row for each plan.
+4. **Handles plan actions:** Provides buttons for subscribing, upgrading, downgrading, or canceling plans, and communicates with the backend API to perform these actions.
+5. **Displays status messages:** Shows relevant status messages to the user, such as when a plan update is processing or when their subscription is about to expire.
+
+## Side Effects
+- Makes API requests to fetch plan data and update subscriptions.
+- Updates the URL to redirect to Stripe checkout when updating the payment method.
+- Displays toast notifications using `createToast` for success and error messages.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Provides core reactivity and rendering functionalities |
+| shared/types | Imports type definitions for organization, subscription, and plan data |
+| ../formatters | Imports utility functions for formatting currency, bytes, and numbers |
+| solid-icons/bs | Provides Bootstrap icons for visual elements |
+| solid-icons/ai | Provides Ant Design icons for visual elements |
+| ./ShowToasts | Imports the `createToast` function for displaying toast notifications |
+
+## Error Handling
+- Handles 403 Forbidden errors from the API, potentially indicating a role change requiring re-authentication.
+- Displays error messages to the user using toast notifications.
+
+## Future Improvements
+- Implement more robust error handling for API requests, providing specific error messages to the user.
+- Add loading indicators while fetching plan data and processing plan updates.
+- Allow users to manage multiple subscriptions if they belong to multiple organizations.
+- Improve the UI for selecting and comparing plans, potentially using a card layout or interactive elements. 

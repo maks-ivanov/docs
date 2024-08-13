@@ -1,0 +1,59 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script renames tables and columns related to "collections" to "groups", updates constraints, and modifies a function to reflect these changes. It's part of a database schema update to transition from a collection-based to a group-based structure.
+
+## Table of contents
+- Table and column renaming
+- Constraint addition
+- Function update
+
+## Code Structure
+The script consists of a series of ALTER TABLE statements for renaming tables and columns, followed by the creation of a unique constraint, and finally, a function update to reflect the new naming convention.
+
+## Symbols
+
+### ALTER TABLE statements
+#### Description
+These statements rename tables and columns from "collection" to "group" terminology.
+
+#### Internal Logic
+1. Rename `chunk_collection` to `chunk_group`
+2. Rename `chunk_collection_bookmarks` to `chunk_group_bookmarks`
+3. Rename `collections_from_files` to `groups_from_files`
+4. Rename column `collection_uuid` to `group_uuid` in `file_upload_completed_notifications`
+5. Rename column `collection_id` to `group_id` in `groups_from_files` and `chunk_group_bookmarks`
+6. Rename `dataset_collection_counts` to `dataset_group_counts`
+7. Rename column `collection_count` to `group_count` in `dataset_group_counts`
+
+### ADD CONSTRAINT statement
+#### Description
+Adds a unique constraint to the `dataset_id` column in the `dataset_group_counts` table.
+
+#### Internal Logic
+```sql
+ALTER TABLE dataset_group_counts ADD CONSTRAINT UQ_dataset_id UNIQUE (dataset_id);
+```
+
+### CREATE OR REPLACE FUNCTION public.update_collection_counts()
+#### Description
+Updates the `update_collection_counts` function to work with the new "group" terminology.
+
+#### Internal Logic
+1. Handles INSERT, UPDATE, and DELETE operations on the related table
+2. For INSERT and UPDATE:
+   - Inserts or updates the `dataset_group_counts` table, incrementing the `group_count`
+3. For DELETE:
+   - Updates the `dataset_group_counts` table, decrementing the `group_count`
+
+## Side Effects
+- Existing data in renamed tables and columns will be preserved
+- The unique constraint on `dataset_id` may cause issues if duplicate values exist
+- Any code or queries referencing the old table and column names will need to be updated
+
+## Future Improvements
+- Consider adding indexes on frequently queried columns for performance optimization
+- Implement a reverse migration (down.sql) to revert these changes if needed
+- Review and update any application code, views, or stored procedures that may be affected by these naming changes

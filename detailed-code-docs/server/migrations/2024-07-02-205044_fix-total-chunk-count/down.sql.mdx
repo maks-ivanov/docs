@@ -1,0 +1,34 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert the changes made in the corresponding `up.sql` migration. It primarily focuses on removing the `NOT NULL` constraint from the `chunk_count` column in the `organization_usage_counts` table and dropping a trigger function.
+
+## Table of contents
+- Alter `organization_usage_counts` table
+- Drop trigger function
+
+## Symbols
+
+### ALTER TABLE organization_usage_counts
+#### Description
+This SQL command removes the `NOT NULL` constraint from the `chunk_count` column in the `organization_usage_counts` table.
+
+#### Internal Logic
+The command uses the `ALTER COLUMN` clause to modify the `chunk_count` column, specifically using `DROP NOT NULL` to remove the not-null constraint.
+
+### DROP FUNCTION IF EXISTS update_organization_chunk_count
+#### Description
+This SQL command removes the `update_organization_chunk_count` function if it exists in the database.
+
+#### Internal Logic
+The `DROP FUNCTION` statement is used with the `IF EXISTS` clause to ensure that the function is dropped only if it exists, preventing potential errors if the function is not present.
+
+## Side Effects
+- The `chunk_count` column in the `organization_usage_counts` table will allow NULL values after this migration is applied.
+- The `update_organization_chunk_count` function will be removed from the database.
+
+## Future Improvements
+- The commented-out sections suggest that there might be additional data updates or reversals that could be implemented if needed in the future. These sections could be uncommented and adjusted if a more comprehensive rollback is required.
+- Consider adding error handling or logging to track the success of the migration, especially for critical operations like dropping functions or altering table structures.

@@ -1,0 +1,60 @@
+---
+title: "OrganizationSelectBox.tsx"
+---
+
+## High-level description
+The `OrganizationSelectBox` component displays a dropdown menu that allows the user to select an organization from a list. The selected organization is used to filter the list of datasets displayed in the `DatasetSelectBox` component. The component also displays the currently selected organization.
+
+## Table of contents
+- Imports
+- Component Definition (`OrganizationSelectBox`)
+
+## Code Structure
+The `OrganizationSelectBox` component uses the `DatasetAndUserContext` to access the list of organizations and the currently selected organization. The component uses the `Popover` component from the `solid-headless` library to display the dropdown menu. The `Menu` and `MenuItem` components from the `solid-headless` library are used to display the list of organizations. The `FaSolidCheck` icon is used to indicate the currently selected organization.
+
+## References
+- `DatasetAndUserContext`: Provides access to the list of organizations, the currently selected organization, and the function to set the currently selected organization.
+
+## Symbols
+
+### Symbol Name
+```typescript
+OrganizationSelectBox
+```
+
+#### Description
+This is a functional component that renders a dropdown menu for selecting an organization. It displays the currently selected organization's name and allows users to choose from a list of available organizations.
+
+#### Inputs
+This component does not take any explicit props.
+
+#### Outputs
+This component renders a dropdown menu for selecting an organization.
+
+#### Internal Logic
+1. **Retrieves Data from Context:** It uses the `DatasetAndUserContext` to access the list of organizations (`organizations`), the currently selected organization (`currentOrganization`), and the function to update the selected organization (`setCurrentOrganization`).
+2. **Manages Dropdown State:** It utilizes the `Popover` component from `solid-headless` to manage the open/closed state of the dropdown menu.
+3. **Renders Organization List:** It iterates through the `organizationsList` and renders a `MenuItem` for each organization.
+4. **Handles Organization Selection:** When an organization is selected:
+    - It prevents default event behavior.
+    - It updates the `currentOrganization` in the context using `setCurrentOrganization`.
+    - It closes the dropdown menu.
+5. **Indicates Selected Organization:** It visually marks the currently selected organization in the list using a checkmark icon (`FaSolidCheck`).
+
+## Side Effects
+This component updates the `currentOrganization` state in the `DatasetAndUserContext` when the user selects a new organization. This change will likely trigger updates in other components that rely on the `currentOrganization` state.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Core library for building the component and its logic. |
+| solid-headless | Provides headless UI components like `Menu`, `MenuItem`, `Popover`, etc. |
+| solid-icons/fa | Provides the `FaSolidCheck` icon. |
+| solid-icons/fi | Provides the `FiChevronDown` and `FiChevronUp` icons. |
+| ./Contexts/DatasetAndUserContext | Provides access to shared data and functions related to datasets and user context. |
+
+## Future Improvements
+- **Accessibility:** Enhance the component's accessibility by adding keyboard navigation and ARIA attributes for screen readers.
+- **Styling:** Consider extracting the inline styles to a separate CSS file or using a CSS-in-JS library for better maintainability and separation of concerns.
+- **Loading State:** Implement a loading state while fetching the list of organizations to improve the user experience.
+- **Error Handling:** Add error handling to gracefully handle situations where fetching organizations fails.

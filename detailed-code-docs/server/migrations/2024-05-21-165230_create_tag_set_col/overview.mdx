@@ -1,0 +1,28 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts for adding and removing a `tag_set_array` column to three tables: `chunk_metadata`, `chunk_group`, and `files`. The `up.sql` script adds the column, while the `down.sql` script removes it.
+
+## What does it do?
+The scripts in this directory manage changes to the database structure. The `up.sql` script modifies the database by adding a new column called `tag_set_array` to three tables. This column is designed to store an array of text values, and it defaults to an empty array if no tags are provided. 
+
+The `down.sql` script reverses this change by removing the `tag_set_array` column from the same three tables. This effectively reverts the database to its state before the `up.sql` script was applied.
+
+## Key Files
+- **up.sql:** This script adds the `tag_set_array` column to the `chunk_metadata`, `chunk_group`, and `files` tables. The column is defined as a `TEXT[]` data type, allowing it to store an array of text strings. The default value for the column is set to an empty array (`'{}'`).
+
+    ```sql
+    ALTER TABLE chunk_metadata ADD COLUMN tag_set_array TEXT[] DEFAULT '{}';
+    ALTER TABLE chunk_group ADD COLUMN tag_set_array TEXT[] DEFAULT '{}';
+    ALTER TABLE files ADD COLUMN tag_set_array TEXT[] DEFAULT '{}';
+    ```
+
+- **down.sql:** This script removes the `tag_set_array` column from the `chunk_metadata`, `chunk_group`, and `files` tables.
+
+    ```sql
+    ALTER TABLE chunk_metadata DROP COLUMN tag_set_array;
+    ALTER TABLE chunk_group DROP COLUMN tag_set_array;
+    ALTER TABLE files DROP COLUMN tag_set_array;
+    ```

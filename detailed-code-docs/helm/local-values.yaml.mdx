@@ -1,0 +1,118 @@
+---
+title: "local-values.yaml"
+---
+
+## High-level description
+This YAML file, `helm/local-values.yaml`, defines configuration values for a local deployment of the Trieve application using Helm. It includes settings for various components like databases, APIs, authentication, and external services.
+
+## Table of contents
+- Environment Configuration
+- Container Image Tags
+- Postgres Configuration
+- Application Configuration
+- Embeddings Configuration
+
+## Symbols
+### `environment`
+#### Description
+Specifies the deployment environment, set to "local" for local deployments.
+
+#### Inputs
+N/A - This is a top-level configuration value.
+
+#### Outputs
+N/A - This is a configuration value.
+
+### `domain`
+#### Description
+Defines the base domain used for local deployments. Only applicable when `environment` is set to "local".
+
+#### Inputs
+N/A - This is a top-level configuration value.
+
+#### Outputs
+N/A - This is a configuration value.
+
+### `useGpu`
+#### Description
+A boolean flag indicating whether to utilize GPU resources in the deployment.
+
+#### Inputs
+N/A - This is a top-level configuration value.
+
+#### Outputs
+N/A - This is a configuration value.
+
+### `containers`
+#### Description
+This section lists Docker image tags for various services within the Trieve application.
+
+#### Inputs
+N/A - This is a section containing key-value pairs.
+
+#### Outputs
+N/A - This is a configuration section.
+
+### `postgres`
+#### Description
+Configures the PostgreSQL database connection.
+
+#### Inputs
+N/A - This is a section containing key-value pairs.
+
+#### Outputs
+N/A - This is a configuration section.
+
+#### Internal Logic
+- `useSubchart`: Determines whether to use a subchart for deploying PostgreSQL or rely on an external instance.
+- `dbURI`: Provides the connection URI for the PostgreSQL database when not using a subchart.
+
+### `config`
+#### Description
+This section encompasses various application-level configurations.
+
+#### Inputs
+N/A - This is a section containing key-value pairs.
+
+#### Outputs
+N/A - This is a configuration section.
+
+#### Internal Logic
+- `vite`:  Sets up configurations for the Vite frontend build, including API endpoints and Sentry integration.
+- `redis`: Configures the Redis connection, similar to PostgreSQL, with an option to use a subchart or an external instance.
+- `qdrant`:  Defines settings for the Qdrant vector database, including connection details, collection name, and vector quantization options.
+- `analytics`: Manages analytics settings, enabling or disabling them and providing ClickHouse database connection parameters.
+- `trieve`: Contains core Trieve application settings, such as API keys, service URLs, and security configurations.
+- `oidc`: Sets up OpenID Connect (OIDC) authentication parameters, including client credentials and issuer URL.
+- `smtp`:  Defines SMTP settings for sending emails, including relay server, credentials, and sender address.
+- `llm`:  Specifies the API key for the chosen Large Language Model (LLM).
+- `openai`: Configures OpenAI API access with the API key and base URL.
+- `s3`:  Provides Amazon S3 storage settings, including endpoint, access keys, bucket name, and region.
+- `stripe`:  Sets up Stripe payment gateway integration with secret keys and dashboard URL.
+
+### `embeddings`
+#### Description
+This section defines a list of embedding models used by the application.
+
+#### Inputs
+N/A - This is a list of dictionaries.
+
+#### Outputs
+N/A - This is a configuration section.
+
+#### Internal Logic
+Each entry in the list represents an embedding model with properties like:
+- `name`:  A descriptive name for the embedding model.
+- `revision`:  Specifies the model revision or version.
+- `model`:  The identifier or path to the embedding model itself.
+- `args`:  An array of additional arguments passed to the embedding model.
+
+## References
+- This configuration file is referenced during Helm deployments to customize the Trieve application.
+- The `related code snippets` provide context on how some of these values are used within the application code.
+
+## Dependencies
+- This configuration file implicitly depends on the structure and expected values of the Helm charts used to deploy the Trieve application.
+
+## Configuration
+This entire file serves as a configuration file, defining various settings for the Trieve application. Each top-level key represents a configuration section or a specific value.

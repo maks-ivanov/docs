@@ -1,0 +1,62 @@
+---
+title: "ingress-gcloud.yaml"
+---
+
+## High-level description
+This Helm template defines Kubernetes Ingress resources and Network Policies for a Google Cloud (GKE) environment. It sets up routing for various services including dashboard, chat, server, and search, and configures network policies to allow all ingress and egress traffic.
+
+## Table of contents
+- Ingress for dashboard service
+- Ingress for chat service
+- Ingress for server service
+- Ingress for search service
+- Network Policy for allowing all ingress traffic
+- Network Policy for allowing all egress traffic
+
+## Code Structure
+The template is structured as a series of Kubernetes resource definitions, each separated by `---`. The resources are conditionally included based on the environment being "gcloud". The Ingress resources use variables `$domain` and `$externalDomain` from the Helm values.
+
+## Symbols
+
+### Ingress Resources
+#### Description
+Four separate Ingress resources are defined for different services: dashboard, chat, server, and search. Each Ingress resource routes traffic to its respective service based on the hostname.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.domain | string | The domain name used for routing |
+| .Values.environment | string | The deployment environment |
+
+#### Internal Logic
+- Checks if the environment is "gcloud"
+- Sets up routing rules for each service
+- Uses Google Cloud Engine (GCE) ingress class
+- Configures external DNS hostname annotation
+
+### Network Policies
+#### Description
+Two NetworkPolicy resources are defined to allow all ingress and egress traffic for all pods in the namespace.
+
+#### Internal Logic
+- Applies to all pods (empty podSelector)
+- Allows all ingress traffic (empty ingress rule)
+- Allows all egress traffic (empty egress rule)
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Kubernetes networking.k8s.io/v1 API | Used for Ingress and NetworkPolicy resources |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.domain | string | N/A | The domain name used for routing |
+| .Values.environment | string | N/A | The deployment environment |
+
+## Future Improvements
+- Consider adding TLS configuration for secure HTTPS connections
+- Implement more granular NetworkPolicies for improved security
+- Add health check annotations for GCE ingress
+- Consider using backend config for advanced service configurations
+- Implement rate limiting or IP whitelisting for the Ingress resources

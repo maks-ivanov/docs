@@ -1,0 +1,41 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `scripts/template` directory contains Kubernetes YAML configuration files for deploying an application. These files are designed to be used with a Helm chart, as they utilize Helm templating features. The directory includes templates for deploying a Deployment, Service, PersistentVolume, and PersistentVolumeClaim.
+
+## What does it do?
+This directory provides the infrastructure-as-code templates to deploy a containerized application on a Kubernetes cluster. It defines how the application should be deployed, scaled, and accessed within the cluster. It also sets up persistent storage for the application using PersistentVolumes and PersistentVolumeClaims. The templates are configurable, allowing for adjustments based on the deployment environment (e.g., local development vs. AWS).
+
+## Entry points
+The primary entry points for a developer are the YAML files themselves:
+
+- `deployment.yaml`: Defines the deployment strategy for the application, including container image, environment variables, and resource limits.
+- `service.yaml`: Exposes the application running in pods to the cluster (and potentially externally) via a Service.
+- `pv.yaml`: Defines a PersistentVolume for providing storage to the application, specifically tailored for a "local" environment using hostPath.
+- `pvc.yaml`: Defines a PersistentVolumeClaim that requests storage from a PersistentVolume, with size and storage class determined dynamically based on the environment.
+
+These files are typically used together to deploy and expose an application with persistent storage.
+
+## Key Files
+- **deployment.yaml:** This file is the core of the application deployment. It defines the Docker image to use, environment variables, volume mounts, and other container-specific settings. It also controls the deployment strategy, ensuring the desired number of replicas are running.
+- **service.yaml:** This file defines how the deployed application can be accessed within the cluster. It acts as a load balancer, distributing traffic across the running pods.
+- **pv.yaml:** This file is responsible for provisioning storage. It defines a PersistentVolume, which represents a piece of storage in the cluster. This specific template is designed for local development environments and uses `hostPath` to provide storage directly from the host node's filesystem.
+- **pvc.yaml:** This file defines a PersistentVolumeClaim, which is a request for storage by an application. The PVC specifies the desired access modes, storage size, and storage class. This template dynamically adjusts the storage size and class based on the environment.
+
+These files work together to deploy, expose, and provide persistent storage for an application in a Kubernetes cluster. 
+
+## Configuration
+Configuration is primarily managed through a Helm values file (`.Values`). Key configuration options include:
+
+| Option | Description | Used in |
+|:-------|:------------|:--------|
+| `Release.Name` | Name of the Helm release. | `deployment.yaml`, `pvc.yaml` |
+| `accountId` | AWS account ID (used for ECR image URLs). | `deployment.yaml` |
+| `region` | AWS region (used for ECR image URLs). | `deployment.yaml` |
+| `environment` | Environment identifier (determines image source, storage size, storage class). | `deployment.yaml`, `pv.yaml`, `pvc.yaml` |
+| `containers.$NAME.tag` | Docker image tag for the container. | `deployment.yaml` |
+| `config.fixme` | Value for the `ENV_VAR` environment variable. | `deployment.yaml` | 
+
+These options allow for customization of the deployment based on the target environment and application requirements.

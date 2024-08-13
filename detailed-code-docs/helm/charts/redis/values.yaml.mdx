@@ -1,0 +1,114 @@
+---
+title: "values.yaml"
+---
+
+## High-level description
+
+This file contains the configuration values for deploying a Redis cluster using Helm. It defines various parameters for Redis master and replica nodes, Sentinel, metrics, security, networking, and other deployment aspects.
+
+## Table of contents
+
+- Global parameters
+- Common parameters
+- Redis master configuration parameters
+- Redis replicas configuration parameters
+- Redis Sentinel configuration parameters
+- Other Parameters
+- Metrics Parameters
+- Init Container Parameters
+- useExternalDNS Parameters
+
+## Code Structure
+
+The configuration is organized into several main sections, each focusing on different aspects of the Redis deployment. The main sections include global settings, master and replica configurations, Sentinel settings, metrics, and various other deployment parameters.
+
+## Symbols
+
+### global
+#### Description
+Defines global Docker image parameters and a global Redis password.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| imageRegistry | string | Global Docker image registry |
+| imagePullSecrets | array | Global Docker registry secret names |
+| storageClass | string | Global StorageClass for Persistent Volume(s) |
+| redis.password | string | Global Redis password |
+
+### master
+#### Description
+Configures the Redis master node, including its resources, persistence, and service settings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| count | integer | Number of Redis master instances |
+| configuration | string | Configuration for Redis master nodes |
+| resources | object | Resource limits and requests for Redis master containers |
+| persistence | object | Persistence settings for Redis master nodes |
+| service | object | Service configuration for Redis master |
+
+### replica
+#### Description
+Configures Redis replica nodes, including their count, resources, and persistence settings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| replicaCount | integer | Number of Redis replicas to deploy |
+| configuration | string | Configuration for Redis replica nodes |
+| resources | object | Resource limits and requests for Redis replica containers |
+| persistence | object | Persistence settings for Redis replica nodes |
+
+### sentinel
+#### Description
+Configures Redis Sentinel for high availability, including its image, resources, and service settings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| enabled | boolean | Enable Redis Sentinel |
+| image | object | Redis Sentinel image configuration |
+| masterSet | string | Master set name |
+| quorum | integer | Sentinel Quorum |
+
+### metrics
+#### Description
+Configures Prometheus exporter for Redis metrics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| enabled | boolean | Start a sidecar Prometheus exporter |
+| image | object | Redis Exporter image configuration |
+| resources | object | Resource limits and requests for Redis exporter container |
+| service | object | Service configuration for Redis exporter |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| bitnami/redis | Redis image used for deployment |
+| bitnami/redis-sentinel | Redis Sentinel image used when Sentinel is enabled |
+| bitnami/redis-exporter | Redis exporter image used for metrics |
+| bitnami/os-shell | Utility image used for volume permissions and sysctl operations |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| architecture | string | "replication" | Redis architecture. Allowed values: `standalone` or `replication` |
+| auth.enabled | boolean | true | Enable password authentication |
+| auth.password | string | "redis" | Redis password |
+
+## Error Handling
+The configuration file does not explicitly define error handling mechanisms. Error handling would typically be managed by the Helm chart's templates and the Kubernetes cluster itself.
+
+## Logging
+There are no specific logging configurations in this file. Logging would typically be handled by the Redis containers and the Kubernetes cluster.
+
+## Future Improvements
+- Consider adding support for Redis Cluster mode
+- Implement more granular control over Redis configuration options
+- Add support for custom init containers and sidecars
+- Enhance security options, such as support for TLS encryption
+- Improve flexibility in resource allocation for different deployment scenarios

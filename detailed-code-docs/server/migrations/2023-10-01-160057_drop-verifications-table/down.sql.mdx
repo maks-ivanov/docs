@@ -1,0 +1,71 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to undo the changes made in the corresponding `up.sql` file. It recreates the `verification_notifications` and `card_verification` tables, and adds constraints that were likely removed in the `up.sql` file.
+
+## Table of contents
+- Creation of `verification_notifications` table
+- Addition of unique constraint to `card_verification` table
+- Creation of `card_verification` table
+- Addition of primary key constraint to `card_verification` table
+
+## Code Structure
+The script consists of four main SQL statements:
+1. CREATE TABLE for `verification_notifications`
+2. ALTER TABLE to add a unique constraint to `card_verification`
+3. CREATE TABLE for `card_verification`
+4. ALTER TABLE to add a primary key constraint to `card_verification`
+
+## Symbols
+
+### CREATE TABLE verification_notifications
+#### Description
+Creates a table named `verification_notifications` to store information about card verification notifications.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key for the table |
+| user_uuid | UUID | Foreign key referencing the users table |
+| card_uuid | UUID | Foreign key referencing the card_metadata table |
+| verification_uuid | UUID | Foreign key referencing the card_verification table |
+| similarity_score | BigInt | Similarity score for the verification |
+| user_read | boolean | Flag indicating if the user has read the notification |
+| created_at | TIMESTAMP | Timestamp of creation |
+| updated_at | TIMESTAMP | Timestamp of last update |
+
+### ALTER TABLE card_verification ADD CONSTRAINT uq_card_id
+#### Description
+Adds a unique constraint named `uq_card_id` to the `card_id` column in the `card_verification` table.
+
+### CREATE TABLE public.card_verification
+#### Description
+Creates a table named `card_verification` in the public schema to store information about card verifications.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | uuid | Identifier for the verification |
+| card_id | uuid | Identifier of the card being verified |
+| similarity_score | bigint | Similarity score for the verification |
+| created_at | timestamp | Timestamp of creation |
+| updated_at | timestamp | Timestamp of last update |
+
+### ALTER TABLE public.card_verification ADD CONSTRAINT card_verification_pkey
+#### Description
+Adds a primary key constraint named `card_verification_pkey` to the `id` column in the `card_verification` table.
+
+## Dependencies
+This script depends on the existence of the following tables:
+| Dependency | Purpose |
+|:-----------|:--------|
+| users | Referenced by `verification_notifications.user_uuid` |
+| card_metadata | Referenced by `verification_notifications.card_uuid` |
+| card_verification | Referenced by `verification_notifications.verification_uuid` |
+
+## Future Improvements
+- Consider adding indexes on foreign key columns in the `verification_notifications` table to improve query performance.
+- If the `similarity_score` doesn't require the full range of a `bigint`, consider using a smaller integer type to save space.
+- Add comments to the tables and columns to provide more context about their purpose and usage.

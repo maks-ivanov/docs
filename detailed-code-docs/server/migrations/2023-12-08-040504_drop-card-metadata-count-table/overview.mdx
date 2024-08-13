@@ -1,0 +1,13 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts for managing the `card_metadata_count` table and its associated trigger and function. The `up.sql` script removes these database objects, while the `down.sql` script recreates them.
+
+## What does it do?
+The scripts in this directory handle changes to the database schema related to counting card metadata. The `up.sql` script is designed to be executed when applying the migration, removing the table, trigger, and function used for maintaining a count of card metadata. The `down.sql` script reverses these changes, recreating the table, trigger, and function to restore the previous state of the database. This allows for rolling back the migration if needed. 
+
+The `card_metadata_count` table stored the total count of rows in the `card_metadata` table. The `update_card_metadata_count()` function was a trigger function that updated this count whenever rows were inserted into or deleted from the `card_metadata` table. The `card_metadata_count_trigger` trigger, in turn, called the `update_card_metadata_count()` function after every INSERT or DELETE operation on the `card_metadata` table. 
+
+By removing these objects, the database no longer maintains a separate count of card metadata. This could be due to a design decision to calculate this count dynamically when needed, or because the count is no longer relevant to the application's functionality. 

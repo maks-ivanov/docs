@@ -1,0 +1,194 @@
+---
+title: "apiTypes.ts"
+---
+
+## High-level description
+This file defines various TypeScript interfaces and utility functions for handling API-related data types and operations in a chat application. It includes definitions for chunk metadata, user data, collections, and various helper functions for type checking and data manipulation.
+
+## Table of contents
+- ChunkMetadata interface
+- indirectHasOwnProperty function
+- APIRequest interface
+- isChunkMetadata function
+- ChunkMetadataWithVotes interface
+- isChunkMetadataWithVotes function
+- ChunkCollectionDTO interface
+- SlimCollection interface
+- ChunkBookmarksDTO interface
+- ChunksWithTotalPagesDTO interface
+- ScoreChunkDTO interface
+- isScoreChunkDTO function
+- ActixApiDefaultError interface
+- isActixApiDefaultError function
+- ActixChunkUpdateError interface
+- isActixChunkUpdateError function
+- detectReferralToken function
+- getReferralTokenArray function
+- OrganizationDTO interface
+- isOrganizationDTO function
+- UserDTO interface
+- isUserDTO function
+- UserDTOWithVotesAndChunks interface
+- isUserDTOWithVotesAndChunks function
+- UsersWithTotalPagesDTO interface
+- UserDTOWithScore interface
+- isUserDTOWithScore function
+- ChunkCollectionDTO interface
+- ChunkCollectionPageDTO interface
+- isChunkCollectionPageDTO function
+- isChunkCollectionDTO function
+- ChunkCollectionBookmarkDTO interface
+- ChunkCollectionSearchDTO interface
+- isChunkCollectionSearchDTO function
+- BookmarkDTO interface
+- CreateChunkDTO interface
+- SingleChunkDTO interface
+- ChunkCollectionBookmarksDTO interface
+- ChunkCollectionBookmarksWithStatusDTO interface
+- FileDTO interface
+- FileUploadCompleteNotificationDTO interface
+- isFileUploadCompleteNotificationDTO function
+- NotificationDTO type
+- NotificationWithPagesDTO interface
+- Message interface
+- messageRoleFromIndex function
+- DatasetDTO interface
+- isDatasetDTO function
+- UsageDTO interface
+- isUsageDTO function
+- DatasetAndUsageDTO interface
+- isDatasetAndUsageDTO function
+- Topic interface
+
+## Code Structure
+The file consists of a series of interface definitions and type guard functions. These interfaces define the structure of various data objects used in the application, while the type guard functions provide runtime type checking for these objects. The file also includes utility functions for handling referral tokens and message roles.
+
+## Symbols
+
+### `ChunkMetadata`
+#### Description
+An interface representing metadata for a chunk of content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Unique identifier for the chunk |
+| chunk_html | string (optional) | HTML content of the chunk |
+| link | string | null | Link associated with the chunk |
+| qdrant_point_id | string | Identifier for the Qdrant point |
+| created_at | string | Creation timestamp |
+| updated_at | string | Last update timestamp |
+| tag_set | string[] | null | Set of tags associated with the chunk |
+| tracking_id | string | null | Tracking identifier |
+| time_stamp | string | null | Timestamp for the chunk |
+| file_id | string | null | Associated file identifier |
+| file_name | string | null | Name of the associated file |
+| metadata | Record&lt;string, never&gt; | null | Additional metadata |
+| weight | number | null | Weight of the chunk |
+| location | { lat: number; lon: number } | null | Geographical location |
+| num_value | number | null | Numeric value associated with the chunk |
+| dataset_id | string | Identifier of the dataset the chunk belongs to |
+
+### `indirectHasOwnProperty`
+#### Description
+A utility function to safely check if an object has a specific property.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | unknown | The object to check |
+| prop | string | The property name to look for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | True if the object has the property, false otherwise |
+
+### `isChunkMetadata`
+#### Description
+A type guard function to check if an unknown object is of type ChunkMetadata.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chunk | unknown | The object to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | True if the object is of type ChunkMetadata, false otherwise |
+
+### `detectReferralToken`
+#### Description
+A function to detect and store referral tokens in local storage.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queryParamT | string | undefined | null | The referral token from query parameters |
+
+#### Internal Logic
+1. Check if a referral token is provided
+2. Retrieve existing tokens from local storage
+3. Add the new token if it doesn't exist
+4. Update local storage with the new token list
+
+### `getReferralTokenArray`
+#### Description
+A function to retrieve the array of referral tokens from local storage.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tokens | string[] | Array of stored referral tokens |
+
+### `isOrganizationDTO`
+#### Description
+A type guard function to check if an unknown object is of type OrganizationDTO.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| organization | unknown | The object to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | True if the object is of type OrganizationDTO, false otherwise |
+
+### `isUserDTO`
+#### Description
+A type guard function to check if an unknown object is of type UserDTO.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| user | unknown | The object to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | True if the object is of type UserDTO, false otherwise |
+
+### `messageRoleFromIndex`
+#### Description
+A function to determine the role of a message based on its index in a conversation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| idx | number | The index of the message in the conversation |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| role | "system" | "assistant" | "user" | The determined role of the message |
+
+## Dependencies
+This file does not have any external dependencies.
+
+## Future Improvements
+- Consider using a more robust type checking library like `io-ts` or `zod` for runtime type checking.
+- Implement more comprehensive error handling for type guard functions.
+- Consider breaking down this file into smaller, more focused modules for better maintainability.
+- Add unit tests for type guard functions and utility functions to ensure their correctness.

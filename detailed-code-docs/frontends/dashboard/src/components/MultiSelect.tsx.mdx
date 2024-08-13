@@ -1,0 +1,47 @@
+---
+title: "MultiSelect.tsx"
+---
+
+## High-level description
+The `MultiSelect` component is a reusable UI element that allows users to select multiple items from a provided list. It displays the selected items in a compact format and provides a dropdown to view and modify the selection.
+
+## Table of contents
+- `MultiSelect` function
+
+## Symbols
+
+### `MultiSelect`
+#### Description
+This function represents a reusable multi-select component. It takes an array of items, a list of selected items, and a function to update the selected items. It renders a listbox with options to select multiple items.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `{ disabled?: boolean; items: I[]; selected?: I[]; setSelected: (selected: I[]) =&gt; void; }` | An object containing the following properties: `disabled` (optional boolean indicating whether the component is disabled), `items` (an array of objects with `id` and `name` properties), `selected` (an optional array of pre-selected items), and `setSelected` (a function to update the selected items). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | `JSX.Element` | Returns a JSX element representing the multi-select component. |
+
+#### Internal Logic
+1. **State Management:** Uses `createSignal` to manage the selected items, initializing it with the `props.selected` or an empty array.
+2. **Selection Handling:** The `setSelected` function updates both the internal selected items state and calls `props.setSelected` to propagate the changes to the parent component.
+3. **Item Synchronization:** A `createEffect` hook ensures that the selected items are always in sync with the available items. If a selected item is removed from the `props.items`, it's also removed from the selected items.
+4. **Rendering:**
+   - Uses a `Listbox` component from the `terracotta` library to render the multi-select dropdown.
+   - The `ListboxButton` displays the currently selected items.
+   - The `ListboxOptions` displays the list of available items.
+   - Each item is rendered as a `ListboxOption`, which can be selected or deselected.
+   - The component uses conditional rendering to display "None selected" when no items are selected.
+
+## Side Effects
+- Updates the parent component's state through the `props.setSelected` function when the selection changes.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-icons/ai | Provides icons for the component. |
+| solid-icons/tb | Provides icons for the component. |
+| solid-js | The core library for building the component's UI and logic. |
+| terracotta | Provides UI components like `Listbox`, `ListboxButton`, `ListboxOption`, and `ListboxOptions`. |

@@ -1,0 +1,42 @@
+---
+title: "create-new-qdrant.rs"
+---
+
+## High-level description
+This code defines a command-line interface (CLI) to create new Qdrant collections and their corresponding indexes. It reads configuration parameters from environment variables or uses default values.
+
+## Table of contents
+- `main` function
+
+## References
+- `create_new_qdrant_collection_query` (from `server/src/operators/qdrant_operator.rs`)
+
+## Symbols
+### `main` function
+#### Description
+This function is the entry point of the CLI. It retrieves configuration values from environment variables, then calls the `create_new_qdrant_collection_query` function to create the Qdrant collections and indexes.
+
+#### Inputs
+This function takes no direct inputs. It reads configuration values from the following environment variables:
+| Name | Type | Default | Description |
+|:-----|:-----|:--------|:------------|
+| `QDRANT_URL` | `String` | `"http://localhost:6333"` | The URL of the Qdrant server. |
+| `QDRANT_API_KEY` | `String` | `"qdrant_api_key"` | The API key for the Qdrant server. |
+| `REPLICATION_FACTOR` | `u32` | `2` | The replication factor for the Qdrant collection. |
+| `QUANTIZE_VECTORS` | `bool` | `false` | Whether to quantize vectors in the Qdrant collection. |
+| `VECTOR_SIZES` | `Vec&lt;u64&gt;` | `vec![384, 512, 768, 1024, 1536, 3072]` | A comma-separated list of vector sizes to create collections for. |
+
+#### Outputs
+This function returns a `Result&lt;(), ServiceError&gt;`, indicating success or failure.
+
+#### Internal Logic
+1. Reads configuration values from environment variables or uses default values.
+2. Calls the `create_new_qdrant_collection_query` function with the retrieved configuration values.
+
+## Side Effects
+- Creates new Qdrant collections and indexes.
+
+## Dependencies
+- `dotenv`: Used to load environment variables from a `.env` file.
+- `tokio`: Used for asynchronous runtime.
+- `trieve_server`: Contains the `create_new_qdrant_collection_query` function.

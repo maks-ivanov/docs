@@ -1,0 +1,46 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a new table named `card_collection` in the database. The table is designed to store information about collections of cards, including details such as the collection's author, name, visibility status, description, and timestamps for creation and updates.
+
+## Table of contents
+- Table creation
+- Column definitions
+- Foreign key reference
+- Default values
+
+## Symbols
+
+### `card_collection` table
+#### Description
+The `card_collection` table is created to store information about card collections. It includes various attributes to describe and manage these collections.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | PRIMARY KEY | Unique identifier for each card collection |
+| author_id | UUID | NOT NULL, REFERENCES users(id) | ID of the user who created the collection |
+| name | TEXT | NOT NULL | Name of the card collection |
+| is_public | BOOLEAN | NOT NULL, DEFAULT FALSE | Flag indicating whether the collection is public or private |
+| description | TEXT | NOT NULL | Description of the card collection |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the collection was created |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the collection was last updated |
+
+#### Internal Logic
+- The table uses a UUID as the primary key for each card collection.
+- It establishes a foreign key relationship with the `users` table through the `author_id` column.
+- The `is_public` column defaults to `FALSE`, implying collections are private by default.
+- Both `created_at` and `updated_at` columns are automatically set to the current timestamp when a record is inserted.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| users table | The `author_id` column references the `id` column in the `users` table |
+
+## Future Improvements
+- Consider adding an index on the `author_id` column to improve query performance when searching for collections by author.
+- Implement a trigger to automatically update the `updated_at` column whenever a record is modified.
+- If card collections can have multiple authors or collaborators, consider creating a separate junction table to represent this many-to-many relationship.
+- Depending on the application's needs, you might want to add columns for categorization, tags, or other metadata to enhance searchability and organization of collections.

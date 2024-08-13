@@ -1,0 +1,24 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for managing database schema changes related to Diesel ORM setup. It includes scripts for both upgrading and reverting the initial setup of Diesel-specific database functions.
+
+## What does it do?
+These SQL scripts are responsible for setting up and tearing down helper functions in the database that Diesel ORM uses to manage timestamps, specifically the `updated_at` column in tables. 
+
+The `up.sql` script creates two functions:
+- `diesel_manage_updated_at`: This function sets up a trigger on a given table to automatically update the `updated_at` column whenever a row in that table is modified.
+- `diesel_set_updated_at`: This function is used by the trigger created by `diesel_manage_updated_at`. It sets the `updated_at` column to the current timestamp when a row is updated.
+
+The `down.sql` script essentially reverts the changes made by `up.sql`. It drops the two functions mentioned above, removing the automatic timestamp management functionality provided by Diesel.
+
+This approach ensures that the `updated_at` column is automatically updated whenever a row is modified, simplifying application code and ensuring data consistency.
+
+## Key Files
+- `up.sql`: Contains SQL commands to be executed when applying the migration. In this case, it creates the necessary functions for Diesel's timestamp management.
+- `down.sql`: Contains SQL commands to be executed when reverting the migration. It drops the functions created by `up.sql`, effectively undoing the changes.
+
+## Dependencies
+- **Diesel ORM**: These migration scripts are specifically designed for Diesel ORM and rely on its conventions and functionality. 

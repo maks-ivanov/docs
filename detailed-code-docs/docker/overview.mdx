@@ -1,0 +1,23 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `docker` directory contains the infrastructure and scripts for key components of the Trieve project. It includes:
+
+* **ClickHouse Database Setup:** Defines the configuration for a ClickHouse database instance using Docker, crucial for storing and analyzing search queries.
+* **Search Query Embedding:** Provides a Python script (`docker/clickhouse`) that embeds text using an external embedding server, essential for understanding the semantic meaning of search queries.
+* **Search Query Clustering:** Contains a Python script (`docker/clustering-script`) that clusters similar search queries from the ClickHouse database using HDBSCAN, enabling the identification of common search intents.
+* **Query Collapsing Optimization:** Includes a Python script (`docker/collapse-query-script`) that optimizes search query analytics by collapsing similar queries in the ClickHouse database, reducing redundancy and improving data quality.
+* **Keycloak Authentication Server:** Sets up a Keycloak authentication server with custom configuration and themes (`docker/keycloak`), providing secure access control and a branded login experience for Trieve users.
+
+## What does it do?
+This directory sets up the backend infrastructure and data processing pipelines for analyzing search queries in the Trieve project. 
+
+1. **Data Storage and Retrieval:** The ClickHouse database stores raw search queries and their associated metadata.
+2. **Query Embedding:** The `docker/clickhouse` script sends search queries to an external embedding server to generate vector representations, capturing the semantic meaning of each query.
+3. **Clustering Similar Queries:** The `docker/clustering-script` groups similar search queries based on their embeddings using the HDBSCAN algorithm, revealing clusters of queries with shared intents.
+4. **Collapsing Redundant Queries:** The `docker/collapse-query-script` identifies and collapses near-duplicate queries within a specific timeframe, preventing partial queries from skewing analytics results.
+5. **Secure Authentication:** The Keycloak server in `docker/keycloak` manages user authentication and authorization, ensuring secure access to the Trieve platform.
+
+These components work together to provide a robust and scalable solution for collecting, processing, and analyzing search query data, ultimately enabling Trieve to gain insights into user search behavior.

@@ -1,0 +1,50 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is a database migration that reintroduces Time-To-Live (TTL) settings for five tables in a ClickHouse database. It sets a 30-day TTL for each table based on their `created_at` column.
+
+## Table of contents
+- ALTER TABLE statements for:
+  - dataset_events
+  - search_queries
+  - rag_queries
+  - recommendations
+  - ctr_data
+
+## Code Structure
+The script consists of five nearly identical `ALTER TABLE` statements, each applying the same TTL modification to a different table.
+
+## Symbols
+
+### ALTER TABLE statements
+#### Description
+Each `ALTER TABLE` statement modifies the TTL setting for a specific table. The TTL is set to delete rows 30 days after their creation date.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Table Name | String | The name of the table being altered |
+
+#### Internal Logic
+For each table, the script:
+1. Identifies the table by name
+2. Modifies the TTL setting
+3. Sets the TTL to `created_at + INTERVAL 30 DAY`
+
+This means that each row in the table will be automatically deleted 30 days after its `created_at` timestamp.
+
+## Side Effects
+- Rows in the affected tables will be automatically deleted 30 days after their creation date.
+- This may impact data retention and storage usage in the database.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| ClickHouse | The database system for which this SQL is written |
+
+## Future Improvements
+- Consider parameterizing the TTL interval to allow for easy adjustments across all tables.
+- Evaluate if all tables should have the same TTL or if some might benefit from different retention periods.
+- Implement a logging mechanism to track when and how many rows are deleted due to TTL expiration.

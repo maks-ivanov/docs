@@ -1,0 +1,101 @@
+---
+title: "analytics-tests.yml"
+---
+
+## High-level description
+This YAML file defines a GitHub Actions workflow named "analytics test suite" that runs on pull requests modifying files in specific directories. It executes two jobs: "build-test" and "eslint", both running on a "blacksmith-2vcpu-ubuntu-2204" runner. These jobs install dependencies, build the "analytics" project, and perform linting checks, annotating the results back to the pull request.
+
+## Table of contents
+- Workflow Definition (`name`, `concurrency`, `on`)
+- Jobs
+    - `build-test`
+    - `eslint`
+
+## Code Structure
+The code represents a workflow triggered `on` pull requests. It runs two parallel jobs (`build-test`, `eslint`) to build and lint the code respectively.
+
+## Symbols
+### `name`
+#### Description
+Specifies the name of the workflow displayed on GitHub Actions.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `concurrency`
+#### Description
+Configures concurrent workflow run behavior. It uses the workflow name and branch name to cancel previous runs of the same workflow on the same branch, ensuring only the latest run is active.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `on`
+#### Description
+Defines the events that trigger the workflow. In this case, it's triggered on pull requests that modify files within the specified paths.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `jobs`
+#### Description
+Contains a collection of jobs, each running in a fresh instance of a virtual environment specified by `runs-on`.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `jobs.build-test`
+#### Description
+This job installs project dependencies, then builds the "analytics" project.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+1. Checks out the repository code.
+2. Navigates to the "frontends" directory.
+3. Installs dependencies using `yarn` with a frozen lockfile.
+4. Builds the "analytics" project using `yarn build`.
+
+### `jobs.eslint`
+#### Description
+This job installs project dependencies and runs linting checks on the "analytics" project, annotating the results back to the pull request.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+1. Checks out the repository code.
+2. Navigates to the "frontends" directory.
+3. Installs dependencies using `yarn` with a frozen lockfile.
+4. Runs ESLint with the `lint:CI` script, filtering for the "analytics" project.
+5. Uses the `eslint-annotate-action` to annotate linting results directly on the pull request, using a generated JSON report.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | Checks out the repository's code. |
+| ataylorme/eslint-annotate-action@1.0.4 | Annotates ESLint results on the pull request. |
+
+## Error Handling
+The workflow relies on GitHub Actions' built-in error handling. If any step within a job fails, the job execution stops, and the workflow run is marked as failed.
+
+## Logging
+Each step within the jobs generates log output visible in the GitHub Actions workflow run details. This output includes commands run, their output, and any errors encountered.

@@ -1,0 +1,57 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the database schema related to organization usage data and constraints. The migration is identified as "2024-01-03-221426_set-default-org-usage-data" and consists of two files: `up.sql` for applying the changes and `down.sql` for reverting them.
+
+## What does it do?
+The migration accomplishes the following:
+
+1. Removes a unique constraint on the `name` column of the `organizations` table, allowing duplicate organization names.
+2. Creates a function `set_default_org_usage_data` that automatically inserts a default record into the `organization_usage_counts` table when a new organization is added.
+3. Sets up a trigger `set_default_org_usage_data_trigger` on the `organizations` table to call the above function after each insert.
+
+These changes enable automatic tracking of usage data for newly created organizations without requiring unique names.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL statements to apply the migration:
+   - Drops the unique constraint on the `organizations` table's `name` column.
+   - Creates the `set_default_org_usage_data` function.
+   - Sets up the `set_default_org_usage_data_trigger` on the `organizations` table.
+
+   Example of the function creation:
+   ```sql
+   CREATE OR REPLACE FUNCTION set_default_org_usage_data()
+   RETURNS TRIGGER AS $$
+   BEGIN
+     INSERT INTO organization_usage_counts (org_id)
+     VALUES (NEW.id)
+     ON CONFLICT DO NOTHING;
+     RETURN NEW;
+   END;
+   $$ LANGUAGE plpgsql;
+   ```
+
+2. `down.sql`: This file contains the SQL statements to revert the migration:
+   - Drops the trigger `set_default_org_usage_data_trigger`.
+   - Drops the function `set_default_org_usage_data`.
+   - Adds back the unique constraint on the `name` column of the `organizations` table.
+
+   Example of reverting the unique constraint:
+   ```sql
+   ALTER TABLE organizations ADD CONSTRAINT organizations_name_key UNIQUE (name);
+   ```
+
+## Configuration
+This migration doesn't rely on external configuration files or environment variables. However, it assumes the existence of the following database objects:
+
+1. `organizations` table with columns:
+   - `id` (likely the primary key)
+   - `name` (previously had a unique constraint)
+
+2. `organization_usage_counts` table with columns:
+   - `org_id` (foreign key referencing `organizations.id`)
+
+The migration is designed to work with PostgreSQL, as evidenced by the use of PostgreSQL-specific syntax like `CREATE OR REPLACE FUNCTION` and the `plpgsql` language.

@@ -1,0 +1,55 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script modifies the structure of tables related to collections and datasets, and updates a trigger function to maintain collection counts. It represents a shift from user-based to dataset-based collection management.
+
+## Table of contents
+- Table alterations
+- Function update: `update_collection_counts()`
+
+## Code Structure
+The script consists of two main parts: table alterations and a function update. The table alterations modify existing tables to remove user-specific columns and add dataset-related columns. The function update modifies the `update_collection_counts()` trigger function to work with the new table structure.
+
+## Symbols
+
+### Table Alterations
+#### Description
+This section modifies the structure of existing tables to shift from user-based to dataset-based collection management.
+
+#### Internal Logic
+1. Removes `author_id` column from `chunk_collection` table
+2. Removes `user_id` column from `user_collection_counts` table
+3. Adds `dataset_id` column (UUID type) to `user_collection_counts` table
+4. Renames `user_collection_counts` table to `dataset_collection_counts`
+
+### `update_collection_counts()`
+#### Description
+This is a trigger function that updates the collection counts in the `dataset_collection_counts` table when collections are inserted, updated, or deleted.
+
+#### Inputs
+The function is implicitly called by a trigger, so it doesn't have explicit inputs. It uses the `NEW` and `OLD` special variables provided by the trigger context.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NULL | NULL | The function always returns NULL |
+
+#### Internal Logic
+1. For INSERT or UPDATE operations:
+   - Inserts a new row into `dataset_collection_counts` with the collection count set to 1
+   - If a row already exists for the user, it increments the collection count
+2. For DELETE operations:
+   - Decrements the collection count for the corresponding user in `dataset_collection_counts`
+
+## Side Effects
+- Modifies the structure of `chunk_collection`, `user_collection_counts` (renamed to `dataset_collection_counts`) tables
+- Updates the `update_collection_counts()` function, which will affect how collection counts are maintained in the database
+
+## Future Improvements
+1. Consider adding indexes on the `dataset_id` column in the `dataset_collection_counts` table for improved query performance.
+2. The `update_collection_counts()` function still references `user_id` and `author_id`. These should be updated to use `dataset_id` to fully align with the new dataset-based structure.
+3. Implement a data migration script to populate the new `dataset_id` column with appropriate values based on the old `user_id` data.
+4. Update any application code that interacts with these tables to use the new column names and table structure.
+5. Consider adding constraints (e.g., NOT NULL) to the new `dataset_id` column to ensure data integrity.

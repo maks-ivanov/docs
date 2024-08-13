@@ -1,0 +1,65 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the database schema and functionality related to dataset event tracking and notification counts. The migration involves renaming a table, updating a function, and providing a rollback mechanism.
+
+## What does it do?
+The migration scripts in this directory perform the following tasks:
+
+1. Rename the `dataset_notification_counts` table to `dataset_event_counts`, shifting the focus from notifications to events.
+2. Update the `update_notification_count()` function to handle event counting for datasets when notifications are inserted or deleted.
+3. Provide a rollback mechanism to revert these changes if needed.
+
+These changes improve the tracking of events associated with datasets, allowing for more accurate and flexible event management within the system.
+
+## Key Files
+
+### up.sql
+This file contains the SQL commands to apply the migration:
+
+1. Renames the `dataset_notification_counts` table to `dataset_event_counts`.
+2. Replaces the `update_notification_count()` function with an updated version that handles event counting for datasets.
+
+The new function uses an upsert operation to efficiently manage both new and existing records in the `dataset_event_counts` table. It increments the count for INSERT operations and decrements it for DELETE operations.
+
+Key code snippet:
+```sql
+CREATE OR REPLACE FUNCTION update_notification_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        INSERT INTO dataset_event_counts (dataset_uuid, notification_count)
+        VALUES (NEW.dataset_uuid, 1)
+        ON CONFLICT (dataset_uuid) DO UPDATE
+        SET notification_count = dataset_event_counts.notification_count + 1;
+    ELSIF (TG_OP = 'DELETE') THEN
+        UPDATE dataset_event_counts
+        SET notification_count = notification_count - 1
+        WHERE dataset_uuid = OLD.dataset_uuid;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### down.sql
+This file contains the SQL commands to revert the migration:
+
+1. Drops the updated `update_notification_count()` function.
+2. Renames the `dataset_event_counts` table back to `dataset_notification_counts`.
+
+These operations ensure that the database can be rolled back to its previous state if needed.
+
+## Configuration
+The migration scripts use standard SQL syntax and do not require additional configuration. However, they should be executed in the context of the appropriate database and schema.
+
+## Future Improvements
+1. Add error handling in the `update_notification_count()` function to prevent negative counts.
+2. Consider expanding the function to handle UPDATE operations if necessary.
+3. Implement logging or auditing capabilities to track changes in event counts.
+4. Add comments in the `down.sql` file to explain the reasons for the reversion, aiding future developers in understanding the migration history.
+5. If there are data transformations in the `up.sql` script, consider adding corresponding reverse operations in the `down.sql` script to ensure data integrity during rollbacks.
+
+By implementing these improvements, the migration scripts can be made more robust, maintainable, and informative for future development and troubleshooting.

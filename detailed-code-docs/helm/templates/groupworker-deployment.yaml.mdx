@@ -1,0 +1,65 @@
+---
+title: "groupworker-deployment.yaml"
+---
+
+## High-level description
+This file, `helm/templates/groupworker-deployment.yaml`, defines a Kubernetes Deployment for a "group-worker" service. It sets up the container specifications, environment variables, and resource configurations for the group worker component of the Trieve application.
+
+## Table of contents
+- Metadata
+- Selector
+- Template
+  - Metadata
+  - Spec
+    - Service Account
+    - Containers
+      - group-worker container
+      - cloud-sql-proxy container (conditional)
+
+## Code Structure
+The main structure is a Kubernetes Deployment resource. It defines a single pod template with one or two containers:
+1. The main "group-worker" container
+2. An optional "cloud-sql-proxy" container for Google Cloud SQL connectivity (only included when deployed to Google Cloud)
+
+## Symbols
+### Deployment
+#### Description
+Defines a Kubernetes Deployment for the group-worker service.
+
+#### Internal Logic
+- Sets up metadata and labels for the deployment
+- Defines a selector for pod management
+- Specifies the pod template with container configurations
+
+### Container: group-worker
+#### Description
+The main container for the group-worker service.
+
+#### Internal Logic
+- Sets the image based on the environment and tag
+- Defines numerous environment variables for configuration
+
+### Container: cloud-sql-proxy (conditional)
+#### Description
+An optional container for Google Cloud SQL connectivity.
+
+#### Internal Logic
+- Only included when the environment is "gcloud"
+- Sets up the Cloud SQL proxy with appropriate configurations
+
+## Dependencies
+- Helm: This is a Helm template, utilizing Helm's templating syntax
+- Kubernetes: The deployment is designed for a Kubernetes cluster
+
+## Configuration
+The deployment uses various Helm values for configuration, including:
+- `.Values.environment`
+- `.Values.containers.group_worker.tag`
+- `.Values.config.*` (various configuration settings)
+
+## Future Improvements
+1. Consider using Kubernetes Secrets for sensitive environment variables instead of plain text.
+2. Implement resource limits for the group-worker container to ensure proper resource allocation.
+3. Add readiness and liveness probes to improve the reliability and availability of the service.
+4. Consider using a ConfigMap for non-sensitive configuration to improve maintainability.
+5. Implement horizontal pod autoscaling (HPA) for the deployment to handle varying loads efficiently.

@@ -1,0 +1,82 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script modifies several tables related to card collections and metadata by adding a new column named `dataset_id`. It also establishes foreign key constraints to link these tables to a `datasets` table.
+
+## Table of contents
+- Dropping existing column
+- Adding `dataset_id` column
+- Adding foreign key constraints
+
+## References
+- `datasets` table (referenced in foreign key constraints)
+
+## Symbols
+### `ALTER TABLE card_collection_bookmarks`
+#### Description
+This statement drops the `dataset_id` column from the `card_collection_bookmarks` table if it exists. This is likely done to avoid conflicts before adding a new column with the same name.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Side Effects
+- Modifies the structure of the `card_collection_bookmarks` table.
+
+### `ALTER TABLE card_metadata` (first occurrence)
+#### Description
+This statement adds a new column named `dataset_id` to the `card_metadata` table. The column is of type `UUID` and is marked as `NOT NULL`, meaning it cannot be empty.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Side Effects
+- Modifies the structure of the `card_metadata` table.
+
+### `ALTER TABLE card_collection`
+#### Description
+This statement adds a new column named `dataset_id` to the `card_collection` table. The column is of type `UUID` and is marked as `NOT NULL`, meaning it cannot be empty.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Side Effects
+- Modifies the structure of the `card_collection` table.
+
+### `ALTER TABLE card_metadata` (second occurrence)
+#### Description
+This statement adds a foreign key constraint named `card_metadata_dataset_id_fkey` to the `card_metadata` table. This constraint ensures that every value in the `dataset_id` column of `card_metadata` references a valid `id` in the `datasets` table.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Side Effects
+- Modifies the structure of the `card_metadata` table.
+- Enforces referential integrity between `card_metadata` and `datasets`.
+
+### `ALTER TABLE card_collection` (second occurrence)
+#### Description
+This statement adds a foreign key constraint named `card_collection_dataset_id_fkey` to the `card_collection` table. This constraint ensures that every value in the `dataset_id` column of `card_collection` references a valid `id` in the `datasets` table.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Side Effects
+- Modifies the structure of the `card_collection` table.
+- Enforces referential integrity between `card_collection` and `datasets`.

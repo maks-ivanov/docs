@@ -1,0 +1,54 @@
+---
+title: "InvoicesTable.tsx"
+---
+
+## High-level description
+The `InvoicesTable` component displays a table of invoices for the currently selected organization. It fetches invoice data from the API and renders them in a user-friendly format, including links to view invoices on Stripe.
+
+## Table of contents
+- Imports
+- `InvoicesTable` component
+
+## References
+- `UserContext` from `../contexts/UserContext`
+- `createToast` from `./ShowToasts`
+- `StripeInvoice` from `../types/apiTypes`
+- `formatDate` and `usdFormatter` from `../formatters`
+
+## Symbols
+
+### Symbol Name: `InvoicesTable`
+#### Description
+This component fetches and displays a table of invoices for the selected organization.
+
+#### Inputs
+This is a functional component, it doesn't receive any props.
+
+#### Outputs
+Returns a SolidJS JSX element representing the invoices table.
+
+#### Internal Logic
+1. **Retrieves API host and selected organization:**
+   - Gets the API host from environment variables.
+   - Uses `createMemo` to derive the selected organization from the `UserContext`.
+2. **Fetches invoice data:**
+   - Uses `createEffect` to fetch invoice data when the selected organization changes.
+   - Makes an API call to `/stripe/invoices/{selectedOrgId}` with necessary credentials and headers.
+   - Handles 403 errors with a specific toast message.
+   - Updates the `orgInvoices` signal with the fetched data.
+3. **Renders the table:**
+   - Uses `Show` to conditionally render the table only when there are invoices.
+   - Iterates through `orgInvoices` using `For` to display each invoice's details in a row.
+   - Formats date and total amount using `formatDate` and `usdFormatter`.
+   - Provides a link to view the invoice on Stripe using `hosted_invoice_url`.
+
+## Side Effects
+- Makes an API call to fetch invoice data.
+- Displays toast messages in case of errors or specific conditions.
+
+## Dependencies
+- `solid-js`
+- `solid-icons/tb`
+
+## Error Handling
+- Handles 403 errors from the API with a specific toast message, suggesting the user to sign out and back in.

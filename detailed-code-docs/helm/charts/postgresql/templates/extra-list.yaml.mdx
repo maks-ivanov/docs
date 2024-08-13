@@ -1,0 +1,53 @@
+---
+title: "extra-list.yaml"
+---
+
+## High-level description
+This Helm chart template file generates additional Kubernetes resources based on the `extraDeploy` values provided in the chart's values file. It allows users to deploy custom resources alongside the main PostgreSQL deployment.
+
+## Table of contents
+- Range loop over `extraDeploy` values
+- Rendering of custom resources
+
+## Code Structure
+The file consists of a single range loop that iterates over the `extraDeploy` values and renders each item using the `common.tplvalues.render` function.
+
+## Symbols
+
+### Range Loop
+#### Description
+Iterates over the `extraDeploy` list from the chart's values and renders each item as a separate Kubernetes resource.
+
+#### Internal Logic
+1. Starts a range loop over `.Values.extraDeploy`
+2. For each item in the loop:
+   - Adds a YAML document separator (`---`)
+   - Renders the item using the `common.tplvalues.render` function
+
+### `common.tplvalues.render` Function
+#### Description
+A helper function that renders the provided value as a template, allowing for dynamic resource generation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | any | The current item from `extraDeploy` to be rendered |
+| context | object | The current template context (`$`) |
+
+#### Outputs
+Rendered Kubernetes resource manifest as YAML.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.tplvalues.render | Helper function for rendering template values |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| extraDeploy | list | [] | List of additional Kubernetes resources to deploy |
+
+## Future Improvements
+- Add validation or schema checking for the `extraDeploy` items to ensure they are valid Kubernetes resources.
+- Consider adding support for conditional rendering of extra resources based on chart conditions or capabilities.
+- Implement error handling for invalid or malformed `extraDeploy` entries.

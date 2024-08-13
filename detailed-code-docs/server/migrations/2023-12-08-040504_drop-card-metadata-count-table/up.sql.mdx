@@ -1,0 +1,42 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script removes the `card_metadata_count` table, its associated trigger, and the function used to update the count. It's designed to clean up database objects related to card metadata counting.
+
+## Table of contents
+- Drop `card_metadata_count` table
+- Drop `card_metadata_count_trigger` trigger
+- Drop `update_card_metadata_count()` function
+
+## Symbols
+
+### DROP TABLE card_metadata_count
+#### Description
+This command removes the `card_metadata_count` table from the database schema.
+
+#### Side Effects
+- Permanently deletes the `card_metadata_count` table and all its data
+- Removes any dependencies on this table (e.g., views, foreign keys)
+
+### DROP TRIGGER card_metadata_count_trigger ON card_metadata
+#### Description
+This command removes the trigger named `card_metadata_count_trigger` that was associated with the `card_metadata` table.
+
+#### Side Effects
+- Eliminates the automatic execution of the trigger function when changes occur on the `card_metadata` table
+- May affect data integrity if the trigger was responsible for maintaining consistency
+
+### DROP FUNCTION update_card_metadata_count()
+#### Description
+This command removes the function `update_card_metadata_count()` from the database.
+
+#### Side Effects
+- Deletes the function definition from the database
+- Any other objects (e.g., triggers, stored procedures) that depend on this function may become invalid
+
+## Future Improvements
+- Consider adding comments to explain why these objects are being removed
+- If this is part of a larger refactoring, ensure that any application code relying on the removed objects is updated accordingly
+- Implement a corresponding "down" migration to recreate these objects if needed for rollback purposes

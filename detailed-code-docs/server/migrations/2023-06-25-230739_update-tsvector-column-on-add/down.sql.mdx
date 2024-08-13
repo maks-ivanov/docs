@@ -1,0 +1,36 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert the changes made by the corresponding `up.sql` migration. It removes a trigger and its associated function that were likely used to update a tsvector column in the `card_metadata` table.
+
+## Table of contents
+- Drop trigger
+- Drop function
+
+## Symbols
+
+### DROP TRIGGER IF EXISTS update_tsvector_trigger ON card_metadata
+#### Description
+This command removes the trigger named `update_tsvector_trigger` from the `card_metadata` table if it exists.
+
+#### Internal Logic
+- The `IF EXISTS` clause ensures that the command doesn't throw an error if the trigger doesn't exist.
+- The trigger is specifically removed from the `card_metadata` table.
+
+### DROP FUNCTION IF EXISTS update_tsvector()
+#### Description
+This command removes the function named `update_tsvector` if it exists in the database.
+
+#### Internal Logic
+- The `IF EXISTS` clause ensures that the command doesn't throw an error if the function doesn't exist.
+- The function is dropped without specifying any parameters, which means it will drop all functions with this name regardless of their parameter list.
+
+## Side Effects
+- Removes the automatic updating mechanism for the tsvector column in the `card_metadata` table.
+- Potentially affects full-text search capabilities if they were relying on this tsvector column.
+
+## Future Improvements
+- Consider adding comments to explain why these objects are being dropped and what their original purpose was.
+- If there are any dependencies on the dropped objects, ensure they are handled appropriately in related parts of the application.

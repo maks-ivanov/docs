@@ -1,0 +1,51 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a PostgreSQL function named `update_notification_count()` that manages the notification count for users. It automatically increments or decrements the count when notifications are inserted or deleted, respectively.
+
+## Table of contents
+- Function definition: `update_notification_count()`
+- INSERT operation handling
+- DELETE operation handling
+
+## Symbols
+
+### `update_notification_count()`
+#### Description
+This is a PostgreSQL trigger function that automatically updates the notification count for users when notifications are added or removed.
+
+#### Inputs
+This function doesn't take explicit inputs. It operates on the `NEW` and `OLD` pseudo-records provided by the trigger context.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| RETURN | TRIGGER | Returns NEW, as required by trigger functions |
+
+#### Internal Logic
+1. Checks the operation type (INSERT or DELETE)
+2. For INSERT:
+   - Attempts to insert a new record with count 1
+   - If a record already exists, increments the existing count
+3. For DELETE:
+   - Decrements the notification count for the user
+
+## Side Effects
+- Modifies the `user_notification_counts` table
+- Inserts new records or updates existing ones in `user_notification_counts`
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| plpgsql | The function is written in PL/pgSQL language |
+
+## Error Handling
+The function doesn't implement explicit error handling. It relies on PostgreSQL's default error handling mechanisms.
+
+## Future Improvements
+- Add handling for UPDATE operations if notifications can be modified
+- Implement error handling for cases where the notification count might become negative
+- Consider adding a CHECK constraint to ensure notification_count never goes below zero
+- Add logging for debugging purposes, especially for unexpected operations

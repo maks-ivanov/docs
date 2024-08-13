@@ -1,0 +1,13 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts related to the foreign key relationship between the `user_organizations` and `organizations` tables. The scripts modify the behavior of this relationship, specifically regarding cascading deletes.
+
+## What does it do?
+The migration scripts in this directory alter how the database handles deleting an organization. The `up.sql` script enables a feature called "cascade delete." With this feature enabled, deleting an organization will automatically delete all the entries in the `user_organizations` table that are associated with that organization. This ensures that there are no "orphaned" entries in the `user_organizations` table referencing non-existent organizations.
+
+The `down.sql` script does the opposite. It reverts the changes made by `up.sql`, disabling the cascade delete behavior. This means that deleting an organization will no longer automatically delete related entries in the `user_organizations` table. 
+
+This change might be necessary for various reasons, such as changing the application logic or addressing performance concerns related to cascading deletes. 

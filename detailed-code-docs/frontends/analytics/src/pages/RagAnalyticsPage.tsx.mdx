@@ -1,0 +1,57 @@
+---
+title: "RagAnalyticsPage.tsx"
+---
+
+## High-level description
+The `RagAnalyticsPage` component displays a page dedicated to RAG (Retrieval Augmented Generation) analytics. It allows users to filter RAG queries by date range and type, and visualizes the usage data using a bar graph. Additionally, it lists the actual RAG queries performed.
+
+## Table of contents
+- Imports
+- Type definitions
+- Component: `RagAnalyticsPage`
+
+## Symbols
+
+### `RagAnalyticsPage`
+#### Description
+This component renders the RAG Analytics page, providing UI elements for filtering and displaying RAG usage data and queries.
+
+#### Inputs
+This component does not take any props.
+
+#### Outputs
+This component renders the RAG Analytics page content.
+
+#### Internal Logic
+1. **State Management:**
+   - `filter`: Stores the filter settings for RAG analytics, including date range, RAG type, and granularity. Initialized with a default date range of the past 7 days.
+   - `fakeType`: Manages a simplified representation of the RAG type filter, offering "Both", "Chosen chunks", and "All chunks" options.
+
+2. **Filter Synchronization:**
+   - An effect synchronizes the `fakeType` state with the `filter.rag_type` state. 
+   - If `fakeType` is "both", `filter.rag_type` is set to `undefined` to represent querying for both types.
+   - Otherwise, `filter.rag_type` is updated based on the selected `fakeType`.
+
+3. **UI Rendering:**
+   - The component renders a page title and a control bar with a `Select` component for choosing the RAG type and a `DateRangePicker` for selecting the date range.
+   - The `DateRangePicker` also allows suggesting a suitable granularity based on the selected date range.
+   - The main content area is a grid displaying two components:
+     - `RAGUsageGraph`: Visualizes RAG usage data based on the selected filters.
+     - `RagQueries`: Lists the individual RAG queries matching the filters.
+
+#### Side Effects
+- The `createEffect` hook is used to synchronize the `fakeType` and `filter.rag_type` states, ensuring the filter is updated whenever the user interacts with the RAG type selection.
+
+## References
+- `RequiredRAGAnalyticsFilter`: Type definition for the required structure of the RAG analytics filter.
+- `Select`: Shared UI component for dropdown selection.
+- `DateRangePicker`: Shared UI component for selecting a date range.
+- `RAGUsageGraph`: Component for visualizing RAG usage data.
+- `RagQueries`: Component for displaying a list of RAG queries.
+
+## Dependencies
+- solid-js
+- shared/ui
+- ../components/charts/RagQueries
+- date-fns
+

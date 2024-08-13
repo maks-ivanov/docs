@@ -1,0 +1,81 @@
+---
+title: "ingress-local.yaml"
+---
+
+## High-level description
+This Helm template defines Ingress resources for a local Kubernetes environment. It creates four separate Ingress objects for different services (dashboard, chat, server, and search), each with its own subdomain routing.
+
+## Table of contents
+- Ingress for dashboard service
+- Ingress for chat service
+- Ingress for server service
+- Ingress for search service
+
+## Code Structure
+The file contains four separate Ingress resource definitions, each following a similar structure but targeting different services and subdomains. The entire template is conditionally rendered based on the environment being "local".
+
+## Symbols
+
+### Ingress Resources
+#### Description
+Each Ingress resource defines routing rules for a specific service, mapping a subdomain to the corresponding Kubernetes service.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.domain | string | The base domain for all services |
+| .Values.environment | string | The deployment environment |
+
+#### Internal Logic
+1. Check if the environment is "local"
+2. Define the Ingress resource with:
+   - A unique name
+   - The nginx ingress class
+   - A host rule using a subdomain of the provided domain
+   - A path rule directing all traffic to the corresponding service
+
+## Side Effects
+These Ingress resources, when applied, will configure the Kubernetes cluster's ingress controller to route traffic based on the defined rules.
+
+### `ingress-dashboard`
+#### Description
+Defines an Ingress resource for the dashboard service.
+
+#### Internal Logic
+Routes traffic from `dashboard.&lt;domain&gt;` to the `dashboard-service` on port 80.
+
+### `ingress-chat`
+#### Description
+Defines an Ingress resource for the chat service.
+
+#### Internal Logic
+Routes traffic from `chat.&lt;domain&gt;` to the `chat-service` on port 80.
+
+### `ingress-server`
+#### Description
+Defines an Ingress resource for the server service.
+
+#### Internal Logic
+Routes traffic from `api.&lt;domain&gt;` to the `server-service` on port 8090.
+
+### `ingress-search`
+#### Description
+Defines an Ingress resource for the search service.
+
+#### Internal Logic
+Routes traffic from `search.&lt;domain&gt;` to the `search-service` on port 80.
+
+## Dependencies
+This template relies on the Kubernetes networking.k8s.io/v1 API for Ingress resources.
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.domain | string | N/A | The base domain for all services |
+| .Values.environment | string | N/A | The deployment environment |
+
+## Future Improvements
+1. Consider adding annotations for SSL/TLS configuration if HTTPS is required.
+2. Implement path-based routing within each Ingress if more granular control is needed.
+3. Add support for other environments (e.g., staging, production) with environment-specific configurations.
+4. Consider using a single Ingress resource with multiple rules instead of separate Ingress resources for each service, which could simplify management.

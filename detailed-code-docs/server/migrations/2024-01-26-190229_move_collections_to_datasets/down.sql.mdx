@@ -1,0 +1,40 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert changes made to the database schema, specifically undoing the migration of collections to datasets. It restores the previous structure by adding back author-related columns and removing dataset-related columns.
+
+## Table of contents
+- Add `author_id` column to `chunk_collections` table
+- Add `user_id` column to `user_collection_counts` table
+- Remove `dataset_id` column from `chunk_collections` table
+- Rename `dataset_collection_counts` table back to `user_collection_counts`
+
+## Symbols
+
+### ALTER TABLE chunk_collections ADD COLUMN author_id uuid;
+#### Description
+This SQL command adds an `author_id` column of type UUID to the `chunk_collections` table.
+
+### ALTER TABLE user_collection_counts ADD COLUMN user_id uuid;
+#### Description
+This SQL command adds a `user_id` column of type UUID to the `user_collection_counts` table.
+
+### ALTER TABLE chunk_collections DROP COLUMN dataset_id;
+#### Description
+This SQL command removes the `dataset_id` column from the `chunk_collections` table.
+
+### ALTER TABLE dataset_collection_counts RENAME TO user_collection_counts;
+#### Description
+This SQL command renames the `dataset_collection_counts` table back to `user_collection_counts`.
+
+## Dependencies
+This migration script depends on the existence of the following database tables:
+- `chunk_collections`
+- `user_collection_counts`
+- `dataset_collection_counts`
+
+## Future Improvements
+- Consider adding data migration steps if necessary to ensure data integrity when reverting the changes.
+- Implement checks to verify if the columns or tables exist before attempting to modify them to prevent potential errors.

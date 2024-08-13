@@ -1,0 +1,23 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts related to managing user collection counts. It includes scripts to both create and revert the changes associated with tracking and updating these counts.
+
+## What does it do?
+These SQL scripts manage how the system keeps track of how many collections each user has created. One script sets up a new table to store this information and creates a mechanism to automatically update the count whenever a user adds or removes a collection. The other script undoes these changes, effectively removing the tracking mechanism.
+
+## Key Files
+### `up.sql`
+This script sets up the user collection count tracking:
+1. **Creates the `user_collection_counts` table:** This table stores the number of collections each user has.
+2. **Defines the `update_collection_counts()` function:** This function is responsible for updating the `user_collection_counts` table whenever a collection is added or removed.
+3. **Creates the `update_collection_counts_trigger` trigger:** This trigger ensures that the `update_collection_counts()` function is automatically called whenever there are changes to the `card_collection` table (where collection data is stored).
+4. **Initializes the `user_collection_counts` table:** This step populates the table with initial counts based on existing collections.
+
+### `down.sql`
+This script reverts the changes made by `up.sql`:
+1. **Drops the `update_collection_counts_trigger` trigger:** This stops the automatic updating of collection counts.
+2. **Drops the `update_collection_counts()` function:** This removes the function used to update the counts.
+3. **Drops the `user_collection_counts` table:** This removes the table that stores the collection counts.

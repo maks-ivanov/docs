@@ -1,0 +1,109 @@
+---
+title: "delete-worker.rs"
+---
+
+## High-level description
+The code defines a delete worker service that processes messages from a Redis queue to delete datasets and associated data. It handles clearing datasets, deleting datasets entirely, and managing organization deletion when all datasets are removed.
+
+## Table of contents
+- `main` function
+- `delete_worker` function
+- `readd_error_to_queue` function
+
+## References
+- `trieve_server::data::models`
+- `trieve_server::errors::ServiceError`
+- `trieve_server::establish_connection`
+- `trieve_server::get_env`
+- `trieve_server::operators::clickhouse_operator::{ClickHouseEvent, EventQueue}`
+- `trieve_server::operators::dataset_operator::{clear_dataset_query, delete_dataset_by_id_query, get_deleted_dataset_by_unifiedid_query, DeleteMessage}`
+- `trieve_server::operators::organization_operator::{delete_actual_organization_query, get_soft_deleted_datasets_for_organization}`
+
+## Symbols
+
+### `main`
+#### Description
+Initializes the delete worker service, setting up Sentry monitoring, database and Redis connections, signal handling, and starting the `delete_worker` function.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Initializes environment variables from a `.env` file.
+2. Sets up Sentry monitoring if the `SENTRY_URL` environment variable is set.
+3. Initializes tracing for logging.
+4. Retrieves database and Redis connection URLs from environment variables.
+5. Creates a database connection pool using `diesel_async`.
+6. Creates a Redis connection pool using `bb8_redis`.
+7. Registers a signal handler for `SIGTERM` to gracefully shut down the service.
+8. Initializes a ClickHouse client and event queue if analytics are enabled.
+9. Starts the `delete_worker` function in a Tokio runtime.
+
+### `delete_worker`
+#### Description
+Processes messages from the `delete_dataset_queue` in Redis, performing dataset deletion tasks based on the message content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| should_terminate | `Arc&lt;AtomicBool&gt;` | A shared atomic boolean flag indicating whether the worker should terminate. |
+| redis_pool | `actix_web::web::Data&lt;models::RedisPool&gt;` | A shared Redis connection pool. |
+| web_pool | `actix_web::web::Data&lt;models::Pool&gt;` | A shared database connection pool. |
+| clickhouse_client | `actix_web::web::Data&lt;clickhouse::Client&gt;` | A shared ClickHouse client. |
+| event_queue | `actix_web::web::Data&lt;EventQueue&gt;` | A shared ClickHouse event queue. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves a message from the `delete_dataset_queue` in Redis using `brpoplpush`, moving it to the `delete_dataset_processing` queue.
+2. Deserializes the message into a `DeleteMessage` struct.
+3. Retrieves the dataset to be deleted from the database using `get_deleted_dataset_by_unifiedid_query`.
+4. If the `empty_dataset` flag is set in the message, clears the dataset using `clear_dataset_query`.
+5. Otherwise, deletes the dataset entirely using `delete_dataset_by_id_query`.
+6. If the organization associated with the deleted dataset has no remaining datasets, deletes the organization using `delete_actual_organization_query`.
+7. Removes the processed message from the `delete_dataset_processing` queue in Redis.
+8. Handles errors by re-adding the message to the queue with an incremented attempt count using `readd_error_to_queue`.
+
+### `readd_error_to_queue`
+#### Description
+Handles errors during dataset deletion by re-adding the message to the `delete_dataset_queue` with an incremented attempt count. If the attempt count reaches 3, the message is moved to the `dead_letters_delete` queue and an error event is sent to ClickHouse.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| payload | `DeleteMessage` | The original delete message. |
+| error | `ServiceError` | The error encountered during processing. |
+| event_queue | `actix_web::web::Data&lt;EventQueue&gt;` | A shared ClickHouse event queue. |
+| redis_pool | `actix_web::web::Data&lt;models::RedisPool&gt;` | A shared Redis connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result | `Result&lt;(), ServiceError&gt;` | A result indicating success or failure. |
+
+#### Internal Logic
+1. Increments the `attempt_number` in the `DeleteMessage` payload.
+2. Removes the original message from the `delete_dataset_processing` queue in Redis.
+3. If the `attempt_number` is 3, pushes the message to the `dead_letters_delete` queue and sends a `DatasetDeleteFailed` event to ClickHouse.
+4. Otherwise, pushes the updated message back to the `delete_dataset_queue` for retry.
+
+## Dependencies
+- `diesel_async`
+- `redis`
+- `sentry`
+- `signal_hook`
+- `tracing_subscriber`
+- `trieve_server`
+- `bb8_redis`
+- `actix_web`
+- `clickhouse`
+
+## Error Handling
+The `readd_error_to_queue` function handles errors encountered during dataset deletion. It retries failed messages up to 3 times before moving them to a dead letter queue and logging the error in ClickHouse.
+
+## Logging
+The code uses the `tracing` crate for logging, with Sentry integration enabled if the `SENTRY_URL` environment variable is set.

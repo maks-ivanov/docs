@@ -1,0 +1,54 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying the `card_metadata` table in the database. The migrations are specifically focused on adding and removing a `card_html` column, which is designed to store HTML content related to cards in the system.
+
+## What does it do?
+These migration scripts perform the following actions:
+
+1. The "up" migration adds a new column called `card_html` to the `card_metadata` table. This column is intended to store HTML content associated with cards, allowing for more rich and formatted data to be saved alongside other card metadata.
+
+2. The "down" migration removes the `card_html` column from the `card_metadata` table. This is typically used to revert the changes made by the "up" migration, effectively undoing the addition of the column.
+
+These migrations allow the database schema to be updated or rolled back as needed, providing flexibility in managing the structure of the `card_metadata` table.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL command to add the `card_html` column to the `card_metadata` table. The command is:
+
+   ```sql
+   ALTER TABLE card_metadata
+   ADD COLUMN card_html TEXT NULL;
+   ```
+
+   This adds a new TEXT column that allows NULL values, meaning it's optional for each record.
+
+2. `down.sql`: This file contains the SQL command to remove the `card_html` column from the `card_metadata` table. The command is:
+
+   ```sql
+   ALTER TABLE card_metadata
+   DROP COLUMN card_html;
+   ```
+
+   This removes the `card_html` column and any data it contained.
+
+## Dependencies
+These migration scripts depend on the existence of the `card_metadata` table in the database schema. They don't rely on any external libraries or frameworks, as they are pure SQL scripts.
+
+## Configuration
+There are no specific configuration files or environment variables associated with these migration scripts. However, the database connection details and migration framework configuration (if any) would be managed elsewhere in the project.
+
+## Side Effects
+- The "up" migration adds storage capacity for HTML content in the `card_metadata` table, potentially increasing the database size.
+- The "down" migration permanently removes the `card_html` column and any data it contained, which could result in data loss if not handled carefully.
+
+## Future Improvements
+1. Consider adding an index on the `card_html` column in the "up" migration if it will be frequently searched or queried.
+2. If the HTML content is expected to be large, evaluate using a more efficient storage method like BLOB or a separate table for better performance.
+3. Implement a data migration script to populate the new `card_html` column with existing data if necessary.
+4. For the "down" migration, consider adding a backup mechanism before dropping the column to prevent accidental data loss.
+5. If the `card_html` column is expected to contain important data, consider adding a data migration step in the "down" migration to preserve the information in another form before dropping the column.
+
+These migration scripts provide a straightforward way to modify the `card_metadata` table structure, allowing for the addition and removal of HTML content storage capabilities. When implementing these changes, it's crucial to consider the potential impact on existing data and application functionality.

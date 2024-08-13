@@ -1,0 +1,37 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file creates two new indexes on the `events` table to improve query performance for lookups based on `dataset_id` and `event_type` columns.
+
+## Table of contents
+- Creation of index on `dataset_id` column
+- Creation of index on `event_type` column
+
+## Symbols
+
+### `CREATE INDEX idx_events_dataset_id ON events (dataset_id);`
+#### Description
+This SQL statement creates a new index named `idx_events_dataset_id` on the `events` table, specifically for the `dataset_id` column.
+
+#### Internal Logic
+The database engine will create a B-tree index structure for the `dataset_id` column, allowing for faster lookups and potentially improving the performance of queries that filter or join on this column.
+
+### `CREATE INDEX idx_events_event_type ON events (event_type);`
+#### Description
+This SQL statement creates a new index named `idx_events_event_type` on the `events` table, specifically for the `event_type` column.
+
+#### Internal Logic
+Similar to the previous index, this creates a B-tree index structure for the `event_type` column, which can improve the performance of queries that filter or sort based on the event type.
+
+## Performance Considerations
+- Adding indexes can significantly improve query performance for SELECT operations that use the indexed columns in WHERE clauses or JOIN conditions.
+- However, indexes may slightly slow down INSERT, UPDATE, and DELETE operations as the index structures need to be maintained.
+- The effectiveness of these indexes depends on the data distribution and query patterns. They are most beneficial for columns with high cardinality (many distinct values) and frequently used in queries.
+
+## Future Improvements
+- Monitor query performance to ensure these indexes are being utilized effectively.
+- Consider creating composite indexes if queries frequently filter on both `dataset_id` and `event_type` simultaneously.
+- Evaluate the need for additional indexes on other frequently queried columns in the `events` table.
+- Periodically analyze and rebuild the indexes to maintain optimal performance as the table grows.

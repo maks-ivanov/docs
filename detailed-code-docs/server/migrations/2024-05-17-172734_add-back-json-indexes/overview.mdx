@@ -1,0 +1,53 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for modifying indexes on the `chunk_metadata` table in a database. The migration involves replacing individual column indexes with a single JSON-based index to optimize query performance for JSON data stored in the `metadata` column.
+
+## What does it do?
+The migration scripts perform the following actions:
+
+1. In the "up" migration:
+   - Removes three existing indexes: `idx_card_metadata_link`, `idx_chunk_metadata_created_at`, and `idx_chunk_metadata_time_stamp`.
+   - Creates a new JSON-based index named `idx_chunk_metadata_json` on the `metadata` column using the GIN (Generalized Inverted Index) index type with `jsonb_path_ops` operator class.
+
+2. In the "down" migration:
+   - Removes the JSON-based index `idx_chunk_metadata_json`.
+   - Recreates the three individual column indexes: `idx_card_metadata_link`, `idx_chunk_metadata_created_at`, and `idx_chunk_metadata_time_stamp`.
+
+These changes are designed to improve query performance for JSON data in the `metadata` column while providing a way to revert the changes if needed.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL commands to apply the new indexing strategy.
+
+```sql
+DROP INDEX idx_card_metadata_link;
+DROP INDEX idx_chunk_metadata_created_at;
+DROP INDEX idx_chunk_metadata_time_stamp;
+
+CREATE INDEX idx_chunk_metadata_json ON chunk_metadata USING GIN (metadata jsonb_path_ops);
+```
+
+2. `down.sql`: This file contains the SQL commands to revert the changes made by the `up.sql` script.
+
+```sql
+DROP INDEX idx_chunk_metadata_json;
+
+CREATE INDEX idx_card_metadata_link ON chunk_metadata (link);
+CREATE INDEX idx_chunk_metadata_created_at ON chunk_metadata (created_at);
+CREATE INDEX idx_chunk_metadata_time_stamp ON chunk_metadata (time_stamp);
+```
+
+## Configuration
+The migration scripts use standard SQL syntax and do not require additional configuration. However, they assume the existence of a `chunk_metadata` table with a `metadata` column of type `jsonb`.
+
+## Future Improvements
+1. Monitor query performance after applying the migration to ensure the new JSON index is being utilized effectively.
+2. Consider adding more specific indexes if certain JSON paths within the `metadata` column are frequently queried.
+3. Evaluate the impact of removing the individual column indexes on overall database performance.
+4. In the `down.sql` script, consider using the `IF EXISTS` clause for the `DROP INDEX` statement to prevent errors if the index doesn't exist.
+5. Verify the correctness of the index name `idx_card_metadata_link` in the `down.sql` script, as it uses "card" instead of "chunk" in the index name, which might be inconsistent with the table name.
+
+By implementing these migrations, the database schema is updated to use a more efficient indexing strategy for JSON data, potentially improving query performance for operations involving the `metadata` column in the `chunk_metadata` table.

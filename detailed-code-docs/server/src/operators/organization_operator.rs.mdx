@@ -1,0 +1,254 @@
+---
+title: "organization_operator.rs"
+---
+
+Here's a comprehensive documentation for the `organization_operator.rs` file:
+
+## High-level description
+This file contains functions for managing organizations in the Trieve system. It includes operations such as creating, updating, deleting organizations, and managing users within organizations.
+
+## Table of contents
+- create_organization_query
+- update_organization_query
+- delete_organization_query
+- get_org_id_from_subscription_id_query
+- get_org_from_id_query
+- get_org_dataset_count
+- get_user_org_count
+- get_message_org_count
+- get_file_size_sum_org
+- get_org_usage_by_id_query
+- get_org_users_by_id_query
+- get_arbitrary_org_owner_from_org_id
+- get_arbitrary_org_owner_from_dataset_id
+- get_soft_deleted_datasets_for_organization
+- delete_actual_organization_query
+- update_all_org_dataset_configs_query
+
+## Code Structure
+The functions in this file primarily interact with the database using Diesel ORM. They handle various aspects of organization management, including CRUD operations, user management, and usage statistics.
+
+## References
+This file references several other modules and types:
+- `crate::data::models`: Various model structs
+- `crate::errors::ServiceError`: Error handling
+- Diesel ORM types and functions
+- Redis types and functions
+
+## Symbols
+
+### `create_organization_query`
+#### Description
+Creates a new organization in the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | &str | The name of the organization to create |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;Organization, ServiceError&gt; | Result | The created organization or an error |
+
+#### Internal Logic
+1. Generates a new `Organization` struct with a random UUID and the provided name.
+2. Attempts to insert the new organization into the database.
+3. If a unique constraint is violated, generates a new random name and retries.
+
+### `update_organization_query`
+#### Description
+Updates an existing organization's name in the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | uuid::Uuid | The ID of the organization to update |
+| name | &str | The new name for the organization |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+| redis_pool | web::Data&lt;RedisPool&gt; | Redis connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;Organization, ServiceError&gt; | Result | The updated organization or an error |
+
+#### Internal Logic
+1. Updates the organization's name and updated_at timestamp in the database.
+2. Fetches all users associated with the organization.
+3. Deletes the cached user data from Redis for all affected users.
+
+### `delete_organization_query`
+#### Description
+Soft-deletes an organization and its associated data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | Option&lt;&HttpRequest&gt; | The HTTP request (optional) |
+| calling_user_id | Option&lt;uuid::Uuid&gt; | The ID of the user making the request (optional) |
+| org_id | uuid::Uuid | The ID of the organization to delete |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+| redis_pool | web::Data&lt;RedisPool&gt; | Redis connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;(), ServiceError&gt; | Result | Success or an error |
+
+#### Internal Logic
+1. Fetches all users associated with the organization.
+2. Deletes the cached user data from Redis for all affected users.
+3. Checks for and deletes any associated Stripe subscription.
+4. Soft-deletes all datasets associated with the organization.
+5. Marks the organization as deleted in the database.
+6. Adds the organization ID to a Redis set of deleted organizations.
+
+### `get_org_id_from_subscription_id_query`
+#### Description
+Retrieves the organization ID associated with a given Stripe subscription ID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| subscription_id | String | The Stripe subscription ID |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;uuid::Uuid, ServiceError&gt; | Result | The organization ID or an error |
+
+### `get_org_from_id_query`
+#### Description
+Retrieves an organization and its associated Stripe plan and subscription.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| organization_id | uuid::Uuid | The ID of the organization to retrieve |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;OrganizationWithSubAndPlan, ServiceError&gt; | Result | The organization with its plan and subscription, or an error |
+
+### `get_org_dataset_count`, `get_user_org_count`, `get_message_org_count`, `get_file_size_sum_org`
+#### Description
+These functions retrieve various usage statistics for an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| organization_id | uuid::Uuid | The ID of the organization |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;i32, ServiceError&gt; or Result&lt;i64, ServiceError&gt; | Result | The requested count or sum, or an error |
+
+### `get_org_usage_by_id_query`
+#### Description
+Retrieves the usage statistics for an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| org_id | uuid::Uuid | The ID of the organization |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;OrganizationUsageCount, ServiceError&gt; | Result | The organization's usage statistics or an error |
+
+### `get_org_users_by_id_query`
+#### Description
+Retrieves all users associated with an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| org_id | uuid::Uuid | The ID of the organization |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;Vec&lt;SlimUser&gt;, ServiceError&gt; | Result | A vector of users associated with the organization, or an error |
+
+### `get_arbitrary_org_owner_from_org_id`, `get_arbitrary_org_owner_from_dataset_id`
+#### Description
+These functions retrieve an arbitrary owner-level user for an organization, either by organization ID or dataset ID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| org_id or dataset_id | uuid::Uuid | The ID of the organization or dataset |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;SlimUser, ServiceError&gt; | Result | An owner-level user of the organization, or an error |
+
+### `get_soft_deleted_datasets_for_organization`
+#### Description
+Retrieves all soft-deleted datasets for an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| organization_id | uuid::Uuid | The ID of the organization |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;Vec&lt;Dataset&gt;, ServiceError&gt; | Result | A vector of soft-deleted datasets, or an error |
+
+### `delete_actual_organization_query`
+#### Description
+Permanently deletes an organization from the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| org_id | uuid::Uuid | The ID of the organization to delete |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;(), ServiceError&gt; | Result | Success or an error |
+
+### `update_all_org_dataset_configs_query`
+#### Description
+Updates the server configuration for all datasets in an organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| org_id | uuid::Uuid | The ID of the organization |
+| new_config | serde_json::Value | The new configuration to apply |
+| pool | web::Data&lt;Pool&gt; | Database connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result&lt;(), ServiceError&gt; | Result | Success or an error |
+
+#### Internal Logic
+Executes a raw SQL query to update the server_configuration field for all datasets belonging to the specified organization.
+
+## Error Handling
+Most functions in this file return a `Result` type with `ServiceError` as the error type. This allows for consistent error handling throughout the application.
+
+## Future Improvements
+- Implement pagination for functions that return large collections (e.g., `get_org_users_by_id_query`).
+- Add more granular error handling and logging.
+- Consider implementing caching mechanisms for frequently accessed data.
+- Optimize database queries for better performance, especially for large organizations.

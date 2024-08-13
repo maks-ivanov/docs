@@ -1,0 +1,88 @@
+---
+title: "Settings.tsx"
+---
+
+## High-level description
+This code defines two forms: `OrgSettingsForm` and `OrgDangerZoneForm`, both related to managing organization settings within a dashboard application. `OrgSettingsForm` allows updating the organization's name, while `OrgDangerZoneForm` provides functionality to delete an organization.
+
+## Table of contents
+- `OrgSettingsForm`
+- `OrgDangerZoneForm`
+- `Settings`
+
+## Code Structure
+The code consists of three exported components:
+- `OrgSettingsForm`: Responsible for displaying and handling updates to the organization's name.
+- `OrgDangerZoneForm`: Provides the interface for deleting an organization, including confirmation steps.
+- `Settings`: Parent component that renders both `OrgSettingsForm` and `OrgDangerZoneForm`.
+
+## Symbols
+
+### Symbol Name: `OrgSettingsForm`
+#### Description
+This component renders a form for updating the organization's name. It fetches the current organization name, allows the user to edit it, and sends a PUT request to the API to update the name on submission.
+
+#### Inputs
+None
+
+#### Outputs
+JSX Element representing the organization settings form.
+
+#### Internal Logic
+1. Fetches the API host from environment variables.
+2. Retrieves the user context and selected organization.
+3. Initializes signals for organization name and updating state.
+4. Uses an effect to update the organization name when the selected organization changes.
+5. Defines the `updateOrganization` function, which:
+    - Sends a PUT request to the API to update the organization name.
+    - Updates the user context with the new organization name.
+6. Renders a form with an input field for the organization name and a submit button.
+
+### Symbol Name: `OrgDangerZoneForm`
+#### Description
+This component renders a form for deleting the user's organization. It prompts the user to confirm the deletion by typing the organization's name and shows a confirmation dialog before proceeding with the deletion.
+
+#### Inputs
+None
+
+#### Outputs
+JSX Element representing the organization danger zone form.
+
+#### Internal Logic
+1. Fetches the API host from environment variables.
+2. Retrieves the user context and selected organization.
+3. Initializes signals for deleting state and confirmation text.
+4. Defines the `deleteOrganization` function, which:
+    - Prompts the user to confirm the deletion by typing the organization name.
+    - Shows a confirmation dialog to confirm the irreversible deletion.
+    - Sends a DELETE request to the API to delete the organization.
+    - Updates the user context and redirects to the dashboard upon successful deletion.
+    - Displays appropriate toast messages based on the outcome.
+5. Renders a form with an input field for confirming the organization name and a delete button.
+
+### Symbol Name: `Settings`
+#### Description
+This component renders the settings page, including both the `OrgSettingsForm` and `OrgDangerZoneForm`.
+
+#### Inputs
+None
+
+#### Outputs
+JSX Element representing the settings page.
+
+## References
+- `UserContext` from "../../contexts/UserContext"
+- `createToast` from "../../components/ShowToasts"
+- `useNavigate` from "@solidjs/router"
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Provides core functions and components for building the UI. |
+| @solidjs/router | Enables routing and navigation within the application. |
+
+## Error Handling
+- The `deleteOrganization` function in `OrgDangerZoneForm` includes error handling using a `.catch` block on the fetch request. If the deletion fails, it displays an error toast message.
+
+## Logging
+- The code does not implement specific logging mechanisms. Error messages are primarily displayed using toast notifications.

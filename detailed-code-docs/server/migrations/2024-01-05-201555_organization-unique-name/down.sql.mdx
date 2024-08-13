@@ -1,0 +1,29 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script removes a unique constraint from the `organizations` table, specifically the constraint on the `name` column. It is designed to revert the changes made by a corresponding `up.sql` migration.
+
+## Table of contents
+- Alter table statement
+
+## Symbols
+
+### ALTER TABLE organizations DROP CONSTRAINT organizations_name_key
+#### Description
+This SQL command removes the unique constraint named `organizations_name_key` from the `organizations` table. This allows the `name` column to contain duplicate values across different rows in the table.
+
+#### Internal Logic
+1. The `ALTER TABLE` statement targets the `organizations` table.
+2. The `DROP CONSTRAINT` clause is used to remove an existing constraint.
+3. The constraint being removed is identified by its name: `organizations_name_key`.
+
+## Side Effects
+- After executing this migration, the `name` column in the `organizations` table will no longer be required to have unique values.
+- This could potentially lead to duplicate organization names in the database, which may affect application logic that relies on unique organization names.
+
+## Future Improvements
+- Consider adding a comment explaining why the unique constraint is being removed, which could provide context for future developers.
+- If removing this constraint is part of a larger change, ensure that any application code that relies on unique organization names is updated accordingly.
+- Consider if a composite key or a different unique identifier for organizations might be more appropriate, depending on the application's requirements.

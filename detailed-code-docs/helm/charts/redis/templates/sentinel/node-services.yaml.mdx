@@ -1,0 +1,64 @@
+---
+title: "node-services.yaml"
+---
+
+## High-level description
+This Kubernetes YAML template defines NodePort services for Redis Sentinel nodes in a replication architecture. It creates individual services for each replica, exposing both Sentinel and Redis ports.
+
+## Table of contents
+- Conditional block for service creation
+- Loop for creating services for each replica
+- Service metadata
+- Service specification
+  - NodePort configuration
+  - Port definitions for Sentinel and Redis
+  - Selector for pod
+
+## Code Structure
+The main structure is a loop that creates a Service resource for each Redis replica. It uses Helm templating to dynamically generate values and conditionally include certain configurations.
+
+## Symbols
+
+### Service Template
+#### Description
+This template creates a Kubernetes Service of type NodePort for each Redis Sentinel node.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.architecture | string | Redis architecture type |
+| .Values.sentinel.enabled | boolean | Whether Sentinel is enabled |
+| .Values.sentinel.service.type | string | Service type for Sentinel |
+| .Values.replica.replicaCount | integer | Number of Redis replicas |
+
+#### Internal Logic
+1. Checks if the conditions for creating the services are met.
+2. Loops through the number of replicas.
+3. Attempts to lookup existing port configurations from a ConfigMap.
+4. Creates a Service resource for each replica with appropriate metadata and spec.
+
+## Side Effects
+- Creates multiple Kubernetes Service resources.
+- May modify existing Services if upgrading a release.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.names.namespace | Helm helper for namespace |
+| common.names.fullname | Helm helper for resource naming |
+| common.labels.standard | Helm helper for standard labels |
+| common.tplvalues.merge | Helm helper for merging values |
+| common.tplvalues.render | Helm helper for rendering templates |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.sentinel.service.nodePorts.sentinel | integer | - | NodePort for Sentinel service |
+| .Values.sentinel.service.nodePorts.redis | integer | - | NodePort for Redis service |
+| .Values.sentinel.containerPorts.sentinel | integer | - | Container port for Sentinel |
+| .Values.replica.containerPorts.redis | integer | - | Container port for Redis |
+
+## Future Improvements
+- Consider adding support for different service types (e.g., LoadBalancer, ClusterIP).
+- Implement more flexible port allocation strategy to avoid potential conflicts.
+- Add options for customizing the service's selector logic.

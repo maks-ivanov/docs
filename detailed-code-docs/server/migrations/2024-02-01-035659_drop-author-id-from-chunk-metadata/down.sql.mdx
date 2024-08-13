@@ -1,0 +1,71 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is a database migration file designed to revert changes made in a corresponding `up.sql` file. It adds back the `author_id` column to the `chunk_metadata` table and reestablishes foreign key constraints for several tables that reference the `users` table.
+
+## Table of contents
+- Add `author_id` column to `chunk_metadata` table
+- Add foreign key constraints to:
+  - `user_organizations` table
+  - `user_api_key` table
+  - `files` table
+  - `topics` table
+
+## Symbols
+
+### ALTER TABLE chunk_metadata
+#### Description
+This statement adds the `author_id` column back to the `chunk_metadata` table.
+
+#### Internal Logic
+- Adds a new column named `author_id` of type UUID
+- Sets the column as NOT NULL
+- Creates a foreign key reference to the `id` column in the `users` table
+
+### ALTER TABLE user_organizations
+#### Description
+This statement adds a foreign key constraint to the `user_organizations` table.
+
+#### Internal Logic
+- Creates a foreign key constraint named `fk_user_id`
+- Links the `user_id` column to the `id` column in the `users` table
+- Specifies ON DELETE CASCADE behavior
+
+### ALTER TABLE user_api_key
+#### Description
+This statement adds a foreign key constraint to the `user_api_key` table.
+
+#### Internal Logic
+- Creates a foreign key constraint named `user_api_key_user_id_fkey`
+- Links the `user_id` column to the `id` column in the `users` table
+- Specifies ON DELETE CASCADE behavior
+
+### ALTER TABLE files
+#### Description
+This statement adds a foreign key constraint to the `files` table.
+
+#### Internal Logic
+- Creates a foreign key constraint named `files_user_id_fkey`
+- Links the `user_id` column to the `id` column in the `users` table
+- Specifies ON DELETE CASCADE behavior
+
+### ALTER TABLE topics
+#### Description
+This statement adds a foreign key constraint to the `topics` table.
+
+#### Internal Logic
+- Creates a foreign key constraint named `topics_user_id_fkey`
+- Links the `user_id` column to the `id` column in the `users` table
+- Specifies ON DELETE CASCADE behavior
+
+## Side Effects
+- The `chunk_metadata` table will have a new column `author_id` added, which may affect existing queries or data operations.
+- The added foreign key constraints will enforce referential integrity between the modified tables and the `users` table.
+- The CASCADE delete behavior will cause related records in the child tables to be automatically deleted when a user is deleted from the `users` table.
+
+## Future Improvements
+- Consider adding indexes on the foreign key columns if they are frequently used in queries to improve performance.
+- Evaluate the impact of CASCADE delete operations on data integrity and consider using alternative strategies like soft deletes if data preservation is critical.
+- If the database grows large, consider the performance impact of adding these constraints and plan for any necessary database maintenance or optimization.

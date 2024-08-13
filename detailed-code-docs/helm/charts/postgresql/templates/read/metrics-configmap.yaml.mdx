@@ -1,0 +1,53 @@
+---
+title: "metrics-configmap.yaml"
+---
+
+## High-level description
+This Helm template generates a Kubernetes ConfigMap for custom PostgreSQL metrics in a read replica setup. It's conditionally created based on specific configuration values and is used to store custom metrics definitions.
+
+## Table of contents
+- ConfigMap definition
+- Metadata
+- Data
+
+## Code Structure
+The template creates a single Kubernetes ConfigMap resource with metadata and data sections. The creation and content are conditional based on Helm values.
+
+## Symbols
+
+### ConfigMap
+#### Description
+Defines a Kubernetes ConfigMap resource to store custom metrics configurations for PostgreSQL read replicas.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics.enabled | boolean | Indicates if metrics are enabled |
+| .Values.metrics.customMetrics | object | Custom metrics configuration |
+| .Values.architecture | string | PostgreSQL deployment architecture |
+| .Values.commonLabels | object | Common labels to apply |
+| .Values.commonAnnotations | object | Common annotations to apply |
+
+#### Internal Logic
+1. Checks if metrics are enabled, custom metrics are defined, and the architecture is "replication"
+2. If conditions are met, creates a ConfigMap with:
+   - Metadata: name, namespace, labels, and optional annotations
+   - Data: custom metrics configuration
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.labels.standard | Generates standard Kubernetes labels |
+| common.tplvalues.render | Renders template values |
+| postgresql.v1.readReplica.fullname | Generates the full name for read replica resources |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.metrics.enabled | boolean | - | Enables or disables metrics collection |
+| .Values.metrics.customMetrics | object | - | Custom metrics configuration |
+| .Values.architecture | string | - | PostgreSQL deployment architecture |
+
+## Future Improvements
+- Consider adding validation for the `customMetrics` structure to ensure it follows the expected format.
+- Implement versioning for the custom metrics configuration to facilitate updates and rollbacks.

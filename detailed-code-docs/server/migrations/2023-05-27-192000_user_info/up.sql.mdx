@@ -1,0 +1,37 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script alters the `users` table by adding new columns for username, website, and email visibility. It also sets a default value for the email visibility for existing users.
+
+## Table of contents
+- Alter table `users`
+- Update existing rows
+
+## Symbols
+
+### ALTER TABLE users
+#### Description
+This SQL command modifies the structure of the `users` table by adding three new columns.
+
+#### Internal Logic
+1. Adds a `username` column of TEXT type, allowing NULL values and enforcing uniqueness.
+2. Adds a `website` column of TEXT type, allowing NULL values.
+3. Adds a `visible_email` column of BOOLEAN type, not allowing NULL values and setting a default value of false.
+
+### UPDATE users
+#### Description
+This SQL command updates all existing rows in the `users` table, setting the `visible_email` column to true.
+
+#### Internal Logic
+Sets the `visible_email` column to true for all existing rows in the `users` table.
+
+## Side Effects
+- Modifies the structure of the `users` table.
+- Updates data for all existing rows in the `users` table.
+
+## Future Improvements
+- Consider adding indexes on the new columns if they will be frequently queried.
+- If the `users` table is large, consider breaking this migration into smaller steps or performing the update in batches to minimize table locks.
+- Add constraints or validation for the `website` column to ensure valid URLs are stored.

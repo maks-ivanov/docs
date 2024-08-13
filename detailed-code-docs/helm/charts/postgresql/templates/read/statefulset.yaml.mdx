@@ -1,0 +1,98 @@
+---
+title: "statefulset.yaml"
+---
+
+Here's a high-level description and documentation of the provided Kubernetes StatefulSet manifest for PostgreSQL read replicas:
+
+## High-level description
+
+This Kubernetes StatefulSet manifest defines the configuration for PostgreSQL read replicas in a replication architecture. It sets up read-only PostgreSQL instances that replicate data from a primary instance, providing scalable read capacity for the database cluster.
+
+## Table of contents
+
+- Metadata and labels
+- StatefulSet specification
+- Pod template
+- Container specifications
+- Volume mounts and claims
+- Probes and health checks
+- Metrics exporter (optional)
+
+## Code Structure
+
+The manifest is structured as a Kubernetes StatefulSet resource, with the following main sections:
+- Metadata: Defines the name, namespace, and labels for the StatefulSet
+- Spec: Contains the core configuration for the StatefulSet and its pods
+- Template: Defines the pod template used for creating read replica instances
+- Containers: Specifies the main PostgreSQL container and an optional metrics exporter
+- Volumes: Configures persistent storage and other required volumes
+
+## Symbols
+
+### StatefulSet
+#### Description
+Defines a StatefulSet for PostgreSQL read replicas, managing the deployment and scaling of read-only database instances.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.architecture | string | PostgreSQL architecture type (must be "replication") |
+| .Values.readReplicas.replicaCount | integer | Number of read replica pods to deploy |
+
+#### Internal Logic
+- Creates a StatefulSet only if the architecture is set to "replication"
+- Sets up pod template with PostgreSQL container and optional metrics exporter
+- Configures persistent storage for each replica
+- Sets up necessary environment variables for replication setup
+
+### Container: postgresql
+#### Description
+Main container running the PostgreSQL database as a read replica.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.image | object | PostgreSQL image configuration |
+| .Values.auth | object | Authentication and user configuration |
+
+#### Internal Logic
+- Sets up environment variables for PostgreSQL configuration
+- Configures replication mode as "slave"
+- Sets up TLS if enabled
+- Configures resource limits and requests
+
+### Container: metrics (optional)
+#### Description
+Optional container for exporting PostgreSQL metrics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics.enabled | boolean | Whether to enable the metrics exporter |
+| .Values.metrics.image | object | Metrics exporter image configuration |
+
+#### Internal Logic
+- Only included if metrics are enabled
+- Sets up connection to the PostgreSQL instance for metrics collection
+- Exposes metrics on a specified port
+
+## Dependencies
+The StatefulSet relies on several Helm template functions and helpers from the common chart, such as `include "postgresql.v1.image"` for image rendering and `include "common.tplvalues.render"` for value templating.
+
+## Configuration
+The StatefulSet can be extensively configured through the `values.yaml` file, including:
+- Number of replicas
+- Resource allocation
+- Persistence configuration
+- Security settings
+- Metrics export configuration
+
+## Error Handling
+The manifest includes various probes (startup, liveness, readiness) to ensure the health and availability of the PostgreSQL instances. It also allows for custom probe configurations.
+
+## Future Improvements
+- Consider adding support for pod disruption budgets to ensure high availability during cluster operations
+- Implement more flexible scaling options, such as horizontal pod autoscaling based on custom metrics
+- Enhance security features, such as support for additional authentication methods or integration with external secret management systems
+
+This StatefulSet manifest provides a robust and configurable setup for PostgreSQL read replicas, allowing for scalable and highly available database deployments in Kubernetes environments.

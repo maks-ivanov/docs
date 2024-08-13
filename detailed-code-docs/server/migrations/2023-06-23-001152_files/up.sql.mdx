@@ -1,0 +1,45 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a table named 'files' in a database. The table is designed to store information about user-uploaded files, including metadata such as file name, MIME type, privacy status, and timestamps.
+
+## Table of contents
+- Table creation
+- Column definitions
+- Foreign key reference
+- Default values
+
+## Symbols
+
+### `files` table
+#### Description
+The `files` table is created to store information about files uploaded by users. It includes columns for unique identification, user association, file metadata, and timestamps.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | PRIMARY KEY | Unique identifier for each file entry |
+| user_id | UUID | NOT NULL, REFERENCES users (id) | Foreign key linking to the users table |
+| file_name | TEXT | NOT NULL | Name of the uploaded file |
+| mime_type | TEXT | NOT NULL | MIME type of the file |
+| private | BOOLEAN | NOT NULL | Indicates whether the file is private or public |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of file creation |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of last update |
+
+#### Internal Logic
+- The table uses UUIDs for both its primary key and foreign key reference to the users table.
+- The `private` column allows for setting file visibility.
+- Both `created_at` and `updated_at` columns are automatically set to the current timestamp upon insertion.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| users table | The `user_id` column references the `id` column in the `users` table |
+
+## Future Improvements
+- Consider adding an index on the `user_id` column to improve query performance when filtering files by user.
+- Depending on the application's needs, you might want to add a `file_size` column to store the size of each file.
+- If version control is required, consider adding a `version` column or implementing a separate versioning table.
+- For better organization, you could add a `folder_id` column if the application supports a folder structure for files.

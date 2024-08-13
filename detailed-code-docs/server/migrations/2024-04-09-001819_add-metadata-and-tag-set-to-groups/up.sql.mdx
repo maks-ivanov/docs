@@ -1,0 +1,64 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds two new columns to the `chunk_group` table and creates corresponding indexes to improve query performance. The script enhances the `chunk_group` table with metadata storage capabilities and a tag set field.
+
+## Table of contents
+- Add `metadata` column to `chunk_group` table
+- Add `tag_set` column to `chunk_group` table
+- Create index on `metadata` column
+- Create index on `tag_set` column
+
+## Symbols
+
+### ALTER TABLE chunk_group ADD COLUMN metadata
+#### Description
+This SQL command adds a new column named `metadata` to the `chunk_group` table. The column is of type JSONB, allowing for flexible storage of metadata in JSON format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| metadata | JSONB | JSON data to store additional information about the chunk group |
+
+#### Internal Logic
+- The column is nullable, allowing for groups without metadata.
+- A default value of an empty JSON object (`'{}'::JSONB`) is set for the column.
+
+### ALTER TABLE chunk_group ADD COLUMN tag_set
+#### Description
+This SQL command adds a new column named `tag_set` to the `chunk_group` table. The column is of type text, allowing for storage of tag information.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tag_set | text | Text field to store tags associated with the chunk group |
+
+#### Internal Logic
+- The column is nullable, allowing for groups without tags.
+
+### CREATE INDEX idx_chunk_group_metadata
+#### Description
+This SQL command creates an index on the `metadata` column of the `chunk_group` table to improve query performance when searching or filtering based on metadata.
+
+#### Internal Logic
+- The index is named `idx_chunk_group_metadata`.
+- It is created on the `metadata` column of the `chunk_group` table.
+
+### CREATE INDEX idx_chunk_group_tag_set
+#### Description
+This SQL command creates an index on the `tag_set` column of the `chunk_group` table to improve query performance when searching or filtering based on tags.
+
+#### Internal Logic
+- The index is named `idx_chunk_group_tag_set`.
+- It is created on the `tag_set` column of the `chunk_group` table.
+
+## Performance Considerations
+- The addition of indexes on both `metadata` and `tag_set` columns will improve query performance for operations that filter or search based on these fields.
+- However, inserting or updating data in these columns may become slightly slower due to the overhead of maintaining the indexes.
+
+## Future Improvements
+- Consider adding constraints or triggers to ensure data integrity for the `metadata` column (e.g., validating JSON structure).
+- Depending on the usage patterns, it might be beneficial to create partial indexes or function-based indexes on specific metadata fields if they are frequently queried.
+- If the `tag_set` column is intended to store multiple tags, consider normalizing it into a separate table for better data management and querying capabilities.

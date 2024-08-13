@@ -1,0 +1,23 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts for adding and removing the `configuration` column from the `organizations` table. The `configuration` column was intended to store JSON-formatted configuration data for each organization.
+
+## What does it do?
+The `up.sql` script removes the `configuration` column from the `organizations` table. This is a permanent change that will delete any existing configuration data stored in that column.
+
+The `down.sql` script reverts the changes made by `up.sql`. It adds the `configuration` column back to the `organizations` table with a data type of `jsonb` (JSON Binary). This allows for storing structured configuration data for each organization.
+
+These scripts are typically used with a database migration tool to manage changes to the database schema over time. 
+
+```sql
+-- server/migrations/2024-01-11-050932_drop-configuration-col-from-organization/up.sql
+ALTER TABLE organizations DROP COLUMN configuration;
+```
+
+```sql
+-- server/migrations/2024-01-11-050932_drop-configuration-col-from-organization/down.sql
+ALTER TABLE organizations ADD COLUMN configuration jsonb NOT NULL;
+```

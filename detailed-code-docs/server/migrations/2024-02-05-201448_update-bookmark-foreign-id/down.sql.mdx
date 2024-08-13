@@ -1,0 +1,34 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script reverts changes made to the `chunk_group_bookmarks` table, specifically undoing modifications to foreign key constraints related to the `chunk_metadata_id` column.
+
+## Table of contents
+- Drop existing foreign key constraint
+- Add previous foreign key constraint
+
+## Symbols
+
+### Drop existing foreign key constraint
+#### Description
+This SQL command removes the current foreign key constraint on the `chunk_metadata_id` column in the `chunk_group_bookmarks` table.
+
+#### Internal Logic
+The `ALTER TABLE` statement is used with the `DROP CONSTRAINT` clause to remove the constraint named `chunk_group_bookmarks_chunk_metadata_id_fkey`.
+
+### Add previous foreign key constraint
+#### Description
+This SQL command adds back the previous foreign key constraint on the `chunk_metadata_id` column in the `chunk_group_bookmarks` table.
+
+#### Internal Logic
+The `ALTER TABLE` statement is used with the `ADD CONSTRAINT` clause to create a new foreign key constraint named `card_collection_bookmarks_card_metadata_id_fkey`. This constraint links the `chunk_metadata_id` column to the `id` column in the `chunk_metadata` table, with `ON DELETE CASCADE` and `ON UPDATE CASCADE` options.
+
+## Side Effects
+- The foreign key relationship between `chunk_group_bookmarks` and `chunk_metadata` tables is modified.
+- Cascading delete and update behaviors are reintroduced for the relationship between these tables.
+
+## Future Improvements
+- Consider using more descriptive constraint names that align with the current table naming convention (e.g., `chunk_group_bookmarks` instead of `card_collection_bookmarks`).
+- Evaluate if the cascading behavior is still appropriate for the application's data integrity requirements.

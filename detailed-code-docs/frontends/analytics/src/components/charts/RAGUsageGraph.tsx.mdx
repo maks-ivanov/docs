@@ -1,0 +1,61 @@
+---
+title: "RAGUsageGraph.tsx"
+---
+
+## High-level description
+The `RAGUsageGraph` component displays a bar chart visualizing the usage of RAG (Retrieval Augmented Generation) over time. It fetches usage data based on provided filters and granularity, and renders the chart using Chart.js.
+
+## Table of contents
+- Imports
+- Interface `RAGUsageProps`
+- Component `RAGUsageGraph`
+
+## References
+- `getRagUsageGraph` from `../../api/analytics`
+- `getRAGUsage` from `../../api/analytics`
+- `ChartCard` from `./ChartCard`
+- `parseCustomDateString` from `../../utils/formatDate`
+
+## Symbols
+
+### `RAGUsageGraph`
+#### Description
+This component fetches RAG usage data and renders a bar chart using Chart.js. It dynamically updates the chart based on filter and granularity changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `RAGUsageProps` | An object containing filter and granularity settings for the chart. |
+
+#### Outputs
+JSX Element representing a bar chart of RAG usage.
+
+#### Internal Logic
+1. **Data Fetching:** Uses `createQuery` from `@tanstack/solid-query` to fetch RAG usage data (`usageQuery`) and total RAG query count (`ragTotalQuery`) based on provided filters and dataset ID.
+2. **Chart Initialization:** When the component mounts and data is available, it initializes a new Chart.js instance (`chartInstance`) with a bar chart configuration.
+3. **Chart Updates:**  Reactively updates the chart whenever the `usageQuery` data, filter parameters, or granularity changes. 
+    - Parses timestamps from the data using `parseCustomDateString`.
+    - Updates chart labels and data points.
+    - Adjusts chart options like bar thickness and x-axis time unit based on data and granularity.
+4. **Cleanup:** Destroys the Chart.js instance on component cleanup to prevent memory leaks.
+
+## Side Effects
+- Fetches data from the `/analytics/rag` endpoint.
+- Modifies the DOM by rendering a canvas element and updating the chart.
+
+#### Performance Considerations
+- Uses `@tanstack/solid-query` for efficient data fetching and caching.
+- Only updates the chart when necessary, based on changes in data or props.
+- Destroys the chart instance on cleanup to free up resources.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| @tanstack/solid-query | Data fetching and caching. |
+| chart.js | Chart rendering. |
+| chartjs-adapter-date-fns | Date formatting for Chart.js. |
+| date-fns/locale/enUS | Date formatting locale. |
+
+```
+
+```

@@ -1,0 +1,39 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script reverts the database changes made by the migration `2024-01-03-221426_set-default-org-usage-data`. It primarily removes a trigger and a function related to setting default organization usage data and re-enables a unique constraint on the `name` column of the `organizations` table.
+
+## Table of contents
+- Drop Trigger
+- Drop Function
+- Alter Table
+
+## Symbols
+### `DROP TRIGGER IF EXISTS set_default_org_usage_data_trigger ON organizations`
+#### Description
+This statement attempts to drop a trigger named `set_default_org_usage_data_trigger` on the `organizations` table if it exists. The `IF EXISTS` clause ensures that the statement doesn't fail if the trigger is already absent.
+
+#### Internal Logic
+- Checks if the trigger `set_default_org_usage_data_trigger` exists on the `organizations` table.
+- If it exists, the trigger is dropped.
+- If it doesn't exist, the statement does nothing.
+
+### `DROP FUNCTION IF EXISTS set_default_org_usage_data`
+#### Description
+This statement attempts to drop a function named `set_default_org_usage_data` if it exists. The `IF EXISTS` clause ensures that the statement doesn't fail if the function is already absent.
+
+#### Internal Logic
+- Checks if the function `set_default_org_usage_data` exists.
+- If it exists, the function is dropped.
+- If it doesn't exist, the statement does nothing.
+
+### `ALTER TABLE organizations ADD CONSTRAINT organizations_name_key UNIQUE (name)`
+#### Description
+This statement adds a unique constraint named `organizations_name_key` to the `name` column of the `organizations` table. This ensures that all organization names in the table are unique.
+
+#### Internal Logic
+- Adds a constraint to the `organizations` table.
+- The constraint is named `organizations_name_key`.
+- It enforces uniqueness on the `name` column.

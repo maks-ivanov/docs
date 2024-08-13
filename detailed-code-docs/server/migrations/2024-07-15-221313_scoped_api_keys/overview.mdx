@@ -1,0 +1,44 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration files for adding and removing a `scopes` column to the `user_api_key` table in a database. These migrations are part of implementing scoped API keys, which allow for more granular control over API access permissions.
+
+## What does it do?
+The migrations in this directory modify the database structure to support scoped API keys:
+
+1. The "up" migration adds a new column called `scopes` to the `user_api_key` table. This column is of type `text[]`, which means it can store an array of text values. Each value in this array represents a specific permission or scope that the API key has.
+
+2. The "down" migration removes the `scopes` column from the `user_api_key` table, effectively reverting the changes made by the "up" migration.
+
+These changes allow the application to associate multiple scopes or permissions with each API key, enabling more fine-grained control over what actions each API key can perform.
+
+## Key Files
+
+1. `up.sql`: This file contains the SQL statement to add the `scopes` column to the `user_api_key` table.
+
+   ```sql
+   ALTER TABLE user_api_key ADD COLUMN IF NOT EXISTS scopes text[];
+   ```
+
+   This statement adds the `scopes` column only if it doesn't already exist, preventing errors if the migration is run multiple times.
+
+2. `down.sql`: This file contains the SQL statement to remove the `scopes` column from the `user_api_key` table.
+
+   ```sql
+   ALTER TABLE user_api_key DROP COLUMN IF EXISTS scopes;
+   ```
+
+   This statement removes the `scopes` column if it exists, allowing the migration to be safely reverted.
+
+## Configuration
+These migration files don't require any specific configuration. They are typically executed by a database migration tool or framework that manages the order and execution of migrations.
+
+## Future Improvements
+1. Consider adding a default value or constraints to the `scopes` column in the `up.sql` file if there are specific requirements for its content.
+2. If query performance becomes an issue when filtering or searching by scopes, consider creating an index on the `scopes` column.
+3. Implement a backup mechanism in the `down.sql` file to preserve existing data in the `scopes` column before dropping it, especially if the scopes functionality is critical to the application.
+4. If a more graceful downgrade path is needed, consider implementing a solution that preserves the scopes data in some form, rather than completely removing it.
+
+These migrations provide a foundation for implementing scoped API keys, but the actual implementation of scope checking and enforcement would need to be done in the application code that interacts with the database.

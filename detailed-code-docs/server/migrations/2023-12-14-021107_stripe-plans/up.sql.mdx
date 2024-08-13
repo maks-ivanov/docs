@@ -1,0 +1,59 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates two tables: `stripe_plans` and `stripe_subscriptions`. These tables are designed to store information about Stripe payment plans and subscriptions associated with organizations, likely for a SaaS application that uses Stripe for payment processing.
+
+## Table of contents
+- Creation of `stripe_plans` table
+- Creation of `stripe_subscriptions` table
+
+## Code Structure
+The script consists of two `CREATE TABLE` statements, each defining the structure for a separate table in the database.
+
+## Symbols
+
+### `stripe_plans` table
+#### Description
+This table stores information about different Stripe payment plans available in the system.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | NOT NULL, UNIQUE, PRIMARY KEY | Unique identifier for the plan |
+| stripe_id | TEXT | NOT NULL, UNIQUE | Stripe's identifier for the plan |
+| card_count | INTEGER | NOT NULL, DEFAULT 0 | Number of cards allowed in the plan |
+| file_storage | INTEGER | NOT NULL, DEFAULT 0 | Amount of file storage allowed (likely in bytes or MB) |
+| user_count | INTEGER | NOT NULL, DEFAULT 0 | Number of users allowed in the plan |
+| dataset_count | INTEGER | NOT NULL, DEFAULT 0 | Number of datasets allowed in the plan |
+| message_count | INTEGER | NOT NULL, DEFAULT 0 | Number of messages allowed in the plan |
+| amount | BIGINT | NOT NULL | Cost of the plan (likely in cents) |
+| created_at | TIMESTAMP | NOT NULL | Timestamp of when the plan was created |
+| updated_at | TIMESTAMP | NOT NULL | Timestamp of when the plan was last updated |
+
+### `stripe_subscriptions` table
+#### Description
+This table stores information about subscriptions to Stripe plans associated with organizations.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | NOT NULL, UNIQUE, PRIMARY KEY | Unique identifier for the subscription |
+| stripe_id | TEXT | NOT NULL, UNIQUE | Stripe's identifier for the subscription |
+| plan_id | UUID | NOT NULL, REFERENCES stripe_plans(id) | Foreign key referencing the associated plan |
+| organization_id | UUID | NOT NULL, REFERENCES organizations(id) | Foreign key referencing the associated organization |
+| created_at | TIMESTAMP | NOT NULL | Timestamp of when the subscription was created |
+| updated_at | TIMESTAMP | NOT NULL | Timestamp of when the subscription was last updated |
+
+## References
+The `stripe_subscriptions` table references two other tables:
+1. `stripe_plans` through the `plan_id` foreign key
+2. `organizations` through the `organization_id` foreign key
+
+## Future Improvements
+1. Consider adding indexes on frequently queried columns, such as `stripe_id` in both tables, to improve query performance.
+2. Implement a status column in the `stripe_subscriptions` table to track active, cancelled, or expired subscriptions.
+3. Add a currency column to the `stripe_plans` table if multiple currencies are supported.
+4. Consider adding a description column to the `stripe_plans` table for easier plan identification and management.
+5. Implement a billing_cycle column in the `stripe_plans` table to specify if the plan is monthly, yearly, etc.

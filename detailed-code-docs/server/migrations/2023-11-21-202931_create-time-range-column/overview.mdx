@@ -1,0 +1,49 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains SQL migration scripts for adding and removing a `time_stamp` column to the `card_metadata` and `files` tables in the database. The migration is designed to be reversible, with separate scripts for applying (up) and reverting (down) the changes.
+
+## What does it do?
+These migration scripts modify the database structure by adding a new column called `time_stamp` to two existing tables: `card_metadata` and `files`. This column is designed to store timestamp information, which could be used for tracking when cards or files were created or modified. The scripts also provide a way to undo these changes if needed.
+
+When applied, the migration adds the `time_stamp` column to both tables. This column is set up to accept NULL values and has a default value of NULL. This means that existing rows in the tables won't be affected, and new rows will have this column available for use.
+
+If the migration needs to be reversed, the down script removes the `time_stamp` column from both tables, effectively returning the database structure to its previous state.
+
+## Key Files
+1. `up.sql`: This file contains the SQL commands to add the `time_stamp` column to the `card_metadata` and `files` tables.
+
+2. `down.sql`: This file contains the SQL commands to remove the `time_stamp` column from the `card_metadata` and `files` tables.
+
+Both files use standard SQL ALTER TABLE commands to modify the table structures.
+
+## Configuration
+The migration scripts use the following configuration for the new `time_stamp` column:
+
+- Data type: TIMESTAMP
+- Nullable: Yes
+- Default value: NULL
+
+This configuration allows for flexible use of the new column, as it can be left empty if no timestamp is available or relevant.
+
+Here's an example of the SQL command used to add the column in `up.sql`:
+
+```sql
+ALTER TABLE card_metadata
+ADD COLUMN time_stamp TIMESTAMP NULL DEFAULT NULL;
+```
+
+And here's the corresponding command to remove the column in `down.sql`:
+
+```sql
+ALTER TABLE card_metadata
+DROP COLUMN IF EXISTS time_stamp;
+```
+
+These commands are repeated for both the `card_metadata` and `files` tables in their respective scripts.
+
+It's important to note that running the down migration will permanently remove any data stored in the `time_stamp` columns. Therefore, it's recommended to back up any important data before reverting this migration.
+
+Future improvements could include adding indexes on the `time_stamp` columns if they will be frequently used in queries, considering the use of `TIMESTAMP WITH TIME ZONE` for better timezone handling, and potentially adding triggers or application-level logic to automatically set the `time_stamp` value when inserting or updating rows.

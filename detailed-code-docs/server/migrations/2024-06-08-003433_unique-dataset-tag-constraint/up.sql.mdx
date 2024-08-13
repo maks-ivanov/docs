@@ -1,0 +1,36 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script modifies the `dataset_tags` table by removing existing constraints and adding a new unique constraint to ensure that the combination of `dataset_id` and `tag` is unique within the table.
+
+## Table of contents
+- Drop existing constraints
+- Add new unique constraint
+
+## Symbols
+
+### `ALTER TABLE dataset_tags`
+#### Description
+This SQL command is used multiple times to modify the structure of the `dataset_tags` table.
+
+### `DROP CONSTRAINT IF EXISTS dataset_tags_tag`
+#### Description
+Removes the existing constraint named `dataset_tags_tag` from the `dataset_tags` table if it exists.
+
+### `DROP CONSTRAINT IF EXISTS dataset_tags_id_dataset_id`
+#### Description
+Removes the existing constraint named `dataset_tags_id_dataset_id` from the `dataset_tags` table if it exists.
+
+### `ADD CONSTRAINT dataset_tags_dataset_id_tag_key UNIQUE (dataset_id, tag)`
+#### Description
+Adds a new unique constraint named `dataset_tags_dataset_id_tag_key` to the `dataset_tags` table. This constraint ensures that the combination of `dataset_id` and `tag` is unique within the table.
+
+## Side Effects
+- Removes existing constraints from the `dataset_tags` table.
+- Adds a new unique constraint to the `dataset_tags` table, which may prevent duplicate entries for the same dataset and tag combination.
+
+## Future Improvements
+- Consider adding appropriate indexes to support the new unique constraint for better query performance.
+- If necessary, implement a data cleanup step before applying this migration to handle any existing duplicate entries that might violate the new constraint.

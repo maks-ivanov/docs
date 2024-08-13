@@ -1,0 +1,32 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a new column `tracking_id` to the `datasets` table, creates a unique constraint on the combination of `organization_id` and `tracking_id`, and adds an index on the `tracking_id` column.
+
+## Table of contents
+- Add `tracking_id` column to `datasets` table
+- Create unique constraint on `organization_id` and `tracking_id`
+- Create index on `tracking_id` column
+
+## Symbols
+
+### ALTER TABLE datasets ADD COLUMN tracking_id TEXT NULL
+#### Description
+This statement adds a new column named `tracking_id` to the `datasets` table. The column is of type TEXT and allows NULL values.
+
+### ALTER TABLE datasets ADD CONSTRAINT unique_organization_tracking_id UNIQUE (organization_id, tracking_id)
+#### Description
+This statement creates a unique constraint named `unique_organization_tracking_id` on the `datasets` table. It ensures that the combination of `organization_id` and `tracking_id` is unique across all rows in the table.
+
+### CREATE INDEX datasets_tracking_id_idx ON datasets (tracking_id)
+#### Description
+This statement creates an index named `datasets_tracking_id_idx` on the `tracking_id` column of the `datasets` table. This index will improve query performance when searching or filtering by `tracking_id`.
+
+## Performance Considerations
+The addition of the index on `tracking_id` will improve query performance for operations involving this column. However, it may slightly impact the performance of insert and update operations on the `datasets` table.
+
+## Future Improvements
+- Consider adding a NOT NULL constraint to the `tracking_id` column if it's determined that all datasets should have a tracking ID.
+- If `tracking_id` is expected to be frequently used in conjunction with other columns, consider creating composite indexes to further optimize query performance.

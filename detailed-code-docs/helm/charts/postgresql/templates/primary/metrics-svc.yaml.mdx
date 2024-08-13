@@ -1,0 +1,71 @@
+---
+title: "metrics-svc.yaml"
+---
+
+## High-level description
+This YAML template defines a Kubernetes Service for PostgreSQL metrics when metrics are enabled. It creates a ClusterIP service that exposes the metrics endpoint of the primary PostgreSQL instance.
+
+## Table of contents
+- Service metadata
+- Service specification
+- Port configuration
+- Selector
+
+## Code Structure
+The template uses conditional statements and includes to generate a Kubernetes Service manifest. It relies on values from the Helm chart and common templates for labels and annotations.
+
+## Symbols
+
+### Service Metadata
+#### Description
+Defines the metadata for the Kubernetes Service, including its name, namespace, labels, and annotations.
+
+#### Internal Logic
+- Uses the `postgresql.v1.primary.fullname` template to generate the service name with a "-metrics" suffix
+- Applies standard labels using the `common.labels.standard` template
+- Conditionally adds annotations from `.Values.commonAnnotations` and `.Values.metrics.service.annotations`
+
+### Service Specification
+#### Description
+Specifies the type and configuration of the Kubernetes Service.
+
+#### Internal Logic
+- Sets the service type to ClusterIP
+- Configures session affinity from `.Values.metrics.service.sessionAffinity`
+- Optionally sets a specific cluster IP if provided in `.Values.metrics.service.clusterIP`
+
+### Port Configuration
+#### Description
+Defines the port configuration for the metrics service.
+
+#### Internal Logic
+- Creates a single port named "http-metrics"
+- Sets the port number from `.Values.metrics.service.ports.metrics`
+- Targets the "http-metrics" port on the pods
+
+### Selector
+#### Description
+Specifies which pods the service should route traffic to.
+
+#### Internal Logic
+- Merges pod labels from `.Values.primary.podLabels` and `.Values.commonLabels`
+- Uses the `common.labels.matchLabels` template to generate the selector
+- Adds the `app.kubernetes.io/component: primary` label to target primary PostgreSQL pods
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common templates | Used for rendering labels, annotations, and merging values |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.metrics.enabled | boolean | - | Determines if the metrics service should be created |
+| .Values.metrics.service.sessionAffinity | string | - | Sets the session affinity for the service |
+| .Values.metrics.service.clusterIP | string | - | Optional specific cluster IP for the service |
+| .Values.metrics.service.ports.metrics | number | - | Port number for the metrics endpoint |
+
+## Future Improvements
+- Consider adding support for multiple ports if needed for different types of metrics
+- Implement optional support for different service types (e.g., NodePort or LoadBalancer) for external access to metrics
+- Add the ability to specify custom labels for the service selector to allow more flexible pod targeting

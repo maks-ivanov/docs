@@ -1,0 +1,18 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts related to fixing the total chunk count in the `organization_usage_counts` table. The scripts ensure that the `chunk_count` column in this table accurately reflects the total number of chunks used by an organization across all its datasets.
+
+## What does it do?
+The migration script `up.sql` updates the database schema and data to enforce data integrity and consistency for the `chunk_count` column. It first updates any existing NULL values in the `chunk_count` column to 0. Then, it alters the column to be `NOT NULL`, ensuring that all future entries have a valid chunk count. The script then calculates the correct `chunk_count` for each organization based on the sum of `chunk_count` values from the related `dataset_usage_counts` table.
+
+To maintain this consistency automatically, the script creates a trigger function, `update_organization_chunk_count()`, and a trigger, `update_organization_chunk_count_trigger`. The trigger is set to fire after any INSERT, UPDATE, or DELETE operation on the `dataset_usage_counts` table. When triggered, it calls the `update_organization_chunk_count()` function, which recalculates and updates the `chunk_count` in the `organization_usage_counts` table for the affected organization.
+
+The `down.sql` script reverts these changes. It removes the `NOT NULL` constraint from the `chunk_count` column and drops the `update_organization_chunk_count()` trigger function. This effectively undoes the changes made by the `up.sql` script, allowing for NULL values in the `chunk_count` column and removing the automatic update mechanism.
+
+## Entry points
+The main entry points are:
+- `up.sql`: This script is executed to apply the migration.
+- `down.sql`: This script is executed to revert the migration.

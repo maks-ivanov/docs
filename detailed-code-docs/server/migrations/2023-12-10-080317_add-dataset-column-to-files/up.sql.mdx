@@ -1,0 +1,42 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a new column `dataset_id` to the `files` table and establishes a foreign key relationship between the `files` and `datasets` tables.
+
+## Table of contents
+- Add `dataset_id` column to `files` table
+- Add foreign key constraint
+
+## Code Structure
+The script consists of two SQL ALTER TABLE statements that modify the `files` table.
+
+## Symbols
+
+### ALTER TABLE files ADD COLUMN dataset_id UUID NOT NULL
+#### Description
+This statement adds a new column named `dataset_id` to the `files` table.
+
+#### Internal Logic
+- The new column is of type UUID (Universally Unique Identifier)
+- It is defined as NOT NULL, meaning it must always have a value
+
+### ALTER TABLE files ADD CONSTRAINT files_dataset_id_fkey FOREIGN KEY (dataset_id) REFERENCES datasets(id)
+#### Description
+This statement adds a foreign key constraint to the `files` table, linking the `dataset_id` column to the `id` column in the `datasets` table.
+
+#### Internal Logic
+- Creates a constraint named `files_dataset_id_fkey`
+- Establishes a foreign key relationship between `files.dataset_id` and `datasets.id`
+- Ensures referential integrity between the `files` and `datasets` tables
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| datasets table | The target table for the foreign key relationship |
+
+## Future Improvements
+- Consider adding an index on the `dataset_id` column in the `files` table to improve query performance, especially if there will be frequent joins or lookups based on this column.
+- Evaluate the need for cascading actions (e.g., ON DELETE CASCADE) on the foreign key constraint, depending on the desired behavior when a dataset is deleted.
+- If not already present, consider adding a unique constraint or index on the `id` column of the `datasets` table to ensure optimal performance of the foreign key relationship.

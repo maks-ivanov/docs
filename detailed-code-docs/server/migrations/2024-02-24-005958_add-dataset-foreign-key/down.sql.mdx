@@ -1,0 +1,101 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert changes made in a corresponding `up.sql` file. It modifies foreign key constraints in several tables, primarily changing constraint names and in some cases, reverting to older naming conventions.
+
+## Table of contents
+- Dataset usage counts table modifications
+- Events table modifications
+- Chunk metadata table modifications
+- Chunk group table modifications
+- Files table modifications
+- Chunk files table modifications
+- Messages table modifications
+- Topics table modifications
+
+## Code Structure
+The script consists of a series of SQL ALTER TABLE statements, each focusing on a specific table. For each table, the script drops an existing foreign key constraint and then adds a new (or reverts to an old) foreign key constraint.
+
+## Symbols
+
+### ALTER TABLE dataset_usage_counts
+#### Description
+Modifies the `dataset_usage_counts` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint referencing the `datasets` table.
+
+### ALTER TABLE events
+#### Description
+Modifies the `events` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint named `notifications_dataset_id_fkey`, referencing the `datasets` table.
+
+### ALTER TABLE chunk_metadata
+#### Description
+Modifies the `chunk_metadata` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint named `card_metadata_dataset_id_fkey`, referencing the `datasets` table.
+
+### ALTER TABLE chunk_group
+#### Description
+Modifies the `chunk_group` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint named `card_collection_dataset_id_fkey`, referencing the `datasets` table.
+
+### ALTER TABLE files
+#### Description
+Modifies the `files` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint referencing the `datasets` table.
+
+### ALTER TABLE chunk_files (file_id)
+#### Description
+Modifies the `chunk_files` table by dropping and re-adding a foreign key constraint for the `file_id` column.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint named `card_files_file_id_fkey`, referencing the `files` table.
+
+### ALTER TABLE chunk_files (chunk_id)
+#### Description
+Modifies the `chunk_files` table by dropping and re-adding a foreign key constraint for the `chunk_id` column.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint named `card_files_card_id_fkey`, referencing the `chunk_metadata` table.
+
+### ALTER TABLE messages
+#### Description
+Modifies the `messages` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint referencing the `datasets` table.
+
+### ALTER TABLE topics
+#### Description
+Modifies the `topics` table by dropping and re-adding a foreign key constraint.
+
+#### Internal Logic
+1. Drops the existing foreign key constraint if it exists.
+2. Adds a new foreign key constraint referencing the `datasets` table.
+
+## Side Effects
+This script will modify the database schema by changing foreign key constraints. It may affect the referential integrity of the database if not executed carefully.
+
+## Future Improvements
+- Consider using a transaction to ensure all changes are applied atomically.
+- Add error handling to manage cases where constraints cannot be dropped or added.
+- Consider adding comments to explain the reason for each constraint change, especially where naming conventions are being reverted.

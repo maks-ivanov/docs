@@ -1,0 +1,27 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts related to setting default usage data for datasets in the application. The migration ensures that every new dataset created has a corresponding entry in the `dataset_usage_counts` table.
+
+## What does it do?
+When a new dataset is added to the system, these migration scripts ensure that a corresponding entry is created in the `dataset_usage_counts` table to track its usage. This is achieved by:
+
+1. **Creating a trigger function:** A function called `set_default_dataset_usage_data()` is defined. This function is automatically invoked whenever a new dataset is added to the `datasets` table.
+2. **Creating a trigger:** A trigger named `set_default_dataset_usage_data_trigger` is set up on the `datasets` table. This trigger automatically calls the `set_default_dataset_usage_data()` function after a new dataset is inserted.
+3. **Inserting into `dataset_usage_counts`:** The `set_default_dataset_usage_data()` function takes the ID of the newly created dataset and inserts a new row into the `dataset_usage_counts` table, linking the dataset with its usage data.
+
+The migration also includes the corresponding rollback logic:
+
+1. **Dropping the trigger:** The `set_default_dataset_usage_data_trigger` is removed from the `datasets` table.
+2. **Dropping the function:** The `set_default_dataset_usage_data()` function is removed from the database.
+
+This ensures that if the migration needs to be reverted, the database schema is restored to its previous state.
+
+## Entry points
+- `up.sql`: This script is executed to apply the migration, creating the function and trigger.
+- `down.sql`: This script is executed to revert the migration, dropping the function and trigger.
+
+## Dependencies
+- **PostgreSQL:** The migration scripts use PL/pgSQL, PostgreSQL's procedural language, indicating a dependency on a PostgreSQL database.

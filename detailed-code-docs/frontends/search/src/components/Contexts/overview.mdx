@@ -1,0 +1,80 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `DatasetAndUserContextWrapper` component is a SolidJS component that manages the application's state related to the current user, their organizations, and the selected dataset. It fetches user data, organization details, and available datasets, providing this information to child components through a context.
+
+## Table of contents
+- `login` function
+- `onMount` effect
+- `createEffect` for dataset updates
+- `createEffect` for organization updates
+- `createEffect` for fetching datasets and usages
+- `datasetAndUserStore` object
+
+## Code Structure
+The `DatasetAndUserContextWrapper` component defines several signals to store user, organization, and dataset information. It uses `createEffect` hooks to react to changes in these signals and update the application state accordingly. The `login` function fetches user data and populates the relevant signals. The component also defines a `datasetAndUserStore` object that encapsulates the state and related functions, which is then provided to child components through the `DatasetAndUserContext.Provider`.
+
+## References
+- `DatasetAndUserContext`: A SolidJS context used to share the dataset and user store with child components.
+- `useSearchParams`: A hook from `@solidjs/router` used to access and modify URL search parameters.
+- `createToast`: A function used to display toast notifications.
+
+## Symbols
+
+### `DatasetAndUserContextWrapper`
+#### Description
+This component fetches user data, organization details, and available datasets, providing this information to child components through a context. It also manages the selection of the current organization and dataset, updating the URL search parameters and local storage accordingly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | RouteSectionProps | Properties passed from the router, including children components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX Element | A `DatasetAndUserContext.Provider` component that wraps the child components and provides the `datasetAndUserStore` object as its value. |
+
+#### Internal Logic
+1. **Initialization:**
+   - Defines signals for user, organizations, current organization, current dataset, and datasets and usages.
+   - Retrieves the API host from environment variables.
+   - Initializes `useSearchParams` to access and modify URL search parameters.
+
+2. **Login:**
+   - The `login` function fetches user data from the `/auth/me` endpoint.
+   - If the user is authenticated, it updates the `user` and `organizations` signals.
+   - If authentication fails, it redirects the user to the login page.
+
+3. **Mount Effect:**
+   - Calls the `login` function when the component mounts to fetch user data.
+
+4. **Dataset Update Effect:**
+   - When the `currentDataset` signal changes:
+     - Updates the URL search parameters with the selected dataset ID.
+     - Stores the current dataset in local storage.
+
+5. **Organization Update Effect:**
+   - When the `selectedOrganization` signal changes:
+     - Updates the URL search parameters with the selected organization ID.
+     - Stores the current organization in local storage.
+     - Fetches the list of datasets and usages for the selected organization.
+     - Sets the `currentDataset` based on URL parameters, local storage, or the first dataset in the list.
+
+6. **Context Provider:**
+   - Creates a `datasetAndUserStore` object containing the state and related functions.
+   - Wraps the child components with a `DatasetAndUserContext.Provider` component, providing the `datasetAndUserStore` object as its value.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Core SolidJS library for component creation, state management, and effects. |
+| @solidjs/router | SolidJS routing library for managing navigation and URL parameters. |
+
+## Side Effects
+- Modifies URL search parameters based on selected organization and dataset.
+- Stores current organization and dataset in local storage.
+- Fetches user data, organization details, and datasets from the API.
+- Displays toast notifications on errors.

@@ -1,0 +1,34 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made in the corresponding `up.sql` file. It removes the `tracking_id` column from the `chunk_group` table and drops a unique constraint associated with it.
+
+## Table of contents
+- Alter `chunk_group` table to drop `tracking_id` column
+- Drop unique constraint on `tracking_id` and `dataset_id`
+
+## Symbols
+
+### ALTER TABLE chunk_group DROP COLUMN tracking_id
+#### Description
+This SQL command removes the `tracking_id` column from the `chunk_group` table.
+
+#### Internal Logic
+The command uses the `ALTER TABLE` statement to modify the `chunk_group` table structure by dropping the `tracking_id` column.
+
+### ALTER TABLE chunk_group DROP CONSTRAINT chunk_group_tracking_id_dataset_id_key
+#### Description
+This SQL command removes a unique constraint named `chunk_group_tracking_id_dataset_id_key` from the `chunk_group` table.
+
+#### Internal Logic
+The command uses the `ALTER TABLE` statement to modify the `chunk_group` table by dropping the specified constraint. The constraint name suggests it was enforcing uniqueness on the combination of `tracking_id` and `dataset_id` columns.
+
+## Side Effects
+- Removal of the `tracking_id` column will result in the loss of any data stored in that column.
+- Dropping the unique constraint will allow potential duplicate combinations of `tracking_id` and `dataset_id` in the table, if these columns still exist in other parts of the schema.
+
+## Future Improvements
+- Consider adding a backup mechanism before running this migration to preserve any important data in the `tracking_id` column.
+- If the `tracking_id` column is no longer needed in the entire application, ensure that all references to it in the codebase are removed to maintain consistency.

@@ -1,0 +1,68 @@
+---
+title: "embedding_server_cloud_init.yaml"
+---
+
+## High-level description
+This cloud-config file is used to configure an EC2 instance in AWS, specifically for an embedding server. It sets up DNS, user groups, and a custom user with specific permissions and SSH access.
+
+## Table of contents
+- DNS configuration
+- Group setup
+- System default user configuration
+- Custom user creation and configuration
+
+## Code Structure
+The file is structured as a YAML cloud-config file, with different sections for various system configurations.
+
+## Symbols
+
+### DNS Configuration
+#### Description
+Configures the DNS settings for the instance.
+
+#### Internal Logic
+- Sets `manage-resolv-conf` to true
+- Configures nameservers to use Google's public DNS servers (8.8.8.8 and 8.8.4.4)
+
+### Group Setup
+#### Description
+Defines user groups for the instance.
+
+#### Internal Logic
+- Creates three groups: ec2-user, dev, and docker
+- Adds root to ec2-user and dev groups
+
+### System Default User Configuration
+#### Description
+Configures the default system user.
+
+#### Internal Logic
+- Adds the default user to the dev group
+
+### Custom User Creation
+#### Description
+Creates a custom user named "dev" with specific permissions and SSH access.
+
+#### Internal Logic
+- Creates a user named "dev"
+- Sets the home directory to /home/dev
+- Sets the shell to /bin/bash
+- Sets the primary group to dev
+- Grants sudo access without password
+- Adds the user to docker and dev groups
+- Disables password login
+- Adds an SSH public key for authentication (using a variable ${ssh_key})
+
+## Dependencies
+This cloud-config file relies on the cloud-init system, which is commonly used in cloud environments for instance initialization.
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| ssh_key | string | N/A | SSH public key for the dev user |
+
+## Future Improvements
+- Consider using more specific group names instead of generic "dev" if this is for a particular application or service.
+- Implement more secure sudo policies instead of allowing all commands without a password.
+- Consider adding additional security measures such as disabling root login via SSH.
+- If multiple users are needed, consider templating this file to allow for easy addition of more users with similar configurations.

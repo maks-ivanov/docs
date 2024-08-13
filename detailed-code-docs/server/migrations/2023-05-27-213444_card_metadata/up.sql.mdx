@@ -1,0 +1,67 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates two tables, `card_metadata` and `card_votes`, along with their respective indexes. These tables are designed to store metadata about cards and user votes on those cards, establishing relationships between users, cards, and votes.
+
+## Table of contents
+- Creation of `card_metadata` table
+- Creation of indexes for `card_metadata`
+- Creation of `card_votes` table
+- Creation of indexes for `card_votes`
+
+## Symbols
+
+### `card_metadata` table
+#### Description
+This table stores metadata information about cards in the system.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | PRIMARY KEY | Unique identifier for each card metadata entry |
+| content | TEXT | NOT NULL | The content of the card |
+| link | TEXT | DEFAULT NULL | An optional link associated with the card |
+| author_id | UUID | NOT NULL, REFERENCES users(id) | The ID of the user who authored the card |
+| qdrant_point_id | UUID | NOT NULL | The ID of the associated Qdrant point |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the entry was created |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the entry was last updated |
+
+#### Indexes
+1. `idx_card_metadata_author_id` on `author_id`
+2. `idx_card_metadata_qdrant_point_id` on `qdrant_point_id`
+
+### `card_votes` table
+#### Description
+This table stores information about user votes on cards.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | PRIMARY KEY | Unique identifier for each vote |
+| voted_user_id | UUID | NOT NULL, REFERENCES users(id) | The ID of the user who cast the vote |
+| card_metadata_id | UUID | NOT NULL, REFERENCES card_metadata(id) | The ID of the card being voted on |
+| vote | BOOLEAN | NOT NULL | The vote value (true/false) |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the vote was cast |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the vote was last updated |
+
+#### Indexes
+1. `idx_card_votes_voted_user_id` on `voted_user_id`
+2. `idx_card_votes_card_metadata_id` on `card_metadata_id`
+
+## References
+- The `card_metadata` table references the `users` table through the `author_id` column.
+- The `card_votes` table references both the `users` table (through `voted_user_id`) and the `card_metadata` table (through `card_metadata_id`).
+
+## Dependencies
+This migration script assumes the existence of a `users` table, which is referenced by both new tables.
+
+## Performance Considerations
+1. Indexes are created on foreign key columns (`author_id`, `qdrant_point_id`, `voted_user_id`, `card_metadata_id`) to improve query performance when joining tables or filtering by these columns.
+2. The use of UUIDs as primary keys allows for distributed systems to generate unique identifiers without conflicts, but may have slightly slower performance compared to auto-incrementing integers for very large datasets.
+
+## Future Improvements
+1. Consider adding a composite index on `(card_metadata_id, voted_user_id)` in the `card_votes` table if queries frequently filter on both columns simultaneously.
+2. Depending on the application's needs, it might be beneficial to add a `vote_count` column to the `card_metadata` table and implement a trigger to update it automatically when votes are added or changed.
+3. If the system needs to track the history of vote changes, consider implementing a separate `vote_history` table instead of using the `updated_at` column in `card_votes`.

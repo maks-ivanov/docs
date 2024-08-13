@@ -1,0 +1,60 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert changes made in the corresponding `up.sql` file. It recreates a function and a trigger to manage message counts for organizations in a database system.
+
+## Table of contents
+- Function `update_messages_counts()`
+- Trigger `update_messages_counts_trigger`
+
+## Code Structure
+The script defines a function `update_messages_counts()` and a trigger `update_messages_counts_trigger` that uses this function. The function is designed to update message counts for organizations when messages are inserted or deleted.
+
+## Symbols
+
+### `update_messages_counts()`
+#### Description
+This is a PostgreSQL function that updates the message count for organizations when messages are inserted or deleted.
+
+#### Inputs
+This function doesn't take explicit inputs but uses the `NEW` and `OLD` special variables provided by the trigger context.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| RETURN | TRIGGER | Returns NEW as required by trigger functions |
+
+#### Internal Logic
+1. Checks if the operation is an INSERT:
+   - If so, it inserts a new row into `organization_usage_counts` or updates an existing one, incrementing the `message_count`.
+2. Checks if the operation is a DELETE:
+   - If so, it decrements the `message_count` in `organization_usage_counts`, ensuring it doesn't go below zero.
+
+### `update_messages_counts_trigger`
+#### Description
+This is a trigger that executes the `update_messages_counts()` function after INSERT or DELETE operations on the `messages` table.
+
+#### Internal Logic
+- Fires AFTER INSERT OR DELETE operations on the `messages` table.
+- Executes for EACH ROW affected by the operation.
+- Calls the `update_messages_counts()` function.
+
+## Side Effects
+- Modifies the `organization_usage_counts` table by updating or inserting rows.
+- Affects the `message_count` column in the `organization_usage_counts` table.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| datasets table | Used to retrieve the `organization_id` associated with a message's dataset |
+| organization_usage_counts table | Stores and updates the message counts for organizations |
+
+## Error Handling
+The script doesn't implement explicit error handling. It relies on PostgreSQL's built-in error handling mechanisms.
+
+## Future Improvements
+- Consider adding error handling for cases where the `datasets` table doesn't contain the expected `organization_id`.
+- Optimize the trigger to handle bulk operations more efficiently, if necessary.
+- Add logging or auditing capabilities to track changes in message counts over time.

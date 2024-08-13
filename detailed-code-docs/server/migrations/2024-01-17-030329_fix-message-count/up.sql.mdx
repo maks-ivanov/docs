@@ -1,0 +1,69 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file creates a function and a trigger to automatically update message counts for organizations when messages are inserted or deleted in the `messages` table. It ensures that the `organization_usage_counts` table is kept up-to-date with the correct message count for each organization.
+
+## Table of contents
+- Function `update_messages_counts()`
+- Trigger `update_messages_counts_trigger`
+
+## Code Structure
+The code consists of two main parts:
+1. A PL/pgSQL function `update_messages_counts()` that handles the logic for updating message counts.
+2. A trigger `update_messages_counts_trigger` that calls the function on INSERT or DELETE operations on the `messages` table.
+
+## Symbols
+
+### `update_messages_counts()`
+#### Description
+This is a PL/pgSQL function that updates the message count for organizations when messages are inserted or deleted.
+
+#### Inputs
+This function doesn't take explicit inputs but uses the `NEW` and `OLD` special variables provided by the trigger context.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| TRIGGER | TRIGGER | Returns `NEW` as required by trigger functions |
+
+#### Internal Logic
+1. For INSERT operations:
+   - Inserts a new row into `organization_usage_counts` with the organization ID and a count of 1
+   - If the organization already exists, it increments the existing count by 1
+2. For DELETE operations:
+   - Decrements the message count for the organization, ensuring it doesn't go below 0
+
+### `update_messages_counts_trigger`
+#### Description
+This is a trigger that executes the `update_messages_counts()` function after INSERT or DELETE operations on the `messages` table.
+
+#### Inputs
+The trigger doesn't take explicit inputs but is fired by INSERT or DELETE operations on the `messages` table.
+
+#### Internal Logic
+- Executes for each row affected by INSERT or DELETE operations
+- Calls the `update_messages_counts()` function
+
+## Side Effects
+- Modifies the `organization_usage_counts` table by inserting new rows or updating existing ones
+- Ensures that message counts are always non-negative
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| messages table | Source of INSERT and DELETE operations that trigger the update |
+| datasets table | Used to lookup the organization_id for a given dataset_id |
+| organization_usage_counts table | Stores and updates the message counts for each organization |
+
+## Error Handling
+The function includes basic error handling:
+- Uses `ON CONFLICT` to handle potential conflicts when inserting new records
+- Ensures message count never goes below 0 when decrementing
+
+## Future Improvements
+1. Consider adding error logging for unexpected scenarios, such as missing dataset or organization records.
+2. Implement a mechanism to periodically verify and reconcile message counts to ensure long-term data integrity.
+3. Add support for UPDATE operations if message ownership can change between datasets or organizations.
+4. Consider adding indexes on frequently queried columns (e.g., `dataset_id` in `messages` table, `organization_id` in `datasets` table) to improve performance.

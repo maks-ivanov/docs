@@ -1,0 +1,186 @@
+---
+title: "analytics.ts"
+---
+
+## High-level description
+This code defines a set of asynchronous functions that interact with the `/analytics` API endpoints to retrieve and process analytics data for a given dataset. These functions handle fetching data for latency graphs, head queries, low confidence queries, no result queries, and more.
+
+## Table of contents
+- `getLatency`
+- `getRpsUsageGraph`
+- `getHeadQueries`
+- `getRAGQueries`
+- `getRAGUsage`
+- `getRagUsageGraph`
+- `getLowConfidenceQueries`
+- `getNoResultQueries`
+- `getQueryCounts`
+- `getSearchQuery`
+
+## References
+This code references several types and a utility function from other parts of the codebase:
+- `AnalyticsParams`, `HeadQuery`, `LatencyDatapoint`, etc. are types defined in `"shared/types"`.
+- `apiHost` is a variable imported from `"../utils/apiHost"`.
+- `transformAnalyticsFilter` is a function imported from `"../utils/formatDate"`.
+
+## Symbols
+
+### `getLatency`
+#### Description
+This function fetches latency data points for a given dataset and time range from the `/analytics/search` endpoint. It transforms the date filters, sends a POST request, and returns an array of `LatencyDatapoint` objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | `AnalyticsFilter` | An object containing date range and optional search method/type filters. |
+| granularity | `AnalyticsParams["granularity"]` | The desired granularity of the data points (e.g., "day", "hour"). |
+| datasetId | `string` | The ID of the dataset to retrieve latency data for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| latency_points | `Promise&lt;LatencyDatapoint[]&gt;` | A promise that resolves to an array of latency data points. |
+
+### `getRpsUsageGraph`
+#### Description
+This function fetches usage data points for the search RPS graph from the `/analytics/search` endpoint. It takes filters, granularity, and dataset ID as input and returns a promise resolving to an array of `UsageDatapoint` objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | `AnalyticsFilter` | An object containing date range and optional search method/type filters. |
+| granularity | `AnalyticsParams["granularity"]` | The desired granularity of the data points (e.g., "day", "hour"). |
+| datasetId | `string` | The ID of the dataset to retrieve usage data for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| usage_points | `Promise&lt;UsageDatapoint[]&gt;` | A promise that resolves to an array of usage data points. |
+
+### `getHeadQueries`
+#### Description
+This function fetches a list of the most frequent search queries (head queries) for a given dataset and time range from the `/analytics/search` endpoint.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | `AnalyticsFilter` | An object containing date range and optional search method/type filters. |
+| datasetId | `string` | The ID of the dataset to retrieve head queries for. |
+| page | `number` | The page number of results to retrieve. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queries | `Promise&lt;HeadQuery[]&gt;` | A promise that resolves to an array of head queries. |
+
+### `getRAGQueries`
+#### Description
+This function fetches RAG query events for a given dataset, page, filter, sort details from the `/analytics/rag` endpoint.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| datasetId | `string` | The ID of the dataset. |
+| page | `number` | The page number of results to retrieve. |
+| filter | `RAGAnalyticsFilter` | Filter for RAG query events. |
+| sort_by | `RAGSortBy` | The field to sort by. |
+| sort_order | `SortOrder` | The sort order. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queries | `Promise&lt;RagQueryEvent[]&gt;` | A promise that resolves to an array of RAG query events. |
+
+### `getRAGUsage`
+#### Description
+This function fetches RAG usage data for a given dataset and filter from the `/analytics/rag` endpoint.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| datasetId | `string` | The ID of the dataset. |
+| filter | `RAGAnalyticsFilter` | Filter for RAG usage data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `Promise&lt;RAGUsageResponse&gt;` | A promise that resolves to the RAG usage data. |
+
+### `getRagUsageGraph`
+#### Description
+This function fetches usage data points for the RAG usage graph from the `/analytics/rag` endpoint. It takes filters, granularity, and dataset ID as input and returns a promise resolving to an array of `UsageDatapoint` objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | `RAGAnalyticsFilter` | An object containing date range and optional RAG type filters. |
+| granularity | `AnalyticsParams["granularity"]` | The desired granularity of the data points (e.g., "day", "hour"). |
+| datasetId | `string` | The ID of the dataset to retrieve usage data for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| usage_points | `Promise&lt;UsageDatapoint[]&gt;` | A promise that resolves to an array of usage data points. |
+
+### `getLowConfidenceQueries`
+#### Description
+This function fetches a list of search queries with low confidence scores for a given dataset and time range from the `/analytics/search` endpoint.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | `AnalyticsFilter` | An object containing date range and optional search method/type filters. |
+| datasetId | `string` | The ID of the dataset to retrieve low confidence queries for. |
+| page | `number` | The page number of results to retrieve. |
+| threshold | `number` | (Optional) The threshold for low confidence scores. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queries | `Promise&lt;SearchQueryEvent[]&gt;` | A promise that resolves to an array of low confidence queries. |
+
+### `getNoResultQueries`
+#### Description
+This function fetches a list of search queries that returned no results for a given dataset and time range from the `/analytics/search` endpoint.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | `AnalyticsFilter` | An object containing date range and optional search method/type filters. |
+| datasetId | `string` | The ID of the dataset to retrieve no result queries for. |
+| page | `number` | The page number of results to retrieve. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queries | `Promise&lt;SearchQueryEvent[]&gt;` | A promise that resolves to an array of no result queries. |
+
+### `getQueryCounts`
+#### Description
+This function fetches the total count of queries for different search types from a given date for a specific dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| gt_date | `Date` | The start date for fetching query counts. |
+| datasetId | `string` | The ID of the dataset. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| total_queries | `Promise&lt;SearchTypeCount[]&gt;` | A promise that resolves to an array containing the count of queries for each search type. |
+
+### `getSearchQuery`
+#### Description
+This function fetches a specific search query event by its ID for a given dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| datasetId | `string` | The ID of the dataset. |
+| searchId | `string` | The ID of the search query event. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `Promise&lt;SearchQueryEvent&gt;` | A promise that resolves to the search query event. |

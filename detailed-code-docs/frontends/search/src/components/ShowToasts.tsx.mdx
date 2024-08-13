@@ -1,0 +1,80 @@
+---
+title: "ShowToasts.tsx"
+---
+
+## High-level description
+The `ShowToast` component manages the display of toast notifications within the application. It listens for custom "show-toast" events triggered by other components and renders toasts accordingly. Each toast displays a message and a type (success or error) and disappears after a short timeout.
+
+## Table of contents
+- `createToast` function
+- `ShowToast` component
+
+## References
+- `ToastDetail` interface (defined in the same file)
+
+## Symbols
+
+### Symbol Name: `createToast`
+#### Description
+This function dispatches a custom event "show-toast" to trigger the display of a new toast notification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `{ type, message }` | `ToastDetail` | An object containing the type and message for the toast. |
+
+#### Outputs
+None
+
+#### Side Effects
+- Dispatches a "show-toast" custom event on the window object.
+
+___
+
+### Symbol Name: `ShowToast`
+#### Description
+This component listens for "show-toast" events and displays toast notifications accordingly. It maintains an array of toast details and renders each toast with its corresponding type and message.
+
+#### Inputs
+None
+
+#### Outputs
+- Renders a `div` element containing the toast notifications.
+
+#### Internal Logic
+1. **Initialization:**
+   - Uses `createSignal` to create a reactive state variable `toastDetails` to store an array of toast details.
+2. **Event Listener:**
+   - Uses `createEffect` to set up an event listener for the "show-toast" event.
+   - When the event is fired, the `showToastEvent` handler is executed.
+3. **showToastEvent Handler:**
+   - Extracts the toast details from the event object.
+   - Updates the `toastDetails` state by adding the new toast details to the array.
+   - Sets a timeout using `setTimeout` to remove the toast after 1.5 seconds.
+4. **Cleanup:**
+   - Uses `onCleanup` to clear the timeout and remove the event listener when the component is unmounted.
+5. **Rendering:**
+   - Uses a `For` loop to iterate over the `toastDetails` array.
+   - Renders a `div` element for each toast, styling it based on the toast type (success or error).
+   - Displays the toast message and a close button.
+   - Clicking the close button removes the corresponding toast from the `toastDetails` array.
+
+#### Side Effects
+- Modifies the DOM by adding and removing toast notifications.
+
+___
+
+## Dependencies
+- solid-js
+- solid-icons/bs
+- solid-icons/bi
+- solid-icons/vs
+
+## Error Handling
+- The code includes a `@ts-expect-error` comment to suppress a TypeScript error related to the `setTimeout` function. This suggests that the error handling might need improvement.
+
+## Future Improvements
+- **Error Handling:** Address the `@ts-expect-error` comment and implement proper error handling for the `setTimeout` function.
+- **Toast Duration:** Allow customization of the toast duration instead of the fixed 1.5 seconds.
+- **Toast Positioning:** Provide options to configure the position of the toast container on the screen.
+- **Accessibility:** Enhance the accessibility of the toast notifications, such as using ARIA attributes for screen readers.

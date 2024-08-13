@@ -1,0 +1,46 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a `user_plans` table to store information about user subscriptions, including Stripe-related data, plan details, and status. It also adds an index on the `stripe_customer_id` column for improved query performance.
+
+## Table of contents
+- Table creation: `user_plans`
+- Index creation: `idx_user_plans_stripe_customer_id`
+
+## Code Structure
+The script consists of two main SQL statements: one for creating the `user_plans` table and another for creating an index on the `stripe_customer_id` column.
+
+## Symbols
+
+### CREATE TABLE user_plans
+#### Description
+This SQL statement creates a new table named `user_plans` to store information about user subscription plans.
+
+#### Internal Logic
+The table is created with the following columns:
+1. `id`: A unique UUID serving as the primary key
+2. `stripe_customer_id`: A unique text field for storing Stripe customer IDs
+3. `stripe_subscription_id`: A unique text field for storing Stripe subscription IDs
+4. `plan`: A text field to store the plan type
+5. `status`: A text field to store the subscription status
+6. `created_at`: A timestamp for when the record was created
+7. `updated_at`: A timestamp for when the record was last updated
+
+All columns are defined as NOT NULL, ensuring that they always contain a value.
+
+### CREATE INDEX idx_user_plans_stripe_customer_id
+#### Description
+This SQL statement creates an index on the `stripe_customer_id` column of the `user_plans` table.
+
+#### Internal Logic
+The index is created to improve query performance when searching or filtering by `stripe_customer_id`.
+
+## Performance Considerations
+The addition of an index on `stripe_customer_id` suggests that this column is frequently used in queries, and the index will help improve the performance of these queries.
+
+## Future Improvements
+1. Consider adding foreign key constraints if the `user_plans` table is related to other tables in the database.
+2. Depending on the application's needs, additional indexes might be beneficial, such as on the `plan` or `status` columns if they are frequently used in queries.
+3. If the application requires tracking historical data, consider implementing a separate table for storing subscription history or adding columns to track changes over time.

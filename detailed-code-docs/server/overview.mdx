@@ -1,0 +1,78 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `server` directory contains the core implementation of the Trieve server application, a sophisticated data management and search platform. It includes the main server code, database migration scripts, configuration files, and build scripts. The server is primarily written in Rust and uses various external libraries and databases to provide its functionality.
+
+## What does it do?
+The Trieve server application provides a wide range of features and functionalities:
+
+1. User authentication and authorization
+2. Data ingestion and processing
+3. File uploads and management
+4. Advanced search capabilities (semantic, full-text, and hybrid)
+5. Chat and messaging features
+6. Analytics and event tracking
+7. Integration with external services (OpenAI, Stripe)
+8. Database operations (PostgreSQL, Qdrant vector database, ClickHouse)
+9. API versioning and request handling
+10. Background workers for tasks like data deletion, file processing, and data synchronization
+
+The server handles various API requests, manages data storage and retrieval, processes files, and coordinates background tasks. It also includes utilities for database migrations, schema management, and development tools.
+
+## Entry points
+The main entry points for the server application are:
+
+1. `src/main.rs`: The primary entry point for the server application.
+2. `src/lib.rs`: Sets up the server configuration, defines API routes, and initializes various services and middleware.
+3. `src/handlers/`: Contains modules for handling different types of API requests.
+4. `src/bin/`: Houses command-line utilities for various maintenance and management tasks.
+
+## Key Files
+1. `Cargo.toml`: Defines the package metadata, dependencies, and build configuration for the Rust project.
+2. `build.rs`: A build script that handles environment variable loading during compilation.
+3. `diesel.toml`: Configures the Diesel ORM CLI tool for database schema management.
+4. `src/lib.rs`: Sets up the server configuration and API routes.
+5. `src/main.rs`: The main entry point that delegates to `lib.rs`.
+6. `src/errors.rs`: Defines custom error types and error handling logic.
+7. `src/handlers/*.rs`: Implement API request handlers for various resources.
+8. `src/operators/*.rs`: Contain core business logic for data operations.
+9. `src/middleware/*.rs`: Define custom middleware for request processing.
+10. `src/data/models.rs` and `src/data/schema.rs`: Define data structures and database schema.
+11. `ch_migrations/`: Contains ClickHouse database migration scripts.
+12. `migrations/`: Contains PostgreSQL database migration scripts.
+
+## Dependencies
+The server relies on several key external libraries and frameworks:
+
+- `actix-web`: Web framework for handling HTTP requests and responses.
+- `diesel`: ORM for database interactions with PostgreSQL.
+- `qdrant_client`: Client for interacting with the Qdrant vector database.
+- `redis`: For managing task queues and caching.
+- `sentry`: For error logging and monitoring.
+- `tokio`: Asynchronous runtime for Rust.
+- `tracing`: For logging and instrumentation.
+- `utoipa`: For generating OpenAPI documentation.
+- Various other libraries for specific functionalities (e.g., `openai_dive`, `async-stripe`, `lettre`)
+
+## Configuration
+The server uses environment variables for configuration, including:
+
+- Database connection strings (PostgreSQL, Redis, Qdrant, ClickHouse)
+- API keys and secrets
+- Feature flags (e.g., analytics, Sentry integration)
+- Server settings (e.g., cookie security)
+
+Configuration is primarily managed through environment variables, with some constants defined in the code. The `build.rs` script handles loading environment variables during compilation when the `runtime-env` feature is not enabled.
+
+The `diesel.toml` file configures the output location for the generated database schema file.
+
+The `ch_migrations/chm.toml` file contains configuration options for connecting to the ClickHouse database used in migrations.
+
+## Error Handling and Logging
+The application uses a custom `ServiceError` type defined in `src/errors.rs` for consistent error handling across the server. It includes detailed error messages and integrates with Sentry for error logging.
+
+The server uses the `tracing` crate for logging and instrumentation, with optional integration with Sentry for error monitoring.
+
+In conclusion, the `server` directory contains a comprehensive implementation of a data management and search platform, with features for user management, data processing, search, analytics, and integration with external services. The code is well-organized into modules for different functionalities, making it maintainable and extensible. The server utilizes multiple databases and external services to provide its rich set of features, and includes tools for managing database migrations and schema changes.

@@ -1,0 +1,63 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains ClickHouse database migration scripts for managing various tables and schema changes in a ClickHouse database. The migrations are organized chronologically, with each subdirectory representing a specific migration step. These scripts are designed to be executed sequentially to apply or revert changes to the database schema over time.
+
+## What does it do?
+The migration scripts in this directory perform the following main functions:
+
+1. Create and manage initial tables for datasets, search queries, cluster topics, and recommendations.
+2. Add and remove columns for tracking duplicate rows, click-through rates (CTR), and query ratings.
+3. Manage Time-To-Live (TTL) settings for data retention policies.
+4. Create and modify tables for tracking collapsed datasets and CTR data.
+
+These scripts allow developers to version control the database schema, apply changes consistently across different environments, and roll back changes if necessary. They ensure that the database structure evolves in sync with the application code.
+
+## Entry points
+The main entry points for each migration are the `up.sql` and `down.sql` files within each numbered subdirectory. These files contain the SQL statements to apply and revert the specific migration, respectively.
+
+The `chm.toml` file serves as a configuration entry point, defining the connection parameters for the ClickHouse database used in the migrations.
+
+## Key Files
+1. **1720668303_create_inital_tables/up.sql**: Creates initial tables for dataset events, search queries, cluster topics, and recommendations.
+
+2. **1721414235_last_row_processed_for_collapse/up.sql**: Creates a table to track the last collapsed dataset.
+
+3. **1721705174_mark_rows_as_duplicates/up.sql**: Adds an `is_duplicate` column to the `search_queries` table.
+
+4. **1721754801_ctr_table/up.sql**: Creates a `ctr_data` table for storing click-through rate related information.
+
+5. **1721845099_add_ctr_type/up.sql**: Adds a `type` column to the `ctr_data` table.
+
+6. **1722546114_add-bad-query-flag/up.sql**: Adds a `query_rating` column to the `search_queries` table.
+
+7. **1722913965_recreate_recommendations_table/up.sql**: Recreates the `recommendations` table with updated schema.
+
+8. **1722983788_remove_table_ttl/up.sql**: Removes TTL settings from five tables.
+
+9. **chm.toml**: Configuration file for ClickHouse database connection parameters.
+
+## Configuration
+The `chm.toml` file contains the following configuration options for connecting to the ClickHouse database:
+
+```toml
+url = "http://localhost:8123"
+user = "clickhouse"
+password = "password"
+database = "default"
+```
+
+These settings specify the URL of the ClickHouse server, user credentials, and the default database to be used for migrations.
+
+## Dependencies
+The migration scripts rely on ClickHouse-specific SQL syntax and features, such as:
+
+- ReplacingMergeTree engine
+- Partitioning by toYYYYMM(timestamp)
+- TTL settings for data expiration
+
+A ClickHouse migration tool (not specified in the provided files) is likely used to execute these scripts in the correct order.
+
+In conclusion, this directory contains a comprehensive set of database migration scripts that manage the evolution of a ClickHouse database schema. The scripts cover various aspects of database management, from table creation and modification to data retention policies, ensuring that the database structure remains consistent with the application's requirements over time.

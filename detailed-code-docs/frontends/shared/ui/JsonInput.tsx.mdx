@@ -1,0 +1,61 @@
+---
+title: "JsonInput.tsx"
+---
+
+## High-level description
+The `JsonInput` component provides a user-friendly interface for inputting and editing JSON data within a form. It utilizes the `JSONEditor` library to render a text editor with syntax highlighting and validation, and provides callbacks for handling value changes and errors.
+
+## Table of contents
+- JsonInput component
+
+## References
+- `JSONEditor` (external library)
+
+## Symbols
+
+### `JsonInput`
+#### Description
+This component renders a `div` element that serves as a container for the `JSONEditor` instance. Upon mounting, it initializes the `JSONEditor` within the container, configures its appearance and behavior, and sets its initial value. It also handles updating the editor's content when the provided `value` prop changes, and triggers the provided callbacks when the user modifies the JSON data or an error occurs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| onValueChange | `(json: any) =&gt; void` | Callback function triggered when the JSON value is modified. |
+| value | `Accessor&lt;any&gt;` | Accessor function providing the current JSON value. |
+| onError | `(message: string) =&gt; void` | Callback function triggered when an error occurs during JSON parsing or validation. |
+
+#### Outputs
+This component does not have any explicit outputs.
+
+#### Internal Logic
+1. **Initialization:**
+   - An empty `div` with the ID "json-editor-container" is rendered.
+   - The `onMount` lifecycle hook is used to perform actions after the component is mounted to the DOM.
+   - Inside `onMount`, it retrieves the container element and instantiates a new `JSONEditor` instance, passing the container and configuration options.
+   - The editor is configured with the "ace/theme/trieve" theme, and status bar and menu bars are hidden.
+   - An `onChangeText` event handler is attached to the editor, which attempts to parse the edited text as JSON and triggers the `onValueChange` callback with the parsed JSON data. If parsing fails, it triggers the `onError` callback with the error message.
+   - The initial value of the editor is set using the provided `value` accessor.
+   - The editor's mode is set to "code" for JSON editing.
+2. **Value Synchronization:**
+   - A `createEffect` function is used to create a reactive computation that runs whenever the `props.value` signal changes.
+   - Inside the effect, the `editor()` signal is used to access the `JSONEditor` instance, and its `set` method is called with the new value from `props.value()`. This ensures that the editor's content stays in sync with the provided value.
+
+#### Side Effects
+- **DOM Manipulation:** This component directly manipulates the DOM by rendering a `div` container and initializing the `JSONEditor` instance within it.
+- **Event Handling:** It attaches an event handler to the `JSONEditor`'s `onChangeText` event to handle user input.
+
+#### Performance Considerations
+- The `createEffect` function ensures that the `JSONEditor`'s content is only updated when the `props.value` signal actually changes, preventing unnecessary re-renders.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| jsoneditor | Provides the `JSONEditor` library for rendering the JSON editor. |
+| solid-js | Provides the core SolidJS functionality for creating reactive components and managing the component lifecycle. |
+
+## Error Handling
+- The `onChangeText` event handler includes a `try...catch` block to handle potential errors during JSON parsing. If an error occurs, the `onError` callback is triggered with the error message.
+
+## Future Improvements
+- The component could be extended to support additional configuration options for the `JSONEditor` instance, allowing for greater customization.
+- It could also benefit from more robust error handling, such as displaying specific error messages to the user within the editor interface.

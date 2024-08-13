@@ -1,0 +1,20 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts for removing the `chunk_collisions` table and updating the `chunk_metadata` table. The scripts are written in SQL and are intended to be run in sequence.
+
+## What does it do?
+The migration scripts in this directory make changes to the database schema related to chunk management. The `up.sql` script performs the following actions:
+
+1. **Deletes null entries:** Removes rows from the `chunk_metadata` table where the `qdrant_point_id` column is null.
+2. **Enforces non-null constraint:** Modifies the `chunk_metadata` table to make the `qdrant_point_id` column non-nullable.
+3. **Drops the `chunk_collisions` table:** Removes the `chunk_collisions` table from the database.
+
+The `down.sql` script reverts these changes:
+
+1. **Modifies `chunk_metadata` table:** Makes the `qdrant_point_id` column in the `chunk_metadata` table nullable again.
+2. **Recreates `chunk_collisions` table:** Restores the `chunk_collisions` table with its original columns and constraints.
+
+These scripts work together to ensure that the database schema can be safely migrated forward and backward as needed.

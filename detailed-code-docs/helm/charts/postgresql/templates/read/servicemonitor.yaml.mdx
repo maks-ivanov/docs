@@ -1,0 +1,49 @@
+---
+title: "servicemonitor.yaml"
+---
+
+## High-level description
+This YAML template defines a ServiceMonitor resource for monitoring PostgreSQL read replicas in a Kubernetes environment. It's designed to work with Prometheus Operator and is conditionally created based on specific configuration values.
+
+## Table of contents
+- ServiceMonitor metadata
+- ServiceMonitor spec
+  - Selector
+  - Endpoints
+  - Namespace selector
+
+## Code Structure
+The template uses Helm's templating syntax to dynamically generate a ServiceMonitor resource. It heavily relies on conditional statements and value lookups from the Helm chart's values.
+
+## Symbols
+
+### ServiceMonitor Resource
+#### Description
+Defines a ServiceMonitor custom resource for Prometheus Operator to monitor PostgreSQL read replicas.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Helm values for the chart |
+| .Release | Object | Helm release information |
+
+#### Internal Logic
+1. Checks if metrics are enabled and ServiceMonitor is configured for a replication architecture.
+2. Generates metadata including name, namespace, labels, and annotations.
+3. Defines the spec with selector, endpoints, and namespace selector.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| monitoring.coreos.com/v1 | API version for ServiceMonitor resource |
+
+### Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.metrics.enabled | boolean | - | Enables metrics collection |
+| .Values.metrics.serviceMonitor.enabled | boolean | - | Enables ServiceMonitor creation |
+| .Values.architecture | string | - | Must be "replication" for this template |
+
+## Future Improvements
+- Consider adding support for multiple endpoints or additional configuration options for the ServiceMonitor.
+- Implement more flexible namespace selection for cross-namespace monitoring scenarios.

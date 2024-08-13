@@ -1,0 +1,92 @@
+---
+title: "docker-compose-gpu-embeddings.yml"
+---
+
+## High-level description
+This Docker Compose file defines a multi-container application for running various text embedding and reranking models using GPU acceleration. It sets up five separate services, each running a different model for text processing tasks.
+
+## Table of contents
+- Service: splade-doc
+- Service: splade-query
+- Service: jina
+- Service: bgem3
+- Service: reranker
+
+## Code Structure
+The file defines five services, each following a similar structure with slight variations in the model used and the exposed port. All services use the same base image and runtime configuration.
+
+## Symbols
+
+### Service: splade-doc
+#### Description
+This service runs the SPLADE (Sparse Lexical and Expansion) model for document embedding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | Docker image to use |
+| command | string | Command to run the model |
+| ports | array | Port mapping for the service |
+| volumes | array | Volume mapping for data persistence |
+| runtime | string | Runtime configuration for GPU support |
+
+#### Outputs
+The service exposes port 4000 for API access.
+
+### Service: splade-query
+#### Description
+This service runs the SPLADE model optimized for query embedding.
+
+#### Inputs
+(Same structure as splade-doc)
+
+#### Outputs
+The service exposes port 5000 for API access.
+
+### Service: jina
+#### Description
+This service runs the Jina AI embeddings model for text processing.
+
+#### Inputs
+(Same structure as splade-doc)
+
+#### Outputs
+The service exposes port 6000 for API access.
+
+### Service: bgem3
+#### Description
+This service runs the BGE-M3 model for text embeddings.
+
+#### Inputs
+(Same structure as splade-doc)
+
+#### Outputs
+The service exposes port 7000 for API access.
+
+### Service: reranker
+#### Description
+This service runs a reranker model, specifically the BGE-reranker-large.
+
+#### Inputs
+(Same structure as splade-doc)
+
+#### Outputs
+The service exposes port 8000 for API access.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| ghcr.io/huggingface/text-embeddings-inference:turing-1.2 | Base image for all services, providing the text embedding inference framework |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| version | string | '3' | Docker Compose file version |
+| runtime | string | nvidia | Specifies GPU runtime for all services |
+
+## Future Improvements
+1. Consider using environment variables for model IDs and revisions to make the configuration more flexible.
+2. Implement health checks for each service to ensure they're running correctly.
+3. Add resource limits (CPU, memory) for each service to prevent resource exhaustion.
+4. Consider using Docker secrets for sensitive data if any is introduced in the future.
+5. Implement logging and monitoring solutions to track the performance and usage of each model.

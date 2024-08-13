@@ -1,0 +1,49 @@
+---
+title: "downloadFile.ts"
+---
+
+## High-level description
+This file defines utility functions and types for downloading files in a search application. It exports a single function `downloadFile` that fetches file metadata from an API and triggers a file download using the browser's download mechanism.
+
+## Table of contents
+- `downloadFile` function
+- `ChunkFile` type import
+
+## Symbols
+
+### `downloadFile`
+#### Description
+An asynchronous function that fetches file metadata from an API and initiates a file download in the browser.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fileId | string | The unique identifier of the file to download |
+| datasetId | string | The identifier of the dataset the file belongs to |
+
+#### Internal Logic
+1. Sends a GET request to the API to fetch file metadata
+2. If successful, extracts the S3 URL from the response
+3. Creates a temporary link element in the DOM
+4. Sets the link's href to the S3 URL and its download attribute to the file name
+5. Programmatically clicks the link to trigger the browser's download mechanism
+6. The link is not appended to the DOM, so it remains invisible to the user
+
+#### Error Handling
+If the API request fails, the function throws an error with the message "Failed to fetch dataset".
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| ChunkFile | Type definition for the file metadata returned by the API |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| VITE_API_HOST | string | N/A | The base URL for the API, obtained from environment variables |
+
+## Future Improvements
+- Add error handling for cases where the S3 URL is missing from the API response
+- Implement progress tracking for large file downloads
+- Add support for cancelling ongoing downloads
+- Consider using the Fetch API's `blob()` method for more control over the download process

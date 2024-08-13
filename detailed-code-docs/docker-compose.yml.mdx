@@ -1,0 +1,147 @@
+---
+title: "docker-compose.yml"
+---
+
+## High-level description
+This Docker Compose file defines a multi-service application stack for Trieve, including databases, caching, search, file processing, authentication, and various microservices. It orchestrates the deployment and configuration of these services, ensuring they work together seamlessly.
+
+## Table of contents
+- Database services (PostgreSQL, Redis, Qdrant)
+- Object storage (MinIO S3)
+- File processing (Apache Tika)
+- Main application server
+- Worker services (ingestion, file, delete)
+- Frontend services (dashboard, chat, search, analytics)
+- Authentication (Keycloak)
+- Analytics database (ClickHouse)
+
+## Code Structure
+The file defines multiple services, each with its own configuration. Services are interconnected through networks and dependencies. Environment variables are extensively used for configuration, and volumes are defined for data persistence.
+
+## Symbols
+
+### `services`
+#### Description
+Defines all the services that make up the application stack.
+
+#### Internal Logic
+- Sets up database services (PostgreSQL, Redis, Qdrant)
+- Configures object storage with MinIO
+- Defines application services (server, workers, frontends)
+- Sets up authentication with Keycloak
+- Configures analytics with ClickHouse
+
+### `db` (PostgreSQL)
+#### Description
+PostgreSQL database service for the main application.
+
+#### Configuration
+- Uses PostgreSQL 15 image
+- Sets up environment variables for database credentials
+- Configures health check
+- Persists data using a named volume
+- Exposes port 5432
+
+### `redis`
+#### Description
+Redis service for caching and message queuing.
+
+#### Configuration
+- Uses Redis 7.2.2 image
+- Sets up health check
+- Persists data using a named volume
+- Exposes port 6379
+- Configures password protection
+
+### `qdrant-database`
+#### Description
+Qdrant vector database service for similarity search.
+
+#### Configuration
+- Uses Qdrant 1.10.1 image
+- Sets API key for authentication
+- Exposes ports 6333 and 6334
+- Persists data using a named volume
+
+### `s3` and `s3-client`
+#### Description
+MinIO S3-compatible object storage service and its client for initial setup.
+
+#### Configuration
+- Uses MinIO RELEASE.2023-09-27T15-22-50Z image for the server
+- Sets up environment variables for access credentials
+- Configures health check
+- Persists data using a named volume
+- Uses MinIO client to set up initial bucket and user
+
+### `tika`
+#### Description
+Apache Tika service for file content extraction.
+
+#### Configuration
+- Uses Apache Tika 2.9.1.0-full image
+- Sets up health check
+- Exposes port 9998
+
+### `server`
+#### Description
+Main application server.
+
+#### Configuration
+- Builds from a local Dockerfile
+- Depends on other services (tika, db, qdrant-database, redis, keycloak)
+- Uses host network mode
+- Sets up numerous environment variables for configuration
+
+### Worker Services (`ingestion-worker`, `file-worker`, `delete-worker`)
+#### Description
+Background worker services for various tasks.
+
+#### Configuration
+- Build from local Dockerfiles
+- Depend on other services
+- Use host network mode
+- Use environment variables from a .env file
+
+### Frontend Services (`dashboard`, `chat`, `search`, `analytics-site`)
+#### Description
+Frontend applications for different parts of the system.
+
+#### Configuration
+- Build from local Dockerfiles
+- Expose different ports
+- Set up environment variables for API and UI URLs
+
+### `keycloak` and `keycloak-db`
+#### Description
+Keycloak authentication service and its dedicated PostgreSQL database.
+
+#### Configuration
+- Uses Keycloak 23.0.7 image
+- Sets up admin credentials and database connection
+- Imports a realm configuration
+- Uses a custom theme
+- Keycloak DB uses PostgreSQL 15 image
+
+### `clickhouse-db`
+#### Description
+ClickHouse database for analytics.
+
+#### Configuration
+- Uses a custom ClickHouse image
+- Sets up environment variables for credentials and embedding server
+- Persists data using a named volume
+- Exposes multiple ports
+
+## Dependencies
+The application relies on several external Docker images and services, including PostgreSQL, Redis, Qdrant, MinIO, Apache Tika, Keycloak, and ClickHouse.
+
+## Configuration
+The file extensively uses environment variables for configuration, which are expected to be defined in a separate .env file or set in the environment.
+
+## Future Improvements
+- Consider using Docker secrets for sensitive information instead of environment variables
+- Implement rolling updates strategy for zero-downtime deployments
+- Add monitoring and logging services (e.g., Prometheus, Grafana, ELK stack)
+- Optimize health check intervals and timeouts for faster service recovery
+- Consider using Docker Swarm or Kubernetes for more advanced orchestration features

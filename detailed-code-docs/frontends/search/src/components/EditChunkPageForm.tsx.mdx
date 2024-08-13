@@ -1,0 +1,94 @@
+---
+title: "EditChunkPageForm.tsx"
+---
+
+## High-level description
+This code defines a SolidJS component called `EditChunkPageForm` that provides a form for editing the metadata and content of a document chunk. It allows users to modify various attributes of a chunk, such as its link, tags, metadata, location, and content. The component handles form submission, validation, and updates the chunk data via API calls.
+
+## Table of contents
+- Imports
+- Component Definition (`EditChunkPageForm`)
+  - State variables
+  - Effects
+  - Chunk Update Logic
+  - Form Rendering
+
+## Code Structure
+The `EditChunkPageForm` component is the main symbol in this code. It utilizes several state variables to manage the form data, error messages, and loading states. It also uses effects to fetch chunk data, chunk groups, and handle form submission. The component renders a form with various input fields for editing chunk attributes and uses the TinyMCE editor for editing chunk content.
+
+## References
+- `SingleChunkPageProps`: Defines the properties expected by this component, likely passed from a parent component like `SingleChunkPage`.
+- `FullScreenModal`: A component for displaying a full-screen modal, used for login prompts.
+- `DatasetAndUserContext`: A context providing access to dataset and user information.
+- `TinyEditor`: A component for a rich text editor, used for editing chunk content.
+- `useNavigate`: A hook from SolidJS router for programmatic navigation.
+
+## Symbols
+
+### `EditChunkPageForm`
+#### Description
+This component renders a form for editing the details of a document chunk. It fetches the chunk data from the API, populates the form fields, and allows users to modify the chunk's metadata and content. It handles form submission, validation, and updates the chunk data via API calls.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | SingleChunkPageProps | Properties passed to the component, including the chunk ID and default chunk data. |
+
+#### Outputs
+This component doesn't directly return a value but instead renders the form in the UI.
+
+#### Internal Logic
+1. **Initialization:**
+   - Retrieves the API host from environment variables.
+   - Accesses the `useNavigate` hook for navigation.
+   - Consumes the `DatasetAndUserContext` to access dataset and user information.
+   - Initializes numerous state variables to manage form data, errors, loading states, etc.
+2. **Data Fetching:**
+   - Uses `createEffect` to fetch chunk groups for the authenticated user.
+   - Fetches the chunk data using the provided `chunkId` from props.
+   - Populates the form fields with the fetched chunk data.
+3. **Form Handling:**
+   - Renders a form with input fields for each editable chunk attribute.
+   - Uses `TinyEditor` component for rich text editing of the `chunk_html` content.
+   - Validates form data on submission.
+4. **Chunk Update:**
+   - On form submission, prevents default form submission behavior.
+   - Constructs the request body with updated chunk data.
+   - Sends a PUT request to the `/chunk` API endpoint to update the chunk.
+   - Handles successful updates by navigating back to the chunk view.
+   - Handles errors by displaying appropriate error messages.
+5. **Login Prompt:**
+   - If the user is not authenticated, displays a full-screen modal prompting the user to log in or register.
+
+#### Side Effects
+- Modifies the application's navigation history using `useNavigate`.
+- Updates local storage with the current dataset information.
+- Makes API requests to fetch and update chunk data.
+
+#### Performance Considerations
+- The component uses `createEffect` for data fetching and DOM manipulation, which optimizes rendering by only re-executing when dependent signals change.
+- The `TinyEditor` component might have its own performance considerations, especially for large chunks of text.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Core library for building the user interface. |
+| solid-icons/bi | Provides icons from the BoxIcons library. |
+| solid-icons/fi | Provides icons from the Feather Icons library. |
+| shared/ui | Contains shared UI components like `JsonInput` and `Tooltip`. |
+| @solidjs/router | Provides routing functionalities. |
+
+### Configuration
+This component relies on environment variables for the API host (`VITE_API_HOST`).
+
+## Error Handling
+- The component handles HTTP errors from API requests and displays appropriate error messages to the user.
+- It validates form data and displays specific error messages for invalid fields.
+
+## Logging
+The code doesn't appear to implement any specific logging mechanisms.
+
+## Future Improvements
+- Implement a more robust error handling mechanism, potentially using a dedicated error boundary component.
+- Add loading indicators during data fetching and chunk update operations to improve user experience.
+- Consider adding unit tests to cover the form validation and API request logic.

@@ -1,0 +1,69 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains TypeScript files that define interfaces, types, and utility functions for handling API responses, user plans, referral tokens, and message-related data structures in a chat application. The code is organized into two main files: `actix-api.ts` and `messages.ts`, each focusing on different aspects of the application's data management.
+
+## What does it do?
+The code in this directory provides the foundational data structures and type-checking mechanisms for the chat application. It enables the application to:
+
+1. Handle API responses, including error handling and Stripe checkout sessions.
+2. Manage user subscription plans and their associated data.
+3. Process and store referral tokens using the browser's localStorage.
+4. Define and validate message structures for the chat functionality.
+5. Determine message roles (system, assistant, or user) based on their position in a conversation.
+
+These type definitions and utility functions ensure type safety throughout the application, reducing the likelihood of runtime errors and improving the overall reliability of the chat system.
+
+## Key Files
+
+### actix-api.ts
+This file focuses on API-related types and functions:
+
+1. Defines interfaces for API errors (`ActixApiDefaultError`) and Stripe checkout sessions (`StripeCheckoutSessionResponse`).
+2. Implements referral token management using `detectReferralToken` and `getReferralTokenArray` functions.
+3. Provides type guards for validating API responses (`isStripeCheckoutSessionResponse` and `isUserPlan`).
+4. Defines the `UserPlan` interface for representing user subscription plans.
+
+### messages.ts
+This file handles message-related types and functions:
+
+1. Defines the `Message` interface for representing chat messages.
+2. Implements type guards `isMessage` and `isMessageArray` for validating message objects and arrays.
+3. Provides the `messageRoleFromIndex` function to determine message roles in a conversation.
+
+## Dependencies
+The code primarily relies on TypeScript for type definitions and type checking. It also uses the browser's `localStorage` API for managing referral tokens. No external libraries are explicitly imported or used in these files.
+
+## Configuration
+While there are no specific configuration files, the code does interact with the browser's localStorage. The key used for storing referral tokens is hardcoded as `"referral_tokens"`. This could potentially be moved to a configuration file or environment variable for easier management in the future.
+
+Here's an example of how the referral token management works:
+
+```typescript
+function detectReferralToken(queryParamT: string | undefined) {
+  if (queryParamT) {
+    const existingTokens = getReferralTokenArray();
+    if (!existingTokens.includes(queryParamT)) {
+      existingTokens.push(queryParamT);
+      localStorage.setItem("referral_tokens", JSON.stringify(existingTokens));
+    }
+  }
+}
+```
+
+This function checks if a new referral token is provided, adds it to the existing tokens if it's unique, and updates the localStorage.
+
+The message role determination is handled by the `messageRoleFromIndex` function:
+
+```typescript
+function messageRoleFromIndex(idx: number): string {
+  if (idx === 0) return "system";
+  return idx % 2 === 0 ? "assistant" : "user";
+}
+```
+
+This function assigns roles to messages based on their position in the conversation, which is crucial for maintaining the correct flow of dialogue between the user and the AI assistant.
+
+In summary, this directory provides the essential type definitions and utility functions that form the backbone of the chat application's data management system. It ensures type safety, handles API responses, manages user plans and referral tokens, and structures the chat messages for effective communication between users and the AI assistant.

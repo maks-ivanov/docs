@@ -1,0 +1,38 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script modifies the `invitations` table by adding an `organization_id` column with a foreign key constraint to the `organizations` table, and removes the `referral_tokens` column.
+
+## Table of contents
+- Add `organization_id` column to `invitations` table
+- Add foreign key constraint for `organization_id`
+- Remove `referral_tokens` column from `invitations` table
+
+## Symbols
+
+### ALTER TABLE invitations ADD COLUMN organization_id UUID NOT NULL
+#### Description
+This statement adds a new column named `organization_id` to the `invitations` table. The column is of type UUID and is set as NOT NULL, meaning it must have a value for every row.
+
+### ALTER TABLE invitations ADD CONSTRAINT invitations_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations(id)
+#### Description
+This statement adds a foreign key constraint to the `invitations` table. It ensures that the `organization_id` column in the `invitations` table references the `id` column in the `organizations` table, maintaining referential integrity.
+
+### ALTER TABLE invitations DROP COLUMN referral_tokens
+#### Description
+This statement removes the `referral_tokens` column from the `invitations` table.
+
+## Side Effects
+- The `invitations` table structure is modified, which may affect existing queries or application code that interacts with this table.
+- The removal of the `referral_tokens` column will result in the loss of any data stored in that column.
+- New inserts into the `invitations` table will require a valid `organization_id` that exists in the `organizations` table.
+
+## Performance Considerations
+- Adding a new NOT NULL column (`organization_id`) to an existing table with data may require a table rewrite, which could be a time-consuming operation on large tables.
+- The addition of a foreign key constraint may impact the performance of insert and update operations on the `invitations` table, as the database will need to check the `organizations` table for each operation.
+
+## Future Improvements
+- Consider adding an index on the `organization_id` column in the `invitations` table to improve query performance, especially if there will be frequent lookups based on this column.
+- If the `referral_tokens` data is still needed, consider migrating it to another table or column before dropping it from the `invitations` table.

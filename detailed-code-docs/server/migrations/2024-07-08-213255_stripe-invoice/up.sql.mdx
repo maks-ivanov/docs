@@ -1,0 +1,46 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a new table named `stripe_invoices` to store information about Stripe invoices associated with organizations. The table includes fields for invoice identification, organization reference, financial details, timestamps, and invoice status.
+
+## Table of contents
+- Table creation
+- Column definitions
+- Primary key
+- Foreign key constraint
+
+## Code Structure
+The code consists of a single SQL statement that creates the `stripe_invoices` table with defined columns and constraints.
+
+## Symbols
+
+### `stripe_invoices` table
+#### Description
+This table is designed to store Stripe invoice data for organizations. It includes various fields to capture essential invoice information and maintains a relationship with the `organizations` table.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | DEFAULT gen_random_uuid() PRIMARY KEY | Unique identifier for each invoice |
+| org_id | UUID | NOT NULL, FOREIGN KEY | Reference to the associated organization |
+| total | INT | NOT NULL | Total amount of the invoice |
+| created_at | TIMESTAMP | NOT NULL | Timestamp of invoice creation |
+| status | TEXT | NOT NULL | Current status of the invoice |
+| hosted_invoice_url | TEXT | NOT NULL | URL to the hosted invoice on Stripe |
+
+#### Constraints
+- Primary Key: `id` column
+- Foreign Key: `org_id` references `organizations(id)` with ON DELETE CASCADE
+
+## Dependencies
+This migration script relies on the existence of the `organizations` table, as it references it in the foreign key constraint.
+
+## Future Improvements
+1. Consider adding an index on the `org_id` column to improve query performance when searching for invoices by organization.
+2. Depending on the application's needs, additional columns could be added, such as:
+   - `currency`: To specify the currency of the invoice total
+   - `due_date`: To track when the invoice payment is due
+   - `paid_at`: To record when the invoice was paid
+3. If needed, implement a check constraint on the `status` column to ensure only valid statuses are inserted (e.g., 'paid', 'unpaid', 'void').

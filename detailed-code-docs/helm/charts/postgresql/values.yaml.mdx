@@ -1,0 +1,322 @@
+---
+title: "values.yaml"
+---
+
+## High-level description
+This YAML file defines the configuration values for deploying a PostgreSQL database using a Helm chart. It includes parameters for image selection, authentication, replication, persistence, backups, resource allocation, security, networking, and metrics.
+
+## Table of contents
+- Global parameters
+- Common parameters
+- PostgreSQL common parameters
+- PostgreSQL Primary parameters
+- PostgreSQL read only replica parameters
+- Backup parameters
+- Volume Permissions parameters
+- Other Parameters
+- Metrics Parameters
+
+## References
+This file is referenced by the `helm/charts/postgresql/README.md` file, which provides instructions and explanations for using the Helm chart.
+
+## Symbols
+### `global`
+#### Description
+Defines global parameters that can be used to override default values for the entire chart, including dependencies.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `global.imageRegistry` | string | Global Docker image registry |
+| `global.imagePullSecrets` | list | Global Docker registry secret names as an array |
+| `global.storageClass` | string | Global StorageClass for Persistent Volume(s) |
+| `global.postgresql.auth.postgresPassword` | string | Password for the "postgres" admin user (overrides `auth.postgresPassword`) |
+| `global.postgresql.auth.username` | string | Name for a custom user to create (overrides `auth.username`) |
+| `global.postgresql.auth.password` | string | Password for the custom user to create (overrides `auth.password`) |
+| `global.postgresql.auth.database` | string | Name for a custom database to create (overrides `auth.database`) |
+| `global.postgresql.auth.existingSecret` | string | Name of existing secret to use for PostgreSQL credentials (overrides `auth.existingSecret`) |
+| `global.postgresql.auth.secretKeys.adminPasswordKey` | string | Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.adminPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set. |
+| `global.postgresql.auth.secretKeys.userPasswordKey` | string | Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.userPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set. |
+| `global.postgresql.auth.secretKeys.replicationPasswordKey` | string | Name of key in existing secret to use for PostgreSQL credentials (overrides `auth.secretKeys.replicationPasswordKey`). Only used when `global.postgresql.auth.existingSecret` is set. |
+| `global.postgresql.service.ports.postgresql` | string | PostgreSQL service port (overrides `service.ports.postgresql`) |
+| `global.compatibility.openshift.adaptSecurityContext` | string | Adapt the securityContext sections of the deployment to make them compatible with Openshift restricted-v2 SCC. Possible values: auto (apply if the detected running cluster is Openshift), force (perform the adaptation always), disabled (do not perform adaptation) |
+
+#### Outputs
+None
+
+### `kubeVersion`
+#### Description
+Allows overriding the Kubernetes version for the deployment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `kubeVersion` | string | Kubernetes version |
+
+#### Outputs
+None
+
+### `nameOverride`
+#### Description
+String to partially override the common name of the deployment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `nameOverride` | string | String to partially override common name |
+
+#### Outputs
+None
+
+### `fullnameOverride`
+#### Description
+String to fully override the common name of the deployment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `fullnameOverride` | string | String to fully override common name |
+
+#### Outputs
+None
+
+### `clusterDomain`
+#### Description
+Defines the Kubernetes cluster domain.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `clusterDomain` | string | Kubernetes cluster domain |
+
+#### Outputs
+None
+
+### `extraDeploy`
+#### Description
+An array of extra Kubernetes objects to deploy with the release.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `extraDeploy` | list | Array of extra Kubernetes objects |
+
+#### Outputs
+None
+
+### `commonLabels`
+#### Description
+A map of labels to add to all deployed resources.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `commonLabels` | map | Map of labels |
+
+#### Outputs
+None
+
+### `commonAnnotations`
+#### Description
+A map of annotations to add to all deployed resources.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `commonAnnotations` | map | Map of annotations |
+
+#### Outputs
+None
+
+### `diagnosticMode`
+#### Description
+Enables diagnostic mode for the deployment, disabling probes and overriding the container command.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `diagnosticMode.enabled` | boolean | Enable diagnostic mode |
+| `diagnosticMode.command` | list | Command to override all containers in the statefulset |
+| `diagnosticMode.args` | list | Args to override all containers in the statefulset |
+
+#### Outputs
+None
+
+### `image`
+#### Description
+Defines the PostgreSQL image to use for the deployment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `image.registry` | string | PostgreSQL image registry |
+| `image.repository` | string | PostgreSQL image repository |
+| `image.tag` | string | PostgreSQL image tag |
+| `image.digest` | string | PostgreSQL image digest |
+| `image.pullPolicy` | string | PostgreSQL image pull policy |
+| `image.pullSecrets` | list | Specify image pull secrets |
+| `image.debug` | boolean | Specify if debug values should be set |
+
+#### Outputs
+None
+
+### `auth`
+#### Description
+Defines authentication parameters for the PostgreSQL database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `auth.enablePostgresUser` | boolean | Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user |
+| `auth.postgresPassword` | string | Password for the "postgres" admin user. Ignored if `auth.existingSecret` is provided |
+| `auth.username` | string | Name for a custom user to create |
+| `auth.password` | string | Password for the custom user to create. Ignored if `auth.existingSecret` is provided |
+| `auth.database` | string | Name for a custom database to create |
+| `auth.replicationUsername` | string | Name of the replication user |
+| `auth.replicationPassword` | string | Password for the replication user. Ignored if `auth.existingSecret` is provided |
+| `auth.existingSecret` | string | Name of existing secret to use for PostgreSQL credentials. `auth.postgresPassword`, `auth.password`, and `auth.replicationPassword` will be ignored and picked up from this secret. The secret might also contains the key `ldap-password` if LDAP is enabled. `ldap.bind_password` will be ignored and picked from this secret in this case. |
+| `auth.secretKeys.adminPasswordKey` | string | Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set. |
+| `auth.secretKeys.userPasswordKey` | string | Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set. |
+| `auth.secretKeys.replicationPasswordKey` | string | Name of key in existing secret to use for PostgreSQL credentials. Only used when `auth.existingSecret` is set. |
+| `auth.usePasswordFiles` | boolean | Mount credentials as a files instead of using an environment variable |
+
+#### Outputs
+None
+
+### `architecture`
+#### Description
+Defines the PostgreSQL architecture to use for the deployment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `architecture` | string | PostgreSQL architecture (`standalone` or `replication`) |
+
+#### Outputs
+None
+
+### `replication`
+#### Description
+Defines replication configuration parameters for the PostgreSQL database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `replication.synchronousCommit` | string | Set synchronous commit mode. Allowed values: `on`, `remote_apply`, `remote_write`, `local` and `off` |
+| `replication.numSynchronousReplicas` | integer | Number of replicas that will have synchronous replication. Note: Cannot be greater than `readReplicas.replicaCount`. |
+| `replication.applicationName` | string | Cluster application name. Useful for advanced replication settings |
+
+#### Outputs
+None
+
+### `containerPorts`
+#### Description
+Defines the container ports for the PostgreSQL deployment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `containerPorts.postgresql` | integer | PostgreSQL container port |
+
+#### Outputs
+None
+
+### `audit`
+#### Description
+Defines audit settings for the PostgreSQL database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `audit.logHostname` | boolean | Log client hostnames |
+| `audit.logConnections` | boolean | Add client log-in operations to the log file |
+| `audit.logDisconnections` | boolean | Add client log-outs operations to the log file |
+| `audit.pgAuditLog` | string | Add operations to log using the pgAudit extension |
+| `audit.pgAuditLogCatalog` | string | Log catalog using pgAudit |
+| `audit.clientMinMessages` | string | Message log level to share with the user |
+| `audit.logLinePrefix` | string | Template for log line prefix (default if not set) |
+| `audit.logTimezone` | string | Timezone for the log timestamps |
+
+#### Outputs
+None
+
+### `ldap`
+#### Description
+Defines LDAP configuration parameters for the PostgreSQL database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `ldap.enabled` | boolean | Enable LDAP support |
+| `ldap.server` | string | IP address or name of the LDAP server |
+| `ldap.port` | string | Port number on the LDAP server to connect to |
+| `ldap.prefix` | string | String to prepend to the user name when forming the DN to bind |
+| `ldap.suffix` | string | String to append to the user name when forming the DN to bind |
+| `ldap.basedn` | string | Root DN to begin the search for the user in |
+| `ldap.binddn` | string | DN of user to bind to LDAP |
+| `ldap.bindpw` | string | Password for the user to bind to LDAP |
+| `ldap.searchAttribute` | string | Attribute to match against the user name in the search |
+| `ldap.searchFilter` | string | The search filter to use when doing search+bind authentication |
+| `ldap.scheme` | string | Set to `ldaps` to use LDAPS |
+| `ldap.tls.enabled` | boolean | Set to true to enable TLS encryption |
+| `ldap.uri` | string | LDAP URL beginning in the form `ldap[s]://host[:port]/basedn`. If provided, all the other LDAP parameters will be ignored. |
+
+#### Outputs
+None
+
+### `postgresqlDataDir`
+#### Description
+Defines the PostgreSQL data directory folder.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `postgresqlDataDir` | string | PostgreSQL data dir folder |
+
+#### Outputs
+None
+
+### `postgresqlSharedPreloadLibraries`
+#### Description
+Defines the shared preload libraries for PostgreSQL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `postgresqlSharedPreloadLibraries` | string | Shared preload libraries (comma-separated list) |
+
+#### Outputs
+None
+
+### `shmVolume`
+#### Description
+Configures an emptyDir volume for `/dev/shm` for PostgreSQL pods.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `shmVolume.enabled` | boolean | Enable emptyDir volume for /dev/shm for PostgreSQL pod(s) |
+| `shmVolume.sizeLimit` | string | Set this to enable a size limit on the shm tmpfs |
+
+#### Outputs
+None
+
+### `tls`
+#### Description
+Defines TLS configuration parameters for the PostgreSQL database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tls.enabled` | boolean | Enable TLS traffic support |
+| `tls.autoGenerated` | boolean | Generate automatically self-signed TLS certificates |
+| `tls.preferServerCiphers` | boolean | Whether to use the server's TLS cipher preferences rather than the client's |
+| `tls.certificatesSecret` | string | Name of an existing secret that contains the certificates |
+| `tls.certFilename` | string | Certificate filename |
+| `tls.certKeyFilename` | string | Certificate key filename |
+| `tls.certCAFilename` | string | CA Certificate filename |
+| `tls.crlFilename` | string | File containing a Certificate Revocation List |
+
+#### Outputs
+None
+

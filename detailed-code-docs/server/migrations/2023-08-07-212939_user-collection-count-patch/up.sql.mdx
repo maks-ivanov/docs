@@ -1,0 +1,56 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script implements a migration to create and manage a user collection count system. It sets up a table to store user collection counts, creates a trigger function to automatically update these counts, and initializes the counts based on existing data.
+
+## Table of contents
+- Drop previous objects
+- Create user_collection_counts table
+- Create update_collection_counts function
+- Create update_collection_counts_trigger
+- Initialize user_collection_counts data
+
+## Code Structure
+The script is structured in a sequential manner, first removing any existing objects, then creating new ones, and finally initializing data. The main components are the `user_collection_counts` table, the `update_collection_counts()` function, and the `update_collection_counts_trigger`.
+
+## Symbols
+
+### user_collection_counts
+#### Description
+A table that stores the count of collections for each user.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | UUID | Primary key, auto-generated |
+| user_id | UUID | Foreign key referencing users table |
+| collection_count | INTEGER | Count of collections for the user |
+
+### update_collection_counts()
+#### Description
+A PL/pgSQL function that updates the `user_collection_counts` table when changes occur in the `card_collection` table.
+
+#### Internal Logic
+1. For INSERT or UPDATE operations:
+   - Insert a new record or increment the count for the user
+2. For DELETE operations:
+   - Decrement the count for the user
+
+### update_collection_counts_trigger
+#### Description
+A trigger that executes the `update_collection_counts()` function after INSERT, UPDATE, or DELETE operations on the `card_collection` table.
+
+## Side Effects
+- Modifies the `user_collection_counts` table based on changes in the `card_collection` table.
+- Initializes the `user_collection_counts` table with data from existing `card_collection` records.
+
+## Performance Considerations
+- The trigger operates on each row, which could impact performance for bulk operations on the `card_collection` table.
+- The initial data insertion uses a subquery, which might be slow for large datasets.
+
+## Future Improvements
+1. Consider adding error handling within the `update_collection_counts()` function to manage potential issues like negative counts.
+2. For large datasets, the initial data insertion could be optimized using batch processing or a more efficient query structure.
+3. Implement a mechanism to periodically verify and correct the counts in case of any discrepancies that might occur due to concurrent operations or system failures.

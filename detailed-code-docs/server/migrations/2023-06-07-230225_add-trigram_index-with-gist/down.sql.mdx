@@ -1,0 +1,36 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made by the corresponding `up.sql` file. It removes a GiST index and the PostgreSQL trigram extension, effectively undoing the setup for trigram-based text search functionality.
+
+## Table of contents
+- Drop GiST index
+- Drop PostgreSQL trigram extension
+
+## Symbols
+
+### DROP INDEX IF EXISTS idx_gist;
+#### Description
+This SQL command removes the GiST (Generalized Search Tree) index named `idx_gist` if it exists in the database.
+
+#### Side Effects
+- Removes the `idx_gist` index from the database, which may impact the performance of certain text search queries.
+
+### DROP EXTENSION IF EXISTS pg_trgm;
+#### Description
+This SQL command removes the PostgreSQL trigram extension (`pg_trgm`) if it exists in the database.
+
+#### Side Effects
+- Removes the `pg_trgm` extension, which disables trigram-based text search functionality in the database.
+- May affect other database objects or queries that rely on trigram functionality.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| PostgreSQL | The database system where these SQL commands are executed |
+
+## Future Improvements
+- Consider adding comments to explain the purpose of removing these specific database objects.
+- If there are any dependent objects or data that rely on the trigram functionality, consider adding steps to handle or clean up those dependencies before dropping the extension.

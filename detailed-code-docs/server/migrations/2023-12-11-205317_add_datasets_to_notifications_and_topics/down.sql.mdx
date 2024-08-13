@@ -1,0 +1,46 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made in the corresponding `up.sql` file. It removes the `dataset_id` column and its associated foreign key constraints from the `file_upload_completed_notifications`, `topics`, and `messages` tables.
+
+## Table of contents
+- Drop foreign key constraints
+- Remove `dataset_id` columns
+
+## Code Structure
+The script is structured in two main parts:
+1. Dropping foreign key constraints
+2. Removing the `dataset_id` column from each table
+
+## Symbols
+
+### ALTER TABLE statements
+#### Description
+These SQL statements modify the structure of existing tables by removing foreign key constraints and dropping columns.
+
+#### Internal Logic
+1. Drop foreign key constraints:
+   - Remove `notifications_dataset_id_fkey` from `file_upload_completed_notifications`
+   - Remove `topics_dataset_id_fkey` from `topics`
+   - Remove `messages_dataset_id_fkey` from `messages`
+
+2. Drop `dataset_id` columns:
+   - Remove `dataset_id` from `file_upload_completed_notifications`
+   - Remove `dataset_id` from `topics`
+   - Remove `dataset_id` from `messages`
+
+## Side Effects
+- Removes the ability to associate notifications, topics, and messages with specific datasets
+- May result in data loss if the `dataset_id` column contained important information
+
+## Dependencies
+This script depends on the existence of the following tables and constraints:
+- `file_upload_completed_notifications` table with `notifications_dataset_id_fkey` constraint
+- `topics` table with `topics_dataset_id_fkey` constraint
+- `messages` table with `messages_dataset_id_fkey` constraint
+
+## Future Improvements
+- Consider adding a check to ensure the tables and constraints exist before attempting to drop them
+- If data preservation is important, consider adding steps to backup or transfer the `dataset_id` data before removing the column

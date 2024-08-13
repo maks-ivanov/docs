@@ -1,0 +1,122 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains layout components for the Trieve dashboard application. It includes three main components: `ContextWrapper`, `DashboardLayout`, and `DatasetLayout`. These components work together to provide the overall structure and context for the dashboard, handling user authentication, organization selection, and dataset-specific views.
+
+## What does it do?
+The layout components in this directory serve several important functions:
+
+1. Context Management: The `ContextWrapper` component wraps the entire application with necessary context providers, making user and dataset information accessible throughout the app.
+
+2. Dashboard Structure: The `DashboardLayout` component creates the main structure for the dashboard, including navigation, sidebar, and content areas. It also handles routing logic and access control based on user roles and organization membership.
+
+3. Dataset-specific Layout: The `DatasetLayout` component provides a specialized layout for dataset-related pages, including dataset-specific navigation and tabs.
+
+Together, these components create a cohesive and organized structure for the Trieve dashboard, ensuring that users have access to the appropriate information and functionality based on their roles and permissions.
+
+## Entry points
+The main entry point for this directory is likely the `DashboardLayout` component, as it provides the overall structure for the dashboard. The workflow typically follows this pattern:
+
+1. The `ContextWrapper` is used at the top level of the application to provide global context.
+2. The `DashboardLayout` is rendered within the `ContextWrapper`, handling the main dashboard structure and routing.
+3. For dataset-specific pages, the `DatasetLayout` is used within the `DashboardLayout` to provide additional dataset-related navigation and structure.
+
+## Key Files
+1. `ContextWrapper.tsx`: Provides global context for user and dataset information.
+2. `DashboardLayout.tsx`: Defines the main dashboard layout and handles routing logic.
+3. `DatasetLayout.tsx`: Creates a specialized layout for dataset-specific pages.
+
+## Dependencies
+The layout components rely on several external libraries and internal components:
+
+- solid-js: The core library used for building the components.
+- @solidjs/router: Provides routing functionality for the dashboard.
+- Internal components: NavBar, Sidebar, OrgName, OrgTabs, ShowToasts, DatasetName, and DatasetTabs are used to build the layout structure.
+
+These dependencies were likely chosen to provide a reactive and efficient way to build the dashboard interface while maintaining a clean and modular code structure.
+
+Here's a more detailed look at each component:
+
+### ContextWrapper
+This component wraps the application with `UserContextWrapper` and `DatasetContextWrapper`, ensuring that user and dataset information is available throughout the app. It's a simple yet crucial component for managing global state.
+
+```typescript
+const ContextWrapper: Component&lt;ContextWrapperProps&gt; = (props) =&gt; {
+  return (
+    &lt;&gt;
+      &lt;UserContextWrapper&gt;
+        &lt;DatasetContextWrapper&gt;{props.children}&lt;/DatasetContextWrapper&gt;
+      &lt;/UserContextWrapper&gt;
+    &lt;/&gt;
+  );
+};
+```
+
+### DashboardLayout
+This component is responsible for the main dashboard structure and routing logic. It uses the `UserContext` to determine the user's role and organization membership, then renders the appropriate content based on these factors. 
+
+Key features of the `DashboardLayout`:
+- Handles routing logic using `createEffect` and `useNavigate` from `@solidjs/router`.
+- Determines user roles and permissions using `createMemo`.
+- Renders different content based on the user's loading status, organization membership, and role.
+- Includes components like `NavBar`, `Sidebar`, `OrgName`, and `OrgTabs` to create the dashboard structure.
+
+Here's a simplified example of its structure:
+
+```typescript
+const DashboardLayout: Component&lt;{ children: JSX.Element }&gt; = (props) =&gt; {
+  const userContext = useContext(UserContext);
+  // ... (routing and role determination logic)
+
+  return (
+    &lt;div class="flex h-screen bg-gray-100"&gt;
+      &lt;NavBar /&gt;
+      &lt;Sidebar /&gt;
+      &lt;div class="flex-1 flex flex-col overflow-hidden"&gt;
+        &lt;OrgName /&gt;
+        &lt;OrgTabs /&gt;
+        &lt;main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200"&gt;
+          &lt;Switch&gt;
+            {/* ... (conditional rendering based on user status and role) */}
+          &lt;/Switch&gt;
+        &lt;/main&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+```
+
+### DatasetLayout
+This component provides a specialized layout for dataset-specific pages. It ensures that the URL always includes a sub-page after the dataset ID and renders a layout with dataset-specific navigation and tabs.
+
+Key features of the `DatasetLayout`:
+- Uses `createEffect` to check and update the URL pathname.
+- Renders `NavBar`, `Sidebar`, `DatasetName`, and `DatasetTabs` components.
+- Provides a consistent layout for all dataset-related pages.
+
+Here's a simplified example of its structure:
+
+```typescript
+const DatasetLayout: Component&lt;{ children: JSX.Element }&gt; = (props) =&gt; {
+  // ... (URL checking logic)
+
+  return (
+    &lt;div class="flex h-screen bg-gray-100"&gt;
+      &lt;ShowToasts /&gt;
+      &lt;NavBar /&gt;
+      &lt;Sidebar /&gt;
+      &lt;div class="flex-1 flex flex-col overflow-hidden"&gt;
+        &lt;DatasetName /&gt;
+        &lt;DatasetTabs /&gt;
+        &lt;main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200"&gt;
+          {props.children}
+        &lt;/main&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+```
+
+These layout components work together to create a structured, context-aware, and user-role-sensitive dashboard for the Trieve application. They provide a solid foundation for building complex dashboard functionality while maintaining a clean and organized code structure.

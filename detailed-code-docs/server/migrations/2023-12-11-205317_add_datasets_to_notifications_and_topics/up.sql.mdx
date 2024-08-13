@@ -1,0 +1,43 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds a `dataset_id` column to the `file_upload_completed_notifications`, `topics`, and `messages` tables, and establishes foreign key relationships between these tables and the `datasets` table.
+
+## Table of contents
+- Add `dataset_id` column to tables
+- Add foreign key constraints
+
+## Code Structure
+The script consists of two main parts: adding the `dataset_id` column to three tables and then creating foreign key constraints for these new columns.
+
+## Symbols
+
+### ALTER TABLE statements (Adding columns)
+#### Description
+These statements add a new column `dataset_id` of type UUID to the `file_upload_completed_notifications`, `topics`, and `messages` tables.
+
+#### Internal Logic
+For each table:
+1. Adds a new column named `dataset_id`
+2. Sets the column type to UUID
+3. Makes the column NOT NULL
+
+### ALTER TABLE statements (Adding constraints)
+#### Description
+These statements create foreign key constraints for the newly added `dataset_id` columns, linking them to the `datasets` table.
+
+#### Internal Logic
+For each table:
+1. Adds a new constraint with a unique name
+2. Sets the `dataset_id` column as a foreign key
+3. References the `id` column in the `datasets` table
+
+## Side Effects
+- Modifies the structure of the `file_upload_completed_notifications`, `topics`, and `messages` tables
+- Establishes referential integrity between these tables and the `datasets` table
+
+## Future Improvements
+- Consider adding indexes on the `dataset_id` columns to improve query performance, especially if these columns will be frequently used in JOIN operations or WHERE clauses
+- If the tables already contain data, a data migration strategy might be needed to populate the new `dataset_id` columns with valid values

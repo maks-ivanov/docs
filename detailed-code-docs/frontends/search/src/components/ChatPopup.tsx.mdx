@@ -1,0 +1,80 @@
+---
+title: "ChatPopup.tsx"
+---
+
+## High-level description
+The `ChatPopup` component displays a chat interface that allows users to interact with an AI assistant. It enables users to send messages, receive AI-generated responses, and view relevant chunks of information based on the conversation context.
+
+## Table of contents
+- Imports
+- `ChatPopup` component
+
+## Code Structure
+The `ChatPopup` component utilizes several state variables to manage the chat interface, including `messages` for storing the conversation history, `newMessageContent` for the user's input, and `streamingCompletion` to indicate if the AI is actively generating a response. The component fetches previous messages from local storage and allows users to submit new messages, triggering the AI completion process.
+
+## References
+- `AfMessage` component (used to display individual messages)
+- `DatasetAndUserContext` (provides access to dataset and user information)
+- `ScoreChunkDTO` type (represents a chunk of information with a relevance score)
+- `messageRoleFromIndex` function (determines the role of a message based on its index)
+
+## Symbols
+
+### `ChatPopup`
+#### Description
+This component renders a chat popup window that allows users to interact with an AI assistant. It displays previous messages, provides an input field for new messages, and handles the submission and streaming of AI-generated responses.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| selectedIds | Accessor&lt;string[]&gt; | An accessor function returning an array of selected chunk IDs. |
+| chunks | Accessor&lt;ScoreChunkDTO[]&gt; | An accessor function returning an array of `ScoreChunkDTO` objects. |
+| groupChunks | Accessor&lt;GroupScoreChunkDTO[]&gt; | An accessor function returning an array of `GroupScoreChunkDTO` objects. |
+| setOpenChat | Setter&lt;boolean&gt; | A setter function to control the visibility of the chat popup. |
+
+#### Outputs
+This component doesn't have any explicit outputs.
+
+#### Internal Logic
+1. **Initialization:**
+   - Retrieves the API host from environment variables.
+   - Accesses the `DatasetAndUserContext` to get the current dataset.
+   - Initializes state variables for loading messages, messages array, new message content, streaming completion status, and an abort controller for managing AI completion requests.
+2. **Message Handling:**
+   - `handleReader`: Processes streamed AI responses, updating the messages array with new content chunks.
+   - `fetchCompletion`: Sends a request to the `/chunk/generate` API endpoint to generate an AI completion based on the conversation history and selected chunk IDs. It handles streaming the response and updating the messages array accordingly.
+   - `fetchMessages`: Retrieves previous messages from local storage and populates the messages array.
+   - `submitNewMessage`: Triggers the `fetchCompletion` function to generate an AI response for the user's input.
+3. **UI Rendering:**
+   - Displays a loading indicator while messages are being fetched or the AI is generating a response.
+   - Renders the chat messages using the `AfMessage` component, passing the message role, content, and relevant chunk information.
+   - Provides a text input area for composing new messages.
+   - Includes a "Stop Generating" button to abort the AI completion process.
+   - A "Send" button to submit the user's message.
+
+#### Side Effects
+- Modifies local storage to store and retrieve previous messages.
+- Makes API requests to fetch AI completions.
+- Updates the state variables to reflect changes in the chat interface.
+
+#### Performance Considerations
+- Utilizes SolidJS's fine-grained reactivity to efficiently update the UI based on state changes.
+- Employs asynchronous operations and streaming for handling AI responses, preventing UI blocking.
+
+## Dependencies
+- solid-js
+- solid-icons/fi
+- sanitize-html
+
+## Error Handling
+- Implements basic error handling for API requests, displaying toast notifications to the user in case of failures.
+
+## Future Improvements
+- Implement user authentication to persist chat history across sessions.
+- Add support for different AI models and customization options.
+- Improve error handling and provide more informative error messages to the user.
+- Implement a mechanism for users to provide feedback on AI-generated responses.
+- Add functionality to edit or delete messages.
+- Implement a more robust system for managing and displaying relevant chunks, potentially using a pagination or infinite scrolling mechanism.
+- Consider adding support for markdown formatting in messages.
+- Explore options for improving the accessibility of the chat interface.

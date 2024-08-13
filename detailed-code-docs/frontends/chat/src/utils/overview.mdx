@@ -1,0 +1,83 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+This directory contains utility files for a chat application frontend, focusing on API-related data types, operations, and message sizing management. The codebase is written in TypeScript and utilizes the Solid.js framework for reactive state management.
+
+## What does it do?
+
+The utility files in this directory serve several important functions for the chat application:
+
+1. API Data Types and Operations:
+   - Defines TypeScript interfaces for various data structures used in API communication, such as chunk metadata, user data, collections, and notifications.
+   - Provides type guard functions for runtime type checking of API-related objects.
+   - Implements utility functions for handling referral tokens and message roles.
+
+2. Message Sizing and Handle Hover State:
+   - Manages the sizing of messages in the chat interface using Solid.js signals.
+   - Handles the hover state of UI elements (likely for resizing or dragging) in the chat interface.
+
+These utilities enable the chat application to:
+- Ensure type safety when working with API data.
+- Implement features like referral tracking and user management.
+- Dynamically adjust the layout of the chat interface.
+- Provide interactive UI elements for a better user experience.
+
+## Key Files
+
+1. `apiTypes.ts`:
+   This file is the core of the API-related utilities. It defines a wide range of interfaces and type guards for various data structures used in the application. Key features include:
+   - `ChunkMetadata` interface for representing content chunks.
+   - Type guards like `isChunkMetadata`, `isUserDTO`, and `isOrganizationDTO` for runtime type checking.
+   - Utility functions like `detectReferralToken` and `getReferralTokenArray` for managing referral tokens.
+   - Interfaces for user data, collections, and notifications.
+
+2. `messageSizing.ts`:
+   This file focuses on managing the layout and interactivity of the chat interface. It exports:
+   - Signals `messageSizing` and `setMessageSizing` for controlling the sizing of messages in the chat interface.
+   - A `HandleHoverState` type and associated signals `handleHover` and `setHandleHover` for managing hover states of UI elements.
+
+## Dependencies
+
+The codebase primarily relies on TypeScript for type safety and Solid.js for reactive state management. Solid.js is used specifically in `messageSizing.ts` for creating reactive signals.
+
+## Configuration
+
+There are no explicit configuration files or environment variables mentioned in the provided summaries. However, the `apiTypes.ts` file defines numerous interfaces and types that effectively serve as a configuration for the structure of API data used throughout the application.
+
+## Code Snippets
+
+Here's an example of how the `ChunkMetadata` interface is defined in `apiTypes.ts`:
+
+```typescript
+interface ChunkMetadata {
+  id: string;
+  chunk_html?: string;
+  link: string | null;
+  qdrant_point_id: string;
+  created_at: string;
+  updated_at: string;
+  tag_set: string[] | null;
+  tracking_id: string | null;
+  time_stamp: string | null;
+  file_id: string | null;
+  file_name: string | null;
+  metadata: Record&lt;string, never&gt; | null;
+  weight: number | null;
+  location: { lat: number; lon: number } | null;
+  num_value: number | null;
+  dataset_id: string;
+}
+```
+
+And here's how the message sizing signals are created in `messageSizing.ts`:
+
+```typescript
+import { createSignal } from "solid-js";
+
+export const [messageSizing, setMessageSizing] = createSignal&lt;[number, number]&gt;([0.65, 0.35]);
+```
+
+These utilities provide a strong foundation for type safety and reactive state management in the chat application, enabling developers to work with complex data structures and create dynamic user interfaces efficiently.

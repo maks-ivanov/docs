@@ -1,0 +1,61 @@
+---
+title: "application.yaml"
+---
+
+## High-level description
+This Kubernetes manifest file defines a Redis replica deployment for a Redis cluster with replication architecture. It creates a StatefulSet or other specified kind of workload for Redis replicas, configuring various aspects such as pod specifications, volumes, and container settings.
+
+## Table of contents
+- Metadata and labels
+- Spec definition
+- Pod template
+- Container specifications (Redis and metrics)
+- Volume definitions
+- Persistent volume claim template
+
+## Code Structure
+The main structure is a Kubernetes resource definition, likely a StatefulSet or similar, for Redis replicas. It includes nested structures for pod template, container specifications, volume definitions, and optional features like metrics and TLS.
+
+## Symbols
+### Redis Replica Resource
+#### Description
+Defines a Kubernetes resource (StatefulSet by default) for Redis replicas in a replication architecture.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Helm values for configuring the Redis deployment |
+| $ | Object | The root context of the template |
+
+#### Internal Logic
+1. Checks if replication architecture is enabled and sentinel is disabled
+2. Sets up metadata, labels, and annotations
+3. Configures pod template with security contexts, affinity rules, and tolerations
+4. Defines Redis container with environment variables, probes, and volume mounts
+5. Optionally adds metrics container
+6. Sets up volumes and volume claim templates
+
+## Side Effects
+- Creates Kubernetes resources for Redis replicas
+- May create PersistentVolumeClaims for data persistence
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper templates for labels, names, and other common functionalities |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.architecture | string | - | Must be "replication" for this template to be used |
+| .Values.replica.kind | string | - | Kubernetes resource kind for replicas (e.g., StatefulSet) |
+| .Values.auth.enabled | boolean | - | Enables Redis authentication |
+| .Values.tls.enabled | boolean | - | Enables TLS for Redis connections |
+
+## Error Handling
+The template uses conditional statements to handle different configuration options and scenarios, such as authentication and TLS setup.
+
+## Future Improvements
+- Consider separating the metrics container into its own deployment for better scalability
+- Implement more flexible volume management options
+- Add support for custom init containers and sidecars with more granular configuration

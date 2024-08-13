@@ -1,0 +1,40 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file adds several indexes to the `card_collection` and `card_collection_bookmarks` tables to improve query performance on frequently accessed columns.
+
+## Table of contents
+- Indexes for card_collection table
+- Indexes for card_collection_bookmarks table
+
+## Symbols
+
+### CREATE INDEX statements for card_collection table
+#### Description
+These SQL statements create four indexes on the `card_collection` table to optimize queries based on `author_id`, `is_public`, `created_at`, and `updated_at` columns.
+
+#### Internal Logic
+- Creates an index named `idx_card_collection_author_id` on the `author_id` column
+- Creates an index named `idx_card_collection_is_public` on the `is_public` column
+- Creates an index named `idx_card_collection_created_at` on the `created_at` column
+- Creates an index named `idx_card_collection_updated_at` on the `updated_at` column
+
+### CREATE INDEX statements for card_collection_bookmarks table
+#### Description
+These SQL statements create four indexes on the `card_collection_bookmarks` table to optimize queries based on `collection_id`, `card_metadata_id`, `created_at`, and `updated_at` columns.
+
+#### Internal Logic
+- Creates an index named `idx_card_collection_bookmarks_collection_id` on the `collection_id` column
+- Creates an index named `idx_card_collection_bookmarks_card_metadata_id` on the `card_metadata_id` column
+- Creates an index named `idx_card_collection_bookmarks_created_at` on the `created_at` column
+- Creates an index named `idx_card_collection_bookmarks_updated_at` on the `updated_at` column
+
+## Performance Considerations
+The addition of these indexes is likely to significantly improve query performance for operations that filter or sort by the indexed columns. However, it's important to note that while indexes speed up read operations, they can slightly slow down write operations (inserts, updates, and deletes) due to the need to update the index structures.
+
+## Future Improvements
+- Monitor query performance after applying these indexes to ensure they are being utilized effectively.
+- Consider adding composite indexes if queries frequently filter or sort by multiple columns simultaneously.
+- Periodically review and potentially remove unused indexes to maintain optimal database performance.

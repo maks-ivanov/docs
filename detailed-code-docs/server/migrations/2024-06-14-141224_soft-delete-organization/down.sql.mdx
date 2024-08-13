@@ -1,0 +1,35 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert the changes made in the corresponding `up.sql` file. It removes the `deleted` column from the `organizations` table and drops the associated index, effectively undoing a soft delete implementation for organizations.
+
+## Table of contents
+- Drop `deleted` column from `organizations` table
+- Drop index on `deleted` column
+
+## Symbols
+
+### ALTER TABLE organizations DROP COLUMN IF EXISTS deleted;
+#### Description
+This SQL command removes the `deleted` column from the `organizations` table if it exists.
+
+#### Internal Logic
+1. Checks if the `deleted` column exists in the `organizations` table
+2. If the column exists, it is removed from the table structure
+
+### DROP INDEX IF EXISTS idx_organization_deleted;
+#### Description
+This SQL command drops the index named `idx_organization_deleted` if it exists.
+
+#### Internal Logic
+1. Checks if the index `idx_organization_deleted` exists
+2. If the index exists, it is removed from the database
+
+## Dependencies
+This script relies on the existing database schema and assumes that the `organizations` table and the `idx_organization_deleted` index were created in a previous migration.
+
+## Future Improvements
+- Consider adding error handling or logging to capture any issues that might occur during the migration process.
+- If the database supports transactional DDL, consider wrapping the entire migration in a transaction to ensure atomicity.

@@ -1,0 +1,48 @@
+---
+title: "clustering-cronjob.yaml"
+---
+
+## High-level description
+This YAML file defines a Kubernetes CronJob that runs a clustering task using a custom Docker image. The job is scheduled to run hourly and interacts with Clickhouse and potentially the Anthropic API.
+
+## Table of contents
+- CronJob metadata
+- Job schedule
+- Container specification
+- Environment variables
+- Restart policy
+
+## Symbols
+
+### CronJob
+#### Description
+Defines a Kubernetes CronJob named "clustering-cronjob" that runs a clustering task on a regular schedule.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.config.trieve.anthropicAPIKey | String | Anthropic API key |
+| .Values.config.trieve.clickhouseDSN | String | Clickhouse DSN (Data Source Name) |
+
+#### Internal Logic
+- Schedules the job to run every hour (0 * * * *)
+- Uses the "trieve/clickhouse-clustering:latest" Docker image
+- Sets environment variables for Anthropic API key and Clickhouse DSN
+- Configures the restart policy to OnFailure
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| trieve/clickhouse-clustering:latest | Docker image containing the clustering task logic |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| schedule | String | "0 * * * *" | Cron schedule for running the job (hourly) |
+| imagePullPolicy | String | IfNotPresent | Docker image pull policy |
+
+## Future Improvements
+1. Consider adding resource limits and requests for the container to ensure proper resource allocation.
+2. Implement liveness and readiness probes to improve container health monitoring.
+3. Add securityContext settings to enhance the security posture of the pod.
+4. Consider using Kubernetes Secrets for storing sensitive information like API keys instead of passing them directly as environment variables.

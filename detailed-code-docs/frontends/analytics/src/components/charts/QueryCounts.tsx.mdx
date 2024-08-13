@@ -1,0 +1,71 @@
+---
+title: "QueryCounts.tsx"
+---
+
+## High-level description
+The `QueryCounts` component displays a count of different search types made within a selected timeframe. It visualizes the total count for each search type, such as 'Search', 'Autocomplete', etc., and allows users to select a timeframe from a predefined list of options.
+
+## Table of contents
+- Imports
+- `displaySearchType` function
+- `QueryCounts` component
+
+## Symbols
+
+### `displaySearchType`
+#### Description
+This function takes a `search_type` string as input and returns a more user-friendly display string. It maps internal search type names to more readable labels.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | `SearchTypeCount["search_type"]` | The internal search type string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `string` | A user-friendly label for the search type. |
+
+### `QueryCounts`
+#### Description
+This component fetches and displays the count of different search types performed. It uses a dropdown to select a timeframe and displays the counts for each search type within that timeframe.
+
+#### Inputs
+This component does not take any explicit inputs.
+
+#### Outputs
+This component does not return any explicit outputs.
+
+#### Internal Logic
+1. **Retrieves Dataset Context:** Fetches the active dataset from the `DatasetContext`.
+2. **Manages Date Selection:** Uses the `dateSelection` signal to store and update the selected timeframe for the query counts.
+3. **Fetches Query Counts:** Utilizes the `createQuery` hook from `@tanstack/solid-query` to fetch query counts based on the selected date and dataset. The `getQueryCounts` API call is used for fetching the data.
+4. **Renders UI:**
+   - Displays a title and a dropdown for selecting the timeframe.
+   - Uses the `Show` component to conditionally render the query counts based on the query status.
+   - If data is available, it iterates through the `queryCountsQuery.data` and displays the count for each search type using the `displaySearchType` function.
+   - If no data is available for the selected timeframe, it displays a "No searches found" message.
+5. **Renders CTR Summary:** Renders the `CTRSummary` component, passing the selected date filter as a prop.
+
+## References
+- `SearchTypeCount`: Used for typing the search type data.
+- `createQuery`: Used for fetching and caching the query counts data.
+- `getQueryCounts`: API call to fetch the query counts data.
+- `toTitleCase`: Used to format the display of search methods.
+- `Select`: Shared UI component for rendering the timeframe dropdown.
+- `dateRanges`: Array of predefined timeframe options.
+- `CTRSummary`: Component for displaying CTR-related information.
+
+## Dependencies
+- `solid-js`: Used for UI rendering and state management.
+- `@tanstack/solid-query`: Used for data fetching and caching.
+- `shared/ui`: Used for shared UI components like `Select`.
+
+## Side Effects
+- Fetches data from the backend API when the component mounts and whenever the selected date changes.
+
+## Future Improvements
+- Implement pagination for the query counts if the number of search types exceeds a certain threshold.
+- Add filtering options for search method in addition to the existing timeframe filter.
+- Allow users to define custom timeframes instead of relying solely on predefined options.
+- Improve error handling by displaying user-friendly messages in case of API errors.

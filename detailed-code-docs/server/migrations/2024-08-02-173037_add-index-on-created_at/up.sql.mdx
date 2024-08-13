@@ -1,0 +1,78 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration file creates three new indexes on the `created_at` columns of the `chunk_metadata`, `chunk_group`, and `files` tables. These indexes are designed to improve query performance for operations that filter or sort by the creation timestamp.
+
+## Table of contents
+- Create index on chunk_metadata.created_at
+- Create index on chunk_group.created_at
+- Create index on files.created_at
+
+## Symbols
+
+### `CREATE INDEX chunk_metadata_created_at_idx ON chunk_metadata (created_at);`
+#### Description
+This SQL statement creates an index named `chunk_metadata_created_at_idx` on the `created_at` column of the `chunk_metadata` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chunk_metadata | table | The table on which the index is being created |
+| created_at | column | The column being indexed |
+
+#### Outputs
+An index is created on the specified table and column.
+
+#### Performance Considerations
+This index will improve query performance for operations that filter or sort the `chunk_metadata` table by the `created_at` column. However, it may slightly slow down insert and update operations on this table.
+
+___
+
+### `CREATE INDEX groups_created_at_idx ON chunk_group (created_at);`
+#### Description
+This SQL statement creates an index named `groups_created_at_idx` on the `created_at` column of the `chunk_group` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chunk_group | table | The table on which the index is being created |
+| created_at | column | The column being indexed |
+
+#### Outputs
+An index is created on the specified table and column.
+
+#### Performance Considerations
+This index will improve query performance for operations that filter or sort the `chunk_group` table by the `created_at` column. However, it may slightly slow down insert and update operations on this table.
+
+___
+
+### `CREATE INDEX files_created_at_idx ON files (created_at);`
+#### Description
+This SQL statement creates an index named `files_created_at_idx` on the `created_at` column of the `files` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | table | The table on which the index is being created |
+| created_at | column | The column being indexed |
+
+#### Outputs
+An index is created on the specified table and column.
+
+#### Performance Considerations
+This index will improve query performance for operations that filter or sort the `files` table by the `created_at` column. However, it may slightly slow down insert and update operations on this table.
+
+## Dependencies
+This migration file depends on the existence of the following database tables:
+| Dependency | Purpose |
+|:-----------|:--------|
+| chunk_metadata | Table where the first index is created |
+| chunk_group | Table where the second index is created |
+| files | Table where the third index is created |
+
+## Future Improvements
+- Monitor the performance impact of these new indexes and adjust if necessary.
+- Consider adding additional indexes on frequently queried columns if performance issues are identified in the future.
+- Evaluate the need for composite indexes if queries often combine `created_at` with other columns.

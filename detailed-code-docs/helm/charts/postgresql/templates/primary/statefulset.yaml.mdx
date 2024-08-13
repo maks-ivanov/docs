@@ -1,0 +1,101 @@
+---
+title: "statefulset.yaml"
+---
+
+Here's a high-level description and documentation of the provided Kubernetes StatefulSet configuration for PostgreSQL:
+
+## High-level description
+This YAML file defines a Kubernetes StatefulSet for deploying a PostgreSQL primary instance. It includes configurations for authentication, replication, TLS, metrics, and various other PostgreSQL-specific settings.
+
+## Table of contents
+- Metadata and Labels
+- Pod Template
+- Container Specifications
+- Volume Mounts
+- Environment Variables
+- Probes
+- Metrics Sidecar
+- Persistent Volume Claims
+
+## Code Structure
+The main structure is a Kubernetes StatefulSet resource. It defines a single replica of a PostgreSQL primary instance with various configurations and optional features like metrics export, TLS, and custom scripts.
+
+## Symbols
+
+### StatefulSet
+#### Description
+Defines a StatefulSet for deploying a PostgreSQL primary instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Helm values for configuring the StatefulSet |
+
+#### Internal Logic
+1. Sets up metadata, labels, and annotations
+2. Configures the pod template with necessary containers
+3. Sets up volume mounts and persistent volume claims
+4. Configures environment variables for PostgreSQL
+5. Sets up probes for liveness and readiness checks
+6. Optionally adds a metrics sidecar container
+
+### Container: postgresql
+#### Description
+Main container running the PostgreSQL database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.image | Object | PostgreSQL image configuration |
+| .Values.auth | Object | Authentication settings |
+| .Values.primary | Object | Primary-specific configurations |
+
+#### Internal Logic
+1. Sets up environment variables for PostgreSQL configuration
+2. Configures volume mounts for data, configuration, and certificates
+3. Sets up probes for health checking
+4. Configures resource limits and requests
+
+### Container: metrics (Optional)
+#### Description
+Sidecar container for exporting PostgreSQL metrics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.metrics | Object | Metrics exporter configuration |
+
+#### Internal Logic
+1. Sets up environment variables for connecting to PostgreSQL
+2. Configures the metrics port
+3. Sets up probes for health checking
+
+## Side Effects
+- Creates persistent volume claims for PostgreSQL data
+- Potentially modifies file permissions if volume permissions are enabled
+
+## Dependencies
+- Bitnami PostgreSQL image
+- Bitnami PostgreSQL metrics exporter image (if metrics are enabled)
+
+## Configuration
+Various configuration options are available through Helm values, including:
+- Authentication settings
+- Replication configuration
+- TLS settings
+- Resource allocation
+- Persistence settings
+- Metrics export configuration
+
+## Error Handling
+Error handling is primarily managed through Kubernetes probes and PostgreSQL's internal mechanisms.
+
+## Logging
+Logging is handled by PostgreSQL's internal logging mechanisms and Kubernetes' log collection.
+
+## Future Improvements
+- Consider adding support for multiple replicas in the StatefulSet
+- Implement more fine-grained control over PostgreSQL configuration
+- Add support for automated backups and point-in-time recovery
+
+This StatefulSet configuration provides a robust and configurable way to deploy PostgreSQL in a Kubernetes environment, with options for high availability, security, and monitoring.

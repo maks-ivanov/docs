@@ -1,0 +1,85 @@
+---
+title: "json_middleware.rs"
+---
+
+## High-level description
+This code defines a middleware for Actix Web that automatically sets the Content-Type header to "application/json" if it's not already present in the request. It's designed to ensure that all requests are treated as JSON, which is particularly useful for APIs that primarily deal with JSON data.
+
+## Table of contents
+- JsonMiddleware struct and implementation
+- JsonMiddlewareFactory struct and implementation
+
+## Code Structure
+The code defines two main structures: `JsonMiddleware` and `JsonMiddlewareFactory`. The `JsonMiddlewareFactory` is responsible for creating instances of `JsonMiddleware`, which in turn wraps the actual service and modifies requests as they pass through.
+
+## Symbols
+
+### `JsonMiddleware&lt;S&gt;`
+#### Description
+A middleware struct that wraps an Actix Web service and adds JSON content-type headers to requests if they're not already present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| service | Rc&lt;S&gt; | The wrapped Actix Web service |
+
+#### Internal Logic
+1. Checks if the request has a Content-Type header
+2. If not, adds a Content-Type header with value "application/json"
+3. Passes the modified request to the wrapped service
+
+### `impl&lt;S, B&gt; Service&lt;ServiceRequest&gt; for JsonMiddleware&lt;S&gt;`
+#### Description
+Implements the `Service` trait for `JsonMiddleware`, defining how it processes requests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | ServiceRequest | The incoming service request |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Future | LocalBoxFuture&lt;'static, Result&lt;ServiceResponse&lt;B&gt;, Error&gt;&gt; | A future resolving to the service response or an error |
+
+#### Internal Logic
+1. Clones the wrapped service
+2. Checks for the Content-Type header
+3. Adds the header if it's missing
+4. Calls the wrapped service with the modified request
+5. Returns the response from the wrapped service
+
+### `JsonMiddlewareFactory`
+#### Description
+A factory struct for creating `JsonMiddleware` instances.
+
+### `impl&lt;S, B&gt; Transform&lt;S, ServiceRequest&gt; for JsonMiddlewareFactory`
+#### Description
+Implements the `Transform` trait for `JsonMiddlewareFactory`, allowing it to create new `JsonMiddleware` instances.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| service | S | The service to be wrapped by the middleware |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Future | Ready&lt;Result&lt;JsonMiddleware&lt;S&gt;, ()&gt;&gt; | A future immediately resolving to a new `JsonMiddleware` instance |
+
+#### Internal Logic
+Creates a new `JsonMiddleware` instance wrapping the provided service.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actix_http | Provides HTTP-related types and functions |
+| actix_web | The web framework this middleware is designed for |
+| futures_util | Provides utility types for working with futures |
+| std::rc::Rc | Used for reference counting of the wrapped service |
+
+## Future Improvements
+1. Add configuration options to allow customization of the default Content-Type value.
+2. Implement logging to track when the middleware adds the Content-Type header.
+3. Consider adding support for other common headers that might be relevant for JSON APIs.
+4. Optimize the header check and insertion process to minimize overhead.

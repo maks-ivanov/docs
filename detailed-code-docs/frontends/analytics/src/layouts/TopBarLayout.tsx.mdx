@@ -1,0 +1,69 @@
+---
+title: "TopBarLayout.tsx"
+---
+
+## High-level description
+The `TopBarLayout` component is a layout component that renders a sidebar and the main content of the application. It fetches the datasets for the selected organization and provides a context with the selected dataset to its children.
+
+## Table of contents
+- Imports
+- `DatasetContext`
+- `TopBarLayout` component
+
+## Code Structure
+The `TopBarLayout` component uses the `DatasetContext` to provide the selected dataset to its children. The `DatasetContext` is initialized with the first dataset fetched by the `datasetsQuery`. The `selectedDataset` signal is updated when the `datasetsQuery` data changes or the `dataset` parameter in the URL changes.
+
+## References
+- `OrgContext`
+- `Sidebar`
+- `NoDatasetsErrorPage`
+- `DatasetAndUsage`
+
+## Symbols
+
+### Symbol Name: `DatasetContext`
+#### Description
+This symbol is a SolidJS context that stores and provides access to the currently selected dataset.
+
+#### Inputs
+This is a context provider, it does not take direct inputs.
+
+#### Outputs
+This is a context provider, its output is the context value.
+
+### Symbol Name: `TopBarLayout`
+#### Description
+This is a SolidJS component that acts as the main layout for the application. It fetches datasets, manages the selected dataset, and conditionally renders content based on the availability of datasets.
+
+#### Inputs
+This is a layout component, it accepts children components to be rendered within the layout.
+
+#### Outputs
+This component renders the layout structure, including a sidebar and the main content area.
+
+#### Internal Logic
+1. **Fetches Datasets:** Uses `createQuery` from `@tanstack/solid-query` to fetch datasets for the selected organization.
+2. **Handles Authentication:** Redirects to the login page if the datasets fetch returns a 401 (Unauthorized) status.
+3. **Manages Selected Dataset:**
+   - Initializes `selectedDataset` based on the URL parameter `dataset` or defaults to the first dataset.
+   - Updates `selectedDataset` when the fetched datasets change or the URL parameter changes.
+4. **Renders Content Conditionally:**
+   - Shows a "NoDatasetsErrorPage" if no datasets are found for the organization.
+   - Renders the `Sidebar` and provides the `DatasetContext` to children components if a dataset is selected.
+
+## Side Effects
+- Fetches datasets from an API.
+- Redirects to the login page if not authenticated.
+- Updates URL parameters when the selected dataset changes.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| solid-js | Core library for building the component and managing reactivity. |
+| @tanstack/solid-query | Used for data fetching and caching. |
+| @solidjs/router | Used for handling routing and URL parameters. |
+| shared/types | Provides TypeScript types used in the component. |
+
+## Error Handling
+- Redirects to the login page if a 401 (Unauthorized) status is encountered while fetching datasets.
+- Displays a "NoDatasetsErrorPage" if no datasets are found for the selected organization.

@@ -1,0 +1,61 @@
+---
+title: "pdb.yaml"
+---
+
+## High-level description
+This YAML template defines a PodDisruptionBudget (PDB) for a Redis deployment in Kubernetes using Helm. It ensures high availability by specifying the minimum number of pods that must be available or the maximum number that can be unavailable during voluntary disruptions.
+
+## Table of contents
+- Conditional creation of PodDisruptionBudget
+- Metadata definition
+- Specification of minimum available or maximum unavailable pods
+- Selector for pod matching
+
+## Code Structure
+The template uses Helm functions and includes to generate a PodDisruptionBudget resource. It relies on values from the Helm chart and common templates for consistent naming and labeling.
+
+## Symbols
+
+### PodDisruptionBudget Resource
+#### Description
+Defines a Kubernetes PodDisruptionBudget resource to ensure high availability of Redis pods during voluntary disruptions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.pdb.create | boolean | Determines whether to create the PDB |
+| .Values.pdb.minAvailable | number/string | Minimum number of pods that must be available |
+| .Values.pdb.maxUnavailable | number/string | Maximum number of pods that can be unavailable |
+| .Values.commonLabels | map | Custom labels to apply to the resource |
+| .Values.commonAnnotations | map | Custom annotations to apply to the resource |
+
+#### Internal Logic
+1. Checks if PDB creation is enabled (.Values.pdb.create)
+2. Sets the API version using a common capability function
+3. Defines metadata including name, namespace, labels, and annotations
+4. Specifies either minAvailable or maxUnavailable in the spec
+5. Sets the selector to match pods using common labels
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.capabilities.policy.apiVersion | Determines the appropriate API version for PodDisruptionBudget |
+| common.names.fullname | Generates the full name for the resource |
+| common.names.namespace | Provides the namespace for the resource |
+| common.labels.standard | Generates standard labels |
+| common.tplvalues.render | Renders template values |
+| common.labels.matchLabels | Generates match labels for the selector |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| pdb.create | boolean | - | Enables/disables PDB creation |
+| pdb.minAvailable | number/string | - | Minimum number of available pods |
+| pdb.maxUnavailable | number/string | - | Maximum number of unavailable pods |
+| commonLabels | map | - | Custom labels to apply |
+| commonAnnotations | map | - | Custom annotations to apply |
+
+## Future Improvements
+- Consider adding support for percentage-based minAvailable and maxUnavailable values
+- Implement validation to ensure either minAvailable or maxUnavailable is set, but not both
+- Add comments explaining the purpose and impact of PDB settings for easier configuration

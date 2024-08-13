@@ -1,0 +1,51 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a PostgreSQL function `update_notification_count()` that manages a user's notification count. It automatically increments the count when a new notification is inserted and decrements it when a notification is deleted.
+
+## Table of contents
+- Function definition: `update_notification_count()`
+- INSERT operation handling
+- DELETE operation handling
+
+## Symbols
+
+### `update_notification_count()`
+#### Description
+This is a PostgreSQL function that serves as a trigger function to maintain an accurate count of notifications for each user. It handles both insertion of new notifications and deletion of existing ones.
+
+#### Inputs
+This function doesn't explicitly take any inputs. As a trigger function, it implicitly works with the `NEW` and `OLD` record variables provided by the triggering event.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| RETURN | TRIGGER | Returns the `NEW` record as required by trigger functions |
+
+#### Internal Logic
+1. The function first checks the operation type (`TG_OP`).
+2. For INSERT operations:
+   - It attempts to insert a new record into the `user_notification_counts` table.
+   - If a record for the user already exists, it updates the existing count instead.
+3. For DELETE operations:
+   - It updates the `user_notification_counts` table, decrementing the count for the affected user.
+
+## Side Effects
+- Modifies the `user_notification_counts` table by inserting new records or updating existing ones.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| PostgreSQL | This script uses PostgreSQL-specific syntax and features |
+
+## Error Handling
+The function doesn't implement explicit error handling. It relies on PostgreSQL's default error handling mechanisms.
+
+## Future Improvements
+1. Add error handling for cases where the notification count might become negative.
+2. Consider adding a check to ensure the user exists before updating their notification count.
+3. Implement logging for debugging purposes, especially for tracking unexpected behavior.
+4. Add handling for UPDATE operations if notifications can be modified.
+5. Consider adding a maximum cap on the notification count to prevent potential integer overflow issues.

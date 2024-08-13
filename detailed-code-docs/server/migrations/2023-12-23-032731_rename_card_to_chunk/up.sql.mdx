@@ -1,0 +1,46 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script renames various database tables and columns, changing references from "card" to "chunk". It's part of a database schema update, likely to reflect a conceptual change in the application from using "cards" to "chunks" as the primary data unit.
+
+## Table of contents
+- Rename card_collection table
+- Rename columns and table for card_collection_bookmarks
+- Rename column and table for card_collisions
+- Rename column and table for card_files
+- Rename column and table for card_metadata
+- Rename card_metadata_counts table
+- Rename column and table for cut_cards
+- Rename column in stripe_plans table
+
+## Symbols
+
+### ALTER TABLE statements
+#### Description
+Each `ALTER TABLE` statement modifies an existing table in the database, either renaming the table itself or renaming one or more columns within the table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| table_name | string | The name of the table to be altered |
+| new_table_name | string | The new name for the table (when renaming a table) |
+| column_name | string | The name of the column to be renamed |
+| new_column_name | string | The new name for the column |
+
+#### Internal Logic
+1. For table renaming: `ALTER TABLE [table_name] RENAME TO [new_table_name];`
+2. For column renaming: `ALTER TABLE [table_name] RENAME COLUMN [column_name] TO [new_column_name];`
+
+## Side Effects
+This migration will change the schema of the database, affecting all queries and operations that previously referenced the renamed tables and columns. Applications using the old names will need to be updated to use the new names.
+
+## Performance Considerations
+Renaming tables and columns is generally a quick operation in most database systems, as it only updates metadata. However, on large tables or busy systems, it may briefly lock the affected tables.
+
+## Future Improvements
+- Ensure all application code, ORM mappings, and queries are updated to use the new "chunk" terminology.
+- Review and update any database indexes, foreign key constraints, or triggers that might reference the renamed tables or columns.
+- Consider adding a comment to each ALTER TABLE statement explaining the reason for the change, to provide context for future developers.
+- If there are corresponding down migrations, ensure they are created to revert these changes if needed.

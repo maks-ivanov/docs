@@ -1,0 +1,38 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL script creates a new table named `datasets` in the database. The table is designed to store information about datasets, including a unique identifier, name, and timestamps for creation and last update.
+
+## Table of contents
+- Table creation for `datasets`
+
+## Symbols
+
+### `datasets` table
+#### Description
+The `datasets` table is created to store information about datasets. It includes columns for a unique identifier, name, and timestamps for creation and last update.
+
+#### Columns
+| Name | Type | Constraints | Description |
+|:-----|:-----|:------------|:------------|
+| id | UUID | NOT NULL, PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier for each dataset |
+| name | TEXT | NOT NULL | Name of the dataset |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the dataset was created |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Timestamp of when the dataset was last updated |
+
+#### Internal Logic
+- The `id` column uses the `gen_random_uuid()` function to automatically generate a unique UUID for each new dataset entry.
+- Both `created_at` and `updated_at` columns use the `NOW()` function to automatically set the current timestamp when a new record is inserted.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| gen_random_uuid() | PostgreSQL function to generate random UUIDs |
+| NOW() | PostgreSQL function to get the current timestamp |
+
+## Future Improvements
+- Consider adding indexes on frequently queried columns, such as `name` or `created_at`, to improve query performance if the table is expected to grow large.
+- If versioning of datasets is required, consider adding a `version` column or implementing a separate versioning table.
+- Depending on the application's needs, additional columns like `description`, `owner`, or `status` could be added to provide more context about each dataset.

@@ -1,0 +1,33 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts related to adding soft delete functionality to the `datasets` table. The scripts use SQL commands to modify the table structure and create an index.
+
+## What does it do?
+The migration scripts in this directory introduce a mechanism for "soft deleting" datasets. Instead of permanently removing datasets from the database, they are marked as deleted by setting a `deleted` flag in the `datasets` table. This allows for potential data recovery and provides a history of deleted datasets. The scripts also create an index on the `deleted` column to improve the performance of queries that filter or sort datasets based on their deletion status.
+
+## Entry points
+The main entry points are the `up.sql` and `down.sql` files.
+
+- `up.sql`: This script is executed to apply the migration, adding the soft delete functionality to the `datasets` table.
+- `down.sql`: This script is executed to revert the changes made by `up.sql`, effectively removing the soft delete functionality.
+
+The control flow is linear, with the `up.sql` script executed first to apply the migration and the `down.sql` script executed later to revert the changes.
+
+## Key Files
+- `up.sql`: This file contains the SQL commands to add the `deleted` column to the `datasets` table and create an index on it.
+  ```sql
+  ALTER TABLE datasets
+  ADD COLUMN deleted INT DEFAULT 0 NOT NULL;
+
+  CREATE INDEX IF NOT EXISTS idx_dataset_deleted
+  ON datasets (deleted);
+  ```
+- `down.sql`: This file contains the SQL commands to remove the `deleted` column from the `datasets` table and drop the associated index.
+  ```sql
+  ALTER TABLE datasets DROP COLUMN IF EXISTS deleted;
+
+  DROP INDEX IF EXISTS idx_dataset_deleted;
+  ```

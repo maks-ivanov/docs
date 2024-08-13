@@ -1,0 +1,63 @@
+---
+title: "formatters.ts"
+---
+
+## High-level description
+This file provides utility functions and formatters for handling currency, file sizes, and general number formatting in a standardized way for the chat frontend application.
+
+## Table of contents
+- Currency formatter (USD)
+- File size formatter
+- General number formatter
+
+## Symbols
+
+### `usdFormatter`
+#### Description
+A formatter for US dollar currency using the Intl.NumberFormat API.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| usdFormatter | Intl.NumberFormat | An instance of Intl.NumberFormat configured for USD formatting |
+
+### `formatBytesDecimal`
+#### Description
+A function that formats byte sizes into human-readable strings, converting to MB or GB as appropriate.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bytes | number | The number of bytes to format |
+| dm | number | The number of decimal places to show (default: 2) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formattedSize | string | A string representing the formatted file size |
+
+#### Internal Logic
+1. If the input is 0, return "0 Bytes"
+2. If the input is greater than 100MB (1e8 bytes), convert to GB
+3. Otherwise, convert to MB
+4. Round the result to the specified number of decimal places
+
+### `numberFormatter`
+#### Description
+A general-purpose number formatter using the Intl.NumberFormat API with US English locale.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| numberFormatter | Intl.NumberFormat | An instance of Intl.NumberFormat configured for general number formatting |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Intl.NumberFormat | Used for creating standardized currency and number formatters |
+
+## Future Improvements
+1. Add support for different locales in the formatters to make the application more internationalization-friendly.
+2. Extend the `formatBytesDecimal` function to handle a wider range of units (KB, TB, etc.) for more precise file size representation.
+3. Consider adding options to the formatters (e.g., minimum fraction digits, use of grouping separators) to make them more flexible for different use cases within the application.
+4. Implement unit tests to ensure the correct functioning of the formatting functions, especially `formatBytesDecimal`, across various input ranges.

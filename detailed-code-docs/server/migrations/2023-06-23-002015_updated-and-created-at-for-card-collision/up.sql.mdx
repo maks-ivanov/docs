@@ -1,0 +1,53 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script adds two timestamp columns, `created_at` and `updated_at`, to the `card_collisions` table. These columns are designed to track when a record is created and last updated, respectively.
+
+## Table of contents
+- ALTER TABLE statement
+- Addition of `created_at` column
+- Addition of `updated_at` column
+
+## Symbols
+
+### ALTER TABLE card_collisions
+#### Description
+This SQL command modifies the structure of the existing `card_collisions` table by adding two new columns.
+
+#### Internal Logic
+1. Identifies the `card_collisions` table for modification.
+2. Adds the `created_at` column.
+3. Adds the `updated_at` column.
+
+### ADD COLUMN created_at
+#### Description
+This clause adds a new column named `created_at` to the `card_collisions` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| created_at | TIMESTAMP | Stores the timestamp when a record is created |
+
+#### Internal Logic
+- Sets the column as NOT NULL, ensuring that every record has a creation timestamp.
+- Sets a DEFAULT value of NOW(), which automatically populates the column with the current timestamp when a new record is inserted.
+
+### ADD COLUMN updated_at
+#### Description
+This clause adds a new column named `updated_at` to the `card_collisions` table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updated_at | TIMESTAMP | Stores the timestamp when a record is last updated |
+
+#### Internal Logic
+- Sets the column as NOT NULL, ensuring that every record has an update timestamp.
+- Sets a DEFAULT value of NOW(), which automatically populates the column with the current timestamp when a new record is inserted or updated.
+
+## Future Improvements
+1. Consider adding a trigger to automatically update the `updated_at` column whenever a record is modified.
+2. If the database supports it, consider using a more precise timestamp type (e.g., TIMESTAMP WITH TIME ZONE) for better timezone handling.
+3. Evaluate if existing records need to be backfilled with creation dates, if known, or if a default historical date should be used for existing records.

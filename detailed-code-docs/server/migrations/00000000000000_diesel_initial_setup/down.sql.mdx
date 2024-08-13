@@ -1,0 +1,38 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert the initial setup performed by Diesel, an ORM and query builder for Rust. It removes helper functions that were created for managing timestamps in database tables.
+
+## Table of contents
+- Dropping of `diesel_manage_updated_at` function
+- Dropping of `diesel_set_updated_at` function
+
+## Symbols
+
+### `DROP FUNCTION IF EXISTS diesel_manage_updated_at(_tbl regclass)`
+#### Description
+This command removes the `diesel_manage_updated_at` function if it exists in the database. This function was likely used to manage the `updated_at` column for specified tables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _tbl | regclass | The table for which the `updated_at` column was managed |
+
+### `DROP FUNCTION IF EXISTS diesel_set_updated_at()`
+#### Description
+This command removes the `diesel_set_updated_at` function if it exists in the database. This function was likely used to set the `updated_at` column to the current timestamp when a row was updated.
+
+## Side Effects
+- Removal of database functions used for managing `updated_at` timestamps
+- Potential impact on any custom code or triggers that may have been using these functions
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Diesel | ORM and query builder for Rust that generated this migration script |
+
+## Future Improvements
+- If the project decides to no longer use Diesel or switch to a different ORM, this down migration script might need to be adjusted or expanded to remove any other Diesel-specific database objects or configurations.
+- Consider adding comments explaining why these functions are being dropped and what their original purpose was, to provide more context for future developers.

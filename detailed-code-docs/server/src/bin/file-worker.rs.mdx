@@ -1,0 +1,153 @@
+---
+title: "file-worker.rs"
+---
+
+## High-level description
+This code defines a file worker service that listens for file upload messages on a Redis queue, processes them by uploading the file to S3, extracting metadata using Tika, creating database entries, and optionally creating file chunks. It also handles errors and retries failed uploads.
+
+## Table of contents
+- `main` function
+- `file_worker` function
+- `upload_file` function
+- `readd_error_to_queue` function
+
+## References
+- `trieve_server::data::models` - Data models for database and Redis interactions.
+- `trieve_server::errors::ServiceError` - Custom error type for service errors.
+- `trieve_server::establish_connection` - Function to establish a database connection.
+- `trieve_server::get_env` - Helper function to get environment variables.
+- `trieve_server::operators::clickhouse_operator::{ClickHouseEvent, EventQueue}` - Clickhouse event queue for analytics.
+- `trieve_server::operators::dataset_operator::get_dataset_and_organization_from_dataset_id_query` - Function to retrieve dataset and organization information.
+- `trieve_server::operators::file_operator::{create_file_chunks, create_file_query, get_aws_bucket}` - Functions for file operations.
+
+## Symbols
+
+### `main`
+#### Description
+Initializes the file worker service, sets up logging and Sentry monitoring, connects to the database and Redis, and starts the `file_worker` function in a Tokio runtime.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Loads environment variables from a `.env` file.
+2. Initializes Sentry monitoring if the `SENTRY_URL` environment variable is set.
+3. Sets up logging using `tracing_subscriber`.
+4. Establishes a connection pool to the PostgreSQL database using `diesel_async`.
+5. Creates a connection pool to Redis using `bb8_redis`.
+6. Initializes the Clickhouse event queue for analytics if the `USE_ANALYTICS` environment variable is set to `true`.
+7. Registers a signal handler for `SIGTERM` to gracefully shut down the service.
+8. Starts the `file_worker` function in a Tokio runtime.
+
+### `file_worker`
+#### Description
+Listens for file upload messages on a Redis queue, processes them by calling the `upload_file` function, and handles errors and retries.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| should_terminate | `Arc&lt;AtomicBool&gt;` | Atomic boolean flag to signal termination of the service. |
+| redis_pool | `actix_web::web::Data&lt;models::RedisPool&gt;` | Redis connection pool. |
+| web_pool | `actix_web::web::Data&lt;models::Pool&gt;` | Database connection pool. |
+| event_queue | `actix_web::web::Data&lt;EventQueue&gt;` | Clickhouse event queue for analytics. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Enters an infinite loop that continues until the `should_terminate` flag is set.
+2. Retrieves a file upload message from the `file_ingestion` Redis queue using the `brpoplpush` command, which atomically moves the message to the `file_processing` queue.
+3. If the message retrieval fails due to a Redis error, logs the error and retries after a backoff period.
+4. Deserializes the message into a `FileWorkerMessage` struct.
+5. Calls the `upload_file` function to process the message.
+6. If the file upload is successful, removes the message from the `file_processing` queue.
+7. If the file upload fails, logs the error and calls the `readd_error_to_queue` function to handle retries.
+
+### `upload_file`
+#### Description
+Processes a file upload message by uploading the file to S3, extracting metadata using Tika, creating database entries, and optionally creating file chunks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_worker_message | `FileWorkerMessage` | File upload message containing file ID, dataset ID, and upload file data. |
+| web_pool | `actix_web::web::Data&lt;models::Pool&gt;` | Database connection pool. |
+| event_queue | `actix_web::web::Data&lt;EventQueue&gt;` | Clickhouse event queue for analytics. |
+| redis_conn | `MultiplexedConnection` | Redis connection. |
+
+#### Outputs
+`Result&lt;Option&lt;uuid::Uuid&gt;, ServiceError&gt;` - Returns the file ID if the upload is successful, `None` if the upload is successful but chunk creation is skipped, or a `ServiceError` if the upload fails.
+
+#### Internal Logic
+1. Retrieves the file ID and dataset ID from the `file_worker_message`.
+2. Retrieves the file data from S3 using the file ID.
+3. Extracts metadata from the file using Tika.
+4. Creates a new file entry in the database using the `create_file_query` function.
+5. If the `create_chunks` flag in the `upload_file_data` is set to `false`, skips chunk creation and returns `None`.
+6. Retrieves dataset and organization information using the `get_dataset_and_organization_from_dataset_id_query` function.
+7. Creates file chunks using the `create_file_chunks` function.
+8. Returns the file ID if the upload is successful.
+
+### `readd_error_to_queue`
+#### Description
+Handles retries for failed file uploads by re-adding the message to the `file_ingestion` queue with an incremented attempt number.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| payload | `FileWorkerMessage` | File upload message. |
+| error | `ServiceError` | Error that occurred during file upload. |
+| event_queue | `actix_web::web::Data&lt;EventQueue&gt;` | Clickhouse event queue for analytics. |
+| redis_pool | `actix_web::web::Data&lt;models::RedisPool&gt;` | Redis connection pool. |
+
+#### Outputs
+`Result&lt;(), ServiceError&gt;` - Returns `Ok(())` if the message is successfully re-added to the queue, or a `ServiceError` if the re-add fails.
+
+#### Internal Logic
+1. Increments the `attempt_number` in the `payload`.
+2. Removes the original message from the `file_processing` queue.
+3. If the `attempt_number` reaches 3, logs an error, sends a `FileUploadFailed` event to the Clickhouse event queue, moves the message to the `dead_letters_file` queue, and returns an error.
+4. Serializes the updated `payload` into a JSON string.
+5. Re-adds the message to the `file_ingestion` queue using the `lpush` command.
+6. Returns `Ok(())` if the re-add is successful.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| diesel_async | Asynchronous database connection pool |
+| redis | Redis client library |
+| sentry | Error monitoring and reporting |
+| signal_hook | Signal handling |
+| tracing_subscriber | Logging framework |
+| bb8_redis | Redis connection pool |
+| clickhouse | Clickhouse client library |
+| reqwest | HTTP client library |
+| serde_json | JSON serialization and deserialization |
+
+### Configuration
+The following environment variables are used for configuration:
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| DATABASE_URL | String | N/A | PostgreSQL database connection URL |
+| REDIS_URL | String | N/A | Redis connection URL |
+| REDIS_CONNECTIONS | u32 | 2 | Number of Redis connections |
+| USE_ANALYTICS | bool | false | Whether to enable Clickhouse analytics |
+| CLICKHOUSE_URL | String | http://localhost:8123 | Clickhouse connection URL |
+| CLICKHOUSE_USER | String | default | Clickhouse username |
+| CLICKHOUSE_PASSWORD | String | "" | Clickhouse password |
+| CLICKHOUSE_DATABASE | String | default | Clickhouse database name |
+| TIKA_URL | String | N/A | Tika server URL |
+
+## Error Handling
+The `file_worker` function handles Redis errors by retrying after a backoff period. The `upload_file` function returns a `ServiceError` if any of the file upload steps fail. The `readd_error_to_queue` function handles retries for failed file uploads and moves messages to a dead letter queue after 3 failed attempts.
+
+## Logging
+The code uses the `tracing_subscriber` framework for logging. The log level is set to `INFO` by default.
+
+## Future Improvements
+- Implement more robust error handling for Tika metadata extraction.
+- Add support for different file storage backends besides S3.
+- Implement a mechanism for monitoring the health of the file worker service.

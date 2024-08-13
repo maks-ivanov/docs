@@ -1,0 +1,34 @@
+---
+title: "up.sql"
+---
+
+## High-level description
+This SQL migration script creates two new indexes on timestamp columns in the `card_metadata` and `files` tables to improve query performance for time-based operations.
+
+## Table of contents
+- Creation of index on `card_metadata` table
+- Creation of index on `files` table
+
+## Symbols
+
+### `card_time_stamp_index`
+#### Description
+Creates an index on the `time_stamp` column of the `card_metadata` table.
+
+#### Internal Logic
+The index is created using the standard SQL syntax for index creation. It will allow for faster querying and sorting of records in the `card_metadata` table based on the `time_stamp` column.
+
+### `file_time_stamp_index`
+#### Description
+Creates an index on the `time_stamp` column of the `files` table.
+
+#### Internal Logic
+Similar to the `card_time_stamp_index`, this index is created to optimize queries that involve the `time_stamp` column in the `files` table.
+
+## Performance Considerations
+The addition of these indexes will significantly improve the performance of queries that filter, sort, or join on the `time_stamp` columns in the respective tables. However, it's important to note that while read operations will be faster, write operations (inserts, updates, and deletes) may be slightly slower due to the overhead of maintaining the indexes.
+
+## Future Improvements
+- Monitor the usage of these indexes to ensure they are being utilized as expected.
+- Consider adding additional indexes if other timestamp-based queries are frequently used in the application.
+- If write performance becomes an issue, evaluate the trade-off between read and write performance, and consider using partial indexes or removing the indexes if they prove unnecessary.

@@ -1,0 +1,190 @@
+---
+title: "stripe_handler.rs"
+---
+
+## High-level description
+This code defines a Stripe webhook handler and several API endpoints for managing Stripe subscriptions and plans within the application. It handles events like checkout completion, subscription creation/deletion, and invoice payments, interacting with the Stripe API and updating the application database accordingly.
+
+## Table of contents
+- `webhook` function
+- `direct_to_payment_link` function
+- `cancel_subscription` function
+- `update_subscription_plan` function
+- `get_all_plans` function
+- `get_all_invoices` function
+- `create_setup_checkout_session` function
+
+## References
+This code references several other modules and functions within the codebase, including:
+- `crate::data::models`: Defines database models for various entities like `Pool`, `Organization`, `StripePlan`, `StripeSubscription`, etc.
+- `crate::errors::ServiceError`: Defines custom service errors used for error handling.
+- `crate::middleware::auth_middleware::verify_owner`: Verifies if a user is the owner of a resource.
+- `crate::operators`: Contains various operator modules for interacting with the database and external services.
+    - `organization_operator`: Provides functions for managing organizations.
+    - `stripe_operator`: Provides functions for interacting with the Stripe API.
+- `super::auth_handler::OwnerOnly`: An extractor that ensures only organization owners can access certain endpoints.
+
+## Symbols
+
+### `webhook`
+#### Description
+This function handles incoming webhooks from Stripe, processing events like checkout completion, subscription creation/deletion, and invoice payments. It verifies the webhook signature, parses the event type, and performs corresponding actions like creating subscriptions, updating payment methods, and creating invoices in the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | HttpRequest | The incoming HTTP request containing the webhook payload and headers. |
+| payload | web::Bytes | The raw bytes of the webhook payload sent by Stripe. |
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP response indicating success or failure in processing the webhook. |
+
+#### Internal Logic
+1. Parses the webhook payload and extracts the Stripe signature from the request headers.
+2. Verifies the signature against the stored Stripe webhook secret to ensure the event originated from Stripe.
+3. Matches the event type and performs corresponding actions:
+    - `CheckoutSessionCompleted`:
+        - If the checkout session mode is `Setup`, retrieves the setup intent ID, fetches the setup intent from Stripe, extracts metadata (subscription ID), and updates the subscription's payment method.
+        - Otherwise, extracts the subscription ID, plan ID, and organization ID from the checkout session metadata.
+        - Checks for an existing subscription for the organization and deletes it if found.
+        - Creates a new Stripe subscription in the database, linking it to the plan and organization.
+        - Creates an invoice if the checkout session includes an invoice ID.
+    - `PlanCreated`: Creates a new Stripe plan in the database based on the plan data received from Stripe.
+    - `CustomerSubscriptionDeleted`: Updates the subscription's `current_period_end` in the database based on the event data.
+    - `InvoicePaid`: Extracts the subscription ID from the invoice, retrieves the organization ID associated with the subscription, and creates a new invoice in the database.
+4. Returns an HTTP 200 OK response upon successful processing.
+
+### `direct_to_payment_link`
+#### Description
+This function generates a Stripe checkout page link for a specific plan and organization, redirecting the user to Stripe for payment. It retrieves the plan and organization details, checks for any existing active subscriptions, and then generates the payment link using the Stripe API.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path_data | web::Path&lt;GetDirectPaymentLinkData&gt; | Path parameters containing the plan ID and organization ID. |
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP 303 SeeOther response redirecting the user to the Stripe checkout page. |
+
+#### Internal Logic
+1. Retrieves the organization ID and plan ID from the path parameters.
+2. Fetches the organization and plan details from the database.
+3. Checks if the organization already has an active subscription with no `current_period_end`. If so, returns an HTTP 409 Conflict response.
+4. Generates a Stripe payment link using the plan and organization details.
+5. Returns an HTTP 303 SeeOther response with the payment link in the `Location` header, redirecting the user to the Stripe checkout page.
+
+### `cancel_subscription`
+#### Description
+This function allows an organization owner to cancel a subscription associated with their organization. It verifies the user's ownership, retrieves the subscription details, and then cancels the subscription using the Stripe API.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| subscription_id | web::Path&lt;uuid::Uuid&gt; | The ID of the subscription to cancel. |
+| user | OwnerOnly | An extractor containing the authenticated user's information, ensuring they are the organization owner. |
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP 200 OK response upon successful cancellation or an error response if the user is not authorized or the cancellation fails. |
+
+#### Internal Logic
+1. Retrieves the subscription ID from the path parameters.
+2. Fetches the subscription details from the database.
+3. Verifies if the authenticated user is the owner of the organization associated with the subscription. If not, returns an HTTP 403 Forbidden response.
+4. Cancels the Stripe subscription using the Stripe API.
+5. Returns an HTTP 200 OK response upon successful cancellation.
+
+### `update_subscription_plan`
+#### Description
+This function allows an organization owner to update their subscription to a new plan. It verifies the user's ownership, retrieves the subscription and plan details, updates the subscription on Stripe, and then updates the subscription plan in the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path_data | web::Path&lt;UpdateSubscriptionData&gt; | Path parameters containing the subscription ID and the new plan ID. |
+| user | OwnerOnly | An extractor containing the authenticated user's information, ensuring they are the organization owner. |
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP 200 OK response upon successful update or an error response if the user is not authorized or the update fails. |
+
+#### Internal Logic
+1. Retrieves the subscription ID and new plan ID from the path parameters.
+2. Fetches the subscription and plan details from the database.
+3. Verifies if the authenticated user is the owner of the organization associated with the subscription. If not, returns an HTTP 403 Forbidden response.
+4. Updates the Stripe subscription to the new plan using the Stripe API.
+5. Updates the subscription's plan ID in the database.
+6. Returns an HTTP 200 OK response upon successful update.
+
+### `get_all_plans`
+#### Description
+This function retrieves a list of all available Stripe plans from the database.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP 200 OK response containing a JSON array of `StripePlan` objects. |
+
+#### Internal Logic
+1. Queries the database to retrieve all Stripe plans.
+2. Serializes the retrieved plans into a JSON array.
+3. Returns an HTTP 200 OK response with the JSON payload.
+
+### `get_all_invoices`
+#### Description
+This function retrieves a list of all invoices for a specific organization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+| user | OwnerOnly | An extractor containing the authenticated user's information, ensuring they are the organization owner. |
+| path_data | web::Path&lt;uuid::Uuid&gt; | The ID of the organization to retrieve invoices for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP 200 OK response containing a JSON array of `StripeInvoice` objects or an error response if the retrieval fails. |
+
+#### Internal Logic
+1. Retrieves the organization ID from the path parameters.
+2. Queries the database to retrieve all invoices associated with the organization ID.
+3. Serializes the retrieved invoices into a JSON array.
+4. Returns an HTTP 200 OK response with the JSON payload.
+
+### `create_setup_checkout_session`
+#### Description
+This function creates a Stripe checkout session for setting up a payment method for an organization. It retrieves the organization's subscription ID, generates a checkout session link using the Stripe API, and returns the link in the response.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pool | web::Data&lt;Pool&gt; | A shared database connection pool. |
+| user | OwnerOnly | An extractor containing the authenticated user's information, ensuring they are the organization owner. |
+| path_data | web::Path&lt;uuid::Uuid&gt; | The ID of the organization to create the checkout session for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HttpResponse | actix_web::HttpResponse | Returns an HTTP 200 OK response containing the checkout session URL or an error response if the session creation fails. |
+
+#### Internal Logic
+1. Retrieves the organization ID from the path parameters.
+2. Fetches the organization's subscription ID from the database. If no active subscription is found, returns an HTTP 400 Bad Request response.
+3. Generates a Stripe checkout session link using the subscription ID and organization ID.
+4. Returns an HTTP 200 OK response with the checkout session URL in the response payload.

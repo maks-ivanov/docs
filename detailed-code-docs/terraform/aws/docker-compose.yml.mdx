@@ -1,0 +1,91 @@
+---
+title: "docker-compose.yml"
+---
+
+## High-level description
+This Docker Compose file defines a set of services for running various text embedding and reranking models using the Hugging Face Text Embeddings Inference container. It sets up five different services, each running a specific model, with appropriate configurations for GPU acceleration and data persistence.
+
+## Table of contents
+- jina service
+- bgem3 service
+- reranker service
+- splade-doc service
+- splade-query service
+
+## Code Structure
+The file defines five services, each following a similar structure with slight variations in the model used, port mapping, and specific command arguments.
+
+## Symbols
+
+### `jina` service
+#### Description
+This service runs the Jina AI embeddings model for text embedding tasks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| image | string | Docker image to use |
+| command | string | Command to run the model |
+| ports | array | Port mapping for the service |
+| volumes | array | Volume mapping for data persistence |
+| runtime | string | Runtime environment for the container |
+
+#### Outputs
+The service exposes port 7000 for API access.
+
+### `bgem3` service
+#### Description
+This service runs the BAAI/bge-m3 model for text embedding tasks.
+
+#### Inputs
+(Same structure as `jina` service)
+
+#### Outputs
+The service exposes port 8000 for API access.
+
+### `reranker` service
+#### Description
+This service runs the BAAI/bge-reranker-large model for text reranking tasks.
+
+#### Inputs
+(Same structure as `jina` service)
+
+#### Outputs
+The service exposes port 9000 for API access.
+
+### `splade-doc` service
+#### Description
+This service runs the naver/efficient-splade-VI-BT-large-doc model for document embedding tasks using SPLADE pooling.
+
+#### Inputs
+(Same structure as `jina` service, with additional `--pooling splade` argument)
+
+#### Outputs
+The service exposes port 5000 for API access.
+
+### `splade-query` service
+#### Description
+This service runs the naver/efficient-splade-VI-BT-large-query model for query embedding tasks using SPLADE pooling.
+
+#### Inputs
+(Same structure as `jina` service, with additional `--pooling splade` argument)
+
+#### Outputs
+The service exposes port 6000 for API access.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| ghcr.io/huggingface/text-embeddings-inference:turing-1.2 | Base Docker image for all services |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| version | string | '3' | Docker Compose file version |
+
+## Future Improvements
+1. Consider using environment variables for model versions and port mappings to make the configuration more flexible.
+2. Implement health checks for each service to ensure they're running correctly.
+3. Add resource limits (CPU, memory) to each service to prevent resource exhaustion.
+4. Consider using Docker secrets for sensitive information if any is added in the future.
+5. Implement logging configurations for better observability of the services.

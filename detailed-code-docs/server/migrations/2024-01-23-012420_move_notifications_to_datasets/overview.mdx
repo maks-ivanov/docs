@@ -1,0 +1,21 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains database migration scripts for transitioning the notification system from a user-centric model to a dataset-centric model. 
+
+## What does it do?
+The scripts modify database tables to associate notifications with datasets instead of users. This involves renaming tables, adding and removing columns, and updating a trigger function to reflect the new data structure. The `up.sql` script applies the migration, while the `down.sql` script reverts the changes.
+
+## Key Files
+- **up.sql:** This script performs the following actions:
+    - Removes the `user_uuid` column from the `file_upload_completed_notifications` table.
+    - Renames the `user_notification_counts` table to `dataset_notification_counts`.
+    - Adds a `dataset_uuid` column and removes the `user_uuid` column from the `dataset_notification_counts` table.
+    - Updates the `update_notification_count()` trigger function to manage notification counts based on datasets.
+- **down.sql:** This script undoes the changes made by `up.sql`:
+    - Adds a `user_uuid` column back to the `file_upload_completed_notifications` table.
+    - Renames the `dataset_notification_counts` table back to `user_notification_counts`.
+    - Adds a `user_uuid` column and removes the `dataset_uuid` column from the `user_notification_counts` table.
+    - Although not explicitly mentioned, it's assumed that this script would also revert the changes made to the `update_notification_count()` function. 

@@ -1,0 +1,60 @@
+---
+title: "service.yaml"
+---
+
+## High-level description
+This Helm template defines a Kubernetes Service for Redis master nodes. It creates a service to expose Redis master instances, configuring various service properties based on the provided values.
+
+## Table of contents
+- Service metadata
+- Service specification
+- Port configuration
+- Selector configuration
+
+## Code Structure
+The template uses conditional statements and helper functions to dynamically generate the Kubernetes Service manifest based on the provided values.
+
+## Symbols
+
+### Service Definition
+#### Description
+Defines a Kubernetes Service for Redis master nodes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Values provided to the Helm chart |
+| $ | Object | The root context of the template |
+
+#### Internal Logic
+1. Checks if sentinel is not enabled and master count is greater than 0
+2. Defines metadata (name, namespace, labels, annotations)
+3. Specifies service type and related configurations
+4. Configures ports and selectors
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common | Provides helper functions for naming, labels, and template rendering |
+
+### Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.master.service.type | String | N/A | Type of Kubernetes service |
+| .Values.master.service.externalTrafficPolicy | String | N/A | External traffic policy for LoadBalancer or NodePort types |
+| .Values.master.service.internalTrafficPolicy | String | N/A | Internal traffic policy for Kubernetes 1.22+ |
+| .Values.master.service.loadBalancerIP | String | N/A | LoadBalancer IP address |
+| .Values.master.service.loadBalancerClass | String | N/A | LoadBalancer class |
+| .Values.master.service.loadBalancerSourceRanges | List | N/A | Source IP ranges for LoadBalancer |
+| .Values.master.service.clusterIP | String | N/A | ClusterIP for the service |
+| .Values.master.service.sessionAffinity | String | N/A | Session affinity configuration |
+| .Values.master.service.sessionAffinityConfig | Object | N/A | Additional session affinity configuration |
+| .Values.master.service.externalIPs | List | N/A | External IPs for the service |
+| .Values.master.service.ports.redis | Number | N/A | Port number for Redis |
+| .Values.master.service.nodePorts.redis | Number | N/A | NodePort for Redis (if applicable) |
+| .Values.master.service.extraPorts | List | N/A | Additional ports to expose |
+
+## Future Improvements
+1. Consider adding support for IPv6 configurations.
+2. Implement more granular control over service annotations and labels.
+3. Add support for custom health checks or readiness probes within the service definition.

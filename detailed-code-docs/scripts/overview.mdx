@@ -1,0 +1,73 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `scripts` directory contains essential scripts and Kubernetes configuration templates for setting up, configuring, and deploying a self-hosted instance of Trieve. It includes bash scripts for system preparation and configuration, as well as Kubernetes YAML templates for deploying the application in a Kubernetes cluster.
+
+## What does it do?
+This directory provides two main functionalities:
+
+1. Self-hosting setup and configuration:
+   - The bash scripts automate the process of preparing a system for hosting Trieve by installing necessary dependencies, setting up the environment, and configuring the instance based on system capabilities and user input.
+   - They handle package installation, Docker setup, GPU detection, resource allocation, and configuration of web servers, environment variables, and authentication.
+
+2. Kubernetes deployment:
+   - The Kubernetes YAML templates define the infrastructure-as-code for deploying Trieve in a Kubernetes cluster.
+   - They specify how the application should be deployed, scaled, accessed, and provided with persistent storage within the cluster.
+
+## Entry points
+The main entry points for developers are:
+
+1. For self-hosting setup:
+   - `setup-self-hosting.sh`: Prepares the system by installing dependencies and setting up the environment.
+   - `configure-self-hosting.sh`: Configures the Trieve instance based on system capabilities and user input.
+
+2. For Kubernetes deployment:
+   - `template/deployment.yaml`: Defines the deployment strategy for the application.
+   - `template/service.yaml`: Exposes the application to the cluster via a Service.
+   - `template/pv.yaml`: Defines a PersistentVolume for storage in local environments.
+   - `template/pvc.yaml`: Defines a PersistentVolumeClaim for requesting storage.
+
+## Key Files
+1. Self-hosting scripts:
+   - `setup-self-hosting.sh`: Installs required packages, sets up Caddy web server, and installs Docker if needed.
+   - `configure-self-hosting.sh`: Detects GPU and system resources, generates Caddyfile for reverse proxy, configures environment files, modifies Docker Compose files, and sets up Keycloak authentication.
+
+2. Kubernetes templates:
+   - `template/deployment.yaml`: Core of the application deployment, defining Docker image, environment variables, volume mounts, and deployment strategy.
+   - `template/service.yaml`: Defines how the deployed application can be accessed within the cluster.
+   - `template/pv.yaml`: Provisions storage using a PersistentVolume, specifically for local development environments.
+   - `template/pvc.yaml`: Defines a PersistentVolumeClaim for requesting storage, with dynamic adjustment based on the environment.
+
+## Dependencies
+The self-hosting scripts rely on several external tools and packages:
+- jq
+- git
+- caddy
+- curl
+- gawk
+- Docker
+
+The Kubernetes templates are designed to be used with Helm, utilizing Helm templating features for configuration.
+
+## Configuration
+1. Self-hosting configuration:
+   - Domain configuration: Set via the `DOMAIN` environment variable.
+   - GPU and resource detection: Automatically performed by the scripts.
+   - Environment file (.env) configuration: Modified based on detected capabilities and user input.
+   - Keycloak realm configuration: Modified in the realm-export.json file.
+
+2. Kubernetes configuration:
+   Configuration is primarily managed through a Helm values file (`.Values`). Key options include:
+
+   | Option | Description | Used in |
+   |:-------|:------------|:--------|
+   | `Release.Name` | Name of the Helm release. | `deployment.yaml`, `pvc.yaml` |
+   | `accountId` | AWS account ID (for ECR image URLs). | `deployment.yaml` |
+   | `region` | AWS region (for ECR image URLs). | `deployment.yaml` |
+   | `environment` | Environment identifier. | `deployment.yaml`, `pv.yaml`, `pvc.yaml` |
+   | `containers.$NAME.tag` | Docker image tag for the container. | `deployment.yaml` |
+   | `config.fixme` | Value for the `ENV_VAR` environment variable. | `deployment.yaml` |
+
+These configuration options allow for customization of the deployment based on the target environment and application requirements.

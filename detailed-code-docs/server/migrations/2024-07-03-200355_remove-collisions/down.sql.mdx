@@ -1,0 +1,36 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL migration script is designed to revert changes made in the corresponding `up.sql` file. It focuses on modifying the `chunk_metadata` table and recreating the `chunk_collisions` table, effectively undoing a previous migration that likely removed these elements.
+
+## Table of contents
+- Modify `chunk_metadata` table
+- Recreate `chunk_collisions` table
+
+## Symbols
+
+### ALTER TABLE chunk_metadata
+#### Description
+This SQL command modifies the `chunk_metadata` table by making the `qdrant_point_id` column nullable.
+
+#### Internal Logic
+The command uses the `ALTER TABLE` statement to modify the `chunk_metadata` table. It then uses `ALTER COLUMN` to change the `qdrant_point_id` column, specifically dropping the `NOT NULL` constraint.
+
+### CREATE TABLE chunk_collisions
+#### Description
+This SQL command recreates the `chunk_collisions` table with specific columns and constraints.
+
+#### Internal Logic
+The `CREATE TABLE` statement is used to define a new table named `chunk_collisions`. The table is created with the following columns:
+- `id`: UUID, set as the primary key
+- `chunk_id`: UUID, not nullable
+- `collision_qdrant_id`: UUID
+- `created_at`: TIMESTAMP, not nullable
+- `updated_at`: TIMESTAMP, not nullable
+
+## Future Improvements
+- Consider adding foreign key constraints to ensure referential integrity, especially for the `chunk_id` column in the `chunk_collisions` table.
+- If applicable, add indexes to improve query performance, particularly on columns frequently used in WHERE clauses or joins.
+- Depending on the application's needs, consider adding a CASCADE option to the `ALTER TABLE` statement to handle any dependent objects.

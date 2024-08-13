@@ -1,0 +1,81 @@
+---
+title: "push-frontends.yml"
+---
+
+## High-level description
+This GitHub Actions workflow file defines the automated process for building and pushing Docker images for various frontend components of an application upon changes pushed to the 'main' branch. It builds images for chat, search, dashboard, and analytics-site frontends, leveraging Docker Buildx for efficient builds and pushing the images to Docker Hub.
+
+## Table of contents
+- Workflow Trigger
+- Jobs
+    - build_chat
+    - build_search
+    - build_dashboard
+    - build_analytics_site
+
+## References
+This workflow references the following secrets stored in the GitHub repository:
+- `DOCKER_USERNAME`: Docker Hub username for authentication.
+- `DOCKER_PASSWORD`: Docker Hub password for authentication.
+
+## Symbols
+### `name: Create Frontend Docker Images`
+#### Description
+Defines the name of the workflow as it appears in the GitHub Actions interface.
+
+### `concurrency`
+#### Description
+This section configures how concurrent workflow runs are handled. It ensures that only one workflow run is triggered for the same workflow and branch combination, canceling any in-progress runs from previous pushes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| group | string | `${{ github.workflow }}-${{ github.head_ref }}` - Defines the concurrency group based on the workflow name and branch name. |
+| cancel-in-progress | boolean | `true` - Cancels any previous in-progress runs within the same concurrency group. |
+
+### `on: workflow_dispatch`
+#### Description
+Allows this workflow to be manually triggered from the GitHub Actions interface.
+
+### `on: push`
+#### Description
+Triggers the workflow on push events to the repository.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| branches | string array | `['main']` - Specifies that the workflow should only trigger on pushes to the 'main' branch. |
+| paths | string array |  - An array of file paths patterns that trigger the workflow when modified. This includes paths within the 'frontends' directory and the workflow file itself. |
+
+### `jobs`
+#### Description
+This section defines the individual jobs that run within the workflow. Each job represents a separate environment and set of steps to build and push a specific frontend image.
+
+#### Internal Logic
+The workflow includes four jobs, each following a similar structure:
+1. **Checkout:** Checks out the repository code.
+2. **Setup Buildx:** Sets up Docker Buildx for building multi-platform images.
+3. **Login to Docker Hub:** Authenticates with Docker Hub using provided credentials.
+4. **Docker meta:** Generates metadata for Docker images, including tags based on the commit SHA and "latest".
+5. **Build and push Docker image:** Builds the Docker image using the specified Dockerfile and context, then pushes it to Docker Hub with the generated tags and labels.
+
+#### Side Effects
+- Builds and pushes Docker images to Docker Hub.
+
+### `build_chat`, `build_search`, `build_dashboard`, `build_analytics_site`
+#### Description
+These jobs are responsible for building and pushing Docker images for the chat, search, dashboard, and analytics-site frontends, respectively. They follow the same structure as described in the `jobs` section.
+
+#### Inputs
+Each job uses the following inputs:
+- `runs-on`: Specifies the runner environment for the job, which is a specific virtual machine type provided by GitHub Actions.
+- `secrets.DOCKER_USERNAME`: Docker Hub username for authentication.
+- `secrets.DOCKER_PASSWORD`: Docker Hub password for authentication.
+- `steps`: A sequence of steps to execute within the job.
+
+## Future Improvements
+- **Multi-platform builds:** The commented-out `platforms` parameter in the `docker/build-push-action` suggests an intention for multi-platform builds (e.g., for different CPU architectures). Uncommenting and configuring this would allow building and pushing images for multiple platforms.
+- **Cache optimization:** The `cache-from` and `cache-to` parameters utilize a dedicated build cache on Docker Hub. Exploring more efficient caching strategies or local caching mechanisms could further improve build times.
+- **Error handling and reporting:** Implementing robust error handling and reporting mechanisms within the workflow would enhance its reliability and maintainability. This could include sending notifications on failures or logging detailed error messages.
+- **Security hardening:** Regularly review and update the used actions and their versions to benefit from the latest security patches and best practices. Consider using a dedicated security scanning tool for container images.
+- **Modularity and Reusability:** As the number of frontends grows, consider refactoring the workflow to make it more modular and reusable. This could involve creating a reusable workflow template for building and pushing images or using a matrix strategy for defining jobs dynamically.

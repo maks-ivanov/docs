@@ -1,0 +1,92 @@
+---
+title: "metrics_handler.rs"
+---
+
+## High-level description
+This code defines a `Metrics` struct that collects and exposes Prometheus metrics related to the server's queue sizes and processing states. It provides functionality to update the gauges based on Redis queue lengths and generate a Prometheus-formatted response for scraping.
+
+## Table of contents
+- `Metrics` struct
+- `check_x_api_access` function
+- `get_metrics` function
+
+## Code Structure
+The `Metrics` struct holds a Prometheus registry and various gauges representing different queue and processing metrics. The `check_x_api_access` function verifies API access using an admin key. The `get_metrics` function updates the gauges from Redis and returns a Prometheus-formatted response.
+
+## References
+- `RedisPool` from `crate::data::models`
+- `ServiceError` from `crate::errors::ServiceError`
+
+## Symbols
+
+### `Metrics`
+#### Description
+This struct encapsulates Prometheus metrics related to the server's queues and processing states. It holds a registry to manage the metrics and individual gauges for each metric.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes a Prometheus registry.
+- Creates gauges for various queue sizes (ingest, delete, file, update, pgbulk) and processing states (file, delete, ingest, group update, pgbulk).
+- Registers each gauge with the registry.
+
+### `check_x_api_access`
+#### Description
+This function checks if the incoming request has valid API access using the `X-API-KEY` or `Authorization` header. It compares the provided key with the `ADMIN_API_KEY` environment variable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | `&actix_web::HttpRequest` | The incoming HTTP request |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | `bool` | True if the request has valid API access, False otherwise |
+
+#### Internal Logic
+- Retrieves the `ADMIN_API_KEY` from the environment.
+- Checks if the `X-API-KEY` or `Authorization` header is present and matches the `ADMIN_API_KEY`.
+- Returns True if a match is found, False otherwise.
+
+### `get_metrics`
+#### Description
+This function handles the `/metrics` endpoint, updating the queue gauges from Redis and returning a Prometheus-formatted response containing the gathered metrics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | `actix_web::HttpRequest` | The incoming HTTP request |
+| metrics | `web::Data&lt;Metrics&gt;` | The `Metrics` struct instance |
+| redis_pool | `web::Data&lt;RedisPool&gt;` | The Redis connection pool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Result&lt;HttpResponse, actix_web::Error&gt;` | `Result&lt;HttpResponse, actix_web::Error&gt;` | An HTTP response containing the Prometheus metrics or an error |
+
+#### Internal Logic
+- Checks API access using `check_x_api_access`.
+- Updates the queue gauges from Redis using `metrics.update_queue_gauges`.
+- Gathers the metrics from the registry using `metrics.get_response`.
+- Returns an HTTP response with the Prometheus-formatted metrics.
+
+## Dependencies
+- `actix-web`
+- `prometheus`
+- `redis`
+
+## Error Handling
+Returns an `HttpResponse::Unauthorized` if API access is denied. Returns a `ServiceError` if there are errors connecting to Redis or querying the queue lengths.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| /metrics | POST | None | `text/plain` | Returns Prometheus metrics for the server |
+
+## Authentication
+Requires a valid `X-API-KEY` or `Authorization` header matching the `ADMIN_API_KEY` environment variable.

@@ -1,0 +1,120 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This code defines a FastAPI application that serves as an embedding server. It utilizes a pre-trained Hugging Face Transformer model to generate text embeddings and exposes an API endpoint to access these embeddings.
+
+## Table of contents
+- Import Statements
+- Model Loading
+- FastAPI App Initialization
+- Pydantic Models
+    - `OpenAIEmbeddingInput`
+    - `_EmbeddingObject`
+    - `OpenAIEmbeddingResult`
+- API Endpoint: `/embeddings`
+
+## References
+This code references the `transformers` library for loading the pre-trained model and the `fastapi` library for creating the web application and handling requests.
+
+## Symbols
+### `model`
+#### Description
+This variable holds the loaded Hugging Face Transformer model. It is initialized with a pre-trained model specified by the `MODEL` environment variable.
+
+#### Inputs
+N/A - This is a global variable initialized at startup.
+
+#### Outputs
+N/A - This is a global variable.
+
+#### Internal Logic
+The model is loaded from the Hugging Face model hub using `AutoModel.from_pretrained()`. The `trust_remote_code=True` argument allows loading models with custom code. The `cache_dir` argument specifies the directory to cache downloaded models. The `device_map='cuda'` argument instructs the model to utilize the available CUDA device (GPU) for computation.
+
+### `app`
+#### Description
+This variable represents the FastAPI application instance. It is used to define API routes and handle incoming requests.
+
+#### Inputs
+N/A - This is a global variable initialized at startup.
+
+#### Outputs
+N/A - This is a global variable.
+
+### `OpenAIEmbeddingInput`
+#### Description
+This Pydantic model defines the structure of the input data for the `/embeddings` endpoint. It accepts a single string or a list of strings as input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input | Union[List[str], str] | The text input for which to generate embeddings. Can be a single string or a list of strings. |
+
+#### Outputs
+N/A - This is a Pydantic model used for data validation.
+
+### `_EmbeddingObject`
+#### Description
+This Pydantic model defines the structure of a single embedding object within the API response. It includes the embedding vector, the object type ("embedding"), and the index of the embedding within the input list.
+
+#### Inputs
+N/A - This is a Pydantic model used for data serialization.
+
+#### Outputs
+N/A - This is a Pydantic model used for data serialization.
+
+### `OpenAIEmbeddingResult`
+#### Description
+This Pydantic model defines the structure of the response returned by the `/embeddings` endpoint. It includes a list of `_EmbeddingObject` instances, the object type ("embedding"), and the name of the model used to generate the embeddings.
+
+#### Inputs
+N/A - This is a Pydantic model used for data serialization.
+
+#### Outputs
+N/A - This is a Pydantic model used for data serialization.
+
+### `/embeddings`
+#### Description
+This is the main API endpoint of the application. It accepts a POST request with a JSON payload conforming to the `OpenAIEmbeddingInput` model. It generates embeddings for the provided text input using the loaded Transformer model and returns them in a JSON response conforming to the `OpenAIEmbeddingResult` model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | OpenAIEmbeddingInput | The request body containing the text input for embedding generation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | OpenAIEmbeddingResult | A JSON response containing the generated embeddings, object type, and model name. |
+
+#### Internal Logic
+1. Receives the input text from the request body.
+2. Utilizes the loaded `model` to generate embeddings for the input text using `model.encode()`.
+3. Constructs the response object based on whether the input was a single string or a list of strings.
+4. Returns the response object containing the embeddings, object type, and model name.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| transformers | Provides access to pre-trained Hugging Face Transformer models for text embedding generation. |
+| fastapi | Enables building the web application and defining API endpoints. |
+| pydantic | Facilitates data validation and serialization using Python type annotations. |
+| numpy | Used for numerical operations, potentially for handling embedding vectors. |
+| python-dotenv | Allows loading environment variables from a .env file. |
+
+### Configuration
+The application relies on the `MODEL` environment variable to determine the pre-trained model to load.
+
+## Error Handling
+The code does not implement specific error handling beyond the default exception handling provided by FastAPI.
+
+## Logging
+The code does not implement explicit logging.
+
+## Future Improvements
+- Implement error handling to gracefully handle invalid input or model loading failures.
+- Add logging to track requests, responses, and potential errors.
+- Explore batching input texts to improve performance when handling multiple embedding requests.
+- Consider adding support for specifying the embedding dimension or other model parameters.
+- Document the API endpoint using OpenAPI specifications for better discoverability and client generation.

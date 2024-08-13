@@ -1,0 +1,533 @@
+---
+title: "models.rs"
+---
+
+## High-level description
+This code defines data structures for various entities in the Trieve application, such as users, topics, messages, chunks, files, organizations, and more. It also defines enums for different types of events, search methods, and recommendation strategies.
+
+## Table of contents
+- Structs: `User`, `Topic`, `Message`, `GeoInfoWithBias`, `GeoInfo`, `UpdateSpecificChunkMetadata`, `ChunkMetadata`, `ChunkMetadataTable`, `IngestSpecificChunkMetadata`, `ChunkMetadataWithScore`, `ScoreChunkDTO`, `ScoreChunk`, `SlimChunkMetadataWithArrayTagSet`, `NewChunkMetadataTypes`, `ChunkMetadataTypes`, `SlimChunkMetadataWithScore`, `ChunkMetadataStringTagSet`, `SlimChunkMetadataTable`, `SlimChunkMetadata`, `ContentChunkMetadata`, `SlimUser`, `UserDTO`, `ChunkGroup`, `ChunkGroupAndFileId`, `ChunkGroupBookmark`, `FileGroup`, `UserDTOWithChunks`, `File`, `FileAndGroupId`, `FileDTO`, `WorkerEventClickhouse`, `WorkerEvent`, `EventType`, `DatasetGroupCount`, `DatasetEventCount`, `Dataset`, `DatasetDTO`, `DatasetUsageCount`, `DatasetAndUsage`, `DistanceMetric`, `DatasetConfiguration`, `DatasetConfigurationDTO`, `DatasetAndOrgWithSubAndPlan`, `Organization`, `Invitation`, `StripePlan`, `StripeSubscription`, `OrganizationWithSubAndPlan`, `UserRole`, `UserOrganization`, `OrganizationUsageCount`, `DatasetTags`, `ChunkMetadataTags`, `ApiKeyRole`, `UserApiKey`, `ApiKeyRespBody`, `UnifiedId`, `QdrantPayload`, `FileWorkerMessage`, `RangeCondition`, `Range`, `DateRange`, `MatchCondition`, `LocationBoundingBox`, `LocationRadius`, `LocationPolygon`, `ConditionType`, `HasIDCondition`, `FieldCondition`, `SearchQueryEvent`, `SearchQueriesWithClicksCTRResponseClickhouse`, `SearchQueriesWithClicksCTRResponse`, `SearchQueriesWithoutClicksCTRResponseClickhouse`, `SearchQueriesWithoutClicksCTRResponse`, `RecommendationsWithClicksCTRResponseClickhouse`, `RecommendationsWithClicksCTRResponse`, `RecommendationsWithoutClicksCTRResponseClickhouse`, `RecommendationsWithoutClicksCTRResponse`, `SearchQueryEventClickhouse`, `SearchResultType`, `RagQueryEvent`, `RagQueryEventClickhouse`, `ClusterTopicsClickhouse`, `SearchClusterTopics`, `RecommendationEventClickhouse`, `RecommendationEvent`, `SearchClusterMembership`, `SearchType`, `SearchMethod`, `CountSearchMethod`, `SearchAnalyticsFilter`, `RAGAnalyticsFilter`, `ClusterAnalyticsFilter`, `RecommendationType`, `RecommendationAnalyticsFilter`, `DatasetAnalytics`, `HeadQueries`, `UsageGraphPointClickhouse`, `UsageGraphPoint`, `SearchLatencyGraphClickhouse`, `SearchLatencyGraph`, `SearchCTRMetricsClickhouse`, `SearchCTRMetrics`, `RecommendationCTRMetrics`, `ChunkData`, `SearchTypeCount`, `StripeInvoice`, `Granularity`, `SearchSortBy`, `RAGSortBy`, `SortOrder`, `SearchAnalytics`, `RAGAnalytics`, `RecommendationAnalytics`, `ClusterAnalytics`, `CTRAnalytics`, `RecommendationStrategy`, `RecommendType`, `EventTypeRequest`, `MigrationMode`, `MigratePointMessage`, `SortByField`, `SortBySearchType`, `QdrantSortBy`, `ReRankOptions`, `CTRType`, `SortOptions`, `HighlightOptions`, `LLMOptions`, `MultiQuery`, `QueryTypes`
+- Enums: `GeoTypes`, `RoleProxy`, `DistanceMetric`, `EventType`, `ApiKeyRole`, `UnifiedId`, `RangeCondition`, `MatchCondition`, `ConditionType`, `SearchResultType`, `SearchType`, `SearchMethod`, `CountSearchMethod`, `RagTypes`, `RecommendationType`, `CTRType`, `RecommendationStrategy`, `RecommendType`, `EventTypeRequest`, `MigrationMode`, `QdrantSortBy`, `ReRankOptions`, `CTRType`, `SortOptions`, `HighlightOptions`, `LLMOptions`, `QueryTypes`
+
+## Code Structure
+The code defines a large number of structs and enums, each representing a specific entity or concept in the Trieve application. Some structs are related to each other, for example:
+- `ChunkMetadata` represents the metadata of a chunk, while `ChunkMetadataTable` is the corresponding database table representation.
+- `ChunkGroup` represents a group of chunks, while `ChunkGroupAndFileId` includes the file ID associated with the group.
+- `Dataset` represents a dataset, while `DatasetConfiguration` defines the configuration options for a dataset.
+- `Organization` represents an organization, while `OrganizationWithSubAndPlan` includes the subscription and plan information for the organization.
+
+## References
+This code references other parts of the codebase, including:
+- `crate::errors::ServiceError`: Used for error handling.
+- `crate::get_env`: Used for retrieving environment variables.
+- Various operators: Used for performing database operations, Qdrant operations, and other tasks.
+
+## Symbols
+### `User`
+#### Description
+Represents a user in the Trieve application.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `Topic`
+#### Description
+Represents a chat topic in the Trieve application.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `Message`
+#### Description
+Represents a message in a chat topic.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `GeoInfoWithBias`
+#### Description
+Represents a geographical location with a bias value for ranking search results.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `GeoInfo`
+#### Description
+Represents a geographical location with latitude and longitude.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `haversine_distance_to`: Calculates the Haversine distance between two geographical locations.
+
+### `UpdateSpecificChunkMetadata`
+#### Description
+Represents data for updating specific fields of a chunk's metadata.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `ChunkMetadata`
+#### Description
+Represents the metadata of a chunk.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `ChunkMetadata` from provided details.
+- `from_table_and_tag_set`: Creates a new `ChunkMetadata` from a `ChunkMetadataTable` and a tag set.
+
+### `ChunkMetadataTable`
+#### Description
+Represents the database table representation of `ChunkMetadata`.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `IngestSpecificChunkMetadata`
+#### Description
+Represents data for ingesting a specific chunk's metadata.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `ChunkMetadataWithScore`
+#### Description
+Represents a chunk's metadata with an associated score.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `ScoreChunkDTO`
+#### Description
+Represents a chunk with a score and optional highlights.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `slim`: Creates a slimmed-down version of the `ScoreChunkDTO` by replacing `ChunkMetadata` with `SlimChunkMetadata`.
+
+### `ScoreChunk`
+#### Description
+Represents a chunk with a score and optional highlights.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `SlimChunkMetadataWithArrayTagSet`
+#### Description
+Represents a slimmed-down version of `ChunkMetadata` with an array tag set.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `NewChunkMetadataTypes`
+#### Description
+An enum representing different types of chunk metadata.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `ChunkMetadataTypes`
+#### Description
+An enum representing different types of chunk metadata.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `metadata`: Returns the `ChunkMetadata` representation of the enum variant.
+
+### `SlimChunkMetadataWithScore`
+#### Description
+Represents a slimmed-down version of `ChunkMetadata` with an associated score.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `ChunkMetadataStringTagSet`
+#### Description
+Represents a chunk's metadata with a comma-separated string tag set.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `SlimChunkMetadataTable`
+#### Description
+Represents the database table representation of `SlimChunkMetadata`.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `SlimChunkMetadata`
+#### Description
+Represents a slimmed-down version of `ChunkMetadata`.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_table_and_tag_set`: Creates a new `SlimChunkMetadata` from a `SlimChunkMetadataTable` and a tag set.
+
+### `ContentChunkMetadata`
+#### Description
+Represents the metadata of a chunk with only content-related fields.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `SlimUser`
+#### Description
+Represents a slimmed-down version of a user.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `SlimUser` from a `User`, user organizations, and organizations.
+
+### `UserDTO`
+#### Description
+Represents a user DTO.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `ChunkGroup`
+#### Description
+Represents a group of chunks.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `ChunkGroup` from provided details.
+
+### `ChunkGroupAndFileId`
+#### Description
+Represents a chunk group with an associated file ID.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_group`: Creates a new `ChunkGroupAndFileId` from a `ChunkGroup` and a file ID.
+- `to_group`: Converts the `ChunkGroupAndFileId` to a `ChunkGroup`.
+
+### `ChunkGroupBookmark`
+#### Description
+Represents a bookmark of a chunk within a group.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `ChunkGroupBookmark` from provided details.
+
+### `FileGroup`
+#### Description
+Represents a group associated with a file.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `FileGroup` from provided details.
+
+### `UserDTOWithChunks`
+#### Description
+Represents a user DTO with associated chunks.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `File`
+#### Description
+Represents a file in the Trieve application.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `File` from provided details.
+
+### `FileAndGroupId`
+#### Description
+Represents a file with an associated group ID.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `FileDTO`
+#### Description
+Represents a file DTO.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `WorkerEventClickhouse`
+#### Description
+Represents a worker event stored in ClickHouse.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `WorkerEvent`
+#### Description
+Represents a worker event.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `WorkerEvent` from provided details.
+
+### `EventType`
+#### Description
+An enum representing different types of worker events.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `get_all_event_types`: Returns a vector of all event types.
+
+### `DatasetGroupCount`
+#### Description
+Represents the count of groups in a dataset.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `DatasetEventCount`
+#### Description
+Represents the count of events in a dataset.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `Dataset`
+#### Description
+Represents a dataset in the Trieve application.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_details`: Creates a new `Dataset` from provided details.
+
+### `DatasetDTO`
+#### Description
+Represents a dataset DTO.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `DatasetUsageCount`
+#### Description
+Represents the usage count of a dataset.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+N/A
+
+### `DatasetAndUsage`
+#### Description
+Represents a dataset with its usage count.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `from_components`:

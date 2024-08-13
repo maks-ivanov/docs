@@ -1,0 +1,58 @@
+---
+title: "networkpolicy.yaml"
+---
+
+## High-level description
+This Helm template defines a Kubernetes NetworkPolicy for PostgreSQL backup operations using pg_dumpall. It controls egress traffic for the backup cronjob, allowing outbound connections only to port 5432 (PostgreSQL's default port).
+
+## Table of contents
+- NetworkPolicy definition
+- Metadata
+- Spec (podSelector, policyTypes, egress rules)
+
+## Code Structure
+The template uses conditional logic to create the NetworkPolicy only when backup is enabled and the network policy is specifically enabled for the backup cronjob. It leverages several helper templates for generating consistent labels, names, and metadata.
+
+## Symbols
+
+### NetworkPolicy
+#### Description
+Defines a Kubernetes NetworkPolicy resource to control network traffic for PostgreSQL backup operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values.backup.enabled | boolean | Determines if backup is enabled |
+| .Values.backup.cronjob.networkPolicy.enabled | boolean | Determines if network policy for backup cronjob is enabled |
+| .Values.commonLabels | object | Common labels to be applied |
+| .Values.commonAnnotations | object | Common annotations to be applied |
+| .Values.backup.cronjob.podLabels | object | Pod labels for the backup cronjob |
+
+#### Internal Logic
+1. Checks if backup and network policy are enabled
+2. Sets API version using a helper template
+3. Defines metadata (name, namespace, labels, annotations)
+4. Specifies podSelector using merged labels
+5. Sets policyType to Egress
+6. Defines egress rule allowing traffic to port 5432
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.capabilities.networkPolicy.apiVersion | Determines the appropriate API version for NetworkPolicy |
+| common.names.namespace | Generates the namespace name |
+| common.labels.standard | Generates standard labels |
+| common.tplvalues.render | Renders template values |
+| common.tplvalues.merge | Merges multiple sets of labels |
+| common.labels.matchLabels | Generates match labels for selector |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.backup.enabled | boolean | - | Enables or disables backup functionality |
+| .Values.backup.cronjob.networkPolicy.enabled | boolean | - | Enables or disables network policy for backup cronjob |
+
+## Future Improvements
+- Consider adding support for more granular egress rules, allowing connections to specific IP ranges or services.
+- Implement ingress rules if there's a need to control incoming traffic to the backup pods.
+- Add support for naming the NetworkPolicy resource using a configurable value instead of a fixed naming scheme.

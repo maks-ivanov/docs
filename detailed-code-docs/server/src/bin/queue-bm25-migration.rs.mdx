@@ -1,0 +1,73 @@
+---
+title: "queue-bm25-migration.rs"
+---
+
+## High-level description
+This code is a command-line utility that migrates data from a Qdrant collection to a new collection with BM25 indexing. It iterates through all points in the source collection, constructs a migration message, and pushes it to a Redis queue for asynchronous processing.
+
+## Table of contents
+- Setting up logging and environment variables
+- Connecting to Redis
+- Defining vector sizes and collections
+- Iterating through collections
+- Retrieving point IDs from Qdrant
+- Constructing and sending migration messages to Redis
+
+## References
+- `scroll_qdrant_collection_ids`: This function is defined in `server/src/operators/qdrant_operator.rs` and is used to retrieve point IDs from a Qdrant collection.
+- `MigratePointMessage`: This struct is defined in `server/src/data/models.rs` and represents a message for migrating a point from one Qdrant collection to another.
+- `MigrationMode`: This enum is defined in `server/src/data/models.rs` and specifies the mode of migration, in this case, BM25.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| tracing_subscriber | Logging library |
+| trieve_server | Core server library containing data models and operators |
+| dotenvy | Library for loading environment variables from a `.env` file |
+| bb8_redis | Asynchronous Redis client library |
+| actix_web | Web framework used for creating the Redis pool |
+| redis | Synchronous Redis client library |
+| serde_json | JSON serialization/deserialization library |
+| uuid | UUID generation library |
+
+## Symbols
+### `main`
+#### Description
+This function is the entry point of the command-line utility. It sets up logging, connects to Redis, defines the collections to migrate, and iterates through them, sending migration messages to a Redis queue.
+
+#### Inputs
+None
+
+#### Outputs
+- `Result&lt;(), ServiceError&gt;`: Returns an empty `Ok` result on success, or a `ServiceError` on failure.
+
+#### Internal Logic
+1. **Setup logging and environment variables:**
+    - Load environment variables from a `.env` file.
+    - Initialize the tracing subscriber for logging.
+2. **Connect to Redis:**
+    - Retrieve the Redis URL and number of connections from environment variables.
+    - Create a Redis connection manager and a connection pool.
+3. **Define vector sizes and collections:**
+    - Retrieve a comma-separated list of vector sizes from the `VECTOR_SIZES` environment variable.
+    - Construct a list of collection names based on the vector sizes.
+4. **Iterate through collections:**
+    - For each collection:
+        - Initialize an offset for scrolling through the Qdrant collection.
+        - While there are more points to retrieve:
+            - Retrieve a batch of point IDs from Qdrant using `scroll_qdrant_collection_ids`.
+            - Construct a `MigratePointMessage` with the retrieved point IDs, source and destination collection names, and migration mode (BM25).
+            - Serialize the message to JSON.
+            - Push the message to the `collection_migration` Redis list using the synchronous Redis client.
+            - Update the offset for the next batch of points.
+
+## Side Effects
+- Modifies the `collection_migration` list in Redis by pushing migration messages.
+
+## Logging
+The code uses the `tracing_subscriber` library for logging. The log level is set to `INFO` by default.
+
+## Future Improvements
+- The code could be made more robust by handling potential errors during Redis communication.
+- The hardcoded BM25 parameters could be made configurable.
+- The code could be refactored to use the asynchronous Redis client for sending messages to the queue.

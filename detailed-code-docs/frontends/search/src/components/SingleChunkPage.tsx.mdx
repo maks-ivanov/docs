@@ -1,0 +1,82 @@
+---
+title: "SingleChunkPage.tsx"
+---
+
+## High-level description
+This component renders a single chunk of a document, along with its metadata and related chunks. It allows users to view, edit, and delete chunks, as well as interact with them through features like bookmarking and chat.
+
+## Table of contents
+- Imports
+- Interface definitions
+- Component logic
+  - State variables
+  - Data fetching functions
+  - Event handlers
+  - UI rendering logic
+
+## References
+- `FullScreenModal` from `./Atoms/FullScreenModal.tsx`
+- `ConfirmModal` from `./Atoms/ConfirmModal.tsx`
+- `ChunkMetadataDisplay` from `./ChunkMetadataDisplay.tsx`
+- `ChatPopup` from `./ChatPopup.tsx`
+- `DatasetAndUserContext` from `./Contexts/DatasetAndUserContext.tsx`
+
+## Symbols
+### `SingleChunkPage`
+#### Description
+This component fetches and displays a single chunk of a document based on the provided `chunkId`. It handles user interactions like expanding/collapsing content, viewing metadata, editing, deleting, and interacting with related chunks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | SingleChunkPageProps | An object containing the chunkId and defaultResultChunk. |
+
+#### Outputs
+Renders the UI for displaying a single chunk, including:
+- Chunk content
+- Chunk metadata
+- Related chunks
+- User interaction buttons (edit, delete, bookmark, etc.)
+- Modals for confirmation and chat
+
+#### Internal Logic
+1. **Initialization:**
+   - Retrieves API host from environment variables.
+   - Accesses dataset and user context.
+   - Initializes state variables for chunk metadata, errors, loading states, user data, bookmarks, modals, and recommended chunks.
+2. **Data Fetching:**
+   - `fetchChunkGroups`: Fetches chunk groups associated with the current user and dataset.
+   - `fetchBookmarks`: Fetches bookmarks for the current user and the displayed chunk.
+   - `fetchRecommendations`: Fetches recommended chunks based on the displayed chunk.
+   - `fetchChunk`: Fetches the chunk data based on the provided `chunkId`.
+3. **Error Handling:**
+   - Displays error messages if chunk fetching fails or user is unauthorized.
+4. **UI Rendering:**
+   - Conditionally renders loading indicators, error messages, or the chunk content based on the state.
+   - Uses `ScoreChunk` component to display individual chunk data.
+   - Displays related chunks using `ChunkMetadataDisplay` component.
+   - Renders modals for delete confirmation and chat.
+   - Provides buttons for user interactions like opening chat, editing, deleting, and bookmarking.
+
+#### Side Effects
+- Modifies local storage to persist previous messages for the chat functionality.
+- Updates URL search parameters based on the selected dataset.
+
+#### Performance Considerations
+- Uses `createMemo` to optimize the rendering of the chunk content and avoid unnecessary re-renders.
+- Implements lazy loading for related chunks to improve initial loading time.
+
+## Dependencies
+- solid-js
+- solid-js/web
+- @solidjs/router
+- solid-icons/*
+- sanitize-html
+
+### Configuration
+This component relies on environment variables for the API host (`VITE_API_HOST`).
+
+## Future Improvements
+- Implement pagination for related chunks to handle large numbers of recommendations.
+- Add error handling for data fetching functions like `fetchChunkGroups` and `fetchBookmarks`.
+- Consider using a more robust state management solution for complex interactions and data flow.

@@ -1,0 +1,65 @@
+---
+title: "pvc.yaml"
+---
+
+## High-level description
+This YAML template defines a Persistent Volume Claim (PVC) for a Redis master node in a Kubernetes environment. It's designed to be used with Helm charts and provides configurable storage options for Redis data persistence.
+
+## Table of contents
+- Conditional PVC creation
+- Metadata definition
+- PVC specification
+  - Access modes
+  - Storage request
+  - Selector (optional)
+  - Data source (optional)
+  - Storage class
+
+## Code Structure
+The template is structured as a single Kubernetes resource definition (PersistentVolumeClaim) with various conditional blocks and template functions to populate its fields based on provided values.
+
+## Symbols
+
+### PersistentVolumeClaim
+#### Description
+Defines a Kubernetes PersistentVolumeClaim resource for Redis master data storage.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| .Values | Object | Helm values passed to the template |
+| . (dot) | Object | The root context of the Helm chart |
+
+#### Internal Logic
+1. Checks conditions for PVC creation
+2. Defines metadata (name, namespace, labels, annotations)
+3. Specifies PVC requirements (access modes, storage size)
+4. Optionally includes selector and data source
+5. Sets storage class
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| common.names.fullname | Generates full name for the resource |
+| common.names.namespace | Retrieves namespace |
+| common.tplvalues.merge | Merges label values |
+| common.labels.standard | Generates standard labels |
+| common.tplvalues.render | Renders template values |
+| common.storage.class | Sets storage class |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| .Values.architecture | String | - | Redis architecture (must be "standalone") |
+| .Values.master.kind | String | - | Must be "Deployment" |
+| .Values.master.persistence.enabled | Boolean | - | Enables persistence |
+| .Values.master.persistence.existingClaim | String | - | Existing PVC name (if not set, creates new PVC) |
+| .Values.master.persistence.accessModes | List | - | Access modes for the PVC |
+| .Values.master.persistence.size | String | - | Requested storage size |
+| .Values.master.persistence.selector | Object | - | Optional PV selector |
+| .Values.master.persistence.dataSource | Object | - | Optional data source for the PVC |
+
+## Future Improvements
+- Consider adding support for multiple PVCs if needed for scaling
+- Implement volume expansion options if supported by the storage class
+- Add options for volume encryption or specific storage features

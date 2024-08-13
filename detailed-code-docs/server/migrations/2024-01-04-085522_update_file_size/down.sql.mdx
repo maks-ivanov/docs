@@ -1,0 +1,36 @@
+---
+title: "down.sql"
+---
+
+## High-level description
+This SQL script is designed to revert changes made to the database schema, specifically removing a trigger and a function related to updating file storage counts. It's part of a database migration system, likely used to manage changes in the database structure over time.
+
+## Table of contents
+- Drop trigger
+- Drop function
+
+## Symbols
+
+### DROP TRIGGER IF EXISTS update_files_storage_with_update_trigger ON files;
+#### Description
+This command removes a trigger named `update_files_storage_with_update_trigger` from the `files` table if it exists.
+
+#### Internal Logic
+- The `IF EXISTS` clause ensures that the command doesn't throw an error if the trigger doesn't exist.
+- The trigger being dropped was likely responsible for handling 'INSERT', 'UPDATE', and 'DELETE' operations on the `files` table.
+
+### DROP FUNCTION IF EXISTS update_files_storage_counts_with_update();
+#### Description
+This command removes a function named `update_files_storage_counts_with_update` if it exists in the database.
+
+#### Internal Logic
+- The `IF EXISTS` clause prevents errors if the function is not present.
+- The function being dropped was likely responsible for updating file storage counts, including logic for handling 'UPDATE' operations.
+
+## Side Effects
+- Removing the trigger will stop automatic updates to file storage counts when changes are made to the `files` table.
+- Dropping the function will remove the logic used for updating file storage counts, potentially affecting other parts of the system that may have relied on this function.
+
+## Future Improvements
+- Consider adding comments to explain why these specific elements are being removed and what impact it might have on the system.
+- If this is part of a larger migration process, it might be beneficial to include a reference to the corresponding 'up' migration for context.
