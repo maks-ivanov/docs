@@ -1,0 +1,72 @@
+---
+title: "autocorrelation.py"
+---
+
+## High-level description
+
+The `autocorrelation.py` file provides a utility function to compute Moran's I statistic for phylogenetic trees. Moran's I is a measure of spatial autocorrelation, which in this context is used to assess the correlation of numerical data across the leaves of a phylogenetic tree. The function can handle both pre-computed weight matrices and compute them from the tree structure if needed.
+
+## Code Structure
+
+The main function in this file is `compute_morans_i`, which relies on the `CassiopeiaTree` class from the `cassiopeia.data` module to represent the phylogenetic tree. It also uses utility functions from `cassiopeia.data.utilities` to compute weight matrices if they are not provided.
+
+## References
+
+- `CassiopeiaTree`: A class from `cassiopeia.data` that represents a phylogenetic tree and provides methods to interact with its structure and associated data.
+- `compute_phylogenetic_weight_matrix`: A utility function from `cassiopeia.data.utilities` used to compute a weight matrix based on the tree structure.
+- `AutocorrelationError`: A custom exception class from `cassiopeia.mixins` used to handle errors specific to autocorrelation computations.
+
+## Symbols
+
+### `compute_morans_i`
+#### Description
+Computes Moran's I statistic for a given phylogenetic tree and associated numerical data. Moran's I is a measure of spatial autocorrelation, indicating how similar or dissimilar data points are across the tree's leaves. The function can handle both pre-computed weight matrices and compute them from the tree structure if needed.
+
+#### Inputs
+| Name               | Type                  | Description                                                                 |
+|:-------------------|:----------------------|:----------------------------------------------------------------------------|
+| tree               | `CassiopeiaTree`      | The phylogenetic tree on which to compute Moran's I.                        |
+| meta_columns       | `Optional[List]`      | Columns in the tree's cell metadata to compute autocorrelations for.        |
+| X                  | `Optional[pd.DataFrame]` | Additional data matrix for computing autocorrelations.                      |
+| W                  | `Optional[pd.DataFrame]` | Phylogenetic weight matrix. If not provided, it will be computed.           |
+| inverse_weight_fn  | `Callable[[Union[int, float]], float]` | Function to compute inverse weights if the weight matrix is computed.       |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| I    | `Union[float, pd.DataFrame]` | Moran's I statistic, either as a single float or a DataFrame for multiple variables. |
+
+#### Internal Logic
+1. **Input Validation**: Checks if either `X` or `meta_columns` is provided. Raises an `AutocorrelationError` if neither is specified.
+2. **Data Preparation**: Extracts data from the tree's metadata if `meta_columns` is specified. Concatenates with `X` if both are provided.
+3. **Numerical Check**: Ensures all data values are numerical, raising an `AutocorrelationError` if not.
+4. **Weight Matrix**: Computes the weight matrix using `compute_phylogenetic_weight_matrix` if `W` is not provided.
+5. **Normalization**: Normalizes the weight matrix to sum to 1 and standardizes the data matrix `X`.
+6. **Moran's I Calculation**: Computes Moran's I using the formula \( I = X' \cdot Wn \cdot X \).
+7. **Output**: Returns a float if a single variable is tested, otherwise returns a DataFrame.
+
+## Side Effects
+- Raises `AutocorrelationError` for various input validation failures.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy`    | Used for numerical operations and data manipulation. |
+| `pandas`   | Used for handling data in DataFrame format. |
+| `cassiopeia.data.CassiopeiaTree` | Represents the phylogenetic tree structure. |
+| `cassiopeia.data.utilities` | Provides utility functions for computing weight matrices. |
+| `cassiopeia.mixins.AutocorrelationError` | Custom exception for error handling. |
+
+## Error Handling
+The function raises `AutocorrelationError` in several scenarios:
+- If neither `X` nor `meta_columns` is provided.
+- If `X` does not have the same indices as the tree's leaves.
+- If any data columns are not numeric.
+- If the weight matrix `W` does not match the tree's leaves.
+
+## Logging
+No explicit logging is implemented in this code.
+
+## TODOs
+No TODOs are present in the code.

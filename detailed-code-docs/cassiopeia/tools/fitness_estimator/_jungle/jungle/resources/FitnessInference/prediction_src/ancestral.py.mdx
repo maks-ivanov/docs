@@ -1,0 +1,140 @@
+---
+title: "ancestral.py"
+---
+
+## High-level description
+
+The `ancestral.py` file provides a class named `ancestral_sequences` that performs maximum likelihood estimation of ancestral sequences given a phylogenetic tree. The class uses a message-passing algorithm, akin to dynamic programming, to compute the most likely ancestral sequences and the marginal probabilities of different states at each node in the tree.
+
+## Code Structure
+
+The main symbol in the code is the `ancestral_sequences` class, which contains methods for initializing the class with a phylogenetic tree and sequence alignment, calculating state probabilities, normalizing probabilities, and computing ancestral sequences. The class relies on several methods to perform these tasks, including `calc_eigendecomp`, `calc_state_probabilites`, `normalize`, `log_normalize`, `calc_up_messages`, `calc_down_messages`, `calc_marginal_probabilities`, and `calc_most_likely_sequences`.
+
+## Symbols
+
+### `ancestral_sequences`
+#### Description
+The `ancestral_sequences` class is designed to estimate ancestral sequences for a given phylogenetic tree using a maximum likelihood approach. It computes the probabilities of different character states at each node in the tree and determines the most likely ancestral sequences.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | Biopython Tree | A phylogenetic tree object from Biopython. |
+| aln | Biopython Alignment | A sequence alignment with names matching the terminal nodes of the tree. |
+| alphabet | str | A string representing the possible character states (default is "ACGT"). |
+| sub_matrix | list or None | A substitution matrix for character state transitions. Defaults to a flat matrix if not provided. |
+| eps_branch_length | float | A small value to prevent division by zero in branch length calculations. |
+| copy_tree | bool | If true, a new tree object is created; otherwise, the original tree is used. |
+
+#### Outputs
+The class does not have a direct output but modifies the tree by adding ancestral sequence information and probabilities to its nodes.
+
+#### Internal Logic
+- **Initialization**: Sets up the tree, alignment, alphabet, and substitution matrix. Initializes probability arrays for each node.
+- **Eigen Decomposition**: Calculates eigenvalues and eigenvectors of the substitution matrix for state probability calculations.
+- **Message Passing**: Uses `calc_up_messages` and `calc_down_messages` to propagate state probabilities through the tree.
+- **Normalization**: Ensures probabilities sum to one using `normalize` and `log_normalize`.
+- **Ancestral Sequence Calculation**: Computes the most likely sequences and marginal probabilities using `calc_most_likely_sequences` and `calc_marginal_probabilities`.
+
+### `get_state_array`
+#### Description
+Provides a unified function to return an array of ones for initializing messages and probabilities.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state_array | numpy.ndarray | An array of ones with dimensions matching the sequence length and number of states. |
+
+### `calc_eigendecomp`
+#### Description
+Calculates the eigenvalues and eigenvectors of the substitution matrix, assuming it is symmetric.
+
+### `calc_state_probabilites`
+#### Description
+Computes the state probabilities over a time interval using the eigen decomposition of the substitution matrix.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| P | numpy.ndarray | Initial state probabilities. |
+| t | float | Time interval for evolution. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state_probabilities | numpy.ndarray | The evolved state probabilities. |
+
+### `normalize`
+#### Description
+Normalizes the distribution of states at each position in a clade so that the sum equals one.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clade | Biopython Clade | A clade in the phylogenetic tree. |
+
+### `log_normalize`
+#### Description
+Converts unnormalized logarithmic probabilities to linear form and normalizes them.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clade | Biopython Clade | A clade in the phylogenetic tree. |
+
+### `calc_up_messages`
+#### Description
+Recursively calculates the messages passed to the parents of each node in the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clade | Biopython Clade | A clade whose up message is to be calculated. |
+
+### `calc_down_messages`
+#### Description
+Calculates the messages passed to the children of each node in the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clade | Biopython Clade | A clade for which down messages are to be calculated. |
+
+### `calc_marginal_probabilities`
+#### Description
+Calculates the marginal probabilities by multiplying all incoming messages for a clade.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clade | Biopython Clade | A clade in the phylogenetic tree. |
+
+### `calc_most_likely_sequences`
+#### Description
+Recursively calculates the most likely sequences for each node in the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clade | Biopython Clade | A clade in the phylogenetic tree. |
+
+### `calc_ancestral_sequences`
+#### Description
+Calculates the most likely ancestral sequences and marginal probabilities for each position at each internal node in the tree.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `copy` | Used to create deep copies of the tree if `copy_tree` is true. |
+| `numpy` | Utilized for numerical operations, including matrix manipulations and eigen decomposition. |
+| `Bio.Phylo` | Provides the phylogenetic tree structure. |
+| `Bio.Seq` | Used for handling sequences in the tree nodes. |
+
+## Error Handling
+
+The code includes basic error handling for cases where a leaf node does not have a corresponding sequence in the alignment, printing a message to the console.
+
+## Logging
+
+The code uses print statements to log certain conditions, such as encountering NaN values during normalization or missing sequences for leaf nodes.

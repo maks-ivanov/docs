@@ -1,0 +1,64 @@
+---
+title: "missing_data_methods.py"
+---
+
+## High-level description
+
+The target file, `missing_data_methods.py`, provides a method for imputing missing data in a character matrix used in phylogenetic tree construction. Specifically, it implements the "Average" missing data imputation method, which is used to decide the placement of samples with missing data into one of two partitions based on the average similarity of mutations with samples in each partition.
+
+## Code Structure
+
+The main function in this file is `assign_missing_average`, which is used to impute missing data by calculating the average number of shared mutations between samples with missing data and samples in two partitions. This function relies on helper functions from other modules, such as `solver_utilities` for converting sample names to indices and `unravel_ambiguous_states` from `cassiopeia.mixins` to handle ambiguous states.
+
+## References
+
+- `solver_utilities.convert_sample_names_to_indices`: Used to convert sample names to their corresponding indices in the character matrix.
+- `unravel_ambiguous_states`: Used to handle ambiguous states in the character matrix.
+- `is_ambiguous_state`: Checks if a state is ambiguous, though not directly used in this file, it is relevant for understanding how ambiguous states are handled.
+
+## Symbols
+
+### `assign_missing_average`
+#### Description
+The `assign_missing_average` function is designed to impute missing data in a character matrix by assigning samples with missing data to one of two partitions. It calculates the average number of shared mutations between each sample with missing data and samples in the left and right partitions, placing the sample in the partition with the higher average similarity.
+
+#### Inputs
+| Name                  | Type                | Description                                                                 |
+|:----------------------|:--------------------|:----------------------------------------------------------------------------|
+| `character_matrix`    | `pd.DataFrame`      | The character matrix containing observed character states for the samples.  |
+| `missing_state_indicator` | `int`           | The character representing missing values.                                  |
+| `left_set`            | `List[str]`         | A list of sample names on the left of the partition.                        |
+| `right_set`           | `List[str]`         | A list of sample names on the right of the partition.                       |
+| `missing`             | `List[str]`         | A list of sample names with missing data to be imputed.                     |
+| `weights`             | `Optional[Dict[int, Dict[int, float]]]` | Optional weights for character/state mutation pairs.                        |
+
+#### Outputs
+| Name       | Type                | Description                                                                 |
+|:-----------|:--------------------|:----------------------------------------------------------------------------|
+| `left_set` | `List[str]`         | Updated list of sample names on the left of the partition after imputation. |
+| `right_set`| `List[str]`         | Updated list of sample names on the right of the partition after imputation.|
+
+#### Internal Logic
+1. Convert sample names to indices using `solver_utilities.convert_sample_names_to_indices`.
+2. Define a helper function `score_side` to calculate the number of shared character/state pairs between a sample and a partition.
+3. For each sample with missing data, calculate scores for both the left and right partitions using `score_side`.
+4. Compare the average scores for the left and right partitions and assign the sample to the partition with the higher score.
+5. Return the updated left and right partitions.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `numpy`    | Used for numerical operations and array manipulations.                  |
+| `pandas`   | Used for handling the character matrix as a DataFrame.                  |
+| `cassiopeia.mixins` | Provides functions for handling ambiguous states.              |
+| `cassiopeia.solver.solver_utilities` | Provides utility functions for solver operations.|
+
+## Error Handling
+The function does not explicitly handle errors but assumes that inputs are well-formed. It relies on the correctness of helper functions like `convert_sample_names_to_indices` and `unravel_ambiguous_states`.
+
+## Logging
+There is no logging implemented in this code.
+
+## TODOs
+There are no TODOs or notes left in the code.

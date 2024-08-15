@@ -1,0 +1,62 @@
+---
+title: "_iid_exponential_bayesian_cpp.h"
+---
+
+## High-level description
+
+The code in the target file defines a C++ header for a class `_InferPosteriorTimes`, which is part of a Bayesian inference tool for estimating branch lengths in phylogenetic trees. The class provides methods to compute posterior distributions of times at which mutations occur in a tree structure, using a Bayesian approach with an exponential prior. The class is designed to handle the internal logic of the inference process, including memory management and computation of various probabilistic measures.
+
+## Code Structure
+
+The main symbol in the code is the class `_InferPosteriorTimes`, which encapsulates all the functionality related to the Bayesian inference process. The class contains methods for running the inference (`run`), accessing results (`get_posterior_means_res`, `get_posteriors_res`, `get_log_joints_res`, `get_log_likelihood_res`), and several private methods for internal computations and memory management. The class relies on several private member variables to store input parameters and computed results.
+
+## Symbols
+
+### `_InferPosteriorTimes`
+#### Description
+The `_InferPosteriorTimes` class is responsible for performing Bayesian inference to estimate the times at which mutations occur in a phylogenetic tree. It uses a discretized time model and exponential priors to compute posterior distributions and other probabilistic measures related to the tree's structure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N | int | Number of nodes in the tree. |
+| children | vector&lt;vector&lt;int&gt;&gt; | Adjacency list representing the children of each node. |
+| root | int | Index of the root node. |
+| is_internal_node | vector&lt;int&gt; | Flags indicating whether each node is internal. |
+| get_number_of_mutated_characters_in_node | vector&lt;int&gt; | Number of mutated characters at each node. |
+| non_root_internal_nodes | vector&lt;int&gt; | List of internal nodes excluding the root. |
+| leaves | vector&lt;int&gt; | List of leaf nodes. |
+| parent | vector&lt;int&gt; | Parent node for each node. |
+| K | int | Maximum number of mutations. |
+| K_non_missing | vector&lt;int&gt; | Number of non-missing mutations for each node. |
+| T | int | Number of time discretization steps. |
+| r | double | Mutation rate. |
+| lam | double | Division rate. |
+| sampling_probability | double | Probability of sampling a lineage. |
+| is_leaf | vector&lt;int&gt; | Flags indicating whether each node is a leaf. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| posterior_means_res | vector&lt;pair&lt;int, double&gt;&gt; | Posterior means for each node. |
+| posteriors_res | vector&lt;pair&lt;int, vector&lt;double&gt;&gt;&gt; | Posterior distributions for each node. |
+| log_joints_res | vector&lt;pair&lt;int, vector&lt;double&gt;&gt;&gt; | Log joint probabilities for each node. |
+| log_likelihood_res | double | Log likelihood of the observed data given the model. |
+
+#### Internal Logic
+The class uses a dynamic programming approach to compute the probabilities of different mutation and division events in the tree. It maintains caches (`down_cache`, `up_cache`) to store intermediate results for efficiency. The `run` method orchestrates the entire inference process, including memory allocation, computation of probabilities, and result storage. The methods `down` and `up` compute the probabilities of generating data below and above a node, respectively, using recursive formulations. The class also includes methods for precomputing unsampled probabilities and validating state transitions.
+
+## Side Effects
+The class modifies its internal state by allocating and deallocating memory for caches and result storage. It also updates member variables with computed results during the inference process.
+
+## Dependencies
+The code relies on standard C++ libraries such as `&lt;vector&gt;`, `&lt;iostream&gt;`, and `&lt;cmath&gt;` for data structures and mathematical operations.
+
+## Error Handling
+The code includes error handling for memory allocation failures and invalid state transitions. It throws exceptions with descriptive messages when these errors occur.
+
+## Performance Considerations
+The class uses dynamic programming and caching to optimize the computation of probabilities, which is crucial given the potentially large size of the input tree and the number of discretization steps. Memory management is carefully handled to ensure efficient use of resources.
+
+## Logging
+The code uses standard error output (`cerr`) to log critical errors, such as invalid discretization levels, which aids in debugging and understanding runtime issues.

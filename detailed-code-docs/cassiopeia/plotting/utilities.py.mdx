@@ -1,0 +1,223 @@
+---
+title: "utilities.py"
+---
+
+## High-level description
+
+The `utilities.py` file in the `cassiopeia/plotting` module provides utility functions for plotting phylogenetic trees locally. These functions are designed to compute coordinates for nodes and branches of a tree, convert between coordinate systems, and generate color mappings for visualizing tree annotations. The utilities support both rectangular and polar coordinate systems, and they facilitate the creation of color strips for annotating tree leaves with categorical or continuous data.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific tasks related to plotting trees. These functions are interconnected in that they often call each other to perform conversions or calculations necessary for plotting. For example, `place_tree` uses `polar_to_cartesian` to convert coordinates when plotting in polar mode.
+
+## Symbols
+
+### `degrees_to_radians`
+#### Description
+Converts an angle from degrees to radians.
+
+#### Inputs
+| Name    | Type  | Description      |
+|:--------|:------|:-----------------|
+| degrees | float | Angle in degrees |
+
+#### Outputs
+| Name   | Type  | Description         |
+|:-------|:------|:--------------------|
+| result | float | Angle in radians    |
+
+### `polar_to_cartesian`
+#### Description
+Converts polar coordinates to Cartesian coordinates.
+
+#### Inputs
+| Name    | Type  | Description          |
+|:--------|:------|:---------------------|
+| degrees | float | Angle in degrees     |
+| r       | float | Radius               |
+
+#### Outputs
+| Name | Type            | Description                |
+|:-----|:----------------|:---------------------------|
+| x    | float           | X-coordinate in Cartesian  |
+| y    | float           | Y-coordinate in Cartesian  |
+
+### `polars_to_cartesians`
+#### Description
+Converts a list of polar coordinates to Cartesian coordinates.
+
+#### Inputs
+| Name    | Type       | Description               |
+|:--------|:-----------|:--------------------------|
+| degrees | List[float]| List of angles in degrees |
+| rs      | List[float]| List of radii             |
+
+#### Outputs
+| Name | Type         | Description                |
+|:-----|:-------------|:---------------------------|
+| xs   | List[float]  | List of X-coordinates      |
+| ys   | List[float]  | List of Y-coordinates      |
+
+### `place_tree`
+#### Description
+Computes the coordinates of nodes and branches of a tree for visualization.
+
+#### Inputs
+| Name                          | Type                                      | Description                                                                 |
+|:------------------------------|:------------------------------------------|:----------------------------------------------------------------------------|
+| tree                          | CassiopeiaTree                            | The tree to place on the coordinate grid                                    |
+| depth_key                     | Optional[str]                             | Node attribute to use as depth                                              |
+| orient                        | Union[Literal["down", "up", "left", "right"], float] | Orientation of the tree                                                     |
+| depth_scale                   | float                                     | Scale for the depth of the tree                                             |
+| width_scale                   | float                                     | Scale for the width of the tree                                             |
+| extend_branches               | bool                                      | Whether to extend branch lengths                                            |
+| angled_branches               | bool                                      | Whether to display branches as angled                                       |
+| polar_interpolation_threshold | float                                     | Threshold for polar interpolation                                           |
+| polar_interpolation_step      | float                                     | Step for polar interpolation                                                |
+| add_root                      | bool                                      | Whether to add a synthetic root                                             |
+
+#### Outputs
+| Name           | Type                                                                 | Description                                                                 |
+|:---------------|:---------------------------------------------------------------------|:----------------------------------------------------------------------------|
+| node_coords    | Dict[str, Tuple[float, float]]                                       | Dictionary of node coordinates                                              |
+| branch_coords  | Dict[Tuple[str, str], Tuple[List[float], List[float]]]               | Dictionary of branch coordinates                                            |
+
+#### Internal Logic
+- Computes node positions based on depth and orientation.
+- Handles both rectangular and polar coordinate systems.
+- Optionally extends branches and adds a synthetic root.
+
+### `place_colorstrip`
+#### Description
+Computes the coordinates of boxes representing a color strip for annotating tree leaves.
+
+#### Inputs
+| Name          | Type                                      | Description                                                                 |
+|:--------------|:------------------------------------------|:----------------------------------------------------------------------------|
+| anchor_coords | Dict[str, Tuple[float, float]]            | Anchor coordinates for the color strip                                      |
+| width         | float                                     | Width of the box                                                            |
+| height        | float                                     | Height of the box                                                           |
+| spacing       | float                                     | Space between consecutive color strips                                      |
+| loc           | Literal["left", "right", "up", "down", "polar"] | Location of the box relative to the anchors                                 |
+
+#### Outputs
+| Name              | Type                                                                 | Description                                                                 |
+|:------------------|:---------------------------------------------------------------------|:----------------------------------------------------------------------------|
+| boxes             | Dict[str, Tuple[List[float], List[float]]]                           | Dictionary of box coordinates                                               |
+| next_anchor_coords| Dict[str, Tuple[float, float]]                                       | Dictionary of the next set of anchor coordinates                            |
+
+### `generate_random_color`
+#### Description
+Generates a random RGB color within specified ranges.
+
+#### Inputs
+| Name         | Type                      | Description                                                                 |
+|:-------------|:--------------------------|:----------------------------------------------------------------------------|
+| r_range      | Tuple[float, float]       | Range for the red component                                                 |
+| g_range      | Tuple[float, float]       | Range for the green component                                               |
+| b_range      | Tuple[float, float]       | Range for the blue component                                                |
+| random_state | Optional[np.random.RandomState] | Random state for reproducibility                                            |
+
+#### Outputs
+| Name | Type            | Description                |
+|:-----|:----------------|:---------------------------|
+| rgb  | Tuple[int, int, int] | Random RGB color       |
+
+### `get_random_indel_colors`
+#### Description
+Assigns random colors to each unique indel in a lineage profile.
+
+#### Inputs
+| Name            | Type                      | Description                                                                 |
+|:----------------|:--------------------------|:----------------------------------------------------------------------------|
+| lineage_profile | pd.DataFrame              | Lineage profile reporting indels observed at each cut site                  |
+| random_state    | Optional[np.random.RandomState] | Random state for reproducibility                                            |
+
+#### Outputs
+| Name         | Type            | Description                |
+|:-------------|:----------------|:---------------------------|
+| indel_colors | pd.DataFrame    | Mapping from indel to HSV color |
+
+### `get_indel_colors`
+#### Description
+Maps indels to HSV colors using prior probabilities.
+
+#### Inputs
+| Name          | Type                      | Description                                                                 |
+|:--------------|:--------------------------|:----------------------------------------------------------------------------|
+| indel_priors  | pd.DataFrame              | DataFrame mapping indels to probabilities                                   |
+| random_state  | Optional[np.random.RandomState] | Random state for reproducibility                                            |
+
+#### Outputs
+| Name         | Type            | Description                |
+|:-------------|:----------------|:---------------------------|
+| indel_colors | pd.DataFrame    | Mapping from indel to color |
+
+### `hex_to_rgb`
+#### Description
+Converts a hex color code to an RGB tuple.
+
+#### Inputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| value | str   | Hex color code             |
+
+#### Outputs
+| Name | Type            | Description                |
+|:-----|:----------------|:---------------------------|
+| rgb  | Tuple[int, int, int] | RGB color tuple        |
+
+### `rgb_to_hex`
+#### Description
+Converts an RGB tuple to a hex color code.
+
+#### Inputs
+| Name | Type            | Description                |
+|:-----|:----------------|:---------------------------|
+| rgb  | Tuple[int, int, int] | RGB color tuple        |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| hex   | str   | Hex color code             |
+
+### `prepare_alleletable`
+#### Description
+Prepares indel colors and a lineage profile from an allele table.
+
+#### Inputs
+| Name          | Type                      | Description                                                                 |
+|:--------------|:--------------------------|:----------------------------------------------------------------------------|
+| allele_table  | pd.DataFrame              | Allele table containing indels                                              |
+| leaves        | List[str]                 | Leaves of the tree                                                          |
+| indel_priors  | Optional[pd.DataFrame]    | Prior probabilities for each indel                                          |
+| random_state  | Optional[np.random.RandomState] | Random state for reproducibility                                            |
+
+#### Outputs
+| Name              | Type            | Description                |
+|:------------------|:----------------|:---------------------------|
+| lineage_profile   | pd.DataFrame    | Lineage profile            |
+| indel_colors      | pd.DataFrame    | Indel colors               |
+
+## References
+
+- `CassiopeiaTree`: Used in `place_tree` and other functions to represent the tree structure.
+- `preprocess_utilities.convert_alleletable_to_lineage_profile`: Used in `prepare_alleletable` to convert allele tables.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `networkx`         | Used for graph operations and tree traversal.                           |
+| `numpy`            | Used for numerical operations and array manipulations.                  |
+| `pandas`           | Used for handling data frames, especially for lineage profiles.         |
+| `matplotlib.colors`| Used for color conversions and handling color maps.                     |
+| `typing_extensions`| Provides the `Literal` type for type hinting.                           |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checks and assumptions about input data. It assumes that inputs are well-formed and that the tree structure is valid.
+
+## Logging
+
+The code does not implement any logging mechanisms.

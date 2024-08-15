@@ -1,0 +1,75 @@
+---
+title: "SpectralGreedySolver.py"
+---
+
+## High-level description
+
+The `SpectralGreedySolver` is a specialized solver that extends the `GreedySolver` class to incorporate spectral methods for optimizing partitions in phylogenetic tree reconstruction. It uses a top-down approach to recursively split a set of samples based on mutation frequencies and further refines these splits using a spectral hill-climbing procedure to optimize the normalized cut on a similarity graph. This solver is particularly useful for handling cases with missing data and aims to improve the internal similarity within partitions.
+
+## Code Structure
+
+The `SpectralGreedySolver` class inherits from the `GreedySolver` class, which is a part of the Cassiopeia solver framework. The main method of interest in this class is `perform_split`, which is responsible for partitioning the samples using both greedy and spectral criteria. The class also utilizes several utility functions and methods from related modules, such as `graph_utilities` for constructing similarity graphs and `missing_data_methods` for handling missing data.
+
+## References
+
+- `GreedySolver`: The parent class from which `SpectralGreedySolver` inherits.
+- `graph_utilities`: Provides functions for constructing and optimizing similarity graphs.
+- `missing_data_methods`: Contains methods for imputing missing data.
+- `solver_utilities`: Offers various utility functions used throughout the solver module.
+
+## Symbols
+
+### SpectralGreedySolver
+#### Description
+The `SpectralGreedySolver` class implements a phylogenetic tree reconstruction algorithm that combines greedy partitioning with spectral optimization. It aims to improve the quality of partitions by optimizing the normalized cut on a similarity graph, which is constructed based on observed mutations in the samples.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| missing_data_classifier | Callable | Function or method for handling missing data. Default is `assign_missing_average`. |
+| similarity_function | Callable | Function to calculate similarity scores between samples. Default is `hamming_similarity_without_missing`. |
+| threshold | int | Minimum similarity threshold for including an edge in the similarity graph. Default is 0. |
+| prior_transformation | str | Method for transforming priors into weights. Default is "negative_log". |
+
+#### Outputs
+The class does not have direct outputs but modifies the state of the phylogenetic tree by partitioning samples.
+
+### `perform_split`
+#### Description
+The `perform_split` method partitions a set of samples into two groups using both greedy and spectral criteria. It first uses the most frequent mutation to split the samples and then refines the partition using a spectral hill-climbing procedure to optimize the normalized cut on a similarity graph.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | Matrix representing character states for samples. |
+| samples | List[int] | List of sample indices to partition. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for character/state pairs, derived from priors. |
+| missing_state_indicator | int | Indicator for missing data in the character matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tuple[List[str], List[str]] | Tuple | Two lists representing the left and right partition groups. |
+
+#### Internal Logic
+1. **Mutation Frequency Calculation**: Computes the frequency of each mutation in the sample set.
+2. **Initial Greedy Split**: Uses the most frequent mutation to perform an initial partition of the samples.
+3. **Missing Data Handling**: Uses the specified missing data classifier to handle samples with missing data.
+4. **Similarity Graph Construction**: Constructs a similarity graph using the specified similarity function and threshold.
+5. **Spectral Optimization**: Applies a hill-climbing procedure to optimize the partition for the normalized cut on the similarity graph.
+
+## Side Effects
+- Modifies the state of the phylogenetic tree by partitioning samples.
+- Utilizes external resources such as similarity graphs and missing data methods.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| numpy | Used for numerical operations and array manipulations. |
+| pandas | Utilized for handling data in DataFrame format. |
+| networkx | Used for constructing and manipulating graphs. |
+
+## TODOs
+- Implement `FuzzySolver`.
+- Experiment to find the best default similarity function.

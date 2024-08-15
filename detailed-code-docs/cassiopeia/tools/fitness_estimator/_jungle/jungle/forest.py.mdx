@@ -1,0 +1,101 @@
+---
+title: "forest.py"
+---
+
+## High-level description
+
+The `forest.py` file defines a `Forest` class that represents a collection of phylogenetic trees, providing methods for constructing, manipulating, and analyzing these trees. The class includes functionality for loading trees from various file formats, annotating tree nodes with features, calculating statistical metrics, and saving the forest to disk.
+
+## Code Structure
+
+The main symbol in this code is the `Forest` class, which encapsulates a collection of `Tree` objects. The `Forest` class provides methods for creating forests from different sources, manipulating the trees, and calculating various metrics. The `Tree` class, which is imported from `jungle.tree`, is used extensively within the `Forest` class to perform operations on individual trees.
+
+## Symbols
+
+### `Forest`
+#### Description
+The `Forest` class represents a collection of phylogenetic trees and provides methods for constructing, manipulating, and analyzing these trees. It supports operations such as loading trees from Newick files, generating trees, annotating nodes with features, calculating statistical metrics, and saving the forest to disk.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| trees | list | A list of `Tree` objects. |
+| name | str | An optional name for the forest. |
+| params | dict | Optional parameters for the forest. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- **Initialization**: Initializes a forest with a list of trees, a name, and optional parameters.
+- **Loading and Saving**: Methods like `from_newick`, `from_pickle`, and `to_newick` handle loading and saving forests from/to various file formats.
+- **Tree Manipulation**: Methods such as `annotate_standard_node_features`, `rescale`, and `resolve_polytomy` manipulate the trees within the forest.
+- **Statistical Analysis**: Methods like `site_frequency_spectrum`, `fay_and_wus_H`, and `tajimas_D` calculate various statistical metrics for the trees.
+- **Concatenation**: The `concat` method combines two forests into one, merging their trees and attributes.
+
+### `unique_list_str`
+#### Description
+Ensures each element of a list of strings is unique by appending a number to duplicates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| L | list | A list of strings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| L_unique | list | A list of unique strings. |
+
+#### Internal Logic
+- Iterates over the list, appending a number to duplicate strings to ensure uniqueness.
+
+### `_concat_lists_safe`
+#### Description
+Safely concatenates two lists, handling cases where one or both lists may be `None`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| A | list or None | The first list to concatenate. |
+| B | list or None | The second list to concatenate. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | list or None | The concatenated list or `None`. |
+
+#### Internal Logic
+- Checks if either list is `None` and returns the other list if so.
+- If both are lists, concatenates them.
+- Raises a `TypeError` if neither input is a list or `None`.
+
+## References
+
+- **`Tree` Class**: The `Forest` class relies heavily on the `Tree` class from the `jungle.tree` module for operations on individual trees.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `gzip` | For handling gzipped files. |
+| `os` | For file operations like checking existence and removing files. |
+| `pickle` | For serializing and deserializing Python objects. |
+| `tarfile` | For handling tar archives. |
+| `numpy` | For numerical operations, particularly in statistical calculations. |
+| `pandas` | For handling data in tabular form, especially when dealing with node features. |
+| `scipy` | For statistical functions, particularly in calculating standard error of the mean. |
+
+## Error Handling
+
+- The `fit_metric` method prints an error message if the specified attribute does not exist in the forest.
+
+## Logging
+
+- The code does not implement any explicit logging mechanisms.
+
+## TODOs
+
+- The methods `gini`, `gini_by_depth`, and `selection_on_subclones` are defined but not implemented, indicating potential areas for future development.

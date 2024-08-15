@@ -1,0 +1,174 @@
+---
+title: "dissimilarity_functions.py"
+---
+
+## High-level description
+
+The `dissimilarity_functions.py` file provides a set of functions to compute dissimilarity and similarity metrics between phylogenetic samples. These functions are used to evaluate the differences or similarities between character states of samples, which is crucial for phylogenetic analysis and tree construction. The file includes various implementations of Hamming distance and similarity measures, both weighted and unweighted, and also supports handling missing data.
+
+## Code Structure
+
+The main symbols in the code are functions that compute different types of dissimilarity and similarity metrics. These functions are interconnected in the sense that they all operate on lists of character states and optionally use weights to adjust the calculations. The functions are designed to handle missing data and can be used in different contexts depending on the specific requirements of the phylogenetic analysis.
+
+## Symbols
+
+### `weighted_hamming_distance`
+#### Description
+Computes the weighted Hamming distance between two samples, considering the probability of character states occurring. It adjusts the dissimilarity score based on whether states are identical or different, and whether weights are provided.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | List[int] | Character states of the first sample |
+| s2 | List[int] | Character states of the second sample |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| d | float | A dissimilarity score |
+
+#### Internal Logic
+- Iterates over character states, skipping missing values.
+- Adjusts the dissimilarity score based on state comparison and weights.
+- Normalizes the score by the number of non-missing characters.
+
+### `hamming_similarity_without_missing`
+#### Description
+Calculates the number of non-missing character/state mutations shared by two samples, optionally weighted.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | List[int] | Character states of the first sample |
+| s2 | List[int] | Character states of the second sample |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity | float | Number of shared mutations, weighted or unweighted |
+
+### `hamming_similarity_normalized_over_missing`
+#### Description
+Calculates the number of shared mutations between two samples, normalized over the amount of missing data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | List[int] | Character states of the first sample |
+| s2 | List[int] | Character states of the second sample |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity | float | Normalized number of shared mutations |
+
+### `hamming_distance`
+#### Description
+Computes the standard Hamming distance between two samples, with an option to ignore missing data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | np.array(int) | Character states of the first sample |
+| s2 | np.array(int) | Character states of the second sample |
+| ignore_missing_state | bool | Whether to ignore missing data |
+| missing_state_indicator | int | Indicator for missing values |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dist | int | Number of positions where samples disagree |
+
+### `weighted_hamming_similarity`
+#### Description
+Calculates the weighted number of non-missing character/state mutations shared by two samples.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | List[int] | Character states of the first sample |
+| s2 | List[int] | Character states of the second sample |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity | float | Weighted number of shared mutations |
+
+### `exponential_negative_hamming_distance`
+#### Description
+Provides a similarity function derived from the inverse of the weighted Hamming distance, returning an exponential similarity score.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | List[int] | Character states of the first sample |
+| s2 | List[int] | Character states of the second sample |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity | float | Exponential similarity score |
+
+### `cluster_dissimilarity`
+#### Description
+Computes the dissimilarity between possibly ambiguous character strings using a specified dissimilarity function and linkage method.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity_function | Callable | Function to compute pairwise dissimilarities |
+| s1 | Union[List[int], List[Tuple[int, ...]]] | First sample, possibly ambiguous |
+| s2 | Union[List[int], List[Tuple[int, ...]]] | Second sample, possibly ambiguous |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+| linkage_function | Callable | Function to aggregate dissimilarities |
+| normalize | bool | Whether to normalize the dissimilarity |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity | float | Dissimilarity between the two samples |
+
+### `cluster_dissimilarity_weighted_hamming_distance_min_linkage`
+#### Description
+Computes the dissimilarity between possibly ambiguous character strings using weighted Hamming distance and minimum linkage.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | Union[List[int], List[Tuple[int, ...]]] | First sample, possibly ambiguous |
+| s2 | Union[List[int], List[Tuple[int, ...]]] | Second sample, possibly ambiguous |
+| missing_state_indicator | int | Indicator for missing values |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity | float | Dissimilarity between the two samples |
+
+## References
+
+- The `weighted_hamming_distance` function is referenced in the `NeighborJoiningSolver` and `UPGMASolver` classes as a dissimilarity function.
+- The `hamming_distance` function is used in the `ILPSolver` class for computing distances in the potential graph.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| numba | Used for JIT compilation to optimize performance of certain functions |
+| numpy | Provides array and mathematical operations |
+| itertools | Used for efficient looping over iterables |
+
+## TODOs
+
+- There are TODO comments suggesting optimization of certain functions using masks for better performance.

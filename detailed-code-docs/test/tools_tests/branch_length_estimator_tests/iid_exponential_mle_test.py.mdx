@@ -1,0 +1,54 @@
+---
+title: "iid_exponential_mle_test.py"
+---
+
+## High-level description
+
+The target file `iid_exponential_mle_test.py` contains a suite of unit tests for the `IIDExponentialMLE` class from the `cassiopeia.tools` module. This class is responsible for estimating branch lengths in phylogenetic trees using a model that assumes independent and identically distributed (IID) exponential waiting times for CRISPR/Cas9 mutations. The tests validate the behavior of the `IIDExponentialMLE` class under various scenarios, including edge cases and hand-solvable problems, ensuring that the branch length estimation is accurate and robust.
+
+## Code Structure
+
+The main symbols in the code are the test methods within the `TestIIDExponentialMLE` class, which is a subclass of `unittest.TestCase`. Each test method is designed to test a specific aspect of the `IIDExponentialMLE` class, such as handling of degenerate character matrices, saturation, and specific hand-solvable problems. The tests use the `parameterized` library to run the same test logic with different solvers (`ECOS` and `SCS`).
+
+## References
+
+- `CassiopeiaTree`: Used to represent the phylogenetic tree structure and manage character states.
+- `IIDExponentialMLE`: The class being tested, which estimates branch lengths using a maximum likelihood approach.
+- `Cas9LineageTracingDataSimulator`: Used in one of the tests to simulate data for testing the estimator.
+
+## Symbols
+
+### `TestIIDExponentialMLE`
+#### Description
+A test class that contains unit tests for the `IIDExponentialMLE` class. It uses the `unittest` framework to define and run tests that verify the correctness of branch length estimation under various conditions.
+
+#### Inputs
+Each test method takes parameters for the solver name and type, which are used to configure the `IIDExponentialMLE` instance.
+
+#### Outputs
+The test methods do not return outputs but use assertions to validate expected outcomes.
+
+#### Internal Logic
+- **Test Methods**: Each method sets up a specific tree topology and character state configuration, then uses `IIDExponentialMLE` to estimate branch lengths. Assertions are used to check that the estimated values match expected results or that appropriate exceptions are raised.
+- **Parameterization**: The `parameterized.expand` decorator is used to run each test with different solvers, ensuring that the `IIDExponentialMLE` class behaves consistently across different optimization backends.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework for defining and running tests. |
+| `parameterized` | Allows parameterization of test methods to run them with different inputs. |
+| `networkx` | Used to create and manipulate the tree structure as a directed graph. |
+| `numpy` | Provides numerical operations and constants used in the tests. |
+
+## Error Handling
+
+The tests check for specific error conditions, such as degenerate character matrices (fully mutated or unmutated), by asserting that a `ValueError` is raised when these conditions are encountered.
+
+## Logging
+
+No explicit logging is implemented in the test code. The `unittest` framework handles test output and reporting.
+
+## TODOs
+
+No TODOs or notes are present in the code.

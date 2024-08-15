@@ -1,0 +1,67 @@
+---
+title: "cassiopeia_preprocess.py"
+---
+
+## High-level description
+
+The `cassiopeia_preprocess.py` file serves as the main entry point for the Cassiopeia preprocessing pipeline. It orchestrates the execution of various stages of preprocessing sequencing data, leveraging high-level functions from the `pipeline` module. The script is designed to process data from a BAM file, which contains cell barcodes and UMIs, and transform it into a format suitable for phylogenetic inference.
+
+## Code Structure
+
+The main function in this file is `main()`, which sets up the preprocessing pipeline by parsing a configuration file, validating the stages, and executing each stage in sequence. The stages are defined in the `STAGES` dictionary, which maps stage names to their corresponding functions in the `pipeline` module.
+
+## References
+
+- `pipeline`: This module contains the high-level functions that perform the actual data processing for each stage.
+- `setup_utilities`: Provides utility functions for setting up the pipeline environment and parsing configuration files.
+- `utilities`: Contains general utility functions used throughout the preprocessing pipeline.
+- `logger`: A logging utility for capturing runtime information and warnings.
+
+## Symbols
+
+### `main`
+#### Description
+The `main` function is the central function that initializes and runs the Cassiopeia preprocessing pipeline. It reads a configuration file, validates the stages, sets up the output directory, and executes each stage in the pipeline.
+
+#### Inputs
+| Name  | Type | Description                        |
+|:------|:-----|:-----------------------------------|
+| config | str | Path to the configuration file for analysis. |
+
+#### Outputs
+None. The function performs its operations as side effects, such as writing output files and logging information.
+
+#### Internal Logic
+1. **Argument Parsing**: Uses `argparse` to parse the command-line argument for the configuration file path.
+2. **Configuration Parsing**: Reads and parses the configuration file using `setup_utilities.parse_config`.
+3. **Parameter Extraction**: Extracts general parameters like `name`, `output_directory`, `input_files`, `entry_point`, and `exit_point`.
+4. **Stage Validation**: Checks if all specified stages in the configuration are valid by comparing them against the `STAGES` dictionary.
+5. **Output Directory Setup**: Calls `setup_utilities.setup` to prepare the output directory.
+6. **Pipeline Plan Creation**: Uses `setup_utilities.create_pipeline` to determine the sequence of stages to execute based on the entry and exit points.
+7. **Data Initialization**: Initializes the data variable based on the entry point and input files.
+8. **Pipeline Execution**: Iterates over each stage in the pipeline, executing the corresponding function from the `STAGES` dictionary. Handles specific conditions like skipping stages if certain parameters are not provided.
+9. **Output Writing**: Writes the output of each stage to a file if the result is a pandas DataFrame.
+
+## Side Effects
+- Modifies the file system by creating directories and writing output files.
+- Logs information and warnings to the console and log files.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `argparse` | For parsing command-line arguments. |
+| `logging` | For logging runtime information and warnings. |
+| `pandas` | For handling data in DataFrame format. |
+| `os` | For interacting with the operating system, such as file and directory operations. |
+
+## Error Handling
+- Raises `PreprocessError` if an unrecognized stage is specified in the configuration.
+- Raises `PreprocessError` if the number of input files is incorrect for a given stage.
+
+## Logging
+- Utilizes a namespaced logger to capture runtime information and warnings.
+- Logs are written to both the console and log files in the output directory.
+
+## TODOs
+- Include invocation instructions and pipeline specifics in the documentation.

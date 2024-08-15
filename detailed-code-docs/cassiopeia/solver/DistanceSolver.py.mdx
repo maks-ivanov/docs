@@ -1,0 +1,63 @@
+---
+title: "DistanceSolver.py"
+---
+
+## High-level description
+
+The `DistanceSolver` class in the `DistanceSolver.py` file is a subclass of `CassiopeiaSolver` designed to implement distance-based phylogenetic tree reconstruction algorithms. It provides a framework for solving phylogenetic trees using a dissimilarity map, which is iteratively updated as samples are merged. The class is intended to be extended by specific algorithms like Neighbor-Joining and UPGMA, which define their own methods for selecting "cherries" (pairs of samples to merge) and updating the dissimilarity map.
+
+## Code Structure
+
+The `DistanceSolver` class extends the `CassiopeiaSolver` abstract class and provides a base implementation for distance-based tree reconstruction. It interacts with the `CassiopeiaTree` class to manage tree data and uses utility functions from `solver_utilities` and `dissimilarity_functions` to perform computations. The class is designed to be subclassed by specific algorithms that implement the abstract methods for cherry selection and dissimilarity map updates.
+
+## References
+
+- `CassiopeiaSolver`: The abstract base class that `DistanceSolver` extends.
+- `CassiopeiaTree`: A data structure used to store and manipulate phylogenetic trees.
+- `solver_utilities`: Provides utility functions for node naming and dissimilarity map handling.
+- `dissimilarity_functions`: Contains functions for computing dissimilarities between samples.
+
+## Symbols
+
+### `DistanceSolver`
+#### Description
+The `DistanceSolver` class is a generic distance-based solver for phylogenetic tree reconstruction. It uses a dissimilarity map to iteratively merge samples and update the map, eventually constructing a tree. The class is designed to be extended by specific algorithms that define how to select cherries and update the dissimilarity map.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity_function | Optional[Callable] | Function to compute dissimilarity between samples. |
+| add_root | bool | Whether to add an implicit root to the tree. |
+| prior_transformation | str | Method for transforming priors into weights. |
+| threads | int | Number of threads to use for computation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies the `CassiopeiaTree` object. |
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with the provided dissimilarity function, root option, prior transformation, and threading.
+- **get_dissimilarity_map**: Obtains or generates a dissimilarity map from a `CassiopeiaTree`.
+- **solve**: Implements a general bottom-up distance-based solver routine, iteratively finding and merging cherries, updating the dissimilarity map, and constructing the tree.
+- **_ccphylo_solve**: Uses the CCPhylo package for fast distance-based tree reconstruction if specified.
+- **setup_dissimilarity_map**: Prepares the dissimilarity map and root sample for solving.
+- **Abstract Methods**: Defines abstract methods `root_tree`, `find_cherry`, `update_dissimilarity_map`, and `setup_root_finder` for subclasses to implement specific logic.
+
+## Side Effects
+- Modifies the `CassiopeiaTree` object by populating it with a reconstructed tree.
+- May alter the character matrix and dissimilarity map within the `CassiopeiaTree`.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os`, `subprocess`, `tempfile` | Used for file and process management, especially when interfacing with external tools like CCPhylo. |
+| `configparser` | Reads configuration settings for external tool paths. |
+| `ete3`, `networkx`, `numpy`, `pandas` | Libraries for tree manipulation, graph operations, numerical computations, and data handling. |
+
+## Error Handling
+- Raises `DistanceSolverError` for issues related to dissimilarity function specification, root setup, and CCPhylo path validation.
+
+## TODOs
+- Specify functions for rooting trees and add a compositional framework.
+- Enable the solver to work with similarity maps as flattened arrays.

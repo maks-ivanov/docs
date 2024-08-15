@@ -1,0 +1,68 @@
+---
+title: "UPGMASolver.py"
+---
+
+## High-level description
+
+The `UPGMASolver` class in the `UPGMASolver.py` file is a subclass of `DistanceSolver` that implements the UPGMA (Unweighted Pair Group Method with Arithmetic Mean) algorithm for hierarchical clustering. This algorithm iteratively joins samples with the minimum dissimilarity and updates the dissimilarity map by averaging the distances of elements in the new cluster with each existing node. The result is a rooted tree that is assumed to be ultrametric.
+
+## Code Structure
+
+The `UPGMASolver` class is the main symbol in this file, inheriting from `DistanceSolver`. It overrides several methods to implement the UPGMA-specific logic for finding cherries, updating the dissimilarity map, and rooting the tree. The class also provides options for using a fast implementation of UPGMA through external libraries.
+
+## References
+
+- `DistanceSolver`: The base class from which `UPGMASolver` inherits.
+- `dissimilarity_functions`: Provides the default dissimilarity function used by the solver.
+- `CassiopeiaTree`: A data structure used to represent the tree being solved.
+- `DistanceSolverError`: An error class used for handling exceptions specific to distance solvers.
+
+## Symbols
+
+### `UPGMASolver`
+#### Description
+The `UPGMASolver` class implements the UPGMA algorithm for hierarchical clustering. It extends the `DistanceSolver` class and provides methods to find cherries, update the dissimilarity map, and root the tree. The class can optionally use a fast implementation of UPGMA.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity_function | Callable | Function to compute the dissimilarity map. Optional if a dissimilarity map is already provided. |
+| prior_transformation | str | Function to transform priors into weights. Supports "negative_log", "inverse", and "square_root_inverse". |
+| fast | bool | Whether to use a fast implementation of UPGMA. |
+| implementation | str | Which fast implementation to use. Options are "ccphylo_upgma". |
+| threads | int | Number of threads to use for dissimilarity map computation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return values directly but modifies the `CassiopeiaTree` object. |
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with the specified dissimilarity function, prior transformation, and threading options. If `fast` is true, it checks for valid fast implementations.
+- **`root_tree`**: Roots the tree by adding a root node to the last two unjoined nodes, assuming an ultrametric tree.
+- **`find_cherry`**: Identifies the pair of samples with the minimum dissimilarity in the matrix to join into a cherry.
+- **`update_dissimilarity_map`**: Updates the dissimilarity map after joining two nodes by averaging their distances with other nodes.
+- **`__update_dissimilarity_map_numba`**: A private, optimized function using Numba for updating the dissimilarity map.
+- **`setup_root_finder`**: Defines the implicit rooting strategy for the UPGMASolver.
+
+## Side Effects
+- Modifies the `CassiopeiaTree` object by populating it with a solved tree.
+- Updates internal state variables like `__cluster_to_cluster_size`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `networkx` | Used for graph operations and tree manipulations. |
+| `numba` | Provides JIT compilation for performance optimization. |
+| `numpy` | Used for numerical operations and matrix manipulations. |
+| `pandas` | Used for handling data frames, particularly the dissimilarity map. |
+
+## Error Handling
+- Raises `DistanceSolverError` if an invalid fast implementation is specified or if required parameters are not provided.
+
+## Logging
+No explicit logging is implemented in this code.
+
+## TODOs
+No TODOs are present in the code.

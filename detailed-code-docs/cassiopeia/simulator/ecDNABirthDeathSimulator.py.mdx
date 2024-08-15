@@ -1,0 +1,83 @@
+---
+title: "ecDNABirthDeathSimulator.py"
+---
+
+## High-level description
+
+The `ecDNABirthDeathSimulator` class in the `ecDNABirthDeathSimulator.py` file is a specialized simulator for modeling phylogenetic trees using a forward birth-death process, specifically tailored for populations with extrachromosomal DNA (ecDNA). It extends the `BirthDeathFitnessSimulator` class to incorporate additional parameters and logic for simulating ecDNA dynamics, including fitness effects, copy number variations, and cosegregation during cell division. The simulator allows users to specify various distributions for birth and death waiting times, fitness mutations, and stopping conditions for the simulation.
+
+## Code Structure
+
+The `ecDNABirthDeathSimulator` class inherits from the `BirthDeathFitnessSimulator` class, which provides a general framework for simulating phylogenetic trees using a birth-death process with fitness. The `ecDNABirthDeathSimulator` class extends this framework by adding specific logic and parameters for simulating ecDNA dynamics. It interacts with the `CassiopeiaTree` class to manage the tree structure and node attributes, and it uses various utility functions and error classes from the `cassiopeia` package.
+
+## References
+
+- `BirthDeathFitnessSimulator`: The base class that provides the general birth-death simulation framework.
+- `CassiopeiaTree`: A class used to represent and manipulate the phylogenetic tree structure.
+- `ecDNABirthDeathSimulatorError` and `TreeSimulatorError`: Custom error classes used for handling specific exceptions in the simulator.
+
+## Symbols
+
+### `ecDNABirthDeathSimulator`
+#### Description
+The `ecDNABirthDeathSimulator` class simulates a phylogenetic tree using a forward birth-death process with fitness, specifically for populations with ecDNA. It allows for the specification of various distributions for birth and death waiting times, fitness mutations, and stopping conditions. The class also handles ecDNA-specific parameters such as copy number, cosegregation, and capture efficiency.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| birth_waiting_distribution | Callable[[float], float] | Function to sample birth waiting times. |
+| initial_birth_scale | float | Initial scale parameter for birth events. |
+| death_waiting_distribution | Optional[Callable[[], float]] | Function to sample death waiting times. |
+| mutation_distribution | Optional[Callable[[], int]] | Function to sample the number of mutations. |
+| fitness_distribution | Optional[Callable[[], float]] | Function to sample fitness mutation strengths. |
+| fitness_base | float | Base for fitness mutation strength calculation. |
+| num_extant | Optional[int] | Stopping condition based on the number of extant lineages. |
+| experiment_time | Optional[float] | Stopping condition based on total experiment time. |
+| collapse_unifurcations | bool | Whether to collapse unifurcations in the tree. |
+| prune_dead_lineages | bool | Whether to prune dead lineages. |
+| random_seed | int | Seed for random number generation. |
+| initial_copy_number | np.array | Initial copy number for ecDNA. |
+| cosegregation_coefficient | float | Coefficient for ecDNA cosegregation. |
+| splitting_function | Callable[[int], int] | Function for ecDNA segregation during cell division. |
+| fitness_array | np.array | Fitness values based on ecDNA copy number. |
+| fitness_function | Optional[Callable[[int, int, float], float]] | Function to calculate fitness based on copy number. |
+| capture_efficiency | float | Probability of observing an ecDNA species. |
+| initial_tree | Optional[CassiopeiaTree] | Initial tree structure for the simulation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies the tree structure. |
+
+#### Internal Logic
+- The constructor initializes the simulator with the provided parameters and checks for valid stopping conditions.
+- The `initialize_tree` method sets up the initial tree structure, either from scratch or using an existing tree.
+- The `update_fitness` method calculates the fitness of a lineage based on its ecDNA copy number and fitness function.
+- The `sample_lineage_event` method simulates the next event (birth or death) for a given lineage, updating the tree structure accordingly.
+- The `get_ecdna_array` method calculates the ecDNA copy number for a child lineage based on its parent's copy number and segregation logic.
+- The `populate_tree_from_simulation` method finalizes the tree structure by adding metadata and pruning dead lineages.
+
+## Side Effects
+- Modifies the state of the `CassiopeiaTree` by adding nodes, edges, and attributes.
+- Uses random number generation, which can be controlled with a seed for reproducibility.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `networkx` | Used for managing the tree structure as a directed graph. |
+| `numpy` | Used for numerical operations and random number generation. |
+| `pandas` | Used for managing metadata associated with tree nodes. |
+| `CassiopeiaTree` | Represents the phylogenetic tree structure. |
+| `ecDNABirthDeathSimulatorError`, `TreeSimulatorError` | Custom error handling. |
+
+## Error Handling
+- Raises `TreeSimulatorError` for invalid stopping conditions or negative waiting times.
+- Raises `ecDNABirthDeathSimulatorError` if child ecDNA entries exceed parental entries.
+
+## Logging
+- The code does not explicitly implement logging, but it uses print statements to indicate when sublineages are removed during pruning.
+
+## TODOs
+- Improve the generalizability of the cosegregation coefficient to handle multiple species with different pairwise covariances.
+- Enhance the implementation of the splitting function to allow for non-independent segregation.

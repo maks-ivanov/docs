@@ -1,0 +1,153 @@
+---
+title: "local_3d.py"
+---
+
+## High-level description
+
+The `local_3d.py` file in the Cassiopeia library is designed to facilitate 3D visualization of phylogenetic trees using spatial data. It provides utilities for generating synthetic labels for cells based on their spatial coordinates and a `Tree3D` class that uses Pyvista for rendering 3D projections of trees onto 2D surfaces. This module is particularly useful for visualizing lineage tracing experiments where spatial information is available.
+
+## Code Structure
+
+The main components of the code are utility functions for handling spatial data and color manipulations, and the `Tree3D` class, which encapsulates the logic for rendering and interacting with 3D tree visualizations. The utility functions are used within the `Tree3D` class to process data and create visual elements.
+
+## Symbols
+
+### `interpolate_branch`
+#### Description
+Interpolates a branch between a parent and child node in 3D space, ensuring a 90-degree angle.
+
+#### Inputs
+| Name   | Type  | Description                        |
+|:-------|:------|:-----------------------------------|
+| parent | Tuple | Coordinates of the parent node.    |
+| child  | Tuple | Coordinates of the child node.     |
+
+#### Outputs
+| Name   | Type       | Description                                      |
+|:-------|:-----------|:-------------------------------------------------|
+| output | np.ndarray | Array of coordinates representing the branch.    |
+
+#### Internal Logic
+The function calculates intermediate points to create a 90-degree angle between the parent and child coordinates.
+
+### `polyline_from_points`
+#### Description
+Creates a Pyvista `PolyData` object from a set of points, representing a connected polyline.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| points | np.ndarray | Array of points to form the polyline. |
+
+#### Outputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| output | pv.PolyData  | Pyvista object representing the polyline. |
+
+### `average_mixing`
+#### Description
+Averages a set of colors by computing the mean of each color channel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| c    | List | List of colors to be averaged. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | Tuple  | Averaged color as a tuple.         |
+
+### `highlight`
+#### Description
+Increases the brightness of a given color.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| c    | Tuple | Color to be highlighted. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | Tuple  | Highlighted color.                 |
+
+### `lowlight`
+#### Description
+Decreases the brightness of a given color.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| c    | Tuple | Color to be dimmed. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | Tuple  | Dimmed color.                      |
+
+### `labels_from_coordinates`
+#### Description
+Generates a synthetic labels array for 3D plotting based on spatial coordinates of cells in a `CassiopeiaTree`.
+
+#### Inputs
+| Name          | Type             | Description |
+|:--------------|:-----------------|:------------|
+| tree          | CassiopeiaTree   | Tree containing cell data. |
+| attribute_key | str              | Key for spatial coordinates in cell metadata. |
+| shape         | tuple            | Shape of the output array. |
+
+#### Outputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| output | np.ndarray | Synthetic labels array.            |
+
+#### Internal Logic
+The function normalizes spatial coordinates, scales them, and draws circles representing cells on a 2D plane.
+
+### `Tree3D`
+#### Description
+A class for creating and interacting with 3D visualizations of phylogenetic trees using Pyvista.
+
+#### Inputs
+| Name          | Type             | Description |
+|:--------------|:-----------------|:------------|
+| tree          | CassiopeiaTree   | Tree to be visualized. |
+| labels        | np.ndarray       | Optional labels for cells. |
+| offset        | float            | Offset for tree and shading. |
+| downscale     | float            | Factor to downscale images. |
+| cmap          | Optional[List[str]] | Colormap for visualization. |
+| attribute_key | str              | Key for spatial coordinates. |
+
+#### Internal Logic
+The class initializes visualization parameters, sets up Pyvista plotter, and provides methods to render nodes, branches, and subclones. It also includes interactive features like sliders and checkboxes for user interaction.
+
+## References
+
+- `CassiopeiaTree`: Used for accessing tree data and metadata.
+- `PlottingError`, `PlottingWarning`: Custom exceptions and warnings for handling errors and warnings in plotting.
+- `try_import`: Utility function for importing optional dependencies.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| numpy      | Numerical operations and array manipulations. |
+| pandas     | Handling data frames for cell metadata. |
+| matplotlib | Color conversions and manipulations. |
+| pyvista    | 3D rendering and visualization. |
+| cv2        | Image processing for generating labels. |
+| skimage    | Image processing utilities. |
+| vtk        | Visualization toolkit for 3D graphics. |
+
+## Error Handling
+
+The code uses custom exceptions like `PlottingError` to handle errors related to plotting operations. It also raises `ValueError` for invalid inputs, such as incorrect shapes or missing metadata.
+
+## Logging
+
+The code does not implement explicit logging mechanisms but uses warnings to notify users of potential issues, such as missing metadata or unsupported dimensions.
+
+## TODOs
+
+- The code does not contain explicit TODOs, but potential improvements could include more robust error handling and logging for better traceability of issues during execution.

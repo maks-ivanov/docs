@@ -1,0 +1,75 @@
+---
+title: "upgma_test.py"
+---
+
+## High-level description
+
+The `upgma_test.py` file is a unit test suite for the `UPGMASolver` class in the `cassiopeia.solver` module. It uses the `unittest` framework to verify the correctness of the UPGMA (Unweighted Pair Group Method with Arithmetic Mean) algorithm implementation. The tests cover various scenarios, including basic functionality, handling of weights, and dealing with duplicate and missing data in character matrices.
+
+## Code Structure
+
+The main symbols in the code are the `TestUPGMASolver` class and the `find_triplet_structure` function. The `TestUPGMASolver` class contains several test methods that validate different aspects of the `UPGMASolver` class. The `find_triplet_structure` function is a utility function used within the tests to determine the structure of a triplet in a tree.
+
+## References
+
+- `CassiopeiaTree`: A class from the `cassiopeia.data` module used to represent phylogenetic trees.
+- `UPGMASolver`: A class from the `cassiopeia.solver` module that implements the UPGMA algorithm.
+- `dissimilarity_functions`: A module from `cassiopeia.solver` that provides functions for calculating dissimilarities between samples.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+Determines the structure of a triplet (three nodes) in a given tree by comparing the number of common ancestors between pairs of nodes.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| triplet| tuple  | A tuple of three node identifiers. |
+| T      | DiGraph| A directed graph representing a tree.|
+
+#### Outputs
+| Name     | Type  | Description                                      |
+|:---------|:------|:-------------------------------------------------|
+| structure| str   | A string indicating the structure of the triplet.|
+
+#### Internal Logic
+1. Extracts the three nodes from the triplet.
+2. Computes the ancestors for each node using NetworkX's `ancestors` function.
+3. Determines the number of common ancestors between each pair of nodes.
+4. Returns a string indicating which pair of nodes has the most common ancestors.
+
+### `TestUPGMASolver`
+#### Description
+A test suite for the `UPGMASolver` class, containing multiple test cases to verify its functionality.
+
+#### Internal Logic
+- **setUp**: Initializes various character matrices and dissimilarity maps, and creates instances of `CassiopeiaTree` and `UPGMASolver` for use in the tests.
+- **test_constructor**: Verifies that the `UPGMASolver` is correctly initialized with a dissimilarity function and that the dissimilarity map in `CassiopeiaTree` is not `None`.
+- **test_find_cherry**: Tests the `find_cherry` method of `UPGMASolver` to ensure it correctly identifies a pair of nodes to join based on minimum dissimilarity.
+- **test_update_dissimilarity_map**: Validates the `update_dissimilarity_map` method by checking that the dissimilarity map is correctly updated after joining nodes.
+- **test_basic_solver**: Tests the `solve` method of `UPGMASolver` on a basic tree, verifying the tree structure and distances.
+- **test_upgma_solver_weights**: Tests the `solve` method with weighted dissimilarities, ensuring the tree structure is as expected.
+- **test_pp_solver**: Tests the `solve` method on a tree with a different character matrix, checking the tree structure and dissimilarities.
+- **test_duplicate**: Tests the solver's ability to handle duplicate and missing data in the character matrix.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| unittest   | Provides the framework for writing and running tests. |
+| networkx   | Used for graph operations and tree manipulations. |
+| numpy      | Used for numerical operations and array manipulations. |
+| pandas     | Used for handling data in DataFrame format. |
+
+## Error Handling
+
+The test suite uses assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the `UPGMASolver`.
+
+## Logging
+
+No explicit logging is implemented in the test suite. The `unittest` framework provides output indicating the success or failure of each test case.
+
+## TODOs
+
+No TODOs are present in the code.

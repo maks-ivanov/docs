@@ -3,41 +3,71 @@ title: "Overview"
 ---
 
 ## High-level description
-This `.github` directory contains GitHub-specific configuration files and workflows for a software project, likely related to search, analytics, and chat functionality. It includes issue templates, pull request templates, custom linting rules for API specifications, and various GitHub Actions workflows that automate tasks such as building and pushing Docker images, running tests, linting code, and generating documentation.
 
-## What does it do?
-This directory serves several important functions in the development process:
+The provided YAML file is a GitHub Actions workflow configuration for a project named "cassiopeia". It is designed to automate the process of installing Python dependencies, running tests, and performing linting across multiple Python versions (3.8 and 3.9) whenever there is a push or pull request to the master branch.
 
-1. Standardizes issue reporting: The issue template ensures that all bug reports and feature requests follow a consistent format, making it easier for developers to understand and address them.
+## Code Structure
 
-2. Streamlines pull requests: The pull request template guides contributors to provide necessary information about their changes, linking them to relevant issues and notifying maintainers.
+The workflow is structured into a single job named `build`, which is executed on the `ubuntu-latest` runner. The job uses a matrix strategy to test the code against two different Python versions. The steps within the job include checking out the code, setting up the Python environment, caching pip dependencies, installing necessary packages, running tests with coverage, and reporting the results.
 
-3. Enforces API specification standards: The custom linting rules help maintain consistency in the API documentation by disabling certain default rules that may not fit the project's needs.
+## Symbols
 
-4. Automates development workflows: The GitHub Actions workflows automate various tasks such as:
-   - Building and pushing Docker images for different components (frontend, server, ClickHouse, etc.)
-   - Running tests for different features (analytics, chat, search, etc.)
-   - Linting code to ensure code quality
-   - Generating and validating API documentation
-   - Performing Rust-specific checks and tests
+### `name: cassiopeia`
+#### Description
+This defines the name of the workflow as "cassiopeia". It is used for identification purposes within the GitHub Actions interface.
 
-These automated processes help maintain code quality, ensure consistent builds, and streamline the deployment process across different components of the application.
+### `on`
+#### Description
+Specifies the events that trigger the workflow. In this case, the workflow is triggered on pushes and pull requests to the `master` branch.
 
-## Key Files
-1. `.github/ISSUE_TEMPLATE/issue_template.md`: Provides a standardized format for reporting issues, including description, targets, requirements to close, and community channels for support.
+### `jobs`
+#### Description
+Defines a collection of jobs to be run as part of the workflow. Here, there is a single job named `build`.
 
-2. `.github/pull_request_template.md`: Offers a simple template for pull requests, prompting contributors to link their changes to relevant issues and tag maintainers.
+### `build`
+#### Description
+The main job in the workflow that performs the tasks of setting up the environment, installing dependencies, running tests, and reporting coverage.
 
-3. `.github/rules.yaml`: Configures custom linting rules for API specifications, specifically disabling the `paths-kebab-case` rule from the recommended Spectral OAS ruleset.
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| python-version | list | A list of Python versions (3.8, 3.9) to test against. |
 
-4. `.github/workflows/`: Contains multiple YAML files defining GitHub Actions workflows:
-   - `analytics-tests.yml`, `chat-tests.yml`, `dashboard-tests.yml`, `search-tests.yml`: Define build and lint processes for specific features.
-   - `push-*.yml` files: Automate building and pushing Docker images for various components.
-   - `rust-tests.yml`: Runs Rust-specific tests, formatting checks, and documentation generation.
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The job does not produce direct outputs but performs actions like testing and reporting. |
 
-## Configuration
-The `rules.yaml` file serves as a configuration for Spectral linting within the GitHub repository. It extends the recommended OpenAPI Specification (OAS) ruleset but disables the `paths-kebab-case` rule, allowing for more flexibility in API path naming conventions.
+#### Internal Logic
+- **Runs-on**: Specifies the environment (`ubuntu-latest`) where the job will run.
+- **Timeout-minutes**: Sets a maximum time limit of 20 minutes for the job to complete.
+- **Strategy**: Uses a matrix to run the job with different Python versions.
+- **Steps**:
+  - **Checkout**: Uses the `actions/checkout@v2` action to clone the repository.
+  - **Set up Python**: Configures the Python environment using `actions/setup-python@v2`.
+  - **Cache pip**: Caches pip dependencies to speed up subsequent runs.
+  - **Install dependencies**: Installs necessary Python packages including `pytest-cov`, `codecov`, and any additional dependencies specified in the `requirements.txt`.
+  - **Test with pytest**: Runs tests using `pytest` with coverage reporting.
+  - **After success**: Uploads coverage reports to `codecov` and lists installed packages.
 
-The various workflow files in the `workflows` directory configure GitHub Actions to run on specific events (e.g., pull requests, pushes to the main branch) and define the steps for each automated process. These workflows often use environment secrets for Docker Hub authentication and specific runner environments for consistency.
+## Dependencies
 
-Overall, this `.github` directory sets up a robust infrastructure for maintaining code quality, automating deployments, and streamlining the development process across multiple components of a complex software project.
+| Dependency | Purpose |
+|:-----------|:--------|
+| `actions/checkout@v2` | Checks out the repository code. |
+| `actions/setup-python@v2` | Sets up the specified Python version. |
+| `actions/cache@v2` | Caches dependencies to improve workflow efficiency. |
+| `pytest-cov` | A pytest plugin for measuring code coverage. |
+| `codecov` | A tool for uploading code coverage reports. |
+
+## Error Handling
+
+The workflow does not explicitly define error handling mechanisms. However, GitHub Actions will automatically fail the workflow if any step returns a non-zero exit code, which is typical for CI/CD pipelines.
+
+## Logging
+
+GitHub Actions provides built-in logging for each step in the workflow. The `pytest` command is run with the `-vv` flag to increase verbosity, which provides detailed output for each test case.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

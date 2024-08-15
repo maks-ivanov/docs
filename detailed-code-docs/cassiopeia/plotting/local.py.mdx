@@ -1,0 +1,239 @@
+---
+title: "local.py"
+---
+
+## High-level description
+
+The `local.py` file in the `cassiopeia/plotting` module provides functions for plotting phylogenetic trees locally using either Matplotlib for static plots or Plotly for dynamic plots. These functions allow for the visualization of trees with various annotations, such as color strips for categorical or continuous data, indel heatmaps, and clade-specific coloring, without relying on external services like iTOL.
+
+## Code Structure
+
+The main symbols in the code are functions that handle different aspects of plotting trees. These functions are interconnected, with some functions serving as helpers to compute coordinates or colors, while others handle the actual plotting using Matplotlib or Plotly. The functions rely on data structures like dictionaries and data frames to manage node coordinates, colors, and other plot attributes.
+
+## Symbols
+
+### `compute_colorstrip_size`
+#### Description
+Computes the size of colorstrip boxes for tree annotations, determining the width and height based on node and anchor coordinates.
+
+#### Inputs
+| Name          | Type   | Description                                      |
+|:--------------|:-------|:-------------------------------------------------|
+| node_coords   | Dict   | Coordinates of nodes in the tree.                |
+| anchor_coords | Dict   | Coordinates of anchors for the colorstrip.       |
+| loc           | Literal| Location of the box relative to the anchor.      |
+
+#### Outputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| width  | float | Width of the colorstrip box.                     |
+| height | float | Height of the colorstrip box.                    |
+
+#### Internal Logic
+The function iterates over node coordinates to find the minimum and maximum positions and depths, then calculates the width as 5% of the tree depth and the height to ensure tight arrangement of boxes.
+
+### `create_categorical_colorstrip`
+#### Description
+Creates a colorstrip for a categorical variable, mapping categories to colors and positioning boxes relative to anchor coordinates.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| values         | Dict   | Node-category pairs.                             |
+| anchor_coords  | Dict   | Anchor coordinates for the colorstrip boxes.     |
+| width          | float  | Width of the colorstrip.                         |
+| height         | float  | Height of each box of the colorstrip.            |
+| spacing        | float  | Space before placing each box.                   |
+| loc            | Literal| Location of the boxes relative to the anchors.   |
+| cmap           | Union  | Colormap for the categories.                     |
+| value_mapping  | Optional[Dict] | Mapping of string values to integers.    |
+
+#### Outputs
+| Name                | Type  | Description                                      |
+|:--------------------|:------|:-------------------------------------------------|
+| colorstrip          | Dict  | Box coordinates and colors for each node.        |
+| next_anchor_coords  | Dict  | New anchor coordinates for further annotations.  |
+
+#### Internal Logic
+The function uses a colormap to assign colors to categories, places boxes using a utility function, and returns the coordinates and colors for each node.
+
+### `create_continuous_colorstrip`
+#### Description
+Creates a colorstrip for a continuous variable, mapping values to colors based on a colormap and positioning boxes relative to anchor coordinates.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| values         | Dict   | Node-value pairs.                                |
+| anchor_coords  | Dict   | Anchor coordinates for the colorstrip boxes.     |
+| width          | float  | Width of the colorstrip.                         |
+| height         | float  | Height of each box of the colorstrip.            |
+| spacing        | float  | Space before placing each box.                   |
+| loc            | Literal| Location of the boxes relative to the anchors.   |
+| cmap           | Union  | Colormap for the values.                         |
+| vmin           | Optional[float] | Lower limit of the color scale.         |
+| vmax           | Optional[float] | Upper limit of the color scale.         |
+
+#### Outputs
+| Name                | Type  | Description                                      |
+|:--------------------|:------|:-------------------------------------------------|
+| colorstrip          | Dict  | Box coordinates and colors for each node.        |
+| next_anchor_coords  | Dict  | New anchor coordinates for further annotations.  |
+
+#### Internal Logic
+The function normalizes values to a 0-1 range, assigns colors using a colormap, places boxes using a utility function, and returns the coordinates and colors for each node.
+
+### `create_indel_heatmap`
+#### Description
+Generates an indel heatmap for a tree, mapping indels to colors and creating colorstrips for each cut site.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| allele_table   | pd.DataFrame | Allele table containing indels.            |
+| anchor_coords  | Dict   | Anchor coordinates for the colorstrip boxes.     |
+| width          | float  | Width of the colorstrip.                         |
+| height         | float  | Height of each box of the colorstrip.            |
+| spacing        | float  | Space before placing each box.                   |
+| loc            | Literal| Location of the boxes relative to the anchors.   |
+| indel_colors   | Optional[pd.DataFrame] | Mapping of indels to colors.     |
+| indel_priors   | Optional[pd.DataFrame] | Prior probabilities for indels.  |
+| random_state   | Optional[np.random.RandomState] | Random state for reproducibility. |
+
+#### Outputs
+| Name                | Type  | Description                                      |
+|:--------------------|:------|:-------------------------------------------------|
+| heatmap             | List  | List of colorstrips for each cut site.           |
+| anchor_coords       | Dict  | New anchor coordinates for further annotations.  |
+
+#### Internal Logic
+The function prepares the allele table, assigns colors to indels, and creates colorstrips for each cut site using a utility function.
+
+### `create_clade_colors`
+#### Description
+Assigns colors to nodes and branches by clade, using a provided mapping of internal nodes to colors.
+
+#### Inputs
+| Name          | Type   | Description                                      |
+|:--------------|:-------|:-------------------------------------------------|
+| tree          | CassiopeiaTree | The tree to color.                       |
+| clade_colors  | Dict   | Internal node-color mappings.                    |
+
+#### Outputs
+| Name          | Type  | Description                                      |
+|:--------------|:------|:-------------------------------------------------|
+| node_colors   | Dict  | Node colors by clade.                            |
+| branch_colors | Dict  | Branch colors by clade.                          |
+
+#### Internal Logic
+The function traverses the tree, applying colors to nodes and branches based on the largest clade first, and warns if clades overlap.
+
+### `place_tree_and_annotations`
+#### Description
+Places a tree and its annotations on a coordinate grid, preparing data for plotting.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| tree           | CassiopeiaTree | The tree to plot.                       |
+| depth_key      | Optional[str] | Node attribute for depth.                |
+| meta_data      | Optional[List[str]] | Meta data to plot.                 |
+| allele_table   | Optional[pd.DataFrame] | Allele table for annotations.  |
+| indel_colors   | Optional[pd.DataFrame] | Indel color mapping.            |
+| indel_priors   | Optional[pd.DataFrame] | Indel prior probabilities.      |
+| orient         | Union[Literal, float] | Orientation of the tree.         |
+| extend_branches| bool   | Whether to extend branch lengths.               |
+| angled_branches| bool   | Whether to display angled branches.             |
+| add_root       | bool   | Whether to add a synthetic root.                |
+| colorstrip_width | Optional[float] | Width of colorstrips.               |
+| colorstrip_spacing | Optional[float] | Spacing between colorstrips.      |
+| clade_colors   | Optional[Dict] | Clade color mappings.                   |
+| continuous_cmap| Union[str, mpl.colors.Colormap] | Colormap for continuous variables. |
+| vmin           | Optional[float] | Lower limit of color scale.            |
+| vmax           | Optional[float] | Upper limit of color scale.            |
+| categorical_cmap | Union[str, mpl.colors.Colormap] | Colormap for categorical variables. |
+| value_mapping  | Optional[Dict] | Mapping of string values to integers.   |
+| random_state   | Optional[np.random.RandomState] | Random state for reproducibility. |
+
+#### Outputs
+| Name                | Type  | Description                                      |
+|:--------------------|:------|:-------------------------------------------------|
+| node_coords         | Dict  | Node coordinates.                                |
+| branch_coords       | Dict  | Branch coordinates.                              |
+| node_colors         | Dict  | Node colors.                                     |
+| branch_colors       | Dict  | Branch colors.                                   |
+| colorstrips         | List  | List of colorstrips for annotations.             |
+
+#### Internal Logic
+The function places the tree on a coordinate grid, computes anchor coordinates, and generates colorstrips for annotations, handling both categorical and continuous data.
+
+### `plot_matplotlib`
+#### Description
+Generates a static plot of a tree using Matplotlib, with options for various annotations and customizations.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| tree           | CassiopeiaTree | The tree to plot.                       |
+| depth_key      | Optional[str] | Node attribute for depth.                |
+| meta_data      | Optional[List[str]] | Meta data to plot.                 |
+| allele_table   | Optional[pd.DataFrame] | Allele table for annotations.  |
+| indel_colors   | Optional[pd.DataFrame] | Indel color mapping.            |
+| indel_priors   | Optional[pd.DataFrame] | Indel prior probabilities.      |
+| orient         | Union[Literal, float] | Orientation of the tree.         |
+| extend_branches| bool   | Whether to extend branch lengths.               |
+| angled_branches| bool   | Whether to display angled branches.             |
+| add_root       | bool   | Whether to add a synthetic root.                |
+| figsize        | Tuple[float, float] | Size of the plot.                  |
+| colorstrip_width | Optional[float] | Width of colorstrips.               |
+| colorstrip_spacing | Optional[float] | Spacing between colorstrips.      |
+| clade_colors   | Optional[Dict] | Clade color mappings.                   |
+| internal_node_kwargs | Optional[Dict] | Arguments for internal nodes.    |
+| leaf_kwargs    | Optional[Dict] | Arguments for leaf nodes.               |
+| branch_kwargs  | Optional[Dict] | Arguments for branches.                 |
+| colorstrip_kwargs | Optional[Dict] | Arguments for colorstrips.          |
+| continuous_cmap| Union[str, mpl.colors.Colormap] | Colormap for continuous variables. |
+| vmin           | Optional[float] | Lower limit of color scale.            |
+| vmax           | Optional[float] | Upper limit of color scale.            |
+| categorical_cmap | Union[str, mpl.colors.Colormap] | Colormap for categorical variables. |
+| value_mapping  | Optional[Dict] | Mapping of string values to integers.   |
+| ax             | Optional[plt.Axes] | Matplotlib axis for the plot.       |
+| random_state   | Optional[np.random.RandomState] | Random state for reproducibility. |
+
+#### Outputs
+| Name                | Type  | Description                                      |
+|:--------------------|:------|:-------------------------------------------------|
+| fig                 | plt.Figure | The Matplotlib figure.                      |
+| ax                  | plt.Axes | The Matplotlib axis.                          |
+
+#### Internal Logic
+The function uses the `place_tree_and_annotations` helper to get coordinates and colors, then plots nodes, branches, and colorstrips using Matplotlib's plotting functions.
+
+### `plot_plotly`
+#### Description
+Generates a dynamic plot of a tree using Plotly, with options for various annotations and customizations.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| tree           | CassiopeiaTree | The tree to plot.                       |
+| depth_key      | Optional[str] | Node attribute for depth.                |
+| meta_data      | Optional[List[str]] | Meta data to plot.                 |
+| allele_table   | Optional[pd.DataFrame] | Allele table for annotations.  |
+| indel_colors   | Optional[pd.DataFrame] | Indel color mapping.            |
+| indel_priors   | Optional[pd.DataFrame] | Indel prior probabilities.      |
+| orient         | Union[Literal, float] | Orientation of the tree.         |
+| extend_branches| bool   | Whether to extend branch lengths.               |
+| angled_branches| bool   | Whether to display angled branches.             |
+| add_root       | bool   | Whether to add a synthetic root.                |
+| width          | float  | Width of the figure.                            |
+| height         | float  | Height of the figure.                           |
+| colorstrip_width | Optional[float] | Width of colorstrips.               |
+| colorstrip_spacing | Optional[float] | Spacing between colorstrips.      |
+| clade_colors   | Optional[Dict] | Clade color mappings.                   |
+| internal_node_kwargs | Optional[Dict] | Arguments for internal nodes.    |
+| leaf_kwargs    | Optional[Dict] | Arguments for leaf nodes.               |
+| branch_kwargs  | Optional[Dict] | Arguments for branches.                 |
+| colorstrip_kwargs | Optional[Dict] | Arguments for colorstrips.          |
+| continuous_cmap| Union[str, mpl.colors.Colormap] | Colormap for continuous variables. |
+| vmin           | Optional[float] | Lower limit of

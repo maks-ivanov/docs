@@ -1,0 +1,97 @@
+---
+title: "sfs.py"
+---
+
+## High-level description
+
+The code defines a class `SFS` (Site Frequency Spectrum) that is used to analyze genetic data by calculating various statistical measures from mutation counts. These measures include Fay and Wu's H, Zeng's E, Tajima's D, and Ferretti's L, which are used to infer evolutionary dynamics and population genetics from a given set of mutation data. The class also provides functionality to bin the site frequency spectrum data for further analysis.
+
+## Code Structure
+
+The main symbol in the code is the `SFS` class, which encapsulates the functionality for handling site frequency spectrum data. The class provides methods to construct an SFS from a tree, bin the data, and calculate various statistical measures. Each statistical measure has a corresponding method to retrieve its value and a private method to calculate it if it hasn't been computed yet.
+
+## Symbols
+
+### `SFS`
+#### Description
+The `SFS` class represents a Site Frequency Spectrum, which is a summary of the frequency of genetic mutations in a population. It provides methods to construct the spectrum from a phylogenetic tree, bin the data, and calculate several population genetics statistics.
+
+#### Inputs
+- `counts`: A list or array representing the mutation counts.
+- `T`: An optional tree structure from which the SFS can be constructed.
+
+#### Outputs
+- Various statistical measures such as Fay and Wu's H, Zeng's E, Tajima's D, and Ferretti's L.
+
+#### Internal Logic
+- **Initialization**: Sets up the initial state with mutation counts and an optional tree.
+- **from_tree**: Constructs the SFS from a given tree by iterating over its descendants and accumulating mutation counts.
+- **bin**: Bins the site frequency spectrum data into specified intervals, normalizes the binned data, and optionally cuts the spectrum based on the tree size.
+- **Statistical Calculations**: Each statistical measure (Fay and Wu's H, Zeng's E, Tajima's D, Ferretti's L) has a method to calculate its value using the mutation counts and harmonic numbers.
+
+### `from_tree`
+#### Description
+Constructs a site frequency spectrum from a given tree by iterating over its descendants and accumulating mutation counts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| T | Tree | A phylogenetic tree structure |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| SFS | SFS | An instance of the SFS class with counts derived from the tree |
+
+### `bin`
+#### Description
+Bins the site frequency spectrum data into specified intervals and normalizes the binned data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bins | str or array | Specifies the binning strategy or custom bin edges |
+| n_bins | int | Number of bins (optional) |
+| min_edge | float | Minimum edge for binning (optional) |
+| max_edge | float | Maximum edge for binning (optional) |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Determines bin edges and centers based on the specified strategy (linear, log, logit, or custom).
+- Calculates the frequency of each count index and assigns them to bins.
+- Normalizes the binned data by the size of each bin.
+- Optionally cuts the spectrum based on the tree size.
+
+### `fay_and_wus_H`, `zengs_E`, `tajimas_D`, `ferrettis_L`
+#### Description
+Each of these methods retrieves the corresponding statistical measure, calculating it if it hasn't been computed yet.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| measure | float | The calculated statistical measure |
+
+#### Internal Logic
+- Each method checks if the measure has been calculated.
+- If not, it calls a private method to perform the calculation using mutation counts and harmonic numbers.
+
+## Dependencies
+
+The code uses the `numpy` library for numerical operations, such as creating arrays, performing mathematical calculations, and handling binning operations.
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| numpy | Used for numerical operations and array manipulations |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic operations. It assumes that inputs are valid and that operations like array indexing and mathematical calculations will succeed without exceptions.
+
+## Logging
+
+The code does not implement any logging mechanisms.

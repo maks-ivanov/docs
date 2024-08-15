@@ -1,0 +1,115 @@
+---
+title: "doublet_utils.py"
+---
+
+## High-level description
+
+The `doublet_utils.py` file contains functions designed to filter out cell doublets from sequencing data. Doublets are instances where two or more cells are mistakenly captured as one, leading to conflicting genetic information. The functions in this file are used to identify and remove such doublets by analyzing allele information and kinship scores within lineage groups. These utilities are invoked by the `pipeline.py` file and support the `filter_molecule_table` and `call_lineage_groups` functions.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific tasks related to filtering doublets:
+
+- `filter_intra_doublets`: Filters cells with conflicting allele information within a single cell barcode (cellBC).
+- `get_intbc_set`: Retrieves the set of integration barcodes (intBCs) for a given lineage group.
+- `compute_lg_membership`: Calculates the kinship score of a cell with each lineage group.
+- `filter_inter_doublets`: Filters cells with low kinship scores with their assigned lineage group.
+
+These functions work together to process and filter sequencing data, ensuring that only high-confidence cell data is retained for further analysis.
+
+## References
+
+- `utilities.log_molecule_table`: A decorator used to log information about the molecule table.
+- `logger`: Used for logging debug information.
+- `pipeline.py`: Invokes the functions in this file as part of a larger preprocessing pipeline.
+
+## Symbols
+
+### `filter_intra_doublets`
+#### Description
+Filters out cells from a molecule table that have a high proportion of conflicting allele information, indicating potential doublets.
+
+#### Inputs
+| Name           | Type         | Description                                                                 |
+|:---------------|:-------------|:----------------------------------------------------------------------------|
+| molecule_table | pd.DataFrame | A DataFrame containing cellBC-UMI pairs to be filtered.                     |
+| prop           | float        | The threshold for the proportion of conflicting UMIs needed to filter out a cellBC. |
+
+#### Outputs
+| Name           | Type         | Description                                                                 |
+|:---------------|:-------------|:----------------------------------------------------------------------------|
+| filtered_table | pd.DataFrame | A DataFrame with filtered cellBCs.                                          |
+
+#### Internal Logic
+1. Groups the molecule table by `cellBC`, `intBC`, and `allele` to count UMIs.
+2. Identifies the most common allele for each `intBC` and calculates the proportion of conflicting UMIs.
+3. Filters out `cellBCs` where the proportion of conflicting UMIs exceeds the specified threshold.
+
+### `get_intbc_set`
+#### Description
+Returns the set of intBCs for a lineage group and optionally filters out intBCs with low proportions.
+
+#### Inputs
+| Name  | Type         | Description                                                                 |
+|:------|:-------------|:----------------------------------------------------------------------------|
+| lg    | pd.DataFrame | An allele table representing a single lineage group.                        |
+| thresh| int          | The minimum proportion of cells that must have an intBC for it to be included. |
+
+#### Outputs
+| Name           | Type          | Description                                                                 |
+|:---------------|:--------------|:----------------------------------------------------------------------------|
+| intbc_set      | Set[str]      | A set of intBCs in the lineage group.                                       |
+| dropout_dict   | Dict[str, float] | A dictionary with intBCs as keys and the proportion of cells without that intBC. |
+
+### `compute_lg_membership`
+#### Description
+Calculates the kinship score of a cell with each lineage group based on shared intBCs.
+
+#### Inputs
+| Name         | Type                | Description                                                                 |
+|:-------------|:--------------------|:----------------------------------------------------------------------------|
+| cell         | pd.DataFrame        | An allele table subsetted to one cellBC.                                    |
+| intbc_sets   | Dict[int, Set[str]] | A dictionary of intBC sets for each lineage group.                          |
+| lg_dropouts  | Dict[int, Dict[str, float]] | A dictionary of dropout proportions for each lineage group. |
+
+#### Outputs
+| Name         | Type                | Description                                                                 |
+|:-------------|:--------------------|:----------------------------------------------------------------------------|
+| kinship_dict | Dict[int, float]    | A dictionary of kinship scores for each lineage group.                      |
+
+#### Internal Logic
+1. For each lineage group, calculates the intersection of intBCs between the cell and the group.
+2. Computes a weighted intersection score based on dropout proportions.
+3. Normalizes the scores across all lineage groups.
+
+### `filter_inter_doublets`
+#### Description
+Filters out cells with low kinship scores with their assigned lineage group, indicating potential inter-lineage doublets.
+
+#### Inputs
+| Name  | Type         | Description                                                                 |
+|:------|:-------------|:----------------------------------------------------------------------------|
+| at    | pd.DataFrame | An allele table of cellBC-intBC-allele groups to be filtered.               |
+| rule  | float        | The minimum kinship threshold a cell must pass to be included.              |
+
+#### Outputs
+| Name           | Type         | Description                                                                 |
+|:---------------|:-------------|:----------------------------------------------------------------------------|
+| filtered_table | pd.DataFrame | A DataFrame with filtered cellBCs.                                          |
+
+#### Internal Logic
+1. Groups the allele table by `lineageGrp` to get intBC sets and dropout proportions.
+2. Computes kinship scores for each cell with its assigned lineage group.
+3. Filters out cells with kinship scores below the specified threshold.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| pandas     | Used for data manipulation and analysis.                                |
+| cassiopeia.mixins.logger | Provides logging functionality for debugging and information. |
+| cassiopeia.preprocess.utilities | Provides utility functions and decorators for preprocessing tasks. |
+
+## Logging
+
+The code uses a logger from the `cassiopeia.mixins` module to log debug information, such as the number of filtered cellBCs. This helps in tracking the filtering process and understanding the impact of the filtering criteria.

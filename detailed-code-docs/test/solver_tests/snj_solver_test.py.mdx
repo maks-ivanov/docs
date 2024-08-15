@@ -1,0 +1,102 @@
+---
+title: "snj_solver_test.py"
+---
+
+## High-level description
+
+The `snj_solver_test.py` file is a unit test suite for the `SpectralNeighborJoiningSolver` class in the Cassiopeia library. It uses the `unittest` framework to verify the correctness of the solver's functionality, which is designed to reconstruct phylogenetic trees from character matrices and dissimilarity maps. The tests cover various scenarios, including basic solver functionality, handling of duplicate samples, integration tests, and edge cases like missing dissimilarity maps.
+
+## Code Structure
+
+The main components of the code are the test functions within the `TestSpectralNeighborJoiningSolver` class, which is a subclass of `unittest.TestCase`. These test functions utilize helper functions like `find_triplet_structure` and `assertTripletCorrectness` to validate the solver's output against expected results. The `setUp` method initializes common test data used across multiple test cases.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+This function identifies the two nodes in a triplet that have the most similar ancestry within a given tree.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| triplet | list   | A list of three node names.        |
+| T       | DiGraph| A directed graph representing a tree.|
+
+#### Outputs
+| Name      | Type   | Description                                           |
+|:----------|:-------|:------------------------------------------------------|
+| structure | str    | A string indicating which two nodes have the most similar ancestry ("ab", "ac", or "bc"). |
+
+#### Internal Logic
+- The function calculates the common ancestors for each pair of nodes in the triplet.
+- It compares the number of common ancestors for each pair and returns the pair with the most common ancestors.
+
+### `assertTripletCorrectness`
+#### Description
+This function checks if two trees are isomorphic by comparing the triplet structures of their leaf nodes.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| self           | object | The instance of the test case.                   |
+| nodes          | list   | A list of leaf node names.                       |
+| expected_tree  | DiGraph| The expected tree structure.                     |
+| observed_tree  | DiGraph| The observed tree structure to be tested.        |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Generates all possible triplets from the list of nodes.
+- For each triplet, it uses `find_triplet_structure` to determine the structure in both the expected and observed trees.
+- Asserts that the structures match for each triplet.
+
+### `TestSpectralNeighborJoiningSolver`
+#### Description
+A test case class that contains various unit tests for the `SpectralNeighborJoiningSolver`.
+
+#### Methods
+- `setUp`: Initializes the solver and test data.
+- `test_constructor`: Tests the solver's constructor and error handling for tree rooting.
+- `test_compute_svd2_pairwise`: Tests the computation of the lambda matrix for pairwise subsets.
+- `test_compute_svd2_N3`: Tests the lambda matrix computation for three subsets.
+- `test_update_dissimilarity_map_base`: Tests the update method for the lambda matrix.
+- `test_update_dissimilarity_map_N3`: Tests the update method when only three subsets are left.
+- `test_get_dissimilarity_map`: Tests the override method for generating a lambda matrix.
+- `test_find_cherry`: Tests the method for finding cherries in a similarity map.
+- `test_basic_solver`: Tests the solver's output for a basic tree with a specified root.
+- `test_snj_solver_weights`: Tests the solver with a perfect phylogenetic tree and priors.
+- `test_pp_solver`: Integration test for a perfect phylogenetic tree.
+- `test_duplicate_sample`: Tests the solver with duplicate leaf nodes.
+- `test_integration1`: Integration test on a 7-leaf tree.
+- `test_integration2`: Integration test on a 10-leaf tree.
+- `test_setup_root_finder_missing_dissimilarity_map`: Tests root setup with a missing dissimilarity map.
+- `test_setup_root_finder_existing_dissimilarity_map`: Tests root setup with an existing dissimilarity map.
+
+## References
+
+- `CassiopeiaTree`: Used to create tree structures for testing.
+- `SpectralNeighborJoiningSolver`: The solver being tested.
+- `DistanceSolverError`: An error class used in exception handling.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `unittest` | Provides the testing framework.              |
+| `networkx` | Used for graph operations and tree structures.|
+| `pandas`   | Used for handling data frames.               |
+| `numpy`    | Used for numerical operations.               |
+| `cassiopeia` | The main library being tested.             |
+
+## Error Handling
+
+- The tests use `assertRaises` to check for expected exceptions, such as `DistanceSolverError`, when invalid operations are performed.
+
+## Logging
+
+- The test suite does not implement logging but relies on assertions to validate correctness.
+
+## TODOs
+
+- No TODOs are present in the code.

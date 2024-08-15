@@ -1,0 +1,113 @@
+---
+title: "__init__.py"
+---
+
+## High-level description
+
+The `cassiopeia/preprocess/__init__.py` file serves as the entry point for the preprocessing module of the Cassiopeia library. It imports and exposes a set of functions from the `pipeline`, `utilities`, and `setup_utilities` modules, which are used for preprocessing sequencing data. These functions include operations such as sequence alignment, UMI collapsing, error correction, and filtering, which are essential for preparing data for phylogenetic analysis.
+
+## Code Structure
+
+The main symbols in this file are the functions imported from the `pipeline`, `utilities`, and `setup_utilities` modules. These functions are organized into categories based on their functionality, such as sequence alignment, error correction, and data filtering. The `__all__` list defines the public API of the module, specifying which functions are available for import when the module is imported elsewhere.
+
+## Symbols
+
+### `align_sequences`
+#### Description
+Aligns sequences to a reference, either locally or globally, and returns a DataFrame with alignment details.
+
+### `call_alleles`
+#### Description
+Extracts indels from CIGAR strings in sequence alignments and maps them to reference sequences.
+
+### `collapse_umis`
+#### Description
+Aggregates and error-corrects UMIs by collapsing similar sequences, producing a DataFrame of collapsed reads.
+
+### `convert_fastqs_to_unmapped_bam`
+#### Description
+Converts FASTQ files to an unmapped BAM file, tagging them according to the specified sequencing chemistry.
+
+### `error_correct_cellbcs_to_whitelist`
+#### Description
+Corrects cell barcodes in a BAM file to a provided whitelist using a method similar to Cell Ranger.
+
+### `error_correct_intbcs_to_whitelist`
+#### Description
+Corrects integration barcodes (intBCs) in a DataFrame to a provided whitelist based on Levenshtein distance.
+
+### `error_correct_umis`
+#### Description
+Corrects UMIs within cellBC-intBC pairs by collapsing those with close sequences, based on a Hamming distance threshold.
+
+### `filter_bam`
+#### Description
+Filters reads in a BAM file based on the quality of barcode and UMI sequences.
+
+### `resolve_umi_sequence`
+#### Description
+Resolves a consensus sequence for each UMI, filtering based on read counts and plotting diagnostics.
+
+### `filter_molecule_table`
+#### Description
+Filters and corrects a molecule table of cellBC-UMI pairs, performing several preprocessing steps including UMI filtering and intBC correction.
+
+### `call_lineage_groups`
+#### Description
+Assigns cells to clonal populations by iteratively filtering and assigning lineage groups based on shared intBCs.
+
+### `compute_empirical_indel_priors`
+#### Description
+Calculates prior probabilities for indels based on their occurrence in the allele table.
+
+### `convert_alleletable_to_character_matrix`
+#### Description
+Converts an allele table into a character matrix for phylogenetic analysis, with options for handling missing data and collapsing duplicates.
+
+### `convert_alleletable_to_lineage_profile`
+#### Description
+Transforms an allele table into a lineage profile, summarizing indels observed at cellBC-intBC pairs.
+
+### `convert_lineage_profile_to_character_matrix`
+#### Description
+Converts a lineage profile into a character matrix, abstracting indels into integer states.
+
+### `filter_cells`
+#### Description
+Filters out cell barcodes with insufficient UMIs or reads per UMI from a molecule table.
+
+### `filter_umis`
+#### Description
+Removes UMIs with read counts below a specified threshold from a molecule table.
+
+### `setup`
+#### Description
+Sets up the environment for the preprocessing pipeline, including logging configuration.
+
+## References
+
+- Functions from `pipeline.py` and `utilities.py` are heavily referenced, as they provide the core functionality for preprocessing tasks.
+- The `setup_utilities.py` file is referenced for environment setup functions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pysam` | Used for handling BAM files. |
+| `pandas` | Utilized for data manipulation and storage in DataFrames. |
+| `numpy` | Provides numerical operations and data handling. |
+| `ngs_tools` | Offers utilities for sequence processing and error correction. |
+| `tqdm` | Used for progress bar display during processing. |
+
+## Error Handling
+
+- The code raises `PreprocessError` for invalid inputs, such as unsupported chemistries or missing required arguments.
+- Warnings are issued using `PreprocessWarning` for potential issues like missing data in alleles.
+
+## Logging
+
+- The code uses a logging mechanism to provide information about the execution process, including start and end times, and details about the operations performed.
+
+## TODOs
+
+- The `error_correct_cellbcs_to_whitelist` function has a TODO note indicating the need to integrate pre-packaged whitelists from the `ngs-tools` library in the future.

@@ -1,0 +1,170 @@
+---
+title: "iid_exponential_bayesian_test.py"
+---
+
+## High-level description
+
+The target file, `iid_exponential_bayesian_test.py`, is a unit test suite designed to validate the functionality of the `IIDExponentialBayesian` class from the `cassiopeia.tools` module. This class is a branch length estimator that models the evolution of a phylogenetic tree using a Bayesian approach with an IID (independent and identically distributed) exponential model. The test suite checks the accuracy of the model's likelihood computations, posterior time distributions, and branch length estimations against both closed-form solutions and numerical approximations.
+
+## Code Structure
+
+The main symbols in the code are functions and a test class that interact with each other to perform various tests on the `IIDExponentialBayesian` model. The test class `TestIIDExponentialBayesian` uses helper functions to compute expected results and compare them with the model's output.
+
+## References
+
+- `CassiopeiaTree`: A data structure representing a phylogenetic tree, used extensively in the tests.
+- `IIDExponentialBayesian`: The class being tested, which estimates branch lengths using a Bayesian model.
+- `networkx`, `numpy`, `scipy`: Libraries used for graph manipulation, numerical computations, and integration.
+
+## Symbols
+
+### `_non_root_internal_nodes`
+#### Description
+Returns a list of internal nodes in a `CassiopeiaTree`, excluding the root.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree from which to extract internal nodes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| nodes | List[str] | Internal nodes excluding the root. |
+
+### `calc_exact_log_full_joint`
+#### Description
+Calculates the exact log full joint probability of a tree's branch lengths, character states, and topology.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree structure. |
+| mutation_rate | float | Mutation rate of the model. |
+| birth_rate | float | Birth rate of the model. |
+| sampling_probability | float | Sampling probability of the model. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_prob | float | Log full joint probability. |
+
+#### Internal Logic
+- Iterates over tree edges to compute likelihoods for birth and mutation processes.
+- Uses mathematical functions like logarithms and binomials to compute probabilities.
+
+### `calc_numerical_log_likelihood`
+#### Description
+Computes the numerical log likelihood of the observed data in a tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree structure. |
+| mutation_rate | float | Mutation rate of the model. |
+| birth_rate | float | Birth rate of the model. |
+| sampling_probability | float | Sampling probability of the model. |
+| epsrel | float | Tolerance for numerical integration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_likelihood | np.array | Log likelihood of the data. |
+
+#### Internal Logic
+- Uses numerical integration to compute the likelihood over possible node times.
+- Validates the result to ensure it is not NaN.
+
+### `calc_numerical_log_joints`
+#### Description
+Calculates the numerical log joint probability for a node's possible times.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree structure. |
+| node | str | Node for which to compute the joint probability. |
+| mutation_rate | float | Mutation rate of the model. |
+| birth_rate | float | Birth rate of the model. |
+| sampling_probability | float | Sampling probability of the model. |
+| discretization_level | int | Number of timesteps for discretization. |
+| epsrel | float | Tolerance for numerical integration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_joints | np.array | Log joint probabilities for node times. |
+
+#### Internal Logic
+- Iterates over discretized time intervals to compute joint probabilities.
+- Uses numerical integration for each time step.
+
+### `numerical_posterior_time`
+#### Description
+Computes the numerical posterior time distribution for a node.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree structure. |
+| node | str | Node for which to compute the posterior time. |
+| mutation_rate | float | Mutation rate of the model. |
+| birth_rate | float | Birth rate of the model. |
+| sampling_probability | float | Sampling probability of the model. |
+| discretization_level | int | Number of timesteps for discretization. |
+| epsrel | float | Tolerance for numerical integration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| posterior_time | np.array | Posterior time distribution for the node. |
+
+#### Internal Logic
+- Computes log joint probabilities and normalizes them to obtain the posterior distribution.
+
+### `relative_error`
+#### Description
+Calculates the relative error between two values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x | float | First value. |
+| y | float | Second value. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | float | Relative error between x and y. |
+
+### `TestIIDExponentialBayesian`
+#### Description
+A test class that uses the `unittest` framework to validate the `IIDExponentialBayesian` model.
+
+#### Internal Logic
+- Contains multiple test methods that compare the model's output against expected results.
+- Uses parameterized tests to check different configurations of the model.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used for graph operations on the tree. |
+| `numpy` | Used for numerical computations. |
+| `scipy` | Provides integration and special functions. |
+| `pytest` | Used for marking slow tests. |
+| `parameterized` | Allows parameterized test cases. |
+
+## Error Handling
+
+- The test methods use assertions to validate the correctness of the model's output.
+- The `IIDExponentialBayesian` class raises `ValueError` for invalid input parameters, such as incorrect tree topology or sampling probability.
+
+## Logging
+
+- The test suite does not implement logging but uses assertions to ensure correctness.
+
+## TODOs
+
+- No TODOs are present in the target file.

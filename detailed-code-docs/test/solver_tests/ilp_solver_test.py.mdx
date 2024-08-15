@@ -1,0 +1,89 @@
+---
+title: "ilp_solver_test.py"
+---
+
+## High-level description
+
+The `ilp_solver_test.py` file is a unit test suite for the `ILPSolver` class in the Cassiopeia library. It uses the `unittest` framework to verify the functionality of the `ILPSolver`, which is responsible for inferring phylogenetic trees using integer linear programming (ILP). The tests cover various scenarios, including handling of missing data, duplicate samples, and potential graph inference, ensuring that the solver behaves as expected under different conditions.
+
+## Code Structure
+
+The main components of the code are the `TestILPSolver` class, which contains multiple test methods, and the `find_triplet_structure` function. The `TestILPSolver` class is a subclass of `unittest.TestCase` and includes setup and teardown methods to prepare and clean up the test environment. The test methods within this class are designed to test specific functionalities of the `ILPSolver`.
+
+## References
+
+- `ILPSolver`: The class being tested, which is part of the `cassiopeia.solver` module.
+- `ILPSolverError`: An exception class used to handle errors specific to the ILPSolver.
+- `ilp_solver_utilities`: A module containing utility functions used by the ILPSolver, such as `get_lca_characters_cython` and `simple_hamming_distance_cython`.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+Determines the structure of a triplet (a, b, c) in a given tree `T` by comparing the number of common ancestors between pairs of nodes.
+
+#### Inputs
+| Name    | Type       | Description                  |
+|:--------|:-----------|:-----------------------------|
+| triplet | tuple      | A triplet of nodes (a, b, c) |
+| T       | nx.DiGraph | A directed graph representing a tree |
+
+#### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| structure | str    | The structure of the triplet, either "ab", "ac", "bc", or "-" |
+
+#### Internal Logic
+- Computes the ancestors of each node in the triplet.
+- Counts the number of common ancestors between each pair of nodes.
+- Determines the structure based on which pair has the most common ancestors.
+
+### `TestILPSolver`
+#### Description
+A test suite for the `ILPSolver` class, containing various test cases to validate its functionality.
+
+#### Inputs
+No direct inputs; uses class-level setup to initialize test data.
+
+#### Outputs
+No direct outputs; uses assertions to validate test conditions.
+
+#### Internal Logic
+- **`setUp`**: Initializes test data, including character matrices with different scenarios (e.g., missing data, duplicates).
+- **`test_raises_error_on_ambiguous`**: Verifies that the solver raises an error when given ambiguous data.
+- **`test_get_lca_cython`**: Tests the utility function for finding the least common ancestor (LCA) using Cython.
+- **`test_cython_hamming_dist`**: Tests the Cython implementation of the Hamming distance calculation.
+- **`test_single_sample_ilp`**: Tests the solver's behavior with a single sample.
+- **`test_basic_ilp_constructor`**: Validates the default settings of the ILPSolver constructor.
+- **`test_get_layer_for_potential_graph`**: Tests the inference of a layer in the potential graph.
+- **`test_simple_potential_graph_inference`**: Verifies the inference of a simple potential graph.
+- **`test_post_process_steiner_solution`**: Tests the post-processing of a Steiner tree solution.
+- **`test_append_sample_nodes_and_remove_spurious_leaves`**: Tests the appending of sample nodes and removal of spurious leaves in a tree.
+- **`test_ilp_solver_perfect_phylogeny`**: Tests the solver's ability to reconstruct a perfect phylogeny.
+- **`test_potential_graph_inference_with_duplicates`**: Tests potential graph inference with duplicate samples.
+- **`test_ilp_solver_with_duplicates`**: Tests the solver's handling of duplicate samples.
+- **`test_ilp_solver_missing_data`**: Tests the solver's handling of missing data.
+- **`test_ilp_throws_error_when_potential_graph_is_not_found`**: Verifies that the solver raises an error when a potential graph cannot be found.
+- **`tearDown`**: Cleans up by removing the log file created during tests.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used for graph operations and tree structures. |
+| `numpy`    | Used for numerical operations and array handling. |
+| `pandas`   | Used for handling character matrices as DataFrames. |
+| `cassiopeia` | The main library being tested, specifically the `ILPSolver` class. |
+
+## Error Handling
+
+- The tests expect `ILPSolverError` to be raised in certain scenarios, such as when ambiguous data is provided or when a potential graph cannot be found.
+
+## Logging
+
+- The tests involve logging to a file (`test.log`) to capture the solver's output and progress during execution.
+
+## TODOs
+
+- The code includes `unittest.skipUnless` decorators to skip certain tests if the Gurobi library is not installed, indicating a dependency on this external library for some tests.

@@ -1,0 +1,67 @@
+---
+title: "coupling.py"
+---
+
+## High-level description
+
+The `compute_evolutionary_coupling` function in the `cassiopeia/tools/coupling.py` file is designed to compute the evolutionary coupling statistics between categorical meta variables on a phylogenetic tree. This function calculates how closely related different categories of a given meta variable are, using a Z-normalized mean distance metric. The function is particularly useful for analyzing relationships between different cell types in lineage tracing experiments.
+
+## Code Structure
+
+The main function in this file is `compute_evolutionary_coupling`, which relies on several utility functions from the `cassiopeia.data.utilities` module. It uses the `CassiopeiaTree` class from the `cassiopeia.data` module to represent the phylogenetic tree and its associated metadata.
+
+## References
+
+- `CassiopeiaTree`: A class from the `cassiopeia.data` module that represents a phylogenetic tree and its associated metadata.
+- `data_utilities`: A module that provides utility functions for data manipulation and analysis, such as `compute_phylogenetic_weight_matrix` and `compute_inter_cluster_distances`.
+
+## Symbols
+
+### `compute_evolutionary_coupling`
+#### Description
+This function computes the evolutionary coupling statistics for a given categorical meta variable on a phylogenetic tree. It calculates the Z-normalized mean distance between categories, indicating how closely related these categories are on the tree.
+
+#### Inputs
+| Name                      | Type                      | Description                                                                 |
+|:--------------------------|:--------------------------|:----------------------------------------------------------------------------|
+| tree                      | CassiopeiaTree            | The phylogenetic tree containing the meta data.                             |
+| meta_variable             | str                       | The column name in `tree.cell_meta` that stores the categorical variable.   |
+| minimum_proportion        | float                     | Minimum proportion of cells a category needs to appear in to be considered. |
+| number_of_shuffles        | int                       | Number of times to shuffle the data to compute the empirical Z score.       |
+| random_state              | Optional[np.random.RandomState] | Numpy random state for shuffling.                                           |
+| dissimilarity_map         | Optional[pd.DataFrame]    | A precomputed dissimilarity map between all leaves.                         |
+| cluster_comparison_function | Callable                | Function for comparing mean distances between groups.                       |
+| **comparison_kwargs       | dict                      | Additional arguments for the cluster comparison function.                   |
+
+#### Outputs
+| Name            | Type         | Description                                      |
+|:----------------|:-------------|:-------------------------------------------------|
+| Z_scores        | pd.DataFrame | A K x K dataframe of evolutionary coupling scores.|
+
+#### Internal Logic
+1. **Weight Matrix Calculation**: If a dissimilarity map is not provided, compute a phylogenetic weight matrix using `compute_phylogenetic_weight_matrix`.
+2. **Meta Data Filtering**: Filter the meta data based on the `minimum_proportion` threshold.
+3. **Inter-cluster Distances**: Calculate the inter-cluster distances using `compute_inter_cluster_distances`.
+4. **Background Distribution**: Generate an empirical background distribution by shuffling the meta data and recalculating inter-cluster distances.
+5. **Z-score Calculation**: Compute Z-scores by comparing the observed inter-cluster distances to the background distribution.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| numpy      | Used for numerical operations and random number generation.             |
+| pandas     | Used for data manipulation and storage in DataFrames.                   |
+| tqdm       | Provides a progress bar for the shuffling process.                      |
+| cassiopeia.data | Provides the `CassiopeiaTree` class and utility functions for data manipulation. |
+
+## Error Handling
+
+The function does not explicitly handle errors but relies on the underlying libraries and functions to raise exceptions if invalid inputs are provided, such as a non-existent meta variable or an improperly formatted dissimilarity map.
+
+## Logging
+
+The function uses `tqdm` to provide a progress bar for the shuffling process, which helps in tracking the progress of the empirical background generation.
+
+## TODOs
+
+No TODOs are present in the target file.

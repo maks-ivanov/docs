@@ -1,0 +1,80 @@
+---
+title: "VanillaGreedySolver.py"
+---
+
+## High-level description
+
+The `VanillaGreedySolver` class is a specialized implementation of a greedy algorithm for phylogenetic tree reconstruction, specifically designed to handle character matrices with potential missing data. It extends the `GreedySolver` class and implements a top-down approach to partition samples based on the most frequent mutations, optimizing for parsimony. The solver includes mechanisms to handle ambiguous and missing data, allowing for flexible and robust tree inference.
+
+## Code Structure
+
+The `VanillaGreedySolver` class inherits from the `GreedySolver` class, which is a subclass of `CassiopeiaSolver`. The `VanillaGreedySolver` implements the `perform_split` method, which is crucial for partitioning samples during the tree reconstruction process. It also utilizes missing data imputation methods from the `missing_data_methods` module and utility functions from the `solver_utilities` module.
+
+## Symbols
+
+### `VanillaGreedySolver`
+#### Description
+The `VanillaGreedySolver` class implements a greedy algorithm for phylogenetic tree reconstruction. It recursively partitions a set of samples based on the most frequent mutation, handling missing and ambiguous data through specified imputation methods.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| missing_data_classifier | Callable | A function or string specifying the method for handling missing data. Defaults to `assign_missing_average`. |
+| prior_transformation | str | A string specifying the transformation to apply to priors for weighting. Defaults to `"negative_log"`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies the state of a `CassiopeiaTree` object. |
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with a specified missing data classifier and prior transformation method.
+- **`perform_split` Method**: 
+  - Computes mutation frequencies for each character and state.
+  - Selects the best character-state pair to partition the samples, considering weights if provided.
+  - Handles missing data using the specified classifier, ensuring samples with missing values are appropriately partitioned.
+  - Returns two lists representing the left and right partitions of samples.
+
+### `perform_split`
+#### Description
+Partitions a list of samples into two groups based on the most frequent character-state pair, using a specified method to handle missing data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | The character matrix containing sample data. |
+| samples | List[int] | A list of sample indices to partition. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character-state pair, derived from priors. |
+| missing_state_indicator | int | Indicator for missing data in the character matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tuple[List[str], List[str]] | Tuple | Two lists representing the left and right partitions of samples. |
+
+#### Internal Logic
+- Converts sample names to indices for efficient processing.
+- Computes mutation frequencies for each character and state.
+- Iterates over character-state pairs to find the best split, considering weights if available.
+- Partitions samples into left, right, and missing groups based on the chosen character-state pair.
+- Uses the missing data classifier to handle samples with missing data, ensuring they are placed in the appropriate partition.
+
+## References
+
+- **`GreedySolver`**: The parent class that defines the structure for greedy solvers, including the abstract `perform_split` method.
+- **`missing_data_methods.assign_missing_average`**: The default method for handling missing data during sample partitioning.
+- **`solver_utilities.convert_sample_names_to_indices`**: Utility function to map sample names to indices for efficient processing.
+- **`solver_utilities.transform_priors`**: Utility function to transform priors into weights for character-state pairs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for numerical operations and array manipulations. |
+| `pandas` | Utilized for handling character matrices as DataFrames. |
+
+## TODOs
+
+- **Implement fuzzysolver**: A note in the class docstring indicates a future implementation of a "fuzzysolver" is planned.
+
+This documentation provides a comprehensive overview of the `VanillaGreedySolver` class, detailing its purpose, functionality, and integration with other components in the codebase.

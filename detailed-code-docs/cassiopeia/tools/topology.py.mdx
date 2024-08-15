@@ -1,0 +1,128 @@
+---
+title: "topology.py"
+---
+
+## High-level description
+
+The `topology.py` file provides utilities for assessing the topological properties of a phylogenetic tree, specifically focusing on the balance and expansion of subclades within the tree. The main functionalities include computing expansion p-values for subclades to assess their growth under a neutral model and calculating the cophenetic correlation, which measures the correlation between phylogenetic distances and character dissimilarities.
+
+## Code Structure
+
+The main symbols in the code are functions that operate on a `CassiopeiaTree` object. These functions utilize mathematical and statistical methods to analyze the tree's topology. The `CassiopeiaTree` class, defined in a related file, is central to these operations, providing methods for tree traversal and attribute management.
+
+## References
+
+- `CassiopeiaTree`: A class from `cassiopeia.data` that represents a phylogenetic tree and provides methods for tree manipulation and analysis.
+- `compute_phylogenetic_weight_matrix`: A function from `cassiopeia.data` used to compute a weight matrix for the tree.
+- `dissimilarity_functions.weighted_hamming_distance`: A default dissimilarity function used in cophenetic correlation calculations.
+
+## Symbols
+
+### `compute_expansion_pvalues`
+#### Description
+Computes expansion p-values for subclades in a phylogenetic tree to assess their growth under a neutral coalescent model. It adds an "expansion_pvalue" attribute to each node in the tree.
+
+#### Inputs
+| Name          | Type            | Description                                                                 |
+|:--------------|:----------------|:----------------------------------------------------------------------------|
+| tree          | CassiopeiaTree  | The phylogenetic tree to analyze.                                           |
+| min_clade_size| int             | Minimum number of leaves in a subtree to be considered.                     |
+| min_depth     | int             | Minimum depth of clade to be considered.                                    |
+| copy          | bool            | If True, returns a copy of the tree with attributes added.                  |
+
+#### Outputs
+| Name  | Type            | Description                                                                 |
+|:------|:----------------|:----------------------------------------------------------------------------|
+| tree  | CassiopeiaTree or None | The tree with added attributes if `copy` is True, otherwise None.     |
+
+#### Internal Logic
+- Traverses the tree in a depth-first manner.
+- For each node, calculates the number of leaves and children.
+- Computes the expansion p-value using a simplified coalescent probability formula.
+- Sets the "expansion_pvalue" attribute for each node.
+
+#### Performance Considerations
+- The function can run in O(n log n) time for balanced trees but may degrade to O(n^3) for highly unbalanced trees.
+
+### `compute_cophenetic_correlation`
+#### Description
+Calculates the cophenetic correlation of a phylogenetic tree, which is the Pearson correlation between phylogenetic distances and character dissimilarities.
+
+#### Inputs
+| Name                | Type            | Description                                                                 |
+|:--------------------|:----------------|:----------------------------------------------------------------------------|
+| tree                | CassiopeiaTree  | The phylogenetic tree to analyze.                                           |
+| weights             | Optional[pd.DataFrame] | Precomputed phylogenetic weights matrix. If None, it is computed.          |
+| dissimilarity_map   | Optional[pd.DataFrame] | Precomputed dissimilarity matrix. If None, it is computed.                 |
+| dissimilarity_function | Optional[Callable] | Function to compute dissimilarities if not precomputed.                    |
+
+#### Outputs
+| Name  | Type            | Description                                                                 |
+|:------|:----------------|:----------------------------------------------------------------------------|
+| Tuple | (float, float)  | The cophenetic correlation value and its significance.                      |
+
+#### Internal Logic
+- Computes or retrieves the phylogenetic weight matrix and dissimilarity map.
+- Aligns the matrices to ensure they correspond to the same set of leaves.
+- Converts matrices to condensed distance matrices.
+- Computes the Pearson correlation between the condensed matrices.
+
+### `simple_coalescent_probability`
+#### Description
+Calculates the probability of observing a specific number of samples in a lineage under a simple coalescent model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n    | int  | Total number of leaves in the subtree. |
+| b    | int  | Number of leaves in one lineage. |
+| k    | int  | Number of lineages. |
+
+#### Outputs
+| Name       | Type  | Description |
+|:-----------|:------|:------------|
+| probability| float | Probability of observing `b` leaves in one lineage. |
+
+#### Internal Logic
+- Uses combinatorial calculations to determine the probability based on the coalescent model.
+
+### `nCk`
+#### Description
+Computes the binomial coefficient, "n choose k", which is the number of ways to choose `k` items from `n` items.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n    | int  | Total number of items. |
+| k    | int  | Number of items to choose. |
+
+#### Outputs
+| Name       | Type  | Description |
+|:-----------|:------|:------------|
+| coefficient| float | The number of ways to choose `k` items from `n`. |
+
+#### Internal Logic
+- Uses the factorial function to compute the binomial coefficient.
+- Raises an error if `k` is greater than `n`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `math`     | Provides mathematical functions like factorial. |
+| `numpy`    | Used for numerical operations and array manipulations. |
+| `pandas`   | Used for handling data in DataFrame format. |
+| `scipy`    | Provides statistical functions and distance calculations. |
+
+## Error Handling
+
+- The `nCk` function raises a `CassiopeiaError` if `k` is greater than `n`.
+- The `CassiopeiaError` is a general exception for the Cassiopeia software, defined in `cassiopeia.mixins.errors`.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+- The `compute_expansion_pvalues` function mentions a future improvement to implement the function in O(n) time.

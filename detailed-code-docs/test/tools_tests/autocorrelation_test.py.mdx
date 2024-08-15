@@ -1,0 +1,117 @@
+---
+title: "autocorrelation_test.py"
+---
+
+## High-level description
+
+The target file `autocorrelation_test.py` is a test suite designed to validate the functionality of the `compute_morans_i` function from the `cassiopeia.tools.autocorrelation` module. This function calculates Moran's I, a measure of spatial autocorrelation, using phylogenetic trees and associated data. The test suite uses the `unittest` framework to ensure that the function behaves correctly under various conditions, including handling of custom weight matrices and error scenarios.
+
+## Code Structure
+
+The main class in this file is `TestAutocorrelation`, which inherits from `unittest.TestCase`. This class contains several test methods that each test different aspects of the `compute_morans_i` function. The `setUp` method initializes a basic phylogenetic tree and a data matrix, which are used in the tests.
+
+## References
+
+- `compute_morans_i`: The function being tested, located in `cassiopeia.tools.autocorrelation`.
+- `AutocorrelationError`: An exception class used to handle errors specific to autocorrelation computations, located in `cassiopeia.mixins.errors`.
+
+## Symbols
+
+### `TestAutocorrelation`
+#### Description
+A test case class for testing the `compute_morans_i` function. It sets up a basic phylogenetic tree and data matrix, and contains multiple test methods to validate different functionalities and error handling of the function.
+
+#### Methods
+
+- `setUp`: Initializes the test environment with a basic tree and data matrix.
+- `test_simple_moran_single_variable`: Tests the computation of Moran's I for a single variable.
+- `test_moran_bivariate`: Tests the computation of Moran's I for multiple variables.
+- `test_moran_custom_weights`: Tests the computation of Moran's I using a custom weight matrix.
+- `test_moran_exceptions`: Tests various error scenarios to ensure proper exception handling.
+
+### `setUp`
+#### Description
+Sets up the initial conditions for the tests, including a basic phylogenetic tree and a data matrix.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| self.basic_tree | CassiopeiaTree | A basic phylogenetic tree used in tests. |
+| self.X | DataFrame | A data matrix with example observations. |
+
+### `test_simple_moran_single_variable`
+#### Description
+Tests the computation of Moran's I for a single variable (`nUMI`) and compares the result to an expected value.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| self.basic_tree | CassiopeiaTree | The phylogenetic tree used for the test. |
+| self.X | DataFrame | The data matrix containing the variable to test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| I | float | The computed Moran's I statistic. |
+
+### `test_moran_bivariate`
+#### Description
+Tests the computation of Moran's I for multiple variables and compares the results to expected correlation values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| self.basic_tree | CassiopeiaTree | The phylogenetic tree used for the test. |
+| self.X | DataFrame | The data matrix containing multiple variables to test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| I | DataFrame | The computed Moran's I statistics for each variable pair. |
+
+### `test_moran_custom_weights`
+#### Description
+Tests the computation of Moran's I using a custom weight matrix.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| self.basic_tree | CassiopeiaTree | The phylogenetic tree used for the test. |
+| self.X | DataFrame | The data matrix containing the variable to test. |
+| W | DataFrame | The custom weight matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| I | float | The computed Moran's I statistic using custom weights. |
+
+### `test_moran_exceptions`
+#### Description
+Tests various error scenarios to ensure that the `compute_morans_i` function raises the appropriate exceptions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| self.basic_tree | CassiopeiaTree | The phylogenetic tree used for the test. |
+| self.X | DataFrame | The data matrix used in the test. |
+
+#### Outputs
+Raises `AutocorrelationError` for various invalid input scenarios.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used to create and manipulate the phylogenetic tree. |
+| `numpy` | Used for numerical operations. |
+| `pandas` | Used for data manipulation and storage. |
+| `cassiopeia` | The main library being tested, specifically its `tools` and `mixins` modules. |
+
+## Error Handling
+
+The test suite checks for `AutocorrelationError` exceptions in various scenarios, such as when non-numeric data is provided, when the data matrix does not match the tree's leaves, and when the weight matrix is incorrectly specified.
+
+## Logging
+
+No explicit logging is implemented in this test suite. The `unittest` framework handles test results and outputs.

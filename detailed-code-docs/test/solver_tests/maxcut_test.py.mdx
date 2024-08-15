@@ -1,0 +1,74 @@
+---
+title: "maxcut_test.py"
+---
+
+## High-level description
+
+The `maxcut_test.py` file is a unit test suite for the `MaxCutSolver` class, which is part of the Cassiopeia library. This test suite verifies the functionality of the `MaxCutSolver` by testing its ability to construct connectivity graphs, evaluate cuts, and solve phylogenetic trees using the max-cut approach. The tests ensure that the solver correctly partitions samples based on their mutation data and handles various scenarios, including base cases and the use of priors.
+
+## Code Structure
+
+The main components of the code are the `MaxCutSolverTest` class, which contains several test methods, and the `find_triplet_structure` function. The `MaxCutSolverTest` class uses the `unittest` framework to define test cases for different functionalities of the `MaxCutSolver`. The `find_triplet_structure` function is a utility used within the tests to determine the structure of triplets in a tree.
+
+## References
+
+- `MaxCutSolver`: The class being tested, which is responsible for solving the max-cut problem on connectivity graphs.
+- `graph_utilities`: A module that provides utility functions for graph operations, such as checking cuts and constructing connectivity graphs.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+Determines the structure of a triplet (three nodes) in a given tree by comparing the common ancestors of the nodes.
+
+#### Inputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| triplet| list         | A list of three nodes (a, b, c).   |
+| T      | nx.DiGraph   | A directed graph representing a tree.|
+
+#### Outputs
+| Name     | Type   | Description                                      |
+|:---------|:-------|:-------------------------------------------------|
+| structure| str    | A string indicating the structure of the triplet.|
+
+#### Internal Logic
+- Computes the ancestors of each node in the triplet.
+- Determines the number of common ancestors between each pair of nodes.
+- Returns a string indicating which pair of nodes has the most common ancestors.
+
+### `MaxCutSolverTest`
+#### Description
+A test class that uses the `unittest` framework to test the functionality of the `MaxCutSolver`.
+
+#### Methods
+- `setUp`: Initializes test data and instances of `CassiopeiaTree` and `MaxCutSolver`.
+- `test_check_if_cut`: Tests the `check_if_cut` function from `graph_utilities`.
+- `test_evaluate_cut`: Tests the `evaluate_cut` method of `MaxCutSolver`.
+- `test_graph_construction`: Tests the construction of connectivity graphs.
+- `test_graph_construction_weights`: Tests graph construction with specified weights.
+- `test_hill_climb`: Tests the hill-climbing optimization of cuts.
+- `test_polytomy_base_case`: Tests the solver's handling of unresolved samples (polytomy).
+- `test_simple_base_case`: Tests a simple case of tree resolution.
+- `test_simple_base_case_priors`: Tests tree resolution with priors.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `unittest` | Provides the testing framework.              |
+| `networkx` | Used for graph operations and tree structures.|
+| `pandas`   | Used for handling character matrices.        |
+| `cassiopeia`| Provides the `MaxCutSolver` and related classes.|
+
+## Error Handling
+
+The test suite uses assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the `MaxCutSolver`.
+
+## Logging
+
+No explicit logging is implemented in the test suite. The `unittest` framework handles test results and outputs.
+
+## TODOs
+
+- There is a TODO comment in the `construct_connectivity_graph` function in the related `graph_utilities.py` file suggesting optimization with `numba`. This is not directly related to the test file but indicates potential future improvements in the utility functions used by the solver.

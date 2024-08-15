@@ -1,0 +1,123 @@
+---
+title: "solver_utilities.py"
+---
+
+## High-level description
+
+The `solver_utilities.py` file provides utility functions for the solver module in the Cassiopeia library. These utilities include functions for generating unique node names, collapsing unifurcations in trees, transforming prior probabilities into weights, mapping sample names to indices, and saving dissimilarity maps in the PHYLIP format. These functions are designed to support various tree reconstruction algorithms by providing common operations needed during the tree-building process.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `node_name_generator`: Generates unique node names using hashed timestamps.
+- `collapse_unifurcations`: Collapses nodes in a tree that have only one child.
+- `transform_priors`: Transforms prior probabilities into weights using specified transformations.
+- `convert_sample_names_to_indices`: Maps sample names to their indices in a list.
+- `save_dissimilarity_as_phylip`: Saves a dissimilarity map as a PHYLIP file.
+
+## Symbols
+
+### `node_name_generator`
+#### Description
+Generates unique node names for building a reconstructed tree by hashing timestamps.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Generator[str, None, None] | A generator object that yields unique node names. |
+
+#### Internal Logic
+- Continuously generates a unique node name by encoding the current timestamp and hashing it using the `blake2b` algorithm.
+
+### `collapse_unifurcations`
+#### Description
+Collapses all unifurcations in a tree, removing nodes with only one child and connecting their children directly to their parent.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | ete3.Tree | The tree to be collapsed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| collapsed_tree | ete3.Tree | The tree with unifurcations collapsed. |
+
+#### Internal Logic
+- Traverses the tree to identify nodes with only one child and deletes them, effectively connecting their child directly to their parent.
+
+### `transform_priors`
+#### Description
+Transforms a dictionary of prior probabilities into a dictionary of weights using specified transformations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| priors | Optional[Dict[int, Dict[int, float]]] | A dictionary of prior probabilities for each character/state pair. |
+| prior_transformation | str | The transformation to apply to the priors. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| weights | Dict[int, Dict[int, float]] | A dictionary of weights for each character/state pair. |
+
+#### Internal Logic
+- Validates the transformation type and applies the corresponding mathematical transformation to each prior probability.
+
+### `convert_sample_names_to_indices`
+#### Description
+Maps sample string names to their integer indices in a given set of names.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| names | List[str] | A list of sample names in the original character matrix. |
+| samples | List[str] | A list of sample names to be mapped to indices. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| indices | List[int] | A list of integer indices corresponding to the sample names. |
+
+#### Internal Logic
+- Creates a dictionary mapping each name to its index and uses it to convert the sample names to indices.
+
+### `save_dissimilarity_as_phylip`
+#### Description
+Saves a dissimilarity map as a PHYLIP file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity_map | pd.DataFrame | A dissimilarity map. |
+| path | str | The path to save the PHYLIP file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function writes to a file and does not return a value. |
+
+#### Internal Logic
+- Converts the dissimilarity map to a NumPy array and writes it to a file in the PHYLIP format, including the number of samples and formatted dissimilarity values.
+
+## References
+
+- `PriorTransformationError`: An exception class used to handle errors related to prior transformations, imported from `cassiopeia.mixins`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ete3` | Used for tree manipulation and operations. |
+| `hashlib` | Provides the `blake2b` hashing algorithm for generating unique node names. |
+| `numpy` | Used for numerical operations and transformations. |
+| `pandas` | Used for handling data frames, particularly for dissimilarity maps. |
+| `time` | Used to generate timestamps for unique node names. |
+
+## Error Handling
+
+- The `transform_priors` function raises a `PriorTransformationError` if an unsupported transformation is specified or if prior probabilities are out of the valid range (0, 1].
+
+## Logging
+
+- The file uses the `logging` module to log messages, although specific logging statements are not detailed in the provided code.

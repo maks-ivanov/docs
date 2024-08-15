@@ -1,0 +1,67 @@
+---
+title: "convert_fastqs_to_unmapped_bam_test.py"
+---
+
+## High-level description
+
+The target file, `convert_fastqs_to_unmapped_bam_test.py`, is a unit test script designed to verify the functionality of converting FASTQ files to an unmapped BAM format using different sequencing chemistries. It leverages the `unittest` framework to define and execute tests that ensure the conversion process, implemented in the `pipeline.py` module, correctly handles various input formats and produces the expected BAM outputs.
+
+## Code Structure
+
+The main class in this file is `TestConvertFastqsToUnmappedBam`, which inherits from `unittest.TestCase`. This class contains several test methods, each corresponding to a different sequencing chemistry. The tests utilize the `convert_fastqs_to_unmapped_bam` function from the `pipeline` module to perform the conversion and then validate the results using assertions.
+
+## Symbols
+
+### `TestConvertFastqsToUnmappedBam`
+#### Description
+This class is a test suite for verifying the conversion of FASTQ files to unmapped BAM files using different sequencing chemistries. It sets up test data and defines test cases for each supported chemistry.
+
+#### Inputs
+- None directly, but it uses file paths to test FASTQ files set up in the `setUp` method.
+
+#### Outputs
+- None directly, but it asserts the correctness of the BAM file conversion.
+
+#### Internal Logic
+- **setUp**: Initializes file paths for test FASTQ files for different sequencing chemistries.
+- **test_dropseq**: Tests the conversion for the "dropseq" chemistry using 10xv3 FASTQ files.
+- **test_10xv2**: Tests the conversion for the "10xv2" chemistry using 10xv3 FASTQ files.
+- **test_10xv3**: Tests the conversion for the "10xv3" chemistry using 10xv3 FASTQ files.
+- **test_indropsv3**: Tests the conversion for the "indropsv3" chemistry using indropsv3 FASTQ files.
+- **test_slideseq2**: Tests the conversion for the "slideseq2" chemistry using slideseq2 FASTQ files.
+
+Each test method:
+1. Calls `convert_fastqs_to_unmapped_bam` with appropriate parameters.
+2. Opens the resulting BAM file using `pysam.AlignmentFile`.
+3. Fetches alignments and performs assertions to verify:
+   - The number of alignments.
+   - The query names of the alignments.
+   - The sequences and qualities match those in the input FASTQ files.
+   - The presence and correctness of specific BAM tags.
+
+## References
+
+- `pipeline.convert_fastqs_to_unmapped_bam`: The function being tested, which performs the conversion from FASTQ to BAM.
+- `pysam.AlignmentFile`: Used to read the BAM files and verify their contents.
+- `ngs.fastq.Fastq`: Used to read sequences and qualities from the FASTQ files for comparison.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `pysam` | Used for reading BAM files. |
+| `ngs_tools` | Used for reading FASTQ files. |
+| `cassiopeia.preprocess.pipeline` | Contains the function under test. |
+
+## Error Handling
+
+The test methods rely on assertions to handle errors. If an assertion fails, it indicates a discrepancy between the expected and actual results, which is reported by the `unittest` framework.
+
+## Logging
+
+No explicit logging is implemented in this test file. The `unittest` framework handles output related to test execution and results.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

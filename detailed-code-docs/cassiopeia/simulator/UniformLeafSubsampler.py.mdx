@@ -1,0 +1,61 @@
+---
+title: "UniformLeafSubsampler.py"
+---
+
+## High-level description
+
+The `UniformLeafSubsampler` class is a specialized subclass of `LeafSubsampler` designed to uniformly sample a subset of leaves from a `CassiopeiaTree`. It allows users to specify either a ratio or an exact number of leaves to sample, and it returns a new `CassiopeiaTree` that includes only the lineages relevant to the sampled leaves. This functionality is useful for simulating scenarios where only a subset of the data is available or for reducing the complexity of a tree for analysis.
+
+## Code Structure
+
+The `UniformLeafSubsampler` class extends the `LeafSubsampler` abstract base class, implementing the `subsample_leaves` method. It interacts with the `CassiopeiaTree` class to perform operations such as leaf removal and tree pruning. The class uses the `LeafSubsamplerError` for error handling when invalid parameters are provided.
+
+## References
+
+- `CassiopeiaTree`: The main data structure representing a phylogenetic tree, which the `UniformLeafSubsampler` operates on.
+- `LeafSubsampler`: The abstract base class that `UniformLeafSubsampler` extends.
+- `LeafSubsamplerError`: An exception class used for error handling within the `UniformLeafSubsampler`.
+
+## Symbols
+
+### `UniformLeafSubsampler`
+#### Description
+The `UniformLeafSubsampler` class is responsible for uniformly sampling a subset of leaves from a `CassiopeiaTree`. It can sample based on a specified ratio of the total leaves or a fixed number of leaves. The class ensures that only one of these parameters is provided and raises an error if neither or both are specified.
+
+#### Inputs
+| Name              | Type   | Description                                                                 |
+|:------------------|:-------|:----------------------------------------------------------------------------|
+| `ratio`           | float  | The fraction of leaves to sample, rounded down.                             |
+| `number_of_leaves`| int    | The exact number of leaves to sample.                                       |
+
+#### Outputs
+| Name | Type            | Description                                                                 |
+|:-----|:----------------|:----------------------------------------------------------------------------|
+| -    | `CassiopeiaTree`| A new tree containing only the sampled leaves and their relevant lineages.  |
+
+#### Internal Logic
+1. **Initialization**: The constructor checks that exactly one of `ratio` or `number_of_leaves` is provided. If not, it raises a `LeafSubsamplerError`.
+2. **Subsampling**: The `subsample_leaves` method calculates the number of leaves to sample based on the provided `ratio` or `number_of_leaves`.
+3. **Validation**: It checks if the calculated number of leaves to sample is valid (i.e., greater than zero and less than or equal to the total number of leaves).
+4. **Sampling**: It randomly selects leaves to remove from the tree, ensuring the remaining leaves form a valid subtree.
+5. **Tree Pruning**: The method prunes the tree to remove unnecessary nodes and optionally collapses the singular root edge if specified.
+6. **Time and Branch Lengths**: It updates the times and branch lengths in the resulting tree to reflect the subsampling.
+
+## Side Effects
+- Modifies the input `CassiopeiaTree` by creating a deep copy and altering the copy to reflect the subsampling.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `numpy`    | Used for random selection of leaves to remove.                          |
+| `copy`     | Used to create a deep copy of the `CassiopeiaTree` to avoid modifying the original. |
+
+## Error Handling
+- The class raises `LeafSubsamplerError` if invalid parameters are provided during initialization or if the sample size is invalid during subsampling.
+
+## Logging
+- The code does not implement any logging mechanisms.
+
+## TODOs
+- No TODOs are present in the target file.

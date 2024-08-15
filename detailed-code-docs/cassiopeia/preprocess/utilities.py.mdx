@@ -1,0 +1,269 @@
+---
+title: "utilities.py"
+---
+
+## High-level description
+
+The `utilities.py` file in the `cassiopeia/preprocess` directory provides utility functions and decorators for the Cassiopeia-Preprocess pipeline. These utilities include logging decorators for tracking function execution, filtering and error-correcting data in DataFrames, and converting data formats. The file is designed to support preprocessing tasks such as filtering cells and UMIs, error-correcting integration barcodes, and converting BAM files to DataFrames.
+
+## Code Structure
+
+The main symbols in the code are function decorators and utility functions. The decorators (`log_molecule_table`, `log_runtime`, `log_kwargs`) are used to enhance other functions by adding logging capabilities. The utility functions (`filter_cells`, `filter_umis`, `error_correct_intbc`, `record_stats`, `convert_bam_to_df`, `convert_alleletable_to_character_matrix`, `convert_alleletable_to_lineage_profile`, `convert_lineage_profile_to_character_matrix`, `compute_empirical_indel_priors`, `get_default_cut_site_columns`) perform specific data processing tasks.
+
+## Symbols
+
+### `log_molecule_table`
+#### Description
+A decorator that logs statistics about a DataFrame returned by a function, specifically the number of reads, unique UMIs, and unique cell barcodes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| wrapped | Callable | The function being decorated. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Callable | The decorated function. |
+
+#### Internal Logic
+- Checks if the "UMI" column contains counts or sequences.
+- Logs the number of reads, UMIs, and unique cell barcodes.
+
+### `log_runtime`
+#### Description
+A decorator that logs the start time, end time, and runtime of a function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| wrapped | Callable | The function being decorated. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Callable | The decorated function. |
+
+#### Internal Logic
+- Records the start time, executes the function, and logs the runtime.
+
+### `log_kwargs`
+#### Description
+A decorator that logs the keyword arguments of a function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| wrapped | Callable | The function being decorated. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Callable | The decorated function. |
+
+#### Internal Logic
+- Logs the keyword arguments passed to the function.
+
+### `filter_cells`
+#### Description
+Filters out cell barcodes from a DataFrame that have too few UMIs or too few reads per UMI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| molecule_table | pd.DataFrame | A DataFrame of cellBC-UMI pairs. |
+| min_umi_per_cell | int | Minimum number of UMIs per cell. |
+| min_avg_reads_per_umi | float | Minimum average reads per UMI. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | pd.DataFrame | A filtered DataFrame. |
+
+#### Internal Logic
+- Groups data by cell barcode and filters based on UMI count and average reads per UMI.
+
+### `filter_umis`
+#### Description
+Filters out UMIs with too few reads from a DataFrame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| molecule_table | pd.DataFrame | A DataFrame of cellBC-UMI pairs. |
+| min_reads_per_umi | int | Minimum read count for a UMI. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | pd.DataFrame | A filtered DataFrame. |
+
+#### Internal Logic
+- Filters UMIs based on the read count threshold.
+
+### `error_correct_intbc`
+#### Description
+Error corrects integration barcodes (intBCs) in a DataFrame based on similarity and UMI counts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| molecule_table | pd.DataFrame | A DataFrame of cellBC-UMI pairs. |
+| prop | float | Proportion threshold for correction. |
+| umi_count_thresh | int | UMI count threshold for correction. |
+| dist_thresh | int | Distance threshold for correction. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | pd.DataFrame | A DataFrame with corrected intBCs. |
+
+#### Internal Logic
+- Iterates over pairs of intBCs and corrects based on allele similarity, Levenshtein distance, UMI count, and proportion.
+
+### `record_stats`
+#### Description
+Records statistics about UMIs in a DataFrame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| molecule_table | pd.DataFrame | A DataFrame of alignments. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Tuple[np.array, np.array, np.array] | Read counts, UMIs per intBC, UMIs per cellBC. |
+
+#### Internal Logic
+- Groups data and calculates read counts and UMI statistics.
+
+### `convert_bam_to_df`
+#### Description
+Converts a BAM file to a Pandas DataFrame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data_fp | str | File path to the BAM file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | pd.DataFrame | A DataFrame containing BAM information. |
+
+#### Internal Logic
+- Reads the BAM file and extracts relevant information into a DataFrame.
+
+### `convert_alleletable_to_character_matrix`
+#### Description
+Converts an AlleleTable into a character matrix for phylogenetic analysis.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alleletable | pd.DataFrame | Allele Table to be converted. |
+| ignore_intbcs | List[str] | intBCs to ignore. |
+| allele_rep_thresh | float | Threshold for allele representation. |
+| missing_data_allele | Optional[str] | Indicator for missing data. |
+| missing_data_state | int | State for missing data. |
+| mutation_priors | Optional[pd.DataFrame] | Prior probabilities of mutations. |
+| cut_sites | Optional[List[str]] | Columns to treat as cut sites. |
+| collapse_duplicates | bool | Whether to collapse duplicate states. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Tuple[pd.DataFrame, Dict[int, Dict[int, float]], Dict[int, Dict[int, str]]] | Character matrix, probability dictionary, state mapping. |
+
+#### Internal Logic
+- Processes the AlleleTable to create a character matrix, applying filters and handling missing data.
+
+### `convert_alleletable_to_lineage_profile`
+#### Description
+Converts an AlleleTable to a lineage profile, summarizing indels at cellBC-intBC pairs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| allele_table | pd.DataFrame | AlleleTable. |
+| cut_sites | Optional[List[str]] | Columns to treat as cut sites. |
+| collapse_duplicates | bool | Whether to collapse duplicate states. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | pd.DataFrame | A lineage profile. |
+
+#### Internal Logic
+- Aggregates data to form a pivot table representing the lineage profile.
+
+### `convert_lineage_profile_to_character_matrix`
+#### Description
+Converts a lineage profile to a character matrix, abstracting indels into integers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lineage_profile | pd.DataFrame | Lineage profile. |
+| indel_priors | Optional[pd.DataFrame] | Indel prior probabilities. |
+| missing_allele_indicator | Optional[str] | Indicator for missing alleles. |
+| missing_state_indicator | int | State for missing data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Tuple[pd.DataFrame, Dict[int, Dict[int, float]], Dict[int, Dict[int, str]]] | Character matrix, probability dictionary, state mapping. |
+
+#### Internal Logic
+- Maps indels to character states and constructs a character matrix.
+
+### `compute_empirical_indel_priors`
+#### Description
+Computes empirical indel prior probabilities from an AlleleTable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| allele_table | pd.DataFrame | AlleleTable. |
+| grouping_variables | List[str] | Variables for stratifying data. |
+| cut_sites | Optional[List[str]] | Columns to treat as cut sites. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | pd.DataFrame | DataFrame mapping indels to probabilities. |
+
+#### Internal Logic
+- Counts indel occurrences and calculates frequencies.
+
+### `get_default_cut_site_columns`
+#### Description
+Retrieves default cut-site columns from an AlleleTable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| allele_table | pd.DataFrame | AlleleTable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | List[str] | Columns corresponding to cut sites. |
+
+#### Internal Logic
+- Identifies columns matching the pattern for cut sites.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ngs_tools` | Provides utilities for sequence analysis. |
+| `numpy` | Used for numerical operations. |
+| `pandas` | Used for data manipulation and analysis. |
+| `pysam` | Used for reading and writing BAM files. |
+| `tqdm` | Used for progress bars in loops. |
+
+## Logging
+
+The file uses a logger from `cassiopeia.mixins` to log debug and info messages, particularly in the decorators and utility functions.

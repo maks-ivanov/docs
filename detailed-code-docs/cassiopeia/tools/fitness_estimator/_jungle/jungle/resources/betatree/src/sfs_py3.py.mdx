@@ -1,0 +1,80 @@
+---
+title: "sfs_py3.py"
+---
+
+## High-level description
+
+The code in the target file is designed to generate beta coalescent trees and calculate their Site Frequency Spectrum (SFS). It provides a class `SFS` that inherits from `betatree`, which is used to simulate the coalescent process and accumulate the SFS. The script can generate multiple trees, calculate and bin the SFS, and save or load the SFS data from files.
+
+## Code Structure
+
+The main symbol in the code is the `SFS` class, which inherits from the `betatree` class. The `SFS` class provides methods to generate trees, calculate the SFS, bin the SFS, and save or load the SFS data. The script also includes a `logit` function for logistic transformation and a main execution block that demonstrates the usage of the `SFS` class.
+
+## Symbols
+
+### `logit`
+#### Description
+The `logit` function performs a logistic transformation on a given input `x`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x | float | A value between 0 and 1 to be transformed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | float | The logit-transformed value of `x` |
+
+#### Internal Logic
+The function calculates the logit transformation using the formula `np.log(x / (1 - x))`.
+
+### `SFS`
+#### Description
+The `SFS` class generates beta coalescent trees and accumulates their Site Frequency Spectrum (SFS). It provides methods to generate trees, calculate the SFS, bin the SFS, and save or load the SFS data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sample_size | int | The number of samples in the tree |
+| alpha | float | The alpha parameter for the beta coalescent process (default is 2) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies its internal state |
+
+#### Internal Logic
+- **Initialization**: Calls the constructor of the `betatree` class with `sample_size` and `alpha`. Initializes `alleles` and `sfs` attributes.
+- **`glob_trees` Method**: Generates multiple trees and accumulates the SFS by iterating over a specified number of trees (`ntrees`).
+- **`getSFS` Method**: Calculates the SFS by generating trees and summing the branch lengths weighted by clade weights.
+- **`binSFS` Method**: Bins the pre-calculated SFS using specified binning modes (`linear`, `log`, or `logit`) and a number of bins.
+- **`saveSFS` Method**: Saves the calculated SFS to a file, optionally gzipping the file if the filename ends with `.gz`.
+- **`loadSFS` Method**: Loads a previously saved SFS from a file, checking for a one-dimensional vector and using its length as the sample size.
+
+## Side Effects
+- The `saveSFS` method writes the SFS data to a file.
+- The `loadSFS` method reads SFS data from a file and modifies the internal state of the `SFS` object.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file operations like checking if a file exists. |
+| `random` | Used for random number generation, though not explicitly shown in the provided code. |
+| `numpy` | Used for numerical operations and array manipulations. |
+| `scipy.special` | Provides special mathematical functions, though not explicitly used in the provided code. |
+| `Bio.Phylo` | Used for handling phylogenetic trees. |
+| `matplotlib.pyplot` | Used for plotting the SFS data. |
+
+## Error Handling
+- The `loadSFS` method checks if the file exists before attempting to load it and prints an error message if it does not.
+
+## Logging
+- The script uses print statements to log progress and actions, such as when calculating or loading spectra.
+
+## API/Interface Reference
+The code does not explicitly define an API or public interface, but it provides a command-line interface when executed as a script, demonstrating the usage of the `SFS` class.
+
+## TODOs
+No TODOs or notes are present in the code.

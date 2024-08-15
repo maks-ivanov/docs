@@ -1,0 +1,73 @@
+---
+title: "greedy_variants_test.py"
+---
+
+## High-level description
+
+The `greedy_variants_test.py` file is a unit test suite designed to validate the functionality of different greedy solver variants within the Cassiopeia library. It specifically tests the behavior of the `SpectralGreedySolver` and `MaxCutGreedySolver` classes, ensuring they correctly handle various scenarios, including ambiguous cases, sparse data, and different weight configurations. The tests verify that these solvers can accurately partition data and reconstruct phylogenetic trees based on character matrices.
+
+## Code Structure
+
+The main components of the code are the `GreedyVariantsTest` class, which contains several test methods, and the `find_triplet_structure` function, which is used to determine the structure of triplets in a tree. The test methods utilize the `unittest` framework to assert the correctness of the solvers' behavior under different conditions.
+
+## References
+
+- `GreedySolverError`: An exception class used to handle errors specific to greedy solvers.
+- `SpectralGreedySolver` and `MaxCutGreedySolver`: Solver classes that implement specific greedy algorithms for phylogenetic tree reconstruction.
+- `solver_utilities`: A module providing utility functions for solver operations, such as transforming priors into weights.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+Determines the structure of a triplet (three nodes) in a given tree by comparing the number of common ancestors between pairs of nodes.
+
+#### Inputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| triplet| tuple        | A tuple of three node identifiers. |
+| T      | nx.DiGraph   | A directed graph representing a tree.|
+
+#### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| structure | str    | A string indicating the structure of the triplet.|
+
+#### Internal Logic
+- Computes the ancestors for each node in the triplet.
+- Determines the number of common ancestors between each pair of nodes.
+- Returns a string indicating which pair of nodes has the most common ancestors.
+
+### `GreedyVariantsTest`
+#### Description
+A test class that extends `unittest.TestCase` to validate the behavior of different greedy solver variants.
+
+#### Test Methods
+- `test_raises_error_on_ambiguous`: Tests that the `SpectralGreedySolver` raises a `GreedySolverError` when given an ambiguous character matrix.
+- `test_spectral_sparse_case`: Validates the `SpectralGreedySolver` on a sparse character matrix, checking the correctness of the partition and tree structure.
+- `test_spectral_base_case`: Tests the `SpectralGreedySolver` on a base case character matrix, ensuring correct partitioning and tree reconstruction.
+- `test_spectral_base_case_weights_almost_one`: Similar to `test_spectral_base_case`, but with weights derived from priors that are almost one.
+- `test_maxcut_base_case`: Tests the `MaxCutGreedySolver` on a base case with negative weights, ensuring the solver favors a cut with zero weight.
+- `test_maxcut_base_case_weights_trivial`: Similar to `test_maxcut_base_case`, but with trivial weights.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `unittest` | Provides the framework for writing and running tests. |
+| `itertools`| Used for generating combinations of triplets. |
+| `networkx` | Used for creating and manipulating graph structures. |
+| `pandas`   | Used for handling character matrices as data frames. |
+| `cassiopeia` | The main library being tested, providing tree and solver classes. |
+
+## Error Handling
+
+- The test `test_raises_error_on_ambiguous` specifically checks for the `GreedySolverError` to ensure that the solver correctly identifies and handles ambiguous cases.
+
+## Logging
+
+No explicit logging is implemented in this test suite. The focus is on using assertions to validate expected outcomes.
+
+## TODOs
+
+- The `SpectralGreedySolver` and `MaxCutGreedySolver` classes have TODOs for implementing a fuzzy solver and experimenting with similarity functions, respectively. These are not directly related to the test suite but indicate areas for future development in the solver classes.

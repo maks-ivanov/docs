@@ -1,0 +1,99 @@
+---
+title: "utilities.py"
+---
+
+## High-level description
+
+The `cassiopeia/mixins/utilities.py` file provides utility functions that are used to handle ambiguous states, import modules dynamically, unravel ambiguous states, and find duplicate groups in a character matrix. These utilities are essential for processing character matrices that may contain ambiguous states and for managing dependencies that may not be installed.
+
+## Code Structure
+
+The main symbols in the code are utility functions that operate independently. They are designed to be used as helper functions in various parts of the codebase, particularly in handling character matrices and dynamic module imports.
+
+## Symbols
+
+### `is_ambiguous_state`
+#### Description
+Determines whether a given state is ambiguous. An ambiguous state is represented as a tuple of integers.
+
+#### Inputs
+| Name  | Type                  | Description                          |
+|:------|:----------------------|:-------------------------------------|
+| state | `Union[int, Tuple[int, ...]]` | A single character state, which may be ambiguous. |
+
+#### Outputs
+| Name   | Type    | Description                          |
+|:-------|:--------|:-------------------------------------|
+| result | `bool`  | `True` if the state is ambiguous, `False` otherwise. |
+
+### `try_import`
+#### Description
+Attempts to import a module by name and returns the module if successful, or `None` if the module is not installed.
+
+#### Inputs
+| Name   | Type   | Description                |
+|:-------|:-------|:---------------------------|
+| module | `str`  | The name of the module to import. |
+
+#### Outputs
+| Name   | Type               | Description                          |
+|:-------|:-------------------|:-------------------------------------|
+| result | `Optional[ModuleType]` | The imported module, or `None` if the module is not found. |
+
+### `unravel_ambiguous_states`
+#### Description
+Unravels a list of states, expanding any ambiguous states (tuples) into individual states.
+
+#### Inputs
+| Name        | Type                                | Description                          |
+|:------------|:------------------------------------|:-------------------------------------|
+| state_array | `List[Union[int, Tuple[int, ...]]]` | A list of states, potentially containing ambiguous states. |
+
+#### Outputs
+| Name   | Type      | Description                          |
+|:-------|:----------|:-------------------------------------|
+| result | `List[int]` | A list of unique states contained in the input list. |
+
+#### Internal Logic
+- Iterates over each state in the input list.
+- If a state is ambiguous (a tuple), it converts it into a list of individual states.
+- Uses `functools.reduce` to concatenate all lists of states into a single list.
+
+### `find_duplicate_groups`
+#### Description
+Identifies groups of samples in a character matrix that have identical character states, including handling ambiguous states.
+
+#### Inputs
+| Name             | Type            | Description                          |
+|:-----------------|:----------------|:-------------------------------------|
+| character_matrix | `pd.DataFrame`  | A character matrix, potentially with ambiguous states. |
+
+#### Outputs
+| Name   | Type                      | Description                          |
+|:-------|:--------------------------|:-------------------------------------|
+| result | `Dict[str, Tuple[str, ...]]` | A mapping of a single sample name to the set of samples that have the same character states. |
+
+#### Internal Logic
+- Converts each character state to a set to handle ambiguous states.
+- Identifies duplicated rows in the character matrix.
+- Groups samples with identical character states and returns them as a dictionary.
+
+## References
+
+- The `is_ambiguous_state` function is referenced in multiple files, such as `CassiopeiaTree.py` and `utilities.py`, indicating its utility in handling ambiguous states across the codebase.
+- The `try_import` function is used in `local_3d.py` and `ClonalSpatialDataSimulator.py` to manage optional dependencies.
+
+## Dependencies
+
+- `functools`: Used for reducing lists of states.
+- `importlib`: Used for dynamic module imports.
+- `numpy`: Used for handling arrays and unique operations.
+- `pandas`: Used for handling character matrices as DataFrames.
+
+## Error Handling
+
+- The `try_import` function handles `ModuleNotFoundError` by returning `None`, allowing the code to gracefully handle missing optional dependencies.
+
+## Logging
+
+- No explicit logging is implemented in this file.

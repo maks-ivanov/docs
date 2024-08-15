@@ -1,0 +1,295 @@
+---
+title: "character_matrix_test.py"
+---
+
+## High-level description
+
+The `character_matrix_test.py` file contains a suite of unit tests designed to validate the functionality of character matrix formation from allele tables within the Cassiopeia preprocessing pipeline. These tests ensure that the conversion of allele tables to character matrices and lineage profiles is performed correctly, handling various scenarios such as missing data, conflicts, and custom configurations.
+
+## Code Structure
+
+The main class in this file is `TestCharacterMatrixFormation`, which inherits from `unittest.TestCase`. This class contains several test methods that each test a specific aspect of the character matrix formation process. The tests utilize the `cassiopeia` library's preprocessing functions, particularly those for converting allele tables to character matrices and lineage profiles.
+
+## References
+
+The tests in this file heavily reference the `cassiopeia.preprocess` module, specifically functions like `convert_alleletable_to_character_matrix`, `convert_alleletable_to_lineage_profile`, and `compute_empirical_indel_priors`. These functions are responsible for the core logic of transforming allele tables into character matrices and lineage profiles.
+
+## Symbols
+
+### `TestCharacterMatrixFormation`
+#### Description
+This class contains unit tests for verifying the correct formation of character matrices from allele tables. It sets up various test cases and checks the output of the conversion functions against expected results.
+
+#### Inputs
+- None directly, but it uses predefined allele tables set up in the `setUp` method.
+
+#### Outputs
+- None directly, but it asserts the correctness of outputs from the conversion functions.
+
+#### Internal Logic
+- The `setUp` method initializes several allele tables with different configurations to be used in the tests.
+- Each test method calls a specific function from the `cassiopeia.preprocess` module and compares the output to an expected result using assertions.
+
+### `setUp`
+#### Description
+Initializes test data for use in the test methods. This includes setting up various allele tables with different configurations to test different scenarios.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Creates several Pandas DataFrames representing allele tables with different configurations, such as basic tables, tables with conflicts, and non-cassiopeia tables.
+
+### `test_basic_character_matrix_formation`
+#### Description
+Tests the basic functionality of converting an allele table to a character matrix.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the shape and content of the resulting character matrix.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` and checks the resulting matrix against an expected DataFrame.
+
+### `test_character_matrix_formation_custom_missing_data`
+#### Description
+Tests character matrix formation with custom missing data indicators.
+
+#### Inputs
+- None directly, modifies `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the shape and content of the resulting character matrix.
+
+#### Internal Logic
+- Modifies the allele table to include a custom missing data indicator and checks the resulting matrix against an expected DataFrame.
+
+### `test_character_matrix_formation_with_conflicts`
+#### Description
+Tests character matrix formation when there are conflicts in the allele table.
+
+#### Inputs
+- None directly, uses `self.alleletable_conflict`.
+
+#### Outputs
+- None directly, but asserts the shape and content of the resulting character matrix.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` with a table containing conflicts and checks the resulting matrix against an expected DataFrame.
+
+### `test_ignore_intbc`
+#### Description
+Tests the functionality of ignoring specific integration barcodes during character matrix formation.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the shape and content of the resulting character matrix.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` with the `ignore_intbcs` parameter and checks the resulting matrix against an expected DataFrame.
+
+### `test_filter_out_low_diversity_intbcs`
+#### Description
+Tests filtering out low diversity integration barcodes during character matrix formation.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the shape and content of the resulting character matrix.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` with the `allele_rep_thresh` parameter and checks the resulting matrix against an expected DataFrame.
+
+### `test_mutation_prior_formation`
+#### Description
+Tests the formation of mutation priors during character matrix conversion.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic` and `self.mutation_priors`.
+
+#### Outputs
+- None directly, but asserts the correctness of the mutation priors.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` with mutation priors and checks the resulting priors against an expected dictionary.
+
+### `test_indel_state_mapping_formation`
+#### Description
+Tests the formation of indel state mappings during character matrix conversion.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic` and `self.mutation_priors`.
+
+#### Outputs
+- None directly, but asserts the correctness of the indel state mappings.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` with mutation priors and checks the resulting state mappings against an expected dictionary.
+
+### `test_alleletable_to_lineage_profile`
+#### Description
+Tests the conversion of an allele table to a lineage profile.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting lineage profile.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_lineage_profile` and checks the resulting profile against an expected DataFrame.
+
+### `test_alleletable_to_lineage_profile_with_conflicts`
+#### Description
+Tests the conversion of an allele table with conflicts to a lineage profile.
+
+#### Inputs
+- None directly, uses `self.alleletable_conflict`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting lineage profile.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_lineage_profile` with a table containing conflicts and checks the resulting profile against an expected DataFrame.
+
+### `test_lineage_profile_to_character_matrix_with_conflicts`
+#### Description
+Tests the conversion of a lineage profile with conflicts to a character matrix.
+
+#### Inputs
+- None directly, uses `self.alleletable_conflict`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting character matrix.
+
+#### Internal Logic
+- Converts the allele table to a lineage profile and then to a character matrix, checking the result against expected DataFrames.
+
+### `test_lineage_profile_to_character_matrix_no_priors`
+#### Description
+Tests the conversion of a lineage profile to a character matrix without mutation priors.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting character matrix.
+
+#### Internal Logic
+- Converts the allele table to a lineage profile and then to a character matrix, checking the result against expected DataFrames.
+
+### `test_lineage_profile_to_character_matrix_with_priors`
+#### Description
+Tests the conversion of a lineage profile to a character matrix with mutation priors.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic` and `self.mutation_priors`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting character matrix and priors.
+
+#### Internal Logic
+- Converts the allele table to a lineage profile and then to a character matrix with priors, checking the result against expected DataFrames and dictionaries.
+
+### `test_compute_empirical_indel_probabilities`
+#### Description
+Tests the computation of empirical indel probabilities from an allele table.
+
+#### Inputs
+- None directly, uses `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting indel probabilities.
+
+#### Internal Logic
+- Calls `compute_empirical_indel_priors` and checks the resulting probabilities against an expected DataFrame.
+
+### `test_compute_empirical_indel_probabilities_with_conflicts`
+#### Description
+Tests the computation of empirical indel probabilities from an allele table with conflicts.
+
+#### Inputs
+- None directly, uses `self.alleletable_conflict`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting indel probabilities.
+
+#### Internal Logic
+- Calls `compute_empirical_indel_priors` with a table containing conflicts and checks the resulting probabilities against an expected DataFrame.
+
+### `test_compute_empirical_indel_probabilities_multiple_variables`
+#### Description
+Tests the computation of empirical indel probabilities with multiple grouping variables.
+
+#### Inputs
+- None directly, uses `self.allele_table_mouse`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting indel probabilities.
+
+#### Internal Logic
+- Calls `compute_empirical_indel_priors` with multiple grouping variables and checks the resulting probabilities against an expected DataFrame.
+
+### `test_noncanonical_cut_sites_allele_table_to_character_matrix`
+#### Description
+Tests the conversion of a non-canonical allele table to a character matrix.
+
+#### Inputs
+- None directly, uses `self.noncassiopeia_alleletable`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting character matrix.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_character_matrix` with non-canonical cut sites and checks the resulting matrix against an expected DataFrame.
+
+### `test_noncanonical_cut_sites_allele_table_to_lineage_profile`
+#### Description
+Tests the conversion of a non-canonical allele table to a lineage profile.
+
+#### Inputs
+- None directly, uses `self.noncassiopeia_alleletable`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting lineage profile.
+
+#### Internal Logic
+- Calls `convert_alleletable_to_lineage_profile` with non-canonical cut sites and checks the resulting profile against an expected DataFrame.
+
+### `test_lineage_profile_to_character_matrix_custom_missing_data`
+#### Description
+Tests the conversion of a lineage profile to a character matrix with custom missing data indicators.
+
+#### Inputs
+- None directly, modifies `self.alleletable_basic`.
+
+#### Outputs
+- None directly, but asserts the content of the resulting character matrix and priors.
+
+#### Internal Logic
+- Modifies the allele table to include a custom missing data indicator, converts it to a lineage profile, and then to a character matrix, checking the result against expected DataFrames and dictionaries.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `numpy` | Used for numerical operations and handling missing data. |
+| `pandas` | Used for data manipulation and creation of DataFrames. |
+| `cassiopeia` | The main library being tested, specifically its preprocessing module. |
+
+## Error Handling
+
+The tests use assertions to handle errors. If an assertion fails, it indicates that the function being tested did not produce the expected result, which is reported as a test failure.
+
+## Logging
+
+No explicit logging is implemented in the test file. However, the `cassiopeia` library may have its own logging mechanisms that are utilized during the execution of the functions being tested.

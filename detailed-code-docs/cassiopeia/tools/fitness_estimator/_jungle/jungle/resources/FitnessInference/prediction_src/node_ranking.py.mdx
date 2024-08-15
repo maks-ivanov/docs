@@ -1,0 +1,67 @@
+---
+title: "node_ranking.py"
+---
+
+## High-level description
+
+The `node_ranking.py` file defines a class `node_ranking` that extends the `fitness_inference` class to rank nodes in a phylogenetic tree based on various fitness-related metrics. The class provides methods to compute rankings using different strategies, such as mean posterior fitness, polarizer, branch length, depth, and expansion score. Additionally, it includes utility functions for visualizing these rankings by coloring the nodes of the tree.
+
+## Code Structure
+
+The main class in this file is `node_ranking`, which inherits from `fitness_inference`. This class is responsible for ranking nodes in a phylogenetic tree using different methods. It utilizes several methods to compute rankings, calculate expansion scores, sort leaf nodes into time bins, and visualize the rankings by coloring the tree. The class also provides methods to calculate correlations between different ranking scores and to determine the best node based on a specified method.
+
+## Symbols
+
+### `node_ranking`
+#### Description
+The `node_ranking` class is a subclass of `fitness_inference` that ranks nodes in a phylogenetic tree using various methods. It provides functionality to compute rankings, calculate expansion scores, sort nodes, and visualize rankings by coloring the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| methods | list | A list of methods used to rank the nodes. Default methods include "mean_fitness", "polarizer", "branch_length", "depth", and "expansion_score". |
+| time_bins | list | Temporal bins used to calculate the expansion score. |
+| pseudo_count | int | Pseudo count used for calculating frequencies in time bins. |
+| *args | tuple | Additional positional arguments passed to the superclass. |
+| **kwargs | dict | Additional keyword arguments passed to the superclass. |
+
+#### Outputs
+The class does not have a direct output but modifies the state of the nodes in the tree by assigning ranks and colors based on the specified methods.
+
+#### Internal Logic
+- **Initialization**: Initializes the class with specified methods, time bins, and pseudo count. Calls the superclass initializer.
+- **compute_rankings**: Computes rankings for nodes using specified methods. It infers ancestral fitness and calculates alternative rankings.
+- **expansion_score**: Calculates the expansion score for nodes based on the fraction of leaf nodes and their temporal frequency.
+- **sort_leafs_in_time_bins**: Sorts leaf nodes into specified time bins.
+- **rank_by_method**: Ranks nodes based on a specified method and optionally scrambles them before sorting.
+- **correlation_between_scores**: Calculates the rank correlation between two node attributes.
+- **ranking_quality**: Determines the rank of the lowest terminal node that is less than one standard deviation away from the top.
+- **color_tree**: Colors the tree nodes based on their ranking using a colormap.
+- **interpolate_color**: Colors internal nodes based on the mean color of their leaf nodes.
+- **color_other_tree**: Transfers scores to nodes of another tree and colors them.
+- **best_node**: Returns the best node among a set of nodes based on a specified method.
+- **rank_labels**: Retrieves the rank label of a node.
+
+## References
+
+- The `node_ranking` class inherits from `fitness_inference`, which is likely defined in the `fitness_inference` module.
+- The class uses utility functions from the `tree_utils` module for tree-related operations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| numpy | Used for numerical operations and array manipulations. |
+| scipy.stats | Used for statistical operations, such as linear regression. |
+
+## Error Handling
+
+The code includes basic error handling in methods like `correlation_between_scores`, where it catches `AttributeError` and prints an error message. Other exceptions are caught with a generic message.
+
+## Logging
+
+The code uses a `verbose` flag to control the printing of progress messages during computations, such as when calculating rankings or coloring the tree.
+
+## TODOs
+
+There are no explicit TODOs or notes left in the code.

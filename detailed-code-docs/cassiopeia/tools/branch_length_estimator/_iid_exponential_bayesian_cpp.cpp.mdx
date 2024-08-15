@@ -1,0 +1,91 @@
+---
+title: "_iid_exponential_bayesian_cpp.cpp"
+---
+
+## High-level description
+
+The code in the target file implements a Bayesian inference algorithm for estimating branch lengths in a phylogenetic tree using a discretized model of exponential growth. It defines a class `_InferPosteriorTimes` that performs the inference by calculating the posterior probabilities of different evolutionary states over time, using dynamic programming techniques to efficiently compute these probabilities.
+
+## Code Structure
+
+The main symbol in the code is the class `_InferPosteriorTimes`, which encapsulates the entire logic for the Bayesian inference process. This class contains methods for memory allocation, precomputation of probabilities, recursive computation of probabilities for different states, and the final computation of posterior results. The class relies on several helper functions for memory management and mathematical operations.
+
+## Symbols
+
+### `_InferPosteriorTimes`
+#### Description
+The `_InferPosteriorTimes` class is responsible for performing Bayesian inference to estimate the branch lengths in a phylogenetic tree. It uses a discretized model of exponential growth to compute the posterior probabilities of different evolutionary states over time. The class provides methods to run the inference process, access the results, and manage memory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N | int | Number of nodes in the phylogenetic tree. |
+| children | vector&lt;vector&lt;int&gt;&gt; | Adjacency list representing the children of each node. |
+| root | int | Index of the root node. |
+| is_internal_node | vector&lt;int&gt; | Flags indicating whether each node is internal. |
+| get_number_of_mutated_characters_in_node | vector&lt;int&gt; | Number of mutated characters at each node. |
+| non_root_internal_nodes | vector&lt;int&gt; | List of internal nodes excluding the root. |
+| leaves | vector&lt;int&gt; | List of leaf nodes. |
+| parent | vector&lt;int&gt; | Parent node for each node. |
+| K | int | Maximum number of mutations. |
+| K_non_missing | vector&lt;int&gt; | Number of non-missing mutations for each node. |
+| T | int | Number of time steps for discretization. |
+| r | double | Mutation rate. |
+| lam | double | Division rate. |
+| sampling_probability | double | Probability of sampling a lineage. |
+| is_leaf | vector&lt;int&gt; | Flags indicating whether each node is a leaf. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| posterior_means_res | vector&lt;pair&lt;int, double&gt;&gt; | Posterior means for each non-root internal node. |
+| posteriors_res | vector&lt;pair&lt;int, vector&lt;double&gt;&gt;&gt; | Posterior probabilities for each non-root internal node. |
+| log_joints_res | vector&lt;pair&lt;int, vector&lt;double&gt;&gt;&gt; | Log joint probabilities for each non-root internal node. |
+| log_likelihood_res | double | Log likelihood of the observed data given the model. |
+
+#### Internal Logic
+- **Memory Allocation**: The class allocates memory for various data structures used in the inference process, such as caches for dynamic programming.
+- **Precomputation**: It precomputes probabilities related to unsampled lineages to optimize the inference process.
+- **Recursive Computation**: The `down` and `up` methods recursively compute the probabilities of generating data below and above a node, respectively, using dynamic programming.
+- **Result Population**: After computation, the class populates the results for posterior means, posteriors, and log joints, which can be accessed through getter methods.
+
+### `logsumexp`
+#### Description
+The `logsumexp` function computes the logarithm of the sum of exponentials of input values, which is a numerically stable way to compute the log of a sum of exponentials.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lls | vector&lt;double&gt; | Logarithms of likelihoods to be summed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | double | Logarithm of the sum of exponentials of the input values. |
+
+#### Internal Logic
+- Finds the maximum value in the input vector to prevent overflow.
+- Computes the sum of exponentials of the input values adjusted by the maximum value.
+- Returns the logarithm of this sum plus the maximum value.
+
+## Side Effects
+- The class modifies internal state variables and caches during the inference process.
+- Memory is dynamically allocated and deallocated, which can affect system resources.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `&lt;vector&gt;` | Used for dynamic arrays and lists. |
+| `&lt;iostream&gt;` | Used for input and output operations. |
+| `&lt;fstream&gt;` | Used for file operations. |
+| `&lt;cmath&gt;` | Provides mathematical functions like `log` and `exp`. |
+| `&lt;cassert&gt;` | Used for assertions to validate assumptions in the code. |
+
+## Error Handling
+- The code throws `std::invalid_argument` exceptions when memory allocation fails or when the discretization level is too small, ensuring that the user is informed of these critical issues.
+
+## Logging
+- The code uses `cerr` to output error messages related to invalid discretization levels, which helps in debugging.
+
+## TODOs
+- There are no explicit TODOs or notes left in the code.

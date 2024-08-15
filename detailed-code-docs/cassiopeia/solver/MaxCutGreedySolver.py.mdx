@@ -1,0 +1,59 @@
+---
+title: "MaxCutGreedySolver.py"
+---
+
+## High-level description
+
+The `MaxCutGreedySolver` is a specialized solver for phylogenetic tree reconstruction that extends the `GreedySolver` by incorporating a max-cut optimization step. This solver uses a top-down approach to partition samples based on mutation frequencies and further refines these partitions using a hill-climbing procedure to optimize the max-cut criterion on a connectivity graph. This process aims to group samples with similar mutations and separate those with different mutations, even in the presence of missing data.
+
+## Code Structure
+
+The `MaxCutGreedySolver` class inherits from the `GreedySolver` class, which is an abstract class for top-down tree reconstruction algorithms. The `MaxCutGreedySolver` implements the `perform_split` method, which is responsible for partitioning the samples using both greedy and max-cut criteria. It utilizes utility functions from `graph_utilities` and `solver_utilities` to construct graphs and handle sample indices.
+
+## References
+
+- `GreedySolver`: The parent class from which `MaxCutGreedySolver` inherits.
+- `graph_utilities`: Provides functions for constructing connectivity graphs and optimizing partitions.
+- `solver_utilities`: Offers utility functions for handling sample indices and transforming priors into weights.
+
+## Symbols
+
+### `MaxCutGreedySolver`
+#### Description
+The `MaxCutGreedySolver` class is a solver that extends the `GreedySolver` by incorporating a max-cut optimization step. It partitions samples based on mutation frequencies and refines these partitions using a hill-climbing procedure to optimize the max-cut criterion on a connectivity graph.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `missing_data_classifier` | `Callable` | Function to classify missing data during character splits. |
+| `prior_transformation` | `str` | Method to transform priors into weights, with options like "negative_log", "inverse", and "square_root_inverse". |
+
+#### Outputs
+None directly, but the class provides methods to partition samples and optimize partitions.
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with a specified missing data classifier and prior transformation method.
+- **`perform_split` Method**: 
+  - Computes mutation frequencies for the samples.
+  - Selects the most frequent mutation to partition the samples.
+  - Handles missing data using the specified classifier.
+  - Constructs a connectivity graph and applies a hill-climbing procedure to optimize the partition for the max-cut criterion.
+
+## Side Effects
+- Modifies the internal state of the solver by updating the partitions of samples.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for numerical operations and array manipulations. |
+| `pandas` | Utilized for handling character matrices as DataFrames. |
+| `networkx` | Employed for graph operations, particularly in constructing and optimizing connectivity graphs. |
+
+## Error Handling
+The code does not explicitly handle errors within the `MaxCutGreedySolver` class, but it relies on the parent class `GreedySolver` to raise exceptions for unsupported operations, such as handling ambiguous states.
+
+## TODOs
+- Implement a fuzzy solver, as indicated by the TODO comment in the class docstring. This suggests future work to extend the solver's capabilities to handle fuzzy or uncertain data.
+
+This documentation provides a comprehensive overview of the `MaxCutGreedySolver` class, detailing its purpose, functionality, and integration with other components in the codebase.

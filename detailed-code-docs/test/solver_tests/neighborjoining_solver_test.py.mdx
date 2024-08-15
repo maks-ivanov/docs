@@ -1,0 +1,102 @@
+---
+title: "neighborjoining_solver_test.py"
+---
+
+## High-level description
+
+The `neighborjoining_solver_test.py` file is a unit test suite for the `NeighborJoiningSolver` class in the Cassiopeia library. It uses the `unittest` framework to verify the functionality of the Neighbor Joining algorithm, which is used to reconstruct phylogenetic trees based on dissimilarity data. The tests cover various scenarios, including basic solver functionality, handling of duplicate samples, and the use of different dissimilarity functions.
+
+## Code Structure
+
+The main components of the code are:
+- `find_triplet_structure`: A helper function to determine the structure of a triplet in a tree.
+- `delta_fn`: A dissimilarity function used by the solver.
+- `TestNeighborJoiningSolver`: A test class that contains multiple test cases for the `NeighborJoiningSolver`.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+Determines the structure of a triplet (three nodes) in a given tree by comparing the number of common ancestors between pairs of nodes.
+
+#### Inputs
+| Name    | Type       | Description                        |
+|:--------|:-----------|:-----------------------------------|
+| triplet | tuple      | A tuple of three node identifiers. |
+| T       | nx.DiGraph | A directed graph representing a tree. |
+
+#### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| structure | str    | A string indicating the structure of the triplet ("ab", "ac", "bc", or "-"). |
+
+#### Internal Logic
+- Computes the ancestors for each node in the triplet.
+- Counts the number of common ancestors for each pair of nodes.
+- Determines the structure based on which pair has the most common ancestors.
+
+### `delta_fn`
+#### Description
+Calculates a simple dissimilarity score between two arrays by counting the number of differing elements.
+
+#### Inputs
+| Name          | Type          | Description                                      |
+|:--------------|:--------------|:-------------------------------------------------|
+| x             | np.array      | First array of states.                           |
+| y             | np.array      | Second array of states.                          |
+| missing_state | int           | Indicator for missing data (not used in logic).  |
+| priors        | Optional[Dict[int, Dict[int, float]]] | Priors for states (not used in logic). |
+
+#### Outputs
+| Name | Type | Description                        |
+|:-----|:-----|:-----------------------------------|
+| d    | int  | The dissimilarity score between x and y. |
+
+#### Internal Logic
+- Iterates over the elements of the arrays `x` and `y`.
+- Increments the dissimilarity score `d` for each pair of differing elements.
+
+### `TestNeighborJoiningSolver`
+#### Description
+A test suite for the `NeighborJoiningSolver` class, containing various test cases to validate its functionality.
+
+#### Internal Logic
+- **setUp**: Initializes test data, including character matrices and dissimilarity maps, and creates instances of `CassiopeiaTree` and `NeighborJoiningSolver`.
+- **test_constructor**: Tests the constructor of `NeighborJoiningSolver` and verifies error handling when solving trees without roots.
+- **test_compute_q**: Validates the computation of the Q-matrix used in the Neighbor Joining algorithm.
+- **test_find_cherry**: Tests the ability to find a cherry (a pair of nodes to join) in the dissimilarity map.
+- **test_update_dissimilarity_map**: Checks the update of the dissimilarity map after joining a cherry.
+- **test_basic_solver**: Verifies the basic functionality of the solver, including tree topology and edge relationships.
+- **test_nj_solver_weights**: Tests the solver with weighted dissimilarity functions and priors.
+- **test_pp_solver**: Validates the solver with a different character matrix setup.
+- **test_duplicate_sample_neighbor_joining**: Tests the solver's handling of duplicate samples.
+- **test_setup_root_finder_missing_dissimilarity_map**: Ensures the root finder is set up correctly when the dissimilarity map is missing.
+- **test_setup_root_finder_existing_dissimilarity_map**: Ensures the root finder is set up correctly when the dissimilarity map is provided.
+
+## References
+
+- `CassiopeiaTree`: A class from the `cassiopeia.data` module used to represent phylogenetic trees.
+- `NeighborJoiningSolver`: A class from the `cassiopeia.solver` module that implements the Neighbor Joining algorithm.
+- `weighted_hamming_distance`: A function from `cassiopeia.solver.dissimilarity` used as a dissimilarity function.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `unittest` | Provides the testing framework.              |
+| `networkx` | Used for graph operations and tree structures. |
+| `numpy`    | Used for numerical operations and array handling. |
+| `pandas`   | Used for data manipulation and storage.      |
+| `cassiopeia` | The main library being tested, providing tree and solver classes. |
+
+## Error Handling
+
+The test cases use `assertRaises` to verify that specific errors are raised when expected, such as when solving a tree without a root.
+
+## Logging
+
+No explicit logging is implemented in this test suite. However, the `unittest` framework provides output for test results.
+
+## TODOs
+
+No TODOs are present in the code.

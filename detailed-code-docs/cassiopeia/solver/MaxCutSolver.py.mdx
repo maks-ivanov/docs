@@ -1,0 +1,108 @@
+---
+title: "MaxCutSolver.py"
+---
+
+## High-level description
+
+The `MaxCutSolver` class in the `MaxCutSolver.py` file is a specialized solver for the max-cut problem applied to phylogenetic trees. It extends the `GreedySolver` class and implements a top-down algorithm to partition a set of samples based on a connectivity graph derived from observed mutations. The solver aims to find a partition that maximizes the weight of the cut, effectively grouping samples with shared mutations and separating those with differing mutations.
+
+## Code Structure
+
+The `MaxCutSolver` class is a subclass of `GreedySolver`, which itself is a subclass of `CassiopeiaSolver`. The `MaxCutSolver` class uses utility functions from the `graph_utilities` module to construct and optimize the connectivity graph. The main method of interest is `perform_split`, which is responsible for generating the partition of samples.
+
+## Symbols
+
+### `MaxCutSolver`
+#### Description
+The `MaxCutSolver` class is designed to solve the max-cut problem on a connectivity graph generated from a character matrix of samples. It uses a recursive top-down approach to partition the samples by constructing a connectivity graph where edge weights represent the number of triplets separating samples minus those grouping them. The solver then finds a maximum weight cut and refines it using a greedy hill-climbing procedure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sdimension | Optional[int] | Number of dimensions for the embedding space. |
+| iterations | Optional[int] | Number of iterations for updating embeddings. |
+| prior_transformation | str | Transformation function for priors, default is "negative_log". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies the state of the `CassiopeiaTree` it operates on. |
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with specified dimensions, iterations, and prior transformation.
+- **perform_split**: 
+  - Computes mutation frequencies.
+  - Constructs a connectivity graph using `graph_utilities.construct_connectivity_graph`.
+  - Initializes random embeddings for nodes in a d-dimensional sphere.
+  - Iteratively updates embeddings based on edge weights.
+  - Evaluates multiple random hyperplane cuts to find the best partition.
+  - Refines the partition using `graph_utilities.max_cut_improve_cut`.
+
+### `perform_split`
+#### Description
+Generates a partition of samples by finding the max-cut on a connectivity graph. It uses a heuristic method to embed samples in a high-dimensional space and iteratively refines the partition to maximize the cut weight.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | Matrix of observed character states for samples. |
+| samples | List[int] | List of sample indices to partition. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character-state pair. |
+| missing_state_indicator | int | Indicator for missing data in the character matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tuple[List[str], List[str]] | Tuple | Two lists representing the left and right partitions of samples. |
+
+#### Internal Logic
+- Computes mutation frequencies for the samples.
+- Constructs a connectivity graph with edge weights based on shared and differing mutations.
+- Randomly initializes node embeddings and iteratively updates them to cluster strongly connected nodes.
+- Evaluates random hyperplane cuts to find the partition that maximizes the cut weight.
+- Refines the partition using a greedy hill-climbing approach.
+
+### `evaluate_cut`
+#### Description
+Evaluates the weight of a given cut in the connectivity graph by summing the weights of edges that are part of the cut.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cut | List[str] | List of nodes representing one side of the cut. |
+| G | nx.DiGraph | The connectivity graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| float | float | The total weight of the cut. |
+
+#### Internal Logic
+- Iterates over all edges in the graph.
+- Checks if each edge is part of the cut using `graph_utilities.check_if_cut`.
+- Sums the weights of edges that are part of the cut.
+
+## References
+
+- `GreedySolver`: The parent class from which `MaxCutSolver` inherits.
+- `graph_utilities`: Provides utility functions for constructing and optimizing the connectivity graph.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| networkx | Used for graph operations and manipulations. |
+| numpy | Used for numerical operations, particularly for random embeddings. |
+| pandas | Used for handling the character matrix as a DataFrame. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as ensuring the graph has edges before attempting to find a cut. More robust error handling could be implemented to manage edge cases or invalid inputs.
+
+## Logging
+
+The code does not implement any logging mechanisms. Adding logging could help trace the execution flow and debug issues related to graph construction and partitioning.
+
+## TODOs
+
+- The `construct_connectivity_graph` function in `graph_utilities` has a TODO comment suggesting optimization with numba, which could improve performance for large datasets.

@@ -1,0 +1,96 @@
+---
+title: "conf.py"
+---
+
+## High-level description
+
+The `conf.py` file is a configuration script for building the documentation of the Cassiopeia project using Sphinx. It sets up various Sphinx extensions, configuration options, and paths necessary for generating the project's documentation. Additionally, it includes custom logic for generating autosummaries of class methods and attributes.
+
+## Code Structure
+
+The main components of the `conf.py` file include:
+- Importing necessary modules and setting up the system path for documentation.
+- Defining general Sphinx configuration options such as extensions, templates, and source file suffixes.
+- Configuring HTML output options, including theme settings and static paths.
+- Setting up intersphinx mappings for cross-referencing external documentation.
+- Defining project metadata like version, author, and copyright.
+- Implementing a custom Sphinx directive `AutoAutoSummary` for generating autosummaries of class methods and attributes.
+- A `setup` function to register the custom directive with Sphinx.
+
+## References
+
+- The `cassiopeia` module is imported to access its version information.
+- The `sphinx.ext.autosummary` and `docutils.parsers.rst.directives` are used for creating custom autosummaries.
+
+## Symbols
+
+### `AutoAutoSummary`
+#### Description
+`AutoAutoSummary` is a custom Sphinx directive that extends the `Autosummary` class to automatically generate summaries for class methods and attributes. It is particularly useful for documenting large classes with many members.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | object | The class object to document. |
+| typ | str | The type of member to document (e.g., "method", "attribute"). |
+| include_public | list | A list of public members to include. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| public | list | A list of public members of the specified type. |
+| items | list | A list of all members of the specified type. |
+
+#### Internal Logic
+- The `get_members` method iterates over the attributes of a class object, using the `get_documenter` function to determine the type of each attribute.
+- It filters out private members (those starting with an underscore) unless they are explicitly included in `include_public`.
+- The `run` method imports the specified class, retrieves its methods and attributes, and formats them for inclusion in the documentation.
+
+### `setup`
+#### Description
+The `setup` function registers the `AutoAutoSummary` directive with the Sphinx application, allowing it to be used in the documentation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Sphinx application | The Sphinx application object. |
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `sphinx.ext.autodoc` | Automatically documents modules. |
+| `sphinx.ext.intersphinx` | Links to external documentation. |
+| `sphinx.ext.viewcode` | Adds links to highlighted source code. |
+| `nbsphinx` | Integrates Jupyter Notebooks into Sphinx. |
+| `sphinx.ext.mathjax` | Renders mathematical expressions. |
+| `sphinx.ext.napoleon` | Supports Google and NumPy style docstrings. |
+| `sphinx_autodoc_typehints` | Enhances type hinting in documentation. |
+| `scanpydoc` | Provides additional Sphinx extensions for documentation. |
+
+## Configuration
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `needs_sphinx` | str | "3.4" | Minimum Sphinx version required. |
+| `extensions` | list | N/A | List of Sphinx extensions to use. |
+| `templates_path` | list | ["_templates"] | Paths to custom templates. |
+| `source_suffix` | str | ".rst" | File suffix for source files. |
+| `master_doc` | str | "index" | The master toctree document. |
+| `html_theme` | str | "pydata_sphinx_theme" | Theme for HTML output. |
+| `html_static_path` | list | ["_static"] | Paths to custom static files. |
+
+## Error Handling
+
+The code includes basic error handling in the `get_members` method, where it catches `AttributeError` exceptions when attempting to document class members that may not exist.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

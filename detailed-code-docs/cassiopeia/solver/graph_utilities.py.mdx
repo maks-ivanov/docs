@@ -1,0 +1,133 @@
+---
+title: "graph_utilities.py"
+---
+
+## High-level description
+
+The `graph_utilities.py` file provides utility functions for constructing and optimizing graphs used in graph-based solvers, specifically for phylogenetic tree reconstruction. It includes functions to build connectivity and similarity graphs from character matrices and to optimize graph partitions using max-cut and spectral methods.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `construct_connectivity_graph` and `construct_similarity_graph` are responsible for building graphs based on character matrices and mutation data.
+- `max_cut_improve_cut` and `spectral_improve_cut` are optimization functions that refine graph partitions using hill-climbing techniques.
+- `check_if_cut` is a helper function used by the optimization functions to determine if two nodes are on opposite sides of a partition.
+
+## Symbols
+
+### `check_if_cut`
+#### Description
+Determines if two nodes are on opposite sides of a given graph partition.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| u | int | The first node. |
+| v | int | The second node. |
+| cut | List[int] | A list representing one side of a partition. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if nodes u and v are on opposite sides of the partition, False otherwise. |
+
+### `construct_connectivity_graph`
+#### Description
+Generates a connectivity graph for a max-cut algorithm, representing a supertree over trees generated for each character.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | The character matrix of observed character states for all samples. |
+| mutation_frequencies | Dict[int, Dict[int, int]] | Frequencies of each character/state pair in the character matrix. |
+| missing_state_indicator | int | Indicator for missing values. |
+| samples | List[str] | List of sample names to build the graph over. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for edges in the graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| G_names | nx.Graph | A connectivity graph constructed over the sample set. |
+
+#### Internal Logic
+- Converts sample names to indices.
+- Iterates over pairs of samples to compute similarity scores based on shared and distant mutations.
+- Adds edges to the graph with weights reflecting these scores.
+
+### `max_cut_improve_cut`
+#### Description
+Optimizes a graph partition for the max-cut criterion using a greedy hill-climbing procedure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| G | nx.Graph | The graph to optimize. |
+| cut | List[str] | Initial partition of the graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| new_cut | List[str] | An optimized partition that is a local maximum for the max-cut criterion. |
+
+#### Internal Logic
+- Calculates improvement potential for moving nodes across the partition.
+- Iteratively moves nodes to maximize the cut weight until no further improvements are possible.
+
+### `construct_similarity_graph`
+#### Description
+Generates a similarity graph with nodes representing samples and edges weighted by similarity scores.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | The character matrix of observed character states for all samples. |
+| missing_state_indicator | int | Indicator for missing values. |
+| samples | List[str] | List of sample names to build the graph over. |
+| similarity_function | Callable | Function to calculate similarity scores between samples. |
+| threshold | int | Minimum similarity threshold for including an edge. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for edges in the graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| G_names | nx.Graph | A similarity graph constructed over the sample set. |
+
+#### Internal Logic
+- Converts sample names to indices.
+- Computes similarity scores for pairs of samples using the provided function.
+- Adds edges to the graph if the similarity score exceeds the threshold.
+
+### `spectral_improve_cut`
+#### Description
+Optimizes a graph partition for a modified normalized cut using a greedy hill-climbing procedure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| G | nx.Graph | The graph to optimize. |
+| cut | List[str] | Initial partition of the graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| new_cut | List[str] | An optimized partition that is a local minimum for the objective function. |
+
+#### Internal Logic
+- Calculates improvement potential for moving nodes across the partition.
+- Iteratively moves nodes to minimize the normalized cut ratio until no further improvements are possible.
+
+## References
+
+- `solver_utilities.convert_sample_names_to_indices`: Used to map sample names to indices for efficient graph construction.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| networkx | Used for graph construction and manipulation. |
+| numpy | Used for numerical operations and calculations. |
+| pandas | Used for handling character matrices. |
+
+## TODOs
+
+- There are TODO comments suggesting potential optimization using `numba` for performance improvements in the `construct_connectivity_graph` and `construct_similarity_graph` functions.

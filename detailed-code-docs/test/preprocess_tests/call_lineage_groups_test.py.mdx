@@ -1,0 +1,115 @@
+---
+title: "call_lineage_groups_test.py"
+---
+
+## High-level description
+
+The target file `call_lineage_groups_test.py` is a unit test suite designed to validate the functionality of the `call_lineage_groups` function from the `cassiopeia.preprocess.pipeline` module. This test suite uses the `unittest` framework to ensure that the lineage grouping logic correctly processes input data frames, assigns lineage groups, and filters data according to specified criteria.
+
+## Code Structure
+
+The main class in this file is `TestCallLineageGroup`, which inherits from `unittest.TestCase`. This class contains several test methods that each test different aspects of the `call_lineage_groups` function. The test methods use various pre-defined data frames to simulate different scenarios and validate the expected outcomes.
+
+## Symbols
+
+### `TestCallLineageGroup`
+#### Description
+This class is a test suite for the `call_lineage_groups` function. It sets up test data and contains multiple test methods to verify the function's behavior under different conditions.
+
+#### Inputs
+- None directly, but uses pre-defined data frames within the class.
+
+#### Outputs
+- None directly, but asserts expected conditions on the output of the `call_lineage_groups` function.
+
+#### Internal Logic
+- **`setUp` Method**: Initializes several data frames (`basic_grouping`, `reassign`, `filter_and_reassign`, `doublet`) that are used in the test cases. These data frames simulate different input scenarios for the lineage grouping function.
+- **Test Methods**: Each test method calls `call_lineage_groups` with specific parameters and asserts that the output matches expected conditions. The tests cover:
+  - Correct format of the output data frame.
+  - Basic grouping logic.
+  - Handling of doublets.
+  - Reassignment logic.
+  - Filtering and reassignment logic.
+  - Conversion of filtered lineage groups to allele tables.
+
+### `test_format`
+#### Description
+Tests if the output data frame from `call_lineage_groups` contains the expected columns.
+
+#### Inputs
+- Uses the `self.doublet` data frame.
+
+#### Outputs
+- Asserts that the output data frame contains specific columns.
+
+### `test_basic_grouping`
+#### Description
+Tests the basic grouping logic of `call_lineage_groups`.
+
+#### Inputs
+- Uses the `self.basic_grouping` data frame.
+
+#### Outputs
+- Asserts that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
+
+### `test_doublet`
+#### Description
+Tests the handling of doublets in `call_lineage_groups`.
+
+#### Inputs
+- Uses the `self.doublet` data frame.
+
+#### Outputs
+- Asserts that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
+
+### `test_reassign`
+#### Description
+Tests the reassignment logic of `call_lineage_groups`.
+
+#### Inputs
+- Uses the `self.reassign` data frame.
+
+#### Outputs
+- Asserts that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
+
+### `test_filter_reassign`
+#### Description
+Tests the filtering and reassignment logic of `call_lineage_groups`.
+
+#### Inputs
+- Uses the `self.filter_and_reassign` data frame.
+
+#### Outputs
+- Asserts that certain intBCs are not present and that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
+
+### `test_filter_lineage_group_to_allele_table_single_lineage`
+#### Description
+Tests the conversion of filtered lineage groups to allele tables.
+
+#### Inputs
+- Uses the `self.basic_grouping` data frame.
+
+#### Outputs
+- Asserts that the output data frame contains a "lineageGrp" column and that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
+
+## References
+
+- `pipeline.call_lineage_groups`: The main function being tested, which is responsible for assigning lineage groups to cells based on UMI and intBC data.
+- `lineage_utils.filtered_lineage_group_to_allele_table`: A utility function used in one of the tests to convert lineage groups to allele tables.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `pandas` | Used for creating and manipulating data frames. |
+| `cassiopeia.preprocess.pipeline` | Contains the `call_lineage_groups` function being tested. |
+| `cassiopeia.preprocess.lineage_utils` | Provides utility functions for lineage group processing. |
+
+## Error Handling
+
+The test suite uses assertions to handle errors. If an assertion fails, it indicates that the function did not behave as expected for the given test case.
+
+## Logging
+
+No explicit logging is implemented in the test suite. The `unittest` framework provides output for test results, including any assertion failures.

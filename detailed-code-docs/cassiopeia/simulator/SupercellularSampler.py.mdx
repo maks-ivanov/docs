@@ -1,0 +1,68 @@
+---
+title: "SupercellularSampler.py"
+---
+
+## High-level description
+
+The `SupercellularSampler` class is a specialized subclass of `LeafSubsampler` designed to iteratively merge leaves in a phylogenetic tree to create a new tree with ambiguous character states. The merging process is probabilistic, with the likelihood of merging two leaves being inversely proportional to their branch distance. This class is particularly useful for simulating scenarios where character states are not clearly defined, allowing for the study of ambiguous evolutionary histories.
+
+## Code Structure
+
+The `SupercellularSampler` class extends the `LeafSubsampler` abstract class, inheriting its structure and implementing the `subsample_leaves` method. The class interacts with the `CassiopeiaTree` class, which provides the tree structure and character state data necessary for the merging process. The `SupercellularSampler` uses methods from `CassiopeiaTree` to manipulate the tree, such as merging leaves, calculating distances, and updating character states.
+
+## References
+
+- `CassiopeiaTree`: This class is used extensively within `SupercellularSampler` to manage the tree structure and character states.
+- `LeafSubsampler`: The abstract base class that `SupercellularSampler` extends, providing the framework for leaf subsampling.
+- `LeafSubsamplerError` and `CassiopeiaTreeError`: Exception classes used for error handling within the `SupercellularSampler`.
+
+## Symbols
+
+### `SupercellularSampler`
+#### Description
+The `SupercellularSampler` class is responsible for merging leaves in a phylogenetic tree to create a new tree with ambiguous character states. It uses a probabilistic approach to select pairs of leaves for merging, based on their branch distances.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ratio | Optional[float] | The ratio of merges to perform relative to the total number of leaves. |
+| number_of_merges | Optional[float] | The explicit number of merges to perform. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| subsample_leaves | CassiopeiaTree | A new `CassiopeiaTree` with merged leaves and ambiguous character states. |
+
+#### Internal Logic
+- **Initialization**: The constructor checks that exactly one of `ratio` or `number_of_merges` is provided. It stores these values for use in the merging process.
+- **subsample_leaves Method**: 
+  1. Determines the number of merges to perform based on the provided `ratio` or `number_of_merges`.
+  2. Validates that the number of merges is feasible given the number of leaves.
+  3. Iteratively selects pairs of leaves to merge:
+     - Selects a random leaf `A`.
+     - Chooses a second leaf `B` with a probability inversely proportional to the branch distance from `A`.
+     - Merges `A` and `B` into a new leaf with combined character states.
+     - Updates the tree structure to reflect the merge.
+  4. Collapses unifurcations and optionally collapses duplicate character states.
+
+## Side Effects
+- Modifies the structure of the input `CassiopeiaTree` by merging leaves and updating character states.
+- May alter the global state of the tree by collapsing unifurcations and duplicate character states.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for random selection and probability calculations. |
+| `copy` | Utilized for deep copying the tree structure to avoid modifying the original tree. |
+
+## Error Handling
+- Raises `LeafSubsamplerError` if both `ratio` and `number_of_merges` are provided or if neither is provided.
+- Raises `LeafSubsamplerError` if the number of merges exceeds the number of leaves or if no merges are to be performed.
+- Raises `CassiopeiaTreeError` if the character matrix is not defined in the tree.
+
+## Logging
+No explicit logging mechanisms are implemented in the code.
+
+## TODOs
+No TODOs are present in the code.

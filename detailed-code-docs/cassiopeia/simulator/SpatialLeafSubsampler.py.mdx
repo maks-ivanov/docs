@@ -1,0 +1,67 @@
+---
+title: "SpatialLeafSubsampler.py"
+---
+
+## High-level description
+
+The `SpatialLeafSubsampler` class is a specialized subclass of `LeafSubsampler` designed to sample leaves from a `CassiopeiaTree` based on spatial information. It allows for the selection of leaves within a specified region of interest, defined either by a bounding box or a spatial mask, and can optionally merge cells that occupy the same spatial location. The result is a new `CassiopeiaTree` containing only the sampled leaves and their relevant lineages.
+
+## Code Structure
+
+The `SpatialLeafSubsampler` class extends the `LeafSubsampler` abstract class and implements the `subsample_leaves` method. It interacts with the `CassiopeiaTree` class to perform operations such as retrieving spatial attributes, pruning lineages, and managing character states. The class also handles various input validation checks and can raise specific errors or warnings if the inputs are invalid.
+
+## References
+
+- `CassiopeiaTree`: The main data structure used for representing phylogenetic trees with associated character matrices and metadata.
+- `LeafSubsampler`: The abstract base class that `SpatialLeafSubsampler` extends, providing the framework for leaf subsampling.
+- `LeafSubsamplerError` and `LeafSubsamplerWarning`: Custom error and warning classes used for handling specific exceptions and warnings related to leaf subsampling.
+
+## Symbols
+
+### `SpatialLeafSubsampler`
+#### Description
+The `SpatialLeafSubsampler` class is responsible for subsampling leaves from a `CassiopeiaTree` based on spatial criteria. It can sample leaves within a specified bounding box or spatial mask and optionally merge cells that share the same spatial location.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bounding_box | Optional[List[tuple]] | Defines the region of interest as a list of (min, max) tuples for each dimension. |
+| space | Optional[np.ndarray] | A boolean numpy array mask representing the spatial region of interest. |
+| ratio | Optional[float] | The ratio of leaves to sample from the region of interest. |
+| number_of_leaves | Optional[int] | The exact number of leaves to sample. |
+| attribute_key | Optional[str] | The key in the tree's node attributes that contains spatial coordinates. |
+| merge_cells | Optional[bool] | Whether to merge cells within the same spatial location. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | - | The class does not directly output values but modifies the input tree to produce a subsampled tree. |
+
+#### Internal Logic
+1. **Initialization**: Validates input parameters, ensuring that either a bounding box or space is provided, but not both. It also checks that only one of `ratio` or `number_of_leaves` is specified.
+2. **Subsampling**: The `subsample_leaves` method performs the actual subsampling. It checks for spatial attributes in the tree, subsets leaves based on the bounding box or space, and handles downsampling if specified.
+3. **Merging Cells**: If `merge_cells` is true, it merges cells within the same spatial location, updating character states and times accordingly.
+4. **Pruning and Finalization**: Removes non-sampled leaves and prunes the tree to maintain only relevant lineages. It can also collapse unifurcations and handle singular root edges based on input flags.
+
+## Side Effects
+- Modifies the input `CassiopeiaTree` by removing non-sampled leaves and potentially altering character states and times.
+- Raises `LeafSubsamplerError` for invalid inputs and may issue `LeafSubsamplerWarning` for potential issues like coordinate scaling.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for numerical operations and handling spatial masks. |
+| `copy` | Utilized for deep copying the tree to avoid modifying the original input. |
+| `collections.defaultdict` | Used for managing collections of leaves by spatial coordinates. |
+
+## Error Handling
+- **Input Validation**: Raises `LeafSubsamplerError` if input parameters are invalid, such as providing both `ratio` and `number_of_leaves`.
+- **Spatial Checks**: Ensures that spatial attributes are present and compatible with the specified bounding box or space dimensions.
+- **Warnings**: Issues `LeafSubsamplerWarning` if there are potential issues with coordinate scaling relative to the space dimensions.
+
+## Logging
+The code does not implement explicit logging but uses warnings to notify users of potential issues.
+
+## TODOs
+No TODOs are present in the code.

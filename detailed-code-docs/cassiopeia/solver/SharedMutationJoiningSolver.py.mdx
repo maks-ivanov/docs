@@ -1,0 +1,128 @@
+---
+title: "SharedMutationJoiningSolver.py"
+---
+
+## High-level description
+
+The `SharedMutationJoiningSolver` class in the `SharedMutationJoiningSolver.py` file implements an agglomerative clustering algorithm for phylogenetic inference. This algorithm clusters samples based on shared mutations in their character states, iteratively joining the most similar samples until a complete tree is formed. The solver is designed to work with a character matrix and can handle various transformations of prior probabilities to compute weights for the clustering process.
+
+## Code Structure
+
+The main class in this file is `SharedMutationJoiningSolver`, which inherits from `CassiopeiaSolver`. It utilizes several methods to perform the clustering, including initializing the solver, solving the tree, finding cherries (pairs of samples to join), and updating the similarity map and character matrix. The class also attempts to optimize performance using the `numba` library for just-in-time compilation.
+
+## References
+
+- `CassiopeiaTree`: Used to store and manipulate the tree structure and character matrix.
+- `dissimilarity_functions`: Provides functions to compute similarity between samples.
+- `solver_utilities`: Contains utility functions for node name generation and prior transformation.
+- `SharedMutationJoiningSolverError` and `SharedMutationJoiningSolverWarning`: Custom error and warning classes for handling exceptions and warnings specific to this solver.
+
+## Symbols
+
+### `SharedMutationJoiningSolver`
+#### Description
+The `SharedMutationJoiningSolver` class implements a bottom-up agglomerative clustering algorithm to infer phylogenetic trees by joining samples with the most shared mutations. It uses a similarity function to compute pairwise similarities and iteratively joins the most similar samples until a single tree is formed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity_function | Callable | Function to compute similarity between samples. |
+| prior_transformation | str | Method to transform priors into weights. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class modifies the input `CassiopeiaTree` in place. |
+
+#### Internal Logic
+- **Initialization**: Sets up the similarity function and attempts to optimize it using `numba`.
+- **Solve Method**: Computes a similarity matrix, iteratively finds and joins the most similar samples, updates the tree structure, and optionally collapses mutationless edges.
+- **Find Cherry**: Identifies the pair of samples with the highest similarity to join.
+- **Update Similarity Map and Character Matrix**: Updates the similarity map and character matrix after joining a pair of samples, adding a new node representing their least common ancestor (LCA).
+
+### `solve`
+#### Description
+Solves the phylogenetic tree by iteratively joining samples based on shared mutations, updating the tree structure in the provided `CassiopeiaTree` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cassiopeia_tree | CassiopeiaTree | The tree object to populate with the inferred phylogeny. |
+| layer | Optional[str] | The layer of the character matrix to use. |
+| collapse_mutationless_edges | bool | Whether to collapse edges with no mutations. |
+| logfile | str | File to log output (not currently used). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Modifies the `cassiopeia_tree` in place. |
+
+#### Internal Logic
+- Initializes a similarity matrix using the character matrix and similarity function.
+- Iteratively finds and joins the most similar samples, updating the similarity matrix and character matrix.
+- Updates the tree structure in the `CassiopeiaTree` object.
+- Optionally collapses mutationless edges.
+
+### `find_cherry`
+#### Description
+Finds the pair of samples with the highest similarity to join into a "cherry" in the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity_matrix | np.array | A matrix of pairwise sample similarities. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tuple[int, int] | Tuple | Indices of the samples to join. |
+
+#### Internal Logic
+- Converts the similarity matrix to float and sets the diagonal to negative infinity to avoid self-joining.
+- Uses `np.argmax` to find the indices of the maximum similarity value.
+
+### `update_similarity_map_and_character_matrix`
+#### Description
+Updates the similarity map and character matrix after joining a pair of samples, adding a new node representing their LCA.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | Character information for all nodes. |
+| similarity_function | Callable | Function to compute similarity. |
+| similarity_map | pd.DataFrame | Current similarity map. |
+| cherry | Tuple[str, str] | Indices of the samples being joined. |
+| new_node | str | Name of the new node to add. |
+| missing_state_indicator | int | Indicator for missing data. |
+| weights | Optional | Weights for character/state pairs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pd.DataFrame | pd.DataFrame | Updated similarity map. |
+
+#### Internal Logic
+- Computes the LCA character vector for the joined samples.
+- Updates the character matrix with the new LCA node.
+- Recomputes pairwise similarities for the new node and updates the similarity map.
+
+## Side Effects
+- Modifies the `CassiopeiaTree` object by populating it with the inferred tree structure.
+- Updates the character matrix and similarity map within the solver.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `networkx` | Used for graph operations and tree manipulation. |
+| `numba` | Provides just-in-time compilation for performance optimization. |
+| `numpy` | Used for numerical operations and matrix manipulations. |
+| `pandas` | Used for handling data in DataFrame format. |
+| `scipy` | Used for distance computations and matrix operations. |
+
+## Error Handling
+- Uses `SharedMutationJoiningSolverError` for exceptions specific to this solver.
+- Issues warnings using `SharedMutationJoiningSolverWarning` when `numba` optimization fails.
+
+## TODOs
+- Improve the solver to work with similarity maps as flattened arrays.

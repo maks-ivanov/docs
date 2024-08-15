@@ -1,0 +1,66 @@
+---
+title: "coupling_test.py"
+---
+
+## High-level description
+
+The target file `coupling_test.py` is a unit test suite designed to validate the functionality of evolutionary coupling estimators implemented in the `cassiopeia/tools/coupling.py` module. It uses the `unittest` framework to test the computation of evolutionary coupling statistics between different cell types in a phylogenetic tree. The tests ensure that the coupling calculations are accurate under various conditions, including default settings, custom dissimilarity maps, and minimum proportion thresholds.
+
+## Code Structure
+
+The main class in this file is `TestDataUtilities`, which inherits from `unittest.TestCase`. This class contains several test methods that validate the behavior of the `compute_evolutionary_coupling` function from the `cassiopeia.tools.coupling` module. The tests are structured to check the function's output against expected results, ensuring that the coupling statistics are computed correctly.
+
+## References
+
+- `CassiopeiaTree`: A class from `cassiopeia.data` used to represent the phylogenetic tree structure.
+- `compute_evolutionary_coupling`: A function from `cassiopeia.tools.coupling` that calculates evolutionary coupling statistics.
+- `compute_inter_cluster_distances`: A utility function from `cassiopeia.data.utilities` used to compute distances between clusters.
+
+## Symbols
+
+### `TestDataUtilities`
+#### Description
+`TestDataUtilities` is a test class that contains methods to test the evolutionary coupling functionality. It sets up a phylogenetic tree and associated metadata, then runs various tests to ensure the coupling calculations are correct.
+
+#### Methods
+
+- **`setUp`**: Initializes a directed graph representing a phylogenetic tree and a metadata DataFrame. This setup is used in all test methods.
+  
+- **`test_evolutionary_coupling_basic`**: Tests the basic functionality of the `compute_evolutionary_coupling` function using default parameters.
+
+- **`test_evolutionary_coupling_custom_dissimilarity_map`**: Tests the coupling computation with a custom dissimilarity map to ensure the function can handle user-defined distance metrics.
+
+- **`test_evolutionary_coupling_minimum_proportion`**: Tests the function's ability to filter out categories based on a minimum proportion threshold, ensuring that only sufficiently represented categories are considered.
+
+#### Inputs
+- **`setUp`**: No direct inputs; initializes class attributes.
+- **`test_evolutionary_coupling_basic`**: Uses the tree and metadata set up in `setUp`.
+- **`test_evolutionary_coupling_custom_dissimilarity_map`**: Uses a custom dissimilarity map along with the tree and metadata.
+- **`test_evolutionary_coupling_minimum_proportion`**: Modifies the metadata to test category filtering.
+
+#### Outputs
+- **`test_evolutionary_coupling_basic`**: Asserts that the computed coupling matches expected values.
+- **`test_evolutionary_coupling_custom_dissimilarity_map`**: Asserts that the computed coupling with a custom map matches expected values.
+- **`test_evolutionary_coupling_minimum_proportion`**: Asserts that the function correctly filters categories and computes the expected coupling.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used to create and manipulate the phylogenetic tree as a directed graph. |
+| `numpy` | Used for numerical operations, including random state management. |
+| `pandas` | Used to handle metadata and dissimilarity matrices. |
+| `cassiopeia` | The main library being tested, specifically its data structures and tools for evolutionary analysis. |
+
+## Error Handling
+
+The test methods use `assertRaises` to ensure that the `compute_evolutionary_coupling` function raises a `CassiopeiaError` when inappropriate data types are used, such as numerical data for categorical variables.
+
+## Logging
+
+No explicit logging is implemented in the test suite. The `unittest` framework handles test output and error reporting.
+
+## TODOs
+
+No TODOs are present in the code.

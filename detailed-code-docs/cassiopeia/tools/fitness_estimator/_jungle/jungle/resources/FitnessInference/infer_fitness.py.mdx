@@ -1,0 +1,73 @@
+---
+title: "infer_fitness.py"
+---
+
+## High-level description
+
+The script `infer_fitness.py` is designed to perform fitness inference on sequences within a multiple sequence alignment. It processes an alignment file, identifies an outgroup sequence, and uses a prediction algorithm to rank sequences based on inferred fitness. The results, including reconstructed trees and sequence rankings, are output to a directory named with the current date and time.
+
+## Code Structure
+
+The script is structured to first parse command-line arguments, then read and process the alignment file to identify sequences and the specified outgroup. It sets up the sequence data and runs a prediction algorithm to infer fitness. Finally, it outputs the results, including writing trees and sequence rankings to files, and optionally plots the prediction tree.
+
+## References
+
+- `sequence_ranking`: This is a function or class from the `sequence_ranking` module, which is used to perform the fitness prediction and ranking of sequences.
+- `tree_utils.plot_prediction_tree`: A utility function used to plot the prediction tree if the `--plot` option is enabled.
+
+## Symbols
+
+### `ofunc`
+#### Description
+A utility function to open files, choosing between gzip and regular open based on the file extension.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fname | str | The name of the file to open. |
+| mode | str | The mode in which to open the file (e.g., 'r' for read). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file object | file-like object | A file object opened in the specified mode. |
+
+#### Internal Logic
+- Checks if the file name ends with `.gz` to determine if it should use `gzip.open`.
+- Otherwise, uses the standard `open` function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `argparse` | For parsing command-line arguments. |
+| `matplotlib` | For plotting graphs and setting up plot parameters. |
+| `numpy` | For numerical operations, such as calculating square roots. |
+| `Bio` (from Biopython) | For handling sequence alignments and phylogenetic trees. |
+| `tree_utils` | For plotting prediction trees. |
+| `sequence_ranking` | For performing the fitness prediction and ranking. |
+
+## Configuration
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `--aln` | str | None | Name of the alignment file in fasta format. |
+| `--outgroup` | str | None | Name of the outgroup sequence in the alignment file. |
+| `--eps_branch` | float | 1e-5 | Minimal branch length for inference. |
+| `--diffusion` | float | 0.5 | Fitness diffusion coefficient. |
+| `--gamma` | float | 1.0 | Scale factor for time scale. |
+| `--omega` | float | 0.1 | Approximate sampling fraction divided by the fitness standard deviation. |
+| `--collapse` | bool | False | Collapse internal branches with identical sequences. |
+| `--plot` | bool | False | Plot trees if set. |
+
+## Error Handling
+
+- The script checks if the outgroup is present in the alignment file. If not, it prints an error message and exits.
+
+## Logging
+
+- The script does not implement any logging mechanisms. It uses print statements for error messages.
+
+## TODOs
+
+- There are no explicit TODOs or notes left in the code.

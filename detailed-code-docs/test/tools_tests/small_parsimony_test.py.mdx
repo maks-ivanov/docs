@@ -1,0 +1,216 @@
+---
+title: "small_parsimony_test.py"
+---
+
+## High-level description
+
+The `small_parsimony_test.py` file contains unit tests for the small parsimony algorithms implemented in the `cassiopeia.tools.small_parsimony` module. These tests focus on verifying the correctness of the Fitch-Hartigan algorithm for reconstructing ancestral states in phylogenetic trees, scoring parsimony, and counting state transitions using the FitchCount algorithm. The tests ensure that the algorithms handle different tree structures and metadata correctly.
+
+## Code Structure
+
+The main class in this file is `TestSmallParsimony`, which inherits from `unittest.TestCase`. This class contains several test methods that validate the functionality of the small parsimony algorithms. The tests are organized to cover different aspects of the algorithms, such as bottom-up and top-down state reconstruction, parsimony scoring, and state transition counting.
+
+## Symbols
+
+### `TestSmallParsimony`
+#### Description
+The `TestSmallParsimony` class is a test suite for the small parsimony algorithms. It sets up test cases with specific tree structures and metadata, and then runs various tests to ensure the algorithms work as expected.
+
+#### Inputs
+- None directly, but it uses predefined tree structures and metadata within the `setUp` method.
+
+#### Outputs
+- None directly, but it uses assertions to validate the expected outcomes of the tests.
+
+#### Internal Logic
+- The `setUp` method initializes two types of trees (`binary_tree` and `general_tree`) with associated metadata, which are used in the tests.
+- Each test method performs specific checks using assertions to validate the behavior of the algorithms.
+
+### `setUp`
+#### Description
+Initializes the test environment by creating two phylogenetic trees (`binary_tree` and `general_tree`) with associated metadata. These trees are used in the subsequent test methods.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Constructs two directed graphs using `networkx.DiGraph`.
+- Populates these graphs with edges to form specific tree structures.
+- Creates metadata for the leaves of the trees using `pandas.DataFrame`.
+- Initializes `CassiopeiaTree` objects with the constructed trees and metadata.
+
+### `test_fitch_hartigan_bottom_up`
+#### Description
+Tests the `fitch_hartigan_bottom_up` function to ensure it correctly performs the bottom-up phase of the Fitch-Hartigan algorithm.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected sets of states for each node.
+
+#### Internal Logic
+- Checks for exceptions when invalid metadata columns are used.
+- Verifies that the function correctly computes the sets of possible states for each node in the tree.
+
+### `test_fitch_hartigan_top_down`
+#### Description
+Tests the `fitch_hartigan_top_down` function to ensure it correctly performs the top-down phase of the Fitch-Hartigan algorithm.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected labels for each node.
+
+#### Internal Logic
+- Runs the bottom-up phase first, then the top-down phase.
+- Verifies that the function assigns the correct labels to each node based on the computed states.
+
+### `test_fitch_hartigan`
+#### Description
+Tests the complete `fitch_hartigan` function, which combines both bottom-up and top-down phases.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected labels for each node.
+
+#### Internal Logic
+- Calls the `fitch_hartigan` function and checks that the labels assigned to each node match the expected values.
+
+### `test_score_parsimony`
+#### Description
+Tests the `score_small_parsimony` function to ensure it correctly computes the parsimony score of a tree.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the parsimony score.
+
+#### Internal Logic
+- Checks for exceptions when invalid label keys are used.
+- Verifies that the function computes the correct parsimony score for the tree.
+
+### `test_general_tree_fitch_bottom_up`
+#### Description
+Tests the `fitch_hartigan_bottom_up` function on a general tree structure.
+
+#### Inputs
+- None directly, but uses `self.general_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected sets of states for each node.
+
+#### Internal Logic
+- Verifies that the function correctly computes the sets of possible states for each node in the general tree.
+
+### `test_general_tree_fitch_hartigan`
+#### Description
+Tests the complete `fitch_hartigan` function on a general tree structure.
+
+#### Inputs
+- None directly, but uses `self.general_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected labels for each node.
+
+#### Internal Logic
+- Calls the `fitch_hartigan` function and checks that the labels assigned to each node match the expected values.
+
+### `test_general_tree_parsimony`
+#### Description
+Tests the `score_small_parsimony` function on a general tree structure.
+
+#### Inputs
+- None directly, but uses `self.general_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the parsimony score.
+
+#### Internal Logic
+- Verifies that the function computes the correct parsimony score for the general tree.
+
+### `test_fitch_count_basic_binary`
+#### Description
+Tests the `fitch_count` function to ensure it correctly counts state transitions in a binary tree.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected transition matrix.
+
+#### Internal Logic
+- Verifies that the function computes the correct transition matrix for the binary tree.
+
+### `test_fitch_count_basic_binary_custom_state_space`
+#### Description
+Tests the `fitch_count` function with a custom state space.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected transition matrix.
+
+#### Internal Logic
+- Verifies that the function handles custom state spaces correctly and raises an error if the state space is insufficient.
+
+### `test_fitch_count_basic_binary_internal_node`
+#### Description
+Tests the `fitch_count` function with a specified internal node as the root.
+
+#### Inputs
+- None directly, but uses `self.binary_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected transition matrix.
+
+#### Internal Logic
+- Verifies that the function computes the correct transition matrix when an internal node is specified as the root.
+
+### `test_fitch_count_general_tree`
+#### Description
+Tests the `fitch_count` function on a general tree structure.
+
+#### Inputs
+- None directly, but uses `self.general_tree` and metadata.
+
+#### Outputs
+- None directly, but uses assertions to validate the expected transition matrix.
+
+#### Internal Logic
+- Verifies that the function computes the correct transition matrix for the general tree.
+
+## References
+
+- `fitch_hartigan_bottom_up`: Function from `cassiopeia.tools.small_parsimony` used for bottom-up state reconstruction.
+- `fitch_hartigan_top_down`: Function from `cassiopeia.tools.small_parsimony` used for top-down state refinement.
+- `fitch_hartigan`: Function from `cassiopeia.tools.small_parsimony` that combines both bottom-up and top-down phases.
+- `score_small_parsimony`: Function from `cassiopeia.tools.small_parsimony` used to compute the parsimony score.
+- `fitch_count`: Function from `cassiopeia.tools.small_parsimony` used to count state transitions.
+- `CassiopeiaError`, `CassiopeiaTreeError`, `FitchCountError`: Exception classes from `cassiopeia.mixins.errors` used for error handling.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used to create and manipulate graph structures for trees. |
+| `numpy` | Used for numerical operations and random number generation. |
+| `pandas` | Used to handle metadata in DataFrame format. |
+| `cassiopeia` | Provides the core functionality for phylogenetic analysis. |
+
+## Error Handling
+
+The test methods use assertions to validate expected outcomes and raise exceptions when invalid inputs are provided. Specific exceptions like `CassiopeiaError`, `CassiopeiaTreeError`, and `FitchCountError` are used to handle errors related to metadata and state transitions.
+
+## Logging
+
+No explicit logging is implemented in this test file. The focus is on using assertions to validate the correctness of the algorithms.

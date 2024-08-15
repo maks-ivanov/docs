@@ -1,0 +1,86 @@
+---
+title: "hybrid_solver_test.py"
+---
+
+## High-level description
+
+The `hybrid_solver_test.py` file is a unit test suite for the `HybridSolver` class in the Cassiopeia library. It uses the `unittest` framework to verify the functionality of the `HybridSolver`, which is designed to construct phylogenetic trees using a combination of greedy and more complex algorithms. The tests cover various scenarios, including handling of missing data, different solver configurations, and ensuring the correctness of the tree structure produced by the solver.
+
+## Code Structure
+
+The main components of the code are the `TestHybridSolver` class, which contains multiple test methods, and the `find_triplet_structure` function, which is used to verify the structure of triplets in the phylogenetic trees. The `TestHybridSolver` class sets up different configurations of the `HybridSolver` and tests its behavior under various conditions.
+
+## References
+
+- `cassiopeia.solver.HybridSolver`: The class being tested, which is responsible for constructing phylogenetic trees.
+- `cassiopeia.data.CassiopeiaTree`: Used to represent the phylogenetic tree and its associated data.
+- `cassiopeia.solver.solver_utilities`: Provides utility functions used in the tests, such as generating unique node names.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+Determines the structure of a triplet (three nodes) in a given tree by comparing the number of common ancestors between pairs of nodes.
+
+#### Inputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| triplet| list         | A list of three node identifiers.  |
+| T      | nx.DiGraph   | A directed graph representing the tree. |
+
+#### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| structure | str    | A string indicating the structure of the triplet ("ab", "ac", "bc", or "-"). |
+
+#### Internal Logic
+- Computes the ancestors for each node in the triplet.
+- Counts the number of common ancestors between each pair of nodes.
+- Determines the structure based on which pair has the most common ancestors.
+
+### `TestHybridSolver`
+#### Description
+A test suite for the `HybridSolver` class, containing various test cases to ensure the solver's correctness and robustness.
+
+#### Inputs
+No direct inputs; uses class-level setup to initialize test data.
+
+#### Outputs
+No direct outputs; uses assertions to validate behavior.
+
+#### Internal Logic
+- **`setUp`**: Initializes test data, including character matrices and different configurations of the `HybridSolver`.
+- **`test_constructor`**: Verifies the correct initialization of the `HybridSolver`.
+- **`test_cutoff`**: Tests the cutoff logic for transitioning between solvers.
+- **`test_top_down_split_manual`**: Manually tests the top-down splitting logic.
+- **`test_apply_top_solver_small`**: Tests the application of the top solver on a small dataset.
+- **`test_apply_top_solver_large`**: Tests the application of the top solver on a larger dataset.
+- **`test_apply_top_solver_missing`**: Tests the application of the top solver with missing data.
+- **`test_full_hybrid`**: Tests the full hybrid solver process, including tree structure validation.
+- **`test_full_hybrid_single_thread`**: Similar to `test_full_hybrid`, but with single-threaded execution.
+- **`test_full_hybrid_large`**: Tests the hybrid solver on a large dataset.
+- **`test_full_hybrid_maxcut`**: Tests the hybrid solver with a MaxCut Greedy solver.
+- **`test_full_hybrid_missing`**: Tests the hybrid solver with missing data handling.
+- **`test_greedy_over_greedy_maxcut_missing`**: Tests a specific configuration of the hybrid solver with missing data.
+- **`tearDown`**: Cleans up log files created during testing.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `unittest` | Provides the testing framework.              |
+| `networkx` | Used for graph operations and tree structures. |
+| `pandas`   | Used for handling character matrices.        |
+| `cassiopeia` | The main library being tested.             |
+
+## Error Handling
+
+- The tests use assertions to validate expected outcomes. If an assertion fails, it indicates a problem with the `HybridSolver` implementation.
+
+## Logging
+
+- The tests generate log files to track the solver's progress. These files are checked for existence to ensure logging is functioning correctly.
+
+## TODOs
+
+- The code includes conditional skips for tests that require Gurobi, indicating a need for Gurobi installation to run those tests.

@@ -1,0 +1,97 @@
+---
+title: "setup_utilities.py"
+---
+
+## High-level description
+
+The `setup_utilities.py` file in the Cassiopeia preprocessing module provides utility functions to set up the environment and parse configuration files for a preprocessing pipeline. It supports the command-line interface entry point in `cassiopeia_preprocess.py` by setting up logging, creating necessary directories, and parsing configuration strings into structured parameters for different stages of the pipeline.
+
+## Code Structure
+
+The main symbols in the code are the functions `setup`, `parse_config`, and `create_pipeline`. These functions work together to prepare the environment for the preprocessing pipeline, parse configuration settings, and determine the sequence of pipeline stages to execute.
+
+## References
+
+- `UnspecifiedConfigParameterError`: An exception class used to handle missing configuration parameters.
+- `constants.DEFAULT_PIPELINE_PARAMETERS`: Provides default parameters for the pipeline stages.
+- `logger`: A logging utility used to handle logging within the setup process.
+
+## Symbols
+
+### `setup`
+#### Description
+Sets up the environment for the preprocessing pipeline by creating necessary directories and configuring logging.
+
+#### Inputs
+| Name                     | Type    | Description                                      |
+|:-------------------------|:--------|:-------------------------------------------------|
+| output_directory_location | str     | Directory path for output files and logs.        |
+| verbose                  | bool    | Flag to determine the verbosity of logging.      |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if the specified output directory exists; if not, it creates the directory.
+- Configures logging to output both to the console and to log files (`preprocess.log` for general logs and `preprocess.err` for error logs) in the specified directory.
+
+### `parse_config`
+#### Description
+Parses a configuration string into a dictionary of parameters for each preprocessing stage, ensuring required parameters are specified.
+
+#### Inputs
+| Name          | Type  | Description                           |
+|:--------------|:------|:--------------------------------------|
+| config_string | str   | Configuration file content as a string.|
+
+#### Outputs
+| Name       | Type            | Description                                      |
+|:-----------|:----------------|:-------------------------------------------------|
+| parameters | Dict[str, Dict[str, Any]] | Dictionary mapping parameters for each preprocessing stage. |
+
+#### Internal Logic
+- Initializes a `ConfigParser` and loads default parameters from `constants.DEFAULT_PIPELINE_PARAMETERS`.
+- Reads the configuration string and populates a dictionary with parameters for each stage.
+- Checks for the presence of essential parameters in the "general" section and raises `UnspecifiedConfigParameterError` if any are missing.
+- Copies certain parameters from the "general" section to specific stages to ensure consistency.
+
+### `create_pipeline`
+#### Description
+Creates a list of pipeline stages to execute based on specified entry and exit points.
+
+#### Inputs
+| Name  | Type  | Description                                      |
+|:------|:------|:-------------------------------------------------|
+| entry | str   | The starting stage of the pipeline.              |
+| _exit | str   | The ending stage of the pipeline.                |
+| stages| list  | List of all possible stages in the pipeline.     |
+
+#### Outputs
+| Name          | Type  | Description                                      |
+|:--------------|:------|:-------------------------------------------------|
+| stage_names   | list  | List of stages to execute in the pipeline.       |
+
+#### Internal Logic
+- Determines the index of the entry and exit stages in the list of all stages.
+- Returns a sublist of stages from the entry to the exit stage, inclusive.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `os`       | Used for directory operations and file path management. |
+| `ast`      | Used for safely evaluating string expressions in the configuration. |
+| `configparser` | Used for parsing configuration files.    |
+| `logging`  | Used for setting up logging mechanisms.      |
+
+## Error Handling
+
+- The `parse_config` function raises an `UnspecifiedConfigParameterError` if essential configuration parameters are missing.
+
+## Logging
+
+- The `setup` function configures logging to output both to the console and to log files, with verbosity controlled by the `verbose` flag.
+
+## TODOs
+
+None.

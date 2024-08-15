@@ -1,0 +1,92 @@
+---
+title: "IIDExponentialBayesian.py"
+---
+
+## High-level description
+
+The `IIDExponentialBayesian` class is a subclass of `BranchLengthEstimator` that estimates branch lengths in a phylogenetic tree using a Bayesian approach. It models CRISPR/Cas9 mutations as independent and identically distributed (IID) events with exponential waiting times and assumes the phylogeny follows a subsampled Birth Process. The class computes posterior mean branch lengths based on observed topology and character data, which are used as branch length estimates.
+
+## Code Structure
+
+The main class in this file is `IIDExponentialBayesian`, which inherits from `BranchLengthEstimator`. It uses several helper functions to process the tree data and compute the necessary statistics for branch length estimation. The class relies on a C++ implementation for efficient computation of posterior times and other related statistics.
+
+## References
+
+- `CassiopeiaTree`: A data structure from `cassiopeia.data` that represents the phylogenetic tree and provides methods for manipulating and querying tree properties.
+- `_PyInferPosteriorTimes`: A C++ implementation used for efficient computation of posterior times and related statistics.
+
+## Symbols
+
+### `IIDExponentialBayesian`
+#### Description
+The `IIDExponentialBayesian` class estimates branch lengths in a phylogenetic tree using a Bayesian model. It assumes IID exponential mutations and a subsampled Birth Process for the phylogeny. The class computes posterior mean branch lengths based on observed topology and character data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mutation_rate | float | The CRISPR/Cas9 mutation rate. |
+| birth_rate | float | The phylogeny birth rate. |
+| sampling_probability | float | The probability that a leaf in the ground truth tree was sampled. Must be in (0, 1]. |
+| discretization_level | int | How many timesteps are used to discretize time. Default is 600. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies the input tree with estimated branch lengths. |
+
+#### Internal Logic
+1. **Initialization**: Validates the `sampling_probability` and initializes the class attributes.
+2. **Branch Length Estimation**: The `estimate_branch_lengths` method validates the input tree, imputes missing states, and computes posterior means using a C++ implementation.
+3. **Validation**: The `_validate_input_tree` method checks that the tree is binary, except for the root.
+4. **C++ Integration**: The `_populate_attributes_with_cpp_implementation` method interfaces with a C++ module to compute necessary statistics efficiently.
+5. **Posterior Computation**: The class computes log joint probabilities and posterior distributions for node times.
+
+### `_get_number_of_mutated_characters_in_node`
+#### Description
+Calculates the number of mutated characters in a given node, excluding missing characters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The phylogenetic tree. |
+| v | str | The node identifier. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| int | int | The number of mutated characters in the node. |
+
+### `_non_root_internal_nodes`
+#### Description
+Returns a list of internal nodes in the tree, excluding the root.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The phylogenetic tree. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| List[str] | list | A list of internal node identifiers, excluding the root. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for numerical operations and array manipulations. |
+| `deepcopy` | Used to create deep copies of the tree to avoid modifying the original data. |
+
+## Error Handling
+
+- The class raises a `ValueError` if the `sampling_probability` is not in the range (0, 1].
+- The `_validate_input_tree` method raises a `ValueError` if the tree topology is not binary as expected.
+- The `_populate_attributes_with_cpp_implementation` method raises a `ValueError` if the C++ implementation returns unexpected results.
+
+## Logging
+
+The code does not explicitly implement logging, but it raises exceptions with descriptive error messages to indicate issues during execution.
+
+## TODOs
+
+- There are no explicit TODOs in the code, but potential improvements could include more detailed logging and handling of edge cases in tree validation.

@@ -1,0 +1,99 @@
+---
+title: "SequentialLineageTracingDataSimulator.py"
+---
+
+## High-level description
+
+The `SequentialLineageTracingDataSimulator` is a specialized simulator for generating lineage tracing data using Cas9-based technologies, specifically designed for sequential recording systems like the DNA Typewriter. It extends the `LineageTracingDataSimulator` class and implements the `overlay_data` method to simulate the sequential editing of DNA cassettes in a tree structure, taking into account various parameters such as initiation and continuation rates, cassette architecture, state distribution, and silencing rates.
+
+## Code Structure
+
+The main class in this file is `SequentialLineageTracingDataSimulator`, which inherits from `LineageTracingDataSimulator`. It uses the `CassiopeiaTree` class from the `cassiopeia.data` module to represent the tree structure on which the lineage tracing data is overlaid. The class defines several parameters in its constructor to control the simulation process and implements the `overlay_data` method to perform the simulation.
+
+## References
+
+- `CassiopeiaTree`: Used to represent the tree structure for lineage tracing.
+- `DataSimulatorError`: Used for error handling specific to data simulation.
+- `LineageTracingDataSimulator`: The abstract base class that `SequentialLineageTracingDataSimulator` extends.
+
+## Symbols
+
+### `SequentialLineageTracingDataSimulator`
+#### Description
+This class simulates Cas9-based lineage tracing data for sequential recording systems. It models the editing process as an exponential process and overlays the simulated data onto a `CassiopeiaTree`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| number_of_cassettes | int | Number of cassettes in the system. |
+| size_of_cassette | int | Number of editable target sites per cassette. |
+| initiation_rate | float | Rate at which a cassette starts recording. |
+| continuation_rate | float | Rate at which sequential events occur after initiation. |
+| state_priors | Dict[int, float] | Prior probabilities for different states. |
+| heritable_silencing_rate | float | Rate of heritable silencing events. |
+| stochastic_silencing_rate | float | Rate of stochastic dropout events. |
+| heritable_missing_data_state | int | State representing heritable missing data. |
+| stochastic_missing_data_state | int | State representing stochastic missing data. |
+| random_seed | Optional[int] | Seed for random number generation to ensure deterministic simulations. |
+
+#### Outputs
+None (The method `overlay_data` modifies the input `CassiopeiaTree` in place).
+
+#### Internal Logic
+- **Initialization**: Validates input parameters and initializes instance variables.
+- **`overlay_data` Method**: 
+  - Sets a random seed if provided.
+  - Initializes a character matrix for the tree nodes.
+  - Traverses the tree in a depth-first manner, simulating edits on each node based on the initiation and continuation rates.
+  - Applies silencing to cassettes based on the specified rates.
+  - Updates the character matrix of the tree with the simulated data.
+
+### `edit_site`
+#### Description
+Edits a specific site in the character array based on the state priors.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_array | List[int] | The character array representing the current state of a node. |
+| site | int | The index of the site to be edited. |
+| state_priors | Dict[int, float] | Dictionary mapping states to their prior probabilities. |
+
+#### Outputs
+None (Modifies the `character_array` in place).
+
+#### Internal Logic
+- Chooses a new state for the site based on the provided state priors using a random choice.
+
+### `silence_cassettes`
+#### Description
+Silences cassettes in the character array based on a given silencing rate.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_array | List[int] | The character array representing the current state of a node. |
+| silencing_rate | float | The rate at which cassettes are silenced. |
+| missing_state | int | The state to use for encoding missing data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updated_character_array | List[int] | The character array after applying silencing. |
+
+#### Internal Logic
+- Iterates over cassettes and applies silencing based on the silencing rate, setting the state to `missing_state` for silenced cassettes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for random number generation and array operations. |
+| `math` | Used for mathematical operations like checking if values are close. |
+
+## Error Handling
+
+The class raises `DataSimulatorError` for various invalid input conditions, such as non-positive cassette numbers, invalid rates, or state priors that do not sum to 1.
+
+## TODOs
+None.

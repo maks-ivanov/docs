@@ -1,0 +1,130 @@
+---
+title: "itol_utilities.py"
+---
+
+## High-level description
+
+The `itol_utilities.py` file provides utilities for generating visualizations of phylogenetic trees using the iTOL (Interactive Tree Of Life) platform. The main function, `upload_and_export_itol`, facilitates the process of uploading a tree to iTOL, configuring its visualization with optional metadata and allele tables, and exporting the visualization to a local file. The file also includes helper functions to create gradient and colorbar files for visualizing numerical and categorical data alongside the tree.
+
+## Code Structure
+
+The main function `upload_and_export_itol` is supported by several helper functions: `create_gradient_from_df`, `create_colorbar`, and `create_indel_heatmap`. These helper functions are responsible for generating specific types of visualization files that can be uploaded to iTOL to enhance the tree visualization with additional data.
+
+## Symbols
+
+### `upload_and_export_itol`
+#### Description
+Uploads a phylogenetic tree to the iTOL platform, configures its visualization with optional metadata and allele tables, and exports the visualization to a specified file format.
+
+#### Inputs
+| Name               | Type                | Description |
+|:-------------------|:--------------------|:------------|
+| cassiopeia_tree    | CassiopeiaTree      | A tree instance populated with a phylogenetic tree. |
+| tree_name          | str                 | Name of the tree for iTOL. |
+| export_filepath    | str                 | Path to save the exported tree visualization. |
+| itol_config        | str                 | Path to iTOL configuration file. |
+| api_key            | Optional[str]       | API key for iTOL account. |
+| project_name       | Optional[str]       | Project name in iTOL account. |
+| meta_data          | List[str]           | Metadata columns to visualize alongside the tree. |
+| allele_table       | Optional[pd.DataFrame] | Allele table for visualization. |
+| indel_colors       | Optional[pd.DataFrame] | Color mapping for alleles. |
+| indel_priors       | Optional[pd.DataFrame] | Prior probabilities for indels. |
+| rect               | bool                | Whether to save the tree as a rectangle. |
+| include_legend     | bool                | Whether to include a legend in the visualization. |
+| use_branch_lengths | bool                | Whether to use branch lengths in the visualization. |
+| palette            | List[str]           | Color palette for visualization. |
+| random_state       | Optional[np.random.RandomState] | Random state for reproducibility. |
+| user_dataset_files | Optional[List[str]] | Additional dataset files to upload. |
+| verbose            | bool                | Whether to print verbose output. |
+| **kwargs           | dict                | Additional iTOL export parameters. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates a temporary directory for storing files to be uploaded to iTOL.
+2. Reads iTOL credentials from the configuration file or uses provided API key and project name.
+3. Writes the tree in Newick format to a temporary file.
+4. Validates the export file format.
+5. Prepares and uploads additional files (e.g., allele heatmaps, metadata gradients) to iTOL.
+6. Configures iTOL upload parameters and uploads the tree.
+7. Exports the visualization from iTOL to the specified file path.
+8. Cleans up temporary files.
+
+### `create_gradient_from_df`
+#### Description
+Generates a gradient file for numerical metadata to be used in iTOL visualizations.
+
+#### Inputs
+| Name             | Type          | Description |
+|:-----------------|:--------------|:------------|
+| df               | pd.Series     | Numerical data series. |
+| tree             | CassiopeiaTree | The tree associated with the data. |
+| dataset_name     | str           | Name for the dataset. |
+| output_directory | str           | Directory to save the output file. |
+| color_min        | str           | Minimum color for gradient. |
+| color_max        | str           | Maximum color for gradient. |
+
+#### Outputs
+| Name   | Type | Description |
+|:-------|:-----|:------------|
+| outfp  | str  | File path to the generated gradient file. |
+
+### `create_colorbar`
+#### Description
+Generates a colorbar file for categorical metadata to be used in iTOL visualizations.
+
+#### Inputs
+| Name             | Type          | Description |
+|:-----------------|:--------------|:------------|
+| labels           | pd.DataFrame  | Categorical data series. |
+| tree             | CassiopeiaTree | The tree associated with the data. |
+| colormap         | Dict[str, Tuple[int, int, int]] | Mapping from category to RGB colors. |
+| dataset_name     | str           | Name for the dataset. |
+| output_directory | str           | Directory to save the output file. |
+| create_legend    | bool          | Whether to include a legend. |
+
+#### Outputs
+| Name   | Type | Description |
+|:-------|:-----|:------------|
+| outfp  | str  | File path to the generated colorbar file. |
+
+### `create_indel_heatmap`
+#### Description
+Generates files for displaying an indel heatmap alongside a tree in iTOL.
+
+#### Inputs
+| Name             | Type          | Description |
+|:-----------------|:--------------|:------------|
+| alleletable      | pd.DataFrame  | Allele table for the tree. |
+| tree             | CassiopeiaTree | The tree associated with the data. |
+| dataset_name     | str           | Name for the dataset. |
+| output_directory | str           | Directory to save the output files. |
+| indel_colors     | Optional[pd.DataFrame] | Mapping of indels to colors. |
+| indel_priors     | Optional[pd.DataFrame] | Prior probabilities for indels. |
+| random_state     | Optional[np.random.RandomState] | Random state for reproducibility. |
+
+#### Outputs
+| Name         | Type    | Description |
+|:-------------|:--------|:------------|
+| allele_files | List[str] | List of file paths to the generated heatmap files. |
+
+## References
+
+- `CassiopeiaTree`: A class from `cassiopeia.data` representing a phylogenetic tree with associated metadata.
+- `iTOLError`: An exception class from `cassiopeia.mixins` used for handling errors related to iTOL operations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `bokeh.palettes` | Provides color palettes for visualization. |
+| `itolapi.Itol` and `itolapi.ItolExport` | Interfaces for interacting with the iTOL API. |
+| `matplotlib.colors.hsv_to_rgb` | Converts HSV color values to RGB. |
+| `numpy` | Provides numerical operations and random state management. |
+| `pandas` | Handles data manipulation and storage. |
+| `tqdm.auto` | Provides progress bars for loops. |
+
+## TODOs
+
+- Add the ability to pass in min/max colors for specific numeric metadata to use when creating gradient files.

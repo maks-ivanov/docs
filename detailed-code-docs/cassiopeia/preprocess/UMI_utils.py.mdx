@@ -1,0 +1,140 @@
+---
+title: "UMI_utils.py"
+---
+
+## High-level description
+
+The `UMI_utils.py` file is part of the Cassiopeia preprocessing module and is responsible for handling Unique Molecular Identifier (UMI) collapsing and error correction. It provides utilities to process BAM files, sort and group reads by UMIs, and collapse similar UMIs to account for sequencing errors. The file supports functions like `collapseUMIs` and `errorCorrectUMIs` from the pipeline.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific tasks related to UMI processing. These functions are interconnected as they often rely on each other to complete the UMI collapsing and error correction process. For instance, `sort_bam` is used to prepare data for `form_collapsed_clusters`, which in turn uses helper functions like `form_clusters` and `align_clusters`.
+
+## Symbols
+
+### `detect_cell_bc_tag`
+#### Description
+Detects the appropriate BAM tag for the cell barcode, choosing between raw and corrected tags based on the presence of the corrected tag in the BAM file.
+
+#### Inputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| bam_fp | str  | Path to the BAM file |
+
+#### Outputs
+| Name | Type | Description                      |
+|:-----|:-----|:---------------------------------|
+| tag  | str  | The BAM tag to use as the barcode |
+
+### `group_bam_by_key`
+#### Description
+Groups alignments in a sorted BAM file by a specified key, yielding groups of alignments that share the same key.
+
+#### Inputs
+| Name      | Type     | Description                                      |
+|:----------|:---------|:-------------------------------------------------|
+| sorted_fn | str      | Path to the sorted BAM file                      |
+| sort_key  | Callable | Function to determine the grouping key           |
+| n_threads | int      | Number of threads to use                         |
+
+#### Outputs
+| Name | Type | Description                                                                 |
+|:-----|:-----|:----------------------------------------------------------------------------|
+| -    | Generator | Yields tuples of a grouping key and a list of alignments with that key |
+
+### `sort_bam`
+#### Description
+Sorts a BAM file by a specified key and filters alignments based on a filter function, writing the sorted alignments to a new BAM file.
+
+#### Inputs
+| Name       | Type     | Description                                      |
+|:-----------|:---------|:-------------------------------------------------|
+| bam_fp     | str      | File path of the BAM to be sorted                |
+| sorted_fn  | str      | File name of the output sorted BAM               |
+| sort_key   | Callable | Function specifying the key for sorting          |
+| filter_func| Callable | Function specifying the key for filtering        |
+| n_threads  | int      | Number of threads to use                         |
+
+#### Outputs
+| Name            | Type | Description                                      |
+|:----------------|:-----|:-------------------------------------------------|
+| max_read_length | int  | Maximum read length in the sorted BAM            |
+| total_reads_out | int  | Total number of relevant reads sorted            |
+
+### `form_collapsed_clusters`
+#### Description
+Clusters aligned segments that share UMIs and have similar sequences, creating consensus sequences for each cluster and saving them to a BAM file.
+
+#### Inputs
+| Name              | Type     | Description                                      |
+|:------------------|:---------|:-------------------------------------------------|
+| sorted_fn         | str      | File name of the sorted BAM                      |
+| collapsed_fn      | str      | File name of the collapsed BAM                   |
+| max_hq_mismatches | int      | Max high-quality mismatches for collapsing       |
+| max_indels        | int      | Max indels allowed for collapsing                |
+| cell_key          | Callable | Function to extract cell barcode from alignment  |
+| UMI_key           | Callable | Function to extract UMI from alignment           |
+| method            | Literal  | Method for forming initial sequence clusters     |
+| n_threads         | int      | Number of threads to use                         |
+
+### `form_clusters`
+#### Description
+Forms clusters of aligned segments with similar sequences, creating a consensus sequence for each cluster.
+
+#### Inputs
+| Name              | Type | Description                                      |
+|:------------------|:-----|:-------------------------------------------------|
+| als               | List[pysam.AlignedSegment] | List of aligned segments  |
+| max_read_length   | int  | Maximum read length in the dataset               |
+| max_hq_mismatches | int  | Max high-quality mismatches for clustering       |
+
+#### Outputs
+| Name     | Type | Description                                      |
+|:---------|:-----|:-------------------------------------------------|
+| clusters | List[pysam.AlignedSegment] | Consensus sequences for each cluster |
+
+### `correct_umis_in_group`
+#### Description
+Collapses UMIs within a group of alignments that have close sequences, correcting sequencing errors by merging less abundant UMIs into more abundant ones.
+
+#### Inputs
+| Name            | Type         | Description                                      |
+|:----------------|:-------------|:-------------------------------------------------|
+| cell_group      | pd.DataFrame | DataFrame of alignments                          |
+| max_umi_distance| int          | Max Hamming distance for UMI correction          |
+
+#### Outputs
+| Name                | Type         | Description                                      |
+|:--------------------|:-------------|:-------------------------------------------------|
+| corrected_cell_group| pd.DataFrame | DataFrame of error-corrected UMIs                |
+| num_corrections     | int          | Number of corrected UMIs                         |
+
+## References
+
+- `pysam`: Used for handling BAM files and alignments.
+- `ngs_tools`: Provides utilities for sequence processing and parallelization.
+- `cassiopeia.mixins`: Provides logging and error handling utilities.
+- `cassiopeia.preprocess.constants`: Provides constants used for BAM processing.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| pysam      | Handling BAM files and alignments            |
+| ngs_tools  | Sequence processing and parallelization      |
+| numpy      | Numerical operations                         |
+| pandas     | Data manipulation                            |
+| tqdm       | Progress bar for loops                       |
+
+## Error Handling
+
+- Uses `PreprocessError` for handling errors specific to preprocessing tasks.
+- Warnings are issued using `PreprocessWarning` for non-critical issues.
+
+## Logging
+
+- Utilizes a logger from `ngs_tools` for logging information and debugging messages.
+
+## TODOs
+
+- Address the arbitrary merging of UMIs with ties in their read counts in `correct_umis_in_group`.

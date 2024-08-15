@@ -1,0 +1,101 @@
+---
+title: "call_alleles_test.py"
+---
+
+## High-level description
+
+The `call_alleles_test.py` file contains unit tests for the allele calling functionality in the `alignment_utilities.py` and `pipeline.py` modules of the Cassiopeia software. These tests verify the correct parsing of CIGAR strings, which represent sequence alignments, and ensure that the allele calling process correctly identifies integration barcodes and indels (insertions and deletions) at specified cut sites in DNA sequences.
+
+## Code Structure
+
+The main class in this file is `TestCallAlleles`, which is a subclass of `unittest.TestCase`. This class contains several test methods that each test different aspects of the allele calling functionality. The tests use the `alignment_utilities.parse_cigar` function to parse CIGAR strings and verify the results against expected values.
+
+## References
+
+- `alignment_utilities.parse_cigar`: This function is crucial for understanding the tests as it is the main function being tested. It parses CIGAR strings to identify integration barcodes and indels.
+- `cassiopeia.pp.call_alleles`: This function is tested in the `test_call_alleles_function` method to ensure it correctly processes a DataFrame of sequence alignments.
+
+## Symbols
+
+### `TestCallAlleles`
+#### Description
+The `TestCallAlleles` class is a test suite for verifying the functionality of allele calling in the Cassiopeia software. It uses the `unittest` framework to define and run tests.
+
+#### Inputs
+- None directly, but it uses predefined sequences, CIGAR strings, and DataFrames within its methods.
+
+#### Outputs
+- None directly, but it asserts expected outcomes for various test cases.
+
+#### Internal Logic
+- The `setUp` method initializes test data, including reference sequences, barcode intervals, cut sites, and alignment DataFrames.
+- Each test method calls `alignment_utilities.parse_cigar` with specific parameters and asserts that the returned integration barcodes and indels match expected values.
+
+### `setUp`
+#### Description
+Initializes the test environment by setting up reference sequences, barcode intervals, cut sites, and alignment DataFrames used in the tests.
+
+### `test_basic_cigar_string_match`
+#### Description
+Tests the parsing of a simple CIGAR string representing a perfect match.
+
+### `test_basic_cigar_string_deletion`
+#### Description
+Tests the parsing of a CIGAR string with a deletion.
+
+### `test_basic_cigar_string_deletion_with_context`
+#### Description
+Tests the parsing of a CIGAR string with a deletion, including context around the indel.
+
+### `test_basic_cigar_string_insertion`
+#### Description
+Tests the parsing of a CIGAR string with an insertion.
+
+### `test_basic_cigar_string_insertion_with_context`
+#### Description
+Tests the parsing of a CIGAR string with an insertion, including context around the indel.
+
+### `test_long_cigar_parsing_no_context`
+#### Description
+Tests the parsing of a long CIGAR string without context.
+
+### `test_long_cigar_parsing_with_context`
+#### Description
+Tests the parsing of a long CIGAR string with context.
+
+### `test_intersite_deletion_parsing`
+#### Description
+Tests the parsing of a CIGAR string with an intersite deletion.
+
+### `test_complex_cigar_parsing_intersite_deletion`
+#### Description
+Tests the parsing of a complex CIGAR string with multiple intersite deletions.
+
+### `test_call_alleles_function`
+#### Description
+Tests the `call_alleles` function to ensure it correctly processes a DataFrame of sequence alignments.
+
+### `test_missing_data_in_allele_throws_warning`
+#### Description
+Tests that a warning is raised when there is missing data in the allele calling process.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `numpy` | Used for numerical operations, though not directly in this file. |
+| `pandas` | Used to create and manipulate DataFrames for test data. |
+| `cassiopeia` | The main package being tested, specifically its `preprocess` module. |
+
+## Error Handling
+
+- The tests expect certain warnings, such as `PreprocessWarning`, to be raised in specific scenarios, ensuring that the software handles edge cases appropriately.
+
+## Logging
+
+- No explicit logging is implemented in this test file, as it relies on the `unittest` framework's output for test results.
+
+## TODOs
+
+- No TODOs are present in the code.

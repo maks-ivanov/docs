@@ -1,0 +1,122 @@
+---
+title: "tree.py"
+---
+
+## High-level description
+
+The code defines a `Tree` class that represents a phylogenetic tree structure, providing various methods for constructing, manipulating, and analyzing the tree. It includes functionalities for loading trees from Newick or pickle files, generating trees through simulation, annotating nodes with features, calculating various statistical metrics, and visualizing the tree. The class also integrates with external libraries for specific tasks like fitness inference and site frequency spectrum analysis.
+
+## Code Structure
+
+The main symbol in the code is the `Tree` class, which encapsulates all the functionalities related to phylogenetic trees. The class methods allow for tree construction, annotation, analysis, and visualization. The class relies on external libraries such as `ete3`, `numpy`, `pandas`, and `Bio.Phylo` for tree manipulation and analysis. Additionally, it uses custom modules like `betatree` and `node_ranking` for specific tasks.
+
+## References
+
+- `ete3.Tree`: Used for tree construction and manipulation.
+- `Phylo`: Used for converting trees to Biopython format for fitness inference.
+- `betatree`: Used for generating trees through simulation.
+- `node_ranking`: Used for inferring fitness metrics of tree nodes.
+- `SFS`: Used for site frequency spectrum analysis.
+
+## Symbols
+
+### `Tree`
+#### Description
+The `Tree` class represents a phylogenetic tree and provides methods for constructing, manipulating, and analyzing the tree. It supports loading trees from files, generating trees, annotating nodes with features, calculating statistical metrics, and rendering the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| T | `ete3.Tree` | The tree structure. |
+| name | `str` | The name of the tree. |
+| params | `dict` | Parameters for tree construction or analysis. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tree instance | `Tree` | An instance of the `Tree` class. |
+
+#### Internal Logic
+- **Construction**: Trees can be constructed from Newick files, pickle files, or generated through simulation using the `betatree` module.
+- **Annotation**: Nodes can be annotated with features like depth, number of descendants, imbalance, and Colless index.
+- **Analysis**: The class provides methods to calculate site frequency spectrum, Fay and Wu's H, Zeng's E, Tajima's D, Ferretti's L, and fitness metrics.
+- **Visualization**: Trees can be rendered as images, and nodes can be colored based on attributes.
+
+### `from_newick`
+#### Description
+Constructs a `Tree` instance from a Newick file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | `str` | Path to the Newick file. |
+| name | `str` | Optional name for the tree. |
+| params | `dict` | Optional parameters for the tree. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tree instance | `Tree` | A new `Tree` instance. |
+
+### `from_pickle`
+#### Description
+Loads a `Tree` instance from a pickle file, with optional gzip support.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | `str` | Path to the pickle file. |
+| gzip | `bool` | Whether to use gzip for decompression. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tree instance | `Tree` | A loaded `Tree` instance. |
+
+### `generate`
+#### Description
+Generates a `Tree` instance by simulating a tree using the `betatree` module.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| params | `dict` | Parameters for tree simulation. |
+| name | `str` | Optional name for the tree. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tree instance | `Tree` | A generated `Tree` instance. |
+
+### `annotate_standard_node_features`
+#### Description
+Annotates each node in the tree with standard features such as depth, number of children, and number of descendants.
+
+### `infer_fitness`
+#### Description
+Infers fitness metrics for each node using the `node_ranking` module from the `FitnessInference` package.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| params | `dict` | Parameters for fitness inference. |
+
+### `render`
+#### Description
+Renders the tree as an image using the `ete3` library.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ete3` | For tree construction and manipulation. |
+| `numpy` | For numerical operations and calculations. |
+| `pandas` | For handling tabular data and node features. |
+| `Bio.Phylo` | For converting trees to Biopython format. |
+| `betatree` | For simulating tree generation. |
+| `node_ranking` | For inferring fitness metrics. |
+
+## TODOs
+- Move `betatree` functionality into its own module and install it as a package.
+- Install `FitnessInference` as a package and import it accordingly.
+- Move site frequency spectrum and metrics to a separate class.

@@ -1,0 +1,172 @@
+---
+title: "ILPSolver.py"
+---
+
+## High-level description
+
+The `ILPSolver` class in the `cassiopeia/solver/ILPSolver.py` file implements an Integer Linear Programming (ILP) based algorithm to infer a maximum parsimony tree from a character matrix. This solver constructs a potential graph of evolutionary states and uses the Gurobi optimizer to find a Steiner Tree, which represents the most parsimonious phylogenetic tree. The solver is designed to handle various constraints and configurations, such as time limits, iteration limits, and edge weighting based on mutation likelihoods.
+
+## Code Structure
+
+The `ILPSolver` class is a subclass of `CassiopeiaSolver` and utilizes several utility functions and classes from the `cassiopeia` package, including `CassiopeiaTree`, `dissimilarity_functions`, and `ilp_solver_utilities`. The solver's main functionality is encapsulated in the `solve` method, which orchestrates the process of constructing the potential graph, setting up the ILP model, and solving it to produce a phylogenetic tree.
+
+## References
+
+- `CassiopeiaTree`: Used to store and manipulate the phylogenetic tree and character matrix.
+- `dissimilarity_functions`: Provides functions to compute distances and similarities between character states.
+- `ilp_solver_utilities`: Contains utility functions for potential graph inference and other ILP-related tasks.
+- `ILPSolverError`: Custom exception class for handling errors specific to the ILPSolver.
+
+## Symbols
+
+### `ILPSolver`
+#### Description
+The `ILPSolver` class implements the Cassiopeia-ILP algorithm to infer a maximum parsimony tree using an ILP approach. It constructs a potential graph of evolutionary states and solves for a Steiner Tree using Gurobi, optimizing for the most parsimonious phylogeny.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| convergence_time_limit | int | Time limit for ILP convergence. |
+| convergence_iteration_limit | int | Iteration limit for ILP convergence. |
+| maximum_potential_graph_layer_size | int | Max size for potential graph layers. |
+| maximum_potential_graph_lca_distance | Optional[int] | Max LCA height for potential graph. |
+| weighted | bool | Whether to weight edges by mutation likelihood. |
+| seed | Optional[int] | Random seed for ILP optimization. |
+| mip_gap | float | Objective gap for the ILP problem. |
+| prior_transformation | str | Method for transforming priors into weights. |
+
+#### Outputs
+The class does not have a direct output but modifies the `CassiopeiaTree` object by populating it with the inferred phylogenetic tree.
+
+#### Internal Logic
+1. **Initialization**: Sets up solver parameters and inherits from `CassiopeiaSolver`.
+2. **Solve Method**: 
+   - Validates input and configures logging.
+   - Constructs a potential graph from the character matrix.
+   - Sets up and solves the ILP model using Gurobi.
+   - Processes the solution to form a phylogenetic tree and populates the `CassiopeiaTree`.
+   - Handles node renaming and tree collapsing based on configuration.
+
+### `solve`
+#### Description
+The `solve` method infers a phylogenetic tree using the Cassiopeia-ILP algorithm, populating the provided `CassiopeiaTree` with the inferred tree structure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cassiopeia_tree | CassiopeiaTree | The tree object to populate with the inferred phylogeny. |
+| layer | Optional[str] | Layer of the character matrix to use. |
+| collapse_mutationless_edges | bool | Whether to collapse edges without mutations. |
+| logfile | str | File to log the solver's progress. |
+
+#### Outputs
+The method modifies the `cassiopeia_tree` by populating it with the inferred tree.
+
+#### Internal Logic
+- Validates input and configures logging.
+- Constructs a potential graph and sets up the ILP model.
+- Solves the ILP problem using Gurobi and processes the solution.
+- Populates the `CassiopeiaTree` with the inferred tree and handles node renaming and collapsing.
+
+### `infer_potential_graph`
+#### Description
+Infers a potential graph of evolutionary states from the character matrix, which serves as the basis for the ILP optimization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | Character matrix of observed states. |
+| pid | int | Process ID for reference. |
+| lca_height | int | Maximum LCA height for connecting nodes. |
+| weights | Optional[Dict[int, Dict[int, str]]] | Weights for character-state pairs. |
+| missing_state_indicator | int | Indicator for missing data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| potential_graph | nx.DiGraph | Directed graph representing potential evolutionary states. |
+
+#### Internal Logic
+- Calls `ilp_solver_utilities.infer_potential_graph_cython` to generate potential graph edges.
+- Decodes edge strings and constructs a NetworkX directed graph.
+- Adds edge weights based on priors or mutation counts.
+
+### `generate_steiner_model`
+#### Description
+Creates a Gurobi model for the Steiner Tree problem using the potential graph, root, and target nodes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| potential_graph | nx.DiGraph | Graph representing evolutionary space. |
+| root | List[int] | Node to treat as the source. |
+| targets | List[List[int]] | Target nodes for the Steiner Tree. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model | gurobipy.Model | Gurobi model for the Steiner Tree problem. |
+| edge_variables | dict | Variables representing edges in the model. |
+
+#### Internal Logic
+- Initializes Gurobi model and variables for edge flows and usage.
+- Adds constraints for flow conservation and edge usage.
+- Sets the objective to minimize the weighted sum of used edges.
+
+### `solve_steiner_instance`
+#### Description
+Solves the Steiner Tree problem using the Gurobi model and returns the proposed solutions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model | gurobipy.Model | Gurobi model for the Steiner Tree problem. |
+| edge_variables | dict | Variables representing edges in the model. |
+| potential_graph | nx.DiGraph | Graph used in the Steiner Tree problem. |
+| pid | int | Process ID for logging. |
+| logfile | str | File to log the solver's progress. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| solutions | List[nx.DiGraph] | List of proposed Steiner Tree solutions. |
+
+#### Internal Logic
+- Configures Gurobi parameters and optimizes the model.
+- Extracts subgraphs from the Gurobi solution and logs execution time.
+
+### `post_process_steiner_solution`
+#### Description
+Cleans up the proposed Steiner Tree by removing self-loops and ensuring each node has at most one parent.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| solution | nx.DiGraph | Proposed Steiner Tree solution. |
+| root | List[int] | Root node of the tree. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| processed_solution | nx.DiGraph | Cleaned-up Steiner Tree solution. |
+
+#### Internal Logic
+- Removes self-loops and spurious roots.
+- Ensures each node has at most one parent by removing redundant edges.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| networkx | Used for graph operations and tree manipulations. |
+| numpy | Utilized for numerical operations and array manipulations. |
+| pandas | Used for handling character matrices and data frames. |
+| gurobipy | Required for solving the ILP problem using Gurobi. |
+
+## Error Handling
+
+The `ILPSolver` class raises `ILPSolverError` for various error conditions, such as when ambiguous states are detected in the character matrix or when the potential graph cannot be constructed with the given parameters.
+
+## Logging
+
+The `solve` method configures logging to a specified file, capturing the solver's progress and parameters used during the execution. This includes details about the potential graph inference and ILP optimization process.

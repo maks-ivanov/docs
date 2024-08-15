@@ -1,0 +1,86 @@
+---
+title: "sequence_ranking.py"
+---
+
+## High-level description
+
+The target file `sequence_ranking.py` is part of a module designed to predict evolutionary fitness from sequence alignments. It defines two main classes: `alignment`, which processes sequence alignments to calculate allele frequencies and build phylogenetic trees, and `sequence_ranking`, which extends the `node_ranking` class to rank sequences based on inferred evolutionary fitness. The code leverages sequence data to construct trees and uses various metrics to rank nodes, aiding in evolutionary predictions.
+
+## Code Structure
+
+- The `alignment` class is responsible for handling sequence alignments, calculating allele frequencies, and building phylogenetic trees.
+- The `sequence_ranking` class inherits from `node_ranking` and uses the processed alignment data to rank sequences based on fitness predictions.
+
+## References
+
+- The `sequence_ranking` class extends the `node_ranking` class from the `node_ranking.py` file.
+- The `tree_utils` module is used for tree construction and manipulation.
+
+## Symbols
+
+### `alignment`
+#### Description
+The `alignment` class manages sequence alignments, calculates allele frequencies, and constructs phylogenetic trees. It provides methods to compute distances between sequences and to translate nucleotide sequences into amino acids.
+
+#### Inputs
+| Name     | Type                      | Description                                      |
+|:---------|:--------------------------|:-------------------------------------------------|
+| aln      | `MultipleSeqAlignment`    | Biopython alignment object containing sequences. |
+| outgroup | `SeqRecord`               | Sequence used as an outgroup for tree rooting.   |
+| cds      | `dict` or `None`          | Coding region information, if applicable.        |
+| collapse | `bool`                    | Whether to collapse zero-length branches.        |
+| build_tree | `bool`                  | Whether to build a phylogenetic tree.            |
+
+#### Outputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| consensus  | `Seq`  | Consensus sequence of the alignment.             |
+| T          | `Tree` | Phylogenetic tree constructed from the alignment.|
+
+#### Internal Logic
+- **Initialization**: Sets up the alignment, outgroup, and optional coding region. Determines if the alignment is for protein sequences.
+- **process_alignment**: Calculates allele frequencies, translates sequences if necessary, and builds a phylogenetic tree.
+- **calculate_allele_frequencies**: Computes nucleotide allele frequencies across the alignment.
+- **calculate_aa_allele_frequencies**: Computes amino acid allele frequencies if the alignment is for proteins.
+- **translate_alignment**: Translates nucleotide sequences to amino acids and calculates the amino acid consensus.
+- **mean_distance_to_sequence**: Computes the average Hamming distance between a query sequence and the alignment.
+- **mean_distance_to_set**: Computes the average Hamming distance between another alignment and the stored alignment.
+- **aa_distance_to_sequence**: Computes the average Hamming distance for amino acid sequences.
+- **aa_distance_to_set**: Computes the average Hamming distance between amino acid alignments.
+- **build_tree**: Constructs a phylogenetic tree, roots it with the outgroup, and infers ancestral states.
+
+### `sequence_ranking`
+#### Description
+The `sequence_ranking` class extends `node_ranking` to handle sequence data, build trees, and rank nodes based on fitness predictions.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| sequence_data  | `alignment` | Processed alignment data.                   |
+| distance_scale | `float` | Scale factor for distance calculations.         |
+
+#### Outputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| best_node  | `Node` | The highest ranked external node.                |
+
+#### Internal Logic
+- **Initialization**: Initializes the base `node_ranking` class and calculates the coalescence time scale.
+- **predict**: Computes rankings and returns the highest ranked node based on the specified method.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `numpy`    | Used for numerical operations and calculations. |
+| `Bio`      | Biopython library for handling biological sequences and alignments. |
+| `tree_utils` | Provides utilities for tree construction and manipulation. |
+
+## Error Handling
+The code includes basic error handling, such as printing messages when operations are not applicable (e.g., attempting to calculate amino acid distances for non-protein sequences).
+
+## Logging
+The code uses print statements for logging, particularly when verbose mode is enabled, to provide feedback on processing steps and timing.
+
+## TODOs
+- The `translate_alignment` method includes a TODO comment to make translation gap-tolerant, indicating a potential area for improvement.

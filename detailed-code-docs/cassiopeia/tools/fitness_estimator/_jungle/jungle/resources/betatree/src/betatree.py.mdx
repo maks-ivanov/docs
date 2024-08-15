@@ -1,0 +1,63 @@
+---
+title: "betatree.py"
+---
+
+## High-level description
+
+The code defines a class `betatree` that simulates beta coalescent trees, which are used in population genetics to model the ancestry of a sample of individuals. The class allows for the generation of trees based on different coalescent processes, determined by the parameter `alpha`, and calculates the Site Frequency Spectrum (SFS) for these trees. The script can generate and visualize these trees using the BioPython library.
+
+## Code Structure
+
+The main symbol in the code is the `betatree` class, which encapsulates the entire process of simulating a beta coalescent tree. The class methods handle the initialization of the tree, the simulation of coalescence events, and the final construction of the tree. The class relies on several mathematical functions from the `numpy` and `scipy` libraries to calculate merger rates and waiting times. The `Bio` library is used to represent and visualize the tree structure.
+
+## Symbols
+
+### `betatree`
+#### Description
+The `betatree` class simulates a beta coalescent tree for a given sample size and alpha parameter. It models the process of lineages merging over time, which is a key concept in population genetics. The class can simulate different types of coalescent processes, such as Kingman and Bolthausen-Sznitman, by adjusting the `alpha` parameter.
+
+#### Inputs
+| Name        | Type | Description                                                                 |
+|:------------|:-----|:----------------------------------------------------------------------------|
+| sample_size | int  | The number of leaves (or individuals) in the tree.                           |
+| alpha       | float| The parameter of the merger distribution, determining the type of coalescent process. |
+
+#### Outputs
+| Name   | Type | Description                                                                 |
+|:-------|:-----|:----------------------------------------------------------------------------|
+| BioTree| Tree | A BioPython tree object representing the final coalescent tree structure.   |
+
+#### Internal Logic
+- **Initialization**: Sets up auxiliary arrays based on the `alpha` parameter to facilitate the calculation of merger rates and waiting times.
+- **Tree Initialization**: Creates initial blocks (leaves) as BioPython clade objects.
+- **Coalescence Event**: Determines the time and size of the next merger event, updates branch lengths, and merges selected blocks.
+- **Merge Clades**: Combines selected clades into a new clade and updates the list of active blocks.
+- **Clean Up Subtree**: Adjusts branch lengths and calculates the number of children for each node in the tree.
+- **Waiting Time Calculation**: Computes the time until the next merger event based on the current number of blocks and the `alpha` parameter.
+- **Merger Size Distribution**: Determines the size of the next merger event based on the current number of lineages and the `alpha` parameter.
+- **Coalesce**: Simulates the entire coalescent process until a single tree remains.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| numpy      | Used for numerical operations and random number generation.             |
+| scipy      | Provides special functions for gamma calculations.                      |
+| Bio        | Used for tree and clade representations and visualization.              |
+| matplotlib | Used for plotting and saving the visual representation of the trees.    |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes valid input parameters and relies on the robustness of the libraries used.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The code does not expose an API or public interface beyond the `betatree` class and its methods.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

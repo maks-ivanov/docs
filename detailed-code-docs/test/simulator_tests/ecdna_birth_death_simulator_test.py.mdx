@@ -1,0 +1,83 @@
+---
+title: "ecdna_birth_death_simulator_test.py"
+---
+
+## High-level description
+
+The target file, `ecdna_birth_death_simulator_test.py`, is a unit test suite designed to validate the functionality of the `ecDNABirthDeathSimulator` class from the `cassiopeia.simulator` module. This simulator models the birth-death process of lineages with extrachromosomal DNA (ecDNA) dynamics, incorporating factors like fitness, cosegregation, and capture efficiency. The test suite uses the `unittest` framework to ensure that the simulator behaves as expected under various conditions and configurations.
+
+## Code Structure
+
+The test suite is structured around the `unittest` framework, with each test case encapsulated in a method of the `ecDNABirthDeathSimulatorTest` class. The tests cover different aspects of the simulator's functionality, such as ecDNA splitting, initial sample events, lineage event sampling, tree population from simulation, and cosegregation behavior.
+
+## References
+
+- `ecDNABirthDeathSimulator`: The main class being tested, which simulates a phylogenetic tree using a birth-death process with ecDNA dynamics.
+- `CassiopeiaTree`: A data structure used to represent the tree and its associated metadata, utilized in the tests to verify the simulator's output.
+
+## Symbols
+
+### `node_name_generator`
+#### Description
+Generates unique node names for the tree in a sequential manner, starting from "0" and incrementing by one for each subsequent call.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | A unique node name as a string. |
+
+#### Internal Logic
+The generator uses an infinite loop to yield incrementing integers converted to strings.
+
+### `extract_tree_statistics`
+#### Description
+A helper function that extracts statistics from a `CassiopeiaTree`, such as the total lived time for each extant lineage, the number of extant lineages, and whether the tree has the expected node degrees.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree from which to extract statistics. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| times | List[float] | Total time lived for each leaf. |
+| num_leaves | int | Number of leaves in the tree. |
+| correct_degrees | bool | Whether the tree has only degree 0 or 2 nodes. |
+
+#### Internal Logic
+The function iterates over the nodes of the tree, collecting the time for leaf nodes and the out-degree for all nodes, then checks if all non-root nodes have out-degrees of 0 or 2.
+
+### `ecDNABirthDeathSimulatorTest`
+#### Description
+A test class derived from `unittest.TestCase` that contains multiple test methods to validate different functionalities of the `ecDNABirthDeathSimulator`.
+
+#### Methods
+- `test_ecdna_splitting`: Tests the ecDNA array generation for child nodes.
+- `test_initial_sample_event`: Validates the initial sample event handling.
+- `test_basic_sample_lineage_events`: Checks the behavior of lineage event sampling under edge cases.
+- `test_populate_tree_from_simulation`: Tests the population of a `CassiopeiaTree` from a simulated tree.
+- `test_basic_cosegregation`: Validates the basic cosegregation behavior.
+- `test_perfect_cosegregation`: Tests the behavior when cosegregation is perfect.
+- `test_low_capture_efficiency`: Checks the simulator's handling of low capture efficiency.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used for graph operations and tree representation. |
+| `numpy` | Utilized for numerical operations and random number generation. |
+| `pandas` | Used for handling tabular data and metadata. |
+
+## Error Handling
+
+The test suite uses assertions provided by the `unittest` framework to validate expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the simulator.
+
+## Logging
+
+No explicit logging is implemented in the test suite. The `unittest` framework handles test result reporting.
+
+## TODOs
+
+No TODOs are present in the target file.

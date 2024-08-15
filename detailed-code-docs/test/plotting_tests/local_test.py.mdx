@@ -1,0 +1,182 @@
+---
+title: "local_test.py"
+---
+
+## High-level description
+
+The `local_test.py` file is a unit test suite for testing the plotting functionalities of the `cassiopeia` library, specifically focusing on local plotting methods. It uses the `unittest` framework to verify the correctness of various plotting functions, such as creating color strips, heatmaps, and plotting trees using both Matplotlib and Plotly. The tests ensure that the plotting functions behave as expected, handle errors, and issue warnings appropriately.
+
+## Code Structure
+
+The main class in this file is `TestLocalPlotting`, which inherits from `unittest.TestCase`. This class contains several test methods that each test a specific function from the `cassiopeia.plotting.local` module. The `setUp` method initializes common test data, including a sample tree and allele table, which are used across multiple test cases.
+
+## Symbols
+
+### `TestLocalPlotting`
+#### Description
+This class is a test suite for the local plotting functions in the `cassiopeia` library. It contains methods to test the creation of color strips, heatmaps, and tree plots, ensuring that these functions produce the expected outputs and handle errors and warnings correctly.
+
+#### Inputs
+- None directly, but uses initialized data in `setUp`.
+
+#### Outputs
+- None directly, but asserts expected outcomes using `unittest` methods.
+
+#### Internal Logic
+- The `setUp` method initializes a directed graph representing a tree and a DataFrame for cell metadata, which are used in the tests.
+- Each test method calls a specific function from the `cassiopeia.plotting.local` module and uses assertions to verify the correctness of the output.
+
+### `setUp`
+#### Description
+Initializes test data, including a directed graph and cell metadata, to be used in the test cases.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Creates a directed graph using `networkx` to represent a tree structure.
+- Initializes a DataFrame for cell metadata with columns for UMI counts and cluster labels.
+- Constructs a `CassiopeiaTree` object using the graph and metadata.
+
+### `test_compute_colorstrip_size`
+#### Description
+Tests the `compute_colorstrip_size` function to ensure it calculates the correct size of color strips based on given coordinates and location.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| coordinates | dict | Node coordinates in a plot. |
+| anchor_coords | dict | Anchor coordinates for color strips. |
+| loc | str | Location of the color strip (e.g., "up", "right"). |
+
+#### Outputs
+- Asserts that the computed size matches the expected size.
+
+### `test_create_categorical_colorstrip`
+#### Description
+Tests the `create_categorical_colorstrip` function to ensure it creates color strips for categorical data correctly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| categories | dict | Mapping of nodes to categories. |
+| anchor_coords | dict | Anchor coordinates for color strips. |
+| width | int | Width of the color strip. |
+| height | int | Height of the color strip. |
+| spacing | int | Spacing between color strips. |
+| loc | str | Location of the color strip. |
+
+#### Outputs
+- Asserts that the created color strip and next anchor coordinates match the expected values.
+
+### `test_create_continous_colorstrip`
+#### Description
+Tests the `create_continuous_colorstrip` function to ensure it creates color strips for continuous data correctly and handles warnings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| values | dict | Mapping of nodes to continuous values. |
+| anchor_coords | dict | Anchor coordinates for color strips. |
+| width | int | Width of the color strip. |
+| height | int | Height of the color strip. |
+| spacing | int | Spacing between color strips. |
+| loc | str | Location of the color strip. |
+| vmin | int | Minimum value for normalization. |
+| vmax | int | Maximum value for normalization. |
+
+#### Outputs
+- Asserts that the created color strip and next anchor coordinates match the expected values.
+- Checks for warnings when `vmin` is greater than `vmax`.
+
+### `test_create_indel_heatmap`
+#### Description
+Tests the `create_indel_heatmap` function to ensure it creates a heatmap for indel data correctly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| allele_table | DataFrame | Table containing allele information. |
+| anchor_coords | dict | Anchor coordinates for the heatmap. |
+| width | int | Width of the heatmap. |
+| height | int | Height of the heatmap. |
+| spacing | int | Spacing between heatmap elements. |
+| loc | str | Location of the heatmap. |
+| indel_colors | DataFrame | DataFrame mapping indels to colors. |
+
+#### Outputs
+- Asserts that the created heatmap and anchor coordinates match the expected values.
+
+### `test_plot_matplotlib`
+#### Description
+Tests the `plot_matplotlib` function to ensure it plots trees using Matplotlib correctly and handles errors.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | Tree to be plotted. |
+| add_root | bool | Whether to add a root to the plot. |
+| meta_data | list | Metadata to include in the plot. |
+| allele_table | DataFrame | Table containing allele information. |
+| clade_colors | dict | Colors for specific clades. |
+
+#### Outputs
+- Asserts that the function raises errors for invalid metadata.
+
+### `test_plot_plotly`
+#### Description
+Tests the `plot_plotly` function to ensure it plots trees using Plotly correctly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | Tree to be plotted. |
+| add_root | bool | Whether to add a root to the plot. |
+| meta_data | list | Metadata to include in the plot. |
+
+#### Outputs
+- None, but ensures no errors occur during plotting.
+
+### `test_create_clade_colors`
+#### Description
+Tests the `create_clade_colors` function to ensure it assigns colors to clades correctly and handles warnings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | Tree to assign clade colors. |
+| clade_colors | dict | Colors for specific clades. |
+
+#### Outputs
+- Asserts that the node and branch colors match the expected values.
+- Checks for warnings when conflicting clade colors are provided.
+
+## References
+
+- `cassiopeia.data.CassiopeiaTree`: Used to create a tree structure for testing.
+- `cassiopeia.plotting.local`: Contains the functions being tested.
+- `cassiopeia.mixins.PlottingError`: Used for error handling in plotting functions.
+- `cassiopeia.mixins.PlottingWarning`: Used for warning handling in plotting functions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `mock` | Used for mocking objects in tests. |
+| `networkx` | Used to create and manipulate the graph structure. |
+| `numpy` | Used for numerical operations and testing. |
+| `pandas` | Used to handle data in DataFrame format. |
+| `cassiopeia` | The library being tested, specifically its plotting module. |
+
+## Error Handling
+
+- The tests check for `PlottingError` exceptions when invalid metadata is provided to plotting functions.
+- The tests also check for `PlottingWarning` warnings when there are potential issues with plotting parameters, such as conflicting clade colors or invalid normalization ranges.
+
+## Logging
+
+- No explicit logging is implemented in the test suite. The focus is on assertions and exception handling.

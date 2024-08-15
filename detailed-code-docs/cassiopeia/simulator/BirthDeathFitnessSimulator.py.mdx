@@ -1,0 +1,131 @@
+---
+title: "BirthDeathFitnessSimulator.py"
+---
+
+## High-level description
+
+The `BirthDeathFitnessSimulator` class in the `BirthDeathFitnessSimulator.py` file is a simulator for generating phylogenetic trees using a forward birth-death process with fitness considerations. It allows for the simulation of lineage branching and cessation, with the ability to specify various distributions for birth and death waiting times, as well as fitness mutations that affect lineage birth rates. The simulator can be configured to stop based on the number of extant nodes or a specified experiment time.
+
+## Code Structure
+
+The main class in this file is `BirthDeathFitnessSimulator`, which inherits from the abstract class `TreeSimulator`. This class is responsible for simulating phylogenetic trees using a birth-death process with fitness. It interacts with the `CassiopeiaTree` class to manage the tree structure and node attributes.
+
+## References
+
+- `CassiopeiaTree`: Used to represent the tree structure and manage node attributes.
+- `TreeSimulatorError`: Custom error class used for handling exceptions specific to tree simulation.
+- `TreeSimulator`: Abstract base class that `BirthDeathFitnessSimulator` extends.
+
+## Symbols
+
+### `BirthDeathFitnessSimulator`
+#### Description
+The `BirthDeathFitnessSimulator` class simulates phylogenetic trees using a forward birth-death process with fitness. It allows for the specification of birth and death waiting time distributions, fitness mutation distributions, and stopping conditions based on the number of extant nodes or experiment time.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| birth_waiting_distribution | Callable[[float], float] | Function to sample birth waiting times. |
+| initial_birth_scale | float | Initial scale parameter for birth rates. |
+| death_waiting_distribution | Optional[Callable[[], float]] | Function to sample death waiting times. |
+| mutation_distribution | Optional[Callable[[], int]] | Function to sample the number of mutations. |
+| fitness_distribution | Optional[Callable[[], float]] | Function to sample fitness mutation strengths. |
+| fitness_base | float | Base for fitness mutation strength calculation. |
+| num_extant | Optional[int] | Stopping condition based on the number of extant nodes. |
+| experiment_time | Optional[float] | Stopping condition based on experiment time. |
+| collapse_unifurcations | bool | Whether to collapse unifurcations in the tree. |
+| random_seed | int | Seed for random number generation. |
+| initial_tree | Optional[CassiopeiaTree] | Initial tree to start the simulation from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| simulate_tree | CassiopeiaTree | Simulated phylogenetic tree. |
+
+#### Internal Logic
+- **Initialization**: Validates input parameters and initializes instance variables.
+- **Tree Initialization**: Uses `initialize_tree` to set up the initial tree structure.
+- **Lineage Simulation**: Uses `simulate_tree` to simulate the birth-death process, sampling events for each lineage and updating the tree structure.
+- **Fitness Updates**: Uses `update_fitness` to adjust birth scales based on fitness mutations.
+- **Event Sampling**: Uses `sample_lineage_event` to determine the next event for a lineage, updating the tree and lineage queue accordingly.
+- **Tree Population**: Uses `populate_tree_from_simulation` to finalize the tree structure and attributes after simulation.
+
+### `initialize_tree`
+#### Description
+Initializes a tree structure with a single root node or from an existing tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| names | Generator[str, None, None] | Generator for unique node names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.DiGraph | Initialized tree structure. |
+
+### `simulate_tree`
+#### Description
+Simulates a phylogenetic tree using a forward birth-death process with fitness.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cassiopeia_tree | CassiopeiaTree | Simulated tree with topology and attributes. |
+
+### `sample_lineage_event`
+#### Description
+Samples the next event for a lineage, updating the tree and lineage queue.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lineage | Dict[str, Union[int, float]] | Current lineage information. |
+| current_lineages | PriorityQueue | Queue of active lineages. |
+| tree | nx.DiGraph | Tree structure being constructed. |
+| names | Generator | Generator for unique node names. |
+| observed_nodes | List[str] | List of nodes observed at the end of the experiment. |
+
+### `update_fitness`
+#### Description
+Updates the birth scale of a lineage based on fitness mutations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| birth_scale | float | Current birth scale of the lineage. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updated_birth_scale | float | Updated birth scale after fitness mutations. |
+
+### `populate_tree_from_simulation`
+#### Description
+Finalizes the tree structure and attributes after simulation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.DiGraph | Simulated tree structure. |
+| observed_nodes | List[str] | List of observed nodes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cassiopeia_tree | CassiopeiaTree | Finalized tree with attributes. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| networkx | Used for managing the tree structure as a directed graph. |
+| numpy | Used for random number generation and numerical operations. |
+
+## Error Handling
+
+The class raises `TreeSimulatorError` for various invalid input conditions, such as missing stopping conditions, invalid mutation or fitness distributions, and negative waiting times.
+
+## Logging
+
+No explicit logging is implemented in the code.

@@ -1,0 +1,154 @@
+---
+title: "small_parsimony.py"
+---
+
+## High-level description
+
+The `small_parsimony.py` file provides tools for analyzing phylogenetic trees using the small-parsimony approach. It includes implementations of the Fitch-Hartigan algorithm for reconstructing ancestral states, scoring parsimony, and the FitchCount algorithm for counting state transitions. These tools are designed to work with the `CassiopeiaTree` data structure, which represents phylogenetic trees with associated metadata.
+
+## Code Structure
+
+The main symbols in the code are functions that implement various algorithms related to small-parsimony analysis. These functions interact with the `CassiopeiaTree` class, which provides the necessary tree structure and metadata for the analysis. The functions are designed to modify the tree in place or return a modified copy, depending on the user's preference.
+
+## Symbols
+
+### `fitch_hartigan`
+#### Description
+Runs the full Fitch-Hartigan small parsimony algorithm on a `CassiopeiaTree`. It infers the most-parsimonious set of states for the tree's nodes and stores the result in a specified attribute.
+
+#### Inputs
+| Name             | Type             | Description                                                                 |
+|:-----------------|:-----------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree  | CassiopeiaTree   | The tree to analyze, containing cell metadata.                              |
+| meta_item        | str              | Column in the cell metadata corresponding to a categorical variable.        |
+| root             | Optional[str]    | Root node for the analysis; defaults to the tree's root if not specified.   |
+| state_key        | str              | Attribute key for storing ancestral states.                                 |
+| label_key        | str              | Attribute key for storing the parsimony assignment.                         |
+| copy             | bool             | Whether to modify the tree in place or return a copy.                       |
+
+#### Outputs
+| Name             | Type                  | Description                                                                 |
+|:-----------------|:----------------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree  | Optional[CassiopeiaTree] | A new tree with inferred states if `copy` is True, else None.               |
+
+#### Internal Logic
+1. Optionally creates a copy of the tree.
+2. Calls `fitch_hartigan_bottom_up` to perform the bottom-up phase of the algorithm.
+3. Calls `fitch_hartigan_top_down` to perform the top-down refinement.
+4. Returns the modified tree or None, depending on the `copy` parameter.
+
+### `fitch_hartigan_bottom_up`
+#### Description
+Performs the bottom-up phase of the Fitch-Hartigan algorithm, inferring the optimal set of ancestral states for each node in the tree.
+
+#### Inputs
+| Name             | Type             | Description                                                                 |
+|:-----------------|:-----------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree  | CassiopeiaTree   | The tree to analyze, containing cell metadata.                              |
+| meta_item        | str              | Column in the cell metadata corresponding to a categorical variable.        |
+| add_key          | str              | Key to add for storing bottom-up reconstruction results.                    |
+| copy             | bool             | Whether to modify the tree in place or return a copy.                       |
+
+#### Outputs
+| Name             | Type                  | Description                                                                 |
+|:-----------------|:----------------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree  | Optional[CassiopeiaTree] | A new tree with inferred states if `copy` is True, else None.               |
+
+#### Internal Logic
+1. Validates the presence and type of the `meta_item` in the tree's metadata.
+2. Optionally creates a copy of the tree.
+3. Traverses the tree in a depth-first manner, inferring states for each node based on its children's states.
+4. Stores the inferred states in the specified attribute.
+
+### `fitch_hartigan_top_down`
+#### Description
+Runs the top-down refinement phase of the Fitch-Hartigan algorithm, selecting an optimal solution for the tree's nodes.
+
+#### Inputs
+| Name             | Type             | Description                                                                 |
+|:-----------------|:-----------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree  | CassiopeiaTree   | The tree to analyze, containing cell metadata.                              |
+| root             | Optional[str]    | Root node for the analysis; defaults to the tree's root if not specified.   |
+| state_key        | str              | Attribute key for storing ancestral states.                                 |
+| label_key        | str              | Attribute key for storing the parsimony assignment.                         |
+| copy             | bool             | Whether to modify the tree in place or return a copy.                       |
+
+#### Outputs
+| Name             | Type                  | Description                                                                 |
+|:-----------------|:----------------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree  | Optional[CassiopeiaTree] | A new tree with inferred states if `copy` is True, else None.               |
+
+#### Internal Logic
+1. Determines the root node for the analysis.
+2. Optionally creates a copy of the tree.
+3. Traverses the tree in a depth-first manner, assigning states to each node based on its parent's state and its own possible states.
+4. Stores the assigned states in the specified attribute.
+
+### `score_small_parsimony`
+#### Description
+Calculates the parsimony score of a tree, which is the number of state changes required to explain the observed data.
+
+#### Inputs
+| Name                   | Type             | Description                                                                 |
+|:-----------------------|:-----------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree        | CassiopeiaTree   | The tree to analyze, containing cell metadata.                              |
+| meta_item              | str              | Column in the cell metadata corresponding to a categorical variable.        |
+| root                   | Optional[str]    | Root node for the analysis; defaults to the tree's root if not specified.   |
+| infer_ancestral_states | bool             | Whether to infer ancestral states before scoring.                           |
+| label_key              | Optional[str]    | Attribute key for storing the parsimony assignment.                         |
+
+#### Outputs
+| Name             | Type  | Description                                                                 |
+|:-----------------|:------|:----------------------------------------------------------------------------|
+| parsimony        | int   | The parsimony score of the tree.                                            |
+
+#### Internal Logic
+1. Optionally infers ancestral states using the `fitch_hartigan` function.
+2. Traverses the tree, counting the number of state changes between parent and child nodes.
+3. Returns the total number of state changes as the parsimony score.
+
+### `fitch_count`
+#### Description
+Implements the FitchCount algorithm to count the number of state transitions between pairs of states across all equally-parsimonious solutions.
+
+#### Inputs
+| Name                   | Type             | Description                                                                 |
+|:-----------------------|:-----------------|:----------------------------------------------------------------------------|
+| cassiopeia_tree        | CassiopeiaTree   | The tree to analyze, containing cell metadata.                              |
+| meta_item              | str              | Column in the cell metadata corresponding to a categorical variable.        |
+| root                   | Optional[str]    | Root node for the analysis; defaults to the tree's root if not specified.   |
+| infer_ancestral_states | bool             | Whether to infer ancestral states before counting transitions.              |
+| state_key              | str              | Attribute key for storing ancestral states.                                 |
+| unique_states          | Optional[List[str]] | Optional list of unique states to consider.                                 |
+
+#### Outputs
+| Name             | Type  | Description                                                                 |
+|:-----------------|:------|:----------------------------------------------------------------------------|
+| M                | pd.DataFrame | An MxM count matrix indicating the number of transitions between states. |
+
+#### Internal Logic
+1. Validates the state space and optionally subsets the tree.
+2. Optionally infers ancestral states using the `fitch_hartigan_bottom_up` function.
+3. Constructs dynamic programming tables `N` and `C` to count transitions.
+4. Computes the count matrix `M` from the dynamic programming tables.
+
+## References
+
+- `CassiopeiaTree`: A class representing phylogenetic trees with associated metadata, used extensively in the functions.
+- `CassiopeiaError`, `CassiopeiaTreeError`, `FitchCountError`: Custom exceptions used for error handling.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| numpy      | Used for numerical operations and array manipulations.                  |
+| pandas     | Used for handling data frames, particularly for metadata and results.   |
+| itertools  | Used for generating combinations of states in the FitchCount algorithm. |
+
+## Error Handling
+
+The code uses custom exceptions (`CassiopeiaError`, `CassiopeiaTreeError`, `FitchCountError`) to handle errors related to missing metadata, incorrect data types, and invalid state spaces. These exceptions provide informative error messages to guide the user in correcting input issues.
+
+## Logging
+
+The code does not implement explicit logging mechanisms. However, it raises exceptions with descriptive messages to inform users of errors during execution.

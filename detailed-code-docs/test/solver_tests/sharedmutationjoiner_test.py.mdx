@@ -1,0 +1,82 @@
+---
+title: "sharedmutationjoiner_test.py"
+---
+
+## High-level description
+
+The target file `sharedmutationjoiner_test.py` is a unit test suite for the `SharedMutationJoiningSolver` class from the `cassiopeia.solver` module. This test suite is designed to verify the functionality and correctness of the `SharedMutationJoiningSolver`, which is an agglomerative clustering algorithm used to reconstruct phylogenetic trees based on shared mutations among samples. The tests cover various scenarios, including basic solver functionality, handling of missing data, and the use of different similarity functions.
+
+## Code Structure
+
+The main components of the test suite are:
+- The `find_triplet_structure` function, which is used to determine the relationship structure among three nodes in a tree.
+- The `TestSharedMutationJoiningSolver` class, which is a subclass of `unittest.TestCase` and contains multiple test methods to validate different aspects of the `SharedMutationJoiningSolver`.
+
+## Symbols
+
+### `find_triplet_structure`
+#### Description
+This function determines the relationship structure among three nodes (a triplet) in a given tree. It calculates the number of common ancestors between each pair of nodes and returns a string indicating the closest pair.
+
+#### Inputs
+| Name    | Type       | Description                        |
+|:--------|:-----------|:-----------------------------------|
+| triplet | tuple      | A tuple of three node identifiers. |
+| T       | nx.DiGraph | A directed graph representing the tree. |
+
+#### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| structure | str    | A string indicating the closest pair in the triplet ("ab", "ac", "bc", or "-"). |
+
+#### Internal Logic
+- The function computes the set of ancestors for each node in the triplet.
+- It calculates the number of common ancestors for each pair of nodes.
+- Based on the counts of common ancestors, it determines which pair of nodes is closest and returns the corresponding string.
+
+### `TestSharedMutationJoiningSolver`
+#### Description
+This class contains unit tests for the `SharedMutationJoiningSolver`. It sets up various test cases and verifies the solver's behavior under different conditions.
+
+#### Methods
+- `setUp`: Initializes test data and solver instances for use in the tests.
+- `test_init`: Tests the initialization of the solver, including the use of numba for optimization.
+- `test_find_cherry`: Tests the method for finding the pair of nodes to join based on maximum similarity.
+- `test_create_similarity_map`: Tests the creation of a similarity map from a character matrix and priors.
+- `test_update_similarity_map_and_character_matrix`: Tests the update of the similarity map and character matrix after joining nodes.
+- `test_basic_solver`: Tests the basic functionality of the solver on a simple dataset.
+- `test_solver_no_numba`: Tests the solver without numba optimization.
+- `test_smj_solver_weights`: Tests the solver with weighted similarity functions.
+- `test_pp_solver`: Tests the solver on a dataset with lineage tracing.
+- `test_duplicate`: Tests the solver's handling of duplicate and missing data.
+
+## References
+
+- `SharedMutationJoiningSolver`: The class being tested, which is part of the `cassiopeia.solver` module.
+- `CassiopeiaTree`: A data structure used to represent phylogenetic trees, referenced in the tests.
+- `dissimilarity_functions`: A module containing functions for calculating dissimilarities, used in the solver.
+- `solver_utilities`: A module providing utility functions for solvers, used in the tests.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the framework for writing and running tests. |
+| `networkx` | Used for graph operations, particularly for representing trees. |
+| `numba` | Used for optimizing functions with just-in-time compilation. |
+| `numpy` | Provides support for numerical operations and array handling. |
+| `pandas` | Used for handling data in tabular form, such as character matrices. |
+| `scipy` | Provides scientific computing functions, used for distance calculations. |
+
+## Error Handling
+
+- The test `test_init` checks for warnings related to numba optimization using `assertWarns`.
+- The solver's behavior with missing data and duplicates is tested to ensure robustness.
+
+## Logging
+
+- The test suite does not implement explicit logging but uses assertions to verify expected outcomes.
+
+## TODOs
+
+- The test suite does not contain any TODOs or notes for future improvements.

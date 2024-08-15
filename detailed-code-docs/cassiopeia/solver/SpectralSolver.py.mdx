@@ -1,0 +1,64 @@
+---
+title: "SpectralSolver.py"
+---
+
+## High-level description
+
+The `SpectralSolver` class is a specialized solver for partitioning a set of samples based on their genetic mutations. It extends the `GreedySolver` class and uses spectral graph theory, specifically Fiedler's algorithm, to minimize a normalized cut on a similarity graph. This approach aims to group samples with shared mutations while normalizing for the size of each partition, and it further refines the partition using a greedy hill-climbing procedure.
+
+## Code Structure
+
+The `SpectralSolver` class is a subclass of `GreedySolver`, which itself is a subclass of `CassiopeiaSolver`. The `SpectralSolver` implements a specific method for partitioning samples using spectral methods, which is a more sophisticated approach compared to the basic greedy methods. The class relies on utility functions from the `graph_utilities` module to construct similarity graphs and improve partitions.
+
+## Symbols
+
+### `SpectralSolver`
+#### Description
+The `SpectralSolver` class is designed to partition a set of samples based on their genetic similarity. It constructs a similarity graph where nodes represent samples and edges represent shared mutations. The solver uses spectral methods to find a partition that minimizes a normalized cut, which is then refined using a greedy hill-climbing approach.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity_function | Optional[Callable] | Function to calculate similarity between samples. Default is `hamming_similarity_without_missing`. |
+| threshold | Optional[int] | Minimum similarity threshold to include an edge in the graph. Default is 0. |
+| prior_transformation | str | Method to transform priors into weights. Default is "negative_log". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but modifies the state of the object. |
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with a similarity function, threshold, and prior transformation method.
+- **`perform_split` Method**: 
+  - Constructs a similarity graph using the provided character matrix and similarity function.
+  - Computes the normalized Laplacian of the graph and finds its second eigenvector.
+  - Orders nodes by eigenvector values to find a partition that minimizes the normalized cut.
+  - Uses a greedy hill-climbing procedure to further optimize the partition.
+
+## References
+
+- **`GreedySolver`**: The `SpectralSolver` class extends `GreedySolver`, inheriting its structure and some methods.
+- **`graph_utilities.construct_similarity_graph`**: Used to build the similarity graph for the samples.
+- **`graph_utilities.spectral_improve_cut`**: Used to refine the partition obtained from the spectral method.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `networkx` | Used for graph operations and spectral analysis. |
+| `numpy` | Used for numerical operations, particularly eigenvector calculations. |
+| `pandas` | Used for handling the character matrix as a DataFrame. |
+| `scipy` | Used for linear algebra operations, specifically eigenvalue decomposition. |
+
+## TODOs
+
+- **Experiment to find the best default similarity function**: The code includes a TODO comment suggesting that further experimentation is needed to determine the most effective default similarity function for the solver.
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that inputs are well-formed and that the necessary libraries are available.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the code. Any logging would need to be added externally or by modifying the code to include logging statements.

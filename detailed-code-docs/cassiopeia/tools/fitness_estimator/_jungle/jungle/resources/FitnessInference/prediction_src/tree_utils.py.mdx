@@ -1,0 +1,192 @@
+---
+title: "tree_utils.py"
+---
+
+## High-level description
+
+The `tree_utils.py` file is a collection of utility functions designed to build, manipulate, and analyze phylogenetic trees. It provides functionalities for constructing trees from sequence alignments, annotating and labeling nodes, collapsing branches, translating sequences, and visualizing trees with various annotations and colorings.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific tasks related to phylogenetic trees. These functions often interact with each other, such as using the output of one function as input to another. The code heavily relies on the Biopython library for handling biological sequences and trees, and it uses external tools like FastTree for tree construction.
+
+## References
+
+- The code references the Biopython library for sequence and tree manipulation.
+- It uses the FastTree software for building phylogenetic trees.
+- The `ancestral` module is imported for inferring ancestral sequences.
+
+## Symbols
+
+### `calculate_tree`
+#### Description
+Builds a phylogenetic tree from a given sequence alignment and an outgroup sequence using the FastTree software.
+
+#### Inputs
+| Name     | Type   | Description                                      |
+|:---------|:-------|:-------------------------------------------------|
+| aln      | object | Biopython alignment object containing sequences. |
+| outgroup | object | Outgroup sequence as a Biopython object.         |
+| ancestral| bool   | Flag to infer ancestral sequences.               |
+
+#### Outputs
+| Name            | Type   | Description                        |
+|:----------------|:-------|:-----------------------------------|
+| biopython_tree  | object | A Biopython tree object.           |
+
+#### Internal Logic
+- Writes sequences to a temporary file.
+- Executes FastTree to build the tree.
+- Parses the output and constructs a Biopython tree.
+- Roots the tree with the outgroup and ladderizes it.
+- Infers ancestral sequences if specified.
+
+### `branch_label`
+#### Description
+Generates labels for tree branches based on mutations.
+
+#### Inputs
+| Name              | Type  | Description                                           |
+|:------------------|:------|:------------------------------------------------------|
+| node              | object| Tree node containing mutation information.            |
+| aa                | bool  | Flag to use amino acid sequences for labeling.        |
+| display_positions | list  | Positions to display mutations, if specified.         |
+
+#### Outputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| label     | string | Concatenated mutation labels.      |
+
+### `collapse_zero_branches`
+#### Description
+Collapses branches with identical maximum likelihood sequences into single nodes.
+
+#### Inputs
+| Name  | Type  | Description                  |
+|:------|:------|:-----------------------------|
+| clade | object| Clade of a Biopython tree.   |
+
+### `annotate_leaf`
+#### Description
+Adds attributes to a leaf node based on a provided annotation dictionary.
+
+#### Inputs
+| Name       | Type  | Description                        |
+|:-----------|:------|:-----------------------------------|
+| leaf       | object| Tree node to annotate.             |
+| annotation | dict  | Dictionary of attributes to add.   |
+
+### `translate_sequences_on_tree`
+#### Description
+Translates nucleotide sequences on a tree to amino acid sequences.
+
+#### Inputs
+| Name | Type  | Description                                      |
+|:-----|:------|:-------------------------------------------------|
+| T    | object| Biopython tree object.                           |
+| cds  | dict  | Dictionary specifying coding region parameters.  |
+
+### `mutations_on_branches`
+#### Description
+Identifies mutations on tree branches by comparing sequences at the start and end of each branch.
+
+#### Inputs
+| Name | Type  | Description                                      |
+|:-----|:------|:-------------------------------------------------|
+| T    | object| Biopython tree object.                           |
+| aa   | bool  | Flag to identify amino acid mutations.           |
+
+### `find_internal_nodes`
+#### Description
+Links internal nodes between two trees by identifying the most recent common ancestor in the destination tree.
+
+#### Inputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| sourceT| object| Source Biopython tree.                           |
+| destT  | object| Destination Biopython tree.                      |
+
+### `label_nodes`
+#### Description
+Labels nodes in a tree based on a provided dictionary of sequences to label.
+
+#### Inputs
+| Name          | Type  | Description                                      |
+|:--------------|:------|:-------------------------------------------------|
+| T             | object| Biopython tree object.                           |
+| seqs_to_label | dict  | Dictionary of sequences to label.                |
+
+### `erase_color`
+#### Description
+Resets the color attribute of all nodes in a tree to `None`.
+
+#### Inputs
+| Name | Type  | Description                                      |
+|:-----|:------|:-------------------------------------------------|
+| tree | object| Biopython tree object.                           |
+
+### `plot_prediction_tree`
+#### Description
+Plots a phylogenetic tree with nodes colored according to a prediction method.
+
+#### Inputs
+| Name       | Type  | Description                                      |
+|:-----------|:------|:-------------------------------------------------|
+| prediction | object| Prediction object containing tree data.          |
+| method     | string| Method for coloring nodes.                       |
+| internal   | bool  | Flag to include internal nodes.                  |
+| fig        | object| Matplotlib figure object.                        |
+| axes       | object| Matplotlib axes object.                          |
+| cb         | bool  | Flag to include a color bar.                     |
+| scalebar   | bool  | Flag to include a scale bar.                     |
+| offset     | float | Offset for coloring.                             |
+| node_label_func | function | Function to label nodes.                 |
+
+### `draw_tree`
+#### Description
+Draws a phylogenetic tree on a canvas with optional node and branch labels.
+
+#### Inputs
+| Name         | Type  | Description                                      |
+|:-------------|:------|:-------------------------------------------------|
+| tree         | object| Biopython tree object.                           |
+| node_label   | function | Function to label nodes.                      |
+| branch_label | function | Function to label branches.                   |
+| cmap         | object| Colormap for coloring.                           |
+| fig          | object| Matplotlib figure object.                        |
+| axes         | object| Matplotlib axes object.                          |
+| cb           | bool  | Flag to include a color bar.                     |
+| scalebar     | bool  | Flag to include a scale bar.                     |
+
+### `plot_combined_tree`
+#### Description
+Plots a combined tree of prediction and test data, coloring nodes according to a specified method.
+
+#### Inputs
+| Name          | Type  | Description                                      |
+|:--------------|:------|:-------------------------------------------------|
+| prediction    | object| Prediction object containing tree data.          |
+| combined_data | object| Combined data object containing tree data.       |
+| method        | string| Method for coloring nodes.                       |
+| internal      | bool  | Flag to include internal nodes.                  |
+| axes          | object| Matplotlib axes object.                          |
+| cb            | bool  | Flag to include a color bar.                     |
+| offset        | float | Offset for coloring.                             |
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| numpy      | Used for numerical operations and comparisons.|
+| matplotlib | Used for plotting and visualizing trees.     |
+| Biopython  | Used for handling biological sequences and trees.|
+| subprocess | Used for executing external commands.        |
+| gzip       | Used for handling compressed files.          |
+
+## Error Handling
+
+The code includes basic error handling, such as try-except blocks, to catch and report errors during sequence translation and mutation identification.
+
+## Logging
+
+The code uses print statements for logging progress and errors, particularly in functions that perform time-consuming operations like tree building and sequence translation.

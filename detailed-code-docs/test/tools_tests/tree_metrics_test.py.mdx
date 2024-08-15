@@ -1,0 +1,182 @@
+---
+title: "tree_metrics_test.py"
+---
+
+## High-level description
+
+The `test/tools_tests/tree_metrics_test.py` file contains unit tests for the `tree_metrics` module of the Cassiopeia library, specifically focusing on functions related to tree metrics such as parsimony and likelihood calculations. The tests are designed to validate the correctness of these functions by using predefined tree structures and character matrices, and by checking the expected outcomes against the actual results produced by the functions.
+
+## Code Structure
+
+The main class in this file is `TestCassiopeiaTree`, which inherits from `unittest.TestCase`. This class contains several test methods that each test a specific functionality of the `tree_metrics` module. The tests are organized to cover different scenarios and edge cases, ensuring that the tree metrics calculations handle various inputs and configurations correctly.
+
+## Symbols
+
+### `TestCassiopeiaTree`
+#### Description
+This class contains unit tests for the `tree_metrics` module, specifically testing the calculation of parsimony, transition probabilities, and likelihoods on phylogenetic trees.
+
+#### Inputs
+- None directly, but it uses predefined tree structures and character matrices within its methods.
+
+#### Outputs
+- None directly, but it asserts expected outcomes using the `unittest` framework.
+
+#### Internal Logic
+- The `setUp` method initializes a small directed graph representing a tree and a character matrix, which are used in the tests.
+- Various test methods (`test_parsimony_bad_cases`, `test_parsimony_reconstruct_internal_states`, etc.) call functions from the `tree_metrics` module and use assertions to verify that the results match expected values.
+- The tests cover scenarios such as calculating parsimony with and without reconstructing internal states, handling missing data, and calculating likelihoods under different assumptions.
+
+### `test_parsimony_bad_cases`
+#### Description
+Tests the `calculate_parsimony` function for cases where it should raise a `TreeMetricError` due to missing character states.
+
+#### Inputs
+- None directly, but uses the `small_net` tree and `parsimony_tree` initialized in `setUp`.
+
+#### Outputs
+- Asserts that `TreeMetricError` is raised.
+
+### `test_parsimony_reconstruct_internal_states`
+#### Description
+Tests the `calculate_parsimony` function with the option to infer ancestral characters.
+
+#### Inputs
+- None directly, but uses the `parsimony_tree` initialized in `setUp`.
+
+#### Outputs
+- Asserts that the calculated parsimony matches expected values.
+
+### `test_parsimony_specify_internal_states`
+#### Description
+Tests the `calculate_parsimony` function with specified internal states.
+
+#### Inputs
+- None directly, but uses the `parsimony_tree` initialized in `setUp`.
+
+#### Outputs
+- Asserts that the calculated parsimony matches expected values.
+
+### `test_log_transition_probability`
+#### Description
+Tests the `log_transition_probability` function for various state transitions and time intervals.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified priors.
+
+#### Outputs
+- Asserts that the calculated log transition probabilities match expected values.
+
+### `test_log_likelihood_of_character`
+#### Description
+Tests the `log_likelihood_of_character` function for calculating the likelihood of a character on the tree.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified priors and character matrix.
+
+#### Outputs
+- Asserts that the calculated log likelihoods match expected values.
+
+### `test_bad_lineage_tracing_parameters`
+#### Description
+Tests the handling of invalid lineage tracing parameters in likelihood calculations.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix.
+
+#### Outputs
+- Asserts that `TreeMetricError` is raised for invalid parameters.
+
+### `test_get_lineage_tracing_parameters`
+#### Description
+Tests the `get_lineage_tracing_parameters` function for retrieving or estimating lineage tracing parameters.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix and priors.
+
+#### Outputs
+- Asserts that the retrieved parameters match expected values.
+
+### `test_likelihood_bad_cases`
+#### Description
+Tests the `calculate_likelihood_discrete` function for cases where it should raise a `TreeMetricError`.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix.
+
+#### Outputs
+- Asserts that `TreeMetricError` is raised.
+
+### `test_likelihood_simple_mostly_missing`
+#### Description
+Tests the `calculate_likelihood_discrete` function for a simple case with mostly missing data.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix and priors.
+
+#### Outputs
+- Asserts that the calculated likelihood matches expected values.
+
+### `test_likelihood_more_complex_case`
+#### Description
+Tests the `calculate_likelihood_discrete` function for a more complex case with various character states.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix and priors.
+
+#### Outputs
+- Asserts that the calculated likelihood matches expected values.
+
+### `test_likelihood_set_internal_states`
+#### Description
+Tests the `calculate_likelihood_discrete` function with specified internal states.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix and priors.
+
+#### Outputs
+- Asserts that the calculated likelihood matches expected values.
+
+### `test_likelihood_time`
+#### Description
+Tests the `calculate_likelihood_continuous` function for likelihood calculations over time.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix and priors.
+
+#### Outputs
+- Asserts that the calculated likelihood matches expected values.
+
+### `test_likelihood_sum_to_one`
+#### Description
+Tests that the sum of likelihoods over all possible states equals one.
+
+#### Inputs
+- None directly, but uses a `small_tree` with specified character matrix and priors.
+
+#### Outputs
+- Asserts that the sum of likelihoods is close to one.
+
+## References
+
+- `tree_metrics.calculate_parsimony`
+- `tree_metrics.log_transition_probability`
+- `tree_metrics.log_likelihood_of_character`
+- `tree_metrics.calculate_likelihood_discrete`
+- `tree_metrics.calculate_likelihood_continuous`
+- `tree_metrics.get_lineage_tracing_parameters`
+- `TreeMetricError` from `cassiopeia.mixins`
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `networkx` | Used for creating and manipulating the tree structure. |
+| `numpy` | Used for numerical operations and calculations. |
+| `pandas` | Used for handling character matrices. |
+| `cassiopeia` | The main library being tested, specifically its `tools.tree_metrics` module. |
+
+## Error Handling
+
+The tests expect certain functions to raise `TreeMetricError` when invalid inputs or configurations are provided, ensuring that the error handling in the `tree_metrics` module is functioning correctly.

@@ -1,0 +1,65 @@
+---
+title: "SpectralNeighborJoiningSolver.py"
+---
+
+## High-level description
+
+The `SpectralNeighborJoiningSolver` class is a specialized implementation of a distance-based phylogenetic tree reconstruction algorithm. It extends the `DistanceSolver` class and implements the Spectral Neighbor-Joining (SNJ) algorithm, which is designed to iteratively join subsets of leaves into a cherry based on the second singular value of a specific matrix. This approach is used to reconstruct latent tree models, as described in the paper by Jaffe et al. (2021).
+
+## Code Structure
+
+The `SpectralNeighborJoiningSolver` class is a subclass of `DistanceSolver`, inheriting its methods and attributes. It overrides specific methods to implement the SNJ algorithm, such as `find_cherry`, `get_dissimilarity_map`, and `update_dissimilarity_map`. The class relies on a similarity function to compute a similarity map, which is then used to generate a lambda matrix for the SNJ algorithm.
+
+## Symbols
+
+### `SpectralNeighborJoiningSolver`
+#### Description
+The `SpectralNeighborJoiningSolver` class implements the Spectral Neighbor-Joining algorithm for reconstructing phylogenetic trees. It uses a spectral method to iteratively join subsets of leaves into a cherry based on the second singular value of a matrix derived from the similarity map.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity_function | Callable | Function to compute the similarity map, defaulting to exponential negative hamming distance. |
+| add_root | bool | Whether to add an implicit root to the tree. |
+| prior_transformation | str | Function to transform priors into weights. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return values directly but modifies the state of the `CassiopeiaTree` object. |
+
+#### Internal Logic
+- **Initialization**: Sets up the solver with a similarity function, root addition option, and prior transformation method.
+- **get_dissimilarity_map**: Computes the initial lambda matrix, which is a k x k matrix indexed by subsets of leaves. It calculates the second singular value of the RA matrix for each pair of subsets.
+- **find_cherry**: Identifies the pair of subsets with the smallest second singular value in the lambda matrix to join into a cherry.
+- **_compute_svd2**: Computes the second largest singular value for an RA matrix, which is used to update the lambda matrix.
+- **update_dissimilarity_map**: Updates the lambda matrix after joining a pair of subsets into a cherry.
+- **setup_root_finder**: Configures the rooting strategy for the SNJ solver, adding an implicit root if necessary.
+- **root_tree**: Converts the general graph to a directed graph with respect to a specified root.
+
+## References
+
+- `DistanceSolver`: The base class from which `SpectralNeighborJoiningSolver` inherits.
+- `CassiopeiaTree`: A data structure used to store the tree and character matrix.
+- `dissimilarity_functions.exponential_negative_hamming_distance`: The default similarity function used by the solver.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `networkx` | Used for graph operations and tree manipulations. |
+| `numpy` | Utilized for numerical operations and matrix manipulations. |
+| `pandas` | Used for handling data frames, particularly for the lambda matrix. |
+| `scipy` | Provides functions for singular value decomposition. |
+
+## Error Handling
+
+The class raises a `DistanceSolverError` if the dissimilarity function is not specified when required, or if rooting parameters are not correctly provided.
+
+## Logging
+
+The class does not implement specific logging mechanisms.
+
+## TODOs
+
+No TODOs are present in the code.

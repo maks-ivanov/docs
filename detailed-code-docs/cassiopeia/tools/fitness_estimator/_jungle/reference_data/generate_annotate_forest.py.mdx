@@ -1,0 +1,63 @@
+---
+title: "generate_annotate_forest.py"
+---
+
+## High-level description
+
+The script `generate_annotate_forest.py` is designed to generate and annotate a forest of phylogenetic trees using specified parameters. It takes command-line arguments to define the number of leaves per tree, the number of trees in the forest, and a shape parameter `alpha` that influences the tree structure. The generated forest is then saved as a gzipped pickle file in a specified output directory.
+
+## Code Structure
+
+The script primarily interacts with the `jungle` module, specifically using the `Forest` class to generate and annotate the trees. The script is structured to take input parameters from the command line, generate the forest, annotate it, and then save the result to a file.
+
+## References
+
+- `jungle.Forest`: This is the main class used for generating and annotating the forest. It provides methods like `generate`, `resolve_polytomy`, `annotate_standard_node_features`, `annotate_colless`, and `dump`.
+
+## Symbols
+
+### `generate_annotate_forest.py`
+#### Description
+This script generates a forest of phylogenetic trees based on input parameters and annotates them with specific features. The forest is then saved to a file for further analysis or use.
+
+#### Inputs
+| Name       | Type   | Description                                                                 |
+|:-----------|:-------|:----------------------------------------------------------------------------|
+| n_leaves   | int    | Number of leaves in each tree of the forest.                                |
+| n_trees    | int    | Number of trees to generate in the forest.                                  |
+| alpha      | float  | Shape parameter influencing tree structure (e.g., Kingman or Bolthausen-Sznitman trees). |
+| output_dir | string | Directory where the output file will be saved.                              |
+
+#### Outputs
+| Name    | Type   | Description                                      |
+|:--------|:-------|:-------------------------------------------------|
+| outfile | string | Path to the gzipped pickle file containing the generated forest. |
+
+#### Internal Logic
+1. **Parameter Parsing**: The script reads command-line arguments to set the number of leaves, number of trees, the alpha parameter, and the output directory.
+2. **Output File Naming**: Constructs a unique output file name using the parameters and a UUID.
+3. **Forest Generation**: Utilizes the `jg.Forest.generate` method to create the forest with the specified parameters.
+4. **Annotation**: Calls methods on the forest object to resolve polytomies and annotate nodes with standard features and Colless index.
+5. **File Saving**: Dumps the annotated forest to a gzipped pickle file in the specified directory.
+6. **Timing and Reporting**: Measures and reports the time taken for the entire process if verbosity is enabled.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `sys`      | To read command-line arguments.                                         |
+| `time`     | To measure the execution time of the script.                            |
+| `uuid`     | To generate a unique identifier for the output file name.               |
+| `jungle`   | Provides the `Forest` class and related methods for tree generation and annotation. |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond basic command-line argument parsing. It assumes valid input is provided and that the `jungle` module is correctly installed and accessible.
+
+## Logging
+
+The script uses simple print statements to log the parameters used and the elapsed time for the process. This is controlled by the `verbose` flag, which is set to `True` by default.
+
+## TODOs
+
+There are no explicit TODOs or notes left in the code.

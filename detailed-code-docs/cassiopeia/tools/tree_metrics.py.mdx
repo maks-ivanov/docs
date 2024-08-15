@@ -1,0 +1,165 @@
+---
+title: "tree_metrics.py"
+---
+
+## High-level description
+
+The `tree_metrics.py` file provides functions to calculate various metrics on phylogenetic trees, specifically focusing on parsimony and likelihood calculations. These metrics are used to evaluate the evolutionary history and character state transitions within a tree structure, represented by the `CassiopeiaTree` class. The file includes functions to calculate the number of mutations (parsimony), the log transition probability between states, the log likelihood of character states, and to estimate lineage tracing parameters.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `calculate_parsimony` computes the number of mutations on a tree.
+- `log_transition_probability` calculates the log probability of transitioning between two states over a given time.
+- `log_likelihood_of_character` computes the log likelihood of a character's states across the tree using Felsenstein's Pruning Algorithm.
+- `get_lineage_tracing_parameters` retrieves or estimates parameters related to mutation and missing data rates.
+- `calculate_likelihood_discrete` and `calculate_likelihood_continuous` calculate the log likelihood of a tree under discrete and continuous models, respectively.
+
+These functions rely on the `CassiopeiaTree` class for tree structure and character state information, and they use parameter estimation functions from `parameter_estimators`.
+
+## References
+
+- `CassiopeiaTree`: A class from `cassiopeia.data` that represents the tree structure and provides methods for accessing and manipulating character states and tree topology.
+- `TreeMetricError`: An exception class from `cassiopeia.mixins` used for error handling in tree metric calculations.
+- `parameter_estimators`: A module from `cassiopeia.tools` that provides functions for estimating mutation and missing data rates.
+
+## Symbols
+
+### `calculate_parsimony`
+#### Description
+Calculates the number of mutations that have occurred on a tree by evaluating character state changes along the edges.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree to calculate parsimony over. |
+| infer_ancestral_characters | bool | Whether to infer ancestral character states. |
+| treat_missing_as_mutation | bool | Whether to treat missing states as mutations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parsimony | int | The number of mutations that have occurred on the tree. |
+
+#### Internal Logic
+- If `infer_ancestral_characters` is true, it reconstructs ancestral characters.
+- Traverses the tree edges and counts mutations using `get_mutations_along_edge`.
+
+### `log_transition_probability`
+#### Description
+Calculates the log transition probability between two given states over a specified time period.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree on which the priors are stored. |
+| character | int | The character whose distribution to draw the prior from. |
+| s | Union[int, str] | The original state. |
+| s_ | Union[int, str] | The state being transitioned to. |
+| t | float | The length of time that the transition can occur along. |
+| mutation_probability_function_of_time | Callable[[float], float] | Function defining mutation probability over time. |
+| missing_probability_function_of_time | Callable[[float], float] | Function defining missing data probability over time. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_prob | float | The log transition probability between the states. |
+
+#### Internal Logic
+- Determines transition probabilities based on state changes and time, using provided probability functions and tree priors.
+
+### `log_likelihood_of_character`
+#### Description
+Calculates the log likelihood of a given character on the tree using Felsenstein's Pruning Algorithm.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree on which to calculate the likelihood. |
+| character | int | The index of the character to calculate the likelihood of. |
+| use_internal_character_states | bool | Whether to use internal node character states. |
+| mutation_probability_function_of_time | Callable[[float], float] | Function defining mutation probability over time. |
+| missing_probability_function_of_time | Callable[[float], float] | Function defining missing data probability over time. |
+| stochastic_missing_probability | float | Probability of stochastic missing data. |
+| implicit_root_branch_length | float | Length of the implicit root branch. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_likelihood | float | The log likelihood of the tree on one character. |
+
+#### Internal Logic
+- Uses a recursive relation to compute likelihoods at nodes, considering state transitions and missing data.
+
+### `get_lineage_tracing_parameters`
+#### Description
+Retrieves or estimates lineage tracing parameters such as mutation rate and missing data rates from a tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree on which to consume/estimate the parameters. |
+| continuous | bool | Whether to estimate parameters as continuous or discrete. |
+| assume_root_implicit_branch | bool | Whether to include an implicit root in depth/time estimation. |
+| layer | Optional[str] | Layer to use for the character matrix in estimating parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parameters | Tuple[float, float, float] | The mutation rate, heritable missing rate, and stochastic missing probability. |
+
+#### Internal Logic
+- Consumes parameters from the tree or estimates them using `parameter_estimators`.
+
+### `calculate_likelihood_discrete`
+#### Description
+Calculates the log likelihood of a tree under a discrete process model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree on which to calculate likelihood. |
+| use_internal_character_states | bool | Whether to use internal node character states. |
+| layer | Optional[str] | Layer to use for the character matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_likelihood | float | The log likelihood of the tree given the observed character states. |
+
+#### Internal Logic
+- Retrieves lineage tracing parameters and computes likelihood for each character, summing them for the tree.
+
+### `calculate_likelihood_continuous`
+#### Description
+Calculates the log likelihood of a tree under a continuous process model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The tree on which to calculate likelihood. |
+| use_internal_character_states | bool | Whether to use internal node character states. |
+| layer | Optional[str] | Layer to use for the character matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_likelihood | float | The log likelihood of the tree given the observed character states. |
+
+#### Internal Logic
+- Similar to `calculate_likelihood_discrete`, but uses continuous rate models and branch lengths.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| numpy | Used for numerical operations and calculations. |
+| scipy | Provides special functions and statistical distributions. |
+
+## Error Handling
+
+The code uses `TreeMetricError` to handle errors related to tree metric calculations, such as uninitialized trees or missing character states.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the code.

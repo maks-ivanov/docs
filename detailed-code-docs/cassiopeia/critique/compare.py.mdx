@@ -1,0 +1,84 @@
+---
+title: "compare.py"
+---
+
+## High-level description
+
+The `compare.py` file in the `cassiopeia.critique` module provides functions to compare two phylogenetic trees. It includes methods to calculate the triplet correctness, which measures the similarity of triplet structures between two trees, and the Robinson-Foulds distance, a metric for comparing tree topologies.
+
+## Code Structure
+
+The main symbols in the code are two functions: `triplets_correct` and `robinson_foulds`. Both functions take two `CassiopeiaTree` objects as input and return metrics that quantify the similarity between these trees. The `triplets_correct` function relies on utility functions from `critique_utilities` to sample triplets and determine their outgroups, while `robinson_foulds` uses the `ete3` library to compute the distance.
+
+## References
+
+- `CassiopeiaTree`: A class from the `cassiopeia.data` module representing a phylogenetic tree.
+- `critique_utilities`: A module providing utility functions for tree analysis, such as `annotate_tree_depths`, `sample_triplet_at_depth`, and `get_outgroup`.
+- `ete3`: A library used for tree manipulation and comparison, specifically for computing the Robinson-Foulds distance.
+
+## Symbols
+
+### `triplets_correct`
+#### Description
+Calculates the triplet correctness between two trees, which is the proportion of triplets (sets of three leaves) that have the same structure in both trees. This function samples triplets at various depths to minimize sampling bias.
+
+#### Inputs
+| Name                  | Type             | Description                                                                 |
+|:----------------------|:-----------------|:----------------------------------------------------------------------------|
+| `tree1`               | `CassiopeiaTree` | The first tree to compare.                                                  |
+| `tree2`               | `CassiopeiaTree` | The second tree to compare.                                                 |
+| `number_of_trials`    | `int`            | Number of triplets to sample at each depth.                                 |
+| `min_triplets_at_depth` | `int`          | Minimum number of triplets needed at a depth for it to be included in the analysis. |
+
+#### Outputs
+| Name                          | Type            | Description                                                                 |
+|:------------------------------|:----------------|:----------------------------------------------------------------------------|
+| `all_triplets_correct`        | `Dict[int, float]` | Proportion of all triplets that are correct at each depth.                  |
+| `resolvable_triplets_correct` | `Dict[int, float]` | Proportion of resolvable triplets that are correct at each depth.           |
+| `unresolved_triplets_correct` | `Dict[int, float]` | Proportion of unresolved triplets that are correct at each depth.           |
+| `proportion_unresolvable`     | `Dict[int, float]` | Proportion of unresolvable triplets at each depth.                          |
+
+#### Internal Logic
+1. Create deep copies of the input trees and collapse unifurcations.
+2. Annotate tree depths and calculate the number of triplets at each depth.
+3. For each depth, sample triplets and determine their outgroups using utility functions.
+4. Compare the outgroups between the two trees and update the correctness scores.
+5. Normalize the scores by the number of trials and return the results.
+
+### `robinson_foulds`
+#### Description
+Calculates the Robinson-Foulds distance between two trees, a measure of the topological difference between them. This function uses the `ete3` library to perform the calculation.
+
+#### Inputs
+| Name   | Type             | Description                        |
+|:-------|:-----------------|:-----------------------------------|
+| `tree1`| `CassiopeiaTree` | The first tree to compare.         |
+| `tree2`| `CassiopeiaTree` | The second tree to compare.        |
+
+#### Outputs
+| Name   | Type   | Description                                                                 |
+|:-------|:-------|:----------------------------------------------------------------------------|
+| `rf`   | `float`| The Robinson-Foulds distance between the two trees.                         |
+| `rf_max` | `float` | The maximum possible Robinson-Foulds distance for normalization purposes. |
+
+#### Internal Logic
+1. Create deep copies of the input trees and collapse unifurcations.
+2. Convert the trees to `ete3` format.
+3. Use the `robinson_foulds` method from `ete3` to compute the distance and maximum possible distance.
+4. Return the computed distances.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `ete3`     | Used for tree manipulation and computing the Robinson-Foulds distance.  |
+| `networkx` | Utilized for graph-based operations on trees.                           |
+| `numpy`    | Provides numerical operations, such as finding maximum values.          |
+
+## Error Handling
+
+The code does not explicitly handle errors but relies on the robustness of the `CassiopeiaTree` methods and the `ete3` library. If the input trees are not properly initialized or formatted, exceptions may be raised by these underlying libraries.
+
+## Logging
+
+The code does not implement any logging mechanisms.
