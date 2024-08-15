@@ -1,0 +1,114 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file, `extensions.ts`, is part of a frontend codebase that integrates with the CodeMirror library to provide extensions for cell movement and code editing within a notebook-like environment. It defines functions to create keybindings and extensions that facilitate various cell operations such as running, deleting, moving, and editing cells, as well as handling code formatting and language-specific features.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MovementCallbacks` and `CodeCallbacks` interfaces define the structure for callback functions used in cell operations.
+- `cellMovementBundle` and `cellCodeEditingBundle` functions create CodeMirror extensions for handling cell movement and code editing, respectively.
+- These functions utilize the `HotkeyProvider` to map specific actions to keyboard shortcuts, enabling user interaction with the notebook cells.
+
+## Symbols
+
+### `MovementCallbacks`
+#### Description
+Defines a set of callback functions related to cell movement and manipulation within the notebook. These callbacks are used to perform actions like moving to the next cell, running code, deleting cells, and more.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| moveToNextCell | CellActions["moveToNextCell"] | Function to move to the next cell. |
+| onRun | () =&gt; void | Function to execute the current cell. |
+| deleteCell | () =&gt; void | Function to delete the current cell. |
+| createAbove | () =&gt; void | Function to create a new cell above the current one. |
+| createBelow | () =&gt; void | Function to create a new cell below the current one. |
+| moveUp | () =&gt; void | Function to move the current cell up. |
+| moveDown | () =&gt; void | Function to move the current cell down. |
+| focusUp | () =&gt; void | Function to focus on the cell above. |
+| focusDown | () =&gt; void | Function to focus on the cell below. |
+| toggleHideCode | () =&gt; boolean | Function to toggle the visibility of the cell's code. |
+| aiCellCompletion | () =&gt; boolean | Function to trigger AI-based code completion. |
+
+### `cellMovementBundle`
+#### Description
+Creates a set of CodeMirror extensions that handle cell movement operations based on user-defined hotkeys. It maps various cell actions to keyboard shortcuts, allowing users to interact with cells using the keyboard.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | CellId | The identifier of the cell to which the extensions apply. |
+| callbacks | MovementCallbacks | A set of callback functions for cell operations. |
+| hotkeys | HotkeyProvider | Provides the hotkeys for the cell operations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Extension[] | An array of CodeMirror extensions for cell movement. |
+
+#### Internal Logic
+- Defines keybindings for various cell operations such as running, deleting, moving, and focusing cells.
+- Uses the `hotkeys` provider to retrieve the appropriate key for each action.
+- Each keybinding is associated with a function that executes the corresponding callback from `MovementCallbacks`.
+
+### `CodeCallbacks`
+#### Description
+Defines a set of callback functions related to code editing within a cell. These callbacks are used to update cell code and handle formatting changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updateCellCode | CellActions["updateCellCode"] | Function to update the code of a cell. |
+| afterToggleMarkdown | () =&gt; void | Function to execute after toggling markdown view. |
+
+### `cellCodeEditingBundle`
+#### Description
+Creates a set of CodeMirror extensions that handle code editing operations within a cell. It includes functionality for updating cell code and handling formatting changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | CellId | The identifier of the cell to which the extensions apply. |
+| callbacks | CodeCallbacks | A set of callback functions for code editing. |
+| hotkeys | HotkeyProvider | Provides the hotkeys for the code editing operations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Extension[] | An array of CodeMirror extensions for code editing. |
+
+#### Internal Logic
+- Sets up an `onChangePlugin` to listen for document changes and determine if they are formatting changes.
+- Updates the cell code using the `updateCellCode` callback when changes are detected.
+- Integrates with the `formatKeymapExtension` to provide formatting capabilities.
+
+## References
+
+- `HotkeyProvider`: Used to retrieve hotkeys for cell operations.
+- `CellActions`: Provides the structure for cell-related actions.
+- `getEditorCodeAsPython`: Utilized to convert editor content to Python code.
+- `formattingChangeEffect`: Used to identify formatting changes in the editor.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides the CodeMirror view components and keymap functionality. |
+| `@codemirror/state` | Provides the state management for CodeMirror extensions. |
+| `@codemirror/autocomplete` | Used for handling autocompletion within the editor. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic function execution. It assumes that the provided callbacks and hotkeys are correctly implemented and available.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

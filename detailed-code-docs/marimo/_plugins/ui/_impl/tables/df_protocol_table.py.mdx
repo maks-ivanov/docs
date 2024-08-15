@@ -1,0 +1,61 @@
+---
+title: "df_protocol_table.py"
+---
+
+## High-level description
+
+The `DataFrameProtocolTableManager` class in the `df_protocol_table.py` file is designed to manage and manipulate data structures that conform to the DataFrame Interchange Protocol. It provides functionalities to convert these data structures into formats like CSV and JSON, apply formatting, and perform operations such as selecting rows or columns, sorting, and summarizing data. The class leverages the PyArrow library for efficient data handling and conversion.
+
+## Code Structure
+
+The main symbol in this file is the `DataFrameProtocolTableManager` class, which extends the `TableManager` class. This class is responsible for managing data that adheres to the DataFrame Interchange Protocol. It interacts with other components such as `PyArrowTableManagerFactory` for creating PyArrow table managers and uses the `DependencyManager` to ensure necessary dependencies are available.
+
+## References
+
+- `PyArrowTableManagerFactory`: Used to create a delegate manager for handling PyArrow tables.
+- `DependencyManager`: Ensures that the required dependencies, like PyArrow, are available.
+- `FormatMapping`: Used for applying formatting to the data.
+- `is_dataframe_like`: A utility function to check if an object conforms to the DataFrame Interchange Protocol.
+
+## Symbols
+
+### `DataFrameProtocolTableManager`
+#### Description
+The `DataFrameProtocolTableManager` class manages data structures that conform to the DataFrame Interchange Protocol. It provides methods to convert data to CSV and JSON formats, apply formatting, and perform various data operations such as selecting rows or columns, sorting, and summarizing data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | DataFrameLike | A data structure that conforms to the DataFrame Interchange Protocol. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _delegate | Optional[TableManager[Union[pa.Table, pa.RecordBatch]]] | A delegate manager for handling PyArrow tables. |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the manager with a DataFrame-like object and checks for the presence of necessary methods.
+- **Delegate Management**: The `_ensure_delegate` method ensures that a delegate manager is created using the PyArrowTableManagerFactory if it doesn't already exist.
+- **Data Conversion**: Methods like `to_csv` and `to_json` convert the data into respective formats using the delegate manager.
+- **Data Operations**: Methods such as `select_rows`, `select_columns`, `sort_values`, and `get_summary` perform various operations on the data by delegating to the PyArrow manager.
+- **Type Checking**: The `is_type` static method checks if a given value is a DataFrame-like object.
+- **Field Type Mapping**: The `_get_field_type` static method maps column data types to internal and external representations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| pyarrow | Used for efficient data handling and conversion to Arrow tables. |
+
+## Error Handling
+
+- The constructor raises a `ValueError` if the provided data does not have the required `num_columns` method.
+- The `_ensure_delegate` method uses the `DependencyManager` to ensure that PyArrow is available, raising a `ModuleNotFoundError` if it is not.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

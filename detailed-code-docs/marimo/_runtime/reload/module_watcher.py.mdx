@@ -1,0 +1,141 @@
+---
+title: "module_watcher.py"
+---
+
+## High-level description
+
+The `module_watcher.py` file is part of a system designed to monitor and manage changes in Python modules used within a dataflow graph, specifically in the context of a notebook-like environment. It provides functionality to detect when modules have been modified and to trigger appropriate actions, such as marking cells as stale or re-running them, based on the changes detected. This is particularly useful in environments where code is executed interactively, and changes to the codebase need to be reflected immediately.
+
+## Code Structure
+
+The main components of the code are functions and a class that work together to monitor module changes and manage their impact on a dataflow graph. The `ModuleWatcher` class is the central component, utilizing helper functions to determine module dependencies and changes.
+
+## Symbols
+
+### `is_submodule`
+#### Description
+Determines if one module is a submodule of another by comparing their names.
+
+#### Inputs
+| Name       | Type   | Description                        |
+|:-----------|:-------|:-----------------------------------|
+| src_name   | str    | The name of the source module.     |
+| target_name| str    | The name of the target module.     |
+
+#### Outputs
+| Name    | Type | Description                                      |
+|:--------|:-----|:-------------------------------------------------|
+| result  | bool | True if `src_name` is a parent of `target_name`. |
+
+### `_depends_on`
+#### Description
+Checks if a source module depends on any of a set of target modules, considering exclusions and using a `ModuleReloader` to determine dependencies.
+
+#### Inputs
+| Name           | Type                  | Description                                      |
+|:---------------|:----------------------|:-------------------------------------------------|
+| src_module     | types.ModuleType      | The source module to check dependencies for.     |
+| target_modules | set[types.ModuleType] | The set of target modules to check against.      |
+| excludes       | list[str]             | List of module names to exclude from checking.   |
+| reloader       | ModuleReloader        | The reloader used to get module dependencies.    |
+
+#### Outputs
+| Name    | Type | Description                                      |
+|:--------|:-----|:-------------------------------------------------|
+| result  | bool | True if `src_module` depends on any target module.|
+
+### `_is_third_party_module`
+#### Description
+Determines if a module is a third-party module by checking if its file path includes "site-packages".
+
+#### Inputs
+| Name   | Type             | Description                        |
+|:-------|:-----------------|:-----------------------------------|
+| module | types.ModuleType | The module to check.               |
+
+#### Outputs
+| Name    | Type | Description                                      |
+|:--------|:-----|:-------------------------------------------------|
+| result  | bool | True if the module is a third-party module.      |
+
+### `_get_excluded_modules`
+#### Description
+Generates a list of module names that are considered third-party and should be excluded from dependency checks.
+
+#### Inputs
+| Name    | Type                          | Description                        |
+|:--------|:------------------------------|:-----------------------------------|
+| modules | dict[str, types.ModuleType]   | Dictionary of module names to modules.|
+
+#### Outputs
+| Name    | Type        | Description                                      |
+|:--------|:------------|:-------------------------------------------------|
+| result  | list[str]   | List of module names to exclude.                 |
+
+### `_check_modules`
+#### Description
+Identifies modules that have been modified and are used by the dataflow graph, marking them as stale.
+
+#### Inputs
+| Name       | Type                          | Description                        |
+|:-----------|:------------------------------|:-----------------------------------|
+| modules    | dict[str, types.ModuleType]   | Modules used by the graph.         |
+| reloader   | ModuleReloader                | Reloader to check for modifications.|
+| sys_modules| dict[str, types.ModuleType]   | System modules to check against.   |
+
+#### Outputs
+| Name          | Type                          | Description                                      |
+|:--------------|:------------------------------|:-------------------------------------------------|
+| stale_modules | dict[str, types.ModuleType]   | Modules that have been modified.                 |
+
+### `watch_modules`
+#### Description
+Continuously monitors modules used by a dataflow graph for changes, marking cells as stale and triggering re-execution as needed.
+
+#### Inputs
+| Name                    | Type                          | Description                                      |
+|:------------------------|:------------------------------|:-------------------------------------------------|
+| graph                   | dataflow.DirectedGraph        | The dataflow graph to monitor.                   |
+| reloader                | ModuleReloader                | Reloader to check for module changes.            |
+| mode                    | Literal["lazy", "autorun"]    | Mode of operation for handling stale cells.      |
+| enqueue_run_stale_cells | Callable[[], None]            | Function to enqueue stale cells for execution.   |
+| should_exit             | threading.Event               | Event to signal when to stop watching.           |
+| run_is_processed        | threading.Event               | Event to signal when a run is processed.         |
+| stream                  | Stream                        | Stream for communicating staleness to the frontend.|
+
+### `ModuleWatcher`
+#### Description
+A class that encapsulates the logic for watching modules and managing their impact on a dataflow graph. It initializes a background thread to monitor module changes and handle stale cells accordingly.
+
+#### Inputs
+| Name                    | Type                          | Description                                      |
+|:------------------------|:------------------------------|:-------------------------------------------------|
+| graph                   | dataflow.DirectedGraph        | The dataflow graph to monitor.                   |
+| reloader                | ModuleReloader                | Reloader to check for module changes.            |
+| mode                    | Literal["lazy", "autorun"]    | Mode of operation for handling stale cells.      |
+| enqueue_run_stale_cells | Callable[[], None]            | Function to enqueue stale cells for execution.   |
+| stream                  | Stream                        | Stream for communicating staleness to the frontend.|
+
+#### Methods
+- `__init__`: Initializes the `ModuleWatcher` and starts the monitoring thread.
+- `stop`: Signals the watcher thread to stop.
+
+## References
+
+- `ModuleReloader`: Used to check for module modifications and manage dependencies.
+- `dataflow.DirectedGraph`: Represents the graph of cells and their dependencies.
+- `Stream`: Used for communication with the frontend regarding cell staleness.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `itertools`| Used for chaining module dependencies.       |
+| `pathlib`  | Used for handling file paths.                |
+| `sys`      | Accesses system modules.                     |
+| `threading`| Manages threading for the module watcher.    |
+| `time`     | Used for sleeping between checks.            |
+
+## TODOs
+
+- There is a TODO comment suggesting the exclusion of standard library modules from checks, but a reliable method has not been found yet.

@@ -1,0 +1,61 @@
+---
+title: "altair_bug.py"
+---
+
+## High-level description
+
+The target file `altair_bug.py` is a smoke test script for the Marimo application framework, specifically testing the integration with the Altair visualization library. It creates a bar chart with temperature data from Seattle weather, annotates it with text, and attempts to handle a known bug related to chart selection. The script is structured to run as a standalone application using Marimo's cell-based execution model.
+
+## Code Structure
+
+The script is organized into several cells, each defined by the `@app.cell` decorator. These cells are executed in sequence, and they collectively build and display a chart using Altair and Marimo's UI components. The cells are responsible for importing necessary libraries, creating the chart, and interacting with the chart's properties.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which is used to define and run the application. It manages the execution of the decorated cells.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a cell in the Marimo application. Each cell can contain code that is executed in sequence when the application runs.
+
+### `__()`
+#### Description
+This function is used multiple times as a placeholder for different cells. Each instance of `__()` serves a different purpose, such as importing libraries, creating charts, or interacting with chart properties.
+
+#### Inputs
+- Varies depending on the cell; some cells take no inputs, while others take objects like `alt`, `data`, `mo`, or `chart`.
+
+#### Outputs
+- Varies depending on the cell; outputs can include chart objects, data sources, or UI components.
+
+#### Internal Logic
+- The first cell imports necessary libraries (`marimo`, `altair`, and `vega_datasets`).
+- The second cell creates a bar chart using Altair, annotates it with text, and handles a known bug by setting `chart_selection=False`.
+- Subsequent cells interact with the chart's properties, such as `selections`, `value`, and `dataframe`.
+
+## Side Effects
+
+- The script modifies the global state by creating and displaying a chart using Marimo's UI components.
+- It also interacts with the chart's properties, which may affect how the chart is rendered or interacted with.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used for creating and running the application, as well as UI components. |
+| `altair` | Used for creating the bar chart visualization. |
+| `vega_datasets` | Provides the Seattle weather dataset used in the chart. |
+
+## Error Handling
+
+- The script includes a comment noting a bug related to chart selection, indicating that `chart_selection` does not work when not set to `False`. This is due to the aggregation of `month(date)` that cannot be reversed.
+
+## Logging
+
+- There is no explicit logging mechanism implemented in the code.
+
+## TODOs
+
+- The script includes a comment about a known bug with chart selection, suggesting that further investigation or a fix may be needed in the future.

@@ -1,0 +1,141 @@
+---
+title: "test_virtual_file.py"
+---
+
+## High-level description
+
+The target file `test_virtual_file.py` contains a series of asynchronous test functions designed to verify the behavior of virtual file management within a runtime environment. These tests focus on the creation, deletion, caching, and reference counting of virtual files, ensuring that the system correctly handles these operations in various scenarios.
+
+## Code Structure
+
+The main symbols in the code are the asynchronous test functions, each of which tests a specific aspect of virtual file management. These functions utilize the `Kernel` class from the `marimo._runtime.runtime` module to execute code snippets that interact with virtual files. The `ExecReqProvider` from `tests.conftest` is used to generate execution requests for the kernel.
+
+## Symbols
+
+### `test_virtual_file_creation`
+#### Description
+Tests the creation of a virtual file by executing a code snippet that generates a PDF file from a byte stream. It verifies that the virtual file registry contains exactly one file with a `.pdf` extension.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_virtual_file_deletion`
+#### Description
+Tests the deletion of a virtual file by executing a code snippet to create a PDF file and then deleting the cell that created it. It verifies that the virtual file registry is empty after deletion.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_cached_virtual_file_not_deleted`
+#### Description
+Tests that a cached virtual file is not deleted when the cell that created it is rerun. It verifies that the virtual file registry maintains the file across multiple executions and deletions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_cell_deletion_clears_vfiles`
+#### Description
+Tests that deleting a cell clears the virtual files it created. It verifies that the virtual file registry is empty after the deletion of the cell that created the virtual file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_vfile_refcount_incremented`
+#### Description
+Tests that the reference count of a virtual file is incremented correctly when it is used in multiple contexts. It verifies that the reference count reflects the number of active references to the virtual file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_vfile_refcount_decremented`
+#### Description
+Tests that the reference count of a virtual file is decremented correctly when references are removed. It verifies that the virtual file is disposed of when its reference count reaches zero.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_cached_vfile_disposal`
+#### Description
+Tests the disposal of cached virtual files when they are no longer referenced. It verifies that the virtual file registry removes files that have no active references.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+### `test_virtual_files_not_supported`
+#### Description
+Tests the behavior of the system when virtual files are not supported. It verifies that no virtual files are created when the `virtual_files_supported` flag is set to `False`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel used to execute the code snippet. |
+| exec_req | ExecReqProvider | Provides execution requests for the kernel. |
+
+#### Outputs
+None
+
+## References
+
+- `get_context()`: Used to access the current runtime context, including the virtual file registry.
+- `DeleteCellRequest`: Used to request the deletion of a cell in the kernel.
+- `Kernel`: The class responsible for managing the execution of code and the virtual file lifecycle.
+- `ExecReqProvider`: A utility for generating execution requests for the kernel.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.context` | Provides the runtime context and virtual file registry. |
+| `marimo._runtime.requests` | Defines request types for interacting with the kernel. |
+| `marimo._runtime.runtime` | Contains the `Kernel` class used for executing code. |
+| `tests.conftest` | Provides fixtures and utilities for testing, including `ExecReqProvider`. |
+
+## Error Handling
+
+The tests rely on assertions to verify the expected state of the virtual file registry. If an assertion fails, it indicates a discrepancy between the expected and actual behavior, which is reported as a test failure.
+
+## Logging
+
+No explicit logging is implemented in the test functions. The focus is on using assertions to validate behavior.

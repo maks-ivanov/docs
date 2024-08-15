@@ -1,0 +1,113 @@
+---
+title: "config-schema.ts"
+---
+
+## High-level description
+
+The target file, `config-schema.ts`, defines the configuration schema for a frontend application using the `zod` library. It specifies the structure and default values for user and application configurations, including settings for completion, saving, formatting, key mapping, runtime, display, package management, AI, and experimental features. The file also includes functions to parse and validate these configurations, ensuring they adhere to the defined schema.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `PackageManagerNames` and `APP_WIDTHS` are constants used in the configuration schemas.
+- `UserConfigSchema` and `AppConfigSchema` are `zod` schemas that define the structure and default values for user and application configurations.
+- `parseAppConfig`, `parseUserConfig`, and `defaultUserConfig` are functions that utilize these schemas to parse and validate configuration data.
+- The `Logger` is used for logging errors during configuration parsing.
+
+## Symbols
+
+### `PackageManagerNames`
+#### Description
+Defines a constant array of valid package manager names used in the configuration schema.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PackageManagerNames | `readonly string[]` | An array of valid package manager names. |
+
+### `APP_WIDTHS`
+#### Description
+Defines a constant array of valid application width settings used in the configuration schema.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| APP_WIDTHS | `readonly string[]` | An array of valid application width settings. |
+
+### `UserConfigSchema`
+#### Description
+Defines the schema for user configuration using `zod`, specifying the structure and default values for various user settings.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| UserConfigSchema | `ZodObject` | A `zod` schema for user configuration. |
+
+#### Internal Logic
+- The schema includes nested objects for different configuration categories like `completion`, `save`, `formatting`, etc.
+- Default values are provided for each configuration option.
+- Some fields use transformations to ensure valid values (e.g., transforming `copilot` boolean to a string).
+
+### `AppConfigSchema`
+#### Description
+Defines the schema for application configuration using `zod`, specifying the structure and default values for application settings.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| AppConfigSchema | `ZodObject` | A `zod` schema for application configuration. |
+
+#### Internal Logic
+- The schema includes fields like `width` and `app_title`.
+- Default values are provided, and transformations are applied to handle deprecated values.
+
+### `parseAppConfig`
+#### Description
+Parses and validates the application configuration using the `AppConfigSchema`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parsedConfig | `AppConfig` | The parsed and validated application configuration. |
+
+#### Internal Logic
+- Attempts to parse the configuration using `AppConfigSchema`.
+- Logs an error and returns a default configuration if parsing fails.
+
+### `parseUserConfig`
+#### Description
+Parses and validates the user configuration using the `UserConfigSchema`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parsedConfig | `UserConfig` | The parsed and validated user configuration. |
+
+#### Internal Logic
+- Attempts to parse the configuration using `UserConfigSchema`.
+- Logs an error and returns a default configuration if parsing fails.
+- Logs enabled experimental features.
+
+### `defaultUserConfig`
+#### Description
+Returns the default user configuration by parsing an empty object with `UserConfigSchema`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| defaultConfig | `UserConfig` | The default user configuration. |
+
+## References
+
+- `Logger`: Used for logging errors during configuration parsing.
+- `getMarimoAppConfig`, `getMarimoUserConfig`: Functions from `marimo-tag` module used to retrieve configuration data.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for defining and validating configuration schemas. |
+
+## Error Handling
+
+- The `parseAppConfig` and `parseUserConfig` functions catch errors during parsing and log them using the `Logger`, returning default configurations in case of errors.

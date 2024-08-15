@@ -1,0 +1,91 @@
+---
+title: "MarimoApp.tsx"
+---
+
+## High-level description
+
+The `MarimoApp.tsx` file defines the root component of the Marimo application, which is a React-based application. It sets up the main application structure by incorporating various providers and lazy-loaded components to optimize performance. The file also manages the initial loading of different application modes and ensures that necessary configurations and styles are applied.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MarimoApp`: The root component of the application, which uses various providers to manage application-wide states and configurations.
+- `Providers`: A component that wraps the application with several context providers, such as error handling, tooltips, modals, and more.
+- `reactLazyWithPreload`: A utility function used to lazily load components with a preload capability, optimizing the initial load time of the application.
+
+## Symbols
+
+### `MarimoApp`
+#### Description
+The `MarimoApp` component is the root component of the Marimo application. It initializes the application by setting up necessary configurations and rendering the appropriate page based on the initial mode. It uses lazy loading to optimize the loading of different pages.
+
+#### Inputs
+None directly, but it uses hooks to access configurations.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX | React Element | The rendered application component tree. |
+
+#### Internal Logic
+- Retrieves user and app configurations using hooks.
+- Converts the user's preferred code editor font size to a CSS `rem` unit.
+- Determines which page to render based on the `initialMode` and uses lazy-loaded components for the home, run, and edit pages.
+- Wraps the rendered page with the `Providers` component to ensure all necessary contexts are available.
+
+### `Providers`
+#### Description
+The `Providers` component wraps its children with several context providers, ensuring that the application has access to error handling, tooltips, modals, and other utilities.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| children | React Node | The child components to be wrapped by the providers. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX | React Element | The wrapped children with context providers. |
+
+#### Internal Logic
+- Uses `ErrorBoundary` to catch and handle errors in the component tree.
+- Wraps children with `Suspense` to handle lazy-loaded components.
+- Provides tooltips, modals, and other UI utilities through respective providers.
+
+### `toRem`
+#### Description
+A utility function that converts a pixel value to a `rem` unit, which is used for setting the font size in the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| px | number | The pixel value to be converted to `rem`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rem | string | The equivalent `rem` value as a string. |
+
+## References
+
+- `useUserConfig` and `useAppConfig` from `config.ts` are used to retrieve configuration settings.
+- `reactLazyWithPreload` from `lazy.ts` is used for lazy loading components.
+- `ErrorBoundary`, `TooltipProvider`, `Toaster`, `ModalProvider`, and `DayPickerProvider` are imported from various UI components to provide context and utilities.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-day-picker` | Provides date-picking functionality. |
+| `@marimo-team/react-slotz` | Manages slot-based layouts within the application. |
+
+## Error Handling
+
+The `ErrorBoundary` component is used to catch and handle errors that occur within the component tree, providing a fallback UI and a mechanism to reset the error state.
+
+## Logging
+
+No explicit logging is implemented in this file, but error handling and user feedback are managed through UI components like `Toaster`.
+
+## TODOs
+None present in the code.

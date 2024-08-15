@@ -1,0 +1,54 @@
+---
+title: "repl.ts"
+---
+
+## High-level description
+The `repl.ts` file provides a utility function `repl` that allows developers to safely add objects to the global `window` scope for debugging purposes. This is particularly useful for accessing and manipulating objects directly from the browser's console during development.
+
+## Code Structure
+The main symbol in this file is the `repl` function, which interacts with the global `window` object. It uses the `Logger` from the `Logger.ts` file to log warnings when overwriting existing objects in the global scope.
+
+## References
+- The `Logger` from `Logger.ts` is used to log warnings when an object is overwritten in the global scope.
+- The `repl` function is used in other parts of the codebase, such as in `feature-flag.tsx`, to expose functions like `setFeatureFlag` to the global scope for debugging.
+
+## Symbols
+
+### `repl`
+#### Description
+The `repl` function is designed to add objects to the global `window` scope under a specific name prefixed with `__marimo__`. This is useful for debugging, as it allows developers to access these objects from the browser's console. If an object with the same name already exists, a warning is logged unless the environment is set to "test".
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| item | unknown | The object to be added to the global scope. |
+| name | string | The name under which the object will be stored in the global scope, prefixed with `__marimo__`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A | The function does not return a value. |
+
+#### Internal Logic
+1. The function first checks if the `window` object is defined, which ensures that the code is running in a browser environment.
+2. It constructs a `fullName` by prefixing the provided `name` with `__marimo__`.
+3. If an object with the same `fullName` already exists in the `window` and the environment is not "test", it logs a warning using the `Logger`.
+4. Finally, it assigns the `item` to the `window` object under the `fullName`.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger` from `Logger.ts` | Used to log warnings when overwriting existing objects in the global scope. |
+
+## Error Handling
+The function does not explicitly handle errors but uses logging to warn about potential overwriting of existing global objects.
+
+## Logging
+The `Logger` is used to log a warning message if an existing object in the global scope is being overwritten, provided the environment is not set to "test".
+
+## Side Effects
+- Modifies the global `window` object by adding a new property with a name prefixed by `__marimo__`.
+- Logs a warning if an existing object is overwritten, which can be useful for debugging.
+
+## Performance Considerations
+The function is lightweight and primarily used for debugging purposes, so performance is not a critical concern. However, excessive use of global variables can lead to potential conflicts and should be managed carefully.

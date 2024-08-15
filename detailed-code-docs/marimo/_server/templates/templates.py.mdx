@@ -1,0 +1,137 @@
+---
+title: "templates.py"
+---
+
+## High-level description
+
+The target file, `templates.py`, is part of the Marimo server module and is responsible for generating HTML templates for different types of pages in a Marimo application. It provides functions to create HTML content for the home page, notebook page, and static notebook page by replacing placeholders in HTML templates with dynamic content such as configuration settings, tokens, and application-specific data.
+
+## Code Structure
+
+The main symbols in the code are functions that generate HTML templates. These functions are interconnected as they all perform similar operations of replacing placeholders in HTML strings with actual data. The functions utilize various configurations and data structures from the Marimo framework to populate the templates.
+
+## Symbols
+
+### `home_page_template`
+#### Description
+Generates the HTML content for the home page by replacing placeholders in the provided HTML string with the base URL, user configuration, server token, and other static values.
+
+#### Inputs
+| Name         | Type           | Description                          |
+|:-------------|:---------------|:-------------------------------------|
+| html         | str            | The HTML template string.            |
+| base_url     | str            | The base URL for the application.    |
+| user_config  | MarimoConfig   | User configuration settings.         |
+| server_token | SkewProtectionToken | Token for server-client synchronization. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | str  | The populated HTML content for the home page. |
+
+### `notebook_page_template`
+#### Description
+Generates the HTML content for a notebook page by replacing placeholders in the provided HTML string with dynamic data such as the base URL, user configuration, server token, application configuration, filename, and session mode.
+
+#### Inputs
+| Name         | Type           | Description                          |
+|:-------------|:---------------|:-------------------------------------|
+| html         | str            | The HTML template string.            |
+| base_url     | str            | The base URL for the application.    |
+| user_config  | MarimoConfig   | User configuration settings.         |
+| server_token | SkewProtectionToken | Token for server-client synchronization. |
+| app_config   | _AppConfig     | Application-specific configuration.  |
+| filename     | Optional[str]  | The filename of the notebook.        |
+| mode         | SessionMode    | The session mode (edit or run).      |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | str  | The populated HTML content for the notebook page. |
+
+### `static_notebook_template`
+#### Description
+Generates the HTML content for a static notebook page by replacing placeholders in the provided HTML string with dynamic data such as user configuration, server token, application configuration, and various cell-related data. It also serializes cell outputs and console outputs to base64.
+
+#### Inputs
+| Name               | Type                          | Description                          |
+|:-------------------|:------------------------------|:-------------------------------------|
+| html               | str                           | The HTML template string.            |
+| user_config        | MarimoConfig                  | User configuration settings.         |
+| server_token       | SkewProtectionToken           | Token for server-client synchronization. |
+| app_config         | _AppConfig                    | Application-specific configuration.  |
+| filename           | Optional[str]                 | The filename of the notebook.        |
+| code               | str                           | The code content of the notebook.    |
+| cell_ids           | list[str]                     | List of cell IDs.                    |
+| cell_names         | list[str]                     | List of cell names.                  |
+| cell_codes         | list[str]                     | List of cell codes.                  |
+| cell_configs       | list[CellConfig]              | List of cell configurations.         |
+| cell_outputs       | dict[CellId_t, CellOutput]    | Dictionary of cell outputs.          |
+| cell_console_outputs | dict[CellId_t, List[CellOutput]&gt; | Dictionary of cell console outputs. |
+| files              | dict[str, str]                | Dictionary of file contents.         |
+| asset_url          | Optional[str]                 | URL for static assets.               |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | str  | The populated HTML content for the static notebook page. |
+
+#### Internal Logic
+- Serializes cell outputs and console outputs to base64.
+- Replaces relative URLs in the HTML with absolute URLs using the asset URL.
+- Appends JavaScript blocks to the HTML to set up the notebook state and assets.
+
+### `_serialize_to_base64`
+#### Description
+Encodes a given string to a base64-encoded string after URL-encoding it.
+
+#### Inputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| value | str  | The string to encode.|
+
+#### Outputs
+| Name          | Type | Description                  |
+|:--------------|:-----|:-----------------------------|
+| base64_encoded | str  | The base64-encoded string.  |
+
+### `_serialize_list_to_base64`
+#### Description
+Encodes a list of strings to a list of base64-encoded strings.
+
+#### Inputs
+| Name  | Type      | Description                |
+|:------|:----------|:---------------------------|
+| value | list[str] | The list of strings to encode. |
+
+#### Outputs
+| Name          | Type      | Description                        |
+|:--------------|:----------|:-----------------------------------|
+| base64_encoded_list | list[str] | The list of base64-encoded strings. |
+
+## References
+
+- `MarimoConfig` from `marimo._config.config` is used to handle user configuration settings.
+- `_AppConfig` from `marimo._ast.app` is used for application-specific configuration.
+- `CellConfig` and `CellId_t` from `marimo._ast.cell` are used for cell configurations and identifiers.
+- `CellOutput` from `marimo._messaging.cell_output` is used to represent cell outputs.
+- `uri_encode_component` from `marimo._output.utils` is used for URL encoding.
+- `parse_title` from `marimo._server.api.utils` is used to parse filenames into titles.
+- `SessionMode` from `marimo._server.model` is used to determine the session mode.
+- `SkewProtectionToken` from `marimo._server.tokens` is used for server-client synchronization.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `base64`   | Used for encoding data to base64. |
+| `json`     | Used for serializing data to JSON format. |
+| `typing`   | Provides type hints for better code clarity and type checking. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the template functions. It assumes that the inputs are valid and that the replacements in the HTML will succeed. Any errors in the input data or the HTML template could lead to incorrect or incomplete HTML output.
+
+## Logging
+
+The code does not implement any logging mechanisms.

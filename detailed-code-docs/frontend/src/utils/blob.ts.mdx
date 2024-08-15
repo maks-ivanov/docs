@@ -1,0 +1,93 @@
+---
+title: "blob.ts"
+---
+
+## High-level description
+
+The target file, `blob.ts`, provides utility functions for serializing and deserializing `Blob` objects to and from base64-encoded data URLs. This allows for the conversion of binary data into a text format that can be easily stored or transmitted, and then converted back into its original binary form.
+
+## Code Structure
+
+The main symbols in the code are two functions: `serializeBlob` and `deserializeBlob`. These functions are responsible for converting `Blob` objects to base64-encoded strings and vice versa. The `ensureError` function is a helper used to ensure that any errors thrown are instances of the `Error` class.
+
+## Symbols
+
+### `serializeBlob`
+#### Description
+The `serializeBlob` function converts a `Blob` object into a base64-encoded data URL string. This is useful for encoding binary data into a text format that can be easily stored or transmitted.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| blob | Blob | The `Blob` object to be serialized into a base64-encoded data URL. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Promise&lt;DataURLString&gt; | A promise that resolves to a base64-encoded data URL string representing the `Blob`. |
+
+#### Internal Logic
+- A `FileReader` is used to read the `Blob` as a data URL.
+- The `onload` event handler resolves the promise with the result.
+- The `onerror` event handler rejects the promise with an error message if reading fails.
+
+### `deserializeBlob`
+#### Description
+The `deserializeBlob` function converts a base64-encoded data URL string back into a `Blob` object. This is useful for decoding text-encoded binary data back into its original binary form.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| serializedBlob | DataURLString | The base64-encoded data URL string to be deserialized into a `Blob`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Promise&lt;Blob&gt; | A promise that resolves to a `Blob` object. |
+
+#### Internal Logic
+- The function splits the data URL to extract the base64 data and MIME type.
+- The base64 string is decoded into a binary string.
+- The binary string is converted into a `Uint8Array`.
+- A new `Blob` is created from the `Uint8Array` and resolved.
+
+### `ensureError`
+#### Description
+The `ensureError` function ensures that a given error is an instance of the `Error` class. If not, it converts it into an `Error`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | unknown | The error to be ensured as an `Error` instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Error | An `Error` instance. |
+
+## References
+
+- The `DataURLString` type is imported from `json/base64.ts`, which defines the structure of a base64-encoded data URL.
+- The `serializeBlob` function is used in `upload.tsx` to convert files into base64 strings for upload.
+- The `deserializeBlob` function is used in `files.ts` to convert base64 strings back into `Blob` objects for virtual file handling.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `FileReader` | Used to read `Blob` objects as data URLs. |
+| `atob` | Decodes base64 strings into binary strings. |
+| `Blob` | Represents binary data in the form of file-like objects. |
+
+## Error Handling
+
+- The `serializeBlob` function handles errors by rejecting the promise with an error message if the `FileReader` encounters an error.
+- The `deserializeBlob` function uses the `ensureError` function to ensure that any caught errors are instances of the `Error` class before rejecting the promise.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the target file. However, error messages are provided when promises are rejected.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

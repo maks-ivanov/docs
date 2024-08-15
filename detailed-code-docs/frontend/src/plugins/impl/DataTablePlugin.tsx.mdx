@@ -1,0 +1,103 @@
+---
+title: "DataTablePlugin.tsx"
+---
+
+## High-level description
+
+The `DataTablePlugin.tsx` file defines a React component that serves as a plugin for rendering and managing data tables within a frontend application. It provides functionalities for loading, displaying, and interacting with data tables, including features like sorting, filtering, pagination, and data fetching from external sources. The plugin is designed to be flexible and configurable, allowing for various data operations and visual customizations.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `DataTablePlugin`: The main export of the file, created using a plugin builder pattern. It defines the data schema, functions, and rendering logic for the data table.
+- `LoadingDataTableComponent`: A memoized React component responsible for managing the state and logic for loading and displaying data in the table.
+- `DataTableComponent`: A React component that renders the actual data table UI, including headers, rows, and interactive elements like sorting and filtering controls.
+
+## Symbols
+
+### `DataTablePlugin`
+#### Description
+The `DataTablePlugin` is a plugin created using a builder pattern that defines a data table component. It specifies the data schema, functions, and rendering logic for the data table, allowing it to be integrated into a larger application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| S | Array&lt;string \| number&gt; | Represents the selection state of the data table. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| DataTablePlugin | Plugin | A configured plugin for rendering data tables. |
+
+#### Internal Logic
+- Uses `zod` for schema validation of input data.
+- Defines functions for downloading data, getting column summaries, and searching data.
+- Utilizes a renderer function to render the `LoadingDataTableComponent` with the provided data and functions.
+
+### `LoadingDataTableComponent`
+#### Description
+A memoized React component that manages the state and logic for loading and displaying data in the data table. It handles data fetching, sorting, searching, and filtering operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | DataTableProps&lt;T&gt; | Properties for configuring the data table, including data, functions, and UI settings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered data table component. |
+
+#### Internal Logic
+- Manages sorting, searching, and filtering states using React hooks.
+- Uses `useAsyncData` to fetch data asynchronously based on the current state.
+- Handles data loading, error handling, and rendering of the data table UI.
+- Utilizes `DataTableComponent` for rendering the actual table UI.
+
+### `DataTableComponent`
+#### Description
+A React component that renders the data table UI, including headers, rows, and interactive elements like sorting and filtering controls.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | DataTableProps&lt;unknown&gt; & DataTableSearchProps | Properties for configuring the data table, including data, functions, and UI settings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered data table component. |
+
+#### Internal Logic
+- Uses `useMemo` to generate columns and chart specifications based on the provided data and settings.
+- Manages row selection and handles changes using event hooks.
+- Clears selection when reloading data to ensure consistency.
+- Renders the data table with optional pagination, sorting, and filtering features.
+
+## References
+
+- `useAsyncData`: A custom hook used for asynchronous data fetching.
+- `createPlugin`: A function from the core builder module used to create the plugin.
+- `rpc`: A utility for defining RPC functions with input and output validation.
+- `generateColumns`: A function for generating column definitions for the data table.
+- `vegaLoadData`: A function for loading and parsing data from a URL.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for schema validation of input data. |
+| `@tanstack/react-table` | Provides types and utilities for managing table state and rendering. |
+| `@radix-ui/react-tooltip` | Used for rendering tooltips in the UI. |
+
+## Error Handling
+
+- The `LoadingDataTableComponent` handles errors during data fetching by displaying an error alert using the `Alert` component.
+- Errors in column summaries are logged using the `Logger` utility.
+
+## Logging
+
+- The `Logger` utility is used for logging warnings and errors, particularly when multiple sort columns are not supported or when errors occur during data fetching.
+
+## TODOs
+- No explicit TODOs are present in the code.

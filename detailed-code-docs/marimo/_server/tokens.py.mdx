@@ -1,0 +1,73 @@
+---
+title: "tokens.py"
+---
+
+## High-level description
+
+The `tokens.py` file defines two classes, `AuthToken` and `SkewProtectionToken`, which are used for managing authentication and version skew protection tokens in a server environment. These classes provide mechanisms to generate, represent, and validate tokens, ensuring secure and consistent communication between clients and the server.
+
+## Code Structure
+
+The file contains two main classes: `AuthToken` and `SkewProtectionToken`. Both classes are designed to handle tokens, with methods for generating random tokens, creating tokens from a code, and checking if a token is empty. The `AuthToken` class is specifically adapted from Starlette to avoid external dependencies.
+
+## Symbols
+
+### `AuthToken`
+#### Description
+The `AuthToken` class is responsible for managing authentication tokens. It ensures that the token's value is not exposed in tracebacks and provides methods to generate random tokens, create tokens from a code, and check if a token is empty.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | The string value of the token. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `__repr__` | str | A string representation of the token, obscuring the actual value. |
+| `__str__` | str | The actual string value of the token. |
+| `__bool__` | bool | Boolean indicating if the token has a non-empty value. |
+
+#### Internal Logic
+- The `__repr__` method returns a string with the class name and obscured token value.
+- The `__str__` method returns the actual token value.
+- The `__bool__` method checks if the token value is non-empty.
+- The `random` method generates a new `AuthToken` with a random value using `secrets.token_urlsafe`.
+- The `from_code` method creates a token by hashing a given code.
+- The `is_empty` method checks if a token's string representation is empty.
+
+### `SkewProtectionToken`
+#### Description
+The `SkewProtectionToken` class provides tokens to protect against version skew bugs, which can occur when new server code is deployed but the client is still using an older version.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| token | str | The string value of the skew protection token. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `__str__` | str | The actual string value of the skew protection token. |
+
+#### Internal Logic
+- The `__str__` method returns the token value.
+- The `from_code` method creates a skew protection token by hashing a given code.
+- The `random` method generates a new `SkewProtectionToken` with a random value using `secrets.token_urlsafe`.
+
+## References
+
+- The `AuthToken` class is referenced in the `marimo/_cli/cli.py` file, where it is used to handle authentication tokens for session-based authentication.
+- The `SkewProtectionToken` class is referenced in the `marimo/_server/api/deps.py` and `marimo/_server/export/exporter.py` files, where it is used to manage skew protection tokens for sessions and exports.
+
+## Dependencies
+
+- The `secrets` module is used to generate secure random tokens.
+
+## Error Handling
+
+The code does not explicitly handle errors, but it uses secure methods from the `secrets` module to ensure that token generation is robust and secure.
+
+## Logging
+
+There is no logging implemented in this file.

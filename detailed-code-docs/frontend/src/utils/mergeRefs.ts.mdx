@@ -1,0 +1,52 @@
+---
+title: "mergeRefs.ts"
+---
+
+## High-level description
+
+The `mergeRefs` function in the target file `mergeRefs.ts` is a utility function designed to merge multiple React refs into a single ref callback. This allows multiple refs to be updated simultaneously when a component is rendered or updated, which is particularly useful in scenarios where a component needs to interact with multiple ref objects or functions.
+
+## Code Structure
+
+The main symbol in the code is the `mergeRefs` function. It takes an arbitrary number of React refs as arguments and returns a single ref callback function. This callback function iterates over the provided refs and updates each one with the given value, handling both function refs and object refs.
+
+## Symbols
+
+### `mergeRefs`
+#### Description
+The `mergeRefs` function merges multiple React refs into a single ref callback. This is useful when a component needs to manage multiple refs, such as when using third-party libraries that require refs or when combining refs from different parts of a component tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `refs` | `Array&lt;React.Ref&lt;T&gt;&gt;` | An array of React refs, which can be either function refs or object refs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `output` | `React.Ref&lt;T&gt;` | A single ref callback that updates all provided refs with a given value. |
+
+#### Internal Logic
+The function returns a callback that takes a `value` as an argument. It iterates over each ref in the `refs` array:
+- If the ref is a function, it calls the function with the `value`.
+- If the ref is an object (specifically a `MutableRefObject`), it sets the `current` property of the ref to the `value`.
+
+## References
+
+The `mergeRefs` function is used in the related code snippets, particularly in the `SortableCell` and `CellCodeMirrorEditor` components. These components utilize `mergeRefs` to combine multiple refs, such as a forwarded ref and a ref from a third-party library, into a single ref callback.
+
+## Dependencies
+
+The code relies on React's ref system, specifically `React.Ref` and `React.MutableRefObject`, to manage references to DOM elements or component instances.
+
+## Error Handling
+
+The function does not include explicit error handling. It assumes that the provided refs are either functions or objects with a `current` property, which is typical in React applications.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The `mergeRefs` function does not expose an API or interface beyond its function signature. It is a utility function intended for internal use within a React application to manage refs more effectively.

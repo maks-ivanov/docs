@@ -1,0 +1,230 @@
+---
+title: "test_state.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_state.py` contains a series of asynchronous test functions designed to verify the behavior of state management within the `marimo` runtime environment. These tests focus on the functionality of setting and retrieving state values, handling state updates, and ensuring that state transitions occur as expected under various conditions, such as allowing self-loops, using callable objects, and handling exceptions.
+
+## Code Structure
+
+The main symbols in the code are the asynchronous test functions, each of which uses an `execution_kernel` and an `exec_req` to execute a series of commands within the `marimo` runtime. The `Kernel` class from `marimo._runtime.runtime` is used to manage the execution environment, while `ExecReqProvider` from `tests/conftest.py` is used to generate execution requests.
+
+## Symbols
+
+### `test_set_and_get_state`
+#### Description
+Tests the basic functionality of setting and getting a state value within the `marimo` runtime.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the final state value. |
+
+#### Internal Logic
+- Initializes the state to 0 and retrieves it.
+- Sets the state to 1 if the current state is 0.
+- Asserts that the final state value is 1.
+
+### `test_set_and_get_iteration`
+#### Description
+Tests the iterative update of a state value until a condition is met.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the final state value. |
+
+#### Internal Logic
+- Initializes the state to 0 and retrieves it.
+- Increments the state by 1 until it reaches 5.
+- Asserts that the final state value is 5.
+
+### `test_no_self_loops`
+#### Description
+Tests that self-loops are not allowed by default when setting a state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the final state value. |
+
+#### Internal Logic
+- Initializes the state to 0 and sets it to 1.
+- Asserts that the state remains 0, indicating no self-loop occurred.
+
+### `test_allow_self_loops`
+#### Description
+Tests the functionality of allowing self-loops when setting a state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the final state value. |
+
+#### Internal Logic
+- Initializes the state to 0 with self-loops allowed.
+- Increments the state by 1 until it reaches 3.
+- Asserts that the final state value is 3.
+
+### `test_update_with_function`
+#### Description
+Tests updating the state using a function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the final state value. |
+
+#### Internal Logic
+- Initializes the state to 0.
+- Updates the state using a lambda function that increments the value.
+- Asserts that the final state value is 1.
+
+### `test_set_to_callable_object`
+#### Description
+Tests setting the state to a callable object and verifies it hasn't been called.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the callable object state. |
+
+#### Internal Logic
+- Initializes the state to 0.
+- Sets the state to an instance of a callable class.
+- Asserts that the callable object has not been called.
+
+### `test_non_stale_not_run`
+#### Description
+Tests that non-stale cells are not re-run unnecessarily.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the counter value. |
+
+#### Internal Logic
+- Initializes a private object with a counter.
+- Sets the state and updates the counter.
+- Asserts that the counter is incremented only once.
+
+### `test_cancelled_not_run`
+#### Description
+Tests that a cell is not run if its ancestor raises an error.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the absence of a variable. |
+
+#### Internal Logic
+- Sets the state and raises a `ValueError`.
+- Asserts that the subsequent cell is not executed.
+
+### `test_set_state_with_overridden_eq`
+#### Description
+Tests setting a state with an object that overrides the equality operator.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the type of the state. |
+
+#### Internal Logic
+- Initializes a class with an overridden `__eq__` method.
+- Sets the state to an instance of this class.
+- Asserts that the state is of the correct type.
+
+### `test_set_state_not_strict_copied`
+#### Description
+Tests that state and set_state are not strictly copied in a strict kernel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| strict_kernel | Kernel | The execution environment for running the test. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the identity of state and set_state. |
+
+#### Internal Logic
+- Initializes the state and set_state.
+- Asserts that the identities of the state and set_state match the global variables.
+
+## References
+
+- `Kernel` from `marimo._runtime.runtime`: Manages the execution environment.
+- `ExecReqProvider` from `tests/conftest.py`: Provides execution requests for the tests.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.runtime` | Provides the `Kernel` class for managing execution. |
+| `tests.conftest` | Provides fixtures and utilities for testing, including `ExecReqProvider`. |
+
+## Error Handling
+
+The tests implicitly handle errors by using assertions to verify expected outcomes. If an assertion fails, it indicates an error in the state management logic.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on assertions to verify correct behavior.

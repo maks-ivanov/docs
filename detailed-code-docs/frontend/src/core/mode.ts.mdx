@@ -1,0 +1,112 @@
+---
+title: "mode.ts"
+---
+
+## High-level description
+
+The `mode.ts` file defines and manages the application modes for a notebook application. It provides functionality to determine the initial mode of the application based on HTML attributes, toggle between different modes, and manage the view state of the application, including handling transitions between modes like "read", "edit", "present", and "home".
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `AppMode` is a type that defines the possible modes of the application.
+- `getInitialAppMode` determines the starting mode of the application by inspecting the DOM.
+- `toggleAppMode` switches between "edit" and "present" modes.
+- `ViewState` is an interface that represents the state of the view, including the current mode and a cell anchor.
+- `viewStateAtom` and `kioskModeAtom` are Jotai atoms that manage the state of the view and kiosk mode, respectively.
+- `runDuringPresentMode` is a function that executes a given function during the "present" mode, handling mode transitions and rendering delays.
+
+## Symbols
+
+### `AppMode`
+#### Description
+`AppMode` is a TypeScript type that defines the possible modes of the application: "read", "edit", "present", and "home". It is used to specify the current mode of the application.
+
+### `getInitialAppMode`
+#### Description
+This function determines the initial mode of the application by checking for a custom HTML element `&lt;marimo-mode&gt;` and its `data-mode` attribute. If the element or attribute is not found, it defaults to "read" mode.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mode | `AppMode` | The initial mode of the application. |
+
+#### Internal Logic
+- It queries the DOM for an element with the tag name `marimo-mode`.
+- If the element is found and has a valid `data-mode` attribute, it returns the corresponding mode.
+- If the mode is "present", it throws an error as "present" mode is not supported initially.
+- If the element or attribute is missing, it logs a warning and defaults to "read" mode.
+
+### `toggleAppMode`
+#### Description
+This function toggles the application mode between "edit" and "present". It does not allow switching to "present" mode from "read" mode.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mode | `AppMode` | The current mode of the application. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| newMode | `AppMode` | The toggled mode of the application. |
+
+#### Internal Logic
+- If the current mode is "read", it returns "read".
+- If the current mode is "edit", it switches to "present".
+- If the current mode is "present", it switches to "edit".
+
+### `ViewState`
+#### Description
+`ViewState` is an interface that represents the state of the view, including the current mode and a cell anchor for scrolling purposes.
+
+#### Properties
+- `mode`: The current mode of the application.
+- `cellAnchor`: An optional cell ID used to anchor scrolling when toggling between modes.
+
+### `viewStateAtom`
+#### Description
+A Jotai atom that holds the current view state of the application, including the mode and cell anchor.
+
+### `kioskModeAtom`
+#### Description
+A Jotai atom that manages whether the application is in kiosk mode, which is a boolean state.
+
+### `runDuringPresentMode`
+#### Description
+This function executes a given function during the "present" mode, ensuring the application is in the correct mode and handling rendering delays.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fn | `() =&gt; void \| Promise&lt;void&gt;` | A function to execute during "present" mode. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `Promise&lt;void&gt;` | A promise that resolves after the function is executed. |
+
+#### Internal Logic
+- It checks the current mode from `viewStateAtom`.
+- If the mode is "present", it executes the function immediately.
+- If not, it switches to "present" mode, waits for rendering, executes the function, and then switches back to "edit" mode.
+
+## References
+
+- The `assertNever` function from `@/utils/assertNever` is used to ensure exhaustive checks in switch statements.
+- The `Logger` from `@/utils/Logger` is used for logging warnings and errors.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management with atoms. |
+
+## Error Handling
+
+- The `getInitialAppMode` function throws an error if the mode is "present" as it is not supported initially.
+- The `assertNever` function is used to ensure exhaustive checks in switch statements, throwing an error if an unexpected mode is encountered.
+
+## Logging
+
+- The `Logger` is used to log warnings when the `marimo-mode` tag or its `data-mode` attribute is not found.

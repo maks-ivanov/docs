@@ -1,0 +1,88 @@
+---
+title: "preview_column.py"
+---
+
+## High-level description
+
+The code in `marimo/_data/preview_column.py` is designed to generate a preview of a specific column in a dataset. This preview includes a summary of the column's data and a visual representation (chart) if possible. The function handles various data types and checks for necessary dependencies, such as the Altair library for chart rendering.
+
+## Code Structure
+
+The main function in this file is `get_column_preview`, which interacts with several other components in the codebase, such as `TableManager`, `DependencyManager`, and `DataColumnPreview`. It also utilizes helper functions like `_get_altair_chart` to generate charts using the Altair library.
+
+## References
+
+- `marimo._data.charts.get_chart_builder`: Used to obtain a chart builder based on the column's data type.
+- `marimo._data.models.ColumnSummary`: Represents a summary of the column's data.
+- `marimo._dependencies.dependencies.DependencyManager`: Checks for the presence of required dependencies like Altair.
+- `marimo._messaging.ops.DataColumnPreview`: Represents the preview data structure that is returned.
+- `marimo._plugins.ui._impl.tables.table_manager.TableManager`: Manages table operations and data retrieval.
+- `marimo._runtime.requests.PreviewDatasetColumnRequest`: Represents the request structure for previewing a dataset column.
+
+## Symbols
+
+### `get_column_preview`
+#### Description
+The `get_column_preview` function generates a preview of a specified column in a dataset. It provides a summary of the column's data and attempts to create a visual chart if the necessary dependencies are available.
+
+#### Inputs
+| Name    | Type                        | Description                          |
+|:--------|:----------------------------|:-------------------------------------|
+| `item`  | `object`                    | The dataset object containing the column. |
+| `request` | `PreviewDatasetColumnRequest` | The request containing details about the column to preview. |
+
+#### Outputs
+| Name    | Type                | Description                          |
+|:--------|:--------------------|:-------------------------------------|
+| `output` | `DataColumnPreview` or `None` | The preview of the column, including a chart and summary, or `None` if the preview cannot be generated. |
+
+#### Internal Logic
+1. **Table Retrieval**: Attempts to retrieve a `TableManager` for the dataset. If unsuccessful, returns `None`.
+2. **Empty Table Check**: Checks if the table is empty. If so, returns a `DataColumnPreview` with an error message.
+3. **Column Summary**: Tries to get a summary of the column. Logs a warning if it fails and uses a default `ColumnSummary`.
+4. **Dependency Check**: Verifies if the Altair library is available for chart rendering. If not, sets an error message.
+5. **Special Character Check**: Checks for unsupported characters in the column name for chart rendering.
+6. **Chart Generation**: If no errors, attempts to generate a chart using `_get_altair_chart`. Logs a warning if it fails.
+7. **Return**: Constructs and returns a `DataColumnPreview` object with the gathered information.
+
+### `_get_altair_chart`
+#### Description
+The `_get_altair_chart` function generates a chart specification and code for a given column using the Altair library, if supported.
+
+#### Inputs
+| Name    | Type                        | Description                          |
+|:--------|:----------------------------|:-------------------------------------|
+| `request` | `PreviewDatasetColumnRequest` | The request containing details about the column to preview. |
+| `table` | `TableManager[Any]`         | The table manager for the dataset.   |
+| `summary` | `ColumnSummary`           | The summary of the column's data.    |
+
+#### Outputs
+| Name    | Type                | Description                          |
+|:--------|:--------------------|:-------------------------------------|
+| `output` | `tuple[Optional[str], Optional[str], bool]` | A tuple containing the chart JSON, chart code, and a boolean indicating if there were max rows errors. |
+
+#### Internal Logic
+1. **Dependency and Support Check**: Ensures Altair is available and the table supports it.
+2. **Chart Builder**: Retrieves a chart builder based on the column's data type and whether it should be limited to 10 items.
+3. **Data Selection**: Selects the column data from the table.
+4. **Chart Generation**: Attempts to generate the chart JSON using Altair, handling different data types appropriately.
+5. **Max Rows Error Handling**: Catches `MaxRowsError` to handle cases where the data exceeds Altair's row limit.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `altair`   | Used for rendering charts. |
+
+## Error Handling
+
+- The code logs warnings when it fails to get a column summary or generate a chart.
+- It checks for the presence of the Altair library and provides a user-friendly error message if it's missing.
+- It handles special characters in column names that could cause issues in chart rendering.
+
+## Logging
+
+- The code uses a logger to record warnings when exceptions occur during column summary retrieval and chart generation.
+
+## TODOs
+- No TODOs are present in the code.

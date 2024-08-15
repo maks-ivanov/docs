@@ -1,0 +1,75 @@
+---
+title: "user-config-form.tsx"
+---
+
+## High-level description
+
+The `user-config-form.tsx` file defines a React component, `UserConfigForm`, which provides a user interface for configuring various settings in a Marimo application. This form allows users to customize settings related to the editor, display, package management, runtime, AI assist, and AI code completion. It uses the `react-hook-form` library for form management and validation, and integrates with the application's configuration and network layers to save user preferences.
+
+## Code Structure
+
+The main component, `UserConfigForm`, is responsible for rendering the form and handling user interactions. It uses several imported UI components like `Checkbox`, `Input`, `NativeSelect`, and `NumberField` to create form fields. The form is structured into different sections using the `SettingGroup` component, each section corresponding to a different category of settings. The form's state is managed using the `useForm` hook from `react-hook-form`, and the form's data is validated using a schema defined with `zod`.
+
+## References
+
+- `UserConfigSchema` from `config-schema.ts` is used for form validation.
+- `saveUserConfig` from `requests.ts` is used to persist user settings.
+- `useUserConfig` from `config.ts` is used to access and update the user configuration state.
+- `KEYMAP_PRESETS` and `THEMES` are used to populate select options for keymap and theme settings.
+
+## Symbols
+
+### `UserConfigForm`
+#### Description
+The `UserConfigForm` component renders a form that allows users to configure various settings for the Marimo application. It handles form submission, validation, and updates the user configuration state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The component does not take any props. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The component does not return any values. |
+
+#### Internal Logic
+- Initializes form state using `useForm` with default values from the current user configuration.
+- Defines an `onSubmit` function to save the form data using `saveUserConfig` and update the configuration state.
+- Renders form fields for various settings categories, such as Editor, Display, Package Management, Runtime, AI Assist, and AI Code Completion.
+- Uses conditional rendering to display additional fields based on user selections, such as API key input for Codeium when selected as the copilot provider.
+
+### `SettingGroup`
+#### Description
+A helper component used to group related form fields under a common title. It provides a consistent layout for different sections of the form.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | string | The title of the setting group. |
+| children | React.ReactNode | The form fields to be displayed within the group. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The component does not return any values. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-hook-form` | Manages form state and validation. |
+| `zod` | Provides schema validation for form data. |
+| `jotai` | Manages global state for user configuration. |
+
+## Error Handling
+
+The form uses `zod` for schema validation, which ensures that the form data adheres to the expected structure and types. Validation errors are displayed using the `FormMessage` component.
+
+## Logging
+
+No explicit logging is implemented in this file. However, errors during form submission are likely handled by the `saveUserConfig` function, which may include logging.
+
+## TODOs
+
+No TODOs or notes are present in the code.

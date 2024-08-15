@@ -1,0 +1,83 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The target file, `utils.py`, provides utility functions to determine the environment in which a Python script is running. It includes functions to check if the script is running in a virtual environment, a Conda environment, or an isolated Python environment (such as Pyodide). These checks are useful for configuring the runtime behavior of applications based on the environment.
+
+## Code Structure
+
+The main symbols in the code are three functions: `in_virtual_environment`, `in_conda_env`, and `is_python_isolated`. These functions are interconnected in that `is_python_isolated` uses the other two functions to determine if the Python environment is isolated.
+
+## Symbols
+
+### `in_virtual_environment`
+#### Description
+This function checks if the current Python interpreter is running inside a virtual environment. It does this by comparing the `sys.prefix` with `sys.base_prefix` or `sys.real_prefix`.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Returns `True` if a virtual environment is activated, otherwise `False`. |
+
+#### Internal Logic
+- The function retrieves `base_prefix` or `real_prefix` from the `sys` module.
+- It compares `sys.prefix` with the retrieved prefix to determine if they are different, which indicates a virtual environment is active.
+
+### `in_conda_env`
+#### Description
+This function checks if the current Python interpreter is running inside a Conda environment by looking for the `CONDA_DEFAULT_ENV` variable in the environment variables.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Returns `True` if a Conda environment is detected, otherwise `False`. |
+
+#### Internal Logic
+- The function checks if the `CONDA_DEFAULT_ENV` key exists in the `os.environ` dictionary.
+
+### `is_python_isolated`
+#### Description
+This function determines if the Python environment is isolated, meaning it is not using the system Python. It checks for a virtual environment, a Conda environment, or if it is running in Pyodide.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Returns `True` if the Python environment is isolated, otherwise `False`. |
+
+#### Internal Logic
+- The function calls `in_virtual_environment`, `in_conda_env`, and `is_pyodide` to determine if any of these conditions are true, indicating an isolated environment.
+
+## References
+
+- The function `is_pyodide` is imported from `marimo._utils.platform` and is used in `is_python_isolated` to check if the environment is Pyodide.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used to access environment variables to check for Conda environment. |
+| `sys` | Used to access system-specific parameters and functions to check for virtual environments. |
+| `marimo._utils.platform` | Provides the `is_pyodide` function to check for Pyodide environment. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic exception raising. It assumes that the environment variables and system attributes it accesses are available and valid.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

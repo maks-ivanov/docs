@@ -1,0 +1,109 @@
+---
+title: "query-form.tsx"
+---
+
+## High-level description
+
+The `query-form.tsx` file defines a React component called `QueryForm` that is part of a data visualization tool. This component allows users to configure chart specifications by selecting encoding channels and marks for data visualization. It provides a user interface for selecting fields and functions for data encoding, as well as choosing the type of mark (e.g., bar, line) to be used in the chart.
+
+## Code Structure
+
+- **`QueryForm` Component**: The main component that renders the form for selecting chart encodings and marks.
+- **`FieldSelect` Component**: A sub-component used within `QueryForm` to render a dropdown for selecting fields and their associated functions.
+- **`FieldOptions` Component**: A sub-component that provides additional options for field functions, such as aggregation or temporal functions.
+
+## References
+
+- **`chartSpecAtom`**: An atom from the state management system Jotai, used to manage the state of the chart specification.
+- **`useChartSpecActions`**: A hook that provides actions to modify the chart specification state.
+- **`Schema`**: Represents the schema of the data, used to determine field types and available fields.
+- **`SpecMark`**: Represents the type of mark used in the chart, such as bar, line, etc.
+
+## Symbols
+
+### `QueryForm`
+#### Description
+The `QueryForm` component allows users to configure the encodings and mark type for a chart. It uses a form interface to let users select fields and functions for each encoding channel and choose a mark type for the chart.
+
+#### Inputs
+| Name  | Type   | Description          |
+|:------|:-------|:---------------------|
+| schema | Schema | The schema of the data, providing field names and types. |
+| mark   | SpecMark | The current mark type for the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered form component. |
+
+#### Internal Logic
+- Uses `useAtomValue` to access the current chart specification state.
+- Uses `useChartSpecActions` to get actions for updating the chart specification.
+- Renders encoding channels using the `FieldSelect` component.
+- Renders a dropdown for selecting the mark type using the `Select` component.
+
+### `FieldSelect`
+#### Description
+The `FieldSelect` component renders a dropdown for selecting a field and its associated function for a given encoding channel.
+
+#### Inputs
+| Name            | Type          | Description |
+|:----------------|:--------------|:------------|
+| label           | string        | The label for the field select. |
+| schema          | Schema        | The schema of the data. |
+| fieldDefinition | FieldDefinition | The current field definition for the encoding channel. |
+| disabled        | boolean       | Whether the select is disabled. |
+| onChange        | function      | Callback function to handle changes in field selection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered field select component. |
+
+#### Internal Logic
+- Renders the current field value or a placeholder if no field is selected.
+- Provides a dropdown of available fields from the schema.
+- Allows clearing the selected field.
+- Calls `onChange` with the new field definition when a selection is made.
+
+### `FieldOptions`
+#### Description
+The `FieldOptions` component provides additional options for field functions, such as aggregation or temporal functions, based on the field type.
+
+#### Inputs
+| Name  | Type          | Description |
+|:------|:--------------|:------------|
+| field | FieldDefinition | The current field definition. |
+| onChange | function    | Callback function to handle changes in field function. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered field options component. |
+
+#### Internal Logic
+- Determines available functions based on the field type (quantitative or temporal).
+- Renders a dropdown for selecting a function.
+- Calls `onChange` with the updated field definition when a function is selected.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating React components. |
+| `jotai` | State management library used for managing global state. |
+| `compassql` | Provides schema and query utilities for data visualization. |
+| `lodash-es` | Utility library used for string manipulation. |
+| `lucide-react` | Icon library used for rendering icons. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `QueryForm` component. However, it relies on the state management and schema utilities to ensure valid operations.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

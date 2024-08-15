@@ -1,0 +1,198 @@
+---
+title: "debugging_embeddings.py"
+---
+
+## High-level description
+
+The `debugging_embeddings.py` file is a script designed to demonstrate the process of sanity-checking embeddings using the `PyMDE` library, with a focus on the MNIST dataset. It provides a series of interactive cells that guide the user through creating a neighborhood-preserving embedding, visualizing distortions, and examining pairs of images with high and low distortion.
+
+## Code Structure
+
+The script is structured using the `marimo` library, which allows for the creation of interactive notebooks. Each function is decorated with `@app.cell`, indicating that it represents a cell in the notebook. The main components include setting up the environment, creating and visualizing embeddings, and analyzing distortion in the embeddings.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of `marimo.App`, which is used to create and manage the interactive notebook environment.
+
+### `__generated_with`
+#### Description
+A string indicating the version of the tool used to generate the script.
+
+### `@app.cell`
+#### Description
+A decorator provided by the `marimo` library that designates a function as a cell in the interactive notebook.
+
+### `__(mo)`
+#### Description
+A function that uses the `mo.md` method to render markdown content in the notebook, providing explanations and context for the embedding process.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The `marimo` module used for rendering markdown. |
+
+#### Outputs
+None
+
+### `__(n_neighbors)`
+#### Description
+A function that initializes and returns the number of neighbors for the k-NN graph, which is a parameter for the embedding process.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n_neighbors | int | The number of neighbors to consider in the k-NN graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n_neighbors | int | The number of neighbors. |
+
+### `__(mnist, plt, quadratic_mde, ready)`
+#### Description
+A function that computes the embedding using the `quadratic_mde` object, plots the embedding and distortions, and returns the results.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mnist | dataset | The MNIST dataset. |
+| plt | module | The `matplotlib.pyplot` module for plotting. |
+| quadratic_mde | object | The MDE problem instance for embedding. |
+| ready | bool | A flag indicating if the system is ready to compute the embedding. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| compute_embedding | function | The function to compute the embedding. |
+| distortions | array | The distortions of the embedding. |
+| pairs | array | The pairs of images with high distortion. |
+| plots | tuple | The plot axes for the embedding and distortions. |
+
+#### Internal Logic
+- Computes the embedding using `quadratic_mde.embed()`.
+- Plots the embedding and distortion CDF.
+- Identifies pairs with high distortion.
+
+### `__(knn, n_neighbors, ready)`
+#### Description
+A function that constructs the k-NN graph if the system is ready.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| knn | function | The function to compute k-NN. |
+| n_neighbors | int | The number of neighbors for the k-NN graph. |
+| ready | bool | A flag indicating if the system is ready. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| knn_graph | object | The k-NN graph. |
+
+### `__(functools, mnist, pymde)`
+#### Description
+A function that defines a cached function to compute the k-NN graph using `pymde`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| functools | module | The `functools` module for caching. |
+| mnist | dataset | The MNIST dataset. |
+| pymde | module | The `pymde` library for embeddings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| knn | function | The cached function to compute k-NN. |
+
+### `__(knn_graph, mnist, pymde, ready, torch)`
+#### Description
+A function that constructs the MDE problem using the k-NN graph and returns the problem instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| knn_graph | object | The k-NN graph. |
+| mnist | dataset | The MNIST dataset. |
+| pymde | module | The `pymde` library for embeddings. |
+| ready | bool | A flag indicating if the system is ready. |
+| torch | module | The `torch` library for checking CUDA availability. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| construct_mde_problem | function | The function to construct the MDE problem. |
+| quadratic_mde | object | The MDE problem instance. |
+
+#### Internal Logic
+- Checks for CUDA availability to set the device.
+- Constructs the MDE problem using `pymde.MDE`.
+
+### `__(mnist, plt)`
+#### Description
+A function that defines a plotting function for pairs of images.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mnist | dataset | The MNIST dataset. |
+| plt | module | The `matplotlib.pyplot` module for plotting. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plot_pairs | function | The function to plot pairs of images. |
+
+#### Internal Logic
+- Plots pairs of images in a grid format using `matplotlib`.
+
+### `__(pymde)`
+#### Description
+A function that loads the MNIST dataset using `pymde`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pymde | module | The `pymde` library for embeddings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mnist | dataset | The MNIST dataset. |
+
+### `__()`
+#### Description
+A function that imports necessary modules for the script.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| functools, mo, plt, pymde, torch | modules | The imported modules. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used for creating interactive notebook cells. |
+| `matplotlib.pyplot` | Used for plotting graphs and images. |
+| `pymde` | Used for creating and managing embeddings. |
+| `torch` | Used for checking CUDA availability. |
+| `functools` | Used for caching functions. |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond basic checks, such as verifying if the system is ready before proceeding with computations.
+
+## Logging
+
+The script does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The script does not expose an API but provides an interactive notebook interface through the `marimo` library.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

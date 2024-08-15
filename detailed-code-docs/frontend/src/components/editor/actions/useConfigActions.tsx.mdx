@@ -1,0 +1,67 @@
+---
+title: "useConfigActions.tsx"
+---
+
+## High-level description
+
+The `useConfigActions` function in the target file is a React hook that provides a set of configuration actions for a user interface. These actions allow users to modify application and user settings, such as changing the app's width, toggling dark mode, switching keymaps, and enabling or disabling GitHub Copilot. The actions are returned as an array of `ActionButton` objects, which can be used in UI components like dropdown menus or toolbars.
+
+## Code Structure
+
+- The `useConfigActions` function is the main symbol in the code, which utilizes several imported functions and constants to manage configuration actions.
+- It interacts with user and app configuration states through hooks like `useUserConfig` and `useAppConfig`.
+- It uses the `saveUserConfig` and `saveAppConfig` functions to persist configuration changes.
+- The `ActionButton` type from the `types.ts` file is used to define the structure of each action.
+
+## References
+
+- `saveAppConfig` and `saveUserConfig` from `@/core/network/requests` are used to save configuration changes.
+- `useAppConfig` and `useUserConfig` from `@/core/config/config` are used to access and update configuration states.
+- `APP_WIDTHS`, `AppConfig`, and `UserConfig` from `@/core/config/config-schema` define the possible configurations and their schemas.
+- `useTheme` from `@/theme/useTheme` is used to determine the current theme setting.
+
+## Symbols
+
+### `useConfigActions`
+#### Description
+The `useConfigActions` function provides a set of configuration actions that can be used to modify user and application settings. It returns an array of `ActionButton` objects, each representing a specific action that can be performed, such as changing the app's width or toggling dark mode.
+
+#### Inputs
+None directly, but it uses hooks to access configuration states and the current theme.
+
+#### Outputs
+| Name    | Type           | Description                                      |
+|:--------|:---------------|:-------------------------------------------------|
+| actions | `ActionButton[]` | An array of actions that can be performed on the configuration. |
+
+#### Internal Logic
+- The function retrieves the current theme and configuration states using `useTheme`, `useUserConfig`, and `useAppConfig`.
+- It defines two asynchronous handlers, `handleUserConfig` and `handleAppConfig`, to save user and app configurations, respectively.
+- It constructs an array of `ActionButton` objects, each representing a configuration action. These actions include:
+  - Changing the app's width to one of the predefined `APP_WIDTHS`.
+  - Toggling between light and dark themes.
+  - Switching the keymap between "vim" and "default".
+  - Enabling or disabling GitHub Copilot.
+- Each action has a `label` and a `handle` function that performs the action when invoked.
+- The function filters out any actions that are marked as hidden before returning the array.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/core/network/requests` | Provides functions to save user and app configurations. |
+| `@/core/config/config` | Provides hooks to access and update configuration states. |
+| `@/core/config/config-schema` | Defines configuration schemas and constants. |
+| `@/theme/useTheme` | Provides the current theme setting. |
+
+## Error Handling
+
+The code uses promises with `.then()` to handle the asynchronous saving of configurations. However, it does not explicitly handle errors that might occur during these operations. This could be improved by adding `.catch()` blocks to handle potential errors gracefully.
+
+## Logging
+
+No explicit logging is implemented in this code. Adding logging for configuration changes could be beneficial for debugging and auditing purposes.
+
+## TODOs
+
+No TODOs or notes are present in the code.

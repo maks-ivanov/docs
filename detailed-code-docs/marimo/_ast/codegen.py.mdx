@@ -1,0 +1,197 @@
+---
+title: "codegen.py"
+---
+
+## High-level description
+
+The `codegen.py` file in the `marimo/_ast` directory is responsible for generating Python code from a sequence of code cells, which are part of a Marimo application. It provides functionality to convert these cells into a Python script, handling both parsable and unparsable code, and includes mechanisms for managing cell configurations and app configurations. The file also includes utilities for recovering code from a disconnected frontend and loading an app from a file.
+
+## Code Structure
+
+The main symbols in the code are functions that handle different aspects of code generation and app management. These functions interact with each other to transform cell data into a structured Python script, manage configurations, and handle errors. The key functions include `generate_filecontents`, `to_functiondef`, `generate_unparsable_cell`, and `get_app`.
+
+## References
+
+- `App` and `_AppConfig` from `marimo._ast.app`: Used for managing the application and its configuration.
+- `CellConfig` and `CellImpl` from `marimo._ast.cell`: Used for managing cell configurations and implementations.
+- `compile_cell` from `marimo._ast.compiler`: Used to compile cell code.
+- `Name` from `marimo._ast.visitor`: Used for handling variable names.
+
+## Symbols
+
+### `indent_text`
+#### Description
+Indents each line of a given text by a predefined number of spaces.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The text to be indented. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| indented_text | str | The indented text. |
+
+### `_multiline_tuple`
+#### Description
+Formats a sequence of strings into a multiline tuple representation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| elems | Sequence[str] | A sequence of strings to be formatted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tuple_str | str | The formatted multiline tuple string. |
+
+### `_to_decorator`
+#### Description
+Converts a `CellConfig` object into a string representation of a decorator.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | Optional[CellConfig] | The cell configuration to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| decorator_str | str | The string representation of the decorator. |
+
+### `to_functiondef`
+#### Description
+Generates a function definition string from a `CellImpl` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | CellImpl | The cell implementation to convert. |
+| name | str | The name of the function. |
+| unshadowed_builtins | Optional[set[Name]] | Builtins not shadowed by other cells. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| function_def | str | The generated function definition string. |
+
+#### Internal Logic
+- Determines which builtins are not shadowed and should not be included as function arguments.
+- Constructs the function signature and body, handling async functions and long signatures.
+
+### `generate_unparsable_cell`
+#### Description
+Generates a string representation for a cell that cannot be parsed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code of the unparsable cell. |
+| name | Optional[str] | The name of the cell. |
+| config | CellConfig | The configuration of the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| unparsable_cell_str | str | The string representation of the unparsable cell. |
+
+### `generate_app_constructor`
+#### Description
+Generates the constructor string for an app with a given configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | Optional[_AppConfig] | The app configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_constructor_str | str | The generated app constructor string. |
+
+### `generate_filecontents`
+#### Description
+Translates a sequence of code cells into a complete Python file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | list[str] | The list of code strings for each cell. |
+| names | list[str] | The list of names for each cell. |
+| cell_configs | list[CellConfig] | The list of configurations for each cell. |
+| config | Optional[_AppConfig] | The app configuration. |
+| header_comments | Optional[str] | Header comments to include in the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_contents | str | The generated Python file contents. |
+
+#### Internal Logic
+- Compiles each cell and handles syntax errors by generating unparsable cell representations.
+- Constructs the file with imports, app constructor, and function definitions for each cell.
+
+### `get_app`
+#### Description
+Loads and returns an app from a Marimo-generated module file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | Optional[str] | The filename of the module to load. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Optional[App] | The loaded app, or None if loading fails. |
+
+#### Internal Logic
+- Reads the file and checks for the presence of an app object.
+- Handles different file types, such as Markdown, by converting them to apps.
+
+### `recover`
+#### Description
+Generates a module for code recovered from a disconnected frontend.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The filename containing the JSON representation of cells. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| recovered_code | str | The generated module code from the recovered cells. |
+
+### `get_header_comments`
+#### Description
+Extracts header comments from a file, ensuring they are valid.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The filename to extract comments from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| header_comments | Optional[str] | The extracted header comments, or None if invalid. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast` | Used for parsing and analyzing Python code. |
+| `importlib.util` | Used for dynamically importing modules. |
+| `json` | Used for handling JSON data, particularly in recovery. |
+| `os` | Used for file and path operations. |
+
+## Error Handling
+
+The code includes error handling for syntax errors in cells, using try-except blocks to catch `SyntaxError` exceptions and generate appropriate representations for unparsable cells. Additionally, it raises `RuntimeError` and `MarimoFileError` for issues related to module loading and app attributes.
+
+## Logging
+
+The code does not explicitly implement logging, but it is likely integrated with the broader Marimo framework's logging mechanisms, as indicated by the presence of `LOGGER` in related files.

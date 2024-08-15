@@ -1,0 +1,71 @@
+---
+title: "test_formatter_utils.py"
+---
+
+## High-level description
+
+The target file `test_formatter_utils.py` contains unit tests for the `src_or_src_doc` function from the `marimo._output.formatters.utils` module. This function determines whether to return an HTML content as a `src` or `srcdoc` attribute for an iframe, based on the context in which it is executed. The tests verify the correct behavior of this function in different scenarios, such as when running in a notebook environment with or without virtual file support.
+
+## Code Structure
+
+The main symbols in the code are two test functions: `test_srcdoc_in_notebook` and `test_src_in_notebook`. These functions test the behavior of the `src_or_src_doc` function under different conditions. The `test_src_in_notebook` function uses the `unittest.mock.patch` decorator to mock the behavior of the `mo_data.html` function, which is used within `src_or_src_doc`.
+
+## Symbols
+
+### `test_srcdoc_in_notebook`
+#### Description
+This test function verifies that the `src_or_src_doc` function returns the correct `srcdoc` attribute when the context does not support virtual files.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- It creates a sample HTML content.
+- Escapes the HTML content using `html.escape`.
+- Calls the `src_or_src_doc` function with the HTML content.
+- Asserts that the result is a dictionary with the `srcdoc` key containing the escaped HTML content.
+
+### `test_src_in_notebook`
+#### Description
+This test function checks that the `src_or_src_doc` function returns the correct `src` attribute when the context supports virtual files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_html | Any | Mock object for the `mo_data.html` function. |
+| executing_kernel | Kernel | A mocked kernel object. |
+| exec_req | ExecReqProvider | A provider for execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- It uses the `patch` decorator to mock the `mo_data.html` function to return a mock object with a `url` attribute.
+- It creates a sample HTML content.
+- Calls the `src_or_src_doc` function with the HTML content.
+- Asserts that the result is a dictionary with the `src` key containing the mocked URL.
+- Verifies that the `mo_data.html` function was called once with the HTML content.
+
+## References
+
+- `src_or_src_doc`: This function is imported from `marimo._output.formatters.utils` and is the main function being tested.
+- `Kernel`: A class from `marimo._runtime.runtime` used in the `test_src_in_notebook` test to simulate a kernel environment.
+- `ExecReqProvider`: A class from `tests.conftest` used to provide execution requests in the `test_src_in_notebook` test.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `html` | Used to escape HTML content. |
+| `unittest.mock` | Used to mock functions and objects for testing. |
+
+## Error Handling
+
+The test functions use assertions to verify the expected outcomes. If the assertions fail, they will raise an `AssertionError`, indicating that the function did not behave as expected.
+
+## Logging
+
+No explicit logging is implemented in the test functions. However, the `unittest.mock` library provides some logging capabilities, such as tracking function calls, which are used in the `test_src_in_notebook` test.

@@ -1,0 +1,55 @@
+---
+title: "routes.ts"
+---
+
+## High-level description
+
+The `TinyRouter` class in the `frontend/src/utils/routes.ts` file is a simple routing utility designed to match URL paths against a set of predefined templates. It uses the `path-to-regexp` library to create match functions for each template, allowing it to determine if a given location matches any of the specified routes. This utility is particularly useful for client-side routing in web applications.
+
+## Code Structure
+
+The `TinyRouter` class is the main symbol in this file. It contains a constructor that initializes the router with a list of route templates and a `match` method that checks if a given location matches any of these templates. The `match` method returns the matched route and its template if a match is found, or `false` if no match is found.
+
+## Symbols
+
+### `TinyRouter`
+#### Description
+The `TinyRouter` class is a lightweight router that matches URL paths against a set of predefined templates. It uses the `path-to-regexp` library to create match functions for each template, enabling it to determine if a given location matches any of the specified routes.
+
+#### Inputs
+| Name      | Type     | Description                        |
+|:----------|:---------|:-----------------------------------|
+| templates | string[] | An array of route templates to match against. |
+
+#### Outputs
+| Name   | Type                                      | Description                                                                 |
+|:-------|:------------------------------------------|:----------------------------------------------------------------------------|
+| output | `[Match&lt;ParamData&gt;, template: string]` or `false` | Returns a tuple containing the match object and the template string if a match is found, or `false` if no match is found. |
+
+#### Internal Logic
+- **Constructor**: Initializes the `TinyRouter` with an array of route templates. For each template, it creates a match function using the `path-to-regexp` library.
+- **`match` Method**: Iterates over the routes and uses the match function to check if the current location's hash or pathname matches any of the templates. If a match is found, it returns the match object and the template. If no match is found, it returns `false`.
+
+## References
+
+- **`path-to-regexp`**: This library is used to create match functions for the route templates. It is crucial for the functionality of the `TinyRouter` as it provides the mechanism to match URL paths against the templates.
+
+## Dependencies
+
+| Dependency      | Purpose                                                                 |
+|:----------------|:------------------------------------------------------------------------|
+| `path-to-regexp` | Used to create match functions for route templates, enabling path matching. |
+
+## Related Code Snippets
+
+- **`RoutesPlugin` in `frontend/src/plugins/layout/RoutesPlugin.tsx`**: This file uses the `TinyRouter` to manage route matching in a React component. It demonstrates how the `TinyRouter` is integrated into a larger application, handling route changes and rendering the appropriate components based on the current URL.
+  
+- **`routes.test.ts` in `frontend/src/utils/__tests__/routes.test.ts`**: This test file provides unit tests for the `TinyRouter` class, verifying its ability to correctly match paths and handle various routing scenarios, including hash-based routes and nested routes.
+
+## Error Handling
+
+The `TinyRouter` class does not implement specific error handling mechanisms beyond returning `false` when no match is found. This behavior is expected and handled by the consuming code, such as the `RoutesPlugin`.
+
+## Logging
+
+The `TinyRouter` class does not implement any logging mechanisms. Any logging would need to be handled by the consuming code or added as an enhancement to the class itself.

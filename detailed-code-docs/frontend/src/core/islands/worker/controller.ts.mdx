@@ -1,0 +1,85 @@
+---
+title: "controller.ts"
+---
+
+## High-level description
+
+The `ReadonlyWasmController` class in the `controller.ts` file is a specialized controller for managing WebAssembly (Wasm) environments, specifically tailored for read-only operations. It extends the `DefaultWasmController` to provide functionalities such as bootstrapping the Pyodide environment, mounting a filesystem, and starting a session with specific configurations. This class is part of a larger system that integrates Python execution within a web application using Pyodide and WebAssembly.
+
+## Code Structure
+
+- `ReadonlyWasmController` extends `DefaultWasmController`, inheriting its methods and overriding them to provide specific implementations for bootstrapping, mounting filesystems, and starting sessions.
+- The class interacts with the `WasmFileSystem` for filesystem operations and uses the `Logger` for error logging.
+- It utilizes the `defaultUserConfig` from the configuration schema to manage user-specific settings during session initialization.
+
+## References
+
+- `DefaultWasmController`: The base class providing core functionalities for Wasm environment management.
+- `WasmFileSystem`: A utility for managing filesystem operations within the Wasm environment.
+- `Logger`: A utility for logging errors and other messages.
+- `defaultUserConfig`: A function providing default user configuration settings.
+- `SerializedBridge`: A type representing a serialized communication bridge for session management.
+
+## Symbols
+
+### `ReadonlyWasmController`
+#### Description
+The `ReadonlyWasmController` class is responsible for managing a read-only WebAssembly environment using Pyodide. It provides methods to bootstrap the environment, mount a filesystem, and start a session with specific configurations.
+
+#### Inputs
+- `bootstrap`: 
+  | Name          | Type   | Description                        |
+  |:--------------|:-------|:-----------------------------------|
+  | `opts`        | object | Options containing version details |
+
+- `mountFilesystem`: 
+  | Name          | Type   | Description                        |
+  |:--------------|:-------|:-----------------------------------|
+  | `opts`        | object | Options containing code and filename |
+
+- `startSession`: 
+  | Name          | Type   | Description                        |
+  |:--------------|:-------|:-----------------------------------|
+  | `opts`        | object | Options containing code, filename, and a message handler |
+
+#### Outputs
+- `bootstrap`: 
+  | Name     | Type              | Description                        |
+  |:---------|:------------------|:-----------------------------------|
+  | `pyodide`| `PyodideInterface`| The initialized Pyodide interface  |
+
+- `mountFilesystem`: 
+  | Name     | Type   | Description                        |
+  |:---------|:-------|:-----------------------------------|
+  | `result` | object | Contains the code and filename used |
+
+- `startSession`: 
+  | Name     | Type              | Description                        |
+  |:---------|:------------------|:-----------------------------------|
+  | `bridge` | `SerializedBridge`| The communication bridge for the session |
+
+#### Internal Logic
+- **bootstrap**: Calls the parent class's `bootstrap` method to initialize the Pyodide environment with the specified version.
+- **mountFilesystem**: Uses `WasmFileSystem` to create a home directory and initialize notebook code, handling any errors by logging them.
+- **startSession**: Initiates a session by calling the parent class's `startSession` method with additional parameters like user configuration and message handling.
+
+## Side Effects
+- The `mountFilesystem` method modifies the filesystem state by creating directories and writing files.
+- The `startSession` method initializes a session that may alter the state of the Wasm environment.
+
+## Dependencies
+
+| Dependency       | Purpose                                      |
+|:-----------------|:---------------------------------------------|
+| `pyodide`        | Provides Python execution in the browser     |
+| `Logger`         | Logs errors and messages                     |
+| `WasmFileSystem` | Manages filesystem operations in Wasm        |
+| `defaultUserConfig` | Provides default user configuration settings |
+
+## Error Handling
+- Errors during filesystem operations and session initialization are caught and logged using the `Logger`.
+
+## Logging
+- The `Logger` is used to log errors encountered during filesystem operations and session initialization.
+
+This documentation provides a detailed overview of the `ReadonlyWasmController` class, its methods, and its interactions with other components in the system. The class is a crucial part of integrating Python execution within a web application using WebAssembly and Pyodide.

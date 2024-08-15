@@ -1,0 +1,62 @@
+---
+title: "TextOutput.tsx"
+---
+
+## High-level description
+
+The `TextOutput` component in the `TextOutput.tsx` file is a React functional component designed to render text output in a web application. It supports rendering ANSI-styled text as HTML when the output channel is specified as "stdout", allowing for styled console outputs. The component uses the `AnsiUp` library to convert ANSI codes to HTML and applies CSS classes conditionally based on the output channel.
+
+## Code Structure
+
+The `TextOutput` component is the main symbol in this file. It utilizes the `AnsiUp` library to handle ANSI text conversion and the `cn` utility function to manage CSS class names. The component is designed to be used within a larger output rendering system, as indicated by its usage in the `OutputRenderer` component from the related `Output.tsx` file.
+
+## Symbols
+
+### `TextOutput`
+#### Description
+The `TextOutput` component is responsible for rendering text output, with special handling for ANSI-styled text when the output channel is "stdout". It conditionally applies CSS classes and uses the `AnsiUp` library to convert ANSI codes to HTML for styled text rendering.
+
+#### Inputs
+| Name    | Type          | Description                                      |
+|:--------|:--------------|:-------------------------------------------------|
+| text    | string        | The text content to be rendered.                 |
+| channel | OutputChannel | (Optional) The channel type, affecting rendering.|
+
+#### Outputs
+| Name | Type       | Description                        |
+|:-----|:-----------|:-----------------------------------|
+| -    | JSX.Element| A span element containing the text.|
+
+#### Internal Logic
+- The component checks if the `channel` is "stdout" to determine if ANSI conversion is needed.
+- If ANSI conversion is required, it uses the `AnsiUp` instance to convert the text to HTML and renders it using `dangerouslySetInnerHTML`.
+- The `cn` utility function is used to conditionally apply CSS classes based on the `channel` value.
+
+## References
+
+- **`OutputChannel`**: This type is imported from `@/core/kernel/messages` and is used to determine the type of output channel, which affects how the text is rendered.
+- **`cn`**: A utility function imported from `@/utils/cn` to manage CSS class names.
+- **`AnsiUp`**: A library used to convert ANSI escape codes to HTML, enabling styled text rendering.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `ansi_up`  | Converts ANSI escape codes to HTML.          |
+| `@/utils/cn` | Utility for merging and applying CSS classes.|
+
+## Error Handling
+
+The component does not explicitly handle errors. It assumes that the `text` input is a valid string and that the `AnsiUp` conversion will succeed without issues.
+
+## Side Effects
+
+- The component uses `dangerouslySetInnerHTML` to render HTML, which can introduce security risks if the input text is not properly sanitized. However, this is necessary for rendering ANSI-styled text.
+
+## Performance Considerations
+
+- The use of `AnsiUp` for converting ANSI codes to HTML is efficient for typical console output sizes, but performance could degrade with very large text inputs due to the complexity of parsing and converting ANSI codes.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

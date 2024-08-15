@@ -1,0 +1,119 @@
+---
+title: "state.ts"
+---
+
+## High-level description
+
+The target file, `state.ts`, is responsible for managing the state of the Chrome component in a web application. It defines the structure of the state, initializes it, and provides actions to manipulate the state, such as opening applications, toggling the sidebar and terminal, and setting their open states. The state is persisted using local storage, ensuring that user preferences are maintained across sessions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ChromeState`: An interface defining the structure of the state.
+- `initialState`: A function that returns the initial state.
+- `ZodLocalStorage`: A class used to persist the state in local storage.
+- `createReducerAndAtoms`: A utility function that creates a reducer and associated actions for managing the state.
+- `useChromeState` and `useChromeActions`: Hooks that provide access to the state and actions, respectively.
+
+## Symbols
+
+### `ChromeState`
+#### Description
+Defines the structure of the state for the Chrome component, including which panel is selected and whether the sidebar and terminal are open.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `initialState`
+#### Description
+Returns the initial state for the Chrome component, setting default values for the selected panel, sidebar, and terminal.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `ChromeState` | The initial state of the Chrome component. |
+
+### `ZodLocalStorage`
+#### Description
+A class that manages the persistence of the Chrome state in local storage using a Zod schema for validation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | `string` | The key under which the state is stored in local storage. |
+| schema | `ZodType` | The Zod schema used to validate the state. |
+| getDefaultValue | `() =&gt; T` | A function that returns the default state value. |
+
+#### Outputs
+None
+
+### `createReducerAndAtoms`
+#### Description
+A utility function that creates a reducer and associated actions for managing the Chrome state, including middleware for persisting state changes to local storage.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| initialState | `() =&gt; State` | A function that returns the initial state. |
+| reducers | `ReducerHandlers&lt;State&gt;` | An object defining the reducer functions for state transitions. |
+| middleware | `Array&lt;Middleware&lt;State&gt;&gt;` | An optional array of middleware functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `object` | An object containing the reducer, actions, and state atom. |
+
+### `useChromeState`
+#### Description
+A hook that provides access to the current state of the Chrome component, with logic to hide the selected panel if the sidebar is closed.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `ChromeState` | The current state of the Chrome component. |
+
+### `useChromeActions`
+#### Description
+A hook that provides access to the actions for manipulating the Chrome state.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| actions | `object` | An object containing the actions for manipulating the state. |
+
+## References
+
+- `createReducerAndAtoms` from `@/utils/createReducer`: Used to create the reducer and actions for managing the state.
+- `ZodLocalStorage` from `@/utils/localStorage`: Used for persisting the state in local storage.
+- `PanelType` from `./types`: Used to define the type of the selected panel in the state.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management with atoms. |
+| `zod` | Used for schema validation of the state. |
+
+## Error Handling
+
+The `ZodLocalStorage` class includes error handling to return the default state if there is an issue retrieving or parsing the state from local storage.
+
+## Side Effects
+
+- The state is persisted in local storage, which affects the global state of the application.
+
+## Performance Considerations
+
+- The use of local storage for state persistence ensures that state retrieval and updates are fast, but it may not be suitable for very large state objects due to storage size limitations.

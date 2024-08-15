@@ -1,0 +1,87 @@
+---
+title: "polars_table.py"
+---
+
+## High-level description
+
+The `polars_table.py` file defines a `PolarsTableManagerFactory` class that creates a `PolarsTableManager` for managing and manipulating data stored in Polars DataFrames. This manager provides functionalities such as converting data to CSV or JSON formats, applying formatting, filtering, selecting rows or columns, and summarizing column data. It is part of a larger system for handling different types of data tables in a unified manner.
+
+## Code Structure
+
+The main class in this file is `PolarsTableManagerFactory`, which is responsible for creating instances of `PolarsTableManager`. The `PolarsTableManager` class extends the `TableManager` abstract class, implementing its methods specifically for Polars DataFrames. The `PolarsTableManager` provides various data manipulation and export functionalities, leveraging the Polars library.
+
+## Symbols
+
+### `PolarsTableManagerFactory`
+#### Description
+The `PolarsTableManagerFactory` is a factory class for creating instances of `PolarsTableManager`. It provides a static method to return the package name and another to create a new `PolarsTableManager`.
+
+#### Methods
+- `package_name()`: Returns the string "polars", indicating the package this factory is associated with.
+- `create()`: Dynamically defines and returns the `PolarsTableManager` class, which is tailored to handle Polars DataFrames.
+
+### `PolarsTableManager`
+#### Description
+The `PolarsTableManager` class is a concrete implementation of the `TableManager` abstract class, specifically designed to manage Polars DataFrames. It provides methods for data export, formatting, filtering, and summarization.
+
+#### Methods
+
+- `to_csv(format_mapping: Optional[FormatMapping] = None) -&gt; bytes`: Converts the DataFrame to a CSV format, applying any specified formatting. Handles exceptions related to unsupported data types by converting them to JSON or strings.
+
+- `to_json() -&gt; bytes`: Converts the DataFrame to a JSON format.
+
+- `apply_formatting(format_mapping: FormatMapping) -&gt; pl.DataFrame`: Applies a given formatting to the DataFrame based on a mapping of column names to formatting functions or strings.
+
+- `supports_filters() -&gt; bool`: Returns `True`, indicating that this manager supports filtering operations.
+
+- `select_rows(indices: list[int]) -&gt; TableManager[pl.DataFrame]`: Selects and returns a new `PolarsTableManager` with only the specified rows.
+
+- `select_columns(columns: list[str]) -&gt; TableManager[pl.DataFrame]`: Selects and returns a new `PolarsTableManager` with only the specified columns.
+
+- `get_row_headers() -&gt; list[str]`: Returns an empty list, indicating no specific row headers are defined.
+
+- `is_type(value: Any) -&gt; bool`: Checks if the given value is a Polars DataFrame.
+
+- `get_field_types() -&gt; FieldTypes`: Returns a dictionary mapping each column to its field type and external data type.
+
+- `limit(num: int) -&gt; PolarsTableManager`: Limits the DataFrame to the first `num` rows.
+
+- `search(query: str) -&gt; TableManager[Any]`: Searches for the query string in all columns and returns a new `PolarsTableManager` with the filtered results.
+
+- `get_summary(column: str) -&gt; ColumnSummary`: Provides a summary of the specified column, including statistics like total count, nulls, unique values, min, max, mean, etc.
+
+- `get_num_rows(force: bool = True) -&gt; int`: Returns the number of rows in the DataFrame.
+
+- `get_num_columns() -&gt; int`: Returns the number of columns in the DataFrame.
+
+- `get_column_names() -&gt; list[str]`: Returns a list of column names in the DataFrame.
+
+- `get_unique_column_values(column: str) -&gt; list[str | int | float]`: Returns a list of unique values in the specified column.
+
+- `sort_values(by: ColumnName, descending: bool) -&gt; PolarsTableManager`: Sorts the DataFrame by the specified column in either ascending or descending order.
+
+- `_get_field_type(column: pl.Series) -&gt; Tuple[FieldType, ExternalDataType]`: Determines the field type and external data type of a given column.
+
+## References
+
+- `ColumnSummary`, `ExternalDataType`, `NonNestedLiteral` from `marimo._data.models`: Used for summarizing column data and defining data types.
+- `FormatMapping`, `format_value` from `marimo._plugins.ui._impl.tables.format`: Used for applying formatting to data.
+- `TableManager`, `TableManagerFactory` from `marimo._plugins.ui._impl.tables.table_manager`: The base classes that `PolarsTableManager` and `PolarsTableManagerFactory` extend and implement.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `polars` | Used for handling and manipulating DataFrames. |
+
+## Error Handling
+
+- The `to_csv` method includes error handling for `pl.exceptions.ComputeError`, which occurs when the CSV format does not support certain data types. It attempts to convert these columns to JSON or strings as a fallback.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

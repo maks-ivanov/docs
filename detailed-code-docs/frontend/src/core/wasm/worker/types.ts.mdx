@@ -1,0 +1,84 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file, `types.ts`, defines TypeScript interfaces and types for a WebAssembly (Wasm) controller and a bridge used in a frontend application. These interfaces facilitate interactions with a Python runtime environment, specifically Pyodide, which allows Python code execution in the browser. The file outlines the structure of requests and responses for various operations, such as file management and code execution, within this environment.
+
+## Code Structure
+
+The main symbols in the code are the `WasmController` and `RawBridge` interfaces, along with the `SerializedBridge` type. The `WasmController` interface defines methods for initializing the Wasm environment, mounting a filesystem, and starting a session. The `RawBridge` interface specifies methods for interacting with the Python environment, such as executing code, managing files, and formatting code. The `SerializedBridge` type is a transformation of the `RawBridge` interface, ensuring that certain methods return a `Promise&lt;string&gt;`.
+
+## Symbols
+
+### `WasmController`
+#### Description
+The `WasmController` interface defines methods for setting up and managing a WebAssembly environment that runs Python code using Pyodide. It includes methods for bootstrapping the environment, mounting a filesystem, and starting a session.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts.version | string | The version of the Marimo application. |
+| opts.pyodideVersion | string | The version of Pyodide to use. |
+| opts.code | string | The code to mount or start with. |
+| opts.filename | string or null | The filename associated with the code. |
+| opts.queryParameters | Record&lt;string, string or string[]&gt; | Query parameters for the session. |
+| opts.userConfig | UserConfig | User configuration settings. |
+| opts.onMessage | function | Callback function for handling messages. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Promise&lt;PyodideInterface&gt; | A promise that resolves to the Pyodide interface. |
+| output | Promise&lt;{ code: string; filename: string }&gt; | A promise that resolves to an object containing the code and filename. |
+| output | Promise&lt;SerializedBridge&gt; | A promise that resolves to a serialized bridge for interacting with the Python environment. |
+
+### `RawBridge`
+#### Description
+The `RawBridge` interface defines methods for interacting with the Python environment through a bridge. It includes methods for executing code, managing files, and handling various requests related to code formatting, file operations, and configuration saving.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| operation | object | An operation object for control requests. |
+| input | string | Input string for the Python environment. |
+| request | Various types | Different request types for specific operations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Promise&lt;string&gt; | A promise that resolves to a string response. |
+| output | Promise&lt;{ contents: string }&gt; | A promise that resolves to an object containing file contents. |
+| output | Promise&lt;Snippets&gt; | A promise that resolves to code snippets. |
+| output | Promise&lt;FormatResponse&gt; | A promise that resolves to a format response. |
+| output | Promise&lt;null&gt; | A promise that resolves to null for certain operations. |
+
+### `SerializedBridge`
+#### Description
+The `SerializedBridge` type is a transformation of the `RawBridge` interface, ensuring that methods which take a `payload: string` return a `Promise&lt;string&gt;`. This type is used to serialize interactions with the Python environment, making it easier to handle responses as strings.
+
+## References
+
+- `PyodideInterface` from the `pyodide` package is used to interact with the Python runtime.
+- Various request and response types are imported from `../../network/types`, which define the structure of data exchanged with the backend.
+- `OperationMessage` from `@/core/kernel/messages` is used for handling messages within the application.
+- `JsonString` from `@/utils/json/base64` is used for JSON serialization and deserialization.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pyodide` | Provides the interface for running Python code in the browser. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the interfaces, as they are primarily type definitions. Error handling would be implemented in the actual implementation of these interfaces.
+
+## Logging
+
+The code does not implement logging directly, but related files such as `controller.ts` and `worker.tsx` use a `Logger` utility for logging errors and messages.
+
+## API/Interface Reference
+
+The `WasmController` and `RawBridge` interfaces define a set of methods that act as an API for interacting with the Python runtime environment. These methods are used to manage the environment, execute code, and handle file operations.

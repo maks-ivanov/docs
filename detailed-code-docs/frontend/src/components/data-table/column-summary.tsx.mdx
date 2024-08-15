@@ -1,0 +1,68 @@
+---
+title: "column-summary.tsx"
+---
+
+## High-level description
+
+The `TableColumnSummary` component in the `column-summary.tsx` file is a React component designed to display a summary of data for a specific column in a data table. It utilizes a context to retrieve chart specifications and data summaries, and conditionally renders a chart or textual statistics based on the data type and availability of a chart specification.
+
+## Code Structure
+
+- **`TableColumnSummary` Component**: The main component that renders the column summary.
+- **`ColumnChartContext`**: A React context used to provide chart specifications and summaries to the `TableColumnSummary` component.
+- **`LazyVegaLite`**: A lazily loaded component for rendering Vega-Lite charts.
+- **`DelayMount`**: A utility component used to delay the rendering of the chart for a smoother user experience.
+- **`ChartSkeleton`**: A placeholder component displayed while the chart is loading.
+
+## References
+
+- **`ColumnChartSpecModel`**: Provides methods to retrieve chart specifications and summaries for columns.
+- **`useTheme`**: A hook to determine the current theme (light or dark) for styling purposes.
+- **`prettyNumber`, `prettyScientificNumber`, `prettyDate`**: Utility functions for formatting numbers and dates.
+- **`DelayMount`**: Used to delay the rendering of components.
+- **`ChartSkeleton`**: Used as a fallback UI while the chart is loading.
+
+## Symbols
+
+### `TableColumnSummary`
+#### Description
+The `TableColumnSummary` component is responsible for rendering a summary of a data column, which may include a chart and/or textual statistics. It uses the `ColumnChartContext` to access the chart specifications and data summaries for the specified column.
+
+#### Inputs
+| Name     | Type   | Description                |
+|:---------|:-------|:---------------------------|
+| columnId | string | The identifier of the column for which the summary is to be displayed. |
+
+#### Outputs
+| Name  | Type           | Description                      |
+|:------|:---------------|:---------------------------------|
+| chart | React.ReactNode | A React node representing the chart or statistics for the column. |
+
+#### Internal Logic
+1. **Context Usage**: Retrieves the chart specification and summary for the given `columnId` from the `ColumnChartContext`.
+2. **Theme Application**: Uses the `useTheme` hook to determine the current theme for styling the chart.
+3. **Chart Rendering**: If a chart specification (`spec`) is available, it renders a `LazyVegaLite` component within a `DelayMount` to display the chart.
+4. **Statistics Rendering**: If no chart is available or in addition to the chart, it renders textual statistics based on the data type (`date`, `integer`, `number`, `boolean`, `string`, or `unknown`).
+5. **Conditional Logic**: Uses a switch statement to handle different data types and render appropriate statistics.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Used for creating React components and hooks. |
+| `react-vega` | Used for rendering Vega-Lite charts. |
+| `@/theme/useTheme` | Provides theme information for styling. |
+| `@/utils/numbers` | Provides utility functions for formatting numbers. |
+| `@/utils/dates` | Provides utility functions for formatting dates. |
+
+## Error Handling
+
+The component does not explicitly handle errors but relies on the robustness of the utility functions and context to provide valid data. If the context does not provide a valid chart specification or summary, the component gracefully handles the absence of data by not rendering a chart or statistics.
+
+## Logging
+
+There is no explicit logging within this component. However, utility functions like `prettyDate` may log warnings if they encounter errors during date parsing.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

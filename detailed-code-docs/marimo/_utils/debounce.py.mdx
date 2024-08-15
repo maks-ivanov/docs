@@ -1,0 +1,60 @@
+---
+title: "debounce.py"
+---
+
+## High-level description
+
+The code in `marimo/_utils/debounce.py` defines a `debounce` decorator that limits how frequently a function can be called. Specifically, it ensures that a function is not called more than once within a specified time interval (`wait_time`). This is useful for optimizing performance by reducing the number of times a function is executed, especially in response to high-frequency events.
+
+## Code Structure
+
+The main symbol in this code is the `debounce` function, which is a decorator. It takes a `wait_time` as an argument and returns a decorator function (`decorator`). This decorator function, when applied to another function (`func`), wraps it in a `wrapped` function that implements the debouncing logic.
+
+## Symbols
+
+### `debounce`
+#### Description
+The `debounce` function is a decorator that prevents a function from being called more than once every `wait_time` seconds. It achieves this by tracking the last time the function was called and only allowing subsequent calls if the specified time interval has passed.
+
+#### Inputs
+| Name      | Type     | Description                                      |
+|:----------|:---------|:-------------------------------------------------|
+| wait_time | float    | The minimum time interval between function calls |
+
+#### Outputs
+| Name | Type       | Description                                      |
+|:-----|:-----------|:-------------------------------------------------|
+|      | Callable   | A decorator that can be applied to a function to enforce debouncing |
+
+#### Internal Logic
+1. **Decorator Definition**: The `debounce` function defines a `decorator` function that takes a function `func` as an argument.
+2. **State Management**: Inside the `decorator`, a variable `last_called` is initialized to track the last time the function was called.
+3. **Function Wrapping**: The `decorator` defines a `wrapped` function that:
+   - Checks the current time.
+   - Compares it with `last_called` to determine if the `wait_time` has elapsed.
+   - If the time interval has passed, it updates `last_called` and calls the original function `func`.
+4. **Return**: The `wrapped` function is returned, cast to the same type as `func`.
+
+## References
+
+The `debounce` decorator is used in the related file `marimo/_plugins/stateless/status/_progress.py`, specifically in the `debounced_flush` method of the `_Progress` class. This method is responsible for flushing output to the UI, and the debouncing ensures that this operation is not performed too frequently, which could be inefficient.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `time`     | Used to get the current time for debouncing logic. |
+| `functools.wraps` | Used to preserve the metadata of the original function when it is wrapped. |
+| `typing`   | Provides type annotations for better code clarity and type checking. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It relies on Python's built-in exception handling mechanisms. If the `time` module fails to provide the current time, or if there are issues with function calls, these would raise exceptions naturally.
+
+## Logging
+
+There is no logging implemented in this code. The decorator is designed to be lightweight and does not include any logging of function calls or debouncing events.
+
+## Performance Considerations
+
+The `debounce` decorator is performance-critical in scenarios where a function might be called frequently, such as in response to user input or other high-frequency events. By limiting the number of function executions, it can significantly reduce computational overhead and improve application responsiveness. The choice of `wait_time` should be carefully considered to balance responsiveness and performance.

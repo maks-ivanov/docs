@@ -1,0 +1,81 @@
+---
+title: "share-modal.tsx"
+---
+
+## High-level description
+
+The `share-modal.tsx` file defines a React component, `ShareStaticNotebookModal`, which provides a user interface for sharing a static version of a notebook. This component allows users to generate a unique URL for their notebook, upload it as a static HTML page, and copy the URL to the clipboard for sharing. The component also handles user interactions, such as form submission and error handling during the upload process.
+
+## Code Structure
+
+The main symbols in the code are the `ShareStaticNotebookModal` component and the `CopyButton` component. The `ShareStaticNotebookModal` component is responsible for rendering the modal dialog, handling form submission, and managing the state of the slug and URL. The `CopyButton` component is a utility for copying text to the clipboard and providing user feedback through a tooltip.
+
+## Symbols
+
+### `ShareStaticNotebookModal`
+#### Description
+The `ShareStaticNotebookModal` component is a React functional component that renders a modal dialog for sharing a static version of a notebook. It allows users to input a slug, generates a unique URL, and uploads the notebook as a static HTML page. The component also provides feedback to the user through toast notifications.
+
+#### Inputs
+| Name   | Type     | Description                        |
+|:-------|:---------|:-----------------------------------|
+| onClose | `() =&gt; void` | A callback function to close the modal. |
+
+#### Outputs
+None directly, but it performs side effects such as uploading data and displaying notifications.
+
+#### Internal Logic
+- Initializes state for the `slug` and a `randomHash` for generating a unique URL.
+- Constructs the `path` and `url` using the `slug` and `randomHash`.
+- Handles form submission by preventing default behavior, closing the modal, exporting the notebook as HTML, and uploading it to a server.
+- Displays toast notifications to inform the user of the upload status and any errors.
+- Provides an input field for the slug and a button to copy the generated URL to the clipboard.
+
+### `CopyButton`
+#### Description
+The `CopyButton` component is a utility component that allows users to copy a given text to the clipboard. It provides visual feedback through a tooltip indicating that the text has been copied.
+
+#### Inputs
+| Name | Type   | Description          |
+|:-----|:-------|:---------------------|
+| text | string | The text to be copied to the clipboard. |
+
+#### Outputs
+None directly, but it performs side effects such as copying text to the clipboard.
+
+#### Internal Logic
+- Manages a `copied` state to track whether the text has been copied.
+- Defines a `copy` function that writes the text to the clipboard, updates the `copied` state, and resets it after a delay.
+- Renders a button with a tooltip that changes content based on the `copied` state.
+
+## References
+
+- `exportAsHTML` from `@/core/network/requests`: Used to export the notebook as an HTML string.
+- `VirtualFileTracker.INSTANCE.filenames()`: Retrieves the filenames of virtual files to include in the HTML export.
+- `toast` from `@/components/ui/use-toast`: Used to display notifications to the user.
+- `Constants.issuesPage`: Provides a URL for users to report issues on GitHub.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating React components and managing state. |
+| `@/components/ui/dialog` | Provides UI components for the dialog structure. |
+| `@/components/ui/button` | Provides a styled button component. |
+| `@/components/ui/use-toast` | Provides a mechanism for displaying toast notifications. |
+| `@/core/constants` | Provides application-wide constants. |
+| `@/core/network/requests` | Provides functions for network requests, including exporting HTML. |
+| `@/core/static/virtual-file-tracker` | Tracks virtual files associated with the notebook. |
+| `@/utils/events` | Provides utility functions for handling events. |
+
+## Error Handling
+
+- The component uses a `catch` block to handle errors during the fetch request for uploading the HTML. If an error occurs, it dismisses the previous toast and displays an error message with a link to report issues on GitHub.
+
+## Logging
+
+- The component uses toast notifications to log the status of the upload process, including success and error messages.
+
+## TODOs
+
+None present in the code.

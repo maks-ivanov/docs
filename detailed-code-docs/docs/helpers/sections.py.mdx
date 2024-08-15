@@ -1,0 +1,67 @@
+---
+title: "sections.py"
+---
+
+## High-level description
+
+The target file `sections.py` defines a class `PublicMethods` that extends the `Section` class from the `autoclasstoc` library. This class is used to filter and categorize public methods (excluding dunder methods) in a documentation generation context, likely for use with Sphinx or a similar tool.
+
+## Code Structure
+
+- The `PublicMethods` class inherits from the `Section` class.
+- It overrides the `predicate` method to define a custom filtering logic for identifying public methods.
+- The `is_method` function from the `autoclasstoc` library is used to check if a given attribute is a method.
+
+## References
+
+- `autoclasstoc.Section`: The base class that `PublicMethods` extends.
+- `autoclasstoc.is_method`: A utility function used to determine if an attribute is a method.
+
+## Symbols
+
+### `PublicMethods`
+#### Description
+The `PublicMethods` class is designed to identify and categorize public methods in a class, excluding any methods that start with an underscore (i.e., private or special methods). This is useful for generating documentation that focuses on the public API of a class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the attribute being checked. |
+| attr | object | The attribute itself, which could be a method or another type of member. |
+| meta | object | Metadata associated with the attribute, not used in this implementation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Returns `True` if the attribute is a public method, `False` otherwise. |
+
+#### Internal Logic
+- The `predicate` method checks if the attribute is a method using `is_method(name, attr)`.
+- It then checks if the method name does not start with an underscore (`_`), which would indicate a private or special method.
+- If both conditions are met, it returns `True`, indicating that the method is a public method.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `autoclasstoc` | Provides the `Section` class and `is_method` function used to define and filter sections of documentation. |
+
+## Configuration
+
+The `PublicMethods` class is configured with a `key` and `title`:
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| key | str | "public-methods-no-dunder" | A unique identifier for this section type. |
+| title | str | "Public methods" | The title used in the documentation for this section. |
+
+## Error Handling
+
+The `predicate` method does not include explicit error handling, as it relies on the `is_method` function to correctly identify methods. Any errors would likely be raised by `is_method` if it encounters unexpected input.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The `PublicMethods` class does not expose an API directly but is intended to be used within a documentation generation framework like Sphinx, where it would be part of the configuration for generating class documentation.

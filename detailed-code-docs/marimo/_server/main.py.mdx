@@ -1,0 +1,91 @@
+---
+title: "main.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/main.py`, is responsible for setting up and configuring a Starlette application for the Marimo server. It defines the main entry point for creating the application, including setting up middleware, routes, and exception handlers. The file also includes a function to handle errors and convert them into JSON responses.
+
+## Code Structure
+
+The main components of the code are interconnected as follows:
+- The `create_starlette_app` function is the primary function that sets up the Starlette application with specified middleware, routes, and exception handlers.
+- The `handle_error` function is used as an exception handler to convert various exceptions into JSON responses.
+- Middleware components such as `CustomSessionMiddleware`, `AuthenticationMiddleware`, and `CORSMiddleware` are configured within the `create_starlette_app` function to handle authentication, session management, and CORS policies.
+
+## References
+
+- `marimo._loggers`: Provides logging capabilities used in the `handle_error` function.
+- `marimo._server.api.auth`: Contains authentication-related components like `CustomSessionMiddleware` and `on_auth_error`.
+- `marimo._server.api.middleware`: Includes `AuthBackend` and `SkewProtectionMiddleware` used in middleware configuration.
+- `marimo._server.api.router`: Provides the `build_routes` function to define application routes.
+- `marimo._server.api.status`: Defines custom HTTP exceptions and utility functions for error handling.
+
+## Symbols
+
+### `handle_error`
+#### Description
+Converts exceptions into JSON responses for the Starlette application. It handles different types of exceptions, including HTTP exceptions and custom Marimo exceptions, and logs server errors.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| request  | Request | The incoming request object. |
+| response | Any    | The response or exception to handle. |
+
+#### Outputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| response | Any    | A JSON response object. |
+
+#### Internal Logic
+- Checks if the response is an instance of `HTTPException` and converts 403 status codes to 401.
+- Logs server errors if the response is a `MarimoHTTPException` and not a client error.
+- Converts `TypeError` and general `Exception` instances to JSON responses with a 500 status code.
+
+### `create_starlette_app`
+#### Description
+Creates and configures a Starlette application with specified middleware, routes, and exception handlers. It allows customization of authentication, CORS policies, and lifespan events.
+
+#### Inputs
+| Name          | Type                | Description                                      |
+|:--------------|:--------------------|:-------------------------------------------------|
+| base_url      | str                 | The base URL for the application routes.         |
+| host          | Optional[str]       | The host for CORS policy configuration.          |
+| middleware    | Optional[List[Middleware]] | Additional middleware to include.               |
+| lifespan      | Optional[Lifespan[Starlette]] | Lifespan events for the application.            |
+| enable_auth   | bool                | Flag to enable or disable authentication.        |
+| allow_origins | Optional[tuple[str, ...]] | Allowed origins for CORS policy.                |
+
+#### Outputs
+| Name | Type     | Description                  |
+|:-----|:---------|:-----------------------------|
+| app  | Starlette | The configured Starlette application. |
+
+#### Internal Logic
+- Initializes a list of middleware, including session, authentication, CORS, and skew protection middleware.
+- Configures routes using the `build_routes` function.
+- Sets up exception handlers to use the `handle_error` function for various exceptions.
+- Returns the configured Starlette application.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette` | Provides the web framework components like `Starlette`, `Middleware`, and `JSONResponse`. |
+| `marimo._loggers` | Used for logging exceptions and server errors. |
+| `marimo._server.api.auth` | Provides authentication middleware and error handling functions. |
+| `marimo._server.api.middleware` | Includes custom middleware for authentication and skew protection. |
+| `marimo._server.api.router` | Defines the application routes. |
+| `marimo._server.api.status` | Provides custom HTTP exceptions and error handling utilities. |
+
+## Error Handling
+
+The `handle_error` function is the main error handling mechanism, converting exceptions into JSON responses. It handles:
+- `HTTPException`: Converts 403 status codes to 401 and returns a JSON response with the error details.
+- `MarimoHTTPException`: Logs server errors and returns a JSON response with the error details.
+- `TypeError` and general `Exception`: Returns a JSON response with a 500 status code and the error message.
+
+## Logging
+
+The `LOGGER` from `marimo._loggers` is used to log exceptions, particularly server errors, in the `handle_error` function. This helps in tracking and debugging issues that occur during request handling.

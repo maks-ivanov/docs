@@ -1,0 +1,107 @@
+---
+title: "save-worker.ts"
+---
+
+## High-level description
+
+The `save-worker.ts` file is a web worker script responsible for handling the saving of notebooks in a web application. It utilizes the Pyodide library to execute Python code within the browser and manages file operations using a WebAssembly-based filesystem. The worker communicates with the main application thread through an RPC (Remote Procedure Call) mechanism to handle requests such as reading and saving notebooks.
+
+## Code Structure
+
+The main components of the code are:
+
+- **Web Worker Initialization**: The worker is initialized to load Pyodide and its packages, set up the filesystem, and handle RPC requests.
+- **RPC Mechanism**: The worker uses an RPC mechanism to communicate with the main application thread, handling requests like reading and saving notebooks.
+- **Filesystem Operations**: The worker interacts with a WebAssembly-based filesystem to read and write notebook files.
+
+## References
+
+- **`SaveNotebookRequest`**: A type imported from `network/types.ts` that defines the structure of a request to save a notebook.
+- **`WasmFileSystem`**: A module that provides methods for interacting with the WebAssembly-based filesystem.
+- **`getController`**: A function that loads the appropriate controller for managing the Pyodide environment.
+- **`Logger`**: A utility for logging errors and other messages.
+- **`prettyError`**: A utility function for formatting error messages.
+
+## Symbols
+
+### `loadPyodideAndPackages`
+#### Description
+This asynchronous function initializes the Pyodide environment and its packages, sets up the controller, and mounts the filesystem. It also handles any errors that occur during this process.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the Marimo and Pyodide versions.
+- Imports Pyodide and bootstraps the controller.
+- Mounts the filesystem using the controller.
+- Sends an RPC message indicating successful initialization or an error message if initialization fails.
+
+### `pyodideReadyPromise`
+#### Description
+A promise that resolves when the Pyodide environment and packages are fully loaded and initialized.
+
+### `requestHandler`
+#### Description
+An object that defines handlers for various RPC requests related to file operations, such as reading and saving notebooks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | string | The name of the file to read. |
+| opts | SaveNotebookRequest | Options for saving a notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | string | The contents of the file read from the filesystem. |
+
+#### Internal Logic
+- Waits for the Pyodide environment to be ready.
+- Reads a file from the filesystem using Pyodide's FS API.
+- Executes Python code to save a notebook and persists files to a remote location.
+
+### `SaveWorkerSchema`
+#### Description
+Defines the schema for the RPC communication, including messages that can be sent between the worker and the main application thread.
+
+### `rpc`
+#### Description
+An instance of the RPC mechanism that facilitates communication between the worker and the main application thread.
+
+#### Internal Logic
+- Initializes the RPC with a transport mechanism and request handler.
+- Sends a "ready" message once the worker is initialized.
+
+### `getMarimoVersion`
+#### Description
+Retrieves the version of Marimo stored in the worker's name.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| version | string | The version of Marimo. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pyodide` | Provides the Pyodide interface for running Python in the browser. |
+| `rpc-anywhere` | Facilitates RPC communication between the worker and the main application thread. |
+| `Logger` | Used for logging errors and messages. |
+| `prettyError` | Formats error messages for better readability. |
+
+## Error Handling
+
+The code uses a try-catch block in the `loadPyodideAndPackages` function to handle errors during the initialization of Pyodide and its packages. Errors are logged using the `Logger` utility, and a formatted error message is sent via RPC using the `prettyError` function.
+
+## Logging
+
+The `Logger` utility is used to log errors that occur during the initialization of the Pyodide environment and its packages.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,86 @@
+---
+title: "test_module_registry.py"
+---
+
+## High-level description
+
+The target file `test_module_registry.py` contains unit tests for the `ModuleRegistry` class, which is part of a larger system for managing and tracking module imports within a directed graph structure. The tests verify the functionality of determining which cell in the graph is responsible for importing a specific module and identifying any modules that are missing from the system.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ModuleRegistry`: A class that manages module imports within a directed graph.
+- `DirectedGraph`: A class representing a graph structure where nodes are cells that can import modules.
+- `compiler.compile_cell`: A function used to compile code into a cell representation, which is then registered in the graph.
+- `parse_cell`: A partial function derived from `compiler.compile_cell` to simplify cell parsing in tests.
+
+## References
+
+- `ModuleRegistry`: The class being tested, which is defined in `marimo/_runtime/packages/module_registry.py`.
+- `DirectedGraph`: Used to create a graph structure for the tests, defined in `marimo/_runtime/dataflow.py`.
+- `compiler.compile_cell`: Used to compile code into cells, defined in `marimo/_ast/compiler.py`.
+
+## Symbols
+
+### `test_defining_cell`
+#### Description
+Tests the `defining_cell` method of `ModuleRegistry` to ensure it correctly identifies the cell responsible for importing a given module.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Initializes a `ModuleRegistry` with a `DirectedGraph`.
+2. Parses and registers cells importing `matplotlib` and `numpy`.
+3. Asserts that the correct cell IDs are returned for each module.
+
+### `test_defining_cell_dotted`
+#### Description
+Tests the `defining_cell` method with dotted module names to ensure it handles submodules correctly.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Initializes a `ModuleRegistry` with a `DirectedGraph`.
+2. Parses and registers a cell importing `matplotlib.pyplot`.
+3. Asserts that the correct cell ID is returned for `matplotlib` and that `None` is returned for `pyplot` and `plt`.
+
+### `test_missing_modules`
+#### Description
+Tests the `missing_modules` method of `ModuleRegistry` to ensure it correctly identifies modules that are not installed.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Initializes a `ModuleRegistry` with a `DirectedGraph`.
+2. Parses and registers cells importing non-existent modules.
+3. Asserts that the set of missing modules is correctly identified.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `functools.partial` | Used to create the `parse_cell` function for simplifying cell parsing. |
+
+## Error Handling
+
+The tests rely on assertions to validate the expected behavior of the `ModuleRegistry` methods. If an assertion fails, it indicates a discrepancy between the expected and actual behavior.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on using assertions to verify correctness.
+
+## TODOs
+
+No TODOs are present in the code.

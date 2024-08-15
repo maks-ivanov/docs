@@ -1,0 +1,122 @@
+---
+title: "apply.py"
+---
+
+## High-level description
+
+The target file, `apply.py`, is part of a data transformation framework within the Marimo project. It provides functionality to apply a series of transformations to dataframes, specifically supporting Pandas and Polars dataframes. The file defines methods to handle different types of transformations, such as column conversion, renaming, sorting, filtering, and more, by utilizing specific handlers for each dataframe type.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `handle`: A function that delegates specific transformation tasks to the appropriate handler method based on the transformation type.
+- `apply_transforms`: A function that iterates over a list of transformations and applies them sequentially to a dataframe using the `handle` function.
+- `get_handler_for_dataframe`: A function that determines the appropriate handler for a given dataframe, either Pandas or Polars.
+- `TransformsContainer`: A class that maintains the state of transformations applied to a dataframe, allowing for incremental application of transformations.
+
+## References
+
+- `DependencyManager`: Used to check if Pandas or Polars libraries are available.
+- `TransformHandler`: An abstract base class that defines the interface for transformation handlers.
+- `TransformType`: An enumeration of possible transformation types.
+- `assert_never`: A utility function used to ensure exhaustive handling of transformation types.
+
+## Symbols
+
+### `handle`
+#### Description
+The `handle` function applies a specific transformation to a dataframe by delegating the task to the appropriate method of a `TransformHandler`.
+
+#### Inputs
+| Name      | Type             | Description                        |
+|:----------|:-----------------|:-----------------------------------|
+| df        | T                | The dataframe to transform.        |
+| handler   | TransformHandler | The handler for the dataframe type.|
+| transform | Transform        | The transformation to apply.       |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df   | T    | The transformed dataframe. |
+
+#### Internal Logic
+- The function checks the type of the transformation and calls the corresponding method on the handler.
+- If the transformation type is not recognized, it raises an assertion error using `assert_never`.
+
+### `apply_transforms`
+#### Description
+The `apply_transforms` function applies a series of transformations to a dataframe in sequence.
+
+#### Inputs
+| Name       | Type             | Description                        |
+|:-----------|:-----------------|:-----------------------------------|
+| df         | T                | The dataframe to transform.        |
+| handler    | TransformHandler | The handler for the dataframe type.|
+| transforms | Transformations  | The transformations to apply.      |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df   | T    | The transformed dataframe. |
+
+#### Internal Logic
+- The function iterates over the list of transformations and applies each one using the `handle` function.
+
+### `get_handler_for_dataframe`
+#### Description
+Determines the appropriate handler for a given dataframe, either Pandas or Polars.
+
+#### Inputs
+| Name | Type | Description                        |
+|:-----|:-----|:-----------------------------------|
+| df   | Any  | The dataframe to get a handler for.|
+
+#### Outputs
+| Name    | Type             | Description                        |
+|:--------|:-----------------|:-----------------------------------|
+| handler | TransformHandler | The handler for the dataframe type.|
+
+#### Internal Logic
+- Checks if Pandas or Polars is available using `DependencyManager`.
+- Returns the corresponding handler if the dataframe is an instance of Pandas or Polars.
+- Raises a `ValueError` if the dataframe type is unsupported.
+
+### `TransformsContainer`
+#### Description
+A class that maintains the state of transformations applied to a dataframe, allowing for incremental application of transformations.
+
+#### Inputs
+- Constructor:
+  | Name    | Type             | Description                        |
+  |:--------|:-----------------|:-----------------------------------|
+  | df      | T                | The original dataframe.            |
+  | handler | TransformHandler | The handler for the dataframe type.|
+
+#### Outputs
+- Methods:
+  - `apply`: Applies a set of transformations to the dataframe and updates the internal state.
+
+#### Internal Logic
+- Maintains an original and a snapshot dataframe to track transformations.
+- Determines if new transformations are a superset of existing ones to optimize application.
+- Applies transformations incrementally or from the original dataframe based on the superset check.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| Pandas     | To handle transformations on Pandas dataframes.|
+| Polars     | To handle transformations on Polars dataframes.|
+
+## Error Handling
+
+- The `get_handler_for_dataframe` function raises a `ValueError` if the dataframe type is not supported.
+- The `handle` function uses `assert_never` to ensure all transformation types are handled, raising an `AssertionError` if an unknown type is encountered.
+
+## Side Effects
+
+- The `TransformsContainer` class modifies its internal state to keep track of applied transformations.
+
+## Performance Considerations
+
+- The `TransformsContainer` optimizes the application of transformations by checking if new transformations are a superset of existing ones, allowing for incremental application.

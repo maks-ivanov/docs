@@ -1,0 +1,111 @@
+---
+title: "console_output_worker.py"
+---
+
+## High-level description
+
+The `console_output_worker.py` file is responsible for managing and processing console output messages in a buffered manner. It defines a mechanism to collect console messages, buffer them, and then write them out in batches to a specified stream. This is done to optimize performance and ensure that console outputs are efficiently managed and transmitted to the frontend.
+
+## Code Structure
+
+The main components of this file include the `ConsoleMsg` data class, several helper functions for managing console output, and the `buffered_writer` function which orchestrates the buffering and writing of console messages. The `ConsoleMsg` class is used to encapsulate the details of a console message, while the helper functions manage the buffering logic and determine when and how messages should be merged or written out.
+
+## Symbols
+
+### `ConsoleMsg`
+#### Description
+`ConsoleMsg` is a data class that represents a console message. It encapsulates the details of a message, including the stream type, cell ID, data, and mimetype.
+
+#### Inputs
+| Name     | Type             | Description                        |
+|:---------|:-----------------|:-----------------------------------|
+| stream   | StreamT          | The type of stream (STDOUT, STDERR, etc.) |
+| cell_id  | CellId_t         | The identifier of the cell associated with the message |
+| data     | str              | The actual console output data     |
+| mimetype | KnownMimeType    | The mimetype of the data           |
+
+#### Outputs
+None
+
+### `_write_console_output`
+#### Description
+This function writes a console output message to a specified stream. It constructs a `CellOp` object with the console output details and broadcasts it to the stream.
+
+#### Inputs
+| Name       | Type       | Description                        |
+|:-----------|:-----------|:-----------------------------------|
+| stream     | Stream     | The stream to which the message is broadcasted |
+| stream_type| StreamT    | The type of stream (STDOUT, STDERR, etc.) |
+| cell_id    | CellId_t   | The identifier of the cell associated with the message |
+| data       | str        | The actual console output data     |
+| mimetype   | KnownMimeType | The mimetype of the data         |
+
+#### Outputs
+None
+
+### `_can_merge_outputs`
+#### Description
+Determines if two `ConsoleMsg` objects can be merged. This is based on whether they have the same stream type and mimetype.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| first  | ConsoleMsg | The first console message          |
+| second | ConsoleMsg | The second console message         |
+
+#### Outputs
+| Name   | Type  | Description                        |
+|:-------|:------|:-----------------------------------|
+| result | bool  | True if the messages can be merged, False otherwise |
+
+### `_add_output_to_buffer`
+#### Description
+Adds a `ConsoleMsg` to a buffer, merging it with the last message if possible. This function manages the buffering of console messages for each cell.
+
+#### Inputs
+| Name                    | Type                      | Description                        |
+|:------------------------|:--------------------------|:-----------------------------------|
+| console_output          | ConsoleMsg                | The console message to be added to the buffer |
+| outputs_buffered_per_cell | dict[CellId_t, list[ConsoleMsg]] | The buffer storing messages per cell |
+
+#### Outputs
+None
+
+### `buffered_writer`
+#### Description
+The `buffered_writer` function is responsible for managing the buffering and timed flushing of console messages. It uses a condition variable to synchronize access to the message queue and flushes buffered messages to the stream when the timer expires.
+
+#### Inputs
+| Name      | Type               | Description                        |
+|:----------|:-------------------|:-----------------------------------|
+| msg_queue | deque[ConsoleMsg]  | A queue of console messages to be processed |
+| stream    | Stream             | The stream to which messages are written |
+| cv        | Condition          | A condition variable for synchronizing access to the message queue |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function continuously waits for new messages or a timer expiration.
+- It uses a condition variable to wait for messages to be added to the queue.
+- Messages are buffered and merged if possible.
+- When the timer expires, all buffered messages are flushed to the stream.
+
+## References
+
+- `CellId_t` from `marimo._ast.cell`: Used as the type for cell identifiers.
+- `CellChannel` and `CellOutput` from `marimo._messaging.cell_output`: Used for defining the channel type and constructing console output messages.
+- `KnownMimeType` from `marimo._messaging.mimetypes`: Used to specify the mimetype of console messages.
+- `CellOp` from `marimo._messaging.ops`: Used to broadcast console output messages to the stream.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `time`     | Used for managing timeouts and delays in message processing. |
+| `dataclasses` | Provides the `dataclass` decorator for defining simple data structures. |
+| `typing`   | Provides type annotations for better code clarity and type checking. |
+
+## Performance Considerations
+
+The use of a deque and condition variable for message buffering and synchronization is chosen for performance reasons, as it was found to be faster than using a built-in queue. The function is designed to minimize the frequency of writes to the stream by batching messages, which can improve performance in high-throughput scenarios.

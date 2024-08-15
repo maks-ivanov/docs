@@ -1,0 +1,79 @@
+---
+title: "encodings.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for two functions, `findEncodedFields` and `makeEncodingInteractive`, which are part of a Vega-Lite visualization plugin. These tests verify the behavior of these functions in handling Vega-Lite specifications, particularly focusing on how fields are encoded and how encodings can be made interactive by modifying their properties based on certain conditions.
+
+## Code Structure
+
+The main symbols in the code are the test cases for the functions `findEncodedFields` and `makeEncodingInteractive`. These functions are imported from the `encodings` module, and the tests are structured using the `vitest` testing framework. The tests are organized into two `describe` blocks, each corresponding to one of the functions being tested.
+
+## References
+
+- `findEncodedFields` and `makeEncodingInteractive` are the primary functions being tested, and they are imported from the `encodings` module.
+- The `VegaLiteSpec`, `EncodingType`, and `Encodings` types are imported from the `types` module, which provides type definitions for Vega-Lite specifications.
+
+## Symbols
+
+### `findEncodedFields`
+#### Description
+The `findEncodedFields` function is designed to extract and return an array of field names that are encoded in a given Vega-Lite specification. It focuses on non-xy encodings that are typically used in legends and are selectable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | VegaLiteSpec | A Vega-Lite specification object that may contain encoding definitions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fields | string[] | An array of field names that are encoded in the specification. |
+
+#### Internal Logic
+- The function first checks if the `spec` is defined and contains an `encoding` property.
+- It iterates over the entries of the `encoding` object.
+- For each encoding, it checks if the encoding type is allowed (e.g., color, size) and if it contains a `field` or a `condition` with a `field`.
+- It collects and returns the field names that meet these criteria.
+
+### `makeEncodingInteractive`
+#### Description
+The `makeEncodingInteractive` function modifies a given set of encodings to make them interactive by adding conditions based on specified parameters. It primarily updates the opacity encoding to reflect selection states.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | "opacity" | The encoding key to be made interactive, currently only supports "opacity". |
+| encodings | SharedCompositeEncoding&lt;Field&gt; | The current set of encodings to be modified. |
+| paramNames | string[] | An array of parameter names used to define conditions for interactivity. |
+| mark | AnyMark | The mark type associated with the encodings, used to determine initial opacity. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updatedEncodings | SharedCompositeEncoding&lt;Field&gt; | The modified encodings with added interactivity. |
+
+#### Internal Logic
+- Constructs a test condition using the provided parameter names.
+- Retrieves the initial opacity from the mark definition or defaults to 1.
+- Updates the opacity encoding to include a condition that sets the opacity to the initial value when the condition is met, and to a lower value otherwise.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for structuring and running the unit tests. |
+| `vega-lite` | Provides type definitions for Vega-Lite specifications and encodings. |
+
+## Error Handling
+
+The tests do not explicitly handle errors but rely on the `vitest` framework to catch and report any exceptions or assertion failures during test execution.
+
+## Logging
+
+There is no logging implemented in the test code. The focus is on verifying the correctness of the functions through assertions.
+
+## TODOs
+
+There are no TODOs or notes left in the code. The tests appear to be comprehensive for the current functionality of the `findEncodedFields` and `makeEncodingInteractive` functions.

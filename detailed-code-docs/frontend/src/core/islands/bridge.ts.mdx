@@ -1,0 +1,63 @@
+---
+title: "bridge.ts"
+---
+
+## High-level description
+
+The `IslandsPyodideBridge` class in the `bridge.ts` file serves as a communication bridge between the frontend and a Web Worker that runs a Pyodide (Python) environment. It manages the initialization and communication with the worker, handling requests to start sessions, send code for execution, and process messages from the worker. This class implements the `RunRequests` and `EditRequests` interfaces, providing methods to interact with the backend during run and edit modes.
+
+## Code Structure
+
+- **IslandsPyodideBridge**: The main class that implements the `RunRequests` and `EditRequests` interfaces. It manages the lifecycle and communication with a Web Worker running Pyodide.
+- **Deferred**: A utility class used to handle asynchronous operations, particularly for managing the initialization state of the bridge.
+- **getWorkerRPC**: A function that sets up an RPC (Remote Procedure Call) mechanism for communication between the main thread and the worker.
+
+## References
+
+- **getMarimoVersion**: A function imported from `marimo-tag.ts` to retrieve the version of Marimo, which is used to name the worker.
+- **getWorkerRPC**: A function from `rpc.ts` that creates an RPC interface for the worker.
+- **parseMarimoIslandApps** and **createMarimoFile**: Functions from `parse.ts` used to parse and create Marimo files for execution.
+- **Logger**: A utility for logging messages, imported from `Logger.ts`.
+
+## Symbols
+
+### `IslandsPyodideBridge`
+#### Description
+The `IslandsPyodideBridge` class is responsible for managing the interaction between the frontend and a Web Worker running a Pyodide environment. It initializes the worker, sets up RPC communication, and provides methods to start sessions and send requests to the worker.
+
+#### Inputs
+- **opts**: An object containing `code` (string) and `appId` (string) for starting a session.
+
+#### Outputs
+- **Promise&lt;null&gt;**: Most methods return a promise that resolves to `null` after the operation is completed.
+
+#### Internal Logic
+- **Singleton Pattern**: The class uses a lazy singleton pattern to ensure only one instance exists.
+- **Worker Initialization**: Constructs a Web Worker using a dynamically created object URL and sets up error handling.
+- **RPC Setup**: Initializes an RPC interface for communication with the worker.
+- **Message Handling**: Listens for messages from the worker and processes them accordingly, such as resolving the `initialized` promise or handling kernel messages.
+
+#### Side Effects
+- Modifies the global `window` object to store the singleton instance.
+- Creates and manages a Web Worker, including handling its lifecycle and communication.
+
+#### Performance Considerations
+- The use of a Web Worker allows for offloading Python execution to a separate thread, improving performance by not blocking the main UI thread.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Deferred` | Manages asynchronous operations and promises. |
+| `getWorkerRPC` | Sets up RPC communication with the worker. |
+| `Logger` | Provides logging capabilities. |
+
+## Error Handling
+- The worker's error event listener revokes the created object URL to clean up resources.
+- The `initializedError` message from the worker is used to reject the initialization promise with an error.
+
+## Logging
+- Utilizes the `Logger` utility to log debug information and errors, aiding in development and debugging.
+
+## TODOs
+- There is a TODO comment suggesting the abstraction of the worker constructor logic, indicating potential future refactoring for better code organization.

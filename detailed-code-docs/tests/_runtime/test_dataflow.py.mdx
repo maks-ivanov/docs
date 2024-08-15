@@ -1,0 +1,90 @@
+---
+title: "test_dataflow.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_dataflow.py` contains a suite of unit tests for the `DirectedGraph` class from the `dataflow` module in the `marimo` package. These tests verify the functionality of the `DirectedGraph` class, which is used to manage dependencies between computational cells, ensuring that the graph correctly handles registration, dependency tracking, and state management of these cells.
+
+## Code Structure
+
+The main symbols in the code are the test functions, each of which tests a specific aspect of the `DirectedGraph` class. The `parse_cell` function is a partial function created using `functools.partial` to compile code strings into cell objects, which are then registered in the graph. The `DirectedGraph` class from the `dataflow` module is the primary class being tested, and it is responsible for managing the relationships and states of the cells.
+
+## Symbols
+
+### `parse_cell`
+#### Description
+`parse_cell` is a partial function that compiles a code string into a cell object using the `compile_cell` function from the `compiler` module. It is used to create cell objects with a fixed `cell_id` of "0" for testing purposes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code string to be compiled into a cell object. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | CellImpl | The compiled cell object. |
+
+### `test_graph_single_node`
+#### Description
+Tests the registration of a single node in the `DirectedGraph`. It verifies that a single cell can be registered and that the graph correctly reflects the cell's presence without any parents or children.
+
+### `test_graph_two_chains`
+#### Description
+Tests the registration of multiple nodes forming two chains in the `DirectedGraph`. It verifies that the graph correctly tracks dependencies between cells, forming a directed acyclic graph.
+
+### `test_graph_unconnected`
+#### Description
+Tests the registration of unconnected nodes in the `DirectedGraph`. It ensures that the graph can handle multiple cells that do not have dependencies on each other.
+
+### `test_graph_closure`
+#### Description
+Tests the transitive closure functionality of the `DirectedGraph`. It verifies that the graph can correctly compute the transitive closure of a set of nodes, identifying all reachable nodes.
+
+### `test_graph_closure_predicate`
+#### Description
+Tests the transitive closure with a predicate function in the `DirectedGraph`. It ensures that the closure computation respects the predicate, filtering nodes based on their state.
+
+### `test_graph_redefine`
+#### Description
+Tests the behavior of the `DirectedGraph` when a cell redefines a variable. It checks that the graph handles redefinitions correctly without introducing erroneous dependencies.
+
+### `test_set_stale`
+#### Description
+Tests the staleness management in the `DirectedGraph`. It verifies that the graph can mark cells and their dependencies as stale and correctly reset their state.
+
+### `test_ancestors`
+#### Description
+Tests the ancestor retrieval functionality of the `DirectedGraph`. It ensures that the graph can correctly identify all ancestor nodes of a given cell.
+
+### `test_descendants`
+#### Description
+Tests the descendant retrieval functionality of the `DirectedGraph`. It ensures that the graph can correctly identify all descendant nodes of a given cell.
+
+### `test_register_with_stale_ancestor`
+#### Description
+Tests the registration of a cell with a stale ancestor in the `DirectedGraph`. It verifies that newly registered cells inherit the stale state from their ancestors.
+
+## References
+
+- `compile_cell` from `marimo._ast.compiler`: Used to compile code strings into cell objects.
+- `DirectedGraph` from `marimo._runtime.dataflow`: The primary class being tested, responsible for managing cell dependencies and states.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `functools.partial` | Used to create the `parse_cell` partial function. |
+
+## Error Handling
+
+The tests use assertions to verify the correctness of the `DirectedGraph`'s behavior. If any assertion fails, it indicates a discrepancy between the expected and actual behavior of the graph.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on using assertions to validate the functionality of the `DirectedGraph`.
+
+## TODOs
+
+No TODOs are present in the code.

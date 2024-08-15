@@ -1,0 +1,74 @@
+---
+title: "useAsyncData.ts"
+---
+
+## High-level description
+
+The `useAsyncData.ts` file defines a custom React hook, `useAsyncData`, which is used to manage asynchronous data fetching in a React component. It handles loading, error states, and provides a mechanism to reload data. Additionally, it includes a utility function, `combineAsyncData`, to combine multiple asynchronous data responses into a single response object.
+
+## Code Structure
+
+The file contains two main symbols: the `useAsyncData` hook and the `combineAsyncData` function. The `useAsyncData` hook is responsible for managing the state of asynchronous data fetching, while the `combineAsyncData` function is used to merge multiple asynchronous data responses into a single response object.
+
+## Symbols
+
+### `combineAsyncData`
+#### Description
+The `combineAsyncData` function is used to combine multiple asynchronous data responses into a single response object. It checks if all data responses have been successfully fetched, if any are still loading, or if any have encountered an error.
+
+#### Inputs
+| Name      | Type                          | Description                                      |
+|:----------|:------------------------------|:-------------------------------------------------|
+| responses | `{ [K in keyof T]: AsyncDataResponse&lt;T[K]&gt; }` | An array of asynchronous data responses to combine. |
+
+#### Outputs
+| Name   | Type                     | Description                                                                 |
+|:-------|:-------------------------|:----------------------------------------------------------------------------|
+| output | `Omit&lt;AsyncDataResponse&lt;T&gt;, "setData"&gt;` | A combined asynchronous data response object, excluding the `setData` function. |
+
+#### Internal Logic
+- The function checks if all responses have data, and if so, it maps the data into an array.
+- It determines if any of the responses are still loading.
+- It checks for any errors in the responses and returns the first encountered error.
+- It provides a `reload` function that triggers the reload of all responses.
+
+### `useAsyncData`
+#### Description
+The `useAsyncData` hook is a custom React hook that manages the state of asynchronous data fetching. It handles loading, error states, and provides a mechanism to reload data.
+
+#### Inputs
+| Name          | Type            | Description                                                                 |
+|:--------------|:----------------|:----------------------------------------------------------------------------|
+| loaderOrProps | `Props&lt;T&gt;`      | A function or object that defines how to fetch the data.                    |
+| deps          | `DependencyList`| A list of dependencies that trigger the data fetching when changed.         |
+
+#### Outputs
+| Name   | Type                | Description                                                                 |
+|:-------|:--------------------|:----------------------------------------------------------------------------|
+| output | `AsyncDataResponse&lt;T&gt;` | An object containing the data, loading state, error state, and reload function. |
+
+#### Internal Logic
+- Initializes state variables for `data`, `loading`, `error`, and `nonce`.
+- Uses `useEffect` to fetch data when dependencies change.
+- Provides a context with a `previous` function to keep the previous data if needed.
+- Handles the asynchronous data fetching, updating the state based on the result.
+- Returns an object with the current data, loading state, error state, and a `reload` function to trigger a data refetch.
+
+## Side Effects
+- The `useAsyncData` hook updates the component's state with the fetched data, loading, and error states.
+- The `reload` function increments a `nonce` state variable to trigger a refetch of the data.
+
+## References
+- The `useAsyncData` hook is used in various components across the codebase, such as `SnippetsPanel`, `MachineStats`, `FileExplorer`, and others, to manage asynchronous data fetching.
+
+## Dependencies
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `jotai`    | Used for the `SetStateAction` type.          |
+| `react`    | Provides hooks like `useState` and `useEffect`. |
+
+## Error Handling
+- The `useAsyncData` hook catches errors during data fetching and updates the `error` state accordingly.
+
+## Logging
+- There is no explicit logging in the `useAsyncData.ts` file, but errors are captured and stored in the state for handling in the UI.

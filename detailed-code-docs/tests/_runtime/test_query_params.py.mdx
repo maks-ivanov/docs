@@ -1,0 +1,89 @@
+---
+title: "test_query_params.py"
+---
+
+## High-level description
+
+The target file `test_query_params.py` contains unit tests for the `QueryParams` and `CLIArgs` classes, which are part of the `marimo` library. These tests verify the functionality of managing query parameters and command-line arguments, ensuring that operations like getting, setting, appending, and deleting parameters work as expected. The tests also check the interaction with a `Stream` object to ensure that changes to parameters are correctly broadcasted.
+
+## Code Structure
+
+The file is structured into two main test classes: `TestQueryParams` and `TestCLIArgs`. Each class contains a series of test methods that validate different functionalities of the `QueryParams` and `CLIArgs` classes, respectively. The `TestQueryParams` class uses a mock `Stream` object to simulate the broadcasting of parameter changes, while `TestCLIArgs` focuses on the immutability of command-line arguments.
+
+## References
+
+- `Stream`: A class from `marimo._messaging.types` used to simulate message broadcasting.
+- `QueryParams`: A class from `marimo._runtime.params` that manages query parameters.
+- `CLIArgs`: A class from `marimo._runtime.params` that manages command-line arguments.
+
+## Symbols
+
+### `TestQueryParams`
+#### Description
+This class contains unit tests for the `QueryParams` class, ensuring that it correctly handles query parameter operations and interacts with a `Stream` object for broadcasting changes.
+
+#### Inputs
+- None directly, but it initializes a `QueryParams` object with a dictionary of parameters and a mock `Stream`.
+
+#### Outputs
+- None directly, but it asserts expected outcomes of various operations on the `QueryParams` object.
+
+#### Internal Logic
+- **setUp**: Initializes a `QueryParams` object with mock data and a mock `Stream`.
+- **test_get**: Verifies that the `get` method retrieves the correct values.
+- **test_get_all**: Checks that `get_all` returns all values for a key.
+- **test_contains**: Tests the `in` operator for key presence.
+- **test_len**: Validates the length of the parameters.
+- **test_iter**: Ensures iteration over keys works correctly.
+- **test_repr** and **test_str**: Check the string representations.
+- **test_setitem**: Tests setting a new item and broadcasting the change.
+- **test_setitem_null** and **test_setitem_empty**: Ensure setting a key to `None` or an empty list deletes the key.
+- **test_set**: Verifies the `set` method functionality.
+- **test_append**: Tests appending values to existing keys.
+- **test_delete**: Validates deletion of keys and broadcasting.
+- **test_remove**: Checks removal of specific values from lists.
+- **test_clear**: Ensures all parameters can be cleared.
+
+### `TestCLIArgs`
+#### Description
+This class tests the `CLIArgs` class, focusing on the retrieval and immutability of command-line arguments.
+
+#### Inputs
+- None directly, but it initializes a `CLIArgs` object with a dictionary of parameters.
+
+#### Outputs
+- None directly, but it asserts expected outcomes of various operations on the `CLIArgs` object.
+
+#### Internal Logic
+- **setUp**: Initializes a `CLIArgs` object with mock data.
+- **test_get**: Verifies that the `get` method retrieves the correct values.
+- **test_get_all**: Checks that `get_all` returns all values for a key.
+- **test_contains**: Tests the `in` operator for key presence.
+- **test_len**: Validates the length of the parameters.
+- **test_iter**: Ensures iteration over keys works correctly.
+- **test_repr** and **test_str**: Check the string representations.
+- **test_setitem**: Ensures that setting a new item raises a `TypeError`.
+- **test_delete**: Ensures that deleting an item raises a `TypeError`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework for the unit tests. |
+| `unittest.mock` | Used to create mock objects for testing. |
+| `pytest` | Used for handling exceptions in tests. |
+| `marimo._messaging.types.Stream` | Simulates message broadcasting. |
+| `marimo._runtime.params.QueryParams` | The class under test for managing query parameters. |
+| `marimo._runtime.params.CLIArgs` | The class under test for managing command-line arguments. |
+
+## Error Handling
+
+The tests use `pytest.raises` to verify that certain operations on `CLIArgs` raise `TypeError`, ensuring that command-line arguments remain immutable.
+
+## Side Effects
+
+- The `TestQueryParams` class interacts with a mock `Stream` object to simulate and verify the broadcasting of parameter changes.
+
+## Logging
+
+No explicit logging is implemented in the test file, but the mock `Stream` object simulates the logging of operations by capturing calls to its `write` method.

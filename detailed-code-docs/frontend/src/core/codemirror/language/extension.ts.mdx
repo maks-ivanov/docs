@@ -1,0 +1,150 @@
+---
+title: "extension.ts"
+---
+
+## High-level description
+
+The target file, `extension.ts`, is part of a CodeMirror-based editor setup that manages language-specific configurations and extensions. It provides mechanisms to dynamically switch between different language adapters, update the editor's state and code based on the selected language, and configure the editor with adaptive language settings. The file also includes functions to handle language toggling, state effects, and panel creation for language-specific UI components.
+
+## Code Structure
+
+The main symbols in the code are interconnected to manage the language configuration and state within a CodeMirror editor. The `languageCompartment` and `languageAdapterState` are central to maintaining the current language settings. Functions like `languageToggle`, `updateLanguageAdapterAndCode`, and `adaptiveLanguageConfiguration` work together to enable dynamic language switching and configuration. The `getInitialLanguageAdapter` and `switchLanguage` functions are used to determine and change the language adapter based on the editor's content.
+
+## Symbols
+
+### `languageCompartment`
+#### Description
+A `Compartment` from CodeMirror used to manage the current language and its associated extensions. It allows for dynamic reconfiguration when the language changes.
+
+### `setLanguageAdapter`
+#### Description
+A `StateEffect` that defines an effect to set the language adapter. It is used to update the language adapter state when a language change is triggered.
+
+### `languageAdapterState`
+#### Description
+A `StateField` that keeps track of the current language adapter. It updates the state based on the `setLanguageAdapter` effect and provides a mechanism to show a language-specific panel if the language is not Python.
+
+#### Internal Logic
+- **Create**: Initializes with the Python language adapter.
+- **Update**: Changes the adapter based on the `setLanguageAdapter` effect.
+- **Provide**: Conditionally shows a panel if the language is not Python.
+
+### `languageToggle`
+#### Description
+A function that returns a keymap for toggling between supported languages using the F4 key. It cycles through available languages and updates the editor's language if a new one is found.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cm | EditorView | The CodeMirror editor view instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | Array | An array of keymap configurations. |
+
+#### Internal Logic
+- **findNextLanguage**: Recursively finds the next supported language for the current code.
+- **Keymap**: Defines a key binding for F4 to toggle languages.
+
+### `updateLanguageAdapterAndCode`
+#### Description
+Updates the language adapter and the editor's code when a language change is triggered. It handles code transformation and cursor position adjustment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The CodeMirror editor view instance. |
+| nextLanguage | LanguageAdapter | The new language adapter to switch to. |
+
+#### Internal Logic
+- **Code Transformation**: Transforms the current code to the new language format.
+- **Cursor Adjustment**: Adjusts the cursor position based on code transformation.
+- **State Dispatch**: Dispatches changes to update the language adapter, reconfigure compartments, and apply formatting effects.
+
+### `createLanguagePanel`
+#### Description
+Creates a language-specific panel component for the editor view, using the `LanguagePanelComponent`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The CodeMirror editor view instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | Panel | A CodeMirror panel component. |
+
+### `adaptiveLanguageConfiguration`
+#### Description
+Returns a set of extensions to enable adaptive language configuration based on provided options. It configures the editor with language-specific settings and state management.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | Object | Configuration options for setting up the editor. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | Array | An array of CodeMirror extensions. |
+
+### `getInitialLanguageAdapter`
+#### Description
+Determines the best initial language adapter for the editor based on its current code content. Defaults to Python if the content is empty or unsupported.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | EditorState | The current state of the editor. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | LanguageAdapter | The initial language adapter. |
+
+### `switchLanguage`
+#### Description
+Switches the language of the editor to a specified language type, updating the editor's state and code accordingly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The CodeMirror editor view instance. |
+| language | LanguageAdapterType | The type of language to switch to. |
+
+### `reconfigureLanguageEffect`
+#### Description
+Reconfigures the editor view with new language extensions when the language changes, ensuring that the editor is updated with the correct settings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The CodeMirror editor view instance. |
+| completionConfig | CompletionConfig | Configuration for code completion. |
+| hotkeysProvider | HotkeyProvider | Provider for hotkey configurations. |
+
+## References
+
+- `LanguageAdapters`: Provides language adapter instances for Python, Markdown, and SQL.
+- `createPanel`: Used to create UI panels for language-specific actions.
+- `getEditorCodeAsPython`: Utilized to transform editor code to Python format.
+- `formattingChangeEffect`: An effect to notify downstream extensions of formatting changes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides state management utilities for CodeMirror. |
+| `@codemirror/view` | Offers view-related functionalities for CodeMirror. |
+| `@codemirror/commands` | Supplies command utilities for CodeMirror. |
+| `@/utils/math` | Contains utility functions like `clamp` for numerical operations. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic state management and effect application. It assumes that the provided language adapters and configurations are valid and supported.
+
+## Logging
+
+No logging mechanisms are implemented in this code.

@@ -1,0 +1,100 @@
+---
+title: "download.ts"
+---
+
+## High-level description
+
+The `download.ts` file provides utility functions for downloading HTML elements as images or blobs in a web application. It includes functions to convert HTML elements to PNG images and download them, as well as functions to download data from a URL or a Blob object. These utilities are designed to facilitate the export of web content in various formats.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `downloadHTMLAsImage`: Utilizes `toPng` from the `html-to-image` library to convert an HTML element to a PNG image and then uses `downloadByURL` to download the image.
+- `downloadByURL`: Creates an anchor element to download a file from a given URL.
+- `downloadBlob`: Converts a Blob object to a URL using `URL.createObjectURL` and then uses `downloadByURL` to download the file.
+
+## Symbols
+
+### `downloadHTMLAsImage`
+#### Description
+Converts an HTML element into a PNG image and initiates a download of the image file. It also manages the UI state during the download process, such as adding and removing a "printing" class to the document body and restoring the scroll position.
+
+#### Inputs
+| Name     | Type       | Description                  |
+|:---------|:-----------|:-----------------------------|
+| element  | HTMLElement| The HTML element to capture as an image. |
+| filename | string     | The desired filename for the downloaded image. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Captures the current scroll position of the "App" element.
+2. Adds a "printing" class to the document body to potentially alter styles for printing.
+3. Uses `toPng` to convert the HTML element to a PNG data URL.
+4. Calls `downloadByURL` with the data URL and a filename converted to PNG format using `Filenames.toPNG`.
+5. Displays a toast notification if an error occurs during the download.
+6. Removes the "printing" class and restores the scroll position after the download attempt.
+
+### `downloadByURL`
+#### Description
+Initiates a download of a file from a specified URL by creating and clicking an anchor element.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| url      | string | The URL of the file to download. |
+| filename | string | The desired filename for the downloaded file. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates an anchor (`&lt;a&gt;`) element.
+2. Sets the `href` attribute to the provided URL.
+3. Sets the `download` attribute to the provided filename.
+4. Programmatically clicks the anchor to trigger the download.
+5. Removes the anchor element from the DOM.
+
+### `downloadBlob`
+#### Description
+Downloads a file from a Blob object by creating a URL for the Blob and using `downloadByURL`.
+
+#### Inputs
+| Name     | Type | Description                  |
+|:---------|:-----|:-----------------------------|
+| blob     | Blob | The Blob object representing the file to download. |
+| filename | string | The desired filename for the downloaded file. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates a URL for the Blob using `URL.createObjectURL`.
+2. Calls `downloadByURL` with the generated URL and the provided filename.
+
+## References
+
+- `toPng` from the `html-to-image` library is used to convert HTML elements to PNG images.
+- `toast` from `@/components/ui/use-toast` is used to display notifications.
+- `Filenames` from `@/utils/filenames` is used to manage file extensions for downloaded files.
+
+## Dependencies
+
+| Dependency     | Purpose                                      |
+|:---------------|:---------------------------------------------|
+| `html-to-image`| Converts HTML elements to image data URLs.   |
+| `@/components/ui/use-toast` | Displays toast notifications for user feedback. |
+| `@/utils/filenames` | Provides utility functions for handling file extensions. |
+
+## Error Handling
+
+- The `downloadHTMLAsImage` function includes a try-catch block to handle errors during the image conversion and download process. If an error occurs, a toast notification is displayed to inform the user of the failure.
+
+## Side Effects
+
+- The `downloadHTMLAsImage` function temporarily modifies the document's body class list and scroll position, which could affect the UI during the download process. These changes are reverted after the download attempt.
+
+## Logging
+
+- The code uses the `toast` function to log errors and provide feedback to the user when a download fails.

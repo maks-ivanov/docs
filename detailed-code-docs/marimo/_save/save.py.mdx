@@ -1,0 +1,72 @@
+---
+title: "save.py"
+---
+
+## High-level description
+
+The `marimo/_save/save.py` file provides a mechanism for caching the results of code execution within a context block using a `persistent_cache` class. This class is designed to optimize performance by avoiding redundant computations, especially for expensive operations, by storing and retrieving results from a cache. The caching mechanism is integrated with the Marimo framework's runtime context and supports both content-addressed and execution-path-based caching strategies.
+
+## Code Structure
+
+The main symbol in this file is the `persistent_cache` class, which is responsible for managing the caching of code execution results. It interacts with several other components, such as loaders for saving and retrieving cache data, and utilities for handling execution contexts and tracebacks.
+
+## Symbols
+
+### `SkipWithBlock`
+#### Description
+A custom exception used to skip the execution of a block of code within a `with` statement when a cache hit occurs.
+
+### `CacheException`
+#### Description
+A custom exception class used to handle errors related to caching operations.
+
+### `persistent_cache`
+#### Description
+The `persistent_cache` class provides a context manager for caching the results of a block of code. It determines whether the code block should be executed or skipped based on cache availability and manages the saving and loading of cache data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| save_path | str | The directory path where cache files are stored. |
+| name | str | The name of the cache, used as an identifier. |
+| _loader | Optional[Loader] | An optional loader object for custom cache handling. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Self | persistent_cache | Returns the context manager instance. |
+
+#### Internal Logic
+- **Initialization**: Sets up the cache name, loader, and initial state variables.
+- **`__enter__` Method**: Sets a trace function to monitor the execution of the code block and determine if it should be skipped based on cache availability.
+- **`trace` Method**: Analyzes the call stack to identify the module-level context and checks for cache hits. If a cache hit is detected, it raises `SkipWithBlock` to skip execution.
+- **`__exit__` Method**: Restores the previous trace function, handles exceptions, and saves the cache if necessary. It also backfills loaded values into the local scope if a cache hit occurred.
+
+## References
+
+- **`write_traceback`**: Used for logging exceptions when cache saving fails.
+- **`get_context`**: Retrieves the current execution context, which is crucial for determining the cache's scope and validity.
+- **`ExtractWithBlock`**: Utilized for parsing and extracting the `with` block for static analysis.
+- **`Cache` and `contextual_defs`**: Used for managing cache data and resolving variable names in the context of the cache.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `sys` | Used for setting and restoring trace functions. |
+| `traceback` | Utilized for extracting and handling stack traces. |
+| `ast` | Used for parsing and analyzing the abstract syntax tree of code blocks. |
+| `marimo._save.loaders` | Provides loader classes for handling cache storage and retrieval. |
+
+## Error Handling
+
+- **`CacheException`**: Raised when there are issues with cache resolution or execution context.
+- **`SkipWithBlock`**: Used to control the flow of execution by skipping the block when a cache hit is detected.
+
+## Logging
+
+- **`write_traceback`**: Logs detailed tracebacks when exceptions occur during cache operations, aiding in debugging and error reporting.
+
+## TODOs
+
+- There is a TODO comment indicating the need to investigate and potentially report a Python bug related to multi-line `with` statements and their interaction with the caching mechanism.

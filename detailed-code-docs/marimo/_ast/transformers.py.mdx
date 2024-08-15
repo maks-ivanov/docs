@@ -1,0 +1,57 @@
+---
+title: "transformers.py"
+---
+
+## High-level description
+
+The target file, `marimo/_ast/transformers.py`, defines a class `NameTransformer` that extends Python's abstract syntax tree (AST) capabilities. This class is designed to traverse and transform AST nodes, specifically targeting `Name` nodes to substitute identifiers based on a provided mapping. This functionality is useful for renaming variables in a codebase programmatically.
+
+## Code Structure
+
+The main symbol in this file is the `NameTransformer` class, which inherits from `ast.NodeTransformer`. This class is responsible for visiting `Name` nodes in an AST and replacing their identifiers according to a dictionary of substitutions provided at initialization.
+
+## Symbols
+
+### `NameTransformer`
+#### Description
+The `NameTransformer` class is a custom AST node transformer that replaces identifiers in `Name` nodes with new identifiers based on a provided dictionary of substitutions. It is useful for tasks such as renaming variables in a codebase to avoid conflicts or to adhere to naming conventions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name_substitutions | `dict[str, str]` | A dictionary mapping original variable names to their new names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| node | `ast.Name` | The transformed `Name` node with the identifier replaced if a substitution exists. |
+
+#### Internal Logic
+- The `__init__` method initializes the transformer with a dictionary of name substitutions.
+- The `visit_Name` method is overridden to check if the identifier of a `Name` node exists in the substitution dictionary. If it does, the method returns a new `Name` node with the identifier replaced. If not, it returns the original node.
+
+## References
+
+- The `NameTransformer` class is used in the `marimo/_cli/convert/ipynb.py` file, specifically in the `fixup_multiple_definitions` function. This function utilizes `NameTransformer` to rename multiply defined variables in a list of source code strings.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast` | Provides the base class `NodeTransformer` and the `Name` node class used for AST manipulation. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond the basic functionality provided by the `ast` module. The `visit_Name` method assumes that the input node is always of type `ast.Name`.
+
+## Logging
+
+There are no logging mechanisms implemented in this code.
+
+## Side Effects
+
+The `NameTransformer` class does not have any side effects beyond transforming the AST nodes it visits. It does not modify global state or external resources.
+
+## Performance Considerations
+
+The performance of the `NameTransformer` is generally efficient for its purpose, as it leverages the `ast` module's traversal capabilities. However, the performance can be affected by the size of the AST and the number of substitutions required.

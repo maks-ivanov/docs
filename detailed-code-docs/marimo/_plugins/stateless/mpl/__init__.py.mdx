@@ -1,0 +1,60 @@
+---
+title: "__init__.py"
+---
+
+## High-level description
+
+The target file `marimo/_plugins/stateless/mpl/__init__.py` serves as an entry point for utilities related to working with matplotlib in a stateless manner. It specifically exposes the `interactive` function from the `_mpl` module, which is designed to render matplotlib figures using an interactive viewer based on the WebAgg backend.
+
+## Code Structure
+
+The target file is structured to import and expose a single function, `interactive`, from the `_mpl` module. This function is part of a larger system that facilitates interactive plotting with matplotlib in a web-based environment.
+
+## References
+
+- The `interactive` function is imported from `marimo._plugins.stateless.mpl._mpl`, which contains the implementation details for rendering interactive matplotlib figures.
+
+## Symbols
+
+### `interactive`
+#### Description
+The `interactive` function is designed to render a matplotlib figure using an interactive viewer. This viewer allows users to pan, zoom, and view plot coordinates on mouse hover, enhancing the interactivity of matplotlib plots in a web-based environment.
+
+#### Inputs
+| Name   | Type            | Description                                  |
+|:-------|:----------------|:---------------------------------------------|
+| figure | `Figure | Axes` | A matplotlib `Figure` or `Axes` object to be rendered interactively. |
+
+#### Outputs
+| Name | Type  | Description                                      |
+|:-----|:------|:-------------------------------------------------|
+| Html | `Html` | An HTML object representing the interactive figure. |
+
+#### Internal Logic
+The `interactive` function performs the following key steps:
+1. **Figure Validation**: It checks if the input is an `Axes` object and retrieves the associated `Figure` if necessary.
+2. **Context Check**: It verifies the runtime context to determine if it is running within a `KernelRuntimeContext`.
+3. **Figure Manager Creation**: It creates a new figure manager using the `new_figure_manager_given_figure` function from the WebAgg backend.
+4. **Application Setup**: It ensures that a web application is running to serve the interactive plot, using `get_or_create_application`.
+5. **Lifecycle Management**: It registers a cleanup handle to manage the lifecycle of the figure manager.
+6. **HTML Content Generation**: It generates the HTML content required to display the interactive plot using an iframe.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `matplotlib` | Used for creating and managing figures and axes. |
+| `starlette` | Provides the web server framework for serving interactive plots. |
+| `uvicorn` | Used to run the ASGI server for the web application. |
+
+## Error Handling
+
+The `interactive` function and its related components handle errors primarily through assertions and runtime checks. For instance, it asserts the presence of a figure ID and handles exceptions during WebSocket communication to ensure robustness.
+
+## Logging
+
+The code does not explicitly implement logging mechanisms. However, it sets the log level to "critical" when starting the server, minimizing log output during normal operation.
+
+## TODOs
+
+- There is a TODO comment in the `interactive` function indicating a future enhancement to proxy the server through the Marimo server for better deployment support.

@@ -1,0 +1,75 @@
+---
+title: "control_flow.py"
+---
+
+## High-level description
+
+The code in `marimo/_runtime/control_flow.py` is part of the Marimo library, which is designed to manage the execution flow of cells in a notebook-like environment. It provides mechanisms to interrupt or stop the execution of cells based on certain conditions. The file defines custom exceptions and a function to control the execution flow, allowing for the interruption of the entire program or the stopping of specific cells based on predicates.
+
+## Code Structure
+
+The main symbols in the code are two custom exceptions, `MarimoInterrupt` and `MarimoStopError`, and a function `stop`. These symbols are interconnected as follows:
+- `MarimoInterrupt` and `MarimoStopError` are both subclasses of `BaseException`, designed to be used in specific control flow scenarios.
+- The `stop` function uses `MarimoStopError` to halt the execution of a cell when a given predicate is true.
+
+## Symbols
+
+### `MarimoInterrupt`
+#### Description
+`MarimoInterrupt` is a custom exception that is raised to stop the execution of the entire program. It inherits from `BaseException` to avoid being caught by generic `except Exception` blocks, similar to how `KeyboardInterrupt` works.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `MarimoStopError`
+#### Description
+`MarimoStopError` is a custom exception used to stop the execution of a specific cell and its descendants. It also inherits from `BaseException` to prevent accidental capture by `except Exception` blocks.
+
+#### Inputs
+| Name   | Type    | Description                        |
+|:-------|:--------|:-----------------------------------|
+| output | object  | The output to be returned when the cell is stopped. |
+
+#### Outputs
+None
+
+### `stop`
+#### Description
+The `stop` function is used to halt the execution of a cell when a specified predicate evaluates to `True`. If the predicate is true, it raises a `MarimoStopError`, which stops the execution of the current cell and prevents any scheduled descendants from running.
+
+#### Inputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| predicate | bool    | A condition that determines whether to stop execution. |
+| output    | object  | Optional output to be returned if the cell is stopped. |
+
+#### Outputs
+None
+
+#### Internal Logic
+The function checks if the `predicate` is `True`. If so, it raises a `MarimoStopError` with the provided `output`.
+
+## References
+
+- The `mddoc` decorator from `marimo._output.rich_help` is used to document the `stop` function, indicating that it is part of the public API and should be included in the generated documentation.
+
+## Dependencies
+
+| Dependency                  | Purpose                                      |
+|:----------------------------|:---------------------------------------------|
+| `marimo._output.rich_help`  | Provides the `mddoc` decorator for documentation purposes. |
+
+## Error Handling
+
+The code uses custom exceptions (`MarimoInterrupt` and `MarimoStopError`) to manage control flow errors. These exceptions are designed to be used in specific scenarios to stop execution, and they inherit from `BaseException` to avoid being caught by generic exception handlers.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,147 @@
+---
+title: "refresh.py"
+---
+
+## High-level description
+
+The `refresh.py` file is a script that uses the Marimo framework to create a web application that visualizes the positions of the International Space Station (ISS) on a map. It provides interactive controls for users to adjust the refresh interval and the number of data points displayed. The application fetches real-time data from an external API and displays it using Altair charts.
+
+## Code Structure
+
+The code is structured into several functions, each decorated with `@app.cell`, which indicates that they are part of a Marimo application. These functions are responsible for different parts of the application, such as setting up the user interface, fetching data, and rendering charts. The functions are interconnected, with some functions returning data that is used as input for others.
+
+## Symbols
+
+### `@app.cell` Decorator
+#### Description
+The `@app.cell` decorator is used to define a cell in the Marimo application. Each decorated function represents a cell that can perform a specific task, such as rendering UI components or processing data.
+
+### `__()`
+#### Description
+This function initializes the necessary libraries and settings for the application. It imports required modules and sets display options for pandas.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | Altair module for data visualization. |
+| data | module | Vega datasets module for accessing geographical data. |
+| mo | module | Marimo module for building the application. |
+| pd | module | Pandas module for data manipulation. |
+| requests | module | Requests module for making HTTP requests. |
+| time | function | Time function for getting the current time. |
+
+### `__()`
+#### Description
+This function sets up sliders for user input, allowing users to adjust the refresh interval and the number of data points.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n_points_slider | UI component | Slider for selecting the number of data points. |
+| refresh_interval_slider | UI component | Slider for selecting the refresh interval. |
+
+### `__()`
+#### Description
+This function creates a refresher component that triggers data updates at specified intervals.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | Marimo module for building the application. |
+| refresh_interval_slider | UI component | Slider for selecting the refresh interval. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| refresher | UI component | Component that triggers data refreshes. |
+
+### `__()`
+#### Description
+This function fetches the current positions of the ISS using an external API and returns the data as a pandas DataFrame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n_points_slider | UI component | Slider for selecting the number of data points. |
+| pd | module | Pandas module for data manipulation. |
+| refresh_interval_slider | UI component | Slider for selecting the refresh interval. |
+| refresher | UI component | Component that triggers data refreshes. |
+| requests | module | Requests module for making HTTP requests. |
+| time | function | Time function for getting the current time. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get_iss_positions | function | Function to fetch ISS positions. |
+
+#### Internal Logic
+- The function calculates timestamps based on the current time and the refresh interval.
+- It constructs a URL to fetch ISS positions from the API.
+- It processes the API response into a pandas DataFrame and formats the timestamps.
+
+### `__()`
+#### Description
+This function sets up the geographical data and base layers for the Altair chart, including the world map and sphere.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | Altair module for data visualization. |
+| data | module | Vega datasets module for accessing geographical data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| countries | GeoData | Geographical data for countries. |
+| sphere | Chart | Altair chart for the sphere. |
+| world | Chart | Altair chart for the world map. |
+
+### `__()`
+#### Description
+This function creates an Altair chart to visualize the ISS positions on a map, with interactive features like hover effects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | Altair module for data visualization. |
+| get_iss_positions | function | Function to fetch ISS positions. |
+| sphere | Chart | Altair chart for the sphere. |
+| world | Chart | Altair chart for the world map. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chart | Chart | Altair chart visualizing ISS positions. |
+| hover | Selection | Altair selection for hover effects. |
+| iss | Chart | Altair chart for ISS positions. |
+| iss_df | DataFrame | DataFrame containing ISS position data. |
+
+#### Internal Logic
+- The function uses Altair to create a layered chart with the world map, sphere, and ISS positions.
+- It adds interactive hover effects to the ISS position markers.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Framework for building interactive web applications. |
+| altair | Library for declarative statistical visualization. |
+| pandas | Data manipulation and analysis library. |
+| requests | Library for making HTTP requests. |
+| vega_datasets | Provides access to example datasets for visualization. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the API requests and data processing will succeed without issues.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The application does not expose an external API. It interacts with users through a web interface built using Marimo components.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

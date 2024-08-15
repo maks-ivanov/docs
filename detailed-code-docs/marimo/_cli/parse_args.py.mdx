@@ -1,0 +1,71 @@
+---
+title: "parse_args.py"
+---
+
+## High-level description
+
+The `parse_args.py` file is responsible for parsing command-line arguments into a structured dictionary format. It processes arguments passed to a command-line interface (CLI) and converts them into a dictionary of key-value pairs, supporting basic data types like integers, floats, booleans, and strings. This functionality is crucial for handling user inputs in CLI applications, allowing for flexible and dynamic command execution based on user-provided options.
+
+## Code Structure
+
+The main function in this file is `parse_args`, which is used to parse command-line arguments. It is complemented by the `args_from_argv` function, which retrieves arguments directly from the system's argument vector (`sys.argv`). The `SerializedCLIArgs` type from `marimo._runtime.requests` is used to define the structure of the parsed arguments.
+
+## References
+
+- `SerializedCLIArgs` from `marimo._runtime.requests`: This type is used to define the structure of the parsed arguments dictionary.
+- `sys.argv`: Used in `args_from_argv` to retrieve command-line arguments passed to the script.
+
+## Symbols
+
+### `parse_args`
+#### Description
+The `parse_args` function takes an iterable of command-line arguments and parses them into a dictionary of key-value pairs. It supports conversion of values to integers, floats, and booleans, and handles both short (`-`) and long (`--`) options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args | Iterable[str] | An iterable of command-line arguments to be parsed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args_dict | SerializedCLIArgs | A dictionary containing parsed command-line arguments as key-value pairs. |
+
+#### Internal Logic
+1. Initialize an empty dictionary `args_dict` to store parsed arguments.
+2. Iterate over the input `args` to combine arguments that are split by spaces.
+3. For each argument, check if it starts with `-` or `--` to identify it as an option.
+4. Strip leading dashes and split the argument into key and value based on `=` or space.
+5. Attempt to convert the value to an integer, float, or boolean.
+6. Handle duplicate keys by storing values in a list.
+7. Return the populated `args_dict`.
+
+### `args_from_argv`
+#### Description
+The `args_from_argv` function retrieves command-line arguments from `sys.argv` (excluding the script name) and parses them using the `parse_args` function.
+
+#### Inputs
+None directly, but it uses `sys.argv` internally.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args_dict | SerializedCLIArgs | A dictionary containing parsed command-line arguments as key-value pairs. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `sys` | Used to access `sys.argv` for retrieving command-line arguments. |
+
+## Error Handling
+
+The code attempts to convert argument values to integers, floats, and booleans, catching `ValueError` exceptions to handle cases where conversion is not possible. This ensures that non-numeric and non-boolean values remain as strings.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

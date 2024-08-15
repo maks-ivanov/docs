@@ -1,0 +1,87 @@
+---
+title: "query.ts"
+---
+
+## High-level description
+
+The target file, `query.ts`, is part of a larger codebase that deals with search and replace functionality within a CodeMirror editor. It defines interfaces and functions to create and manage search queries, allowing for operations like finding matches, replacing text, and highlighting search results within the editor's state.
+
+## Code Structure
+
+The main symbols in the code are the `QueryType` interface, the `QueryCreator` interface, and the `asQueryCreator` function. The `QueryType` interface defines the structure and methods required for a search query, such as finding the next or previous match, getting replacements, and highlighting matches. The `QueryCreator` interface is a factory for creating `QueryType` instances. The `asQueryCreator` function is used to ensure that a given `SearchQuery` object can be treated as a `QueryCreator`.
+
+## Symbols
+
+### `QueryType`
+#### Description
+The `QueryType` interface defines the methods and properties required for a search query within the CodeMirror editor. It provides methods to find matches, replace text, and highlight search results.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `EditorState` | The current state of the editor. |
+| curFrom | `number` | The starting position for the search. |
+| curTo | `number` | The ending position for the search. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Result | `SearchResult` | The result of the search operation, or `null` if no match is found. |
+
+#### Internal Logic
+- `nextMatch` and `prevMatch` methods are used to find the next or previous match in the editor state.
+- `getReplacement` provides the replacement string for a given search result.
+- `matchAll` returns all matches within a specified limit.
+- `highlight` is used to apply visual highlights to matches in the editor.
+
+### `QueryCreator`
+#### Description
+The `QueryCreator` interface is a factory interface for creating instances of `QueryType`. It ensures that a search query can be instantiated with the necessary methods.
+
+#### Inputs
+None directly, but it operates on a `SearchQuery` object.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| QueryType | `QueryType` | An instance of `QueryType` created by the factory. |
+
+### `asQueryCreator`
+#### Description
+The `asQueryCreator` function checks if a given `SearchQuery` object can be treated as a `QueryCreator`. It uses an invariant to ensure the object has a `create` method.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| query | `SearchQuery` | The search query object to be converted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| QueryCreator | `QueryCreator` | The input query cast as a `QueryCreator`. |
+
+#### Internal Logic
+- Uses the `invariant` function to assert that the `query` has a `create` method.
+- Casts the `query` to `QueryCreator` if the condition is met.
+
+## References
+
+- The `SearchCursor` and `SearchQuery` from `@codemirror/search` are used to define the type of search results and to perform search operations.
+- The `EditorState` from `@codemirror/state` is used to represent the state of the editor.
+- The `invariant` function from `@/utils/invariant` is used to enforce conditions within the `asQueryCreator` function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/search` | Provides search-related functionalities like `SearchCursor` and `SearchQuery`. |
+| `@codemirror/state` | Provides the `EditorState` type used in search operations. |
+| `@/utils/invariant` | Provides the `invariant` function for runtime assertions. |
+
+## Error Handling
+
+The `asQueryCreator` function uses the `invariant` function to throw an error if the provided `SearchQuery` does not have a `create` method, ensuring that only valid query objects are processed.
+
+## Logging
+
+There is no explicit logging mechanism implemented in this code.

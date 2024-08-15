@@ -1,0 +1,129 @@
+---
+title: "ai.py"
+---
+
+## High-level description
+
+The target file `marimo/_server/api/endpoints/ai.py` defines an API endpoint for handling AI completion requests using OpenAI's API. It includes functions to configure the OpenAI client, process incoming requests, and stream responses back to the client. The endpoint is designed to handle different types of content, such as Python code, markdown, and SQL, and it ensures that the OpenAI API is properly configured before processing requests.
+
+## Code Structure
+
+The main components of the code are:
+- **Router**: An instance of `APIRouter` is used to define the `/completion` endpoint.
+- **Functions**: 
+  - `get_openai_client`: Configures and returns an OpenAI client.
+  - `get_model`: Retrieves the AI model to be used from the configuration.
+  - `make_stream_response`: Processes and streams the response from OpenAI.
+  - `ai_completion`: The main endpoint function that handles AI completion requests.
+
+## References
+
+- **MarimoConfig**: Used to retrieve configuration settings for the OpenAI client.
+- **AppState**: Manages application state and session information.
+- **HTTPStatus**: Provides HTTP status codes for error handling.
+- **AiCompletionRequest**: Represents the structure of the request body for AI completion.
+
+## Symbols
+
+### `get_openai_client`
+#### Description
+Configures and returns an OpenAI client using the provided configuration. It checks for the presence of necessary configuration keys and raises an HTTP exception if any are missing.
+
+#### Inputs
+| Name   | Type         | Description                  |
+|:-------|:-------------|:-----------------------------|
+| config | MarimoConfig | Configuration for OpenAI API |
+
+#### Outputs
+| Name   | Type   | Description          |
+|:-------|:-------|:---------------------|
+| output | OpenAI | Configured OpenAI client |
+
+#### Internal Logic
+- Imports the OpenAI module.
+- Checks for the presence of the "ai", "open_ai", and "api_key" keys in the configuration.
+- Retrieves the API key and optional base URL from the configuration.
+- Returns an instance of the OpenAI client configured with the API key and base URL.
+
+### `get_model`
+#### Description
+Retrieves the AI model to be used from the configuration, defaulting to "gpt-4-turbo" if not specified.
+
+#### Inputs
+| Name   | Type         | Description                  |
+|:-------|:-------------|:-----------------------------|
+| config | MarimoConfig | Configuration for OpenAI API |
+
+#### Outputs
+| Name   | Type   | Description          |
+|:-------|:-------|:---------------------|
+| model  | str    | AI model to be used  |
+
+#### Internal Logic
+- Retrieves the model from the configuration.
+- Defaults to "gpt-4-turbo" if no model is specified.
+
+### `make_stream_response`
+#### Description
+Processes and streams the response from OpenAI, handling markdown code fences and logging the original content.
+
+#### Inputs
+| Name     | Type                        | Description                  |
+|:---------|:----------------------------|:-----------------------------|
+| response | Stream[ChatCompletionChunk] | Streamed response from OpenAI |
+
+#### Outputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| output | Generator[str, None, None] | Processed content chunks |
+
+#### Internal Logic
+- Iterates over the response chunks.
+- Handles markdown code fences by removing them from the output.
+- Logs the original content for debugging purposes.
+
+### `ai_completion`
+#### Description
+Handles AI completion requests, processes the request body, configures the OpenAI client, and returns a streaming response.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | Incoming HTTP request        |
+
+#### Outputs
+| Name   | Type             | Description          |
+|:-------|:-----------------|:---------------------|
+| output | StreamingResponse | AI completion response |
+
+#### Internal Logic
+- Retrieves the application state and configuration.
+- Parses the request body into an `AiCompletionRequest`.
+- Configures the OpenAI client and constructs the prompt based on the request.
+- Sends the prompt to OpenAI and returns a streaming response.
+
+## Side Effects
+- Logs the original content of the AI completion response for debugging purposes.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| starlette  | Provides web framework components            |
+| openai     | Interacts with OpenAI's API                  |
+| marimo     | Internal modules for configuration and logging |
+
+## Error Handling
+- Raises `HTTPException` with `HTTPStatus.BAD_REQUEST` if the OpenAI client is not properly configured.
+
+## Logging
+- Uses the `marimo_logger` to log the original content of the AI completion response for debugging purposes.
+
+## API/Interface Reference
+
+| Endpoint       | Method | Request Format | Response Format | Description                          |
+|:---------------|:-------|:---------------|:----------------|:-------------------------------------|
+| /completion    | POST   | JSON           | JSON            | Handles AI completion requests       |
+
+## TODOs
+- No TODOs are present in the code.

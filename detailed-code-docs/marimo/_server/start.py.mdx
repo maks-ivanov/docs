@@ -1,0 +1,96 @@
+---
+title: "start.py"
+---
+
+## High-level description
+
+The `start.py` file in the `marimo/_server` directory is responsible for initializing and starting a server using the Uvicorn ASGI server. It configures the server environment, sets up session management, and handles proxy settings. The server is designed to run applications built with the Marimo framework, supporting both development and production modes.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `_resolve_proxy`: A helper function used within the `start` function to determine the correct host and port settings when a proxy is involved.
+- `start`: The primary function that initializes and starts the server. It configures various server settings, initializes session management, and starts the Uvicorn server.
+
+## Symbols
+
+### `_resolve_proxy`
+#### Description
+This function determines the appropriate host and port to use when a proxy is specified. It checks if a proxy is provided and extracts the host and port from it, defaulting to port 80 if no port is specified.
+
+#### Inputs
+| Name  | Type   | Description                        |
+|:------|:-------|:-----------------------------------|
+| port  | int    | The default port to use if no proxy is specified. |
+| host  | str    | The default host to use if no proxy is specified. |
+| proxy | Optional[str] | The proxy string, potentially containing a host and port. |
+
+#### Outputs
+| Name          | Type   | Description                        |
+|:--------------|:-------|:-----------------------------------|
+| external_port | int    | The port to use, either from the proxy or the default. |
+| external_host | str    | The host to use, either from the proxy or the default. |
+
+#### Internal Logic
+- If no proxy is provided, it returns the default port and host.
+- If a proxy is provided, it uses a regular expression to extract the host and port.
+- If the proxy includes a port, it returns that; otherwise, it defaults to port 80.
+
+### `start`
+#### Description
+This function initializes and starts the Marimo server using Uvicorn. It configures the server environment, sets up session management, and handles various server settings such as development mode, proxy settings, and authentication.
+
+#### Inputs
+| Name                        | Type                      | Description |
+|:----------------------------|:--------------------------|:------------|
+| file_router                 | AppFileRouter             | Manages file routing for the application. |
+| mode                        | SessionMode               | The mode in which the server operates (e.g., EDIT or RUN). |
+| development_mode            | bool                      | Indicates if the server is running in development mode. |
+| quiet                       | bool                      | Suppresses standard output if True. |
+| include_code                | bool                      | Includes notebook code in the app if True. |
+| headless                    | bool                      | Runs the server without launching a browser if True. |
+| port                        | Optional[int]             | The port to attach to. |
+| host                        | str                       | The host to attach to. |
+| proxy                       | Optional[str]             | The address of a reverse proxy. |
+| watch                       | bool                      | Watches files for changes and reloads the app if True. |
+| cli_args                    | SerializedCLIArgs         | Command-line arguments serialized for use. |
+| base_url                    | str                       | The base URL for the server. |
+| allow_origins               | Optional[tuple[str, ...]] | Allowed origins for CORS. |
+| auth_token                  | Optional[AuthToken]       | Token for authentication. |
+| redirect_console_to_browser | bool                      | Redirects console logs to the browser console if True. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function does not return a value. |
+
+#### Internal Logic
+- Determines the port to use, either specified or finds a free one.
+- Initializes a `SessionManager` to handle client sessions.
+- Configures the Starlette application with middleware and routes.
+- Sets application state variables such as port, host, and session manager.
+- Initializes system resources like file descriptor limits and signal handling.
+- Configures and starts a Uvicorn server with the specified settings.
+
+## Side Effects
+- Modifies global state by starting a server and potentially altering system resource limits.
+- Initializes and manages sessions, which may involve network communication and file I/O.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `uvicorn`  | Used to run the ASGI server. |
+| `marimo._server.api.lifespans` | Provides lifecycle management for the application. |
+| `marimo._config.manager.UserConfigManager` | Manages user configuration settings. |
+| `marimo._runtime.requests.SerializedCLIArgs` | Handles serialized command-line arguments. |
+| `marimo._server.file_router.AppFileRouter` | Manages file routing for the application. |
+| `marimo._server.main.create_starlette_app` | Creates the Starlette application. |
+| `marimo._server.model.SessionMode` | Defines session modes for the server. |
+| `marimo._server.sessions.SessionManager` | Manages client sessions. |
+| `marimo._server.tokens.AuthToken` | Handles authentication tokens. |
+| `marimo._server.utils` | Provides utility functions for server initialization. |
+| `marimo._server.uvicorn_utils` | Provides utility functions for Uvicorn server management. |
+| `marimo._utils.paths.import_files` | Imports files for use in the application. |
+
+## TODOs
+- The code contains a TODO comment regarding the use of the `reload` option in Uvicorn, which cannot be used unless the app is an import string. This is a limitation that needs addressing for development mode.

@@ -1,0 +1,50 @@
+---
+title: "once.ts"
+---
+
+## High-level description
+
+The `once.ts` file defines a utility function `once` that ensures a given function is executed only once. This is useful for scenarios where an operation should be performed a single time, such as initializing a resource or setting up a configuration. The function returns a new function that, when called, will execute the original function only on the first invocation and return the cached result on subsequent calls.
+
+## Code Structure
+
+The main symbol in this file is the `once` function. It is a higher-order function that takes another function as an argument and returns a new function. This returned function manages the execution state of the original function, ensuring it is called only once.
+
+## Symbols
+
+### `once`
+#### Description
+The `once` function is a higher-order utility function that takes a function `fn` as an argument and returns a new function. This new function, when invoked, will call `fn` only the first time it is executed and cache the result. On subsequent calls, it will return the cached result without calling `fn` again.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fn | `T extends (...args: unknown[]) =&gt; unknown` | A function that takes any number of arguments and returns a value. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `T` | A function that, when called, executes `fn` only once and returns its result. |
+
+#### Internal Logic
+1. **Initialization**: The function initializes two variables: `result` to store the result of the function call, and `called` to track whether the function has been called.
+2. **Function Execution**: The returned function checks if `called` is `false`. If so, it sets `called` to `true` and executes `fn` with the provided arguments, storing the result in `result`.
+3. **Return Cached Result**: On subsequent calls, the function simply returns the cached `result` without executing `fn` again.
+
+## References
+
+The `once` function is used in various parts of the codebase, as seen in the related files. It is used to ensure that certain operations, such as creating a WebSocket transport or initializing a server client, are performed only once.
+
+## Dependencies
+
+There are no external dependencies in the `once.ts` file. It is a standalone utility function.
+
+## Usage in Related Files
+
+- **`client.ts`**: The `once` function is used to create a WebSocket transport and a Copilot client only once, ensuring that these resources are initialized a single time.
+- **`vim.ts`**: It is used to add custom Vim commands only once, preventing duplicate command definitions.
+- **`api.ts`**: The function ensures that the server token is retrieved only once, optimizing repeated API requests.
+- **`worker.ts`**: It is used to initialize certain operations, like sending an "initialized" message, only once during the worker's lifecycle.
+- **`TexPlugin.tsx`**: The function is used to import the KaTeX library only once, optimizing the rendering of LaTeX content.
+
+The `once` utility is a common pattern in JavaScript and TypeScript for managing idempotent operations, ensuring that certain actions are performed only once to avoid redundant processing and potential side effects.

@@ -1,0 +1,80 @@
+---
+title: "command-palette.tsx"
+---
+
+## High-level description
+
+The `command-palette.tsx` file defines a `CommandPalette` component for a frontend application, which provides a user interface for executing various commands and actions. It leverages a command dialog to display a searchable list of commands, including recently used commands, notebook actions, and cell actions, allowing users to quickly access and execute these commands using keyboard shortcuts.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `CommandPalette`: The main React component that renders the command palette UI.
+- `commandPaletteAtom`: A Jotai atom used to manage the open/close state of the command palette.
+- `useRegisteredActions`, `useRecentCommands`, `useNotebookActions`, `useCellActionButtons`, `useConfigActions`: Hooks that provide data and actions related to registered commands, recent commands, notebook actions, cell actions, and configuration actions.
+- `CommandDialog`, `CommandInput`, `CommandList`, `CommandItem`, etc.: UI components imported from a command UI library to build the command palette interface.
+
+## References
+
+- `useRegisteredActions`: Provides access to registered keyboard shortcuts and their callbacks.
+- `useRecentCommands`: Manages the list of recently used commands.
+- `useNotebookActions`, `useCellActionButtons`, `useConfigActions`: Provide actions related to notebook, cell, and configuration management.
+- `lastFocusedCellAtom`, `hotkeysAtom`: Jotai atoms used to manage the state of the last focused cell and hotkey configurations.
+
+## Symbols
+
+### `commandPaletteAtom`
+#### Description
+A Jotai atom that holds a boolean value indicating whether the command palette is open or closed.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | boolean | The open/close state of the command palette. |
+
+### `CommandPalette`
+#### Description
+A React component that renders a command palette UI, allowing users to search and execute commands. It manages the display of recent commands, notebook actions, and cell actions, and integrates with keyboard shortcuts for quick access.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX | React Element | The rendered command palette UI. |
+
+#### Internal Logic
+- Uses `useAtom` to manage the open state of the command palette.
+- Retrieves registered actions, recent commands, and various notebook and cell actions using custom hooks.
+- Listens for a global keyboard shortcut to toggle the command palette.
+- Renders a `CommandDialog` containing a `CommandInput` for searching commands and a `CommandList` for displaying available commands.
+- Filters and organizes commands into groups, such as recently used commands and all available commands, and renders them using `CommandItem` components.
+- Handles command selection by executing the associated action and updating the recent commands list.
+
+## Side Effects
+- Modifies the state of the command palette (open/close).
+- Updates the list of recent commands in local storage.
+- Executes registered actions when commands are selected.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management for atoms. |
+| `@/components/ui/command` | UI components for building the command palette. |
+| `@/core/hotkeys/actions` | Provides registered actions and hotkey management. |
+| `@/hooks/useRecentCommands` | Manages recent commands. |
+| `@/hooks/useEventListener` | Adds event listeners for keyboard shortcuts. |
+
+## Error Handling
+The code does not explicitly handle errors beyond basic exception raising. It assumes that all actions and hooks function correctly.
+
+## Logging
+No logging mechanisms are implemented in this code.
+
+## TODOs
+None

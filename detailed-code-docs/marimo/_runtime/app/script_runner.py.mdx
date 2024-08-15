@@ -1,0 +1,109 @@
+---
+title: "script_runner.py"
+---
+
+## High-level description
+
+The `AppScriptRunner` class in the `script_runner.py` file is responsible for executing a Marimo application in a script context. It determines whether the application should be run synchronously or asynchronously based on the nature of the cells within the application. The class handles the setup and teardown of the script execution context, manages dependencies, and executes each cell in the application while handling exceptions and post-execution hooks.
+
+## Code Structure
+
+The main class in this file is `AppScriptRunner`, which interacts with several other components of the Marimo framework, such as the `InternalApp`, `CellImpl`, and various context and execution utilities. The `AppScriptRunner` class uses methods from these components to manage the execution flow of the application.
+
+## Symbols
+
+### `AppScriptRunner`
+#### Description
+The `AppScriptRunner` class is designed to execute a Marimo application in a script context. It initializes the script context, checks if the application contains asynchronous cells, and executes the cells either synchronously or asynchronously. It also handles exceptions specific to the Marimo runtime and ensures that the script context is properly torn down after execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | InternalApp | The internal representation of the Marimo application to be executed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outputs | dict[CellId_t, Any] | A dictionary mapping cell IDs to their execution outputs. |
+| defs | dict[str, Any] | A dictionary of global definitions resulting from the execution. |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the `AppScriptRunner` with an `InternalApp` instance.
+- **Run Method**: 
+  - Checks if any cell in the application is a coroutine to determine if asynchronous execution is needed.
+  - Initializes the script context if not already installed.
+  - Registers formatters if they are not already registered.
+  - Executes the application cells either synchronously or asynchronously based on the presence of coroutine cells.
+  - Handles exceptions by raising the underlying cause if it is a `MarimoMissingRefError`, or re-raises the exception without additional context to avoid cluttering the stack trace.
+  - Ensures the script context is torn down after execution.
+
+### `_cell_iterator`
+#### Description
+This method generates an iterator over the cells in the application that are not disabled and are valid for execution.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | Iterator[CellImpl] | An iterator over executable cell implementations. |
+
+### `_run_synchronous`
+#### Description
+Executes the application cells synchronously, applying any post-execution hooks after each cell execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| post_execute_hooks | list[Callable[[], Any]] | A list of functions to be called after each cell execution. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outputs | dict[CellId_t, Any] | A dictionary mapping cell IDs to their execution outputs. |
+| glbls | dict[str, Any] | The global namespace after execution. |
+
+### `_run_asynchronous`
+#### Description
+Executes the application cells asynchronously, applying any post-execution hooks after each cell execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| post_execute_hooks | list[Callable[[], Any]] | A list of functions to be called after each cell execution. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outputs | dict[CellId_t, Any] | A dictionary mapping cell IDs to their execution outputs. |
+| glbls | dict[str, Any] | The global namespace after execution. |
+
+## References
+
+- **`InternalApp`**: Used to access the application's cell manager and execution order.
+- **`CellImpl`**: Represents the implementation of a cell, which is executed by the runner.
+- **`execute_cell` and `execute_cell_async`**: Functions from the `executor` module used to execute cells.
+- **`initialize_script_context` and `teardown_context`**: Functions to manage the script execution context.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for running asynchronous tasks. |
+| `marimo._ast.cell` | Provides cell-related classes and types. |
+| `marimo._dependencies.dependencies` | Manages dependencies like `matplotlib`. |
+| `marimo._messaging.types` | Provides stream types for messaging. |
+| `marimo._runtime.context.types` | Manages runtime context for execution. |
+| `marimo._runtime.executor` | Provides execution functions for cells. |
+| `marimo._runtime.patches` | Provides utilities for patching the main module. |
+
+## Error Handling
+
+The `AppScriptRunner` class handles `MarimoRuntimeException` by checking if the cause is a `MarimoMissingRefError` and raises the underlying `NameError` directly. For other exceptions, it raises the wrapped exception without additional context to keep the stack trace clean.
+
+## Side Effects
+
+- Modifies the global state by installing and tearing down the script context.
+- Registers formatters if they are not already registered.
+
+## Performance Considerations
+
+The decision to run cells synchronously or asynchronously is based on the presence of coroutine cells, which can impact performance depending on the nature of the tasks being executed.

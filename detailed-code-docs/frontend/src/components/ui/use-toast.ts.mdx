@@ -1,0 +1,113 @@
+---
+title: "use-toast.ts"
+---
+
+## High-level description
+
+The `use-toast.ts` file provides a custom hook and utility functions for managing toast notifications in a React application. It defines a system to add, update, dismiss, and remove toast notifications, which are temporary messages displayed to users. The file includes a reducer to manage the state of toasts and a hook `useToast` to interact with this state.
+
+## Code Structure
+
+- **ToasterToast**: A type that extends `ToastProps` with additional properties like `id`, `title`, `description`, and `action`.
+- **actionTypes**: An object defining constants for different actions that can be performed on toasts.
+- **reducer**: A function that updates the state of toasts based on actions like adding, updating, dismissing, or removing a toast.
+- **toastTimeouts**: A map to manage timeouts for automatically removing toasts after a delay.
+- **dispatch**: A function to dispatch actions to the reducer and notify listeners of state changes.
+- **toast**: A function to create a new toast with methods to update or dismiss it.
+- **useToast**: A custom hook that provides the current state of toasts and a method to dismiss them.
+
+## Symbols
+
+### `ToasterToast`
+#### Description
+A type that represents a toast notification, extending `ToastProps` with additional properties for managing the toast's lifecycle and display.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Unique identifier for the toast. |
+| title | React.ReactNode | Optional title for the toast. |
+| description | React.ReactNode | Optional description for the toast. |
+| action | ToastActionElement | Optional action element for the toast. |
+
+#### Outputs
+N/A
+
+### `actionTypes`
+#### Description
+An object containing constants for different actions that can be performed on toasts, such as adding, updating, dismissing, and removing.
+
+### `reducer`
+#### Description
+A function that manages the state of toasts by handling actions to add, update, dismiss, or remove toasts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | State | The current state of toasts. |
+| action | Action | The action to be performed on the state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| newState | State | The updated state after applying the action. |
+
+#### Internal Logic
+- **ADD_TOAST**: Adds a new toast to the state, respecting the `TOAST_LIMIT`.
+- **UPDATE_TOAST**: Updates an existing toast's properties.
+- **DISMISS_TOAST**: Marks a toast as closed and schedules it for removal.
+- **REMOVE_TOAST**: Removes a toast from the state.
+
+### `dispatch`
+#### Description
+A function to dispatch actions to the reducer and notify all listeners of the updated state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| action | Action | The action to be dispatched. |
+
+#### Outputs
+N/A
+
+### `toast`
+#### Description
+A function to create a new toast notification with methods to update or dismiss it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | Toast | Properties for the new toast. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| toastObject | Object | An object containing the toast's id, and methods to update or dismiss it. |
+
+### `useToast`
+#### Description
+A custom hook that provides the current state of toasts and a method to dismiss them.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | State | The current state of toasts. |
+| dismiss | Function | A function to dismiss a toast by its id. |
+
+## Side Effects
+- The `addToRemoveQueue` function schedules a toast for removal after a delay using `setTimeout`.
+- The `dispatch` function updates the global state of toasts and notifies all listeners.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| React | Used for managing state and effects in the component. |
+
+## Error Handling
+The code does not explicitly handle errors, but it ensures that actions are only performed if the necessary conditions are met (e.g., checking if a toast exists before updating or removing it).
+
+## Logging
+No logging mechanisms are implemented in this code.
+
+## TODOs
+- The code contains a comment suggesting that the side effects in the `DISMISS_TOAST` case could be extracted into a separate `dismissToast` action for simplicity.

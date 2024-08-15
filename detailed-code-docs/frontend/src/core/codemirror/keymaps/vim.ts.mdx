@@ -1,0 +1,78 @@
+---
+title: "vim.ts"
+---
+
+## High-level description
+
+The target file `vim.ts` is a module that integrates Vim keybindings into a CodeMirror editor instance. It provides a custom Vim keymap extension for CodeMirror, allowing users to navigate between editor instances using Vim-like commands. The module also synchronizes Vim mode changes across multiple CodeMirror instances, ensuring consistent behavior when switching between different editor views.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `vimKeymapExtension`: This function creates and returns a set of CodeMirror extensions that include custom Vim keybindings and a plugin for synchronizing Vim mode changes.
+- `addCustomVimCommandsOnce`: A function that defines custom Vim actions and maps them to specific key commands.
+- `CodeMirrorVimSync`: A class responsible for managing and synchronizing Vim mode changes across multiple CodeMirror editor instances.
+
+## Symbols
+
+### `vimKeymapExtension`
+#### Description
+The `vimKeymapExtension` function creates a set of CodeMirror extensions that integrate Vim keybindings and custom commands into the editor. It also includes a plugin to manage the synchronization of Vim mode changes across multiple editor instances.
+
+#### Inputs
+| Name     | Type   | Description                                      |
+|:---------|:-------|:-------------------------------------------------|
+| callbacks | object | An object containing `focusUp` and `focusDown` functions to handle focus changes between editor instances. |
+
+#### Outputs
+| Name    | Type        | Description                                      |
+|:--------|:------------|:-------------------------------------------------|
+| output1 | Extension[] | An array of CodeMirror extensions for Vim keybindings and mode synchronization. |
+
+#### Internal Logic
+- Calls `addCustomVimCommandsOnce` to ensure custom Vim commands are defined only once.
+- Returns an array of extensions, including keymaps for 'j' and 'k' keys to move focus between editor instances and a `ViewPlugin` for managing Vim mode synchronization.
+
+### `addCustomVimCommandsOnce`
+#### Description
+This function defines custom Vim actions and maps them to specific key commands, ensuring these definitions are executed only once.
+
+#### Internal Logic
+- Uses the `once` utility to ensure the function is executed only once.
+- Defines a custom Vim action `goToDefinition` and maps it to the `gd` command in normal mode.
+
+### `CodeMirrorVimSync`
+#### Description
+The `CodeMirrorVimSync` class manages the synchronization of Vim mode changes across multiple CodeMirror editor instances, ensuring consistent Vim behavior.
+
+#### Internal Logic
+- Maintains a set of editor instances and listens for Vim mode changes.
+- Broadcasts mode changes to all other instances, ensuring they reflect the same Vim mode.
+- Handles specific mode transitions (normal, insert, visual) and restores editor selections after broadcasting.
+
+## References
+
+- `goToDefinitionAtCursorPosition`: A utility function used in the custom Vim command to navigate to the definition of a variable at the cursor position.
+- `isAtEndOfEditor`, `isAtStartOfEditor`, `isInVimNormalMode`: Utility functions used to determine the cursor position and Vim mode state within the editor.
+
+## Dependencies
+
+| Dependency                | Purpose                                                                 |
+|:--------------------------|:------------------------------------------------------------------------|
+| `@replit/codemirror-vim`  | Provides Vim keybinding support for CodeMirror.                         |
+| `@codemirror/view`        | Provides the `EditorView`, `keymap`, and `ViewPlugin` for CodeMirror.   |
+| `@codemirror/state`       | Provides the `Extension` type for CodeMirror state management.          |
+| `@/utils/invariant`       | Utility for asserting conditions and throwing errors if not met.        |
+| `@/utils/Logger`          | Utility for logging warnings and errors.                                |
+| `@/utils/once`            | Utility to ensure a function is executed only once.                     |
+
+## Error Handling
+
+- The `invariant` function is used to assert conditions and throw errors if they are not met, ensuring that the code behaves as expected.
+
+## Logging
+
+- The `Logger` utility is used to log warnings when expected conditions are not met, such as when a CodeMirror instance does not have the expected state.
+
+## TODOs
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,196 @@
+---
+title: "test_file_path.py"
+---
+
+## High-level description
+
+The target file `tests/_cli/test_file_path.py` contains unit tests for various functions related to file path validation and handling within the Marimo CLI tool. These tests cover functionalities such as validating file names, handling GitHub issue URLs, and creating temporary files from URLs or content. The tests ensure that the CLI tool correctly processes file paths and URLs, particularly those related to GitHub, and handles different scenarios like non-existent files or directories.
+
+## Code Structure
+
+The main symbols in the code are test functions that validate the behavior of functions imported from `marimo._cli.file_path`. These functions include `validate_name`, `_is_github_issue_url`, `is_github_src`, `_handle_github_issue`, `_create_tmp_file_from_url`, `_create_tmp_file_from_content`, and `_find_python_code_in_github_issue`. Each test function is designed to test a specific aspect of these functions, ensuring they behave as expected under various conditions.
+
+## References
+
+The test file references several functions from the `marimo._cli.file_path` module, which are crucial for understanding the tests:
+
+- `validate_name`
+- `_is_github_issue_url`
+- `is_github_src`
+- `_handle_github_issue`
+- `_create_tmp_file_from_url`
+- `_create_tmp_file_from_content`
+- `_find_python_code_in_github_issue`
+
+## Symbols
+
+### `test_validate_name_with_python_file`
+#### Description
+Tests the `validate_name` function to ensure it correctly identifies a Python file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test uses the current file's path as input. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts that the file name ends with "test_file_path.py". |
+
+### `test_validate_name_with_non_python_file`
+#### Description
+Tests the `validate_name` function to ensure it raises an error for non-Python files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses hardcoded file names like "example.txt". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts that a `click.UsageError` is raised. |
+
+### `test_validate_name_with_nonexistent_file`
+#### Description
+Tests the `validate_name` function to ensure it handles nonexistent files correctly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses the file name "nonexistent.py". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts that a `click.UsageError` is raised or the file name is returned. |
+
+### `test_validate_name_with_directory_false`
+#### Description
+Tests the `validate_name` function to ensure it raises an error when directories are not allowed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses the current directory as input. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts that a `click.UsageError` is raised. |
+
+### `test_validate_name_with_directory_true`
+#### Description
+Tests the `validate_name` function to ensure it correctly handles directories when allowed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses the current directory as input. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts that the directory name is returned. |
+
+### `test_is_github_issue_url_with_valid_url`
+#### Description
+Tests the `_is_github_issue_url` function to ensure it correctly identifies valid GitHub issue URLs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses hardcoded GitHub URLs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts the function returns `True` or `False` appropriately. |
+
+### `test_is_github_src_with_valid_url`
+#### Description
+Tests the `is_github_src` function to ensure it correctly identifies valid GitHub source URLs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses hardcoded GitHub URLs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts the function returns `True` or `False` appropriately. |
+
+### `test_handle_github_issue`
+#### Description
+Tests the `_handle_github_issue` function to ensure it correctly processes GitHub issue URLs and extracts Python code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_urlopen | Any | Mocked `urlopen` function to simulate GitHub API response. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts the result is a path to a temporary Python file. |
+
+### `test_create_tmp_file_from_url`
+#### Description
+Tests the `_create_tmp_file_from_url` function to ensure it creates a temporary file from a URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses a hardcoded URL. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts the result is a path to a temporary Python file. |
+
+### `test_create_tmp_file_from_content`
+#### Description
+Tests the `_create_tmp_file_from_content` function to ensure it creates a temporary file from given content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses hardcoded content and file name. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts the result is a path to a temporary file with the correct content. |
+
+### `test_find_python_code_in_github_issue_multiple_codes`
+#### Description
+Tests the `_find_python_code_in_github_issue` function to ensure it extracts Python code blocks from GitHub issue bodies.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Uses hardcoded issue body strings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | Asserts the extracted code matches expected values. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `tempfile` | Used for creating temporary directories. |
+| `unittest.mock` | Used for mocking functions in tests. |
+| `click` | Used for handling command-line interface errors. |
+| `pytest` | Used for writing and running tests. |
+
+## Error Handling
+
+The tests expect certain functions to raise `click.UsageError` when invalid inputs are provided, such as non-existent files or incorrect file types. This is verified using `pytest.raises`.
+
+## Logging
+
+The related code snippets in `marimo/_cli/file_path.py` include logging statements to track the creation and saving of temporary files, as well as downloading files from URLs. However, the test file itself does not implement logging.

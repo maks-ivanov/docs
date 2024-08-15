@@ -1,0 +1,76 @@
+---
+title: "state.tsx"
+---
+
+## High-level description
+
+The target file, `state.tsx`, is responsible for managing the state of a file tree in a file explorer component within a React application. It utilizes the Jotai library to create and manage global state atoms that persist even when components are unmounted. The file defines a `treeAtom` to manage the file tree structure and an `openStateAtom` to track which folders are open. It also provides a `refreshRoot` function to refresh the root of the file tree.
+
+## Code Structure
+
+- **Atoms**: The file defines two Jotai atoms, `treeAtom` and `openStateAtom`, which are used to manage the state of the file tree and the open state of folders, respectively.
+- **Functions**: The `refreshRoot` function is defined to refresh the entire file tree by invoking the `refreshAll` method on the `RequestingTree` instance stored in `treeAtom`.
+
+## References
+
+- **`RequestingTree`**: This class is imported from `./requesting-tree` and is used to manage the file tree operations such as listing, creating, deleting, and renaming files or folders.
+- **Network Requests**: The file imports several functions from `@/core/network/requests` to perform network operations related to file management.
+- **Jotai Store**: The `store` from `@/core/state/jotai` is used to access and manipulate the global state outside of React components.
+
+## Symbols
+
+### `treeAtom`
+#### Description
+`treeAtom` is a Jotai atom that holds an instance of `RequestingTree`. It manages the state of the file tree, including operations like listing, creating, deleting, and renaming files or folders.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `RequestingTree` | Class | An instance of `RequestingTree` initialized with network request functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `treeAtom` | Atom&lt;RequestingTree&gt; | A Jotai atom containing the `RequestingTree` instance. |
+
+### `openStateAtom`
+#### Description
+`openStateAtom` is a Jotai atom that maintains a record of which folders in the file tree are currently open. This state persists even when the component is unmounted.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Record&lt;string, boolean&gt;` | Type | An object mapping folder IDs to their open state (true for open, false for closed). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `openStateAtom` | Atom&lt;Record&lt;string, boolean&gt;&gt; | A Jotai atom containing the open state of folders. |
+
+### `refreshRoot`
+#### Description
+`refreshRoot` is an asynchronous function that refreshes the entire file tree by calling the `refreshAll` method on the `RequestingTree` instance stored in `treeAtom`.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function retrieves the current `RequestingTree` instance from `treeAtom` using the Jotai store.
+- It calls the `refreshAll` method on the `RequestingTree` instance with an empty array, indicating that the entire tree should be refreshed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for creating and managing global state atoms. |
+| `@/core/network/requests` | Provides network request functions for file operations. |
+| `@/core/state/jotai` | Provides the global Jotai store for state management. |
+
+## Error Handling
+The file does not implement specific error handling mechanisms. Error handling is likely managed within the `RequestingTree` class or the network request functions.
+
+## Logging
+The file does not implement any logging mechanisms. Logging, if any, would be handled in other parts of the application, such as within the network request functions or the `RequestingTree` class.

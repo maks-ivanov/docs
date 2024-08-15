@@ -1,0 +1,66 @@
+---
+title: "app-container.tsx"
+---
+
+## High-level description
+
+The `AppContainer` component in the `app-container.tsx` file is a React functional component designed to serve as a container for the main application interface. It manages the layout and rendering of child components, including a dynamic favicon, a status overlay, and a sidebar layout. The component also integrates WebAssembly (Wasm) support through the `PyodideLoader` component, which ensures that Pyodide is loaded before rendering its children.
+
+## Code Structure
+
+The `AppContainer` component is the primary symbol in this file. It utilizes several imported components and types to manage its functionality:
+- `DynamicFavicon` to update the browser's favicon based on the application's running state.
+- `StatusOverlay` to display the current connection and running status.
+- `PyodideLoader` to handle the loading of Pyodide, a Python interpreter for the browser.
+- `WrappedWithSidebar` to provide a layout that includes a sidebar.
+- The component uses the `cn` utility function to conditionally apply CSS classes.
+
+## Symbols
+
+### `AppContainer`
+#### Description
+The `AppContainer` component is a React functional component that serves as the main container for the application interface. It manages the layout and rendering of its children, while also integrating additional components for dynamic favicon updates, status overlays, and WebAssembly support.
+
+#### Inputs
+| Name            | Type                      | Description                                      |
+|:----------------|:--------------------------|:-------------------------------------------------|
+| `connectionState` | `WebSocketState`         | The current state of the WebSocket connection.   |
+| `isRunning`     | `boolean`                 | Indicates whether the application is currently running. |
+| `width`         | `AppConfig["width"]`      | The width configuration for the application layout. |
+| `children`      | `React.ReactNode`         | The child components to be rendered within the container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None |      | The component does not return any output values. |
+
+#### Internal Logic
+- The component first renders the `DynamicFavicon` component to update the favicon based on the `isRunning` state.
+- It then renders the `StatusOverlay` component to display the current `connectionState` and `isRunning` status.
+- The `PyodideLoader` component is used to ensure that Pyodide is loaded before rendering the children.
+- The `WrappedWithSidebar` component is used to provide a layout that includes a sidebar.
+- The main content is wrapped in a `div` with various CSS classes applied conditionally using the `cn` utility function. These classes manage the layout and styling based on the connection state and width configuration.
+
+## References
+
+- `WebSocketState` from `@/core/websocket/types`: Used to determine the current state of the WebSocket connection.
+- `cn` from `@/utils/cn`: Utility function for conditionally applying CSS classes.
+- `AppConfig` from `@/core/config/config-schema`: Provides the width configuration for the application layout.
+- `DynamicFavicon`, `StatusOverlay`, `WrappedWithSidebar`, `PyodideLoader`: Components used within `AppContainer` to manage various aspects of the application's UI and functionality.
+
+## Dependencies
+
+| Dependency     | Purpose                                                                 |
+|:---------------|:------------------------------------------------------------------------|
+| `React`        | Provides the base functionality for creating React components.          |
+| `cn`           | Utility function for merging and conditionally applying CSS classes.    |
+| `PyodideLoader`| Ensures Pyodide is loaded before rendering children, supporting Wasm.   |
+| `DynamicFavicon`| Updates the browser's favicon based on the application's running state.|
+| `StatusOverlay`| Displays the current connection and running status of the application.  |
+| `WrappedWithSidebar`| Provides a layout that includes a sidebar.                         |
+
+## Error Handling
+The component does not implement specific error handling mechanisms beyond basic React component behavior. Any errors in rendering or component logic would be handled by React's error boundaries if implemented elsewhere in the application.
+
+## Logging
+The component does not implement any logging mechanisms. Any logging would need to be implemented in the components it uses or in the parent components that manage the application state.

@@ -1,0 +1,134 @@
+---
+title: "__init__.py"
+---
+
+## High-level description
+
+The `marimo/_server/export/__init__.py` file provides functions to export Marimo notebooks into various formats such as script, markdown, Jupyter notebook, and HTML. It also includes functionality to run a notebook and export it as HTML, either static or reactive, by utilizing asynchronous operations. The file leverages several components from the Marimo framework to manage file routing, session handling, and exporting processes.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `export_as_script`, `export_as_md`, `export_as_ipynb`: These functions use `AppFileRouter` to manage file paths and `Exporter` to perform the actual export operations.
+- `run_app_then_export_as_html`, `run_app_then_export_as_reactive_html`: These functions run the notebook using `run_app_until_completion` and then export the results using `Exporter` or `MarimoIslandGenerator`.
+- `run_app_until_completion`: This function manages the execution of the notebook, using a session to track the state and output of the execution.
+
+## References
+
+- `AppFileRouter`: Used to manage file paths and retrieve file managers.
+- `Exporter`: Used to perform the export operations for different formats.
+- `MarimoIslandGenerator`: Used to generate reactive HTML content.
+- `Session`: Used to manage the execution of the notebook and track its state.
+
+## Symbols
+
+### `export_as_script`
+#### Description
+Exports a Marimo notebook as a flat script in topological order.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | MarimoPath | The path to the notebook file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[str, str] | The exported script content and the filename. |
+
+### `export_as_md`
+#### Description
+Exports a Marimo notebook as a Markdown document with code fences.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | MarimoPath | The path to the notebook file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[str, str] | The exported Markdown content and the filename. |
+
+### `export_as_ipynb`
+#### Description
+Exports a Marimo notebook as a Jupyter notebook in topological order.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | MarimoPath | The path to the notebook file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[str, str] | The exported Jupyter notebook content and the filename. |
+
+### `run_app_then_export_as_html`
+#### Description
+Runs a Marimo notebook and exports it as an HTML file, optionally including the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | MarimoPath | The path to the notebook file. |
+| include_code | bool | Whether to include the notebook code in the HTML export. |
+| cli_args | SerializedCLIArgs | Command-line arguments for the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[str, str] | The exported HTML content and the filename. |
+
+#### Internal Logic
+- Uses `AppFileRouter` to manage file paths.
+- Runs the notebook using `run_app_until_completion`.
+- Exports the session as HTML using `Exporter`.
+
+### `run_app_then_export_as_reactive_html`
+#### Description
+Runs a Marimo notebook and exports it as a reactive HTML file, optionally including the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | MarimoPath | The path to the notebook file. |
+| include_code | bool | Whether to include the notebook code in the HTML export. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[str, str] | The exported reactive HTML content and the filename. |
+
+#### Internal Logic
+- Uses `MarimoIslandGenerator` to generate reactive HTML content.
+
+### `run_app_until_completion`
+#### Description
+Runs a Marimo notebook to completion, capturing its state and outputs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_manager | AppFileManager | Manages the notebook file. |
+| cli_args | SerializedCLIArgs | Command-line arguments for the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | SessionView | The session view capturing the notebook's state and outputs. |
+
+#### Internal Logic
+- Creates a session using `Session`.
+- Runs the notebook and waits for completion.
+- Captures console messages and outputs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| asyncio | Used for asynchronous operations. |
+| typing | Provides type annotations for better code clarity. |
+
+## TODOs
+- There is a TODO comment in `run_app_until_completion` regarding a potential timing issue with the console output worker. It suggests flushing the worker and joining it to ensure all outputs are captured.

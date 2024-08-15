@@ -1,0 +1,89 @@
+---
+title: "test_handlers.py"
+---
+
+## High-level description
+
+The target file `test_handlers.py` is a test suite for validating the functionality of various data transformation operations on dataframes using the `pytest` framework. It tests the application of different transformation types, such as column conversion, renaming, sorting, filtering, grouping, aggregation, selection, shuffling, and sampling, on both Pandas and Polars dataframes. The tests ensure that the transformations are applied correctly and produce the expected results.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `apply` function is used to apply a single transformation to a dataframe.
+- The `assert_frame_equal` function is used to compare two dataframes for equality.
+- The `TestPandasHandler` class contains multiple test methods, each testing a specific transformation type.
+- Each test method uses the `apply` function to apply transformations and `assert_frame_equal` to verify the results.
+
+## References
+
+The code references several components from the `marimo` package:
+- `DependencyManager` from `marimo._dependencies.dependencies` to check for the presence of Pandas and Polars libraries.
+- Transformation-related classes and functions from `marimo._plugins.ui._impl.dataframes.transforms.apply` and `marimo._plugins.ui._impl.dataframes.transforms.types`.
+
+## Symbols
+
+### `apply`
+#### Description
+Applies a specified transformation to a given dataframe using the appropriate handler.
+
+#### Inputs
+| Name     | Type          | Description                        |
+|:---------|:--------------|:-----------------------------------|
+| `df`     | `DataFrameType` | The dataframe to transform.       |
+| `transform` | `Transform` | The transformation to apply.       |
+
+#### Outputs
+| Name     | Type          | Description                        |
+|:---------|:--------------|:-----------------------------------|
+| `output` | `DataFrameType` | The transformed dataframe.        |
+
+#### Internal Logic
+- Retrieves the appropriate handler for the dataframe using `get_handler_for_dataframe`.
+- Applies the transformation using `apply_transforms`.
+
+### `assert_frame_equal`
+#### Description
+Compares two dataframes to ensure they are equal, accounting for differences in index.
+
+#### Inputs
+| Name  | Type          | Description                        |
+|:------|:--------------|:-----------------------------------|
+| `df1` | `DataFrameType` | The first dataframe to compare.   |
+| `df2` | `DataFrameType` | The second dataframe to compare.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Resets the index of Pandas dataframes before comparison.
+- Uses `pd.testing.assert_frame_equal` for Pandas and `pl_testing.assert_frame_equal` for Polars to perform the comparison.
+- Raises a failure if the dataframes are not of the same type.
+
+### `TestPandasHandler`
+#### Description
+A test class containing various test methods to validate dataframe transformations.
+
+#### Internal Logic
+- Each test method is decorated with `pytest.mark.parametrize` to test multiple input-output pairs.
+- Uses the `apply` function to apply transformations and `assert_frame_equal` to verify the results.
+- Tests a wide range of transformations, including column conversion, renaming, sorting, filtering, grouping, aggregation, selection, shuffling, and sampling.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pytest`   | Used for writing and executing test cases.   |
+| `unittest.mock` | Used to mock Pandas and Polars if they are not installed. |
+
+## Error Handling
+
+- The `assert_frame_equal` function raises a failure using `pytest.fail` if the dataframes are not of the same type.
+- The `test_handle_filter_rows_unknown_column` method uses `pytest.raises` to assert that an exception is raised when a transformation is applied to a non-existent column.
+
+## Logging
+
+No explicit logging is implemented in the code. The test framework (`pytest`) handles output and logging of test results.
+
+## TODOs
+
+No TODOs or notes are present in the code.

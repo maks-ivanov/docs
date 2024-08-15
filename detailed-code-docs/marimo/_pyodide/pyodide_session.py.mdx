@@ -1,0 +1,144 @@
+---
+title: "pyodide_session.py"
+---
+
+## High-level description
+
+The `pyodide_session.py` file is part of the Marimo project and is responsible for managing a client session that is compatible with Pyodide, a Python distribution for the browser and Node.js. It provides classes and functions to handle asynchronous communication between the client and the Pyodide kernel, manage input/output streams, and facilitate various operations such as code execution, file management, and UI interactions within a session.
+
+## Code Structure
+
+The main components of the code are:
+
+- `AsyncQueueManager`: Manages different queues for handling control, UI element, code completion, and input requests.
+- `PyodideSession`: Represents a client session, initializing the kernel and managing communication with it.
+- `PyodideBridge`: Acts as a bridge to handle requests from the client, such as control requests, input, code completion, and file operations.
+- `launch_pyodide_kernel`: A function to launch the Pyodide kernel, setting up necessary patches and communication channels.
+- `RestartableTask`: A utility class to manage tasks that can be restarted or stopped.
+
+## References
+
+- `marimo._runtime.requests`: Provides various request types used in the session, such as `ControlRequest`, `SetUIElementValueRequest`, and `CodeCompletionRequest`.
+- `marimo._server.file_manager`: Manages file operations within the session.
+- `marimo._server.model`: Defines session modes and other session-related models.
+- `marimo._utils.parse_dataclass`: Utility for parsing JSON data into dataclass instances.
+
+## Symbols
+
+### `AsyncQueueManager`
+#### Description
+Manages asynchronous queues for different types of requests in a session, such as control, UI element, code completion, and input requests.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes four queues: `control_queue`, `set_ui_element_queue`, `completion_queue`, and `input_queue`.
+- Provides a method `close_queues` to put a `StopRequest` into the control queue, signaling the session to stop.
+
+### `PyodideSession`
+#### Description
+Represents a client session compatible with Pyodide, managing the kernel and client communication.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | AppFileManager | Manages application files. |
+| mode | SessionMode | The mode of the session (e.g., EDIT). |
+| on_write | Callable[[KernelMessage], None] | Callback for writing kernel messages. |
+| app_metadata | AppMetadata | Metadata about the application. |
+| user_config | MarimoConfig | User configuration settings. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes the session with the provided application manager, mode, metadata, and configuration.
+- Sets up consumers for handling kernel messages.
+- Provides methods to start the session, and handle control, completion, and input requests.
+
+### `PyodideBridge`
+#### Description
+Acts as a bridge to handle various requests from the client, such as control requests, input, code completion, and file operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session | PyodideSession | The session to which the bridge is connected. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Provides methods to handle control requests, input, code completion, and file operations.
+- Uses `parse_raw` to parse JSON requests into appropriate request types.
+- Interacts with the session to execute requests and manage files.
+
+### `launch_pyodide_kernel`
+#### Description
+Launches the Pyodide kernel, setting up necessary patches and communication channels.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| control_queue | asyncio.Queue[ControlRequest] | Queue for control requests. |
+| set_ui_element_queue | asyncio.Queue[SetUIElementValueRequest] | Queue for UI element requests. |
+| completion_queue | asyncio.Queue[CodeCompletionRequest] | Queue for code completion requests. |
+| input_queue | asyncio.Queue[str] | Queue for input requests. |
+| on_message | Callable[[KernelMessage], None] | Callback for handling kernel messages. |
+| is_edit_mode | bool | Indicates if the session is in edit mode. |
+| configs | dict[CellId_t, CellConfig] | Configuration for cells. |
+| app_metadata | AppMetadata | Metadata about the application. |
+| user_config | MarimoConfig | User configuration settings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | RestartableTask | A task that manages the kernel's execution. |
+
+#### Internal Logic
+- Registers formatters and applies necessary patches for Pyodide compatibility.
+- Sets up communication channels for stdout, stderr, and stdin.
+- Initializes the kernel and its context.
+- Defines asynchronous functions to listen for messages and handle code completion.
+
+### `RestartableTask`
+#### Description
+A utility class to manage tasks that can be restarted or stopped.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| coro | Callable[[], Any] | The coroutine to be managed. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Provides methods to start, stop, and restart the task.
+- Uses an asyncio loop to manage the task's execution.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| asyncio | Provides asynchronous I/O capabilities. |
+| base64 | Used for encoding and decoding data. |
+| json | Handles JSON serialization and deserialization. |
+| signal | Manages signal handling for the session. |
+
+## Error Handling
+
+- The code uses try-except blocks to handle exceptions during file operations and request parsing.
+- Specific exceptions like `FileNotFoundError` and `ValueError` are caught and logged.
+
+## Logging
+
+- The code uses a logger (`LOGGER`) to log debug information and warnings throughout the session management process.
+
+## TODOs
+
+- The code contains a TODO comment regarding the handling of input in run mode, indicating potential future improvements.

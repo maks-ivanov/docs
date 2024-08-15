@@ -1,0 +1,81 @@
+---
+title: "image.py"
+---
+
+## High-level description
+
+The target file, `marimo/_plugins/stateless/image.py`, provides functionality for rendering images as HTML within the Marimo framework. It includes utilities to normalize various image-like inputs into a standard format and then generate HTML representations of these images, allowing them to be embedded in web applications or documents.
+
+## Code Structure
+
+The main symbols in the code are the `_normalize_image` function and the `image` function. `_normalize_image` is responsible for converting various image-like inputs into a standard format, typically a `BytesIO` object representing a PNG image. The `image` function uses `_normalize_image` to process the input and then generates an HTML representation of the image using the `Html` class from the `marimo._output.hypertext` module.
+
+## Symbols
+
+### `_normalize_image`
+#### Description
+The `_normalize_image` function normalizes an image-like object to a standard format, typically a `BytesIO` object representing a PNG image. It handles various input types, including lists, arrays, and tensors, and ensures compatibility with the `PIL` library for image processing.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| src | ImageLike | An image-like object, which can be a list, array, tensor, or a file-like object. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| normalized_src | Image | A `BytesIO` object or other Image type representing the normalized image. |
+
+#### Internal Logic
+- Checks if the input is a list, has an `__array__` method, or a `toarray` method.
+- If so, it ensures the `PIL` and `numpy` dependencies are available.
+- Converts the input to a numpy array if necessary, normalizes the data, and converts it to a `PIL` image.
+- Saves the image to a `BytesIO` object in PNG format.
+- If the input is already a valid image type (str, bytes, `BytesIO`, `BufferedReader`), it returns the input as is.
+- Raises a `ValueError` if the input is not a valid image-like object.
+
+### `image`
+#### Description
+The `image` function renders an image as an HTML element. It accepts various image-like inputs, normalizes them, and generates an HTML `img` tag with optional styling and attributes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| src | ImageLike | A path or URL to an image, a file-like object, or an array-like object. |
+| alt | Optional[str] | The alt text of the image. |
+| width | Optional[int] | The width of the image in pixels. |
+| height | Optional[int] | The height of the image in pixels. |
+| rounded | bool | Whether to round the corners of the image. |
+| style | Optional[dict[str, Any]] | A dictionary of CSS styles to apply to the image. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| img_html | Html | An `Html` object representing the image as an HTML element. |
+
+#### Internal Logic
+- Calls `_normalize_image` to process the input image.
+- Determines the source URL for the image, handling different input types (e.g., file-like objects, bytes, strings).
+- Uses `mo_data.image` to create a virtual file and obtain a URL if necessary.
+- Constructs a style string using `create_style` based on the provided width, height, and other style attributes.
+- Creates an HTML `img` tag using the `h.img` method from the `_HTMLBuilder` class.
+- Returns an `Html` object containing the constructed `img` tag.
+
+## References
+
+- `DependencyManager`: Used to ensure required dependencies like `PIL` and `numpy` are available.
+- `mo_data.image`: Used to create virtual files from image data.
+- `Html`: A class from `marimo._output.hypertext` used to wrap HTML content.
+- `create_style`: A utility function to create CSS style strings.
+- `io_to_data_url`: A function from `marimo._plugins.core.media` to convert file-like objects to data URLs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `PIL` | Used for image processing and conversion. |
+| `numpy` | Used for handling array-like image data. |
+
+## TODOs
+
+- Consider downsampling large images to improve performance, as noted in the `image` function.

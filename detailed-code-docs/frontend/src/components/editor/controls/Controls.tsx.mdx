@@ -1,0 +1,96 @@
+---
+title: "Controls.tsx"
+---
+
+## High-level description
+
+The `Controls.tsx` file defines a React component named `Controls` that provides a set of interactive controls for a notebook editor interface. These controls include buttons for saving the notebook, toggling presentation mode, running or interrupting code execution, and accessing configuration settings. The component is designed to be part of a larger application that manages code cells, likely in a data science or programming environment.
+
+## Code Structure
+
+The `Controls` component is the main symbol in this file. It utilizes several imported components and hooks to provide functionality, such as `Button`, `Tooltip`, `useCellActions`, and others. The component is structured to render different sets of controls based on the current state of the notebook, such as whether it is in presentation mode or if the notebook is closed.
+
+## References
+
+- `useCellActions`: A hook from `cells.ts` that provides actions related to cell management.
+- `useShouldShowInterrupt`: A hook that determines whether the interrupt button should be shown based on the running state of a cell.
+- `AppConfig`: A type imported from `config-schema.ts` that defines the configuration schema for the application.
+
+## Symbols
+
+### `Controls`
+#### Description
+The `Controls` component renders a set of buttons and controls for managing a notebook editor. It provides functionality for saving the notebook, toggling presentation mode, running or interrupting code execution, and accessing configuration settings. The component adapts its UI based on the notebook's state, such as whether it is in presentation mode or if the notebook is closed.
+
+#### Inputs
+| Name              | Type       | Description                                           |
+|:------------------|:-----------|:------------------------------------------------------|
+| filename          | string \| null | The name of the notebook file.                       |
+| needsSave         | boolean    | Indicates if the notebook has unsaved changes.        |
+| onSaveNotebook    | () =&gt; void | Callback to save the notebook.                        |
+| getCellsAsJSON    | () =&gt; string | Function to get the notebook cells as a JSON string. |
+| presenting        | boolean    | Indicates if the notebook is in presentation mode.    |
+| onTogglePresenting| () =&gt; void | Callback to toggle presentation mode.                 |
+| onInterrupt       | () =&gt; void | Callback to interrupt code execution.                 |
+| onRun             | () =&gt; void | Callback to run code execution.                       |
+| closed            | boolean    | Indicates if the notebook is closed.                  |
+| running           | boolean    | Indicates if code execution is currently running.     |
+| needsRun          | boolean    | Indicates if there are cells that need to be run.     |
+| undoAvailable     | boolean    | Indicates if undo is available for cell deletion.     |
+| appWidth          | AppConfig["width"] | The width configuration of the application. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered UI of the controls component. |
+
+#### Internal Logic
+- The component uses the `useCellActions` hook to access cell-related actions, such as undoing cell deletion.
+- It conditionally renders different controls based on the state of the notebook, such as whether it is closed or in presentation mode.
+- The `handleSaveClick` function is used to handle the save button click event, preventing default behavior and calling the `onSaveNotebook` callback.
+- The `RunControlButton` component is used to render buttons for running or interrupting code execution, with logic to determine which button to show based on the running state.
+
+### `RunControlButton`
+#### Description
+The `RunControlButton` component renders a button for running or interrupting code execution. It decides which button to display based on the running state and whether there are cells that need to be run.
+
+#### Inputs
+| Name       | Type       | Description                                      |
+|:-----------|:-----------|:-------------------------------------------------|
+| running    | boolean    | Indicates if code execution is currently running.|
+| needsRun   | boolean    | Indicates if there are cells that need to be run.|
+| onRun      | () =&gt; void | Callback to run code execution.                  |
+| onInterrupt| () =&gt; void | Callback to interrupt code execution.            |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered UI of the run control button. |
+
+#### Internal Logic
+- The component uses the `useShouldShowInterrupt` hook to determine if the interrupt button should be shown, based on the running state.
+- It conditionally renders a button for interrupting or running code, or a disabled button if there is nothing to run.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lucide-react` | Provides icon components used in the controls, such as `SaveIcon` and `PlayIcon`. |
+| `@/components/editor/inputs/Inputs` | Provides the `Button` component used for rendering buttons. |
+| `@/components/editor/controls/keyboard-shortcuts` | Provides the `KeyboardShortcuts` component for displaying keyboard shortcuts. |
+| `@/components/editor/controls/shutdown-button` | Provides the `ShutdownButton` component for shutting down the kernel. |
+| `@/components/editor/RecoveryButton` | Provides the `RecoveryButton` component for recovering unsaved changes. |
+| `@/components/ui/tooltip` | Provides the `Tooltip` component for displaying tooltips. |
+| `@/utils/cn` | Provides the `cn` utility function for merging class names. |
+
+## Error Handling
+
+The component does not explicitly handle errors, but it uses callbacks and hooks that may include error handling logic, such as `onSaveNotebook` and `useShouldShowInterrupt`.
+
+## Logging
+
+The component does not implement any logging mechanisms directly. However, it uses tooltips and icons to provide visual feedback to the user.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

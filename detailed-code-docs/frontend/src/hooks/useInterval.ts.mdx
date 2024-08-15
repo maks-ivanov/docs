@@ -1,0 +1,58 @@
+---
+title: "useInterval.ts"
+---
+
+## High-level description
+
+The `useInterval` hook in the target file is a custom React hook designed to execute a callback function at specified intervals, with the option to pause the execution when the document is not visible. It leverages React's `useEffect` and `useRef` hooks to manage the interval and ensure the callback function is up-to-date. Additionally, it uses the `useEventListener` hook to handle visibility changes in the document.
+
+## Code Structure
+
+The `useInterval` function is the main symbol in this file. It utilizes the `useRef` and `useEffect` hooks from React to manage the interval and the callback function. It also references the `useEventListener` hook from another file to listen for visibility changes in the document.
+
+## References
+
+- `useEventListener`: This hook is used to add an event listener for the `visibilitychange` event on the document, allowing the interval to be paused when the document is not visible.
+
+## Symbols
+
+### `useInterval`
+#### Description
+The `useInterval` hook sets up an interval to repeatedly execute a given callback function every specified number of milliseconds. It can be configured to only run the callback when the document is visible, using the Page Visibility API.
+
+#### Inputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| callback | `() =&gt; void` | The function to be executed at each interval. |
+| opts     | `{ delayMs: number \| null; whenVisible: boolean; }` | Options for the interval, including the delay in milliseconds and whether the callback should only run when the document is visible. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| null | `null` | The hook does not return any value. |
+
+#### Internal Logic
+1. **Callback Storage**: The `useRef` hook is used to store the latest version of the callback function, ensuring that the most recent callback is executed at each interval.
+2. **Interval Setup**: The `useEffect` hook sets up the interval using `setInterval`. If `delayMs` is `null`, the interval is not set. The interval checks the document's visibility state if `whenVisible` is `true`, and only executes the callback if the document is visible.
+3. **Cleanup**: The interval is cleared using `clearInterval` when the component unmounts or when `delayMs` or `whenVisible` changes.
+4. **Visibility Change Handling**: The `useEventListener` hook is used to listen for `visibilitychange` events. If the document becomes visible and `whenVisible` is `true`, the callback is executed immediately.
+
+## Dependencies
+
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `useRef`         | To store a mutable reference to the callback function.                  |
+| `useEffect`      | To manage side effects, specifically setting up and cleaning up the interval. |
+| `useEventListener` | To handle document visibility changes and execute the callback when the document becomes visible. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the callback function and the document's visibility state are reliable.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The `useInterval` hook does not expose an API or interface beyond its function signature. It is intended to be used within React components to manage repeated execution of a callback function.

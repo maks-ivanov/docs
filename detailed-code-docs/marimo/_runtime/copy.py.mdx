@@ -1,0 +1,131 @@
+---
+title: "copy.py"
+---
+
+## High-level description
+
+The `marimo/_runtime/copy.py` file provides a mechanism for controlling how objects are copied in a strict execution environment. It defines classes and functions to wrap objects in such a way that they can be marked for zero-copy or shallow-copy operations, preventing deep copying. This is useful in scenarios where deep copying is either unnecessary or undesirable due to performance considerations or object immutability.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `_Copy` is a generic base class that serves as a wrapper for objects.
+- `ZeroCopy` and `ShallowCopy` are subclasses of `_Copy` that specify different copying behaviors.
+- `shadow_wrap` is a function that wraps an object in a read-only wrapper, preventing modifications.
+- `unwrap_copy`, `zero_copy`, and `shallow_copy` are functions that manage the wrapping and unwrapping of objects to control their copying behavior.
+
+## Symbols
+
+### `CloneError`
+#### Description
+An exception class that is raised when a strict execution fails to deep copy or clone an object.
+
+### `ReadOnlyError`
+#### Description
+An exception class that is raised when there is an attempt to modify a read-only object.
+
+### `_Copy`
+#### Description
+A generic base wrapper class for objects to be used in strict execution environments. It holds a reference to the wrapped object.
+
+### `ZeroCopy`
+#### Description
+A subclass of `_Copy` that marks an object to prevent deep copying, effectively making it immutable in the context of strict execution.
+
+### `ShallowCopy`
+#### Description
+A subclass of `_Copy` that marks an object to perform a shallow copy instead of a deep copy in strict execution.
+
+### `_ro_fail`
+#### Description
+A function that raises a `ReadOnlyError`, indicating that the object is read-only and cannot be modified.
+
+### `shadow_wrap`
+#### Description
+Wraps an object in a read-only wrapper by copying its attributes to slots and restricting write access.
+
+#### Inputs
+| Name   | Type     | Description                        |
+|:-------|:---------|:-----------------------------------|
+| ref_cls | Type[_Copy[T]] | The wrapper class to use for wrapping. |
+| base   | T        | The base object to be wrapped.     |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | T    | The wrapped object with restricted write access. |
+
+#### Internal Logic
+- Determines the attributes of the base object that can be wrapped.
+- Creates a new class inheriting from the base class and the wrapper class.
+- Overrides `__setattr__` and `__setitem__` to prevent modifications.
+- Uses weak references to maintain a reference to the original object.
+
+### `unwrap_copy`
+#### Description
+Returns the original object from a `ZeroCopy` or `ShallowCopy` wrapped object.
+
+#### Inputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| base   | T    | The wrapped object to be unwrapped. |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | T    | The original unwrapped object.     |
+
+### `zero_copy`
+#### Description
+Wraps an object in a `ZeroCopy` wrapper to prevent copying or cloning in strict execution mode.
+
+#### Inputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| base   | T    | The object to be wrapped.          |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | T    | The wrapped object marked for zero-copy. |
+
+### `shallow_copy`
+#### Description
+Wraps an object in a `ShallowCopy` wrapper to perform a shallow copy instead of a deep copy in strict execution mode.
+
+#### Inputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| base   | T    | The object to be wrapped.          |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | T    | The wrapped object marked for shallow-copy. |
+
+## References
+
+- The `CloneError`, `ShallowCopy`, `ZeroCopy`, and `shallow_copy` symbols are referenced in the `marimo/_runtime/executor.py` file, indicating their use in managing object copying behavior during execution.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `inspect`  | Used for inspecting object attributes and methods. |
+| `sys`      | Used to check the Python version for compatibility. |
+| `weakref`  | Used to create weak references to objects. |
+| `copy`     | Provides the `copy` function for shallow copying. |
+| `typing`   | Provides type annotations and generic types. |
+
+## Error Handling
+
+- The code raises `CloneError` when a deep copy operation fails.
+- `ReadOnlyError` is raised when there is an attempt to modify a read-only object.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

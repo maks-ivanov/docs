@@ -1,0 +1,89 @@
+---
+title: "paths.py"
+---
+
+## High-level description
+
+The `marimo/_utils/paths.py` file provides utility functions for handling file paths and directories. It includes functions to import files, convert absolute paths to relative paths, and create directories if they do not exist. These utilities are designed to facilitate file management tasks within the Marimo project.
+
+## Code Structure
+
+The file contains three main functions: `import_files`, `pretty_path`, and `maybe_make_dirs`. These functions are independent and serve different purposes related to file and directory management.
+
+## Symbols
+
+### `import_files`
+#### Description
+The `import_files` function is used to import resources from a specified filename. It utilizes the `importlib.resources` module to handle resource files, with compatibility for Python versions below 3.9.
+
+#### Inputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| filename | str  | The name of the file to import resources from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | Any  | The imported resources from the specified file. |
+
+#### Internal Logic
+- The function checks the Python version and imports the appropriate `files` function from `importlib.resources` or `importlib_resources` for compatibility.
+- It then returns the result of calling `importlib_files` with the provided filename.
+
+### `pretty_path`
+#### Description
+The `pretty_path` function converts an absolute file path to a relative path if possible, without going outside the current directory. This is useful for displaying shorter, more readable paths.
+
+#### Inputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| filename | str  | The file path to be converted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | str  | The converted relative path or the original path if conversion is not possible. |
+
+#### Internal Logic
+- The function checks if the provided path is absolute.
+- It attempts to convert the absolute path to a relative path using `os.path.relpath`.
+- If the conversion is successful and the relative path does not start with "..", it returns the relative path.
+- If the conversion fails (e.g., on Windows when paths are on different drives), it returns the original path.
+
+### `maybe_make_dirs`
+#### Description
+The `maybe_make_dirs` function ensures that the directory for a given file path exists by creating it if necessary. This is useful for preparing the file system before writing files.
+
+#### Inputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| filepath | str  | The file path for which to ensure directory existence. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | None | This function does not return a value. |
+
+#### Internal Logic
+- The function extracts the directory name from the provided file path.
+- It uses `os.makedirs` with `exist_ok=True` to create the directory if it does not already exist.
+
+## References
+
+- The `maybe_make_dirs` function is referenced in the `marimo/_cli/export/commands.py` file, where it is used to ensure directories exist before writing output files.
+
+## Dependencies
+
+| Dependency          | Purpose                                                                 |
+|:--------------------|:------------------------------------------------------------------------|
+| `os`                | Provides functions for interacting with the operating system, such as path manipulations. |
+| `sys`               | Used to check the Python version for compatibility purposes.            |
+| `importlib.resources` | Used to import resource files, with a fallback for older Python versions. |
+
+## Error Handling
+
+- The `pretty_path` function handles `ValueError` exceptions that may occur when converting paths on different drives in Windows, returning the original path in such cases.
+
+## Side Effects
+
+- The `maybe_make_dirs` function may create directories on the file system if they do not already exist.

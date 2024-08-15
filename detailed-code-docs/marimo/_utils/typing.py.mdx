@@ -1,0 +1,39 @@
+---
+title: "typing.py"
+---
+
+## High-level description
+
+The target file `marimo/_utils/typing.py` is a utility module that provides a compatibility layer for the `NotRequired` type hint, which is used in TypedDicts to indicate optional fields. The module ensures that the correct version of `NotRequired` is imported based on the Python version being used, supporting both Python versions below 3.11 and 3.11 and above.
+
+## Symbols
+
+### `NotRequired`
+#### Description
+The `NotRequired` symbol is a type alias that points to the appropriate `NotRequired` type hint, depending on the Python version. This type hint is used in TypedDicts to specify fields that are not required.
+
+#### Inputs
+- None directly, but it depends on the Python version being used.
+
+#### Outputs
+- A type hint that can be used in TypedDicts to indicate optional fields.
+
+#### Internal Logic
+The module checks the Python version using `sys.version_info`. If the version is less than 3.11, it imports `NotRequired` from `typing_extensions`, which provides backports of new typing features for older Python versions. If the version is 3.11 or higher, it imports `NotRequired` directly from the `typing` module, as it is natively supported in these versions.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `sys`              | Used to check the Python version to determine which `NotRequired` to import. |
+| `typing_extensions`| Provides the `NotRequired` type hint for Python versions below 3.11.    |
+| `typing`           | Provides the `NotRequired` type hint for Python versions 3.11 and above.|
+
+## Error Handling
+The code does not explicitly handle errors, but it assumes that the necessary modules (`typing` or `typing_extensions`) are available in the environment. If they are not, an ImportError would be raised.
+
+## Performance Considerations
+The module is lightweight and only performs a version check and import, which are efficient operations. There are no significant performance considerations.
+
+## Side Effects
+There are no side effects from this module, as it only sets up a type alias based on the Python version.

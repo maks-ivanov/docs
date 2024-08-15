@@ -1,0 +1,69 @@
+---
+title: "virtual-file-tracker.ts"
+---
+
+## High-level description
+
+The `virtual-file-tracker.ts` file is responsible for tracking virtual files that are referenced within a web application, specifically those that are embedded in the output of cells. It provides a singleton class, `VirtualFileTracker`, which maintains a mapping of cell IDs to sets of virtual file paths. The file also includes a utility function, `findVirtualFiles`, to extract virtual file paths from a given string.
+
+## Code Structure
+
+The main symbol in this file is the `VirtualFileTracker` class, which is designed as a singleton to ensure that only one instance manages the virtual files across the application. The class uses a `Map` to associate cell IDs with sets of virtual file paths. The `findVirtualFiles` function is a utility that is used by the `VirtualFileTracker` to identify virtual file paths in cell outputs.
+
+## Symbols
+
+### `VirtualFileTracker`
+#### Description
+The `VirtualFileTracker` class is a singleton that tracks virtual files referenced in the outputs of cells. It maintains a mapping between cell IDs and sets of virtual file paths, allowing for efficient tracking and retrieval of these files.
+
+#### Inputs
+- `message`: An object with properties `cell_id` and `output`, representing a message from a cell that may contain virtual file references.
+
+#### Outputs
+- None directly, but it updates the internal state of the `virtualFiles` map.
+
+#### Internal Logic
+- **Singleton Pattern**: The class uses a static `INSTANCE` getter to ensure only one instance exists. It stores this instance in the global `window` object.
+- **Tracking Files**: The `track` method checks the output's mimetype and uses `findVirtualFiles` to extract virtual file paths, updating the map accordingly.
+- **Retrieving Filenames**: The `filenames` method aggregates all unique virtual file paths across all cells.
+- **Removing Files**: The `removeForCellId` method deletes the entry for a specific cell ID from the map.
+
+### `findVirtualFiles`
+#### Description
+The `findVirtualFiles` function extracts virtual file paths from a given string or JSON object. It uses a regular expression to identify paths that match the virtual file pattern.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str | unknown | The input string or object to search for virtual file paths. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | Set&lt;string&gt; | A set of virtual file paths found in the input. |
+
+#### Internal Logic
+- Converts non-string inputs to JSON strings.
+- Uses a regular expression to find matches for virtual file paths.
+- Adds each match to a set, ensuring uniqueness.
+
+## References
+
+- **`CellMessage`**: Used in the `track` method to handle messages from cells.
+- **`CellId`**: Used as keys in the `virtualFiles` map to associate cell outputs with their respective virtual files.
+
+## Dependencies
+
+No external libraries are directly imported in this file, but it relies on other parts of the codebase, such as `CellMessage` and `CellId`, which are imported from related modules.
+
+## Error Handling
+
+The code does not explicitly handle errors, but it gracefully handles cases where the input to `findVirtualFiles` is null or undefined by returning an empty set.
+
+## Logging
+
+There is no logging implemented in this file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

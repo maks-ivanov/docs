@@ -1,0 +1,132 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file, `marimo/_cli/development/commands.py`, is part of the Marimo library's command-line interface (CLI) for development purposes. It defines a set of CLI commands using the `click` library to facilitate development tasks such as generating OpenAPI schemas and managing Marimo processes. The file includes commands to print the OpenAPI schema, list running Marimo processes, and terminate them.
+
+## Code Structure
+
+The main symbols in the code are functions and command groups defined using the `click` library. The `_generate_schema` function is responsible for generating OpenAPI schemas for various components. The `development` and `ps` command groups organize related commands, such as `openapi`, `list_processes`, and `killall`, which are added to these groups.
+
+## Symbols
+
+### `_generate_schema`
+#### Description
+Generates an OpenAPI schema for Marimo's API by converting Python dataclasses and types into OpenAPI components. This schema is used to document the API endpoints and data structures.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type          | Description                  |
+|:-------|:--------------|:-----------------------------|
+| schema | `dict[str, Any]` | The generated OpenAPI schema |
+
+#### Internal Logic
+- Defines two lists, `MESSAGES` and `REQUEST_RESPONSES`, containing various dataclasses and types used in WebSocket messages and HTTP requests/responses.
+- Uses `PythonTypeToOpenAPI` to convert these types into OpenAPI components, handling name overrides and camel case conversion.
+- Constructs a `SchemaGenerator` with the converted components and returns the generated schema.
+
+### `development`
+#### Description
+A `click` command group that serves as a container for various development-related CLI commands.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `openapi`
+#### Description
+A `click` command that prints the Marimo OpenAPI schema to the console. This command is part of the `development` command group.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls the `_generate_schema` function to obtain the OpenAPI schema.
+- Uses the `yaml` library to print the schema in a human-readable format.
+
+### `ps`
+#### Description
+A `click` command group for managing Marimo processes, containing commands to list and kill processes.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `get_marimo_processes`
+#### Description
+Identifies and returns a list of running Marimo processes using the `psutil` library.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type                  | Description                  |
+|:-------|:----------------------|:-----------------------------|
+| result | `list[psutil.Process]` | List of Marimo processes |
+
+#### Internal Logic
+- Iterates over all running processes using `psutil.process_iter()`.
+- Checks if a process is a Marimo process by examining its name and command line arguments.
+- Returns a list of processes that match the criteria.
+
+### `list_processes`
+#### Description
+A `click` command that lists all running Marimo processes, displaying their process IDs and command lines.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `get_marimo_processes` to retrieve the list of Marimo processes.
+- Iterates over the processes and prints their details using the `orange` function for colored output.
+
+### `killall`
+#### Description
+A `click` command that terminates all running Marimo processes, except the current one.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `get_marimo_processes` to retrieve the list of Marimo processes.
+- Iterates over the processes and kills each one, except the current process, using `proc.kill()`.
+- Prints a confirmation message for each terminated process.
+
+## References
+
+- `PythonTypeToOpenAPI`: Used for converting Python types to OpenAPI components.
+- `build_routes`: Function from `marimo._server.api.router` used to build API routes for schema generation.
+- `psutil`: A library used to interact with system processes.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `click`    | Used for defining CLI commands and groups.   |
+| `psutil`   | Used for process management and inspection.  |
+| `yaml`     | Used for formatting and printing the schema. |
+
+## Logging
+
+The code does not implement explicit logging mechanisms, but it uses the `print` function to output information to the console.
+
+## TODOs
+
+No TODOs or notes are present in the code.

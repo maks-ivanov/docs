@@ -1,0 +1,245 @@
+---
+title: "config.py"
+---
+
+## High-level description
+
+The `config.py` file in the Marimo project defines various configuration classes and utilities for managing the configuration of the Marimo editor. It provides structured configuration options for different aspects of the editor, such as code completion, saving, keymaps, runtime behavior, display settings, formatting, server settings, package management, and AI integration. The file also includes functions to merge user configurations with default settings and to handle sensitive information securely.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- **Configuration Classes**: These are `TypedDict` classes that define the structure of different configuration sections, such as `CompletionConfig`, `SaveConfig`, `KeymapConfig`, etc.
+- **MarimoConfig**: This is a comprehensive configuration class that aggregates all the individual configuration sections.
+- **DEFAULT_CONFIG**: A constant that provides the default configuration for the Marimo editor.
+- **Functions**: Functions like `merge_default_config`, `merge_config`, `mask_secrets`, and `remove_secret_placeholders` are used to manipulate and secure configurations.
+
+## Symbols
+
+### `CompletionConfig`
+#### Description
+Defines configuration options for code completion in the Marimo editor, including activation behavior and integration with external services like GitHub Copilot.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| activate_on_typing | bool | Whether completion activates on typing. |
+| copilot | Union[bool, Literal["github", "codeium"]] | Integration with external completion services. |
+| codeium_api_key | NotRequired[Optional[str]] | API key for Codeium, if applicable. |
+
+#### Outputs
+N/A
+
+### `SaveConfig`
+#### Description
+Specifies configuration options for saving files, including autosave behavior and formatting on save.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| autosave | Literal["off", "after_delay"] | Autosave setting. |
+| autosave_delay | int | Delay before autosaving, in milliseconds. |
+| format_on_save | bool | Whether to format code on save. |
+
+#### Outputs
+N/A
+
+### `KeymapConfig`
+#### Description
+Defines keymap configurations, allowing users to set keymap presets and overrides.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| preset | Literal["default", "vim"] | Keymap preset. |
+| overrides | Dict[str, str] | Custom keymap overrides. |
+
+#### Outputs
+N/A
+
+### `RuntimeConfig`
+#### Description
+Configures runtime behavior, including cell instantiation, auto-reloading, and execution types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| auto_instantiate | bool | Whether cells run automatically on startup. |
+| auto_reload | Literal["off", "lazy", "autorun"] | Auto-reload setting for modified modules. |
+| on_cell_change | OnCellChangeType | Behavior when cell dependencies change. |
+
+#### Outputs
+N/A
+
+### `DisplayConfig`
+#### Description
+Manages display settings, such as theme, font size, and cell output positioning.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| theme | Literal["light", "dark", "system"] | Editor theme. |
+| code_editor_font_size | int | Font size for the code editor. |
+| cell_output | Literal["above", "below"] | Position of cell output. |
+| default_width | WidthType | Default width setting. |
+
+#### Outputs
+N/A
+
+### `FormattingConfig`
+#### Description
+Specifies code formatting options, such as line length.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| line_length | int | Maximum line length for formatting. |
+
+#### Outputs
+N/A
+
+### `ServerConfig`
+#### Description
+Configures server-related settings, including browser preferences and symlink behavior.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| browser | Union[Literal["default"], str] | Preferred web browser. |
+| follow_symlink | bool | Whether the server follows symlinks. |
+
+#### Outputs
+N/A
+
+### `PackageManagementConfig`
+#### Description
+Defines package management settings, specifying the package manager to use.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| manager | Literal["pip", "rye", "uv", "poetry", "pixi"] | Package manager choice. |
+
+#### Outputs
+N/A
+
+### `AiConfig`
+#### Description
+Holds configuration options for AI services, specifically OpenAI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| open_ai | OpenAiConfig | Configuration for OpenAI services. |
+
+#### Outputs
+N/A
+
+### `OpenAiConfig`
+#### Description
+Specifies configuration for OpenAI or compatible services, including API key and model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| api_key | str | OpenAI API key. |
+| model | NotRequired[str] | Model to use. |
+| base_url | NotRequired[str] | Base URL for the API. |
+
+#### Outputs
+N/A
+
+### `MarimoConfig`
+#### Description
+Aggregates all configuration sections into a single configuration for the Marimo editor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion | CompletionConfig | Code completion configuration. |
+| display | DisplayConfig | Display settings. |
+| formatting | FormattingConfig | Formatting options. |
+| keymap | KeymapConfig | Keymap settings. |
+| runtime | RuntimeConfig | Runtime behavior settings. |
+| save | SaveConfig | Save behavior settings. |
+| server | ServerConfig | Server settings. |
+| package_management | PackageManagementConfig | Package management settings. |
+| ai | NotRequired[AiConfig] | AI configuration. |
+| experimental | NotRequired[Dict[str, Any]] | Experimental settings. |
+
+#### Outputs
+N/A
+
+### `merge_default_config`
+#### Description
+Merges a user configuration with the default configuration, ensuring all necessary keys are present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | MarimoConfig | User configuration to merge. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| merged_config | MarimoConfig | Merged configuration. |
+
+### `merge_config`
+#### Description
+Merges two configurations, handling keymap overrides and ensuring backward compatibility.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | MarimoConfig | Base configuration. |
+| new_config | MarimoConfig | New configuration to merge. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| merged_config | MarimoConfig | Merged configuration. |
+
+### `mask_secrets`
+#### Description
+Replaces sensitive information in the configuration with placeholders to prevent exposure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | MarimoConfig | Configuration containing sensitive information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| masked_config | MarimoConfig | Configuration with secrets masked. |
+
+### `remove_secret_placeholders`
+#### Description
+Removes placeholders for secrets in the configuration, typically used before saving to disk.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | MarimoConfig | Configuration with secret placeholders. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cleaned_config | MarimoConfig | Configuration with placeholders removed. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used for defining configuration classes. |
+| `typing` | Provides type hints and `TypedDict` for structured configurations. |
+| `marimo._output.rich_help` | Used for documentation generation. |
+| `marimo._utils.deep_merge` | Provides the `deep_merge` function for merging configurations. |
+
+## Error Handling
+
+The code handles errors related to configuration merging and secret management. It ensures that sensitive information is masked and placeholders are removed before saving configurations.
+
+## TODOs
+
+- There is a TODO comment indicating the need to remove the "normal" width type and migrate to "compact".

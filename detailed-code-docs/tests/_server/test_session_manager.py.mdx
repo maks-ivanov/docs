@@ -1,0 +1,212 @@
+---
+title: "test_session_manager.py"
+---
+
+## High-level description
+
+The target file `test_session_manager.py` contains unit tests for the `SessionManager` class, which is part of a server-side application managing client sessions. These tests verify the functionality of session creation, management, and lifecycle operations such as starting an LSP server, creating sessions, resuming sessions, and closing sessions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `SessionManager`: The primary class being tested, responsible for managing sessions.
+- `Session`: Represents individual client sessions, which are managed by `SessionManager`.
+- `SessionConsumer`: A mock object used to simulate session consumers in tests.
+- `AppFileRouter`, `AppFileManager`, `UserConfigManager`, `LspServer`: Dependencies used by `SessionManager` to manage files, configurations, and language server protocol (LSP) operations.
+
+## References
+
+- `SessionManager` from `marimo._server.sessions`: The main class under test.
+- `Session`, `SessionConsumer`, `ConnectionState`, `SessionMode` from `marimo._server.model`: Used to simulate and manage session states.
+- `AppFileRouter`, `AppFileManager` from `marimo._server.file_router` and `marimo._server.file_manager`: Used for file management within sessions.
+- `UserConfigManager` from `marimo._config.manager`: Manages user configurations.
+- `LspServer` from `marimo._server.sessions`: Manages the language server protocol operations.
+
+## Symbols
+
+### `test_start_lsp_server`
+#### Description
+Tests the `start_lsp_server` method of `SessionManager` to ensure that the LSP server is started correctly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses `asyncio` to run the `start_lsp_server` method.
+- Asserts that the `start` method of the `lsp_server` is called once.
+
+### `test_create_session_new`
+#### Description
+Tests the creation of a new session with a new file key.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session_consumer | SessionConsumer | A mock session consumer. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a session with a new file key.
+- Asserts that the session is stored in the session manager and can be retrieved.
+
+### `test_create_session_absolute_url`
+#### Description
+Tests the creation of a session with an absolute file URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session_consumer | SessionConsumer | A mock session consumer. |
+| temp_marimo_file | str | A temporary file path for testing. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a session with an absolute file URL.
+- Asserts that the session is stored and retrievable.
+
+### `test_maybe_resume_session_for_new_file`
+#### Description
+Tests the `maybe_resume_session` method for a new file scenario.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sets up a session with an orphaned state.
+- Attempts to resume the session with various file keys and asserts that it does not resume.
+
+### `test_maybe_resume_session_for_existing_file`
+#### Description
+Tests the `maybe_resume_session` method for an existing file scenario.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+| temp_marimo_file | str | A temporary file path for testing. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sets up a session with an orphaned state and a specific file.
+- Attempts to resume the session with matching and non-matching file keys and asserts the expected outcomes.
+
+### `test_close_session`
+#### Description
+Tests the `close_session` method of `SessionManager`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Adds a session to the session manager.
+- Closes the session and asserts that it is removed from the session manager.
+
+### `test_any_clients_connected_new_file`
+#### Description
+Tests the `any_clients_connected` method for a new file scenario.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sets up a session with a new file.
+- Asserts that no clients are connected for the new file.
+
+### `test_any_clients_connected_existing_file`
+#### Description
+Tests the `any_clients_connected` method for an existing file scenario.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+| temp_marimo_file | str | A temporary file path for testing. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sets up a session with an existing file.
+- Asserts the connection status for various file keys.
+
+### `test_close_all_sessions`
+#### Description
+Tests the `close_all_sessions` method of `SessionManager`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Adds multiple sessions to the session manager.
+- Closes all sessions and asserts that the session manager is empty.
+
+### `test_shutdown`
+#### Description
+Tests the `shutdown` method of `SessionManager`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager instance to test. |
+| mock_session | Session | A mock session object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Adds multiple sessions to the session manager.
+- Shuts down the session manager and asserts that all sessions are closed and the LSP server is stopped.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing the unit tests. |
+| `unittest.mock` | Provides mock objects for testing. |
+
+## Error Handling
+
+The tests assume that the `SessionManager` and related classes handle errors internally. The tests focus on asserting expected outcomes rather than handling exceptions.
+
+## Logging
+
+The tests do not implement logging. However, the `SessionManager` and related classes likely use logging for debugging and operational purposes, as indicated by the presence of `LOGGER` in the related files.

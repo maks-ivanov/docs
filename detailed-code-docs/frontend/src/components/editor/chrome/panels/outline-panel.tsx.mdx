@@ -1,0 +1,62 @@
+---
+title: "outline-panel.tsx"
+---
+
+## High-level description
+
+The `OutlinePanel` component in the target file is a React component designed to display an outline of a notebook's content. It utilizes the `notebookOutline` atom to retrieve the outline data and renders it using the `OutlineList` component. If the notebook has no outline items, it displays a placeholder message using the `PanelEmptyState` component.
+
+## Code Structure
+
+- The `OutlinePanel` component is the main symbol in this file.
+- It uses the `useAtomValue` hook to access the `notebookOutline` atom, which provides the outline data.
+- The `useMemo` hook is used to compute `headerElements` by calling `findOutlineElements`.
+- The `useActiveOutline` hook is used to determine the currently active header in the outline.
+- Depending on the presence of outline items, it either renders the `OutlineList` or the `PanelEmptyState`.
+
+## References
+
+- `notebookOutline`: An atom from `core/cells/cells` that provides the outline data for the notebook.
+- `findOutlineElements` and `useActiveOutline`: Functions from `outline/useActiveOutline` that help in processing and managing the outline elements.
+- `PanelEmptyState`: A component from `empty-state.tsx` used to display a message when there are no outline items.
+- `OutlineList`: A component from `outline/floating-outline` used to render the list of outline items.
+
+## Symbols
+
+### `OutlinePanel`
+#### Description
+The `OutlinePanel` component is responsible for displaying the outline of a notebook. It retrieves the outline data, processes it to find header elements, and determines the active header. It then renders the outline list or a placeholder message based on the presence of outline items.
+
+#### Inputs
+- None directly, but it uses the `notebookOutline` atom to get the outline data.
+
+#### Outputs
+- Renders a React component that displays either an outline list or a placeholder message.
+
+#### Internal Logic
+1. **Retrieve Outline Data**: Uses `useAtomValue` to get the `items` from the `notebookOutline` atom.
+2. **Compute Header Elements**: Uses `useMemo` to call `findOutlineElements` with `items` to get `headerElements`.
+3. **Determine Active Header**: Calls `useActiveOutline` with `headerElements` to get `activeHeaderId`.
+4. **Conditional Rendering**: 
+   - If `items` is empty, renders `PanelEmptyState` with a message and icon.
+   - Otherwise, renders `OutlineList` with `items` and `activeHeaderId`.
+
+## Dependencies
+
+| Dependency     | Purpose                                                                 |
+|:---------------|:------------------------------------------------------------------------|
+| `React`        | Used for creating the component and utilizing hooks like `useMemo`.     |
+| `jotai`        | Provides the `useAtomValue` hook to access the `notebookOutline` atom.  |
+| `lucide-react` | Provides the `ScrollTextIcon` used in the `PanelEmptyState`.            |
+
+## Error Handling
+The component does not explicitly handle errors. It assumes that the `notebookOutline` atom and related functions will provide valid data.
+
+## Logging
+No logging mechanisms are implemented in this component.
+
+## API/Interface Reference
+The component does not expose any API or interface directly. It is a part of the UI and interacts with the state through atoms and hooks.
+
+## TODOs
+There are no TODOs or notes left in the code.

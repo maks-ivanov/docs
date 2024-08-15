@@ -1,0 +1,112 @@
+---
+title: "rich_help.py"
+---
+
+## High-level description
+
+The `rich_help.py` file is designed to enhance the documentation of Python classes and functions by formatting their docstrings as Markdown. It provides a mechanism to prepend the signature of a class or function to its docstring, formatted in a way that is suitable for display in Markdown. This is particularly useful for generating rich, readable documentation for Python codebases.
+
+## Code Structure
+
+The main components of the code are functions and a protocol class that work together to format and display the documentation of Python objects. The `RichHelp` protocol defines a standard for classes or functions to provide their documentation in a Markdown format. The `mddoc` function is a decorator that adds a `_rich_help_` method to an object, enabling it to conform to the `RichHelp` protocol.
+
+## Symbols
+
+### `_format_parameter`
+#### Description
+Formats a single parameter of a function or method, including its name, type annotation, and default value if present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parameter | `inspect.Parameter` | The parameter to format. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `str` | A string representation of the parameter. |
+
+#### Internal Logic
+- Checks if the parameter has an annotation and appends it to the parameter name.
+- Checks if the parameter has a default value and appends it to the parameter name.
+- Returns the formatted string.
+
+### `_get_signature`
+#### Description
+Generates a string representation of the signature of a class or function, formatted for Markdown.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | `Any` | The object (class or function) to get the signature of. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `str` | A string representation of the object's signature. |
+
+#### Internal Logic
+- Uses `inspect.signature` to retrieve the signature of the object.
+- Formats the parameters using `_format_parameter`.
+- Constructs the full signature string, including return annotations if present.
+- Uses `format_signature` to format the signature text with a specified width.
+
+### `_doc_with_signature`
+#### Description
+Prepends the signature of an object to its docstring, formatted as Markdown.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | `Any` | The object to document. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `str` | The object's signature and docstring formatted as Markdown. |
+
+#### Internal Logic
+- Retrieves the signature using `_get_signature`.
+- Cleans the docstring using `inspect.cleandoc`.
+- Combines the signature and docstring into a Markdown-formatted string.
+
+### `RichHelp`
+#### Description
+A protocol that defines a standard for providing Markdown-formatted documentation for classes or functions.
+
+#### Internal Logic
+- Requires implementing a `_rich_help_` static method that returns a Markdown string documenting the class or function.
+
+### `mddoc`
+#### Description
+A decorator that adds a `_rich_help_` method to an object, enabling it to conform to the `RichHelp` protocol.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | `T` | The object to decorate. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `T` | The decorated object. |
+
+#### Internal Logic
+- Casts the object to `RichHelp`.
+- Assigns a lambda function to `_rich_help_` that returns the object's docstring with its signature prepended.
+- Returns the modified object.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `inspect` | Used to retrieve the signature and docstring of objects. |
+| `format_signature` | Formats the signature of a class or function for Markdown display. |
+
+## Error Handling
+
+- The `_get_signature` function handles exceptions that may occur when retrieving the signature of objects with complex metaclasses, returning a default string representation instead.
+
+## Side Effects
+
+- The `mddoc` decorator modifies the input object by adding a `_rich_help_` method, which can affect how the object is documented or displayed in other parts of the codebase.

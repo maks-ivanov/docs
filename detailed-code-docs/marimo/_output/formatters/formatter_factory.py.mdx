@@ -1,0 +1,79 @@
+---
+title: "formatter_factory.py"
+---
+
+## High-level description
+
+The `formatter_factory.py` file defines an abstract base class `FormatterFactory` for creating formatter classes that can be registered at runtime. This class provides a structure for defining formatters that can be associated with third-party packages, allowing for dynamic registration and potential unregistration of formatters without importing the associated packages immediately, thus optimizing import times.
+
+## Code Structure
+
+The `FormatterFactory` class is an abstract base class that other formatter classes inherit from. It defines two abstract methods: `package_name` and `register`. These methods must be implemented by any subclass, such as those seen in the related files (e.g., `AltairFormatter`, `BokehFormatter`, etc.). The `package_name` method is used to specify the third-party package associated with the formatter, while the `register` method is used to register the formatter with the system.
+
+## Symbols
+
+### `FormatterFactory`
+#### Description
+The `FormatterFactory` class serves as an abstract base class for creating formatter classes that can be registered at runtime. It provides a template for defining formatters that can be associated with third-party packages, allowing for dynamic registration and potential unregistration of formatters.
+
+#### Inputs
+- None directly, but subclasses must implement methods that do not take inputs.
+
+#### Outputs
+- None directly, but subclasses must implement methods that return specific outputs.
+
+#### Internal Logic
+- The class uses Python's `abc` module to define abstract methods, ensuring that any subclass must implement these methods. This enforces a contract for subclasses to follow, which includes defining the `package_name` and `register` methods.
+
+### `package_name`
+#### Description
+This static method is intended to return the name of the third-party package that the formatter is associated with. If the formatter is not associated with any specific package, it should return `None`.
+
+#### Inputs
+- None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| package_name | `Optional[str]` | The name of the third-party package or `None`. |
+
+#### Internal Logic
+- The method is abstract and must be implemented by subclasses. It should not import the package to avoid slowing down imports.
+
+### `register`
+#### Description
+This method is responsible for registering the formatter with the system. It can optionally return a callable that undoes any side effects, such as module patches.
+
+#### Inputs
+- None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| undo_handle | `Callable[[], None] | None` | A callable to undo side effects or `None`. |
+
+#### Internal Logic
+- The method is abstract and must be implemented by subclasses. It should use decorators to register formatters and may return a handle to undo side effects.
+
+## References
+
+The `FormatterFactory` class is referenced by several other formatter classes in the codebase, such as `AltairFormatter`, `BokehFormatter`, `AnyWidgetFormatter`, etc. These classes inherit from `FormatterFactory` and implement the abstract methods defined in it.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `abc` | Used to define the abstract base class and methods. |
+| `typing` | Provides type hints for method signatures. |
+
+## Error Handling
+
+The `FormatterFactory` class itself does not implement error handling, but it raises `NotImplementedError` for its abstract methods to ensure that subclasses implement them.
+
+## Logging
+
+No logging is implemented in this file, but related files like `df_formatters.py` use logging to handle exceptions during formatter registration.
+
+## TODOs
+
+No TODOs are present in this file.

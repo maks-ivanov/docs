@@ -1,0 +1,110 @@
+---
+title: "ast.py"
+---
+
+## High-level description
+
+The target file, `marimo/_save/ast.py`, is designed to manipulate and compile Abstract Syntax Trees (ASTs) in Python. It provides functionality to compile a sequence of AST nodes into a module and to transform `with` blocks into separate modules for pre-processing and main block execution. Additionally, it includes a class to extract and process specific `with` blocks from a given AST structure.
+
+## Code Structure
+
+The main components of the code are:
+
+- `BlockException`: A custom exception class used to signal issues with block structures.
+- `compiled_ast`: A function that compiles a sequence of AST nodes into an `ast.Module`.
+- `clean_to_modules`: A function that standardizes a `with` block into two separate modules.
+- `ExtractWithBlock`: A class that extends `ast.NodeTransformer` to extract and process `with` blocks from an AST.
+
+These components work together to facilitate the manipulation and compilation of Python code represented as ASTs, particularly focusing on handling `with` blocks.
+
+## Symbols
+
+### `BlockException`
+#### Description
+A custom exception class used to signal issues with block structures, particularly when unexpected structures are encountered during AST processing.
+
+___
+
+### `compiled_ast`
+#### Description
+Compiles a sequence of AST nodes into an `ast.Module`, allowing for the execution of the code represented by the AST.
+
+#### Inputs
+| Name  | Type  | Description                                      |
+|:------|:------|:-------------------------------------------------|
+| block | Sequence[Union[ast.AST, ast.stmt]] | A sequence of AST nodes to be compiled into a module. |
+
+#### Outputs
+| Name | Type      | Description                        |
+|:-----|:----------|:-----------------------------------|
+| output | ast.Module | The compiled AST module. |
+
+#### Internal Logic
+- The function uses Python's `compile` function with specific flags to compile the AST nodes into a module.
+- It uses `ast.Module` to wrap the block and sets specific compilation flags like `ast.PyCF_ONLY_AST` and `ast.PyCF_ALLOW_TOP_LEVEL_AWAIT`.
+
+___
+
+### `clean_to_modules`
+#### Description
+Transforms a `with` block into two separate AST modules: one for the pre-block and one for the main block, ensuring that context variables are correctly initialized.
+
+#### Inputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| pre_block | list[ast.AST] | A list of AST nodes representing the code before the `with` block. |
+| block    | ast.With | The `with` block to be transformed.              |
+
+#### Outputs
+| Name | Type                | Description                        |
+|:-----|:--------------------|:-----------------------------------|
+| output | tuple[ast.Module, ast.Module] | A tuple containing the pre-block and main block as separate modules. |
+
+#### Internal Logic
+- Asserts that the `with` block has a single item.
+- Extracts the context expression and optional variables from the `with` block.
+- Adjusts the AST to ensure variables are initialized correctly.
+- Compiles the pre-block and main block into separate modules using `compiled_ast`.
+
+___
+
+### `ExtractWithBlock`
+#### Description
+A class that extends `ast.NodeTransformer` to extract and process specific `with` blocks from a given AST structure, based on a target line number.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| line | int  | The line number to target for extraction. |
+
+#### Outputs
+| Name | Type                | Description                        |
+|:-----|:--------------------|:-----------------------------------|
+| output | tuple[ast.Module, ast.Module] | A tuple containing the pre-block and main block as separate modules. |
+
+#### Internal Logic
+- Initializes with a target line number.
+- Visits nodes in the AST, collecting nodes before and on the target line.
+- Handles edge cases where the block is contained within another block, such as `If` or `With`.
+- Uses `clean_to_modules` to transform the identified `with` block into separate modules.
+
+## References
+
+- The `compiled_ast` and `clean_to_modules` functions are used within the `ExtractWithBlock` class to process and compile AST nodes.
+- The `ast` module from Python's standard library is heavily utilized for AST manipulation.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast` | Used for creating and manipulating Abstract Syntax Trees in Python. |
+| `typing` | Provides type hints and annotations for better code clarity and type checking. |
+
+## Error Handling
+
+- The code uses assertions to ensure expected structures in the AST, raising `BlockException` when unexpected structures are encountered.
+- The `ExtractWithBlock` class raises `BlockException` for specific edge cases, such as when a block is contained within another unsupported block type.
+
+## TODOs
+
+- There is a comment indicating a potential TODO regarding a Python bug related to `With` blocks spanning multiple lines, suggesting further investigation and reporting to CPython.

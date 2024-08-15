@@ -1,0 +1,77 @@
+---
+title: "variables-table.tsx"
+---
+
+## High-level description
+
+The `variables-table.tsx` file defines a React component named `VariableTable` that displays a table of variables, including their names, types, values, and the cells that declare and use them. It leverages the `@tanstack/react-table` library for table functionalities such as sorting and filtering. The component is designed to be part of a larger application, likely a notebook or code editor, where variables are defined and used across different cells.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `VariableTable` is the main React component that renders the table.
+- `ResolvedVariable` is an interface that extends `Variable` to include additional properties for display purposes.
+- `COLUMNS` is an array of column definitions used by the table to render different aspects of the variables.
+- `sortData` is a function that sorts the variables based on the specified column and order.
+- The component uses hooks like `useMemo` to optimize performance by memoizing computed values.
+
+## Symbols
+
+### `VariableTable`
+#### Description
+The `VariableTable` component is a React functional component that renders a table displaying information about variables, such as their names, types, values, and the cells that declare and use them. It supports sorting and filtering functionalities.
+
+#### Inputs
+| Name      | Type       | Description                           |
+|:----------|:-----------|:--------------------------------------|
+| className | string     | Optional CSS class for styling.       |
+| cellIds   | CellId[]   | Array of cell IDs for sorting.        |
+| variables | Variables  | Object containing variable data.      |
+
+#### Outputs
+The component does not return any outputs but renders a table in the UI.
+
+#### Internal Logic
+- **State Management**: Uses `useState` to manage sorting and filtering states.
+- **Data Resolution**: Uses `useMemo` to resolve variables into a format suitable for display, including mapping cell IDs to names.
+- **Sorting**: The `sortData` function is used to sort variables based on the selected column.
+- **Table Configuration**: Configures the table using `useReactTable` from `@tanstack/react-table`, specifying data, columns, and sorting/filtering behaviors.
+- **Rendering**: Renders a search input for filtering and a table with headers and rows, using `flexRender` to render cell content.
+
+### `ResolvedVariable`
+#### Description
+`ResolvedVariable` is an interface that extends the `Variable` type to include additional properties `declaredByNames` and `usedByNames`, which are arrays of strings representing the names of cells that declare and use the variable, respectively.
+
+#### Inputs
+This is a type definition and does not take inputs directly.
+
+#### Outputs
+This is a type definition and does not produce outputs directly.
+
+## References
+
+- `DataTableColumnHeader`: Used for rendering column headers with sorting and filtering capabilities.
+- `CellLink` and `CellLinkList`: Used for rendering links to cells that declare or use the variables.
+- `useReactTable`: A hook from `@tanstack/react-table` used to configure and manage the table's state and behavior.
+- `getCellEditorView` and `goToVariableDefinition`: Functions used to interact with the cell editor, particularly for highlighting variable definitions.
+
+## Dependencies
+
+| Dependency          | Purpose                                                                 |
+|:--------------------|:------------------------------------------------------------------------|
+| `React`             | Core library for building the component.                                |
+| `@tanstack/react-table` | Provides table functionalities like sorting and filtering.           |
+| `lodash-es`         | Used for utility functions like `sortBy`.                                |
+| `lucide-react`      | Provides icons used in the table, such as `SquareEqualIcon`.             |
+
+## Error Handling
+
+The component does not explicitly handle errors beyond basic React error boundaries. It assumes that the data provided to it is valid and correctly formatted.
+
+## Logging
+
+The component does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

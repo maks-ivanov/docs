@@ -1,0 +1,107 @@
+---
+title: "media.py"
+---
+
+## High-level description
+
+The `media.py` file in the `marimo/_plugins/core` directory provides utility functions for handling media files. It includes functions to guess MIME types, convert file-like objects to data URLs, check if data is empty, and map MIME types to file extensions. These utilities are essential for processing and managing media data in various formats, facilitating operations like rendering media in HTML or preparing files for download.
+
+## Code Structure
+
+The main symbols in the code are functions that operate on media data. These functions are interconnected in that they often rely on each other to perform their tasks. For example, `io_to_data_url` uses `guess_mime_type` to determine the MIME type of a file-like object.
+
+## Symbols
+
+### `guess_mime_type`
+#### Description
+This function attempts to determine the MIME type of a given source, which can be a string, bytes, or file-like object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| src | Union[str, bytes, io.BytesIO, io.BufferedReader, None] | The source from which to guess the MIME type. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[str] | The guessed MIME type, or `None` if it cannot be determined. |
+
+#### Internal Logic
+- If the source is `None`, it returns `None`.
+- If the source is a string starting with "data:", it extracts and returns the MIME type from the data URL.
+- If the source is a string, it uses `mimetypes.guess_type` to guess the MIME type based on the file extension.
+- If the source is a file-like object, it uses the file's name to guess the MIME type.
+
+### `mime_type_to_ext`
+#### Description
+Converts a MIME type to a file extension.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mime_type | str | The MIME type to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[str] | The corresponding file extension, or `None` if it cannot be determined. |
+
+### `io_to_data_url`
+#### Description
+Converts a file-like object or bytes to a data URL, which can be used to embed media directly in HTML.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| src | Union[str, bytes, io.BytesIO, None] | The source data to convert. |
+| fallback_mime_type | str | The MIME type to use if it cannot be guessed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[str] | The data URL representation of the source, or `None` if the source is `None`. |
+
+#### Internal Logic
+- If the source is `None`, it returns `None`.
+- If the source is a file-like object, it reads the data, encodes it in base64, and constructs a data URL using the guessed or fallback MIME type.
+- If the source is bytes, it encodes the data in base64 and constructs a data URL using the fallback MIME type.
+- If the source is a string, it returns the string as is.
+
+### `is_data_empty`
+#### Description
+Checks if the provided data is empty.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Union[str, bytes, io.BytesIO] | The data to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | bool | `True` if the data is empty, `False` otherwise. |
+
+#### Internal Logic
+- For strings, it checks if the string is empty.
+- For bytes, it checks if the byte sequence is empty.
+- For `io.BytesIO`, it checks if the buffer size is zero.
+
+## References
+
+- The `is_data_empty` function is referenced in the `marimo/_output/data/data.py` file, where it is used to determine if data should be treated as empty when creating virtual files.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| base64 | Used for encoding data in base64 format. |
+| io | Provides file-like object support. |
+| mimetypes | Used for guessing MIME types and file extensions. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond returning `None` for unsupported or unrecognized input types. This approach is suitable for the utility nature of these functions, where the absence of a result (i.e., `None`) can be a valid outcome.
+
+## Logging
+
+The code does not implement any logging mechanisms. This is typical for utility functions that are expected to be used as building blocks in larger systems, where logging might be handled at a higher level.

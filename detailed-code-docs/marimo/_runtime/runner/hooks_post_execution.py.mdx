@@ -1,0 +1,171 @@
+---
+title: "hooks_post_execution.py"
+---
+
+## High-level description
+
+The target file, `hooks_post_execution.py`, defines a series of functions that act as hooks to be executed after a cell in a computational notebook environment has been run. These hooks perform various tasks such as updating the status of the cell, broadcasting variables and datasets, handling outputs, and managing dependencies. The file also defines a list of these hooks, `POST_EXECUTION_HOOKS`, which can be used to apply all the defined post-execution actions in sequence.
+
+## Code Structure
+
+The main symbols in the code are functions that serve as post-execution hooks. Each function takes three parameters: a `CellImpl` object representing the cell, a `Runner` object that manages the execution of cells, and a `RunResult` object that contains the result of the cell's execution. These functions are interconnected as they all operate on the same types of objects and are intended to be executed in sequence as part of the post-execution process.
+
+## Symbols
+
+### `_set_imported_defs`
+#### Description
+This function updates the `imported_defs` attribute of a cell's import workspace if the cell is an import block. It ensures that only the definitions that are present in the global namespace are marked as imported.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_set_status_idle`
+#### Description
+Sets the runtime state of the cell to "idle" after execution, indicating that the cell has completed its run and is not currently executing.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_set_run_result_status`
+#### Description
+Updates the run result status of the cell based on the outcome of its execution. It checks for specific exceptions and conditions to set the status to "interrupted", "cancelled", "exception", or "success".
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_broadcast_variables`
+#### Description
+Broadcasts the values of variables defined in the cell to the frontend. It collects the current values of these variables from the global namespace and sends them as a `VariableValues` message.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_broadcast_datasets`
+#### Description
+Broadcasts datasets derived from variables defined in the cell. It uses the `get_datasets_from_variables` function to extract datasets and sends them as a `Datasets` message.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_broadcast_duckdb_tables`
+#### Description
+Broadcasts tables from DuckDB if the cell's SQL statements modify data sources. It checks for the presence of DuckDB and whether the SQL statements modify data sources before broadcasting the tables.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_store_reference_to_output`
+#### Description
+Stores a reference to the cell's output if it contains a `UIElement`. This is necessary for making RPCs work for unnamed UI elements.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+### `_broadcast_outputs`
+#### Description
+Handles the broadcasting of the cell's output to the frontend. It formats the output and sends it, ensuring not to rebroadcast outputs that were already sent. It also handles different types of exceptions by broadcasting appropriate error messages.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Formats the output using `formatting.try_format`.
+- Broadcasts the output or error messages based on the execution result and exceptions.
+
+### `_reset_matplotlib_context`
+#### Description
+Resets the Matplotlib context by closing figures, ensuring that each cell gets a fresh axis for plotting.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| cell       | `CellImpl`            | The cell being processed.                        |
+| runner     | `cell_runner.Runner`  | The runner managing the cell execution.          |
+| run_result | `cell_runner.RunResult` | The result of the cell's execution.              |
+
+#### Outputs
+None
+
+## References
+
+- `CellImpl`: Represents a cell in the notebook.
+- `cell_runner.Runner`: Manages the execution of cells.
+- `cell_runner.RunResult`: Contains the result of a cell's execution.
+- `VariableValues`, `Datasets`, `CellOp`: Messaging operations for broadcasting data to the frontend.
+- `DependencyManager`: Manages dependencies like DuckDB.
+- `formatting.try_format`: Formats the output for broadcasting.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._ast.cell` | Defines the `CellImpl` class. |
+| `marimo._data.get_datasets` | Functions for extracting datasets from variables and DuckDB. |
+| `marimo._dependencies.dependencies` | Manages dependencies like DuckDB. |
+| `marimo._messaging.cell_output` | Defines the `CellChannel` class for output channels. |
+| `marimo._messaging.errors` | Defines error classes used in messaging. |
+| `marimo._messaging.ops` | Defines operations for broadcasting messages. |
+| `marimo._messaging.tracebacks` | Handles writing tracebacks. |
+| `marimo._output.formatting` | Provides formatting utilities for outputs. |
+| `marimo._plugins.ui._core.ui_element` | Defines the `UIElement` class. |
+| `marimo._runtime.context.types` | Provides runtime context utilities. |
+| `marimo._runtime.control_flow` | Defines control flow exceptions like `MarimoInterrupt`. |
+| `marimo._runtime.runner.cell_runner` | Provides the `Runner` class for executing cells. |
+| `marimo._utils.flatten` | Utility for checking instances in nested structures. |

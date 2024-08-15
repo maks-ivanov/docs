@@ -1,0 +1,61 @@
+---
+title: "VegaPlugin.tsx"
+---
+
+## High-level description
+
+The `VegaPlugin.tsx` file defines a React component plugin named `VegaPlugin` that integrates Vega-Lite visualizations into a larger application. This plugin is responsible for rendering Vega-Lite charts with support for interactive features such as chart and field selection, and it uses a lazy-loaded component to optimize performance.
+
+## Code Structure
+
+The `VegaPlugin` class implements the `IPlugin` interface, which requires defining a `tagName`, a `validator` for input data, and a `render` method. The `render` method utilizes a `TooltipProvider` to wrap a lazily-loaded `LazyVegaComponent`, which is responsible for rendering the actual Vega-Lite visualization.
+
+## Symbols
+
+### `VegaPlugin`
+#### Description
+The `VegaPlugin` class is a plugin that renders Vega-Lite visualizations within a React application. It validates input data using the `zod` library and provides a render method that returns a JSX element containing the visualization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;VegaComponentState, Data&gt;` | The properties required to render the plugin, including state, data, and functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | A React element that renders the Vega-Lite visualization. |
+
+#### Internal Logic
+- **Validator**: Uses `zod` to define a schema for validating the `spec`, `chartSelection`, and `fieldSelection` properties. The `spec` is transformed into a `VegaLiteSpec`, while `chartSelection` and `fieldSelection` have default values.
+- **Render Method**: Wraps the `LazyVegaComponent` with a `TooltipProvider` to provide tooltip functionality. The `LazyVegaComponent` is loaded asynchronously to improve performance.
+
+## References
+
+- **`IPlugin` Interface**: The `VegaPlugin` class implements this interface, which is defined in `frontend/src/plugins/types.ts`.
+- **`VegaLiteSpec` Type**: Used in the validator to ensure the `spec` property conforms to the expected structure, imported from `frontend/src/plugins/impl/vega/types.ts`.
+- **`TooltipProvider`**: Imported from `frontend/src/components/ui/tooltip.tsx`, used to provide tooltip functionality around the Vega component.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation within the plugin. |
+| `React` | Provides the base for creating React components. |
+| `@/components/ui/tooltip` | Provides tooltip functionality for the Vega component. |
+
+## Error Handling
+
+The `VegaPlugin` itself does not implement specific error handling mechanisms. However, the `LazyVegaComponent` it renders may include error handling as part of its internal logic.
+
+## Logging
+
+The `VegaPlugin` does not implement any logging directly. Logging, if needed, would likely be handled within the `LazyVegaComponent` or other parts of the application.
+
+## API/Interface Reference
+
+The `VegaPlugin` does not expose an API directly. It is used as part of a larger plugin system within the application, adhering to the `IPlugin` interface.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

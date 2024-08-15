@@ -1,0 +1,123 @@
+---
+title: "web_component.py"
+---
+
+## High-level description
+
+The `web_component.py` file in the Marimo project provides utility functions for building HTML components that can be used as plugins in a web-based UI. It includes functions to construct both stateful and stateless HTML components, encode attributes safely for HTML, and parse initial values from HTML strings. The file is designed to facilitate the creation and manipulation of web components that are integrated into the Marimo framework, which appears to be a system for building interactive web applications.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `_build_attr`: Used by `build_ui_plugin` and `build_stateless_plugin` to safely encode component attributes.
+- `build_ui_plugin`: Constructs HTML for stateful components, using `_build_attr` for attribute encoding.
+- `build_stateless_plugin`: Constructs HTML for stateless components, also using `_build_attr`.
+- `parse_initial_value`: Extracts and decodes the initial value from a component's HTML representation.
+
+## Symbols
+
+### `_build_attr`
+#### Description
+This function encodes a given attribute name and value into a format suitable for inclusion in an HTML tag. It ensures that the value is JSON-encoded and HTML-escaped to prevent injection attacks or misinterpretation by the browser.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the attribute to encode. |
+| value | JSONType | The value of the attribute, which must be JSON-serializable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | str | A string representing the encoded attribute, ready for inclusion in an HTML tag. |
+
+#### Internal Logic
+- The function uses `json.dumps` with a custom encoder (`WebComponentEncoder`) to serialize the value.
+- It then escapes the serialized string using `html.escape`.
+- Additional manual replacements are performed to escape backslashes and dollar signs, which are not handled by `html.escape`.
+
+### `build_ui_plugin`
+#### Description
+Constructs an HTML string for a stateful UI component, embedding initial values and other attributes as data attributes in the HTML tag.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| component_name | str | The tag name of the component. |
+| initial_value | Optional[JSONType] | The initial value of the component, which must be JSON-serializable. |
+| label | Optional[str] | A markdown string used as a text label for the component. |
+| args | dict[str, JSONType] | Additional arguments for the component, mapped from names to JSON-serializable values. |
+| slotted_html | str | HTML content to be slotted inside the component. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | str | An HTML string representing the component. |
+
+#### Internal Logic
+- Validates that reserved argument names ("initial-value" and "label") are not used in `args`.
+- Uses `_build_attr` to encode the initial value, label, and additional arguments as data attributes.
+- Constructs the HTML string with the component name, attributes, and slotted HTML content.
+
+### `build_stateless_plugin`
+#### Description
+Constructs an HTML string for a stateless UI component, embedding attributes as data attributes in the HTML tag.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| component_name | str | The tag name of the component. |
+| args | dict[str, JSONType] | Additional arguments for the component, mapped from names to JSON-serializable values. |
+| slotted_html | str | HTML content to be slotted inside the component. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | str | An HTML string representing the component. |
+
+#### Internal Logic
+- Uses `_build_attr` to encode the additional arguments as data attributes.
+- Constructs the HTML string with the component name, attributes, and slotted HTML content.
+
+### `parse_initial_value`
+#### Description
+Extracts and decodes the initial value from a component's HTML representation, which is stored as a data attribute.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The HTML string from which to extract the initial value. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSONType | The decoded initial value. |
+
+#### Internal Logic
+- Uses a regular expression to find the `data-initial-value` attribute in the HTML string.
+- Unescapes the attribute value and deserializes it from JSON.
+
+## References
+
+- `WebComponentEncoder`: A custom JSON encoder used to serialize values for HTML attributes.
+- `MIME`: A type used in the JSONType alias, indicating that MIME objects can be serialized as JSON.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `json` | Used for JSON serialization of attribute values. |
+| `re` | Used for regular expression operations to parse HTML strings. |
+| `html.escape` and `html.unescape` | Used for escaping and unescaping HTML strings. |
+
+## Error Handling
+
+- The `parse_initial_value` function raises a `ValueError` if the `data-initial-value` attribute is not found in the HTML string.
+
+## Logging
+
+- There is no explicit logging in this file, but errors are raised directly when issues are encountered.
+
+## TODOs
+
+- No TODOs are present in the code.

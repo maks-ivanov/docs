@@ -1,0 +1,154 @@
+---
+title: "grid-layout.tsx"
+---
+
+## High-level description
+
+The `GridLayoutRenderer` component in the target file is a React component designed to render a grid layout for a set of cells. It utilizes the `react-grid-layout` library to provide a responsive and interactive grid system where users can drag, drop, and resize cells. The component supports both read and edit modes, allowing for different levels of interaction based on the application mode.
+
+## Code Structure
+
+- **GridLayoutRenderer**: The main component that renders the grid layout.
+- **GridCell**: A sub-component that represents individual cells within the grid.
+- **GridControls**: A sub-component that provides UI controls for modifying the grid layout.
+- **EditableGridCell**: A sub-component that wraps `GridCell` to provide additional editing functionalities.
+- **GridHoverActions**: A sub-component that provides hover actions for grid cells, such as delete and scroll options.
+
+## References
+
+- **OutputArea**: Used to render the output of each cell.
+- **TinyCode**: Used to display code snippets when there is no output.
+- **useIsDragging**: A custom hook to manage drag state.
+- **Maps**: Utility functions for working with maps.
+- **Objects**: Utility functions for working with objects.
+
+## Symbols
+
+### `GridLayoutRenderer`
+#### Description
+The `GridLayoutRenderer` component is responsible for rendering a grid layout of cells. It manages the layout state, handles user interactions like dragging and resizing, and updates the layout accordingly. It also provides controls for configuring the grid's appearance and behavior.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| layout | GridLayout | The current layout configuration. |
+| setLayout | function | Callback to update the layout. |
+| cells | Array | The cells to be rendered in the grid. |
+| mode | AppMode | The current application mode (read or edit). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| grid | JSX.Element | The rendered grid layout. |
+
+#### Internal Logic
+- Initializes state for dragging, dropping, and locking cells.
+- Uses `useMemo` and `useEffect` to manage layout configurations and side effects.
+- Renders cells using `ReactGridLayout`, applying styles and configurations based on the mode.
+- Provides controls for modifying grid properties like columns, row height, and max width.
+
+### `GridCell`
+#### Description
+`GridCell` is a memoized component that renders the content of a cell, including its output or code snippet.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | OutputMessage | The output data of the cell. |
+| cellId | CellId | The unique identifier of the cell. |
+| status | string | The execution status of the cell. |
+| mode | AppMode | The current application mode. |
+| code | string | The code content of the cell. |
+| hidden | boolean | Whether the cell is hidden. |
+| isScrollable | boolean | Whether the cell is scrollable. |
+| side | GridLayoutCellSide | The alignment side of the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellContent | JSX.Element | The rendered content of the cell. |
+
+#### Internal Logic
+- Determines if the cell is loading or if the output is empty.
+- Renders `TinyCode` if the output is empty and not in read mode.
+- Renders `OutputArea` with appropriate styles and configurations.
+
+### `GridControls`
+#### Description
+`GridControls` provides UI elements for adjusting grid properties such as columns, row height, max width, and border settings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| layout | GridLayout | The current layout configuration. |
+| setLayout | function | Callback to update the layout. |
+| isLocked | boolean | Whether the grid is locked. |
+| setIsLocked | function | Callback to toggle the grid lock state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| controls | JSX.Element | The rendered control elements. |
+
+### `EditableGridCell`
+#### Description
+`EditableGridCell` is a forward-ref component that wraps `GridCell` to provide additional editing functionalities like drag-and-drop and hover actions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| children | ReactNode | The content of the cell. |
+| isDragging | boolean | Whether the cell is being dragged. |
+| onDelete | function | Callback to delete the cell. |
+| isScrollable | boolean | Whether the cell is scrollable. |
+| setIsScrollable | function | Callback to toggle scrollability. |
+| side | GridLayoutCellSide | The alignment side of the cell. |
+| setSide | function | Callback to set the alignment side. |
+| display | string | The display position of hover actions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editableCell | JSX.Element | The rendered editable cell. |
+
+### `GridHoverActions`
+#### Description
+`GridHoverActions` provides UI elements that appear on hover, allowing users to delete cells, toggle scrollability, and set alignment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| onDelete | function | Callback to delete the cell. |
+| isScrollable | boolean | Whether the cell is scrollable. |
+| setIsScrollable | function | Callback to toggle scrollability. |
+| side | GridLayoutCellSide | The alignment side of the cell. |
+| setSide | function | Callback to set the alignment side. |
+| display | string | The display position of hover actions. |
+| popoverOpened | string | The currently opened popover. |
+| setPopoverOpened | function | Callback to set the opened popover. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hoverActions | JSX.Element | The rendered hover actions. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-grid-layout` | Provides the grid layout functionality. |
+| `lodash-es` | Used for utility functions like `startCase`. |
+| `@radix-ui/react-icons` | Provides icons for UI elements. |
+
+## Error Handling
+
+The component does not explicitly handle errors beyond basic React error boundaries. It assumes that the provided layout and cell data are valid.
+
+## Logging
+
+There is no explicit logging within the component, but utility functions like `Maps.keyBy` may log duplicate keys.
+
+## TODOs
+
+- Consider adding support for additional responsive breakpoints.
+- Implement more descriptive titles for stale outputs in `OutputArea`.

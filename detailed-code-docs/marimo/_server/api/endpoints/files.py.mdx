@@ -1,0 +1,149 @@
+---
+title: "files.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/endpoints/files.py`, defines a set of API endpoints for managing files within the Marimo application. These endpoints allow users to perform operations such as reading code from a file, renaming a file, opening a file, saving a file, and saving application configurations. The endpoints are implemented using the Starlette framework and are protected by authentication requirements.
+
+## Code Structure
+
+The main symbols in the code are the API endpoints defined using the `APIRouter` class. Each endpoint corresponds to a specific file operation and is decorated with the `@router.post` decorator to handle POST requests. The endpoints interact with the application's state and session management to perform the necessary file operations.
+
+## Symbols
+
+### `read_code`
+#### Description
+The `read_code` function is an API endpoint that reads the contents of a code file from the server and returns it in a `ReadCodeResponse`.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The HTTP request object.     |
+
+#### Outputs
+| Name       | Type            | Description                      |
+|:-----------|:----------------|:---------------------------------|
+| contents   | ReadCodeResponse | The response containing the file contents. |
+
+#### Internal Logic
+- Retrieves the current session from the application state.
+- Checks if the file path is set in the session's file manager.
+- Reads the file contents using the session's file manager.
+- Returns the contents in a `ReadCodeResponse`.
+
+### `rename_file`
+#### Description
+The `rename_file` function is an API endpoint that renames a file managed by the current session.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The HTTP request object.     |
+
+#### Outputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| output | BaseResponse | A response indicating success.     |
+
+#### Internal Logic
+- Parses the request body into a `RenameFileRequest`.
+- Retrieves the current session from the application state.
+- Renames the file using the session's file manager.
+- Updates the session manager's recents list with the new file path.
+- Sends a control request to update the session state.
+
+### `open_file`
+#### Description
+The `open_file` function is an API endpoint that opens a specified file and validates it as a Marimo app.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The HTTP request object.     |
+
+#### Outputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| output | BaseResponse | A response indicating success.     |
+
+#### Internal Logic
+- Parses the request body into an `OpenFileRequest`.
+- Validates the existence of the specified file path.
+- Attempts to load the file as a Marimo app using the `codegen.get_app` function.
+- Returns a success response if the file is valid.
+
+### `save`
+#### Description
+The `save` function is an API endpoint that saves the current state of a notebook to a file.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The HTTP request object.     |
+
+#### Outputs
+| Name   | Type             | Description                        |
+|:-------|:-----------------|:-----------------------------------|
+| output | PlainTextResponse | A response containing the saved contents. |
+
+#### Internal Logic
+- Retrieves the current session from the application state.
+- Parses the request body into a `SaveNotebookRequest`.
+- Saves the notebook using the session's file manager.
+- Returns the saved contents in a `PlainTextResponse`.
+
+### `save_app_config`
+#### Description
+The `save_app_config` function is an API endpoint that saves the application configuration.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The HTTP request object.     |
+
+#### Outputs
+| Name   | Type             | Description                        |
+|:-------|:-----------------|:-----------------------------------|
+| output | PlainTextResponse | A response containing the saved configuration. |
+
+#### Internal Logic
+- Retrieves the current session from the application state.
+- Parses the request body into a `SaveAppConfigurationRequest`.
+- Saves the application configuration using the session's file manager.
+- Returns the saved configuration in a `PlainTextResponse`.
+
+## References
+
+- `AppState`: Used to manage the application state and retrieve the current session.
+- `HTTPStatus`: Used to define HTTP status codes for responses.
+- `parse_request`: Utility function to parse the request body into a specific dataclass.
+- `codegen.get_app`: Function to load and validate a file as a Marimo app.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| starlette  | Provides the web framework for defining API endpoints and handling requests. |
+
+## Error Handling
+
+- The `read_code` and `open_file` endpoints raise `HTTPException` with appropriate status codes and error messages when file operations fail or when the file is not valid.
+
+## Logging
+
+- The module uses a logger (`LOGGER`) from the `marimo._loggers` module to log messages, although specific logging statements are not present in the provided code.
+
+## API/Interface Reference
+
+| Endpoint          | Method | Request Format | Response Format | Description                                      |
+|:------------------|:-------|:---------------|:----------------|:-------------------------------------------------|
+| `/read_code`      | POST   | JSON           | JSON            | Reads code from the server and returns it.       |
+| `/rename`         | POST   | JSON           | JSON            | Renames the current app file.                    |
+| `/open`           | POST   | JSON           | JSON            | Opens a file and validates it as a Marimo app.   |
+| `/save`           | POST   | JSON           | Plain Text      | Saves the current notebook state to a file.      |
+| `/save_app_config`| POST   | JSON           | Plain Text      | Saves the application configuration.             |
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

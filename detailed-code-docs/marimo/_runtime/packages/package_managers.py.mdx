@@ -1,0 +1,66 @@
+---
+title: "package_managers.py"
+---
+
+## High-level description
+
+The target file, `package_managers.py`, is responsible for managing different package managers within the Marimo runtime environment. It defines a dictionary of available package managers and provides a function to create an instance of a specified package manager. This setup allows the Marimo environment to dynamically select and use different package managers based on the user's configuration or environment.
+
+## Code Structure
+
+The main components of the code are the `PACKAGE_MANAGERS` dictionary and the `create_package_manager` function. The dictionary maps the names of package managers to their respective classes, while the function uses this dictionary to instantiate the appropriate package manager based on the provided name.
+
+## Symbols
+
+### `PACKAGE_MANAGERS`
+#### Description
+`PACKAGE_MANAGERS` is a dictionary that maps the names of various package managers to their corresponding classes. This dictionary serves as a registry for all the package managers that can be used within the Marimo environment.
+
+#### Internal Logic
+The dictionary is populated with entries for each package manager class imported from other modules. Each entry maps the `name` attribute of a package manager class to the class itself.
+
+### `create_package_manager`
+#### Description
+The `create_package_manager` function is responsible for creating an instance of a package manager based on the provided name. It checks if the environment is Pyodide and defaults to using the `MicropipPackageManager` in that case. Otherwise, it looks up the name in the `PACKAGE_MANAGERS` dictionary and returns an instance of the corresponding package manager class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the package manager to create. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | PackageManager | An instance of the specified package manager. |
+
+#### Internal Logic
+1. The function first checks if the environment is Pyodide using the `is_pyodide` function. If true, it returns an instance of `MicropipPackageManager`.
+2. If not in Pyodide, it checks if the provided `name` exists in the `PACKAGE_MANAGERS` dictionary.
+3. If the name is found, it returns an instance of the corresponding package manager class.
+4. If the name is not found, it raises a `RuntimeError` indicating an unknown package manager.
+
+## References
+
+- `PixiPackageManager`, `MicropipPackageManager`, `PipPackageManager`, `PoetryPackageManager`, `RyePackageManager`, `UvPackageManager`: These are classes representing different package managers, imported from their respective modules.
+- `is_pyodide`: A utility function used to determine if the current environment is Pyodide.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.packages.conda_package_manager` | Provides the `PixiPackageManager` class. |
+| `marimo._runtime.packages.package_manager` | Provides the `PackageManager` base class. |
+| `marimo._runtime.packages.pypi_package_manager` | Provides various PyPI-related package manager classes. |
+| `marimo._utils.platform` | Provides the `is_pyodide` function to check the environment. |
+
+## Error Handling
+
+The `create_package_manager` function raises a `RuntimeError` if an unknown package manager name is provided. This error includes a message indicating that the issue is a bug in Marimo and provides a link to file an issue on GitHub.
+
+## Logging
+
+No explicit logging is implemented in this code. However, the error message in the `RuntimeError` provides guidance for users encountering issues.
+
+## TODOs
+
+No TODOs are present in the code.

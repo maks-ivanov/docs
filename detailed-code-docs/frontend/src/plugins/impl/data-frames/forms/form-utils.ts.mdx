@@ -1,0 +1,76 @@
+---
+title: "form-utils.ts"
+---
+
+## High-level description
+
+The target file, `form-utils.ts`, provides utility functions for working with Zod schemas in a form context. It includes functions to extract default values from Zod schemas and to retrieve literal values from union types. These utilities are essential for form initialization and validation processes, ensuring that forms have appropriate default values and can handle complex schema types.
+
+## Code Structure
+
+The main symbols in the code are two functions: `getDefaults` and `getUnionLiteral`. These functions are designed to work with Zod schemas, a popular TypeScript library for schema validation. The `getDefaults` function is responsible for extracting default values from various Zod schema types, while `getUnionLiteral` is used to retrieve literal values from union types within schemas.
+
+## Symbols
+
+### `getDefaults`
+#### Description
+The `getDefaults` function is designed to extract default values from a given Zod schema. It handles various schema types, including literals, defaults, effects, unions, arrays, strings, enums, and objects, providing a default value based on the schema's definition.
+
+#### Inputs
+| Name   | Type                      | Description                      |
+|:-------|:--------------------------|:---------------------------------|
+| schema | `TSchema extends z.ZodType&lt;T&gt;` | The Zod schema to extract defaults from. |
+
+#### Outputs
+| Name   | Type | Description                      |
+|:-------|:-----|:---------------------------------|
+| output | `T`  | The default value extracted from the schema. |
+
+#### Internal Logic
+- The function defines a helper `getDefaultValue` to recursively determine the default value for a given schema type.
+- It checks the schema type using `instanceof` checks for various Zod types like `ZodLiteral`, `ZodDefault`, `ZodEffects`, `ZodUnion`, `ZodArray`, `ZodString`, `ZodEnum`, and `ZodObject`.
+- For each type, it extracts the default value based on the schema's internal definition.
+- For objects, it constructs an object with default values for each property by iterating over the schema's shape.
+
+### `getUnionLiteral`
+#### Description
+The `getUnionLiteral` function retrieves the literal value from a union type within a Zod schema. It is useful for determining the specific literal value used in a union, which can be critical for form handling and validation.
+
+#### Inputs
+| Name   | Type                      | Description                      |
+|:-------|:--------------------------|:---------------------------------|
+| schema | `T extends z.ZodType&lt;unknown&gt;` | The Zod schema to extract the union literal from. |
+
+#### Outputs
+| Name   | Type               | Description                      |
+|:-------|:-------------------|:---------------------------------|
+| output | `z.ZodLiteral&lt;string&gt;` | The literal value extracted from the union. |
+
+#### Internal Logic
+- The function checks if the schema is a `ZodLiteral` and returns it if true.
+- If the schema is a `ZodObject`, it attempts to retrieve the literal from the object's type property.
+- If the schema is a `ZodUnion`, it recursively calls itself on the first option of the union.
+- Throws an error if the schema does not match expected types.
+
+## References
+
+- The `getDefaults` function is referenced in the test file `form-utils.test.ts`, where it is tested against various Zod schema types to ensure correct default value extraction.
+- The `getUnionLiteral` function is used in `panel.tsx` and `form.tsx` to handle union types within forms.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod`      | Used for schema validation and type checking. |
+
+## Error Handling
+
+- The `getUnionLiteral` function throws an error if the schema does not match expected types, ensuring that only valid schemas are processed.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,115 @@
+---
+title: "assets.py"
+---
+
+## High-level description
+
+The `assets.py` file in the Marimo server API endpoints is responsible for handling requests related to static assets and virtual files. It defines routes for serving static files, rendering HTML pages, and managing virtual files, which are files stored in memory and accessed via specific URLs. The file uses the Starlette framework to define these routes and manage HTTP requests and responses.
+
+## Code Structure
+
+The main components of the code are:
+
+- **Router**: An instance of `APIRouter` is used to define and manage the routes for handling asset-related requests.
+- **Static Files**: The `StaticFiles` class is used to serve static assets from a specified directory.
+- **HTML Templates**: Functions like `home_page_template` and `notebook_page_template` are used to render HTML pages based on the request context.
+- **Virtual Files**: Functions and logic to handle virtual files, which are files stored in memory and accessed via URLs.
+
+## References
+
+- **`UserConfigManager`**: Used to manage user configuration settings.
+- **`AppState`**: Provides access to the application state and session management.
+- **`read_virtual_file`**: A function from `marimo._runtime.virtual_file` used to read virtual files from shared memory.
+- **`home_page_template` and `notebook_page_template`**: Functions from `marimo._server.templates.templates` used to render HTML pages.
+
+## Symbols
+
+### `router`
+#### Description
+An instance of `APIRouter` that defines routes for handling asset-related requests.
+
+### `index`
+#### Description
+Handles requests to the root endpoint (`/`) and serves the appropriate HTML page based on the presence of a file key.
+
+#### Inputs
+| Name   | Type     | Description                  |
+|:-------|:---------|:-----------------------------|
+| request | Request | The incoming HTTP request.   |
+
+#### Outputs
+| Name | Type         | Description                  |
+|:-----|:-------------|:-----------------------------|
+| -    | HTMLResponse | The HTML page to be rendered.|
+
+#### Internal Logic
+- Retrieves the application state and user configuration.
+- Determines the file key from query parameters or session.
+- Reads the `index.html` file and modifies it based on the presence of a file key.
+- Uses `home_page_template` or `notebook_page_template` to render the HTML page.
+
+### `virtual_file`
+#### Description
+Handles requests to the `/@file/{filename_and_length:path}` endpoint to serve virtual files.
+
+#### Inputs
+| Name   | Type     | Description                  |
+|:-------|:---------|:-----------------------------|
+| request | Request | The incoming HTTP request.   |
+
+#### Outputs
+| Name | Type    | Description                  |
+|:-----|:--------|:-----------------------------|
+| -    | Response | The virtual file content.   |
+
+#### Internal Logic
+- Extracts the filename and byte length from the request path.
+- Validates the request and reads the virtual file using `read_virtual_file`.
+- Returns the file content with the appropriate MIME type.
+
+### `serve_static`
+#### Description
+Handles requests to serve static files from the specified directory.
+
+#### Inputs
+| Name   | Type     | Description                  |
+|:-------|:---------|:-----------------------------|
+| request | Request | The incoming HTTP request.   |
+
+#### Outputs
+| Name | Type        | Description                  |
+|:-----|:------------|:-----------------------------|
+| -    | FileResponse | The static file content.    |
+
+#### Internal Logic
+- Extracts the file path from the request.
+- Checks if the file matches any predefined static file patterns.
+- Returns the file content if it exists, otherwise raises a 404 error.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette` | Used for handling HTTP requests and responses. |
+| `mimetypes` | Used to guess the MIME type of files. |
+
+## Error Handling
+
+- The `virtual_file` function raises `HTTPException` with a 404 status code for invalid requests or byte lengths.
+- The `serve_static` function raises `HTTPException` with a 404 status code if the requested file is not found.
+
+## Logging
+
+- The code uses a logger (`LOGGER`) to log debug information, such as when no file key is provided or when a virtual file is requested.
+
+## API/Interface Reference
+
+| Endpoint                  | Method | Request | Response      | Description                          |
+|:--------------------------|:-------|:--------|:--------------|:-------------------------------------|
+| `/`                       | GET    | -       | HTMLResponse  | Serves the homepage or notebook page.|
+| `/@file/{filename_and_length:path}` | GET    | -       | Response      | Serves a virtual file.               |
+| `/{path:path}`            | GET    | -       | FileResponse  | Serves static files.                 |
+
+## TODOs
+
+- No explicit TODOs are present in the code.

@@ -1,0 +1,98 @@
+---
+title: "data-table.tsx"
+---
+
+## High-level description
+
+The `data-table.tsx` file defines a React component for rendering a data table with various features such as sorting, pagination, filtering, and search. It leverages the `@tanstack/react-table` library to manage table state and operations, and it integrates additional functionalities like column wrapping, downloading data, and displaying filter pills.
+
+## Code Structure
+
+The main component in this file is `DataTableInternal`, which is a generic React component that takes a variety of props to configure the table's behavior. It uses the `useReactTable` hook from `@tanstack/react-table` to manage the table's state and operations. The component is wrapped with `React.memo` to optimize rendering performance by preventing unnecessary re-renders.
+
+## Symbols
+
+### `DataTableInternal`
+#### Description
+`DataTableInternal` is a React component that renders a data table with features like sorting, pagination, filtering, and search. It uses the `@tanstack/react-table` library to manage the table's state and operations.
+
+#### Inputs
+| Name                  | Type                        | Description                                                                 |
+|:----------------------|:----------------------------|:----------------------------------------------------------------------------|
+| wrapperClassName      | string                      | Optional class name for the table wrapper.                                  |
+| className             | string                      | Optional class name for the table.                                          |
+| columns               | Array&lt;ColumnDef&lt;TData&gt;&gt;     | Definitions of the table columns.                                           |
+| data                  | TData[]                     | Data to be displayed in the table.                                          |
+| sorting               | SortingState                | Current sorting state of the table.                                         |
+| setSorting            | OnChangeFn&lt;SortingState&gt;    | Function to update the sorting state.                                       |
+| rowSelection          | RowSelectionState           | Current row selection state.                                                |
+| pageSize              | number                      | Number of rows per page.                                                    |
+| downloadAs            | (req: { format: string }) =&gt; Promise&lt;string&gt; | Function to handle data download in specified format.                       |
+| pagination            | boolean                     | Flag to enable or disable pagination.                                       |
+| onRowSelectionChange  | OnChangeFn&lt;RowSelectionState&gt; | Function to handle changes in row selection.                                |
+| enableSearch          | boolean                     | Flag to enable or disable search functionality.                             |
+| searchQuery           | string                      | Current search query.                                                       |
+| onSearchQueryChange   | (query: string) =&gt; void     | Function to update the search query.                                        |
+| showFilters           | boolean                     | Flag to show or hide filter pills.                                          |
+| filters               | ColumnFiltersState          | Current filter state.                                                       |
+| onFiltersChange       | OnChangeFn&lt;ColumnFiltersState&gt; | Function to update the filter state.                                        |
+| reloading             | boolean                     | Flag indicating if the table is in a reloading state.                       |
+
+#### Outputs
+The component does not have a direct output but renders a table UI based on the provided props.
+
+#### Internal Logic
+- Initializes state for search and pagination.
+- Uses `useEffect` to update pagination state when `pageSize` changes.
+- Configures the `useReactTable` hook with features like sorting, filtering, pagination, and row selection.
+- Renders table headers and rows using the `flexRender` function from `@tanstack/react-table`.
+- Provides UI elements for search, pagination, and download actions.
+
+### `SearchBar`
+#### Description
+`SearchBar` is a React component that provides a search input field with debouncing functionality to delay the search query updates.
+
+#### Inputs
+| Name        | Type     | Description                                      |
+|:------------|:---------|:-------------------------------------------------|
+| hidden      | boolean  | Flag to hide or show the search bar.             |
+| value       | string   | Current value of the search input.               |
+| handleSearch| (query: string) =&gt; void | Function to handle search query updates. |
+| onHide      | () =&gt; void | Function to hide the search bar.               |
+| reloading   | boolean  | Flag indicating if the search is in a reloading state. |
+
+#### Outputs
+The component does not have a direct output but renders a search input UI.
+
+#### Internal Logic
+- Uses `useState` to manage the internal value of the search input.
+- Utilizes `useDebounce` to delay the search query updates.
+- Focuses the input field when the search bar is shown and resets the value when hidden.
+
+## References
+
+- `@tanstack/react-table`: Used for managing table state and operations.
+- `DownloadAs`: Component for handling data download actions.
+- `FilterPills`: Component for displaying active filters as pills.
+- `ColumnWrappingFeature`: Feature for handling column wrapping in the table.
+
+## Dependencies
+
+| Dependency                | Purpose                                                                 |
+|:--------------------------|:------------------------------------------------------------------------|
+| `@tanstack/react-table`   | Provides table state management and operations.                         |
+| `lucide-react`            | Provides icons used in the UI, such as the search icon.                 |
+| `@uidotdev/usehooks`      | Provides the `useDebounce` hook for debouncing search input.            |
+| `react-use-event-hook`    | Provides the `useEvent` hook for stable event handlers.                 |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `DataTableInternal` component. However, the `DownloadAs` component includes error handling for download failures, displaying a toast notification with the error message.
+
+## Logging
+
+There is no explicit logging implemented in the `DataTableInternal` component. However, related components like `DownloadAs` use toast notifications for error reporting.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

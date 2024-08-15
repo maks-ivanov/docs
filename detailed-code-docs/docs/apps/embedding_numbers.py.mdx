@@ -1,0 +1,100 @@
+---
+title: "embedding_numbers.py"
+---
+
+## High-level description
+
+The target file `embedding_numbers.py` is a script designed to create an interactive application using the Marimo framework. This application demonstrates how to use the `pymde.preserve_neighbors` function to generate embeddings of the MNIST dataset, which consists of 70,000 28x28 grayscale images of handwritten digits. The app allows users to explore the embeddings by adjusting parameters such as embedding dimension and constraint type, and visualizes the results using matplotlib.
+
+## Code Structure
+
+The code is structured around the Marimo framework, which uses a cell-based approach to define different parts of the application. Each `@app.cell` decorator defines a function that contributes to the app's functionality. The main components include UI elements for user interaction, functions for computing and displaying embeddings, and utility functions for handling data and visualization.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of the `marimo.App` class, which serves as the main application object for the Marimo framework. It manages the lifecycle and execution of the app's cells.
+
+### `@app.cell`
+#### Description
+A decorator used to define a function as a cell in the Marimo application. Each cell can perform a specific task, such as rendering UI elements, processing data, or handling user interactions.
+
+### `mo.md`
+#### Description
+A method used to render Markdown content within the application. It is used to display text and instructions to the user.
+
+### `mo.ui.button`
+#### Description
+Creates a button UI element within the application. The button can trigger actions or display additional content when clicked.
+
+### `mo.ui.slider`
+#### Description
+Creates a slider UI element that allows users to select a value within a specified range. In this app, it is used to select the embedding dimension.
+
+### `mo.ui.dropdown`
+#### Description
+Creates a dropdown UI element that allows users to select from a list of options. It is used to choose the constraint type for the embedding.
+
+### `compute_embedding`
+#### Description
+A function that computes the embedding of the MNIST dataset using the `pymde.preserve_neighbors` function. It caches results to avoid redundant computations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| embedding_dim | int | The dimension of the embedding (2 or 3). |
+| constraint | object | The constraint type for the embedding (Centered or Standardized). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | tuple | A tuple containing the MDE object and the computed embedding. |
+
+#### Internal Logic
+- Checks if the embedding for the given parameters is already cached.
+- If not cached, computes the embedding using `pymde.preserve_neighbors`.
+- Stores the result in the cache and returns it.
+
+### `show_random_images`
+#### Description
+Displays a random selection of images from the MNIST dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n_images | int | The number of random images to display. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fig | matplotlib.figure.Figure | The figure containing the displayed images. |
+
+#### Internal Logic
+- Selects random indices from the MNIST dataset.
+- Reshapes and displays the selected images using matplotlib.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Framework for building interactive applications. |
+| `matplotlib.pyplot` | Used for plotting and visualizing data. |
+| `pymde` | Library for creating embeddings. |
+| `torch` | Used for handling tensor operations and random permutations. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the necessary libraries and data are available and correctly configured.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The application does not expose an external API. It is designed to be run as a standalone interactive application.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

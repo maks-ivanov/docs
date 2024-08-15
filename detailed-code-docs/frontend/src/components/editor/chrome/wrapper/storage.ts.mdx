@@ -1,0 +1,62 @@
+---
+title: "storage.ts"
+---
+
+## High-level description
+
+The target file defines a utility for managing storage in a panel-based user interface, specifically for handling the storage of panel states in a way that adapts to the panel's location (either "left" or "bottom"). It provides a mechanism to store and retrieve panel state data, flipping the order of stored values when the panel is located at the bottom to account for UI layout changes.
+
+## Code Structure
+
+The main symbol in the code is the `createStorage` function, which returns an object implementing the `PanelGroupStorage` interface. This object provides `getItem` and `setItem` methods for managing stored panel state data. The `schema` variable is used to validate the structure of the stored data, ensuring it is a record of tuples containing numbers. The `Objects` utility is used to manipulate the stored data, specifically to reverse the order of values when necessary.
+
+## Symbols
+
+### `createStorage`
+#### Description
+The `createStorage` function creates a storage object that can store and retrieve panel state data. It adapts the storage behavior based on the panel's location, flipping the order of stored values when the panel is at the bottom to maintain consistent UI behavior.
+
+#### Inputs
+| Name     | Type   | Description                                      |
+|:---------|:-------|:-------------------------------------------------|
+| location | string | The location of the panel, either "left" or "bottom". |
+
+#### Outputs
+| Name   | Type              | Description                                      |
+|:-------|:------------------|:-------------------------------------------------|
+| output | PanelGroupStorage | An object with `getItem` and `setItem` methods for managing storage. |
+
+#### Internal Logic
+- **Initialization**: A `storedValue` variable is used to keep the current state of the storage in memory.
+- **getItem Method**:
+  - If `storedValue` is null, it returns null.
+  - If the location is "left", it returns the stored value as is.
+  - If the location is "bottom", it attempts to parse the stored value, reverse the order of each tuple in the parsed object, and return the modified value.
+- **setItem Method**:
+  - If the location is not "left", it attempts to parse the input value, reverse the order of each tuple, and store the modified value.
+  - If parsing fails, it returns null.
+  - Otherwise, it stores the value directly.
+
+## References
+
+- **`Objects.mapValues`**: Used to reverse the order of tuples in the stored data.
+- **`zod`**: A schema validation library used to define and validate the structure of the stored data.
+
+## Dependencies
+
+| Dependency | Purpose                                                  |
+|:-----------|:---------------------------------------------------------|
+| `zod`      | Used for schema validation to ensure data integrity.     |
+| `Objects`  | Utility functions for manipulating objects, specifically used for reversing tuple orders. |
+
+## Error Handling
+
+- The code uses try-catch blocks to handle JSON parsing errors and schema validation failures. If an error occurs during parsing or validation, the methods return null, indicating that the operation was unsuccessful.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,157 @@
+---
+title: "helper.ts"
+---
+
+## High-level description
+
+The `helper.ts` file is a collection of utility functions designed to facilitate end-to-end (E2E) testing of a web application using Playwright. These functions perform various actions on a web page, such as creating and running cells, taking screenshots, exporting content, and handling keyboard shortcuts. The utilities are intended to streamline the process of writing and maintaining E2E tests by providing reusable components for common interactions within the application.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- Functions like `createCellBelow`, `runCell`, `takeScreenshot`, `pressShortcut`, `exportAsHTMLAndTakeScreenshot`, `exportAsPNG`, `maybeRestartKernel`, and `waitForCellsToRender` are utility functions that perform specific actions on a Playwright `Page` object.
+- The `pressShortcut` function utilizes the `HotkeyProvider` and `HotkeyAction` from the `hotkeys.ts` file to determine the correct keyboard shortcuts based on the platform.
+- The `takeScreenshot` function maintains a count of screenshots taken for each test file to ensure unique filenames.
+
+## References
+
+- `HotkeyProvider` and `HotkeyAction` from `hotkeys.ts` are used in the `pressShortcut` function to handle platform-specific keyboard shortcuts.
+
+## Symbols
+
+### `createCellBelow`
+#### Description
+Creates a new cell below the specified cell, optionally types content into it, and runs it if specified.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `opts`       | object | Options for creating a cell.         |
+| `opts.page`  | Page   | The Playwright page object.          |
+| `opts.cellSelector` | string | Selector for the cell to interact with. |
+| `opts.content` | string | Content to type into the new cell. |
+| `opts.run`   | boolean | Whether to run the new cell.        |
+
+#### Outputs
+None
+
+### `runCell`
+#### Description
+Runs the cell specified by the selector on the page.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `opts`       | object | Options for running a cell.          |
+| `opts.page`  | Page   | The Playwright page object.          |
+| `opts.cellSelector` | string | Selector for the cell to run. |
+
+#### Outputs
+None
+
+### `takeScreenshot`
+#### Description
+Takes a screenshot of the current page and saves it with a unique filename based on the test file name.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `page`       | Page   | The Playwright page object.          |
+| `filename`   | string | The filename of the test file.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Extracts the base name from the filename and increments a counter to ensure unique screenshot filenames.
+- Saves the screenshot in the `e2e-tests/screenshots` directory.
+
+### `pressShortcut`
+#### Description
+Simulates pressing a keyboard shortcut on the page, using platform-specific keys.
+
+#### Inputs
+| Name         | Type          | Description                          |
+|:-------------|:--------------|:-------------------------------------|
+| `page`       | Page          | The Playwright page object.          |
+| `action`     | HotkeyAction  | The action to perform as a shortcut. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Determines the platform (Mac or Windows/Linux) and retrieves the appropriate hotkey.
+- Formats the hotkey string for Playwright and simulates the key press.
+
+### `exportAsHTMLAndTakeScreenshot`
+#### Description
+Exports the current notebook as HTML, saves the file, and takes a screenshot of the exported content.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `page`       | Page   | The Playwright page object.          |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Waits for the page to be fully loaded.
+- Initiates the download of the notebook as HTML and saves it.
+- Opens the downloaded HTML in a new page and takes a screenshot.
+- Optionally toggles code visibility and takes another screenshot.
+
+### `exportAsPNG`
+#### Description
+Exports the current notebook as a PNG image and saves the file.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `page`       | Page   | The Playwright page object.          |
+
+#### Outputs
+None
+
+### `maybeRestartKernel`
+#### Description
+Checks if the session has been resumed and restarts the kernel if necessary.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `page`       | Page   | The Playwright page object.          |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Waits for cells to render.
+- Checks for a message indicating a resumed session and restarts the kernel if found.
+
+### `waitForCellsToRender`
+#### Description
+Waits for the cell editors to be visible on the page, indicating that cells have rendered.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `page`       | Page   | The Playwright page object.          |
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency      | Purpose                                      |
+|:----------------|:---------------------------------------------|
+| `@playwright/test` | Provides the Playwright testing framework. |
+| `node:path`     | Used for handling file paths.                |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond what is provided by Playwright's API. It assumes that the page interactions will succeed if the page is in the expected state.
+
+## Logging
+
+There is no explicit logging in the code. However, Playwright's built-in logging and error reporting can be used to trace issues during test execution.

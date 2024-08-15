@@ -1,0 +1,106 @@
+---
+title: "TexPlugin.tsx"
+---
+
+## High-level description
+
+The `TexPlugin.tsx` file defines a React component and a plugin class for rendering LaTeX content within a web application. It utilizes the `katex` library to render LaTeX expressions, handling specific delimiters to determine the display mode. The plugin is designed to integrate with a larger plugin system, allowing LaTeX content to be rendered dynamically within the application's UI.
+
+## Code Structure
+
+- **TexPlugin Class**: Implements the `IStatelessPlugin` interface to define a plugin for rendering LaTeX.
+- **TexComponent Function**: A React component that uses a `useRef` hook to manage a DOM element and a `useLayoutEffect` hook to render LaTeX content using the `katex` library.
+- **renderLatex Function**: An asynchronous function that imports `katex` and renders LaTeX content based on specific delimiters.
+- **importKatex Function**: A utility function that ensures `katex` is imported only once using the `once` utility.
+
+## References
+
+- **IStatelessPlugin**: An interface from `stateless-plugin.ts` that `TexPlugin` implements.
+- **once**: A utility function from `once.ts` used to ensure `katex` is imported only once.
+
+## Symbols
+
+### `TexPlugin`
+#### Description
+The `TexPlugin` class is a stateless plugin that renders LaTeX content using the `katex` library. It is specialized for how the application's kernel processes LaTeX, ensuring that LaTeX expressions are rendered correctly within the UI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IStatelessPluginProps&lt;{}&gt;` | Properties including the host element and any plugin data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | A React element that renders the LaTeX content. |
+
+### `TexComponent`
+#### Description
+A React functional component that renders LaTeX content within a `span` element. It uses a `useRef` hook to reference the DOM element and a `useLayoutEffect` hook to trigger LaTeX rendering when the content changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tex | `string` | The LaTeX content to be rendered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | A `span` element that contains the rendered LaTeX content. |
+
+#### Internal Logic
+- Uses `useRef` to create a reference to a `span` element.
+- Uses `useLayoutEffect` to call `renderLatex` whenever the `tex` content changes.
+
+### `renderLatex`
+#### Description
+An asynchronous function that renders LaTeX content using the `katex` library. It determines the display mode based on specific delimiters in the LaTeX string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mount | `HTMLElement` | The DOM element where the LaTeX content will be rendered. |
+| tex | `string` | The LaTeX content to be rendered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | `void` | This function does not return a value. |
+
+#### Internal Logic
+- Imports `katex` using `importKatex`.
+- Checks the delimiters of the `tex` string to determine the display mode.
+- Calls `katex.render` with appropriate options based on the delimiters.
+
+### `importKatex`
+#### Description
+A utility function that imports the `katex` library asynchronously and ensures it is only imported once using the `once` utility.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `Promise&lt;any&gt;` | A promise that resolves to the `katex` module. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `katex` | Used for rendering LaTeX content. |
+| `zod` | Used for schema validation. |
+
+## Error Handling
+
+- The `renderLatex` function sets `throwOnError` to `false` when calling `katex.render`, which means that rendering errors will not throw exceptions but will instead be handled gracefully.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

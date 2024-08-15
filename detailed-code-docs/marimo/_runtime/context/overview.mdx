@@ -1,0 +1,50 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_runtime/context` directory is part of the Marimo framework and is responsible for managing runtime contexts in a multi-threaded environment. This directory provides the necessary infrastructure to handle session-specific data and operations, ensuring that each client or session has its own isolated context while maintaining a shared global context for all sessions. The main components include context initialization, retrieval, and teardown, as well as specific runtime contexts for different execution environments such as kernels and scripts.
+
+## What does it do?
+
+The code in this directory manages the execution context for different environments within the Marimo framework. It ensures that each session or client has its own isolated context, which is crucial for maintaining state and handling operations in a concurrent setting. The directory provides mechanisms to:
+
+- Initialize and retrieve runtime contexts for threads, ensuring that each thread has its own context.
+- Manage global contexts shared across all sessions.
+- Handle specific runtime contexts for kernel and script execution, providing access to execution state, global variables, and other runtime properties.
+- Determine the execution environment, such as checking if the code is running in a Marimo notebook.
+
+The directory supports both kernel-based and script-based execution environments, allowing for flexible and isolated context management tailored to the specific needs of each environment.
+
+## Entry points
+
+The main files in the directory are:
+
+- `__init__.py`: Acts as an initializer for the context module, exposing key components related to runtime context management.
+- `kernel_context.py`: Defines the `KernelRuntimeContext` class and functions for creating and initializing kernel contexts.
+- `script_context.py`: Defines the `ScriptRuntimeContext` class and a function for initializing script contexts.
+- `types.py`: Provides the structure and management of runtime contexts, including global and thread-local contexts.
+- `utils.py`: Contains utility functions, such as checking if the current execution environment is a Marimo notebook.
+
+The code is organized to provide a clear separation between different types of runtime contexts and their management, with a focus on ensuring thread safety and context isolation.
+
+## Key Files
+
+- **`kernel_context.py`**: Defines the `KernelRuntimeContext` class, which manages the runtime state for a session in a kernel environment. It provides access to the kernel's execution context, global variables, and other runtime properties.
+
+- **`script_context.py`**: Defines the `ScriptRuntimeContext` class, which manages the runtime state for a Marimo application when executed as a script. It handles command-line arguments, query parameters, and execution context for script-based execution.
+
+- **`types.py`**: Contains the core definitions for managing runtime contexts, including `GlobalContext`, `ExecutionContext`, and `RuntimeContext`. It also provides functions for initializing and retrieving contexts.
+
+- **`utils.py`**: Provides utility functions, such as `running_in_notebook`, to determine the execution environment.
+
+## Dependencies
+
+The directory uses several external libraries and frameworks:
+
+- **`contextlib`**: Used for creating context managers, which are essential for managing the lifecycle of contexts.
+- **`dataclasses`**: Utilized to define data classes, providing a concise way to define classes with attributes.
+- **`typing`**: Provides type annotations for better code clarity and type checking.
+
+These dependencies are chosen to enhance code readability, maintainability, and ensure proper management of context lifecycles.

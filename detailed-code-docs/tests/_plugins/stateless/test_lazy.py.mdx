@@ -1,0 +1,113 @@
+---
+title: "test_lazy.py"
+---
+
+## High-level description
+
+The target file `tests/_plugins/stateless/test_lazy.py` contains unit tests for the `lazy` functionality in the Marimo framework. These tests verify that the `lazy` function correctly handles different types of inputs, such as direct values, synchronous functions, and asynchronous functions, and ensures that the output is rendered as expected in HTML format.
+
+## Code Structure
+
+The main symbols in the code are the test functions `test_lazy`, `test_lazy_function`, and `test_lazy_async_function`. These functions utilize the `Kernel` and `ExecReqProvider` classes to execute code snippets that use the `lazy` function from the Marimo framework. The `get_only_function` helper function is used to retrieve the single registered function from the runtime context for assertions.
+
+## Symbols
+
+### `get_only_function`
+#### Description
+This function retrieves the only function registered in the current runtime context. It ensures that there is exactly one namespace and one function within that namespace, which is then returned.
+
+#### Inputs
+None
+
+#### Outputs
+| Name           | Type          | Description                        |
+|:---------------|:--------------|:-----------------------------------|
+| `function`     | `Function`    | The only function registered in the context. |
+
+#### Internal Logic
+- Calls `gc.collect()` to perform garbage collection.
+- Retrieves the current `RuntimeContext` using `get_context()`.
+- Asserts that there is exactly one namespace and one function in the function registry.
+- Returns the single function from the registry.
+
+### `test_lazy`
+#### Description
+Tests the `lazy` function with a direct value input. It verifies that the function is registered correctly and that the output is rendered as expected.
+
+#### Inputs
+| Name     | Type            | Description                        |
+|:---------|:----------------|:-----------------------------------|
+| `k`      | `Kernel`        | The kernel instance to run the test. |
+| `exec_req` | `ExecReqProvider` | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a code snippet that uses `mo.lazy(42)`.
+- Retrieves the registered function using `get_only_function`.
+- Asserts that the function's name is "load".
+- Calls the function and asserts that the HTML output is `&lt;span&gt;42&lt;/span&gt;`.
+
+### `test_lazy_function`
+#### Description
+Tests the `lazy` function with a synchronous function input. It verifies that the function is registered correctly and that the output is rendered as expected.
+
+#### Inputs
+| Name     | Type            | Description                        |
+|:---------|:----------------|:-----------------------------------|
+| `k`      | `Kernel`        | The kernel instance to run the test. |
+| `exec_req` | `ExecReqProvider` | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a code snippet that uses `mo.lazy(lambda: 42)`.
+- Retrieves the registered function using `get_only_function`.
+- Asserts that the function's name is "load".
+- Calls the function and asserts that the HTML output is `&lt;span&gt;42&lt;/span&gt;`.
+
+### `test_lazy_async_function`
+#### Description
+Tests the `lazy` function with an asynchronous function input. It verifies that the function is registered correctly and that the output is rendered as expected.
+
+#### Inputs
+| Name     | Type            | Description                        |
+|:---------|:----------------|:-----------------------------------|
+| `k`      | `Kernel`        | The kernel instance to run the test. |
+| `exec_req` | `ExecReqProvider` | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a code snippet that uses an asynchronous function with `mo.lazy`.
+- Retrieves the registered function using `get_only_function`.
+- Asserts that the function's name is "load".
+- Calls the function and asserts that the HTML output is `&lt;span&gt;42&lt;/span&gt;`.
+
+## References
+
+- `get_context`: Retrieves the current runtime context.
+- `Function`: Represents a function in the Marimo framework.
+- `Kernel`: Manages the execution of code within the Marimo framework.
+- `ExecReqProvider`: Provides execution requests for testing purposes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `gc` | Used for garbage collection before retrieving the context. |
+| `marimo._runtime.context` | Provides the `get_context` function to access the runtime context. |
+| `marimo._runtime.functions` | Provides the `Function` class used in the tests. |
+| `marimo._runtime.runtime` | Provides the `Kernel` class used to execute code. |
+| `tests.conftest` | Provides the `ExecReqProvider` class for creating execution requests. |
+
+## Error Handling
+
+The test functions use assertions to verify the expected behavior. If any assertion fails, it indicates a problem with the `lazy` function's implementation or its integration within the Marimo framework.
+
+## Logging
+
+No explicit logging is implemented in the target file. The tests rely on assertions to validate behavior.

@@ -1,0 +1,99 @@
+---
+title: "requests-network.ts"
+---
+
+## High-level description
+
+The `requests-network.ts` file defines a set of network request functions that interact with a backend API for various operations related to a web application, likely a notebook or IDE-like environment. These functions are part of a larger system that handles both editing and running operations, such as saving files, running code, managing sessions, and handling file operations. The file exports a single function, `createNetworkRequests`, which returns an object containing these network request functions.
+
+## Code Structure
+
+The main symbol in this file is the `createNetworkRequests` function, which returns an object that implements both `EditRequests` and `RunRequests` interfaces. These interfaces define the types of requests that can be made during edit and run modes, respectively. The functions within `createNetworkRequests` utilize the `marimoClient` to send HTTP requests to specific API endpoints, handling responses with the help of utility functions `handleResponse` and `handleResponseReturnNull` from the `API` module.
+
+## References
+
+- `API`: Provides utility functions for handling HTTP responses and headers.
+- `marimoClient`: A client instance used to make HTTP requests.
+- `EditRequests` and `RunRequests`: Type definitions that specify the structure of the request functions.
+
+## Symbols
+
+### `createNetworkRequests`
+#### Description
+The `createNetworkRequests` function constructs and returns an object containing methods for making various network requests to a backend API. These methods cover a wide range of operations, including managing kernel sessions, file operations, and code execution.
+
+#### Inputs
+None directly, but the function uses the `marimoClient` and `API` utilities.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `EditRequests & RunRequests` | An object containing methods for network requests. |
+
+#### Internal Logic
+- The function defines a series of methods that correspond to different API endpoints.
+- Each method uses the `marimoClient` to send a POST or GET request to a specific endpoint.
+- The request body is typically passed as an argument to these methods.
+- Responses are handled using `handleResponse` or `handleResponseReturnNull` to process the result or handle errors.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `API` | Provides response handling utilities and headers for requests. |
+| `marimoClient` | Used to make HTTP requests to the backend API. |
+
+## Error Handling
+
+The file uses `handleResponse` and `handleResponseReturnNull` from the `API` module to manage responses. These functions check for errors in the response and either resolve with the data or reject with an error.
+
+## Logging
+
+Error logging is handled in the `API` module, where any errors encountered during the request process are logged using a `Logger`.
+
+## API/Interface Reference
+
+The `createNetworkRequests` function provides an interface for interacting with various backend API endpoints. Each method corresponds to a specific endpoint and operation, such as:
+
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| `/api/kernel/set_ui_element_value` | POST | `UpdateComponentValuesRequest` | `null` | Sends component values to the backend. |
+| `/api/kernel/restart_session` | POST | None | `null` | Restarts the current session. |
+| `/api/kernel/sync/cell_ids` | POST | `UpdateCellIdsRequest` | `null` | Synchronizes cell IDs. |
+| `/api/kernel/rename` | POST | `RenameFileRequest` | `null` | Renames a file or folder. |
+| `/api/kernel/save` | POST | `SaveNotebookRequest` | `null` | Saves the current notebook. |
+| `/api/kernel/format` | POST | `FormatRequest` | `FormatResponse` | Formats code. |
+| `/api/kernel/interrupt` | POST | None | `null` | Interrupts the current operation. |
+| `/api/kernel/shutdown` | POST | None | `null` | Shuts down the current session. |
+| `/api/kernel/run` | POST | `RunRequest` | `null` | Runs code in the kernel. |
+| `/api/kernel/scratchpad/run` | POST | `RunScratchpadRequest` | `null` | Runs code in the scratchpad. |
+| `/api/kernel/instantiate` | POST | `InstantiateRequest` | `null` | Instantiates a new object or environment. |
+| `/api/kernel/delete` | POST | `DeleteCellRequest` | `null` | Deletes a cell. |
+| `/api/kernel/code_autocomplete` | POST | `CodeCompletionRequest` | `null` | Requests code completion suggestions. |
+| `/api/kernel/save_user_config` | POST | `SaveUserConfigurationRequest` | `null` | Saves user configuration. |
+| `/api/kernel/save_app_config` | POST | `SaveAppConfigurationRequest` | `null` | Saves application configuration. |
+| `/api/kernel/set_cell_config` | POST | `SetCellConfigRequest` | `null` | Sets cell configuration. |
+| `/api/kernel/function_call` | POST | `FunctionCallRequest` | `null` | Calls a function in the kernel. |
+| `/api/kernel/stdin` | POST | `StdinRequest` | `null` | Sends standard input to the kernel. |
+| `/api/kernel/install_missing_packages` | POST | `InstallMissingPackagesRequest` | `null` | Installs missing packages. |
+| `/api/kernel/read_code` | POST | None | `{ contents: string }` | Reads code from the kernel. |
+| `/api/documentation/snippets` | GET | None | `Snippets` | Retrieves code snippets. |
+| `/api/datasources/preview_column` | POST | `PreviewDatasetColumnRequest` | `null` | Previews a dataset column. |
+| `/api/kernel/open` | POST | `{ path: string }` | `null` | Opens a file. |
+| `/api/usage` | GET | None | `UsageResponse` | Retrieves usage statistics. |
+| `/api/files/list_files` | POST | `FileListRequest` | `FileListResponse` | Lists files. |
+| `/api/files/create` | POST | `FileCreateRequest` | `FileCreateResponse` | Creates a file or folder. |
+| `/api/files/delete` | POST | `FileDeleteRequest` | `FileDeleteResponse` | Deletes a file or folder. |
+| `/api/files/move` | POST | `FileMoveRequest` | `FileMoveResponse` | Renames or moves a file or folder. |
+| `/api/files/update` | POST | `FileUpdateRequest` | `FileUpdateResponse` | Updates a file. |
+| `/api/files/file_details` | POST | `{ path: string }` | `FileDetailsResponse` | Retrieves file details. |
+| `/api/home/recent_files` | POST | None | `RecentFilesResponse` | Retrieves recent files. |
+| `/api/home/workspace_files` | POST | `WorkspaceFilesRequest` | `WorkspaceFilesResponse` | Retrieves workspace files. |
+| `/api/home/running_notebooks` | POST | None | `RunningNotebooksResponse` | Retrieves running notebooks. |
+| `/api/home/shutdown_session` | POST | `ShutdownSessionRequest` | `RunningNotebooksResponse` | Shuts down a session. |
+| `/api/export/html` | POST | `ExportAsHTMLRequest` | `string` | Exports content as HTML. |
+| `/api/export/markdown` | POST | `ExportAsMarkdownRequest` | `string` | Exports content as Markdown. |
+
+## TODOs
+
+There are no TODOs or notes left in the code.

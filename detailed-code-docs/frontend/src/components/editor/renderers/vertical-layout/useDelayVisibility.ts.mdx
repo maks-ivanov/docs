@@ -1,0 +1,71 @@
+---
+title: "useDelayVisibility.ts"
+---
+
+## High-level description
+
+The `useDelayVisibility` function is a custom React hook designed to manage the visibility of a component, specifically in the context of a notebook application. It initially sets the component to be invisible and introduces a delay in making it visible, which is proportional to the number of cells in the notebook. This delay helps to reduce flickering during the app's loading process and prevents cell editors from stealing focus prematurely.
+
+## Code Structure
+
+The main symbols in the code are the `useDelayVisibility` function and the `focusFirstEditor` function. The `useDelayVisibility` function utilizes React's `useState` and `useEffect` hooks to manage the visibility state and introduce a delay. The `focusFirstEditor` function is used within `useDelayVisibility` to focus on the first cell editor once the component becomes visible.
+
+## References
+
+- `AppMode` from `@/core/mode`: This type is used to determine the mode of the application, which affects whether the first cell editor should be focused.
+- `getNotebook` from `@/core/cells/cells`: This function is used to retrieve the notebook's state, including cell IDs and handles, which are necessary for focusing the first editor.
+
+## Symbols
+
+### `useDelayVisibility`
+#### Description
+The `useDelayVisibility` function is a custom React hook that manages the initial visibility of a component. It starts the component as invisible and introduces a delay before making it visible. This delay is calculated based on the number of cells in the notebook, helping to reduce flickering and prevent focus issues during the app's initial load.
+
+#### Inputs
+| Name     | Type    | Description                                      |
+|:---------|:--------|:-------------------------------------------------|
+| numCells | number  | The number of cells in the notebook.             |
+| mode     | AppMode | The current mode of the application (e.g., read, edit). |
+
+#### Outputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| invisible | boolean | A state indicating whether the component is invisible. |
+
+#### Internal Logic
+- Initializes the `invisible` state to `true`.
+- Uses `useEffect` to set a timeout that changes the `invisible` state to `false` after a calculated delay.
+- The delay is computed as `Math.max(Math.min((numCells - 1) * 15, 100), 0)`, ensuring it is between 0 and 100 milliseconds.
+- If the mode is not "read", it requests an animation frame to focus the first editor after the component becomes visible.
+
+### `focusFirstEditor`
+#### Description
+The `focusFirstEditor` function focuses on the first cell editor in the notebook that is not hidden. It is used to ensure that the first cell is ready for interaction once the component becomes visible.
+
+#### Internal Logic
+- Retrieves the notebook's state using `getNotebook`.
+- Iterates over the top-level cell IDs to find the first cell that is not hidden.
+- If a cell is found with a visible editor view, it focuses the editor and exits.
+
+## Dependencies
+
+| Dependency | Purpose                                                  |
+|:-----------|:---------------------------------------------------------|
+| `useState` | Manages the visibility state of the component.           |
+| `useEffect`| Introduces a delay in changing the visibility state.     |
+| `getNotebook` | Retrieves the notebook's state, including cell IDs and handles. |
+
+## Side Effects
+- The `useDelayVisibility` function sets a timeout and uses `requestAnimationFrame`, which are asynchronous operations that affect the component's rendering and focus behavior.
+
+## Performance Considerations
+- The delay calculation ensures that the visibility change is not excessively delayed, with a maximum of 100 milliseconds, to balance between reducing flickering and maintaining responsiveness.
+
+## Error Handling
+- The code does not explicitly handle errors, but it ensures that the delay is within a reasonable range to prevent negative or excessively long delays.
+
+## Logging
+- There is no logging implemented in this code.
+
+## TODOs
+- There are no TODOs or notes left in the code.

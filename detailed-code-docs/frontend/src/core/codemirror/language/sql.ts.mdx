@@ -1,0 +1,71 @@
+---
+title: "sql.ts"
+---
+
+## High-level description
+
+The `SQLLanguageAdapter` class in the target file is a language adapter for SQL code within a CodeMirror editor environment. It provides methods to transform SQL code embedded in Python strings into a format suitable for editing and back into Python code, while also supporting SQL code completion and syntax highlighting.
+
+## Code Structure
+
+The main symbol in the code is the `SQLLanguageAdapter` class, which implements the `LanguageAdapter` interface. This class interacts with various utilities and configurations, such as quote handling, indentation, and SQL capabilities, to provide a seamless SQL editing experience within a Python environment.
+
+## References
+
+- `LanguageAdapter` interface from `./types`: Defines the contract for language adapters.
+- `@codemirror/lang-sql`: Provides SQL language support for CodeMirror.
+- `@codemirror/autocomplete`: Used for SQL code completion.
+- `store` and `capabilitiesAtom` from `@/core/state/jotai` and `@/core/config/capabilities`: Used to check if SQL capabilities are enabled.
+- `datasetsAtom` from `@/core/datasets/state`: Used to fetch dataset information for SQL autocompletion.
+- Utility functions from `./utils/quotes` and `./utils/indentOneTab`: Used for handling quote prefixes and code indentation.
+
+## Symbols
+
+### `SQLLanguageAdapter`
+#### Description
+The `SQLLanguageAdapter` class is responsible for adapting SQL code embedded in Python strings for editing in a CodeMirror editor. It provides methods to transform SQL code into a format suitable for editing (`transformIn`) and back into Python code (`transformOut`). It also checks if a given Python code snippet is supported for SQL transformation and provides SQL-specific editor extensions.
+
+#### Inputs
+| Name         | Type   | Description                                      |
+|:-------------|:-------|:-------------------------------------------------|
+| pythonCode   | string | Python code containing SQL to be transformed.    |
+| code         | string | SQL code to be wrapped in Python format.         |
+| _completionConfig | CompletionConfig | Configuration for code completion. |
+| _hotkeys     | HotkeyProvider | Provides hotkey configurations.          |
+
+#### Outputs
+| Name         | Type   | Description                                      |
+|:-------------|:-------|:-------------------------------------------------|
+| transformIn  | [string, number] | Transformed SQL code and offset.       |
+| transformOut | [string, number] | Python code with SQL and offset.       |
+| isSupported  | boolean | Indicates if the Python code is supported.      |
+| getExtension | Extension[] | Returns editor extensions for SQL.          |
+
+#### Internal Logic
+- **transformIn**: Matches the Python code against predefined regex patterns to extract SQL code. It handles different quote styles and dedents the SQL code for editing.
+- **transformOut**: Wraps the SQL code in a Python string with the appropriate quote prefix and indentation.
+- **isSupported**: Checks if the Python code contains a valid SQL call using regex patterns and the current SQL capabilities.
+- **getExtension**: Returns CodeMirror extensions for SQL syntax highlighting and autocompletion, using dataset information for schema-based completions.
+
+## Side Effects
+- Modifies `lastQuotePrefix` and `dataframeName` properties based on the transformed code.
+- Interacts with global state atoms to fetch capabilities and dataset information.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides the `Extension` type for CodeMirror. |
+| `@codemirror/lang-sql` | Provides SQL language support for CodeMirror. |
+| `@codemirror/autocomplete` | Provides autocompletion features for CodeMirror. |
+| `string-dedent` | Used to remove indentation from SQL code. |
+| `@/core/state/jotai` | Provides global state management. |
+| `@/core/config/capabilities` | Provides configuration for SQL capabilities. |
+
+## Error Handling
+- Throws an error in `transformIn` if the Python code is not supported for SQL transformation.
+
+## Logging
+No explicit logging is implemented in the code.
+
+## TODOs
+No TODOs are present in the code.

@@ -1,0 +1,125 @@
+---
+title: "search-highlight.ts"
+---
+
+## High-level description
+
+The code in `search-highlight.ts` is responsible for managing the search and replace functionality within a CodeMirror editor instance. It provides mechanisms to set, clear, and highlight search queries across multiple editor views, ensuring that search results are visually marked and updated as the document or search parameters change.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `setGlobalSearchQuery` and `clearGlobalSearchQuery` functions interact with all editor views to set or clear search queries.
+- `searchState` is a `StateField` that maintains the current search query state and updates it based on dispatched effects.
+- `searchHighlighter` is a `ViewPlugin` that handles the visual decoration of search matches within the editor.
+- `highlightTheme` defines the CSS styles for the search match decorations.
+
+## Symbols
+
+### `setGlobalSearchQuery`
+#### Description
+Sets the global search query for all editor views based on the current state of the find/replace atom.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | | Utilizes global state from `findReplaceAtom` |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | | Dispatches effects to editor views |
+
+#### Internal Logic
+- Retrieves the current find/replace state from the global store.
+- Iterates over all editor views, skipping read-only views.
+- Dispatches a `setSearchQuery` effect with the current search parameters to each view.
+
+### `clearGlobalSearchQuery`
+#### Description
+Clears the global search query for all editor views.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | | Operates on all editor views |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | | Dispatches effects to clear search queries |
+
+#### Internal Logic
+- Iterates over all editor views, skipping read-only views.
+- Dispatches a `setSearchQuery` effect with an empty search string to each view.
+
+### `searchState`
+#### Description
+A `StateField` that manages the search query state within the editor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | QueryType | The current query state |
+| tr | Transaction | The transaction that may contain effects to update the state |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | QueryType | The updated query state |
+
+#### Internal Logic
+- Initializes with the current search query from the global store.
+- Updates the query state when a `setSearchQuery` effect is encountered in a transaction.
+
+### `searchHighlighter`
+#### Description
+A `ViewPlugin` that highlights search matches in the editor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view instance |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| decorations | DecorationSet | The set of decorations for search matches |
+
+#### Internal Logic
+- On construction, initializes decorations based on the current search state.
+- Updates decorations when the search state or document changes.
+- Uses a `RangeSetBuilder` to create decorations for visible ranges that match the search query.
+
+### `highlightTheme`
+#### Description
+Defines the CSS styles for search match decorations in light and dark themes.
+
+## References
+
+- `SearchQuery` from `@codemirror/search` is used to create and manage search queries.
+- `RangeSetBuilder`, `StateEffect`, and `StateField` from `@codemirror/state` are used for managing state and effects.
+- `Decoration`, `ViewPlugin`, and `EditorView` from `@codemirror/view` are used for visual decorations and view management.
+- `findReplaceAtom` from `./state` is used to access the current find/replace state.
+- `getAllEditorViews` from `@/core/cells/cells` is used to retrieve all editor views.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/search` | Provides search query functionality. |
+| `@codemirror/state` | Manages state and effects for the editor. |
+| `@codemirror/view` | Handles view-related operations and decorations. |
+| `jotai` | Manages global state using atoms. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as skipping read-only views. It assumes that the editor views and state are correctly initialized and available.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,107 @@
+---
+title: "test_ai.py"
+---
+
+## High-level description
+
+The target file `tests/_server/api/endpoints/test_ai.py` contains unit tests for the AI-related API endpoints of a server application. These tests are designed to verify the behavior of the AI completion endpoint, ensuring it handles various configurations and scenarios correctly, such as missing API keys, custom models, and custom base URLs. The tests use the `pytest` framework and mock the OpenAI client to simulate different responses.
+
+## Code Structure
+
+The main symbols in the code are the `TestAiEndpoints` class, which contains several static methods for testing different scenarios of the AI completion endpoint, and the `TestStreamResponse` class, which tests the `make_stream_response` function. The `openai_config`, `openai_config_custom_model`, `openai_config_custom_base_url`, and `no_openai_config` context managers are used to temporarily modify the user configuration for testing purposes.
+
+## References
+
+- `make_stream_response`: A function from `marimo._server.api.endpoints.ai` that processes streaming responses from the OpenAI API.
+- `UserConfigManager`: A class from `marimo._config.manager` used to manage user configurations.
+- `DependencyManager`: A class from `marimo._dependencies.dependencies` used to check for the presence of optional dependencies.
+- `get_user_config_manager`: A function from `tests._server.conftest` that retrieves the user configuration manager for a test client.
+- `token_header` and `with_session`: Functions from `tests._server.mocks` used for session management and authentication in tests.
+
+## Symbols
+
+### `TestAiEndpoints`
+#### Description
+This class contains static methods to test the AI completion endpoint under various conditions, such as missing API keys, custom models, and custom base URLs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | TestClient | The test client used to make requests to the API. |
+| openai_mock | Any | A mock object for the OpenAI client. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The methods assert conditions and do not return values. |
+
+#### Internal Logic
+- **test_completion_without_token**: Tests the endpoint's response when the OpenAI API key is not configured.
+- **test_completion_without_code**: Tests the endpoint's response when no code is provided, ensuring the correct prompt is used.
+- **test_completion_with_code**: Tests the endpoint's response when code is provided, ensuring the correct prompt is used.
+- **test_completion_with_custom_model**: Tests the endpoint's response when a custom model is configured.
+- **test_completion_with_custom_base_url**: Tests the endpoint's response when a custom base URL is configured.
+
+### `TestStreamResponse`
+#### Description
+This class tests the `make_stream_response` function, which processes streaming responses from the OpenAI API to extract code content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| contents | List[str] | A list of strings simulating chunks of a streaming response. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | List[str] | The processed content extracted from the streaming response. |
+
+#### Internal Logic
+- **simulate_stream**: Simulates a streaming response by yielding chunks of content.
+- **test_no_code_fence**: Tests processing of a response without code fences.
+- **test_single_complete_code_fence**: Tests processing of a response with a single complete code fence.
+- **test_code_fence_across_chunks**: Tests processing of a response with code fences spanning multiple chunks.
+- **test_code_fence_across_more_chunks**: Tests processing of a response with more complex code fence spanning.
+- **test_multiple_code_fences**: Tests processing of a response with multiple code fences.
+- **test_nested_code_fences**: Tests processing of a response with nested code fences.
+
+### `openai_config`, `openai_config_custom_model`, `openai_config_custom_base_url`, `no_openai_config`
+#### Description
+These context managers temporarily modify the user configuration to simulate different OpenAI API configurations during tests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | UserConfigManager | The user configuration manager to modify. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | These context managers do not return values. |
+
+#### Internal Logic
+- **openai_config**: Sets a fake API key in the configuration.
+- **openai_config_custom_model**: Sets a fake API key and a custom model in the configuration.
+- **openai_config_custom_base_url**: Sets a fake API key and a custom base URL in the configuration.
+- **no_openai_config**: Clears the API key from the configuration.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and running tests. |
+| `unittest` | Provides a base class for test cases. |
+| `unittest.mock` | Used to create mock objects for testing. |
+| `starlette.testclient` | Provides a test client for making requests to the API. |
+
+## Error Handling
+
+The tests assert expected conditions and raise assertion errors if the conditions are not met. The `@pytest.mark.skipif` decorator is used to skip tests if certain dependencies are not installed.
+
+## Logging
+
+The `make_stream_response` function logs the original content of the completion response for debugging purposes.
+
+## TODOs
+
+No TODOs or notes are present in the code.

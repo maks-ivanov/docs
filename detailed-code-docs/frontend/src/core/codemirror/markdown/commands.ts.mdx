@@ -1,0 +1,192 @@
+---
+title: "commands.ts"
+---
+
+## High-level description
+
+The target file, `commands.ts`, is part of a Markdown editor built using CodeMirror. It provides a set of functions to manipulate text in the editor by inserting or toggling Markdown syntax elements such as blockquotes, bold, italic, code markers, links, and lists. These functions are designed to work with the editor's selection and document state, allowing users to format text efficiently.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific text manipulations in the editor. These functions rely on helper functions like `hasSelection`, `toggleAllLines`, and `wrapWithMarkup` to determine the current selection state and apply the necessary changes. The functions are interconnected as they often use the same helper functions to achieve their goals.
+
+## Symbols
+
+### `hasSelection`
+#### Description
+Checks if there is a non-empty selection in the editor view.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to check for selection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if there is a selection, false otherwise. |
+
+### `toggleAllLines`
+#### Description
+Toggles a given markup on all lines within a selection. If all lines already have the markup, it removes it; otherwise, it adds the markup.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view containing the document. |
+| selection | SelectionRange | The range of text to apply the markup. |
+| markup | string | The markup to toggle on each line. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| changes | Array | An array of changes to be applied to the document. |
+
+#### Internal Logic
+- Iterates over each line in the selection to check if all lines start with the given markup.
+- Constructs a list of changes to either add or remove the markup based on the initial check.
+
+### `wrapWithMarkup`
+#### Description
+Wraps the selected text with specified markup before and after the selection.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view containing the document. |
+| range | SelectionRange | The range of text to wrap with markup. |
+| markupBefore | string | The markup to insert before the selection. |
+| markupAfter | string | The markup to insert after the selection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Object | Contains changes and the new selection range. |
+
+#### Internal Logic
+- Checks if the text is already wrapped with the given markup.
+- Constructs changes to add or remove the markup accordingly.
+- Adjusts the selection range to account for the added or removed markup.
+
+### `insertBlockquote`
+#### Description
+Toggles blockquote markup (`&gt; `) on the selected lines.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to apply the blockquote. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+### `insertBoldMarker`
+#### Description
+Wraps the selected text or the word at the cursor with bold markers (`**`).
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to apply the bold markers. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+### `insertCodeMarker`
+#### Description
+Wraps the selected text with code markers. Uses backticks for inline code and triple backticks for multiline code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to apply the code markers. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+### `insertItalicMarker`
+#### Description
+Wraps the selected text or the word at the cursor with italic markers (`_`).
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to apply the italic markers. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+### `insertLink`
+#### Description
+Inserts a Markdown link at the selected text, defaulting to "http://".
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to insert the link. |
+| url | string | The URL to use in the link. Defaults to "http://". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+### `insertUL`
+#### Description
+Toggles unordered list markers (`- ` or `* `) on the selected lines.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to apply the unordered list. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+### `insertOL`
+#### Description
+Toggles ordered list markers (`1. `) on the selected lines.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view to apply the ordered list. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if changes were made, false otherwise. |
+
+## References
+
+- The functions in this file are used in the `extension.ts` file to provide keybindings for Markdown formatting.
+- The `commands.test.ts` file contains tests for these functions, ensuring their correct behavior.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides the state management for the editor, including selection and transaction handling. |
+| `@codemirror/view` | Provides the view layer for the editor, allowing interaction with the document and selection. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks for selection presence. It assumes that the editor state and view are valid when the functions are called.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

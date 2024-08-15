@@ -1,0 +1,80 @@
+---
+title: "vega-component.tsx"
+---
+
+## High-level description
+
+The `vega-component.tsx` file defines a React component, `VegaComponent`, which is responsible for rendering interactive Vega-Lite visualizations. It handles data loading, error management, and user interactions such as selections and zooming. The component is designed to be highly configurable, allowing for different types of chart and field selections, and it integrates with various hooks and utilities to manage state and optimize performance.
+
+## Code Structure
+
+The main symbols in the code are the `VegaComponent` and `LoadedVegaComponent` components, which work together to render Vega-Lite visualizations. The `VegaComponent` handles data resolution and error checking, while the `LoadedVegaComponent` manages the rendering of the visualization and user interactions. The code also utilizes several hooks and utility functions to manage state, handle asynchronous data loading, and optimize rendering performance.
+
+## Symbols
+
+### `VegaComponent`
+#### Description
+The `VegaComponent` is a React component that serves as the entry point for rendering a Vega-Lite visualization. It resolves the Vega specification data asynchronously and handles any errors that occur during this process. If the data is successfully resolved, it renders the `LoadedVegaComponent`.
+
+#### Inputs
+| Name           | Type                      | Description                                      |
+|:---------------|:--------------------------|:-------------------------------------------------|
+| value          | `VegaComponentState`      | The current state of the Vega component.         |
+| setValue       | `(value: T) =&gt; void`      | Function to update the component's state.        |
+| chartSelection | `boolean \| "point" \| "interval"` | Type of chart selection enabled.                 |
+| fieldSelection | `boolean \| string[]`     | Fields available for selection.                  |
+| spec           | `VegaLiteSpec`            | The Vega-Lite specification for the visualization. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered component or error banner. |
+
+### `LoadedVegaComponent`
+#### Description
+The `LoadedVegaComponent` is responsible for rendering the Vega-Lite visualization once the data has been resolved. It manages user interactions such as selections and zooming, and provides visual feedback through tooltips and error alerts.
+
+#### Inputs
+| Name           | Type                      | Description                                      |
+|:---------------|:--------------------------|:-------------------------------------------------|
+| value          | `VegaComponentState`      | The current state of the Vega component.         |
+| setValue       | `(value: T) =&gt; void`      | Function to update the component's state.        |
+| chartSelection | `boolean \| "point" \| "interval"` | Type of chart selection enabled.                 |
+| fieldSelection | `boolean \| string[]`     | Fields available for selection.                  |
+| spec           | `VegaLiteSpec`            | The resolved Vega-Lite specification.            |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered Vega-Lite visualization. |
+
+#### Internal Logic
+- Utilizes `useMemo` to memoize the Vega specification and selection parameter names to prevent unnecessary re-renders.
+- Uses `useEvent` to handle updates to the component's state when user interactions occur.
+- Implements signal listeners to debounce and log changes in the Vega signals, updating the component's state accordingly.
+- Provides error handling through the `handleError` function, which logs errors and updates the component's error state.
+
+## Side Effects
+- The component logs debug information and errors using the `Logger` utility.
+- It updates the component's state based on user interactions with the Vega visualization.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-vega` | Used to render Vega-Lite visualizations in React. |
+| `lodash-es` | Provides the `debounce` function for optimizing event handling. |
+| `react-use-event-hook` | Simplifies the creation of event handlers in React. |
+
+## Error Handling
+- The component uses the `ErrorBanner` component to display errors that occur during data resolution.
+- Errors are logged using the `Logger` utility, providing detailed information for debugging.
+
+## Logging
+- The component logs debug information about component mounting, rendering, and prop changes using the `useDebugMounting` and `usePropsDidChange` hooks.
+- Signal changes and errors are logged to provide insights into the component's behavior and interactions.
+
+## References
+- `useAsyncData`: A hook used to load data asynchronously and manage loading and error states.
+- `useDeepCompareMemoize`: A hook used to deeply compare and memoize values to prevent unnecessary re-renders.
+- `makeSelectable`: A utility function that modifies the Vega specification to support interactive selections.
+- `resolveVegaSpecData`: A function that resolves data URLs in the Vega specification to prevent flickering during data loading.

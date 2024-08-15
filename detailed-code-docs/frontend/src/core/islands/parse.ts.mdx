@@ -1,0 +1,139 @@
+---
+title: "parse.ts"
+---
+
+## High-level description
+
+The `parse.ts` file is part of a frontend system that processes custom HTML elements, specifically those related to "Marimo Islands". It provides functionality to parse these elements from the DOM, extract relevant data, and convert this data into a format suitable for further processing or execution. The file also includes utility functions for handling code embedded within these elements.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MarimoIslandApp` and `MarimoIslandCell` interfaces define the structure of the data extracted from the DOM.
+- The `parseMarimoIslandApps` function is responsible for parsing the DOM to extract instances of `MarimoIslandApp`.
+- The `createMarimoFile` function converts the extracted data into a string format that represents a Python script.
+- Utility functions like `parseIslandEditor`, `parseIslandCode`, and `extractIslandCodeFromEmbed` assist in processing the code embedded within the custom elements.
+
+## Symbols
+
+### `MarimoIslandApp`
+#### Description
+Represents an application within a Marimo Island, containing multiple cells.
+
+#### Inputs
+None directly, but used as a structure for data.
+
+#### Outputs
+None directly, but used as a structure for data.
+
+### `MarimoIslandCell`
+#### Description
+Represents a single cell within a Marimo Island application, containing code and output.
+
+#### Inputs
+None directly, but used as a structure for data.
+
+#### Outputs
+None directly, but used as a structure for data.
+
+### `parseMarimoIslandApps`
+#### Description
+Parses the DOM to find all Marimo Island elements, extracting their data into structured `MarimoIslandApp` objects.
+
+#### Inputs
+None directly, but operates on the global `document` object.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| apps | `MarimoIslandApp[]` | An array of parsed Marimo Island applications. |
+
+#### Internal Logic
+- Uses `document.querySelectorAll` to find all elements with the tag name defined in `MarimoIslandElement.tagName`.
+- Iterates over these elements, extracting the `data-app-id` and associated cell data.
+- Logs warnings if expected attributes or elements are missing.
+- Constructs `MarimoIslandApp` objects and populates them with `MarimoIslandCell` data.
+
+### `createMarimoFile`
+#### Description
+Generates a Python script from a `MarimoIslandApp` object, formatting each cell's code into a function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | `{ cells: Array&lt;{ code: string }&gt; }` | An object representing a Marimo Island application. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | `string` | A string representing the generated Python script. |
+
+#### Internal Logic
+- Iterates over each cell in the app, formatting the code with indentation.
+- Checks if the code contains asynchronous operations and adjusts the function definition accordingly.
+- Wraps each cell's code in a Python function and appends it to the script.
+
+### `parseIslandEditor`
+#### Description
+Parses code from a string, attempting to JSON parse it if possible.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | `string \| undefined \| null` | The code to parse. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parsedCode | `string` | The parsed code, or an empty string if parsing fails. |
+
+### `parseIslandCode`
+#### Description
+Decodes and trims a URI-encoded string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | `string \| undefined \| null` | The code to decode. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| decodedCode | `string` | The decoded and trimmed code. |
+
+### `extractIslandCodeFromEmbed`
+#### Description
+Extracts code from a Marimo Island element, considering its reactivity.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| embed | `HTMLElement` | The DOM element to extract code from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | `string` | The extracted code, or an empty string if not found. |
+
+#### Internal Logic
+- Checks if the element is reactive.
+- Attempts to extract code from either a code tag or an editor tag within the element.
+
+## References
+
+- `MarimoIslandElement` from `components/web-components.tsx` is used to define tag names and structure for parsing.
+- `Logger` from `utils/Logger.ts` is used for logging warnings and debug information.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger` | Used for logging warnings and debug information. |
+
+## Error Handling
+
+- The code logs warnings using the `Logger` when expected attributes or elements are missing during parsing.
+
+## TODOs
+
+- There is a TODO comment in `createMarimoFile` regarding better handling of asynchronous cells, suggesting that this logic might be improved or moved to a different layer, possibly in Python code.

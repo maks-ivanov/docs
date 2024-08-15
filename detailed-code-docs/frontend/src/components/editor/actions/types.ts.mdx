@@ -1,0 +1,92 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file, `types.ts`, defines an interface `ActionButton` for representing user actions in a UI component, such as a dropdown menu, context menu, or toolbar. It also provides utility functions to determine if an action is a parent action with sub-actions and to flatten nested actions into a single list.
+
+## Code Structure
+
+- **`ActionButton` Interface**: Defines the structure for user actions, including properties for labels, icons, hotkeys, and handlers.
+- **`isParentAction` Function**: Checks if an action has sub-actions (a dropdown).
+- **`flattenActions` Function**: Recursively flattens nested actions into a single list, prepending parent labels to child actions.
+
+## Symbols
+
+### `ActionButton`
+#### Description
+The `ActionButton` interface defines the structure for a user action in the editor. It includes properties for display elements like labels and icons, as well as functionality like click handlers and hotkeys.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| label | string | The text label for the action. |
+| variant | "danger" (optional) | A variant type for styling, e.g., danger for delete actions. |
+| disableClick | boolean (optional) | If true, disables the click action. |
+| icon | React.ReactElement (optional) | An icon to display alongside the label. |
+| hidden | boolean (optional) | If true, hides the action from the UI. |
+| rightElement | React.ReactNode (optional) | An additional element to display on the right side of the action. |
+| hotkey | HotkeyAction (optional) | A hotkey associated with the action. |
+| handle | function | The function to execute when the action is triggered. |
+| handleHeadless | function (optional) | A special handler for non-UI contexts. |
+| divider | boolean (optional) | If true, adds a divider before the action. |
+| dropdown | ActionButton[] (optional) | A list of sub-actions for dropdown menus. |
+
+#### Outputs
+N/A
+
+### `isParentAction`
+#### Description
+Determines if an `ActionButton` is a parent action, meaning it contains a dropdown of sub-actions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| action | ActionButton | The action to check for sub-actions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | True if the action has a dropdown of sub-actions. |
+
+#### Internal Logic
+The function checks if the `dropdown` property of the `ActionButton` is defined, indicating the presence of sub-actions.
+
+### `flattenActions`
+#### Description
+Flattens a list of `ActionButton` objects, including nested sub-actions, into a single list. Parent action labels are prepended to their child actions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| actions | ActionButton[] | The list of actions to flatten. |
+| prevLabel | string (optional) | A prefix label to prepend to child actions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| flattenedActions | ActionButton[] | A flattened list of actions with parent labels prepended. |
+
+#### Internal Logic
+The function uses recursion to traverse and flatten nested actions. It prepends the parent label to each child action's label and returns a single list of actions.
+
+## References
+
+- **`HotkeyAction`**: Imported from `@/core/hotkeys/hotkeys`, used to define hotkeys for actions.
+- **`React.ReactElement` and `React.ReactNode`**: Used for defining UI elements like icons and additional components.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/core/hotkeys/hotkeys` | Provides the `HotkeyAction` type for defining hotkeys. |
+
+## Error Handling
+The code does not explicitly handle errors, as it primarily defines types and utility functions without complex logic that could fail.
+
+## Logging
+No logging mechanisms are implemented in this code.
+
+## TODOs
+No TODOs or notes are present in the code.

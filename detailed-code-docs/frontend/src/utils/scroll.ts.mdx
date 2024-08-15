@@ -1,0 +1,54 @@
+---
+title: "scroll.ts"
+---
+
+## High-level description
+The `smartScrollIntoView` function in the `scroll.ts` file is designed to ensure that a specified HTML element is fully visible within the viewport. It achieves this by scrolling the element into view if it is partially or completely out of the visible area, with optional offsets for fine-tuning the scroll position.
+
+## Code Structure
+The main symbol in this code is the `smartScrollIntoView` function. It interacts with HTML elements and the window object to determine the position of an element and adjust the scroll position accordingly. The function is referenced in other parts of the codebase, such as in the `extensions.ts` file, where it is used to scroll the active line into view in a code editor.
+
+## References
+- `smartScrollIntoView` is referenced in `frontend/src/core/codemirror/extensions.ts`, where it is used to scroll the active line into view when the editor is resized.
+
+## Symbols
+
+### `smartScrollIntoView`
+#### Description
+The `smartScrollIntoView` function ensures that a given HTML element is fully visible within the viewport. It scrolls the element into view if it is either above or below the visible area, with optional top and bottom offsets to adjust the scroll position.
+
+#### Inputs
+| Name   | Type                          | Description                                                                 |
+|:-------|:------------------------------|:----------------------------------------------------------------------------|
+| element| `HTMLElement`                 | The HTML element to be scrolled into view.                                  |
+| offset | `{ top: number; bottom: number }` (optional) | Optional offsets to adjust the scroll position from the top and bottom.     |
+| body   | `HTMLElement` or `typeof window` (default: `window`) | The scrollable container, defaults to the window object.                    |
+
+#### Outputs
+The function does not return any value. It performs a side effect by scrolling the specified element into view.
+
+#### Internal Logic
+1. **Offset Calculation**: The function calculates the top and bottom offsets using the provided `offset` object or defaults to zero if not provided.
+2. **Element Position**: It retrieves the bounding rectangle of the element using `getBoundingClientRect()`.
+3. **Scroll Logic**:
+   - If the element's top is above the viewport (less than the top offset), it scrolls the element to the top.
+   - If the element's bottom is below the viewport (greater than the window's inner height minus the bottom offset), it scrolls the element to the bottom.
+   - If the element is already fully visible, no scrolling occurs.
+
+## Side Effects
+- The function modifies the scroll position of the specified `body` element or the window, which affects the user's view of the page.
+
+## Dependencies
+The function relies on the browser's DOM API, specifically `getBoundingClientRect()` and `scrollBy()`, to determine element positions and perform scrolling.
+
+## Error Handling
+The function does not include explicit error handling. It assumes that the provided `element` and `body` are valid DOM elements.
+
+## Logging
+There is no logging implemented in this function.
+
+## API/Interface Reference
+The function does not expose an API or interface beyond its direct usage as a utility function.
+
+## TODOs
+There are no TODOs or notes left in the code.

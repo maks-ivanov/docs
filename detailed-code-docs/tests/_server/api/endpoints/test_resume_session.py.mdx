@@ -1,0 +1,145 @@
+---
+title: "test_resume_session.py"
+---
+
+## High-level description
+
+The target file `test_resume_session.py` contains a suite of tests designed to verify the functionality of session management in a web application using WebSockets. These tests ensure that sessions can be resumed, saved, and restarted correctly, and that the application state is maintained across different session IDs. The tests interact with a server API to simulate real-world scenarios of session handling, including refreshing sessions, saving session data, and restarting sessions.
+
+## Code Structure
+
+The main symbols in the code are functions that represent individual test cases. These functions utilize helper functions to create responses, manage headers, and assert the correctness of kernel responses. The tests are structured to simulate WebSocket connections and HTTP requests to the server, verifying the expected behavior of session management.
+
+## Symbols
+
+### `create_response`
+#### Description
+Creates a default response dictionary for a session, which can be partially updated with additional data.
+
+#### Inputs
+| Name             | Type           | Description                        |
+|:-----------------|:---------------|:-----------------------------------|
+| partial_response | `dict[str, Any]` | Partial data to update the default response |
+
+#### Outputs
+| Name     | Type           | Description                        |
+|:---------|:---------------|:-----------------------------------|
+| response | `dict[str, Any]` | The complete response dictionary |
+
+#### Internal Logic
+The function initializes a default response dictionary with predefined keys and values, then updates it with any additional data provided in `partial_response`.
+
+### `headers`
+#### Description
+Generates headers for HTTP requests, including a session ID and a token.
+
+#### Inputs
+| Name       | Type   | Description          |
+|:-----------|:-------|:---------------------|
+| session_id | `str`  | The session ID to include in the headers |
+
+#### Outputs
+| Name    | Type           | Description                        |
+|:--------|:---------------|:-----------------------------------|
+| headers | `dict[str, str]` | The headers dictionary for HTTP requests |
+
+### `assert_kernel_ready_response`
+#### Description
+Asserts that the raw data from a WebSocket response matches the expected kernel-ready response.
+
+#### Inputs
+| Name     | Type           | Description                        |
+|:---------|:---------------|:-----------------------------------|
+| raw_data | `dict[str, Any]` | The raw data received from the WebSocket |
+| response | `dict[str, Any]` | The expected response data |
+
+#### Internal Logic
+The function parses both the raw data and the expected response into `KernelReady` objects and compares their attributes to ensure they match.
+
+### `get_session`
+#### Description
+Retrieves a session object using a session manager and a session ID.
+
+#### Inputs
+| Name       | Type         | Description          |
+|:-----------|:-------------|:---------------------|
+| client     | `TestClient` | The test client instance |
+| session_id | `str`        | The session ID to retrieve |
+
+#### Outputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| session | `Optional[Session]` | The session object, if found |
+
+### `test_refresh_session`
+#### Description
+Tests the ability to refresh a session, ensuring that session data is correctly resumed and maintained across different session IDs.
+
+#### Inputs
+| Name   | Type         | Description          |
+|:-------|:-------------|:---------------------|
+| client | `TestClient` | The test client instance |
+
+#### Internal Logic
+The test simulates a WebSocket connection, verifies the initial session state, mimics cell execution, and checks that the session can be resumed with a new session ID. It also verifies that UI element values are maintained.
+
+### `test_save_session`
+#### Description
+Tests the ability to save session data and resume it with a new session ID.
+
+#### Inputs
+| Name   | Type         | Description          |
+|:-------|:-------------|:---------------------|
+| client | `TestClient` | The test client instance |
+
+#### Internal Logic
+The test connects via WebSocket, sends a save request, and verifies that the session data is correctly saved and resumed with a new session ID.
+
+### `test_save_config`
+#### Description
+Tests the ability to save application configuration within a session and verify its persistence.
+
+#### Inputs
+| Name   | Type         | Description          |
+|:-------|:-------------|:---------------------|
+| client | `TestClient` | The test client instance |
+
+#### Internal Logic
+The test saves a configuration setting, checks its persistence in the session, and verifies that the configuration is reflected in the application's index page.
+
+### `test_restart_session`
+#### Description
+Tests the ability to restart a session, ensuring that the session is correctly terminated and a new session is initiated.
+
+#### Inputs
+| Name   | Type         | Description          |
+|:-------|:-------------|:---------------------|
+| client | `TestClient` | The test client instance |
+
+#### Internal Logic
+The test initiates a session, sends a restart request, and verifies that the session is terminated. It then starts a new session to ensure the restart was successful.
+
+## References
+
+- `CellOp`, `KernelCapabilities`, `KernelReady`: These classes from `marimo._messaging.ops` are used to create and verify kernel operations and capabilities.
+- `Session`: This class from `marimo._server.sessions` is used to manage session data.
+- `parse_raw`: A utility function from `marimo._utils.parse_dataclass` used to parse raw data into dataclass instances.
+- `get_session_manager`, `token_header`: Helper functions from `tests._server.conftest` and `tests._server.mocks` used to manage sessions and generate headers.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.testclient` | Used to simulate HTTP and WebSocket requests in tests |
+
+## Error Handling
+
+The tests rely on assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior, which is a common practice in test-driven development.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on assertions to validate the functionality.
+
+## TODOs
+
+- There is a TODO comment in the related file `marimo/_messaging/ops.py` regarding fixing typing once mypy has stricter typing for `asdict`. This indicates a future improvement in type checking for the `Op` class.

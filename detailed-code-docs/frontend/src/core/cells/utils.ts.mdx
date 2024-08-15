@@ -1,0 +1,170 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file, `utils.ts`, provides utility functions for managing the state and behavior of notebook cells in a frontend application. These functions help determine the running status of a notebook, check if a notebook needs saving or running, retrieve cell data, and manage cell editor views. The utilities are designed to work with the notebook's state, which includes cell configurations, runtime states, and layout information.
+
+## Code Structure
+
+The main symbols in the code are interconnected through the `NotebookState` and `LayoutState` types. Functions like `notebookIsRunning`, `notebookNeedsSave`, and `notebookNeedsRun` operate on the `NotebookState` to provide insights into the notebook's current status. Other functions, such as `notebookCells` and `notebookCellEditorViews`, extract specific data from the notebook state, while `disabledCellIds` and `enabledCellIds` filter cells based on their configuration.
+
+## References
+
+- `NotebookState`: A type representing the state of the notebook, including cell data and runtime information.
+- `LayoutState`: A type representing the layout state of the notebook.
+- `arrayShallowEquals`: A utility function from `@/utils/arrays` used to compare arrays.
+- `Objects`: A utility from `@/utils/objects` used for object manipulation.
+- `isEqual`: A function from `lodash-es` used to compare objects deeply.
+- `staleCellIds`: A function from `./cells` that identifies cells that need to be run.
+
+## Symbols
+
+### `notebookIsRunning`
+#### Description
+Determines if any cell in the notebook is currently running.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isRunning | boolean | Returns true if any cell is running, otherwise false. |
+
+### `notebookNeedsSave`
+#### Description
+Checks if the notebook needs to be saved by comparing the current state with the last saved state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+| layout | LayoutState | The current layout state of the notebook. |
+| lastSavedNotebook | LastSavedNotebook \| undefined | The last saved state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| needsSave | boolean | Returns true if the notebook needs saving, otherwise false. |
+
+#### Internal Logic
+- Compares the current cell codes, configurations, and names with the last saved versions.
+- Uses `arrayShallowEquals` to compare arrays and `isEqual` to compare layout objects.
+
+### `notebookNeedsRun`
+#### Description
+Determines if the notebook has any cells that need to be run.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| needsRun | boolean | Returns true if there are stale cells that need to be run, otherwise false. |
+
+### `notebookCells`
+#### Description
+Retrieves all cells in the notebook in their current order.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cells | Array | An array of cell data objects. |
+
+### `notebookCellEditorViews`
+#### Description
+Retrieves the editor views for all cells in the notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| views | Record&lt;CellId, EditorView&gt; | A record mapping cell IDs to their editor views. |
+
+### `disabledCellIds`
+#### Description
+Identifies cells that are disabled based on their configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| disabledCells | Array | An array of disabled cell data objects. |
+
+### `enabledCellIds`
+#### Description
+Identifies cells that are enabled based on their configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| enabledCells | Array | An array of enabled cell data objects. |
+
+### `canUndoDeletes`
+#### Description
+Checks if there are any deletions in the notebook's history that can be undone.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| canUndo | boolean | Returns true if there are deletions that can be undone, otherwise false. |
+
+### `getDescendantsStatus`
+#### Description
+Retrieves the status of the descendants of a given cell, checking for stale, errored, or running/queued states.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | NotebookState | The current state of the notebook. |
+| cellId | CellId | The ID of the cell whose descendants' status is to be checked. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| status | Object | An object containing boolean flags for stale, errored, and runningOrQueued statuses. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lodash-es` | Used for deep object comparison with `isEqual`. |
+| `@codemirror/view` | Provides types for editor views. |
+
+## Error Handling
+
+The functions in this file do not explicitly handle errors beyond basic type checks and assumptions about the structure of the `NotebookState`. They rely on the correctness of the input state and configurations.
+
+## Logging
+
+No logging mechanisms are implemented in this file.

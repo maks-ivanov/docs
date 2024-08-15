@@ -1,0 +1,100 @@
+---
+title: "worker.ts"
+---
+
+## High-level description
+
+The `worker.ts` file is a web worker script responsible for managing the execution of a notebook environment using Pyodide, a Python runtime for the web. It initializes the Pyodide environment, handles remote procedure calls (RPC) for various operations like starting sessions, loading packages, reading files, and executing Python functions. The worker communicates with the main thread using a message-based protocol, ensuring that operations are performed asynchronously and efficiently.
+
+## Code Structure
+
+The main components of the code are interconnected as follows:
+- **Pyodide Initialization**: The `loadPyodideAndPackages` function initializes the Pyodide environment and sets up the necessary controllers.
+- **RPC Handling**: The `createRPCRequestHandler` function defines handlers for various RPC requests, such as starting a session, loading packages, and reading files.
+- **Message Buffering**: The `MessageBuffer` class is used to buffer messages until the worker is ready to process them.
+- **Deferred Operations**: The `Deferred` class is used to manage asynchronous operations that need to be resolved or rejected at a later time.
+
+## References
+
+- **PyodideInterface**: Used to interact with the Pyodide environment.
+- **WasmController**: Manages the WebAssembly environment and operations.
+- **Deferred**: Utility for handling asynchronous operations.
+- **Logger**: Used for logging errors and warnings.
+- **RPC Schema**: Defines the structure of messages exchanged between the worker and the main thread.
+
+## Symbols
+
+### `loadPyodideAndPackages`
+#### Description
+Initializes the Pyodide environment and loads necessary packages and controllers. It handles errors during the initialization process and communicates the status back to the main thread.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the Marimo and Pyodide versions.
+- Imports Pyodide and initializes the controller.
+- Sets the `self.controller` and `self.pyodide` with the initialized instances.
+- Catches and logs errors, sending an error message back to the main thread.
+
+### `requestHandler`
+#### Description
+Handles various RPC requests from the main thread, such as starting a session, loading packages, reading files, and executing functions on the Python bridge.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | object | Options for the specific RPC request being handled. |
+
+#### Outputs
+Varies based on the specific RPC request being handled.
+
+#### Internal Logic
+- **startSession**: Initializes a session with provided code and configuration, ensuring the environment is ready before proceeding.
+- **loadPackages**: Loads Python packages required by the provided code, adding specific packages if certain keywords are detected.
+- **readFile**: Reads a file from the Pyodide filesystem.
+- **setInterruptBuffer**: Sets up an interrupt buffer for handling interrupts in a secure context.
+- **bridge**: Executes a function on the Python bridge, handling special cases for package installation.
+
+### `getMarimoVersion`
+#### Description
+Retrieves the version of Marimo stored in the worker's name.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| version | string | The version of Marimo. |
+
+## Side Effects
+
+- Modifies the global `self` object to include `pyodide` and `controller`.
+- Sends messages to the main thread using the RPC mechanism.
+- Logs errors and warnings using the `Logger`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pyodide` | Provides the Python runtime environment. |
+| `rpc-anywhere` | Facilitates RPC communication between the worker and the main thread. |
+| `Deferred` | Manages asynchronous operations. |
+| `Logger` | Handles logging of messages and errors. |
+
+## Error Handling
+
+- Errors during Pyodide initialization are caught and logged, with a formatted error message sent back to the main thread using `prettyError`.
+- The `invariant` function is used to assert conditions and throw errors if they are not met.
+
+## Logging
+
+- The `Logger` utility is used to log messages, warnings, and errors throughout the code, providing insights into the execution flow and any issues encountered.
+
+## TODOs
+
+None present in the code.

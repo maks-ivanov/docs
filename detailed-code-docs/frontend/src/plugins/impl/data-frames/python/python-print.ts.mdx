@@ -1,0 +1,151 @@
+---
+title: "python-print.ts"
+---
+
+## High-level description
+
+The `python-print.ts` file is responsible for generating Python code strings that represent transformations on a DataFrame. It provides functions to convert a series of transformation operations, defined in a TypeScript schema, into equivalent Python code that can be executed to manipulate data in a DataFrame. This is useful for applications that need to dynamically generate Python scripts based on user-defined transformations.
+
+## Code Structure
+
+The main symbols in the code are the functions `pythonPrintTransforms` and `pythonPrint`, which work together to convert transformation definitions into Python code. The `pythonPrintTransforms` function handles a list of transformations, while `pythonPrint` deals with individual transformations. Helper functions like `generateWhereClause`, `asLiteral`, `listOfStrings`, and `argsList` assist in constructing the Python code strings.
+
+## References
+
+- `TransformType` from `schema.ts`: This is the type definition for the transformations that the functions in this file operate on.
+- `logNever` from `assertNever.ts`: Used for handling unexpected cases in a type-safe manner.
+
+## Symbols
+
+### `pythonPrintTransforms`
+#### Description
+Generates a sequence of Python code strings that apply a series of transformations to a DataFrame.
+
+#### Inputs
+| Name       | Type           | Description                              |
+|:-----------|:---------------|:-----------------------------------------|
+| `dfName`   | `string`       | The name of the DataFrame variable.      |
+| `transforms` | `TransformType[]` | A list of transformations to apply. |
+
+#### Outputs
+| Name       | Type     | Description                                      |
+|:-----------|:---------|:-------------------------------------------------|
+| `output`   | `string` | A string of Python code representing the transformations. |
+
+#### Internal Logic
+1. Initializes a new DataFrame name by appending `_next` to the original name.
+2. Maps each transformation to a Python code string using `pythonPrint`.
+3. Joins the initial DataFrame assignment and transformation strings into a single Python script.
+
+### `pythonPrint`
+#### Description
+Converts a single transformation into a Python code string.
+
+#### Inputs
+| Name       | Type         | Description                              |
+|:-----------|:-------------|:-----------------------------------------|
+| `dfName`   | `string`     | The name of the DataFrame variable.      |
+| `transform` | `TransformType` | The transformation to convert.         |
+
+#### Outputs
+| Name       | Type     | Description                                      |
+|:-----------|:---------|:-------------------------------------------------|
+| `output`   | `string` | A string of Python code for the transformation.  |
+
+#### Internal Logic
+- Uses a switch statement to handle different transformation types.
+- Constructs Python code based on the transformation type and its properties.
+- Handles various operations like column conversion, renaming, sorting, filtering, aggregation, grouping, selection, sampling, and shuffling.
+- Uses helper functions to format parts of the code, such as column identifiers and argument lists.
+
+### `generateWhereClause`
+#### Description
+Generates a Python expression for a filtering condition on a DataFrame.
+
+#### Inputs
+| Name     | Type   | Description                              |
+|:---------|:-------|:-----------------------------------------|
+| `dfName` | `string` | The name of the DataFrame variable.      |
+| `where`  | `object` | The condition to convert, including column ID, operator, and value. |
+
+#### Outputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| `output` | `string` | A string representing the filtering condition.   |
+
+#### Internal Logic
+- Uses a switch statement to handle different operators.
+- Constructs a Python expression based on the operator and value.
+- Supports a variety of operators, including equality, inequality, string operations, and more.
+
+### `asLiteral`
+#### Description
+Converts a value to a string literal suitable for Python code.
+
+#### Inputs
+| Name   | Type     | Description                              |
+|:-------|:---------|:-----------------------------------------|
+| `value` | `unknown` | The value to convert.                    |
+
+#### Outputs
+| Name   | Type     | Description                                      |
+|:-------|:---------|:-------------------------------------------------|
+| `output` | `string` | A string literal representation of the value.   |
+
+#### Internal Logic
+- Checks the type of the value.
+- Wraps strings in quotes and converts other types to strings directly.
+
+### `listOfStrings`
+#### Description
+Converts an array of values into a Python list string.
+
+#### Inputs
+| Name   | Type     | Description                              |
+|:-------|:---------|:-----------------------------------------|
+| `value` | `unknown` | The array of values to convert.          |
+
+#### Outputs
+| Name   | Type     | Description                                      |
+|:-------|:---------|:-------------------------------------------------|
+| `output` | `string` | A string representing a Python list.            |
+
+#### Internal Logic
+- Checks if the input is an array.
+- Maps each element to a string literal and joins them with commas.
+
+### `argsList`
+#### Description
+Creates a comma-separated list of arguments for a Python function call.
+
+#### Inputs
+| Name   | Type     | Description                              |
+|:-------|:---------|:-----------------------------------------|
+| `args` | `string[]` | The list of argument strings.            |
+
+#### Outputs
+| Name   | Type     | Description                                      |
+|:-------|:---------|:-------------------------------------------------|
+| `output` | `string` | A comma-separated string of arguments.          |
+
+#### Internal Logic
+- Filters out empty strings.
+- Joins the remaining strings with commas.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `assertNever.ts` | Provides a utility for handling unexpected cases. |
+
+## Error Handling
+
+The code uses the `logNever` function to log unexpected transformation types or operators, ensuring that any unhandled cases are noted without causing the application to crash.
+
+## Logging
+
+The `logNever` function logs unexpected objects to the console, which helps in debugging and ensuring that all cases are handled properly.
+
+## TODOs
+
+No TODOs or notes are present in the code.

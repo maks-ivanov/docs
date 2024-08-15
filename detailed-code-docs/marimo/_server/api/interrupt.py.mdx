@@ -1,0 +1,56 @@
+---
+title: "interrupt.py"
+---
+
+## High-level description
+
+The `InterruptHandler` class in the `marimo/_server/api/interrupt.py` file is designed to manage the handling of interrupt signals (specifically `SIGINT`, which is typically triggered by pressing Ctrl+C) in an asynchronous Python application. It provides a mechanism to gracefully shut down the application, either immediately or after user confirmation, depending on the configuration.
+
+## Code Structure
+
+The main symbol in this code is the `InterruptHandler` class, which encapsulates the logic for handling interrupt signals. It interacts with the asyncio event loop to manage signal handlers and uses a shutdown callback to perform cleanup operations when an interrupt is detected.
+
+## Symbols
+
+### `InterruptHandler`
+#### Description
+The `InterruptHandler` class is responsible for managing the handling of interrupt signals in an asynchronous application. It allows for graceful shutdowns by either immediately executing a shutdown callback or prompting the user for confirmation before proceeding with the shutdown.
+
+#### Inputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| `quiet`  | `bool`   | If `True`, the application shuts down immediately without user confirmation. |
+| `shutdown` | `Callable[[], None]` | A callback function to execute when shutting down the application. |
+
+#### Outputs
+This class does not produce direct outputs but manages the application's state by invoking the shutdown callback.
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the class with a `quiet` flag, a `shutdown` callback, and sets up the asyncio event loop. It also stores the original signal handler for `SIGINT`.
+- **Adding Interrupt Handler**: The `_add_interrupt_handler` method sets up a custom signal handler for `SIGINT` using the asyncio event loop. If the platform does not support this (e.g., Windows), it falls back to using the `signal` module.
+- **Restoring Interrupt Handler**: The `restore_interrupt_handler` method restores the original signal handler for `SIGINT`, ensuring that subsequent interrupts behave as expected.
+- **Interrupt Handling**: The `_interrupt_handler` method is invoked when an interrupt signal is received. It restores the original signal handler, checks the `quiet` flag, and either shuts down immediately or prompts the user for confirmation. If the user confirms, it calls the shutdown callback.
+- **Registration**: The `register` method is a public interface to add the interrupt handler to the event loop.
+
+## Side Effects
+- Modifies the signal handler for `SIGINT` in the current process.
+- May prompt the user for input, affecting the program's flow based on user interaction.
+
+## References
+- The `InterruptHandler` class is referenced in the `marimo/_server/api/lifespans.py` file, where it is used to manage application lifespans and handle shutdowns gracefully.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio`  | Used for managing the event loop and adding signal handlers. |
+| `signal`   | Used for handling operating system signals like `SIGINT`. |
+| `marimo._server.utils.TAB` | Used for formatting the prompt message. |
+
+## Error Handling
+The code handles `NotImplementedError` exceptions when adding or removing signal handlers, which is necessary for compatibility with platforms like Windows that do not support certain asyncio features.
+
+## Logging
+No explicit logging is implemented in this file, but it interacts with user input and system signals, which are inherently logged by the operating system or the environment.
+
+## TODOs
+No TODOs or notes are present in the code.

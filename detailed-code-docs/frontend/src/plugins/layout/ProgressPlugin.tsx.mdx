@@ -1,0 +1,112 @@
+---
+title: "ProgressPlugin.tsx"
+---
+
+## High-level description
+
+The `ProgressPlugin.tsx` file defines a React component and a plugin class for rendering a progress bar or spinner, which can display progress information such as title, subtitle, progress percentage, total value, estimated time remaining (ETA), and rate of progress. The `ProgressPlugin` class implements the `IStatelessPlugin` interface, allowing it to be used as a stateless plugin within a larger application framework.
+
+## Code Structure
+
+- **ProgressPlugin**: A class implementing the `IStatelessPlugin` interface, responsible for rendering the `ProgressComponent` with the provided data.
+- **ProgressComponent**: A React functional component that displays a progress bar or spinner based on the input data.
+- **clampProgress**: A utility function to ensure the progress value is within the range of 0 to 100.
+- **prettyTime**: A function to convert seconds into a human-readable duration format.
+
+## References
+
+- **IStatelessPlugin** and **IStatelessPluginProps**: Interfaces from `stateless-plugin.ts` that define the structure and behavior of stateless plugins.
+- **Progress**: A UI component from `progress.tsx` used to render the progress bar.
+- **Loader2Icon**: An icon from the `lucide-react` library used to display a spinner for indeterminate progress.
+- **clamp**: A utility function from `math.ts` used to constrain values within a specified range.
+- **renderHTML**: A function from `RenderHTML.tsx` used to safely render HTML content for the title and subtitle.
+- **humanize-duration**: A library used to convert time durations into human-readable formats.
+
+## Symbols
+
+### ProgressPlugin
+#### Description
+The `ProgressPlugin` class is a stateless plugin that renders a progress bar or spinner using the `ProgressComponent`. It validates the input data using a schema defined with `zod`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IStatelessPluginProps&lt;Data&gt;` | Contains the host element and plugin data for rendering. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered progress component. |
+
+### ProgressComponent
+#### Description
+The `ProgressComponent` is a React component that displays a progress bar or spinner based on the provided data. It can show additional information like the rate of progress and estimated time remaining.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | `string` | The title of the progress bar. |
+| subtitle | `string` | The subtitle of the progress bar. |
+| progress | `number | boolean` | The progress value or a boolean for indeterminate progress. |
+| total | `number` | The total value for the progress calculation. |
+| eta | `number` | Estimated time remaining in seconds. |
+| rate | `number` | Rate of progress in items per second. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered progress bar or spinner component. |
+
+#### Internal Logic
+- Determines alignment based on whether the progress is a number or boolean.
+- Renders a progress bar if the total is known and greater than zero; otherwise, renders a spinner.
+- Displays metadata such as rate, ETA, and total time if applicable.
+
+### clampProgress
+#### Description
+Ensures the progress value is clamped between 0 and 100.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| progress | `number` | The progress value to be clamped. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `number` | The clamped progress value. |
+
+### prettyTime
+#### Description
+Converts a duration in seconds into a human-readable format using the `humanize-duration` library.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| seconds | `number` | The duration in seconds to be converted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `string` | The human-readable duration string. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Used for creating React components. |
+| `zod` | Used for data validation. |
+| `lucide-react` | Provides the `Loader2Icon` for the spinner. |
+| `humanize-duration` | Converts time durations into human-readable formats. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic React component rendering. Any errors in rendering or data validation would likely be caught by React's error boundaries or during the validation process with `zod`.
+
+## Logging
+
+There is no explicit logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,70 @@
+---
+title: "localStorage.ts"
+---
+
+## High-level description
+
+The `localStorage.ts` file provides utility classes for interacting with the browser's `localStorage` in a type-safe manner. It defines two classes, `TypedLocalStorage` and `ZodLocalStorage`, which facilitate storing and retrieving data with type safety and optional schema validation using the `zod` library.
+
+## Code Structure
+
+The file contains two main classes:
+
+1. **TypedLocalStorage**: A generic class that allows storing and retrieving data from `localStorage` with type safety.
+2. **ZodLocalStorage**: An extension of `TypedLocalStorage` that adds schema validation using `zod` to ensure the data conforms to a specified structure.
+
+Both classes provide `get` and `set` methods for interacting with `localStorage`.
+
+## Symbols
+
+### `TypedLocalStorage&lt;T&gt;`
+#### Description
+The `TypedLocalStorage` class provides a type-safe interface for storing and retrieving data from the browser's `localStorage`. It ensures that the data retrieved is of the expected type `T` or falls back to a default value if the data is not present or cannot be parsed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | string | The key under which the data is stored in `localStorage`. |
+| defaultValue | T | The default value to return if the data is not found or cannot be parsed. |
+
+#### Outputs
+- **get()**: Returns the stored data of type `T` or the default value if the data is not found or cannot be parsed.
+- **set(value: T)**: Stores the given value in `localStorage` under the specified key.
+
+#### Internal Logic
+- **get()**: Attempts to retrieve and parse the data from `localStorage`. If successful, it returns the parsed data; otherwise, it returns the default value.
+- **set(value: T)**: Serializes the value to a JSON string and stores it in `localStorage`.
+
+### `ZodLocalStorage&lt;T&gt;`
+#### Description
+The `ZodLocalStorage` class extends `TypedLocalStorage` by adding schema validation using the `zod` library. It ensures that the data retrieved from `localStorage` conforms to a specified schema.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | string | The key under which the data is stored in `localStorage`. |
+| schema | ZodType&lt;T, ZodTypeDef, unknown&gt; | A `zod` schema to validate the data against. |
+| getDefaultValue | () =&gt; T | A function that returns the default value if the data is not found or cannot be parsed. |
+
+#### Outputs
+- **get()**: Returns the stored data of type `T` after validating it against the schema, or the default value if the data is not found or cannot be parsed.
+- **set(value: T)**: Stores the given value in `localStorage` under the specified key.
+
+#### Internal Logic
+- **get()**: Attempts to retrieve and parse the data from `localStorage`. If successful, it validates the data against the provided schema using `zod`. If validation fails or the data is not found, it returns the default value.
+- **set(value: T)**: Serializes the value to a JSON string and stores it in `localStorage`.
+
+## References
+
+- **ZodLocalStorage** is used in `frontend/src/components/editor/chrome/state.ts` to manage the state of a UI component with schema validation.
+- **TypedLocalStorage** is used in `frontend/src/core/wasm/store.ts` and `frontend/src/hooks/useLocalStorage.ts` for managing file storage and providing a React hook for `localStorage`, respectively.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for schema validation in the `ZodLocalStorage` class. |
+
+## Error Handling
+
+Both classes handle errors by catching exceptions during JSON parsing and schema validation. If an error occurs, they return the default value specified during instantiation. This ensures that the application can continue to function even if the data in `localStorage` is corrupted or invalid.

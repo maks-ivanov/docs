@@ -1,0 +1,62 @@
+---
+title: "useElapsedTime.ts"
+---
+
+## High-level description
+
+The `useElapsedTime` hook in the target file is a custom React hook that calculates and returns the elapsed time in milliseconds since the component using it was mounted. It uses the `useEffect` hook to set up a timer that updates the elapsed time at a regular interval, ensuring that the time is accurate even if the browser tab becomes inactive.
+
+## Code Structure
+
+The main symbol in the code is the `useElapsedTime` function, which is a custom React hook. It utilizes React's `useRef`, `useState`, and `useEffect` hooks to manage the state and lifecycle of the timer. The `useElapsedTime` function references the `Milliseconds` type and the `Time` class from the `time` utility module to handle time-related operations.
+
+## References
+
+- `Milliseconds` and `Time` from `@/utils/time`: These are used to handle time calculations and conversions.
+- `useEffect`, `useRef`, and `useState` from React: These are used to manage the component's state and lifecycle.
+
+## Symbols
+
+### `useElapsedTime`
+#### Description
+The `useElapsedTime` function is a custom React hook that calculates the elapsed time in milliseconds since the component was mounted. It achieves this by setting up a timer that updates the elapsed time at a regular interval, using the current time to ensure accuracy even if the browser tab is inactive.
+
+#### Inputs
+| Name              | Type        | Description                                  |
+|:------------------|:------------|:---------------------------------------------|
+| initialStartTimeMs| Milliseconds| The initial start time in milliseconds.      |
+
+#### Outputs
+| Name   | Type        | Description                                  |
+|:-------|:------------|:---------------------------------------------|
+| elapsedTime | Milliseconds | The elapsed time in milliseconds since the component was mounted. |
+
+#### Internal Logic
+1. **Initialization**: The `startTime` is initialized using `useRef` to store the initial start time in milliseconds. The `endTime` is managed using `useState`, initialized with the same start time.
+2. **Effect Setup**: The `useEffect` hook sets up a timer using `setInterval` to update the `endTime` state every 17 milliseconds (approximately 60 frames per second).
+3. **Time Calculation**: The `setInterval` callback updates `endTime` with the current time in milliseconds using `Time.now().toMilliseconds()`.
+4. **Cleanup**: The `useEffect` hook returns a cleanup function that clears the interval when the component is unmounted.
+5. **Return Value**: The hook returns the difference between `endTime` and `startTime.current`, representing the elapsed time in milliseconds.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| React      | Provides hooks (`useEffect`, `useRef`, `useState`) for managing component state and lifecycle. |
+| `@/utils/time` | Provides time-related utilities and types for handling milliseconds and time conversions. |
+
+## Error Handling
+
+The code does not explicitly handle errors, as it primarily relies on React hooks and JavaScript's `setInterval` function, which are generally robust for this use case.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The `useElapsedTime` hook does not expose an API or public interface beyond its return value, which is the elapsed time in milliseconds.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

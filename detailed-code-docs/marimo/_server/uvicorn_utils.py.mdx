@@ -1,0 +1,70 @@
+---
+title: "uvicorn_utils.py"
+---
+
+## High-level description
+
+The `uvicorn_utils.py` file is designed to manage the lifecycle of a Uvicorn server within the Marimo application. It provides utility functions to handle signal initialization and server shutdown processes, ensuring graceful termination of the server, especially in environments where Uvicorn's default behavior might lead to ungraceful shutdowns.
+
+## Code Structure
+
+The main symbols in the code are two functions: `initialize_signals` and `close_uvicorn`. These functions are responsible for setting up signal handling and shutting down the Uvicorn server, respectively. They are interconnected in the sense that both deal with signal management and server lifecycle, ensuring that the server can be started and stopped gracefully.
+
+## Symbols
+
+### `initialize_signals`
+#### Description
+This function configures signal handling for the Uvicorn server to prevent ungraceful shutdowns. It is particularly relevant for Uvicorn versions 0.29.0 and above, where the default signal handling behavior was changed.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks the Uvicorn version to determine if special signal handling is needed.
+- If the version is 0.29.0 or above, it sets a no-operation (noop) handler for the `SIGINT` signal to prevent Uvicorn from re-throwing the signal after quitting.
+
+### `close_uvicorn`
+#### Description
+This function is responsible for shutting down the Uvicorn server gracefully. It ensures that the server's event loop is properly closed and that signal handlers are appropriately managed.
+
+#### Inputs
+| Name   | Type            | Description          |
+|:-------|:----------------|:---------------------|
+| server | `uvicorn.Server` | The Uvicorn server instance to be shut down. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Logs a debug message indicating the start of the shutdown process.
+- Checks the Uvicorn version and whether the `pytest` module is present to determine if signal handlers need to be removed.
+- Attempts to remove the `SIGINT` signal handler from the event loop.
+- Calls `server.handle_exit` to handle the server's exit process.
+- Logs a debug message indicating the completion of the shutdown process.
+
+## References
+
+- The `initialize_signals` function is referenced in the `start.py` file, where it is called to set up signal handling before starting the Uvicorn server.
+- The `close_uvicorn` function is used in various parts of the Marimo server codebase, such as in the `execution.py` and `lifespans.py` files, to ensure the server is shut down gracefully when needed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `uvicorn`  | Used to run the server and manage its lifecycle. |
+| `asyncio`  | Utilized for managing asynchronous operations and event loops. |
+| `signal`   | Used for handling operating system signals. |
+| `sys`      | Provides access to system-specific parameters and functions. |
+| `packaging.version` | Used to compare Uvicorn version numbers. |
+| `marimo._loggers` | Provides logging capabilities for the Marimo application. |
+
+## Logging
+
+The file uses the `marimo_logger` from the `marimo._loggers` module to log debug messages during the server shutdown process. This helps in tracking the server's lifecycle events and diagnosing issues related to server termination.
+
+## Error Handling
+
+The code includes error handling for the `NotImplementedError` exception, which may occur when attempting to remove a signal handler on Windows platforms. In such cases, it sets a no-operation handler for the `SIGINT` signal to ensure the server can still shut down gracefully.

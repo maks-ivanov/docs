@@ -1,0 +1,65 @@
+---
+title: "uiregistry.ts"
+---
+
+## High-level description
+
+The `UIElementRegistry` class in the `uiregistry.ts` file is responsible for managing the state and lifecycle of UI elements within a web application. It maintains a registry of UI elements, identified by unique object IDs, and facilitates the synchronization of their values across different instances. The class also handles the dispatching of custom events to notify UI elements of value updates and other interactions.
+
+## Code Structure
+
+The main symbol in this file is the `UIElementRegistry` class, which is designed as a singleton to ensure a single instance manages all UI elements. It interacts with other components through custom events defined in the `events.ts` file and utilizes utility functions from `htmlUtils.ts` for parsing initial values.
+
+## References
+
+- `events.ts`: Provides custom event definitions used by `UIElementRegistry` for communication between UI elements.
+- `htmlUtils.ts`: Contains utility functions for parsing initial values of UI elements.
+- `ids.ts`: Defines types and utilities for generating and parsing unique identifiers for UI elements and cells.
+
+## Symbols
+
+### `UIElementRegistry`
+#### Description
+The `UIElementRegistry` class manages the registration, state, and event dispatching for UI elements in the DOM. It ensures that UI elements are synchronized and can communicate changes in their state through custom events.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| objectId | UIElementId | Unique identifier for the UI element. |
+| value | ValueType | The value associated with the UI element. |
+| instance | HTMLElement | The DOM element instance representing the UI element. |
+| cellId | CellId | Identifier for a cell, used to remove associated UI elements. |
+| message | unknown | Message to be broadcasted to UI elements. |
+| buffers | string[] | Optional buffers to be included in the message. |
+| initiator | HTMLElement | The element that initiated a value update. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | ValueType | The value associated with a UI element, retrieved by its objectId. |
+
+#### Internal Logic
+- **Singleton Pattern**: The class is implemented as a singleton, ensuring only one instance exists throughout the application.
+- **Registration and Removal**: Methods like `registerInstance` and `removeInstance` manage the lifecycle of UI elements, adding or removing them from the registry.
+- **Event Dispatching**: Custom events are dispatched to notify UI elements of updates, using methods like `broadcastMessage` and `broadcastValueUpdate`.
+- **Value Management**: The registry maintains a map of object IDs to their corresponding values and DOM elements, allowing for efficient lookup and synchronization.
+
+## Side Effects
+- Modifies the global `window` object to store the singleton instance.
+- Dispatches custom events to the DOM, affecting event listeners and handlers.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `events.ts` | Defines custom events used for communication between UI elements. |
+| `htmlUtils.ts` | Provides utility functions for parsing initial values of UI elements. |
+
+## Error Handling
+- Throws an error if an attempt is made to register a UI element with an already existing object ID.
+
+## Logging
+- No explicit logging is implemented in this file.
+
+## TODOs
+- No TODOs or notes are present in the code.

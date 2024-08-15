@@ -1,0 +1,78 @@
+---
+title: "getUpdatedColumnTypes.ts"
+---
+
+## High-level description
+
+The `getUpdatedColumnTypes.ts` file provides functionality to update the data types of columns in a data frame based on a series of transformation operations. It processes a list of transformations and applies them sequentially to an initial set of column data types, returning the updated column data types.
+
+## Code Structure
+
+The main function `getUpdatedColumnTypes` relies on a helper function `handleTransform` to process each transformation. The `handleTransform` function uses a switch-case structure to handle different types of transformations, such as column conversion, renaming, grouping, aggregation, and selection.
+
+## References
+
+- `TransformType` and `ColumnDataTypes` are imported from the `schema` and `types` modules, respectively.
+- The `Maps` utility is used for operations like filtering maps.
+- The `logNever` function from `assertNever` is used for handling unexpected transformation types.
+
+## Symbols
+
+### `getUpdatedColumnTypes`
+#### Description
+This function updates the column data types based on a list of transformations. It iterates over each transformation and applies it to the current state of column data types.
+
+#### Inputs
+| Name        | Type             | Description                                      |
+|:------------|:-----------------|:-------------------------------------------------|
+| transforms  | `TransformType[]`| A list of transformations to apply.              |
+| columnTypes | `ColumnDataTypes`| The initial map of column IDs to their data types.|
+
+#### Outputs
+| Name  | Type             | Description                                      |
+|:------|:-----------------|:-------------------------------------------------|
+| output| `ColumnDataTypes`| The updated map of column IDs to their data types.|
+
+#### Internal Logic
+- If no transformations are provided, it returns the initial column types.
+- It creates a copy of the initial column types and iteratively applies each transformation using the `handleTransform` function.
+
+### `handleTransform`
+#### Description
+This function processes a single transformation and updates the column data types accordingly.
+
+#### Inputs
+| Name      | Type            | Description                                      |
+|:----------|:----------------|:-------------------------------------------------|
+| transform | `TransformType` | A single transformation to apply.                |
+| next      | `ColumnDataTypes`| The current map of column IDs to their data types.|
+
+#### Outputs
+| Name  | Type             | Description                                      |
+|:------|:-----------------|:-------------------------------------------------|
+| output| `ColumnDataTypes`| The updated map of column IDs to their data types.|
+
+#### Internal Logic
+- Uses a switch-case to handle different transformation types:
+  - **column_conversion**: Updates the data type of a specified column.
+  - **rename_column**: Renames a column while preserving its data type.
+  - **group_by**: Removes columns not included in the group-by operation.
+  - **aggregate**: Retains only the columns involved in the aggregation.
+  - **select_columns**: Retains only the specified columns.
+  - **filter_rows**, **shuffle_rows**, **sample_rows**, **sort_column**: These transformations do not affect column types.
+  - **default**: Uses `logNever` to handle unexpected transformation types.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `Maps`     | Provides utility functions for map operations.|
+| `logNever` | Logs unexpected transformation types.         |
+
+## Error Handling
+
+The `logNever` function is used to log unexpected transformation types, ensuring that any unhandled cases are noted without throwing an error.
+
+## Test Coverage
+
+The related test file `getUpdatedColumnTypes.test.ts` provides test cases for various transformation scenarios, ensuring that the function behaves as expected for different types of transformations.

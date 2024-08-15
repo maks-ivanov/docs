@@ -1,0 +1,78 @@
+---
+title: "contribute-snippet-button.tsx"
+---
+
+## High-level description
+
+The `ContributeSnippetButton` component in the target file is a React component designed to facilitate the submission of code snippets by users. It provides a button that, when clicked, opens a modal dialog where users can input a title, description, and code for their snippet. The submitted data is then sent to a specified API endpoint for further processing.
+
+## Code Structure
+
+The main symbols in the code are the `ContributeSnippetButton` and `ContributeSnippetModal` components. The `ContributeSnippetButton` is responsible for rendering a clickable area that triggers the opening of the `ContributeSnippetModal`. The modal component handles the user input and submission logic.
+
+## Symbols
+
+### `ContributeSnippetButton`
+#### Description
+The `ContributeSnippetButton` is a React functional component that renders a clickable area (using the `Slot` component) which, when clicked, opens a modal dialog for contributing a code snippet.
+
+#### Inputs
+| Name     | Type            | Description                      |
+|:---------|:----------------|:---------------------------------|
+| children | `React.ReactNode` | The content to be rendered inside the clickable area. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Utilizes the `useImperativeModal` hook to manage the opening and closing of the modal.
+- When clicked, it calls `openModal` with the `ContributeSnippetModal` component as content.
+
+### `ContributeSnippetModal`
+#### Description
+The `ContributeSnippetModal` is a React functional component that renders a modal dialog. It contains a form for users to input a title, description, and code snippet, which is then submitted to an API endpoint.
+
+#### Inputs
+| Name   | Type       | Description                      |
+|:-------|:-----------|:---------------------------------|
+| onClose | `() =&gt; void` | A function to close the modal. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Maintains a local state for the code input using `useState`.
+- Uses the `useTheme` hook to apply the current theme to the code editor.
+- Handles form submission by preventing the default form action, extracting form data, and sending it to the API endpoint using a `fetch` call.
+- Displays a toast notification upon successful submission.
+
+## References
+
+- `useImperativeModal`: A hook from `ImperativeModal.tsx` used to open and close modals.
+- `Constants.githubPage`: A constant URL used in the modal's description for linking to a GitHub page.
+- `LazyAnyLanguageCodeMirror`: A component used for rendering a code editor within the modal.
+- `useTheme`: A hook from `useTheme.ts` to determine the current theme for the code editor.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@radix-ui/react-slot` | Used for rendering the clickable area in `ContributeSnippetButton`. |
+| `@codemirror/view` | Provides the `EditorView` for the code editor. |
+| `react` | Core library for building the component. |
+| `@/components/ui/button`, `@/components/ui/input`, `@/components/ui/textarea`, `@/components/ui/dialog` | UI components used for rendering the modal and its form elements. |
+| `@/components/ui/use-toast` | Provides the `toast` function for displaying notifications. |
+| `@/core/constants` | Provides constants like the GitHub page URL. |
+| `@/theme/useTheme` | Provides the current theme for styling the code editor. |
+
+## Error Handling
+
+- The form submission is handled asynchronously, and the response from the API is not checked, indicating a "fire-and-forget" approach. This means any errors in the submission process are not directly handled or reported to the user.
+
+## Logging
+
+- The code uses a toast notification to inform the user that their snippet has been submitted successfully.
+
+## TODOs
+
+None

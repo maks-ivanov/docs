@@ -1,0 +1,75 @@
+---
+title: "test_hash.py"
+---
+
+## High-level description
+
+The target file `tests/_save/test_hash.py` contains a set of unit tests designed to verify the functionality of caching mechanisms in the `marimo` framework. These tests focus on ensuring that the caching system correctly handles content and execution path hashing, as well as the reproducibility of these hashes across different Python versions. The tests utilize the `App` class from the `marimo._ast.app` module to define and execute cells of code, and they leverage the `persistent_cache` context manager from the `marimo._save.save` module to manage caching.
+
+## Code Structure
+
+The main class in this file is `TestHash`, which contains several static methods that serve as test cases. Each test case uses the `App` class to define a series of cells, which are then executed to test the caching behavior. The `persistent_cache` context manager is used within these cells to simulate caching operations. The `MockLoader` class from `tests._save.mocks` is used to mock the behavior of a cache loader, allowing the tests to simulate cache hits and misses.
+
+## Symbols
+
+### `TestHash`
+#### Description
+The `TestHash` class is a collection of static methods that serve as unit tests for the caching functionality in the `marimo` framework. It tests both content-addressed and execution path caching, as well as the reproducibility of these caches.
+
+#### Methods
+
+- **`test_content_hash`**
+  - **Description**: Tests the content-addressed caching mechanism by verifying that the cache type is correctly set to "ContentAddressed" and that the cache behaves as expected.
+  - **Inputs**: None
+  - **Outputs**: None
+  - **Internal Logic**: 
+    - Initializes an `App` instance and sets it to anonymous mode.
+    - Defines a cell using the `@app.cell` decorator, which uses the `persistent_cache` context manager.
+    - Asserts that the cache type is "ContentAddressed" and returns a value.
+
+- **`test_content_reproducibility`**
+  - **Description**: Ensures that the content-addressed cache is reproducible across different runs, given the same input conditions.
+  - **Inputs**: None
+  - **Outputs**: None
+  - **Internal Logic**: 
+    - Similar to `test_content_hash`, but includes additional assertions to check that the cache hash matches an expected value.
+    - Uses `pytest.mark.skipif` to conditionally skip the test based on the Python version.
+
+- **`test_execution_hash`**
+  - **Description**: Tests the execution path caching mechanism by verifying that the cache type is correctly set to "ExecutionPath".
+  - **Inputs**: None
+  - **Outputs**: None
+  - **Internal Logic**: 
+    - Similar to `test_content_hash`, but checks for "ExecutionPath" as the cache type.
+
+- **`test_execution_reproducibility`**
+  - **Description**: Ensures that the execution path cache is reproducible across different runs, given the same input conditions.
+  - **Inputs**: None
+  - **Outputs**: None
+  - **Internal Logic**: 
+    - Similar to `test_execution_hash`, but includes additional assertions to check that the cache hash matches an expected value.
+    - Uses `pytest.mark.skipif` to conditionally skip the test based on the Python version.
+
+## References
+
+- **`App`**: Used to create and manage cells of code that are executed as part of the tests.
+- **`persistent_cache`**: A context manager used to simulate caching operations within the test cells.
+- **`MockLoader`**: A mock class used to simulate cache loading and saving behavior.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for defining and running the test cases. |
+
+## Error Handling
+
+The tests use assertions to verify expected outcomes. If an assertion fails, it indicates that the caching mechanism did not behave as expected, and the test will fail.
+
+## Logging
+
+There is no explicit logging in the test cases, but the use of `print` statements in some tests helps to output the cache hash for manual verification.
+
+## TODOs
+
+- The code contains a TODO comment regarding a potential Python bug related to multi-line `with` statements, suggesting further investigation and reporting to CPython.

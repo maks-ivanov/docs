@@ -1,0 +1,107 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `movies.py` file is a script designed to create an interactive dashboard application using the `marimo` library. This dashboard allows users to explore movie data, filter it by date ranges, and view various statistics and visualizations related to movies, such as average budget, gross, runtime, and ratings. The application is structured using a series of cells, each responsible for a specific part of the dashboard's functionality.
+
+## Code Structure
+
+The code is structured around the `marimo` library, which is used to create an interactive application. The main components of the code are:
+
+- **App Initialization**: The application is initialized using `marimo.App`.
+- **Cells**: The application is divided into multiple cells, each defined with the `@app.cell` decorator. Each cell performs a specific task, such as rendering UI elements, handling user interactions, or computing statistics.
+- **UI Components**: The code makes extensive use of `marimo`'s UI components, such as buttons, tables, and charts, to create an interactive user interface.
+- **Data Handling**: The code processes movie data using the `pandas` library to filter and compute statistics based on user input.
+
+## Symbols
+
+### `app`
+#### Description
+The `app` is an instance of `marimo.App`, which serves as the main application object for the dashboard. It is initialized with a full-width layout.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define individual cells within the `marimo` application. Each cell encapsulates a specific piece of functionality, such as rendering UI components or processing data.
+
+### `decade_button`
+#### Description
+A helper function within a cell that creates a button for selecting a specific decade. When clicked, it sets the start and end dates to the beginning and end of the decade.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| decade | int | The starting year of the decade (e.g., 1980 for the 1980s). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| button | UI Component | A button UI component labeled with the decade. |
+
+#### Internal Logic
+- Converts the decade into start and end dates.
+- Defines a click handler that updates the application's date range.
+- Returns a button component with the click handler attached.
+
+### `get_average_budget`, `get_average_gross`, `get_average_runtime`, `get_average_rating`
+#### Description
+These functions calculate the average budget, gross, runtime, and rating for a given set of movies, comparing them to a previous set to determine the rate of change.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | DataFrame | The current set of movies. |
+| previous | DataFrame | The previous set of movies for comparison. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| current | float | The average value for the current set of movies. |
+| previous | float | The average value for the previous set of movies. |
+| rate | float | The rate of change between the current and previous averages. |
+
+#### Internal Logic
+- Computes the mean of the specified attribute for both the current and previous datasets.
+- Calculates the rate of change as a percentage.
+
+### `get_previous_date_range`
+#### Description
+Calculates a previous date range based on the current start and end dates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| start_date | datetime | The current start date. |
+| end_date | datetime | The current end date. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| previous_start_date | datetime | The calculated previous start date. |
+| previous_end_date | datetime | The calculated previous end date. |
+
+#### Internal Logic
+- Computes the duration between the start and end dates.
+- Subtracts this duration from both the start and end dates to get the previous range.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used for creating the interactive dashboard application. |
+| `pandas` | Utilized for data manipulation and analysis. |
+| `altair` | Used for creating interactive charts and visualizations. |
+| `vega_datasets` | Provides example datasets, including the movies dataset used in the application. |
+
+## Error Handling
+
+The code includes basic error handling when calculating the previous date range. If an error occurs (e.g., due to invalid date operations), it defaults to using the current date range.
+
+## Logging
+
+The code does not explicitly implement logging mechanisms. However, it uses `marimo`'s UI components to display information and feedback to the user, such as statistics and data visualizations.
+
+## TODOs
+
+The code does not contain any TODO comments or notes.

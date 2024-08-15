@@ -1,0 +1,57 @@
+---
+title: "url.py"
+---
+
+## High-level description
+
+The target file `marimo/_utils/url.py` contains a utility function `is_url` that validates whether a given string is a valid URL. The function uses a complex regular expression to match various URL formats, including support for both IPv4 and IPv6 addresses, domain names, and optional components like ports, paths, query strings, and fragments. The code is adapted from the `validators` library to avoid adding it as a dependency.
+
+## Code Structure
+
+The main symbol in the code is the `is_url` function, which relies on a precompiled regular expression pattern to perform URL validation. The regular expression is defined globally and is used within the `is_url` function to match the input string against the URL format.
+
+## Symbols
+
+### `is_url`
+#### Description
+The `is_url` function checks if a given string is a valid URL. It returns `True` if the string matches the URL pattern defined by the regular expression, and `False` otherwise. The function also has an optional parameter `public` that, when set to `True`, ensures the URL does not belong to a private IP address or localhost.
+
+#### Inputs
+| Name   | Type   | Description                                                                 |
+|:-------|:-------|:----------------------------------------------------------------------------|
+| value  | str    | The URL string to validate.                                                 |
+| public | bool   | Optional; if `True`, only public IP addresses are considered valid. Default is `False`. |
+
+#### Outputs
+| Name   | Type | Description                      |
+|:-------|:-----|:---------------------------------|
+| result | bool | `True` if the input is a valid URL, `False` otherwise. |
+
+#### Internal Logic
+1. The function uses the precompiled `pattern` to match the input `value`.
+2. If `public` is `False`, it simply returns whether the match was successful.
+3. If `public` is `True`, it checks that the matched URL does not contain private IP addresses or localhost by examining named groups in the match result.
+
+## References
+
+- The `is_url` function is referenced in the related file `marimo/_cli/file_path.py`, where it is used to validate URLs in various utility functions like `is_github_src`, `_is_github_issue_url`, and `_is_static_marimo_notebook_url`.
+
+## Dependencies
+
+The code uses the `re` module from Python's standard library for regular expression operations.
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `re`       | Used for compiling and matching regular expressions. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms. It relies on the regular expression match operation, which returns `None` if the input does not match the pattern, thus inherently handling invalid inputs by returning `False`.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

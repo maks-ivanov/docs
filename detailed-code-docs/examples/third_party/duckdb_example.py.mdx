@@ -1,0 +1,117 @@
+---
+title: "duckdb_example.py"
+---
+
+## High-level description
+
+The `duckdb_example.py` script is a Python application that utilizes the Marimo framework to create an interactive notebook for searching and exploring datasets available on Hugging Face. It allows users to search for datasets using filters, explore dataset metadata, and query dataset files using SQL through DuckDB. The application provides a user interface for dataset selection, SQL querying, and data exploration.
+
+## Code Structure
+
+The script is structured around the Marimo framework, which is used to define interactive cells in a notebook-like environment. Each cell is decorated with `@app.cell`, indicating that it is a part of the interactive application. The script uses several functions to handle different aspects of the dataset exploration process, such as loading datasets, filtering datasets, and rendering UI components.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of the `marimo.App` class, which is used to create and manage the interactive application. It is initialized with a full-width layout.
+
+### `@app.cell`
+#### Description
+A decorator used to define interactive cells within the Marimo application. Each decorated function represents a cell that can execute code and render UI components.
+
+### `fetch_hugging_face_datasets`
+#### Description
+Fetches the list of datasets from the Hugging Face API and returns it as a Pandas DataFrame. The function is cached to avoid repeated API calls.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| datasets | DataFrame | A DataFrame containing metadata about the datasets from Hugging Face. |
+
+### `load_hugging_face_dataset`
+#### Description
+Loads the parquet files for a specific dataset from Hugging Face and returns their URLs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dataset_id | str | The identifier of the dataset to load. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| urls | list | A list of URLs pointing to the parquet files of the dataset. |
+
+### `print_month_year`
+#### Description
+Formats a date object into a string representing the month and year.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| date | date | A date object to format. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted_date | str | The formatted date string. |
+
+### `render_sql_editor`
+#### Description
+Renders a SQL editor UI component that allows users to input SQL queries.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sql_editor | UI Component | A UI component for SQL query input. |
+
+### `render_sql_results`
+#### Description
+Executes the SQL query entered in the SQL editor and displays the results in a table.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sql_editor | UI Component | The SQL editor component containing the query. |
+
+### `render_dataframe_editor`
+#### Description
+Renders a dataframe editor UI component for exploring dataset contents.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| limit | int | The maximum number of rows to display in the editor. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df_editor | UI Component | A UI component for dataframe exploration. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used for creating the interactive application and UI components. |
+| `duckdb` | Used for executing SQL queries on dataset files. |
+| `pandas` | Used for data manipulation and conversion. |
+| `requests` | Used for making HTTP requests to the Hugging Face API. |
+| `json` | Used for parsing JSON responses from the API. |
+| `functools` | Used for caching functions to improve performance. |
+
+## Error Handling
+
+The script uses the `mo.stop()` function to halt execution if certain conditions are not met, such as when no dataset is selected or no file is available. This prevents further processing and UI rendering when prerequisites are not satisfied.
+
+## Logging
+
+The script does not explicitly implement logging mechanisms. However, it uses status spinners to provide feedback to the user during data loading operations.
+
+## API/Interface Reference
+
+The script does not expose an external API but provides an interactive interface through the Marimo framework. Users interact with the application via UI components such as text areas, dropdowns, and tables.
+
+## TODOs
+
+There are no explicit TODOs or notes left in the code.

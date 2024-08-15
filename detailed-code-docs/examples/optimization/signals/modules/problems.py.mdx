@@ -1,0 +1,113 @@
+---
+title: "problems.py"
+---
+
+## High-level description
+
+The target file, `problems.py`, defines a set of classes and functions for handling various signal decomposition problems. These problems are related to real-world data such as carbon dioxide emissions, solar power generation, and synthetic data for change point detection and solar panel soiling. The file provides a framework for defining, describing, plotting, decomposing, and providing feedback on these signal decomposition problems.
+
+## Code Structure
+
+The main symbols in the code are classes that represent different signal decomposition problems. Each class inherits from the abstract base class `OSDProblem`, which defines a common interface for all problem types. The classes include `MaunaLoa`, `SolarPower`, `ChangePoint`, `Soiling`, and `CustomDataProblem`. Each class implements methods for describing the problem, plotting the signal, decomposing the signal into components, and providing feedback based on the decomposition.
+
+## Symbols
+
+### `OSDProblem`
+#### Description
+`OSDProblem` is an abstract base class that defines the interface for signal decomposition problems. It requires subclasses to implement methods for getting the problem's name, description, plotting the signal, decomposing the signal, and providing feedback.
+
+#### Inputs
+None directly, but subclasses will implement methods with specific inputs.
+
+#### Outputs
+None directly, but subclasses will implement methods with specific outputs.
+
+### `MaunaLoa`
+#### Description
+Represents a signal decomposition problem for carbon dioxide emissions data from the Mauna Loa Observatory. It provides methods to describe the problem, plot the signal, decompose the signal into components, and give feedback on the decomposition.
+
+#### Inputs
+- `components`: List of components for decomposition.
+
+#### Outputs
+- Returns various outputs depending on the method, such as a plot or feedback message.
+
+#### Internal Logic
+- Uses data from `dataloaders.get_c02_data()`.
+- Decomposes the signal using a `Problem` instance from the `gfosd` library.
+- Provides feedback based on the components used in the decomposition.
+
+### `SolarPower`
+#### Description
+Handles a signal decomposition problem for solar power generation data. It includes methods to describe the problem, plot the signal, decompose it, and provide feedback.
+
+#### Inputs
+- `components`: List of components for decomposition.
+
+#### Outputs
+- Returns various outputs depending on the method, such as a plot or feedback message.
+
+#### Internal Logic
+- Uses data from `dataloaders.get_pvdaq_data()`.
+- Preprocesses the signal using a helper function from `solutions`.
+- Decomposes the signal using a `Problem` instance.
+- Provides feedback based on the components and parameters used.
+
+### `ChangePoint`
+#### Description
+Represents a signal decomposition problem for detecting change points in synthetic data. It provides methods to describe the problem, plot the signal, decompose it, and give feedback.
+
+#### Inputs
+- `components`: List of components for decomposition.
+
+#### Outputs
+- Returns various outputs depending on the method, such as a plot or feedback message.
+
+#### Internal Logic
+- Uses synthetic data from `dataloaders.make_changepoint_data()`.
+- Decomposes the signal using a `Problem` instance.
+- Provides feedback based on the components and parameters used.
+
+### `Soiling`
+#### Description
+Handles a signal decomposition problem for solar panel soiling data. It includes methods to describe the problem, plot the signal, decompose it, and provide feedback.
+
+#### Inputs
+- `components`: List of components for decomposition.
+
+#### Outputs
+- Returns various outputs depending on the method, such as a plot or feedback message.
+
+#### Internal Logic
+- Uses synthetic data from `dataloaders.make_soiling_data()`.
+- Preprocesses the signal using `MinMaxScaler`.
+- Decomposes the signal using a `Problem` instance.
+- Provides a reference decomposition for comparison.
+
+### `CustomDataProblem`
+#### Description
+Allows users to upload their own signal data and perform decomposition. It provides methods to describe the problem, plot the signal, decompose it, and provide feedback.
+
+#### Inputs
+- `signal`: The signal data to be decomposed.
+- `title`: Title for the signal plot.
+
+#### Outputs
+- Returns various outputs depending on the method, such as a plot or feedback message.
+
+#### Internal Logic
+- Uses the provided signal data for decomposition.
+- Decomposes the signal using a `Problem` instance.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `gfosd` | Provides the `Problem` class for signal decomposition. |
+| `matplotlib` | Used for plotting signals. |
+| `marimo` | Used for rendering markdown and HTML content. |
+| `numpy` | Used for numerical operations. |
+| `sklearn.preprocessing.MinMaxScaler` | Used for scaling data in the `Soiling` class. |
+
+## TODOs
+- The `OSDProblem` class has a TODO comment indicating that the `description` method should return an `mo.Html` or at least be HTML showable.

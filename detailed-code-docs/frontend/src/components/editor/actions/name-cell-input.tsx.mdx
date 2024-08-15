@@ -1,0 +1,108 @@
+---
+title: "name-cell-input.tsx"
+---
+
+## High-level description
+
+The `name-cell-input.tsx` file defines two React components, `NameCellInput` and `NameCellContentEditable`, which are used to manage and edit the names of cells in a notebook-like interface. These components provide input fields and content-editable spans for users to rename cells, ensuring that the names are valid and unique within the context of the application.
+
+## Code Structure
+
+The main symbols in the code are the `NameCellInput` and `NameCellContentEditable` components, which both utilize the `useCellNameInput` hook to manage the input state and handle changes. The `useCellNameInput` hook is responsible for normalizing and validating cell names, and it interacts with external functions like `getValidName` and `normalizeName` to ensure name uniqueness and formatting.
+
+## References
+
+- `getCellNames`, `useCellActions` from `cells.ts`: Used to fetch existing cell names and perform actions on cells.
+- `DEFAULT_CELL_NAME`, `normalizeName`, `getValidName` from `names.ts`: Used for handling default names, normalizing input, and ensuring name validity.
+- `useOnMount` from `useLifecycle.ts`: Used to handle component lifecycle events.
+- `cn` from `cn.ts`: Utility for class name merging.
+- `Events` from `events.ts`: Utility for handling event propagation and key events.
+
+## Symbols
+
+### `NameCellInput`
+#### Description
+`NameCellInput` is a React functional component that renders an input field for renaming a cell. It uses a custom hook to manage the input's state and handle changes, ensuring that the cell name is valid and unique.
+
+#### Inputs
+| Name       | Type   | Description                           |
+|:-----------|:-------|:--------------------------------------|
+| value      | string | The current name of the cell.         |
+| onChange   | function | Callback to handle name changes.     |
+| placeholder | string | Placeholder text for the input field.|
+| props      | object | Additional props for the input field. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | Renders an input field for cell name. |
+
+#### Internal Logic
+- Uses `useRef` to reference the input element.
+- Utilizes `useCellNameInput` to manage input state and handle changes.
+- Attaches a native `blur` event listener to handle input blur events.
+
+### `NameCellContentEditable`
+#### Description
+`NameCellContentEditable` is a React functional component that renders a content-editable span for renaming a cell. It provides a tooltip and handles name changes similarly to `NameCellInput`.
+
+#### Inputs
+| Name      | Type   | Description                           |
+|:----------|:-------|:--------------------------------------|
+| cellId    | CellId | Unique identifier for the cell.       |
+| value     | string | The current name of the cell.         |
+| className | string | Additional class names for styling.   |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | Renders a content-editable span for cell name. |
+
+#### Internal Logic
+- Uses `useCellActions` to update the cell name.
+- Utilizes `useCellNameInput` for managing input state and handling changes.
+- Renders a tooltip with a message prompting the user to click to rename.
+
+### `useCellNameInput`
+#### Description
+A custom hook that manages the state and logic for cell name inputs, ensuring that names are normalized and validated.
+
+#### Inputs
+| Name    | Type     | Description                           |
+|:--------|:---------|:--------------------------------------|
+| value   | string   | The current name of the cell.         |
+| onChange| function | Callback to handle name changes.      |
+
+#### Outputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| value    | string | The normalized value of the input.    |
+| onChange | function | Handles input change events.        |
+| onBlur   | function | Handles input blur events.          |
+
+#### Internal Logic
+- Maintains an internal state for the input value.
+- Normalizes the input value on change using `normalizeName`.
+- Validates and commits the name on blur, ensuring uniqueness with `getValidName`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React | Used for creating React components and hooks. |
+| `@/components/ui/input` | Provides the `Input` component used for rendering input fields. |
+| `@/components/ui/tooltip` | Provides the `Tooltip` component for displaying tooltips. |
+| `@/core/cells/cells` | Provides functions and hooks for cell actions and data. |
+| `@/core/cells/ids` | Provides types and utilities for cell IDs. |
+| `@/core/cells/names` | Provides utilities for handling cell names. |
+| `@/hooks/useLifecycle` | Provides lifecycle hooks like `useOnMount`. |
+| `@/utils/cn` | Utility for merging class names. |
+| `@/utils/events` | Utility for handling events. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic input validation and event handling. It assumes that the provided functions like `getValidName` and `normalizeName` will handle any necessary validation logic.
+
+## Logging
+
+The code does not implement any logging mechanisms.

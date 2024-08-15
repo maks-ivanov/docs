@@ -1,0 +1,83 @@
+---
+title: "test_compiler.py"
+---
+
+## High-level description
+
+The target file `tests/_ast/test_compiler.py` contains unit tests for the `compile_cell` function and related functionalities from the `marimo._ast.compiler` module. These tests are designed to verify the behavior of the `compile_cell` function, which compiles code cells, analyzes their definitions and references, and manages import statements. The tests ensure that the function correctly identifies variable definitions, references, and import statements within code cells.
+
+## Code Structure
+
+The main symbols in the code are organized into test classes, each containing static methods that represent individual test cases. These test classes are:
+
+- `TestParseCell`: Tests related to parsing and analyzing code cells for variable definitions and references.
+- `TestImportWorkspace`: Tests focused on handling import statements within code cells.
+- `TestCellFactory`: Tests related to the creation of cells from function definitions.
+
+Each test method within these classes uses the `compile_cell` function to compile a code snippet and then asserts various properties of the resulting cell object, such as its definitions, references, and import-related attributes.
+
+## References
+
+The code references several components from the `marimo` package, particularly from the `marimo._ast` module. Key references include:
+
+- `compiler.compile_cell`: The function being tested, responsible for compiling code cells.
+- `CellManager`: A class used to manage cell IDs and related operations.
+- `ImportData`: A class used to represent import-related data within the code analysis.
+
+## Symbols
+
+### `TestParseCell`
+#### Description
+This class contains static methods that test the parsing of simple code cells to ensure correct identification of variable definitions and references.
+
+#### Methods
+
+- **`test_parse_simple`**: Tests parsing of a simple code snippet with variable assignments.
+- **`test_local_variables`**: Tests parsing of code with local variable assignments and imports.
+- **`test_dunder_dunder_excluded`**: Tests that special dunder variables are handled correctly.
+- **`test_local_class`**: Tests parsing of a local class definition.
+- **`test_alias_underscored_name`**: Tests handling of import statements with aliasing.
+- **`test_ref_local_var`**: Tests handling of references to local variables.
+
+### `TestImportWorkspace`
+#### Description
+This class contains static methods that test the handling of import statements within code cells.
+
+#### Methods
+
+- **`test_import`**: Tests a simple import statement and its effects on the cell's definitions and references.
+- **`test_simple_import_statement`**: Tests a basic import statement.
+- **`test_dotted_import_statement`**: Tests an import statement with a dotted module path.
+- **`test_from_import`**: Tests a `from ... import ...` statement.
+- **`test_multiple_imports`**: Tests multiple import statements in a single code cell.
+- **`test_mixed_statements_not_import_block`**: Tests mixed import and non-import statements.
+- **`test_single_carried_import`**: Tests handling of carried imports.
+- **`test_multiple_carried_imports`**: Tests handling of multiple carried imports.
+- **`test_carried_imports_mismatch`**: Tests handling of mismatched carried imports.
+
+### `TestCellFactory`
+#### Description
+This class contains static methods that test the creation of cells from function definitions, focusing on the inference of definitions and references.
+
+#### Methods
+
+- **`test_defs`**: Tests inference of definitions from function code.
+- **`test_refs`**: Tests inference of references from function code.
+
+### `test_cell_id_from_filename`
+#### Description
+A standalone function that tests the extraction of cell IDs from filenames, ensuring that the `cell_id_from_filename` function works correctly.
+
+## Dependencies
+
+The code relies on the `marimo` package, specifically the `marimo._ast` module, which provides the `compiler`, `CellManager`, and `ImportData` components used in the tests.
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._ast.compiler` | Provides the `compile_cell` function and related utilities for compiling and analyzing code cells. |
+| `marimo._ast.app.CellManager` | Manages cell IDs and related operations. |
+| `marimo._ast.visitor.ImportData` | Represents import-related data within the code analysis. |
+
+## Error Handling
+
+The tests use assertions to verify the expected behavior of the `compile_cell` function. If an assertion fails, it indicates a discrepancy between the expected and actual behavior, which is a common approach in unit testing to handle errors and ensure code correctness.

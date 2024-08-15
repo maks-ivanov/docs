@@ -1,0 +1,65 @@
+---
+title: "rpc.ts"
+---
+
+## High-level description
+
+The target file, `rpc.ts`, is responsible for setting up a Remote Procedure Call (RPC) mechanism between a parent JavaScript environment and a Web Worker. It utilizes the `rpc-anywhere` library to create a communication channel that allows the parent to send and receive messages to and from the worker. This setup is crucial for enabling asynchronous operations and data exchange between the main thread and the worker thread, particularly in a web application context where Web Workers are used to offload heavy computations or tasks.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ParentSchema` defines the structure of messages that the parent can send to the worker.
+- `getWorkerRPC` is a function that initializes the RPC communication using the `createRPC` function from the `rpc-anywhere` library. It sets up the transport mechanism and debugging hooks for logging message exchanges.
+
+## Symbols
+
+### `ParentSchema`
+#### Description
+`ParentSchema` is a TypeScript type that defines the structure of messages that the parent can send to the worker. It specifies a single message type, `consumerReady`, which is an empty object.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `getWorkerRPC`
+#### Description
+`getWorkerRPC` is a function that sets up an RPC communication channel between the parent and a worker. It uses the `createRPC` function from the `rpc-anywhere` library to establish this channel, specifying the transport mechanism and options such as maximum request time and debugging hooks.
+
+#### Inputs
+| Name   | Type   | Description          |
+|:-------|:-------|:---------------------|
+| worker | Worker | The Web Worker instance to communicate with. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rpc  | ReturnType of `createRPC` | The RPC interface for communication with the worker. |
+
+#### Internal Logic
+- The function calls `createWorkerTransport` to create a transport mechanism for the worker, using a predefined `TRANSPORT_ID`.
+- It then calls `createRPC` with the `ParentSchema` and a generic `WorkerSchema` to establish the RPC channel.
+- The function sets a maximum request time of 20 seconds and includes debugging hooks to log messages sent and received between the parent and the worker.
+
+## References
+
+- `createWorkerTransport` and `createRPC` from the `rpc-anywhere` library are used to establish the transport and RPC communication.
+- `TRANSPORT_ID` is imported from `./worker/constants` to uniquely identify the transport channel.
+- `Logger` from `@/utils/Logger` is used for logging debug messages during message exchanges.
+
+## Dependencies
+
+| Dependency     | Purpose                                                                 |
+|:---------------|:------------------------------------------------------------------------|
+| `rpc-anywhere` | Provides the functions `createWorkerTransport` and `createRPC` for setting up RPC communication. |
+| `@/utils/Logger` | Used for logging debug information about the messages being sent and received. |
+
+## Logging
+
+The code implements logging using the `Logger` utility. It logs messages sent from the parent to the worker and vice versa, which is useful for debugging and monitoring the communication flow.
+
+## Error Handling
+
+The code does not explicitly handle errors within the `getWorkerRPC` function. However, the use of a maximum request time and logging can help identify and troubleshoot issues in the communication process.

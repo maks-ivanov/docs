@@ -1,0 +1,176 @@
+---
+title: "test_module_watcher.py"
+---
+
+## High-level description
+
+The target file `test_module_watcher.py` contains a suite of asynchronous tests designed to verify the functionality of a module reloading mechanism within a runtime environment. These tests ensure that changes to Python modules are detected and handled correctly by the system, specifically focusing on the automatic reloading of modules and the management of stale cells in a computational graph.
+
+## Code Structure
+
+The main symbols in the code are the test functions, each of which is an asynchronous test case. These functions interact with a `Kernel` object, which represents the runtime environment, and use utility functions to manipulate Python files and configurations. The tests are structured to simulate changes in module files and verify that the system correctly identifies and reloads these changes.
+
+## Symbols
+
+### `test_reload_function`
+#### Description
+Tests the basic functionality of the module reloading system by modifying a simple Python module and verifying that the changes are detected and reloaded.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tmp_path` | `pathlib.Path` | Temporary directory path for creating test files. |
+| `py_modname` | `str` | Name of the Python module to be tested. |
+| `execution_kernel` | `Kernel` | The runtime kernel used for executing code. |
+| `exec_req` | `ExecReqProvider` | Provider for creating execution requests. |
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. A temporary Python file is created with a simple function.
+2. The kernel is configured to use lazy auto-reloading.
+3. The function is imported and executed, and its result is checked.
+4. The file is updated to change the function's return value.
+5. The test waits for the module watcher to detect the change.
+6. The test verifies that the relevant cells are marked as stale and re-executes them to ensure the new function definition is used.
+
+### `test_disable_and_reenable_reload`
+#### Description
+Tests the ability to disable and then re-enable the module reloading feature, ensuring that it functions correctly after being toggled.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Similar setup to `test_reload_function`, but includes steps to disable and then re-enable the auto-reload feature.
+2. Verifies that the system correctly handles the re-enabling of the feature by detecting changes and reloading modules.
+
+### `test_reload_nested_module_function`
+#### Description
+Tests the reloading of a function within a nested module structure, ensuring that changes in deeply nested modules are detected and handled.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Creates a nested module structure with a function.
+2. Configures the kernel for lazy auto-reloading.
+3. Imports and executes the function, then updates the nested module.
+4. Verifies that the changes are detected and the function is reloaded correctly.
+
+### `test_reload_nested_module_import_module`
+#### Description
+Tests the reloading of a module imported from a nested module structure, ensuring that changes in the module are detected and handled.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Similar to `test_reload_nested_module_function`, but focuses on importing the module itself rather than a specific function.
+2. Verifies that changes to the module are detected and handled correctly.
+
+### `test_reload_nested_module_import_module_autorun`
+#### Description
+Tests the auto-run feature of the module reloading system with nested modules, ensuring that changes trigger automatic execution of affected cells.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Similar setup to previous nested module tests, but configures the kernel for auto-run mode.
+2. Verifies that changes in the module trigger automatic execution of affected cells.
+
+### `test_reload_package`
+#### Description
+Tests the reloading of a package, ensuring that changes in package modules are detected and handled.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `tmp_path` | `pathlib.Path` | Temporary directory path for creating test files. |
+| `execution_kernel` | `Kernel` | The runtime kernel used for executing code. |
+| `exec_req` | `ExecReqProvider` | Provider for creating execution requests. |
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Creates a package with nested modules.
+2. Configures the kernel for lazy auto-reloading.
+3. Imports the package and executes a function, then updates the package module.
+4. Verifies that changes are detected and handled correctly.
+
+### `test_reload_third_party`
+#### Description
+Tests the reloading mechanism with third-party libraries, ensuring that importing such libraries does not interfere with the module reloading system.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Creates a module that imports a third-party library (NumPy).
+2. Configures the kernel for lazy auto-reloading.
+3. Verifies that the module reloading system functions correctly without interference from the third-party library.
+
+### `test_reload_with_modified_cell`
+#### Description
+Tests the behavior of the module reloading system when a cell is modified, ensuring that the system correctly marks the cell as stale.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Similar setup to `test_reload_function`.
+2. Modifies a cell and verifies that it is marked as stale.
+3. Ensures that the system correctly handles the modified cell.
+
+### `test_reload_function_in_import_block`
+#### Description
+Tests the reloading of a function within an import block, ensuring that changes are detected and handled correctly.
+
+#### Inputs
+Same as `test_reload_function`.
+
+#### Outputs
+None directly, but asserts are used to verify the expected behavior.
+
+#### Internal Logic
+1. Creates a module with an import block.
+2. Configures the kernel for lazy auto-reloading.
+3. Verifies that changes to the function within the import block are detected and handled correctly.
+
+## References
+
+- `random_modname` and `update_file` from `reload_test_utils` are used to generate random module names and update files with a delay to ensure timestamp differences.
+- `DEFAULT_CONFIG` from `marimo._config.config` is used to configure the kernel.
+- `Kernel`, `SetUserConfigRequest`, and `ExecReqProvider` are used to manage the execution environment and create execution requests.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for defining and running the test cases. |
+| `asyncio` | Used for asynchronous operations within the tests. |
+
+## TODOs
+
+- There is a TODO comment to deflake a specific test, indicating that the test is currently flaky and requires further investigation.

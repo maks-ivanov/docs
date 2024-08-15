@@ -1,0 +1,82 @@
+---
+title: "df_formatters.py"
+---
+
+## High-level description
+
+The target file, `df_formatters.py`, defines two formatter classes, `PolarsFormatter` and `PyArrowFormatter`, which are used to format data frames from the `polars` and `pyarrow` libraries, respectively. These formatters are part of a larger framework for rendering data in a user-friendly format, specifically for use within the Marimo environment. They utilize a table component to convert data frames into HTML representations, which can be displayed in a web-based interface.
+
+## Code Structure
+
+The main symbols in the code are the `PolarsFormatter` and `PyArrowFormatter` classes, both of which inherit from the `FormatterFactory` abstract base class. Each class implements the `package_name` and `register` methods. The `register` method in each class defines a specific formatter function for the respective data frame type (`pl.DataFrame` for Polars and `pa.Table` for PyArrow) using the `opinionated_formatter` decorator from the `formatting` module.
+
+## References
+
+- `FormatterFactory`: An abstract base class that defines the interface for formatter classes.
+- `KnownMimeType`: A type alias for known MIME types, used to ensure correct MIME type strings.
+- `table`: A UI component used to render data frames as HTML tables.
+- `formatting.opinionated_formatter`: A decorator used to register formatter functions for specific data types.
+
+## Symbols
+
+### `PolarsFormatter`
+#### Description
+The `PolarsFormatter` class is responsible for formatting `polars.DataFrame` objects. It registers a formatter function that converts a Polars DataFrame into an HTML table representation using the `table` component.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | pl.DataFrame | A Polars DataFrame to be formatted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[KnownMimeType, str] | A tuple containing the MIME type and the HTML representation of the DataFrame. |
+
+#### Internal Logic
+- The `register` method imports the `polars` library and the `formatting` module.
+- It defines a formatter function `_show_marimo_dataframe` using the `opinionated_formatter` decorator.
+- The function attempts to convert the DataFrame into an HTML table using the `table` component and returns the MIME type and HTML string.
+- If an exception occurs, it logs a warning and falls back to using the DataFrame's `_repr_html_` method.
+
+### `PyArrowFormatter`
+#### Description
+The `PyArrowFormatter` class is responsible for formatting `pyarrow.Table` objects. It registers a formatter function that converts a PyArrow Table into an HTML table representation using the `table` component.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | pa.Table | A PyArrow Table to be formatted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | tuple[KnownMimeType, str] | A tuple containing the MIME type and the HTML representation of the Table. |
+
+#### Internal Logic
+- The `register` method imports the `pyarrow` library and the `formatting` module.
+- It defines a formatter function `_show_marimo_dataframe` using the `opinionated_formatter` decorator.
+- The function converts the Table into an HTML table using the `table` component and returns the MIME type and HTML string.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `polars` | Used for handling Polars DataFrame objects. |
+| `pyarrow` | Used for handling PyArrow Table objects. |
+| `marimo._loggers` | Provides logging functionality. |
+| `marimo._messaging.mimetypes` | Defines known MIME types. |
+| `marimo._output.formatters.formatter_factory` | Provides the base class for formatter factories. |
+| `marimo._plugins.ui._impl.table` | Provides the table component for rendering data frames. |
+
+## Error Handling
+
+- The `PolarsFormatter` class includes error handling in its formatter function. If an exception occurs during the conversion of a DataFrame to an HTML table, it logs a warning message and falls back to using the DataFrame's `_repr_html_` method.
+
+## Logging
+
+- The `LOGGER` object is used to log warning messages when formatting a DataFrame fails.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,76 @@
+---
+title: "bugs.spec.ts"
+---
+
+## High-level description
+
+The target file `bugs.spec.ts` is an end-to-end test script using Playwright to verify the behavior of a web application, specifically focusing on the initialization and re-initialization of UI elements when upstream source cells are re-run. The test ensures that changes in the input values of cells are correctly reset when the cells are re-executed.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `test` function from Playwright is used to define and execute test cases.
+- The `getAppUrl` function from `playwright.config.ts` is used to retrieve the URL of the application being tested.
+- Helper functions `createCellBelow`, `maybeRestartKernel`, and `runCell` from `helper.ts` are used to manipulate the test environment by creating and running cells and managing the kernel state.
+
+## References
+
+- `getAppUrl` from `playwright.config.ts`: Used to get the URL for the application under test.
+- `createCellBelow`, `maybeRestartKernel`, `runCell` from `helper.ts`: Used to perform actions on the test page.
+
+## Symbols
+
+### `test.beforeEach`
+#### Description
+Sets up the test environment before each test case by navigating to the application URL and potentially reloading the page and restarting the kernel if the test is being retried.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+| info | TestInfo | Information about the current test, including retry status. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Navigates to the application URL.
+- If the test is being retried, reloads the page and restarts the kernel using `maybeRestartKernel`.
+
+### `test("correctly initializes cells")`
+#### Description
+Tests that UI elements are correctly initialized and re-initialized when upstream source cells are re-run. It verifies that input values are reset to their initial state after re-execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+| info | TestInfo | Information about the current test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Verifies the initial value of a number input is "1".
+- Changes the input value to "5" and verifies the change.
+- Creates a new cell with content `bug_1` and runs it.
+- Verifies that both number inputs have the value "5".
+- Re-runs the first cell and checks that both inputs are reset to "1".
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the testing framework and utilities for writing and executing end-to-end tests. |
+
+## Error Handling
+
+The test script relies on Playwright's built-in error handling mechanisms. Assertions using `expect` will throw errors if conditions are not met, causing the test to fail.
+
+## Logging
+
+No explicit logging is implemented in the code. Playwright's default logging and reporting mechanisms are used.
+
+## TODOs
+
+No TODOs or notes are present in the code.

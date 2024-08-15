@@ -1,0 +1,101 @@
+---
+title: "test_health.py"
+---
+
+## High-level description
+
+The target file `test_health.py` contains a set of unit tests designed to verify the health and status endpoints of a server API. These tests ensure that the server's health check, status, version, and memory usage endpoints are functioning correctly and returning the expected responses. The tests also check for proper authorization handling on certain endpoints.
+
+## Code Structure
+
+The file defines several test functions, each targeting a specific API endpoint. These functions use the `TestClient` from the `starlette` or `fastapi` library to simulate HTTP requests to the server. The tests are organized to check both the response status codes and the content of the responses.
+
+## Symbols
+
+### `test_health`
+#### Description
+This function tests the `/health` and `/healthz` endpoints to ensure they return a status code of 200 and a JSON response indicating the server is healthy.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make requests to the server. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request to `/health` and `/healthz`.
+- Asserts that the response status code is 200.
+- Asserts that the JSON response is `{"status": "healthy"}`.
+
+### `test_status`
+#### Description
+This function tests the `/api/status` endpoint for both unauthorized and authorized access, verifying the response content and status code.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make requests to the server. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request to `/api/status` without authorization and checks for a 401 status code.
+- Sends a GET request to `/api/status` with authorization headers and checks for a 200 status code.
+- Verifies the content of the response, including server status, filenames, mode, sessions, version, and LSP running status.
+
+### `test_version`
+#### Description
+This function tests the `/api/version` endpoint to ensure it returns the correct version of the application.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make requests to the server. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request to `/api/version`.
+- Asserts that the response status code is 200.
+- Asserts that the response text matches the application's version.
+
+### `test_memory`
+#### Description
+This function tests the `/api/usage` endpoint to verify memory and CPU usage statistics, ensuring they return valid and expected values.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make requests to the server. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request to `/api/status` without authorization and checks for a 401 status code.
+- Sends a GET request to `/api/usage` with authorization headers and checks for a 200 status code.
+- Verifies the memory and CPU statistics in the response, ensuring they are greater than zero or valid.
+
+## References
+
+- `token_header`: A function from `tests._server.mocks` used to generate authorization headers for requests.
+- `__version__`: The version of the application imported from `marimo`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.testclient` | Used to create a test client for simulating HTTP requests to the server. |
+| `marimo` | Provides the application version and possibly other utilities. |
+
+## Error Handling
+
+The tests use assertions to handle errors. If an assertion fails, it indicates that the endpoint did not return the expected result, which is a common practice in unit testing to ensure code correctness.
+
+## Logging
+
+There is no explicit logging in the test functions. The focus is on assertions to validate the expected behavior of the API endpoints.

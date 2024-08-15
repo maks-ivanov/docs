@@ -1,0 +1,101 @@
+---
+title: "redirect_streams.py"
+---
+
+## High-level description
+
+The `redirect_streams.py` file is part of the Marimo project and is responsible for managing the redirection of standard input/output/error streams within a specific execution context. It provides functionality to temporarily redirect these streams to custom implementations, allowing for controlled input and output handling during the execution of code cells, particularly in a notebook or interactive environment.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `forward_os_stream` is a utility function that continuously reads from a file descriptor and writes the data to a stream object.
+- `dup2newfd` is a utility function that creates a pipe and duplicates a file descriptor to the write end of the pipe.
+- `redirect_streams` is a context manager that temporarily redirects the standard input/output/error streams to custom implementations for a given execution context, identified by a `cell_id`.
+
+## References
+
+- `CellId_t` from `marimo._ast.cell` is used to identify the execution context or cell.
+- `redirect` from `marimo._messaging.streams` is used to manage the redirection of streams.
+- `Stderr`, `Stdin`, `Stdout`, and `Stream` from `marimo._messaging.types` are used as types for the streams being redirected.
+
+## Symbols
+
+### `forward_os_stream`
+#### Description
+Continuously reads data from a file descriptor and writes it to a specified stream object, effectively forwarding the data from the file descriptor to the stream.
+
+#### Inputs
+| Name          | Type          | Description                        |
+|:--------------|:--------------|:-----------------------------------|
+| stream_object | Stdout/Stderr | The stream object to write data to |
+| fd            | int           | The file descriptor to read from   |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Continuously reads up to 1024 bytes from the file descriptor.
+- Decodes the data and writes it to the stream object.
+- Stops when no more data is available.
+
+### `dup2newfd`
+#### Description
+Creates a pipe and duplicates a file descriptor to the write end of the pipe, allowing for redirection of the file descriptor.
+
+#### Inputs
+| Name | Type | Description                  |
+|:-----|:-----|:-----------------------------|
+| fd   | int  | The file descriptor to duplicate |
+
+#### Outputs
+| Name   | Type | Description                                      |
+|:-------|:-----|:-------------------------------------------------|
+| output | tuple[int, int, int] | A tuple containing the duplicate of `fd`, the read end of the pipe, and `fd` itself |
+
+#### Internal Logic
+- Duplicates the original file descriptor.
+- Creates a pipe and assigns the write end to the original file descriptor.
+- Closes the write end of the pipe after duplication.
+
+### `redirect_streams`
+#### Description
+A context manager that temporarily redirects the standard input/output/error streams to custom implementations for a specific execution context, identified by a `cell_id`.
+
+#### Inputs
+| Name   | Type   | Description                                      |
+|:-------|:-------|:-------------------------------------------------|
+| cell_id | CellId_t | The identifier for the execution context or cell |
+| stream  | Stream  | The stream object used for communication        |
+| stdout  | Stdout/None | The custom stdout stream, if any             |
+| stderr  | Stderr/None | The custom stderr stream, if any             |
+| stdin   | Stdin/None | The custom stdin stream, if any               |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if the current context is nested and skips redirection if so.
+- Temporarily replaces `sys.stdout`, `sys.stderr`, and `sys.stdin` with the provided custom streams.
+- Uses the `redirect` context manager to handle the redirection of stdout and stderr.
+- Restores the original streams after the context manager exits.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file descriptor operations like `os.read`, `os.dup`, `os.pipe`, and `os.dup2`. |
+| `sys` | Used to access and modify the standard input/output/error streams. |
+| `contextlib` | Provides the `contextmanager` decorator for creating context managers. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. The `forward_os_stream` function uses a loop that breaks when no data is read, which implicitly handles the end-of-file condition.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

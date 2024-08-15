@@ -1,0 +1,138 @@
+---
+title: "column-header.tsx"
+---
+
+## High-level description
+
+The `column-header.tsx` file defines React components for rendering and managing the headers of columns in a data table. These components provide functionality for sorting, filtering, and formatting data within the columns, as well as offering a user interface for interacting with these features through dropdown menus.
+
+## Code Structure
+
+The main components in this file are `DataTableColumnHeader`, `DataTableColumnHeaderWithSummary`, and `DropdownMenuItemFilter`. These components are interconnected, with `DataTableColumnHeaderWithSummary` extending the functionality of `DataTableColumnHeader` by adding a summary section. The `DropdownMenuItemFilter` component is used within these headers to provide filtering capabilities.
+
+## Symbols
+
+### `DataTableColumnHeader`
+#### Description
+This component renders a column header for a data table, providing options for sorting, filtering, and formatting the column data. It uses dropdown menus to allow users to interact with these options.
+
+#### Inputs
+| Name     | Type                                      | Description                        |
+|:---------|:------------------------------------------|:-----------------------------------|
+| column   | `Column&lt;TData, TValue&gt;`                   | The column object from the table.  |
+| header   | `React.ReactNode`                         | The content to display as the header. |
+| className| `string`                                  | Additional CSS classes for styling.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `JSX.Element` | The rendered column header component. |
+
+#### Internal Logic
+- Checks if the column can be sorted or filtered.
+- Renders sorting options using icons for ascending, descending, and clearing sort.
+- Provides options for text wrapping in the column.
+- Displays format options based on the column's data type.
+- Uses a dropdown menu to encapsulate all these interactive elements.
+
+### `DataTableColumnHeaderWithSummary`
+#### Description
+Extends `DataTableColumnHeader` by adding a summary section below the header, which can display additional information about the column.
+
+#### Inputs
+| Name     | Type                                      | Description                        |
+|:---------|:------------------------------------------|:-----------------------------------|
+| column   | `Column&lt;TData, TValue&gt;`                   | The column object from the table.  |
+| header   | `React.ReactNode`                         | The content to display as the header. |
+| summary  | `React.ReactNode`                         | The content to display as the summary. |
+| className| `string`                                  | Additional CSS classes for styling.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `JSX.Element` | The rendered column header with summary component. |
+
+### `DropdownMenuItemFilter`
+#### Description
+Provides filtering options for a column based on its data type. It supports boolean, text, and number filters, and uses dropdown menus to allow users to set or clear filters.
+
+#### Inputs
+| Name   | Type                                      | Description                        |
+|:-------|:------------------------------------------|:-----------------------------------|
+| column | `Column&lt;TData, TValue&gt;`                   | The column object from the table.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `JSX.Element` | The rendered filter menu items. |
+
+#### Internal Logic
+- Determines if the column can be filtered and what type of filter to apply.
+- Renders different filter options based on the column's filter type.
+- Provides UI elements to apply or clear filters.
+
+### `NumberRangeFilter`
+#### Description
+A sub-component used by `DropdownMenuItemFilter` to provide a UI for filtering numeric columns by a range.
+
+#### Inputs
+| Name   | Type                                      | Description                        |
+|:-------|:------------------------------------------|:-----------------------------------|
+| column | `Column&lt;TData, TValue&gt;`                   | The column object from the table.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `JSX.Element` | The rendered number range filter component. |
+
+#### Internal Logic
+- Manages state for minimum and maximum filter values.
+- Provides input fields for users to enter range values.
+- Applies the filter when the user confirms their input.
+
+### `TextFilter`
+#### Description
+A sub-component used by `DropdownMenuItemFilter` to provide a UI for filtering text columns.
+
+#### Inputs
+| Name   | Type                                      | Description                        |
+|:-------|:------------------------------------------|:-----------------------------------|
+| column | `Column&lt;TData, TValue&gt;`                   | The column object from the table.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `JSX.Element` | The rendered text filter component. |
+
+#### Internal Logic
+- Manages state for the text filter value.
+- Provides an input field for users to enter a search term.
+- Applies the filter when the user confirms their input.
+
+## References
+
+- `formatOptions` from `column-formatting/types.ts` is used to determine available formatting options for a column based on its data type.
+- `DATA_TYPE_ICON` from `datasets/icons.tsx` is used to select icons representing different data types.
+- `Filter` from `filters.ts` is used to create filter objects for different data types.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@tanstack/react-table` | Provides types and utilities for table and column management. |
+| `lucide-react` | Supplies icons used in the UI components. |
+| `@/utils/cn` | Utility for merging and managing CSS class names. |
+| `@/components/ui/dropdown-menu` | Provides dropdown menu components used for sorting, filtering, and formatting options. |
+| `@/components/ui/button` | Supplies button components used in the UI. |
+| `@/components/ui/input` | Provides input components for text and number filtering. |
+
+## Error Handling
+
+- The `logNever` function is used to log unexpected filter types, ensuring that any unhandled cases are noted without crashing the application.
+
+## Logging
+
+- The `logNever` function logs unexpected filter types to the console, aiding in debugging and ensuring that all cases are considered.
+
+## TODOs
+- The file contains placeholders for unimplemented filter types such as "select" and "date", indicating potential future enhancements.

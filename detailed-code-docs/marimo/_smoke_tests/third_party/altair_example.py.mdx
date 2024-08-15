@@ -1,0 +1,139 @@
+---
+title: "altair_example.py"
+---
+
+## High-level description
+
+The target file `altair_example.py` is a script that uses the `marimo` framework to create a series of data visualizations using the `Altair` library. It defines several cells, each responsible for a specific visualization task, such as plotting car data, wind vectors, and stock prices. The script is structured to be run as a standalone application using `marimo.App`.
+
+## Code Structure
+
+The script is organized into several `@app.cell` decorated functions, each representing a cell in the `marimo` application. These cells are responsible for different tasks, such as importing necessary libraries, fetching data, and creating visualizations. The cells are executed in sequence when the application runs.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which is used to define and run the application. It manages the execution of the decorated cells.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a cell in the `marimo` application. Each decorated function represents a cell that can perform a specific task, such as data processing or visualization.
+
+### `__(data)`
+#### Description
+This cell function retrieves data for cars, stocks, and wind vectors. It returns these datasets for use in subsequent cells.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | object | An object providing access to various datasets. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars | DataFrame | Data about cars. |
+| source | DataFrame | Data about wind vectors. |
+| stocks | URL | URL to the stocks data. |
+
+### `__(alt, source)`
+#### Description
+This cell creates a wind vector visualization using the `Altair` library. It plots wind direction and speed on a map.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | The Altair library module. |
+| source | DataFrame | Data about wind vectors. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses `alt.Chart` to create a point plot with wind direction and speed encoded as color, angle, and size.
+- Projects the plot using the "equalEarth" projection.
+
+### `__(alt, cars, mo)`
+#### Description
+This cell creates a scatter plot of car data, displaying horsepower against miles per gallon, colored by origin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | The Altair library module. |
+| cars | DataFrame | Data about cars. |
+| mo | module | The Marimo library module. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars_scatter_plot | Chart | An Altair scatter plot of car data. |
+
+#### Internal Logic
+- Uses `alt.Chart` to create a scatter plot with interactive features.
+- Displays the plot as HTML using `mo.md`.
+
+### `__(alt, datum, stocks)`
+#### Description
+This cell creates a line and point plot of stock prices, filtered to show only data for the "GOOG" symbol.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | The Altair library module. |
+| datum | object | An Altair expression object for data filtering. |
+| stocks | DataFrame | Data about stock prices. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| base | Chart | An Altair line and point plot of stock prices. |
+
+#### Internal Logic
+- Uses `alt.Chart` to create a base chart with stock data.
+- Applies a filter to show only "GOOG" stock data.
+- Combines line and point marks for visualization.
+
+### `__()`
+#### Description
+This cell imports the `marimo` library and returns it for use in other cells.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The Marimo library module. |
+
+### `__()`
+#### Description
+This cell imports the `altair` library, `datum` expression, and `vega_datasets` data module, returning them for use in other cells.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | The Altair library module. |
+| data | module | The Vega datasets module. |
+| datum | object | An Altair expression object. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Framework for creating interactive applications. |
+| altair | Library for declarative statistical visualization. |
+| vega_datasets | Provides example datasets for use with Altair. |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond basic exception raising. It assumes that the data and libraries are available and correctly configured.
+
+## Logging
+
+The script does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The script does not expose an API or public interface. It is designed to be run as a standalone application using the `marimo` framework.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

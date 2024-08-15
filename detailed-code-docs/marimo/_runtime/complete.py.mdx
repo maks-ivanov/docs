@@ -1,0 +1,308 @@
+---
+title: "complete.py"
+---
+
+## High-level description
+
+The `complete.py` file in the `marimo/_runtime` directory is responsible for handling code completion requests using the Jedi library. It processes these requests by analyzing the code context, generating completion options, and broadcasting the results back to the client. The file includes functions to filter and format completion suggestions, manage completion queues, and handle both static and interpreter-based completions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `complete` function is the primary entry point for handling code completion requests.
+- Helper functions like `_get_completions`, `_get_completion_options`, and `_get_completion_option` are used to generate and format completion suggestions.
+- The `completion_worker` function continuously processes completion requests from a queue.
+- Utility functions such as `_is_dunder_name`, `_should_include_name`, `_get_docstring`, and `_get_type_hint` assist in filtering and formatting the completion data.
+
+## References
+
+The code references several other parts of the codebase:
+- `jedi` library for code analysis and completion.
+- `CompletionOption` and `CompletionResult` from `marimo._messaging` for structuring completion data.
+- `Stream` from `marimo._messaging.types` for broadcasting results.
+- `CodeCompletionRequest` from `marimo._runtime.requests` for handling incoming requests.
+- `DirectedGraph` from `marimo._runtime.dataflow` for managing code dependencies.
+
+## Symbols
+
+### `_is_dunder_name`
+#### Description
+Determines if a given name is a "dunder" (double underscore) name, which is typically used for special methods in Python.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the name is a dunder name, False otherwise. |
+
+___
+
+### `_should_include_name`
+#### Description
+Decides whether a name should be included in the completion suggestions based on its prefix and whether it is a dunder name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name to evaluate. |
+| prefix | str | The prefix to compare against. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the name should be included, False otherwise. |
+
+#### Internal Logic
+- Excludes names starting with a single underscore unless they are dunder names and the prefix also starts with an underscore.
+
+___
+
+### `_get_docstring`
+#### Description
+Retrieves and formats the docstring for a given completion item, including function signatures if applicable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion | jedi.api.classes.BaseName | The completion item to retrieve the docstring for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| docstring | str | The formatted docstring and signature information. |
+
+#### Internal Logic
+- Attempts to get the raw docstring and format it based on the type of the completion (function, class, etc.).
+- Converts RST to HTML for non-Marimo modules and formats Marimo docstrings as markdown.
+
+___
+
+### `_get_type_hint`
+#### Description
+Fetches the type hint for a given completion item.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion | jedi.api.classes.BaseName | The completion item to retrieve the type hint for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type_hint | str | The type hint for the completion item. |
+
+___
+
+### `_get_completion_info`
+#### Description
+Determines the appropriate information to display for a completion item, either a docstring or a type hint.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion | jedi.api.classes.BaseName | The completion item to retrieve information for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| info | str | The information to display for the completion item. |
+
+#### Internal Logic
+- Chooses between fetching a docstring or a type hint based on the type of the completion item.
+
+___
+
+### `_get_completion_option`
+#### Description
+Creates a `CompletionOption` object for a given completion item, including its name, type, and additional information.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion | jedi.api.classes.Completion | The completion item to process. |
+| script | jedi.Script | The script context for the completion. |
+| compute_completion_info | bool | Whether to compute additional completion information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| option | CompletionOption | The structured completion option. |
+
+___
+
+### `_get_completion_options`
+#### Description
+Generates a list of `CompletionOption` objects from a list of completion items, applying filters and limits.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completions | list[jedi.api.classes.Completion] | The list of completion items. |
+| script | jedi.Script | The script context for the completions. |
+| prefix | str | The prefix to filter completions by. |
+| limit | int | The maximum number of completions to process. |
+| timeout | float | The time limit for processing completions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| options | list[CompletionOption] | The list of structured completion options. |
+
+#### Internal Logic
+- Filters completions based on the prefix and processes them within the specified time limit.
+
+___
+
+### `_write_completion_result`
+#### Description
+Broadcasts the completion result to the specified stream.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | Stream | The stream to broadcast the result to. |
+| completion_id | str | The ID of the completion request. |
+| prefix_length | int | The length of the prefix used for completion. |
+| options | list[CompletionOption] | The list of completion options to broadcast. |
+
+___
+
+### `_write_no_completions`
+#### Description
+Broadcasts a message indicating that no completions are available.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | Stream | The stream to broadcast the message to. |
+| completion_id | str | The ID of the completion request. |
+
+___
+
+### `_drain_queue`
+#### Description
+Drains the completion request queue, returning the most recent request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion_queue | QueueType[CodeCompletionRequest] | The queue to drain. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| request | CodeCompletionRequest | The most recent completion request. |
+
+___
+
+### `_get_completions_with_script`
+#### Description
+Generates completions using a static analysis script.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | list[str] | The list of code strings to analyze. |
+| document | str | The current document to complete. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | tuple[jedi.Script, list[jedi.api.classes.Completion]] | The script and list of completions. |
+
+___
+
+### `_get_completions_with_interpreter`
+#### Description
+Generates completions using an interpreter-based approach, which may execute code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| document | str | The current document to complete. |
+| glbls | dict[str, Any] | The global namespace for execution. |
+| glbls_lock | threading.RLock | The lock protecting the global namespace. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | tuple[jedi.Script, list[jedi.api.classes.Completion]] | The script and list of completions. |
+
+#### Internal Logic
+- Attempts to acquire a lock on the global namespace to safely execute code for completions.
+
+___
+
+### `_get_completions`
+#### Description
+Determines the best method to generate completions, either using static analysis or interpreter-based execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | list[str] | The list of code strings to analyze. |
+| document | str | The current document to complete. |
+| glbls | dict[str, Any] | The global namespace for execution. |
+| glbls_lock | threading.RLock | The lock protecting the global namespace. |
+| prefer_interpreter_completion | bool | Whether to prefer interpreter-based completions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | tuple[jedi.Script, list[jedi.api.classes.Completion]] | The script and list of completions. |
+
+___
+
+### `complete`
+#### Description
+Handles a code completion request by generating and broadcasting completion options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| request | CodeCompletionRequest | The completion request to handle. |
+| graph | dataflow.DirectedGraph | The dataflow graph of the program. |
+| glbls | dict[str, Any] | The global namespace for execution. |
+| glbls_lock | threading.RLock | The lock protecting the global namespace. |
+| stream | Stream | The stream to broadcast results to. |
+| docstrings_limit | int | The limit for fetching docstrings and type hints. |
+| timeout | float | The timeout for fetching docstrings and type hints. |
+| prefer_interpreter_completion | bool | Whether to prefer interpreter-based completions. |
+
+#### Internal Logic
+- Checks if the document is empty and handles it accordingly.
+- Uses the dataflow graph to determine the code context.
+- Chooses between static and interpreter-based completions.
+- Formats and broadcasts the completion results.
+
+___
+
+### `completion_worker`
+#### Description
+Continuously processes code completion requests from a queue and handles them.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| completion_queue | QueueType[CodeCompletionRequest] | The queue of completion requests. |
+| graph | dataflow.DirectedGraph | The dataflow graph of the program. |
+| glbls | dict[str, Any] | The global namespace for execution. |
+| glbls_lock | threading.RLock | The lock protecting the global namespace. |
+| stream | Stream | The stream to broadcast results to. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jedi` | Used for code analysis and generating completion suggestions. |
+| `html` | Used for escaping HTML content in docstrings. |
+| `threading` | Provides locks for thread-safe operations. |
+| `time` | Used for measuring elapsed time during completion processing. |
+
+## Logging
+
+The code uses a logger (`LOGGER`) to log debug information, particularly when exceptions occur during docstring retrieval or type hint generation. This helps in diagnosing issues with the completion process.

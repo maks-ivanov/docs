@@ -1,0 +1,126 @@
+---
+title: "visitor.py"
+---
+
+## High-level description
+
+The `visitor.py` file defines a set of classes and functions for traversing and analyzing Python Abstract Syntax Trees (ASTs). It is primarily focused on identifying and managing variable scopes, imports, and references within a code block. The main class, `ScopedVisitor`, extends `ast.NodeVisitor` to provide a detailed analysis of variable definitions, references, and imports, which is crucial for understanding code dependencies and scoping rules.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ImportData`, `VariableData`, `Block`, `ObscuredScope`, and `RefData` are data classes used to store metadata about imports, variables, and scopes.
+- `ScopedVisitor` is a subclass of `ast.NodeVisitor` that uses these data classes to track variable definitions, references, and imports as it traverses an AST.
+- The visitor methods in `ScopedVisitor` handle different types of AST nodes, updating the internal state to reflect the current scope and variable usage.
+
+## Symbols
+
+### `ImportData`
+#### Description
+Stores metadata about an import statement, including the module name, the variable name it is imported as, and the fully qualified symbol name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| module | str | The full module name being imported. |
+| definition | str | The variable name used in the import statement. |
+| imported_symbol | Optional[str] | The fully qualified name of the imported symbol. |
+| import_level | Optional[int] | The level of the import (relative or absolute). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| namespace | str | The top-level namespace of the module. |
+
+### `VariableData`
+#### Description
+Stores metadata about a variable, including its kind (function, class, import, or variable) and any required references.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kind | Literal | The type of variable (function, class, import, or variable). |
+| required_refs | set[Name] | A set of names that the variable depends on. |
+| import_data | Optional[ImportData] | Metadata about the import if the variable is an import. |
+
+### `Block`
+#### Description
+Represents a scope in which names are declared, tracking defined names, global names, and variable metadata.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| defs | set[Name] | Names defined in this block. |
+| global_names | set[Name] | Names declared as global in this block. |
+| variable_data | dict[Name, list[VariableData]] | Metadata about variables in this block. |
+| is_comprehension | bool | Whether this block is a comprehension. |
+
+### `ObscuredScope`
+#### Description
+Represents a scope where a name is hidden, typically used in exception handling.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obscured | Optional[str] | The variable id if this block hides a name. |
+
+### `RefData`
+#### Description
+Stores metadata about variables that are referenced but not defined within a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| deleted | bool | Whether the reference was deleted. |
+| parent_blocks | list[Block] | Ancestors of the block where this reference was used. |
+
+### `ScopedVisitor`
+#### Description
+A visitor class for traversing an AST, tracking variable definitions, references, and imports. It manages a stack of blocks to handle nested scopes and uses various methods to visit different types of AST nodes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mangle_prefix | Optional[str] | A prefix for mangling local variable names. |
+| ignore_local | bool | Whether to ignore local variables. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| defs | set[Name] | Global definitions in the current scope. |
+| variable_data | dict[Name, list[VariableData]] | Data accompanying global variables. |
+| refs | set[Name] | Names referenced but not defined. |
+| deleted_refs | set[Name] | Names that were referenced and then deleted. |
+
+#### Internal Logic
+- The visitor methods (`visit_*`) handle specific AST node types, updating the block stack and reference stack as needed.
+- The `_if_local_then_mangle` method mangles local variable names to avoid conflicts.
+- The `_add_ref` and `_remove_ref` methods manage the reference stack, tracking which names are referenced in the current scope.
+- The `_define` and `_define_in_block` methods add variable definitions to the current block or a specified block.
+
+## References
+
+- `normalize_sql_f_string` from `marimo._data.sql_visitor` is used to handle SQL queries in f-strings.
+- `DependencyManager` from `marimo._dependencies.dependencies` is used to check for the presence of the `duckdb` library.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast` | Used for parsing and traversing Python code as an Abstract Syntax Tree. |
+| `sys` | Used for checking Python version information. |
+| `collections.defaultdict` | Used for creating dictionaries with default list values. |
+| `dataclasses` | Used for defining data classes to store metadata. |
+| `uuid` | Used for generating unique identifiers for mangling variable names. |
+
+## Error Handling
+
+- The visitor raises a `SyntaxError` if an `import *` statement is encountered, as this is not allowed in the context of this visitor.
+
+## Logging
+
+- A logger is initialized using `marimo._loggers.marimo_logger()` to log warnings and errors, particularly when handling SQL queries with `duckdb`.
+
+## TODOs
+
+- The code does not contain explicit TODOs, but future improvements could include more robust error handling and support for additional AST node types.

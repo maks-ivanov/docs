@@ -1,0 +1,61 @@
+---
+title: "MermaidPlugin.tsx"
+---
+
+## High-level description
+
+The `MermaidPlugin.tsx` file defines a React component plugin called `MermaidPlugin` that is designed to render Mermaid diagrams within a React application. It implements the `IStatelessPlugin` interface, ensuring that it adheres to a specific structure for stateless plugins. The plugin uses lazy loading to import the `LazyMermaid` component, which is responsible for rendering the actual Mermaid diagram.
+
+## Code Structure
+
+- **MermaidPlugin**: A class that implements the `IStatelessPlugin` interface, providing a structure for rendering Mermaid diagrams.
+- **LazyMermaid**: A lazily loaded component that is imported when needed to render the Mermaid diagram.
+
+## References
+
+- **IStatelessPlugin**: An interface from `stateless-plugin.ts` that `MermaidPlugin` implements, defining the structure and requirements for stateless plugins.
+- **LazyMermaid**: A component imported lazily to render the Mermaid diagram.
+
+## Symbols
+
+### `MermaidPlugin`
+#### Description
+The `MermaidPlugin` class is a stateless plugin designed to render Mermaid diagrams. It implements the `IStatelessPlugin` interface, ensuring it follows a specific contract for rendering plugins without maintaining internal state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IStatelessPluginProps&lt;Data&gt;` | Contains the host element, plugin data, and optional children elements. The `data` property specifically includes the Mermaid diagram string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | A React element that renders the Mermaid diagram using the `LazyMermaid` component. |
+
+#### Internal Logic
+- The `MermaidPlugin` class defines a `tagName` property set to `"marimo-mermaid"`.
+- It uses a `validator` from the `zod` library to ensure that the `diagram` property in the data is a string.
+- The `render` method takes `props` as input and returns a `JSX.Element` that renders the `LazyMermaid` component with the `diagram` data passed as a prop.
+
+### `LazyMermaid`
+#### Description
+`LazyMermaid` is a lazily loaded component that is responsible for rendering the Mermaid diagram. It is imported dynamically to optimize performance by loading the component only when it is needed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation to ensure the `diagram` property is a string. |
+| `react` | Provides the `lazy` function for lazy loading components. |
+
+## Error Handling
+
+The code uses the `zod` library for schema validation, which helps in ensuring that the data passed to the plugin is in the expected format. This prevents runtime errors related to incorrect data types.
+
+## Performance Considerations
+
+The use of React's `lazy` function for the `LazyMermaid` component is a performance optimization. It ensures that the component is only loaded when it is needed, reducing the initial load time of the application.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

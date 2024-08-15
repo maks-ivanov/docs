@@ -1,0 +1,102 @@
+---
+title: "floating-outline.tsx"
+---
+
+## High-level description
+
+The `floating-outline.tsx` file defines a React component called `FloatingOutline` that provides a floating outline panel for a notebook editor. This panel displays a list of outline items, which represent headers or sections within the notebook, and allows users to navigate to specific sections by clicking on them. The component also includes a `MiniMap` for a visual representation of the outline structure.
+
+## Code Structure
+
+The main symbols in the code are the `FloatingOutline`, `MiniMap`, and `OutlineList` components. The `FloatingOutline` component is the primary component that renders the floating outline panel. It uses the `OutlineList` component to display the list of outline items and the `MiniMap` component to provide a visual representation of the outline. The `useActiveOutline` hook is used to determine the currently active header in the outline.
+
+## References
+
+- `useActiveOutline`: A hook imported from `useActiveOutline.tsx` that helps in determining the active header in the outline.
+- `notebookOutline`: An atom from `cells.ts` that provides the outline items for the notebook.
+- `cn`: A utility function from `cn.ts` used for merging and applying CSS class names.
+
+## Symbols
+
+### `FloatingOutline`
+#### Description
+The `FloatingOutline` component renders a floating panel that displays the outline of a notebook. It shows a list of headers or sections and allows users to navigate to them by clicking. It also includes a `MiniMap` for a visual overview of the outline structure.
+
+#### Inputs
+None directly, but it uses:
+- `notebookOutline` atom to get the list of outline items.
+- `useActiveOutline` hook to get the active header ID.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered floating outline panel. |
+
+#### Internal Logic
+- Retrieves the outline items using the `useAtomValue` hook on `notebookOutline`.
+- Uses the `useActiveOutline` hook to determine the active header.
+- Manages hover state to control the visibility of the outline panel.
+- Renders the `OutlineList` and `MiniMap` components with the appropriate props.
+
+### `MiniMap`
+#### Description
+The `MiniMap` component provides a visual representation of the outline structure, showing a series of lines that correspond to the levels of the outline items.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| items | OutlineItem[] | The list of outline items. |
+| activeHeaderId | string or undefined | The ID of the currently active header. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered minimap. |
+
+#### Internal Logic
+- Iterates over the outline items and maps them to visual lines.
+- Uses a `Map` to track occurrences of each item for unique identification.
+- Highlights the active header by changing its visual style.
+- Allows clicking on a line to scroll to the corresponding outline item.
+
+### `OutlineList`
+#### Description
+The `OutlineList` component displays a list of outline items, allowing users to click on them to navigate to different sections of the notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| className | string (optional) | Additional CSS classes for styling. |
+| items | OutlineItem[] | The list of outline items. |
+| activeHeaderId | string or undefined | The ID of the currently active header. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered list of outline items. |
+
+#### Internal Logic
+- Iterates over the outline items and renders them as clickable divs.
+- Uses a `Map` to track occurrences of each item for unique identification.
+- Highlights the active header by changing its text style.
+- Allows clicking on an item to scroll to the corresponding section in the notebook.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating React components. |
+| `jotai` | Used for state management with atoms. |
+| `clsx` and `tailwind-merge` | Used for merging and applying CSS class names. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as returning `null` if there are no items to display.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+No TODOs or notes are present in the code.

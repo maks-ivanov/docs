@@ -1,0 +1,68 @@
+---
+title: "badButton.spec.ts"
+---
+
+## High-level description
+
+The `badButton.spec.ts` file is an end-to-end test script using Playwright to verify the behavior of a web application when interacting with a button labeled "Bad button". The test ensures that clicking this button does not crash the application's kernel, which is a critical aspect of maintaining application stability.
+
+## Code Structure
+
+The main symbols in the code are the Playwright test functions and the utility function `getAppUrl` imported from the `playwright.config.ts` file. The test functions are used to define the test setup and execution, while `getAppUrl` is used to retrieve the URL of the application being tested.
+
+## References
+
+- `getAppUrl`: This function is imported from `playwright.config.ts` and is used to obtain the URL for the application `bad_button.py`.
+
+## Symbols
+
+### `test.beforeEach`
+#### Description
+Sets up the environment for each test by navigating to the application's URL and reloading the page if the test is being retried.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | `Page` | Represents a single tab in a browser where the test is executed. |
+| info | `TestInfo` | Provides information about the test, including retry status. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Navigates to the application URL using `page.goto(appUrl)`.
+- Checks if the test is being retried using `info.retry` and reloads the page if true.
+
+### `test("invalid on_click does not crash kernel")`
+#### Description
+Tests that clicking the "Bad button" does not crash the application's kernel by verifying that a specific error message is not present on the page.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | `Page` | Represents a single tab in a browser where the test is executed. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Simulates a click on the button with the role "button" and name "Bad button".
+- Asserts that the text "kernel not found" does not appear on the page, indicating the kernel is still running.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the testing framework and utilities for writing and executing end-to-end tests. |
+
+## Error Handling
+
+The test script does not explicitly handle errors beyond the assertions provided by Playwright. If the kernel crashes, the assertion will fail, and Playwright will report the test as failed.
+
+## Logging
+
+The script does not implement any logging mechanisms. Playwright's built-in reporting and logging features are used to track test execution and results.
+
+## TODOs
+
+No TODOs are present in the code.

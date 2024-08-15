@@ -1,0 +1,303 @@
+---
+title: "test_table.py"
+---
+
+## High-level description
+
+The target file `test_table.py` is a test suite for the table functionalities within the Marimo UI plugin. It uses the `pytest` framework to verify the behavior of table-related operations, such as data normalization, sorting, and handling of large datasets. The tests ensure that the table component can handle various data types and structures, and that it correctly implements features like sorting, searching, and pagination.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `DefaultTableManager`: This class is used to manage table data and operations like sorting and normalization.
+- `_normalize_data`: A helper function that normalizes input data into a consistent format for table operations.
+- `test_*` functions: These are individual test cases that verify specific functionalities of the table component, such as data normalization, sorting, and handling of large datasets.
+
+## Symbols
+
+### `dtm`
+#### Description
+A pytest fixture that provides an instance of `DefaultTableManager` initialized with an empty list. It is used in multiple test cases to manage table data.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtm | DefaultTableManager | An instance of `DefaultTableManager` initialized with an empty list. |
+
+### `_normalize_data`
+#### Description
+A helper function that normalizes input data into a list of dictionaries, ensuring a consistent format for table operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The input data to be normalized. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | list[dict[str, Any]] | The normalized data as a list of dictionaries. |
+
+#### Internal Logic
+- If the input is a dictionary of lists, it converts it to a list of dictionaries.
+- If the input is a list or tuple, it checks if the elements are JSON-serializable or dictionaries.
+- Raises a `ValueError` if the input data is not in a valid format.
+
+### `test_normalize_data`
+#### Description
+Tests the `_normalize_data` function to ensure it correctly normalizes various types of input data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| executing_kernel | Kernel | A kernel instance, used for its side effects. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Tests normalization of lists of integers, strings, and dictionaries.
+- Tests normalization of dictionaries with lists and tuples.
+- Verifies that invalid data types and structures raise appropriate errors.
+
+### `test_sort_1d_list_of_strings`
+#### Description
+Tests the sorting functionality of `DefaultTableManager` with a list of strings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtm | DefaultTableManager | An instance of `DefaultTableManager`. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Sorts the data by the "value" key in ascending order.
+- Asserts that the sorted data matches the expected order.
+
+### `test_sort_1d_list_of_integers`
+#### Description
+Tests the sorting functionality of `DefaultTableManager` with a list of integers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtm | DefaultTableManager | An instance of `DefaultTableManager`. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Sorts the data by the "value" key in ascending order.
+- Asserts that the sorted data matches the expected order.
+
+### `test_sort_list_of_dicts`
+#### Description
+Tests the sorting functionality of `DefaultTableManager` with a list of dictionaries.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtm | DefaultTableManager | An instance of `DefaultTableManager`. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Sorts the data by the "age" key in descending order.
+- Asserts that the sorted data matches the expected order.
+- Verifies that sorting by a non-existent column raises a `KeyError`.
+
+### `test_sort_dict_of_lists`
+#### Description
+Tests the sorting functionality of `DefaultTableManager` with a dictionary of lists.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtm | DefaultTableManager | An instance of `DefaultTableManager`. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Sorts the data by the "net_worth" key in ascending order.
+- Asserts that the sorted data matches the expected order.
+- Verifies that sorting by a non-existent column raises a `KeyError`.
+
+### `test_sort_dict_of_tuples`
+#### Description
+Tests the sorting functionality of `DefaultTableManager` with a dictionary of tuples.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtm | DefaultTableManager | An instance of `DefaultTableManager`. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Sorts the data by the "key1" key in descending order.
+- Asserts that the sorted data matches the expected order.
+- Verifies that sorting by a non-existent column raises a `KeyError`.
+
+### `test_value`
+#### Description
+Tests the `value` property of the table component when no selection is made.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Creates a table using the `ui.table` function.
+- Asserts that the `value` property is an empty list.
+
+### `test_value_with_selection`
+#### Description
+Tests the `value` property of the table component with a selection.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Creates a table using the `ui.table` function.
+- Asserts that the `value` property matches the expected selection.
+
+### `test_value_with_sorting_then_selection`
+#### Description
+Tests the `value` property of the table component after sorting and then selecting.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Creates a table using the `ui.table` function.
+- Sorts the data in descending and ascending order.
+- Asserts that the `value` property matches the expected selection after sorting.
+
+### `test_value_with_search_then_selection`
+#### Description
+Tests the `value` property of the table component after searching and then selecting.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Normalizes the input data.
+- Creates a table using the `ui.table` function.
+- Searches for specific queries.
+- Asserts that the `value` property matches the expected selection after searching.
+
+### `test_table_with_too_many_columns_fails`
+#### Description
+Tests that creating a table with too many columns raises a `ValueError`.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a dictionary with more than 100 columns.
+- Asserts that creating a table with this data raises a `ValueError`.
+
+### `test_table_with_too_many_rows_gets_clamped`
+#### Description
+Tests that creating a table with too many rows clamps the data to a maximum limit.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a dictionary with more than 20,000 rows.
+- Asserts that the table's data is clamped to 20,000 rows and pagination is enabled.
+
+### `test_table_with_too_many_rows_custom_clamp`
+#### Description
+Tests that creating a table with too many rows clamps the data to a custom limit.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a dictionary with more than 20,000 rows.
+- Asserts that the table's data is clamped to a custom limit of 30 rows and pagination is enabled.
+
+### `test_table_with_too_many_rows_custom_clamp_and_total`
+#### Description
+Tests that creating a table with too many rows clamps the data to a custom limit and sets a custom total.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a dictionary with 40 rows.
+- Asserts that the table's data is clamped to a custom limit of 30 rows, with a total of 300 rows, and pagination is enabled.
+
+### `test_table_with_too_many_rows_unknown_total`
+#### Description
+Tests that creating a table with too many rows and an unknown total sets the appropriate flags.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a dictionary with 40 rows.
+- Asserts that the table's data is clamped to a custom limit of 30 rows, with an unknown total, and pagination is enabled.
+
+## References
+
+- `DefaultTableManager`: Used for managing table data and operations.
+- `ui.table`: Used to create table components for testing.
+- `SearchTableArgs`, `SortArgs`: Used for sorting and searching operations in the table component.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing test cases. |
+
+## Error Handling
+
+- The `_normalize_data` function raises a `ValueError` for invalid data types or structures.
+- The test cases verify that sorting by a non-existent column raises a `KeyError`.
+- The test cases verify that creating a table with too many columns raises a `ValueError`.
+
+## TODOs
+
+None

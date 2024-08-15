@@ -1,0 +1,87 @@
+---
+title: "client.ts"
+---
+
+## High-level description
+
+The target file, `client.ts`, is part of a frontend application that integrates with a Copilot language server using CodeMirror. It defines a WebSocket transport mechanism to connect to the language server, ensuring that the connection is established only when certain conditions are met, such as the Copilot being enabled and the WebSocket being available. The file also provides functions to create and manage a Copilot client and server, facilitating communication with the language server for code completion and other language features.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `LazyWebsocketTransport` is a custom transport class that extends the `Transport` class from the `@open-rpc/client-js` library. It manages the WebSocket connection.
+- `createWSTransport` is a function that creates an instance of `LazyWebsocketTransport` using a utility function `once` to ensure it's only created once.
+- `getCopilotClient` is a function that initializes a `CopilotLanguageServerClient` with specific configurations, including the transport created by `createWSTransport`.
+- `copilotServer` is a function that sets up a language server using the transport and client.
+- `createWsUrl` is a utility function that constructs the WebSocket URL based on the environment and window location.
+
+## Symbols
+
+### `COPILOT_FILENAME`
+#### Description
+A constant representing the filename used by the Copilot language server.
+
+### `LANGUAGE_ID`
+#### Description
+A constant representing the language ID for the Copilot integration.
+
+### `createWSTransport`
+#### Description
+Creates a singleton instance of `LazyWebsocketTransport` to manage WebSocket connections.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `LazyWebsocketTransport` | An instance of the custom WebSocket transport. |
+
+### `LazyWebsocketTransport`
+#### Description
+A custom WebSocket transport class that waits for the Copilot to be enabled and the WebSocket to be available before establishing a connection.
+
+#### Internal Logic
+- **Connect**: Waits for Copilot to be enabled and the WebSocket to be available, then establishes a connection.
+- **Close**: Closes the WebSocket connection if it exists.
+- **SendData**: Sends data over the WebSocket connection.
+
+### `getCopilotClient`
+#### Description
+Creates a singleton instance of `CopilotLanguageServerClient` configured with the necessary parameters for communication with the language server.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `CopilotLanguageServerClient` | An instance of the language server client. |
+
+### `copilotServer`
+#### Description
+Sets up a language server with the specified transport and client, enabling communication with the Copilot language server.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `LanguageServer` | A configured language server instance. |
+
+### `createWsUrl`
+#### Description
+Constructs a WebSocket URL based on the current environment and window location, defaulting to a development port if necessary.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `string` | The constructed WebSocket URL. |
+
+## Side Effects
+- The `LazyWebsocketTransport` class modifies the state of the WebSocket connection by opening and closing it.
+- The `createWsUrl` function relies on the global `window` object to determine the WebSocket URL.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@open-rpc/client-js` | Provides the base `Transport` class and WebSocket transport functionality. |
+| `codemirror-languageserver` | Used to set up the language server with transport. |
+| `@/utils/once` | Ensures certain functions are only executed once. |
+| `@/utils/waitForWs` | Provides a utility to wait for WebSocket availability. |
+
+## TODOs
+- The `createWsUrl` function contains a TODO comment indicating that the WebSocket port should be configurable, rather than relying on appending a '0' to the current port.

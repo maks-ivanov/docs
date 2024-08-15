@@ -1,0 +1,60 @@
+---
+title: "export-output-button.tsx"
+---
+
+## High-level description
+
+The `export-output-button.tsx` file provides functionality to download the output of a specific cell in a web application as an image. It utilizes a utility function to convert the HTML content of the cell into a PNG image and handles the download process, ensuring that the cell's output is styled appropriately during the conversion.
+
+## Code Structure
+
+The main function in this file is `downloadCellOutput`, which interacts with the DOM to find the cell's output element and applies a specific class for styling during the image conversion process. It relies on the `downloadHTMLAsImage` function from the `download.ts` utility file to perform the conversion and download.
+
+## References
+
+- `downloadHTMLAsImage`: A utility function from `download.ts` that converts an HTML element to a PNG image and initiates the download.
+- `CellId`: A type and utility from `ids.ts` used to uniquely identify cells.
+
+## Symbols
+
+### `downloadCellOutput`
+#### Description
+The `downloadCellOutput` function is responsible for downloading the output of a specified cell as an image. It locates the cell's output element in the DOM, applies a temporary class for styling, and uses the `downloadHTMLAsImage` utility to convert and download the content as a PNG file.
+
+#### Inputs
+| Name   | Type   | Description                  |
+|:-------|:-------|:-----------------------------|
+| cellId | CellId | The unique identifier of the cell whose output is to be downloaded. |
+
+#### Outputs
+This function does not return any value.
+
+#### Internal Logic
+1. Retrieve the HTML element corresponding to the cell's output using the `cellId`.
+2. If the element is found, add the class `printing-output` to it to apply specific styles for the image conversion.
+3. Call `downloadHTMLAsImage` with the element and a default filename (`"result.png"`).
+4. Once the download process is complete, remove the `printing-output` class from the element.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `downloadHTMLAsImage` | Converts an HTML element to a PNG image and handles the download process. |
+| `CellId` | Provides a type and utility functions for managing cell identifiers. |
+
+## Error Handling
+
+The `downloadHTMLAsImage` function, which is called within `downloadCellOutput`, includes error handling. It displays a toast notification if the image conversion or download fails, ensuring that the user is informed of any issues.
+
+## Side Effects
+
+- The function temporarily modifies the DOM by adding and removing the `printing-output` class to the cell's output element.
+- It triggers a download action in the user's browser.
+
+## Performance Considerations
+
+The function relies on the `html-to-image` library to convert HTML to a PNG, which can be resource-intensive depending on the complexity and size of the HTML content. The function also temporarily alters the DOM, which may have performance implications if used frequently or on large elements.
+
+## Logging
+
+The `downloadHTMLAsImage` function includes a toast notification for error handling, which serves as a form of user-facing logging to indicate issues during the download process.

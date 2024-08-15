@@ -1,0 +1,245 @@
+---
+title: "test_cli.py"
+---
+
+## High-level description
+
+The `test_cli.py` file contains a suite of tests for the command-line interface (CLI) of the `marimo` application. These tests are designed to ensure that various CLI commands and options function correctly, including starting the application, editing files, running scripts, and handling signals. The tests also verify the application's behavior in different scenarios, such as with or without internet access, and with different configurations.
+
+## Code Structure
+
+The file is structured around a series of test functions, each of which tests a specific aspect of the `marimo` CLI. Helper functions are defined to support these tests, such as checking if the platform is Windows, managing signals, and interacting with subprocesses. The tests use the `pytest` framework for execution and include conditions to skip certain tests based on the environment.
+
+## Symbols
+
+### `_is_win32`
+#### Description
+Determines if the current operating system is Windows.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | `True` if the platform is Windows, otherwise `False`. |
+
+### `_can_access_pypi`
+#### Description
+Checks if the system can access the PyPI website, which is used to determine if update checks can be performed.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | `True` if PyPI is accessible, otherwise `False`. |
+
+### `_patch_signals_win32`
+#### Description
+Context manager to patch signal handling on Windows, specifically for handling `SIGINT`.
+
+#### Internal Logic
+- Temporarily replaces the `SIGINT` signal handler with a no-op on Windows.
+- Restores the original handler upon exit.
+
+### `_interrupt`
+#### Description
+Sends an interrupt signal to a subprocess, using the appropriate signal for the operating system.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| process | `subprocess.Popen` | The process to interrupt. |
+
+### `_confirm_shutdown`
+#### Description
+Sends a confirmation input to a subprocess to proceed with shutdown.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| process | `subprocess.Popen` | The process to confirm shutdown for. |
+
+### `_check_shutdown`
+#### Description
+Checks if a subprocess has shut down, optionally using a custom check function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| process | `subprocess.Popen` | The process to check. |
+| check_fn | `Optional[Callable[[int], bool]]` | Optional function to check the process's exit code. |
+
+### `_try_fetch`
+#### Description
+Attempts to fetch data from a specified host and port, optionally using a token for authentication.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | int | The port to connect to. |
+| host | str | The host to connect to. |
+| token | Optional[str] | An optional access token. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| contents | Optional[bytes] | The fetched data, or `None` if unsuccessful. |
+
+### `_check_started`
+#### Description
+Asserts that a server has started by attempting to fetch data from it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | int | The port to connect to. |
+| host | str | The host to connect to. |
+
+### `_temp_run_file`
+#### Description
+Creates a temporary Python file with generated content for testing purposes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| directory | `tempfile.TemporaryDirectory` | The directory to create the file in. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The path to the created file. |
+
+### `_check_contents`
+#### Description
+Checks if specific content is present in the output of a subprocess.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| p | `subprocess.Popen` | The process whose output is checked. |
+| phrase | bytes | The phrase to look for. |
+| contents | Optional[bytes] | The contents to check. |
+
+### `_get_port`
+#### Description
+Finds an unused port starting from a base port number.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | int | An unused port number. |
+
+### `_read_toml`
+#### Description
+Reads and parses a TOML file, returning its contents as a dictionary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filepath | str | The path to the TOML file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Optional[dict] | The parsed TOML data, or `None` if the file does not exist. |
+
+### `test_cli_help_exit_code`
+#### Description
+Tests that the `marimo --help` command exits with a code of 0, indicating successful execution.
+
+### `test_cli_edit_none`
+#### Description
+Tests the `marimo edit` command without specifying a file, ensuring it starts correctly and returns expected content.
+
+### `test_cli_edit_token`
+#### Description
+Tests the `marimo edit` command with a token, ensuring it starts correctly and returns expected content.
+
+### `test_cli_edit_directory`
+#### Description
+Tests the `marimo edit` command with a specified directory, ensuring it starts correctly and returns expected content.
+
+### `test_cli_edit_new_file`
+#### Description
+Tests the `marimo edit` command with a new file, ensuring it starts correctly and returns expected content.
+
+### `test_cli_edit_with_additional_args`
+#### Description
+Tests the `marimo edit` command with additional arguments, ensuring it starts correctly and returns expected content.
+
+### `test_cli_edit_update_check`
+#### Description
+Tests the `marimo edit` command with update checks, ensuring it starts correctly and updates are checked.
+
+### `test_cli_edit_skip_update_check`
+#### Description
+Tests the `marimo edit` command with the skip update check option, ensuring it starts correctly and skips update checks.
+
+### `test_cli_new`
+#### Description
+Tests the `marimo new` command, ensuring it starts correctly and returns expected content.
+
+### `test_cli_run`
+#### Description
+Tests the `marimo run` command, ensuring it starts correctly and returns expected content.
+
+### `test_cli_run_with_show_code`
+#### Description
+Tests the `marimo run` command with the show code option, ensuring it starts correctly and returns expected content.
+
+### `test_cli_run_with_additional_args`
+#### Description
+Tests the `marimo run` command with additional arguments, ensuring it starts correctly and returns expected content.
+
+### `test_cli_tutorial`
+#### Description
+Tests the `marimo tutorial` command, ensuring it starts correctly and returns expected content.
+
+### `test_cli_md_tutorial`
+#### Description
+Tests the `marimo tutorial` command with markdown format, ensuring it starts correctly and returns expected content.
+
+### `test_cli_md_run`
+#### Description
+Tests the `marimo run` command with a markdown file, ensuring it starts correctly and returns expected content.
+
+### `test_cli_md_edit`
+#### Description
+Tests the `marimo edit` command with a markdown file, ensuring it starts correctly and returns expected content.
+
+### `test_cli_custom_host`
+#### Description
+Tests the `marimo tutorial` command with a custom host, ensuring it starts correctly and returns expected content.
+
+### `test_cli_edit_interrupt_twice`
+#### Description
+Tests that sending two interrupt signals to the `marimo edit` command terminates it.
+
+### `test_cli_run_interrupt_twice`
+#### Description
+Tests that sending two interrupt signals to the `marimo run` command terminates it.
+
+### `test_cli_edit_shutdown`
+#### Description
+Tests the shutdown process of the `marimo edit` command, ensuring it shuts down correctly after an interrupt.
+
+### `test_cli_run_shutdown`
+#### Description
+Tests the shutdown process of the `marimo run` command, ensuring it shuts down correctly after an interrupt.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for running the test suite. |
+| `tomlkit` | Used for parsing TOML configuration files. |
+
+## Error Handling
+
+- The `_can_access_pypi` function handles `URLError` exceptions to determine if PyPI is accessible.
+- The `_get_port` function raises an `OSError` if it cannot find an unused port.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code. The tests rely on assertions to validate behavior, and any failures would be reported by the `pytest` framework.
+
+## TODOs
+
+- The code does not contain any explicit TODOs or notes for future improvements.

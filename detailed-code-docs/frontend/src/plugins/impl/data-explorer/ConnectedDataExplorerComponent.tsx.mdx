@@ -1,0 +1,103 @@
+---
+title: "ConnectedDataExplorerComponent.tsx"
+---
+
+## High-level description
+
+The `ConnectedDataExplorerComponent.tsx` file defines a React component that integrates with a data visualization library to provide an interactive data exploration interface. It uses the `jotai` state management library to manage the state of chart specifications and related data, and it leverages the `react-vega` library to render data visualizations using the Vega-Lite specification. The component is designed to load data asynchronously, handle errors gracefully, and provide a responsive user interface for exploring and visualizing data.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ConnectedDataExplorerComponent`: The main component that sets up the state management and renders the `DataExplorerComponent`.
+- `DataExplorerComponent`: A sub-component responsible for loading data, managing chart specifications, and rendering the main plot and related charts.
+- `useAsyncData`: A custom hook used to load data asynchronously.
+- `vegaLoadData`: A function to load and parse data for visualization.
+- `chartSpecAtom` and `relatedChartSpecsAtom`: State atoms from `jotai` used to manage chart specifications and related chart data.
+- `useChartSpecActions`: A hook to dispatch actions to update the chart specifications.
+
+## References
+
+- `vegaLoadData`: Used to load and parse data for visualization.
+- `useAsyncData`: Used to handle asynchronous data loading.
+- `chartSpecAtom` and `relatedChartSpecsAtom`: State management for chart specifications.
+- `useChartSpecActions`: Provides actions to update chart specifications.
+
+## Symbols
+
+### `ConnectedDataExplorerComponent`
+#### Description
+The main component that initializes a state store using `jotai`, subscribes to changes in chart specifications, and renders the `DataExplorerComponent` within a `Provider` to manage state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | DataTableProps | Properties including data and state management functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered component. |
+
+#### Internal Logic
+- Initializes a `jotai` store using `useMemo`.
+- Subscribes to changes in `chartSpecAtom` and updates the parent component's state using `props.setValue`.
+- Sets the initial value of the chart specification if provided.
+
+### `DataExplorerComponent`
+#### Description
+Handles the loading of data, manages chart specifications, and renders the main plot and related charts using `react-vega`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | DataTableProps | Properties including data URL and state management functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered component. |
+
+#### Internal Logic
+- Uses `useAsyncData` to load data from a URL.
+- Builds a schema from the loaded data and updates the chart specification state.
+- Renders the main plot using `VegaLite` and provides a carousel of related charts.
+- Handles errors by displaying an `ErrorBanner`.
+
+### `makeResponsive`
+#### Description
+Adjusts the Vega-Lite specification to be responsive, particularly for single-view plots.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | any | The Vega-Lite specification to be adjusted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | any | The adjusted Vega-Lite specification. |
+
+#### Internal Logic
+- Checks if the specification includes row or column encodings.
+- Sets the width to "container" for single-view plots to ensure responsiveness.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-vega` | Used for rendering Vega-Lite visualizations. |
+| `jotai` | State management for chart specifications. |
+| `compassql` | Used for building schemas and managing chart queries. |
+
+## Error Handling
+
+- The component uses an `ErrorBanner` to display errors encountered during data loading or processing.
+
+## Logging
+
+- The component does not implement explicit logging but uses `ErrorBanner` for error display.
+
+## TODOs
+
+- The code contains a comment indicating that the `DataExplorerState` type is unused for now, suggesting potential future use or refactoring.

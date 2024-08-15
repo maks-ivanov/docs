@@ -1,0 +1,51 @@
+---
+title: "requests-static.ts"
+---
+
+## High-level description
+
+The `requests-static.ts` file defines a function `createStaticRequests` that returns an object implementing both `EditRequests` and `RunRequests` interfaces. This object provides methods for handling requests in a static notebook environment, where the notebook is not connected to a kernel, and thus, interactive elements are non-functional. The methods either log a message or throw an error to indicate that the requested operation is not supported in static mode.
+
+## Code Structure
+
+The main symbol in this file is the `createStaticRequests` function, which returns an object containing methods that either log a message or throw an error. The methods are categorized into two types: those that log a message and return `null`, and those that throw an error using the `throwNotInEditMode` function.
+
+## Symbols
+
+### `createStaticRequests`
+#### Description
+The `createStaticRequests` function creates and returns an object that implements the `EditRequests` and `RunRequests` interfaces. This object is used in a static notebook environment where the notebook is not connected to a kernel, and thus, interactive operations are not supported.
+
+#### Inputs
+This function does not take any inputs.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `EditRequests & RunRequests` | An object with methods for handling requests in a static notebook environment. |
+
+#### Internal Logic
+- The function defines a helper function `throwNotInEditMode` that throws an error indicating that the operation is not supported in static mode.
+- It returns an object with methods:
+  - `sendComponentValues`, `sendInstantiate`, and `sendFunctionRequest` log a message and display a toast notification indicating that the operation is not supported in static mode.
+  - Other methods like `sendRestart`, `syncCellIds`, `sendRun`, etc., use `throwNotInEditMode` to throw an error, indicating that these operations are not supported.
+
+## References
+
+- **`toast`**: Imported from `@/components/ui/use-toast`, used to display notifications to the user.
+- **`Logger`**: Imported from `@/utils/Logger`, used to log messages to the console.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/components/ui/use-toast` | Provides the `toast` function to display notifications. |
+| `@/utils/Logger` | Provides logging functionality to log messages to the console. |
+
+## Error Handling
+
+The `throwNotInEditMode` function is used to handle operations that are not supported in static mode by throwing an error. This ensures that any attempt to perform these operations results in a clear and immediate error.
+
+## Logging
+
+The `Logger` is used to log messages indicating that certain operations are not supported in static mode. This helps in debugging and understanding the flow of operations in a static notebook environment.

@@ -1,0 +1,73 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The target file `tests/_server/templates/utils.py` contains utility functions designed to process HTML content, specifically to normalize HTML files by removing hash values from URLs and replacing version numbers. This is primarily used to ensure that HTML snapshots remain consistent across different versions of the software.
+
+## Code Structure
+
+The file contains two main functions: `remove_hash_from_href` and `normalize_index_html`. The `normalize_index_html` function utilizes `remove_hash_from_href` to process HTML content, indicating a direct relationship between these two functions.
+
+## Symbols
+
+### `remove_hash_from_href`
+#### Description
+This function removes a hash from the end of a URL if it exists. The hash is assumed to be a 9-character string preceded by a hyphen.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url  | str  | The URL string from which the hash should be removed if present. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url  | str  | The URL with the hash removed if it was present. |
+
+#### Internal Logic
+- The function splits the URL into a base and an extension using `os.path.splitext`.
+- It checks if the base part of the URL is at least 10 characters long and if the 10th last character is a hyphen.
+- If both conditions are met, it removes the last 9 characters (the hash) from the base and reconstructs the URL with the extension.
+- If the conditions are not met, it returns the original URL.
+
+### `normalize_index_html`
+#### Description
+This function normalizes an HTML string by removing hashes from URLs and replacing the version number with a placeholder. This is useful for creating stable HTML snapshots that are not affected by version changes.
+
+#### Inputs
+| Name       | Type | Description                |
+|:-----------|:-----|:---------------------------|
+| index_html | str  | The HTML content to normalize. |
+
+#### Outputs
+| Name       | Type | Description                |
+|:-----------|:-----|:---------------------------|
+| index_html | str  | The normalized HTML content. |
+
+#### Internal Logic
+- The function uses regular expressions to find all `href` and `src` attributes in the HTML content.
+- For each match, it applies the `remove_hash_from_href` function to remove any hash present in the URL.
+- It replaces the current version number (imported from `marimo.__version__`) with a placeholder version "0.0.0".
+- The function returns the modified HTML content.
+
+## References
+
+- The `__version__` variable from the `marimo` library is used to replace the version number in the HTML content.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os`       | Used for splitting the URL into base and extension. |
+| `re`       | Used for regular expression operations to find and replace parts of the HTML content. |
+| `marimo`   | Provides the `__version__` variable for version replacement. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the input strings are well-formed and that the operations (like regular expression matching and string manipulation) will succeed without exceptions.
+
+## Logging
+
+There is no logging implemented in this code.

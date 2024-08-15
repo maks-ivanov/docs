@@ -1,0 +1,93 @@
+---
+title: "test_sql.py"
+---
+
+## High-level description
+
+The target file `tests/_sql/test_sql.py` contains unit tests for SQL-related functionalities in the `marimo` library. It primarily tests the behavior of SQL query execution, particularly focusing on the inclusion of `LIMIT` clauses in queries and the application of default limits when executing SQL queries using the `duckdb` engine. The tests ensure that the SQL execution behaves correctly under different conditions, such as when dependencies are missing or when specific environment variables are set.
+
+## Code Structure
+
+The main symbols in the code are the test functions that utilize the `pytest` framework to validate the behavior of SQL query execution. These functions are interconnected through the use of shared dependencies and environment configurations. The `DependencyManager` is used to check for the presence of required dependencies, and the `sql` function from the `marimo._sql.sql` module is the primary function being tested.
+
+## Symbols
+
+### `test_query_includes_limit`
+#### Description
+This test function checks whether the `_query_includes_limit` function correctly identifies the presence of a `LIMIT` clause in SQL queries.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| query | str | SQL query string to be checked for a `LIMIT` clause. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | `True` if the query includes a `LIMIT` clause, `False` otherwise. |
+
+#### Internal Logic
+The function tests various SQL query strings with and without `LIMIT` clauses to ensure that `_query_includes_limit` returns the expected boolean value.
+
+### `test_applies_limit`
+#### Description
+This test function verifies that the `sql` function applies a default limit to SQL queries when no explicit `LIMIT` clause is present, and that it respects the `LIMIT` clause when it is present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_replace | MagicMock | Mock object to track calls to `output.replace`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Sets an environment variable `MARIMO_SQL_DEFAULT_LIMIT` to control the default limit.
+- Executes SQL queries using `duckdb` and checks the length of the results.
+- Uses a mock to verify that the `output.replace` function is called with the correct arguments.
+- Tests different scenarios, including queries with no limit, with a limit, and with a limit exceeding a predefined cutoff.
+
+### `test_sql_raises_error_without_duckdb`
+#### Description
+This test function ensures that the `sql` function raises a `ModuleNotFoundError` when the `duckdb` dependency is missing.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Uses `pytest.raises` to check that executing a SQL query without `duckdb` installed raises a `ModuleNotFoundError`.
+
+## References
+
+- `_query_includes_limit`: A function from `marimo._sql.sql` that checks for the presence of a `LIMIT` clause in SQL queries.
+- `sql`: A function from `marimo._sql.sql` that executes SQL queries using `duckdb`.
+- `DependencyManager`: A class from `marimo._dependencies.dependencies` used to manage and check for required dependencies.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing test cases. |
+| `unittest.mock` | Provides the `MagicMock` and `patch` utilities for mocking dependencies and functions. |
+| `duckdb` | A database engine used for executing SQL queries in the tests. |
+
+## Error Handling
+
+- The test functions use `pytest.raises` to handle expected exceptions, such as `ModuleNotFoundError`, ensuring that the code behaves correctly when dependencies are missing.
+
+## Logging
+
+- The test functions do not implement any logging mechanisms. They rely on assertions to validate behavior and report errors.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

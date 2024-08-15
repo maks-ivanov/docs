@@ -1,0 +1,60 @@
+---
+title: "distributor.py"
+---
+
+## High-level description
+
+The `Distributor` class in the `marimo/_utils/distributor.py` file is designed to manage the distribution of messages received from a multiprocessing connection to multiple consumer functions. It allows for the dynamic addition and removal of consumers and ensures that each consumer receives messages as they are available. The class is particularly useful in scenarios where multiple components need to react to messages from a shared source, such as a multiprocessing connection.
+
+## Code Structure
+
+The main symbol in the code is the `Distributor` class, which interacts with a `TypedConnection` to receive messages and distribute them to registered consumers. The class uses a list to manage consumer functions and employs the `Disposable` class to handle the removal of consumers. The `Distributor` class also utilizes the `asyncio` library to integrate with the event loop for non-blocking I/O operations.
+
+## Symbols
+
+### `Distributor`
+#### Description
+The `Distributor` class is responsible for distributing messages from a `TypedConnection` to multiple consumer functions. It allows consumers to be added or removed dynamically and ensures that each consumer receives messages as they are available. The class uses the `add_reader()` API from `asyncio` to integrate with the event loop, which is necessary for non-blocking I/O operations on Windows.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input_connection | `TypedConnection[T]` | A typed connection from which messages are received and distributed to consumers. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | `Disposable` | A disposable object that can be used to remove a consumer from the distributor. |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the list of consumers and stores the input connection.
+- **Adding Consumers**: The `add_consumer` method appends a consumer function to the list and returns a `Disposable` object for removing the consumer.
+- **Message Distribution**: The `_on_change` method is called when there is a change in the connection. It polls the connection for messages and distributes them to all registered consumers. It handles `BlockingIOError` by retrying after a short sleep and stops on `EOFError` or `StopIteration`.
+- **Starting and Stopping**: The `start` method adds a reader to the event loop to call `_on_change` when the connection is ready. The `stop` method removes the reader and closes the connection if it is not already closed.
+
+## Side Effects
+- The `Distributor` class modifies the state of the event loop by adding and removing readers.
+- It also manages the state of the connection by closing it when stopping.
+
+## References
+- The `Distributor` class references the `TypedConnection` class for managing the connection.
+- It uses the `Disposable` class to handle the removal of consumers.
+- The `LOGGER` from `marimo._loggers` is used for logging warnings.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for integrating with the event loop for non-blocking I/O operations. |
+| `marimo._loggers` | Provides logging capabilities for the distributor. |
+| `marimo._utils.disposable` | Provides the `Disposable` class for managing consumer removal. |
+| `marimo._utils.typed_connection` | Provides the `TypedConnection` class for managing the connection. |
+
+## Error Handling
+- The `_on_change` method handles `BlockingIOError` by logging a warning and retrying after a short sleep.
+- It stops processing on `EOFError` or `StopIteration`.
+
+## Logging
+- The `Distributor` class uses the `LOGGER` to log warnings when a `BlockingIOError` occurs during message reception.
+
+## TODOs
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,84 @@
+---
+title: "routes.py"
+---
+
+## High-level description
+
+The `routes` class in the `marimo/_plugins/stateless/routes.py` file is designed to manage and render a list of routes for a web application. It allows for the creation of a simple routing mechanism where different URL paths are associated with specific content-rendering functions. This class is particularly useful for single-page applications (SPAs) using hash-based routing and multi-page applications (MPAs) using path-based routing.
+
+## Code Structure
+
+The `routes` class inherits from `UIElement`, which is a generic class for HTML elements with a value. The `routes` class uses several utility functions and classes from the `marimo` library, such as `as_html` for HTML conversion and `lazy` for lazy loading of content. The class is decorated with `mddoc` to provide rich documentation.
+
+## Symbols
+
+### `routes`
+#### Description
+The `routes` class is responsible for rendering a list of routes based on the URL path. It does not support nested or dynamic routes but provides a simple mechanism for associating URL paths with content-rendering functions. The class is initialized with a dictionary of routes, where each key is a URL path and the value is a function or content to be displayed.
+
+#### Inputs
+| Name   | Type   | Description                                                                 |
+|:-------|:-------|:----------------------------------------------------------------------------|
+| routes | dict   | A dictionary where keys are URL paths and values are functions or content.  |
+
+#### Outputs
+| Name | Type | Description        |
+|:-----|:-----|:-------------------|
+| Html | Html | An Html object.    |
+
+#### Internal Logic
+- The constructor iterates over the provided routes dictionary.
+- If a route's content is callable, it wraps it in a `lazy` loader; otherwise, it converts it to HTML using `as_html`.
+- It initializes the `UIElement` with the component name, initial value, and other parameters, including the list of route keys.
+
+### `CATCH_ALL`
+#### Description
+A constant string used to match any URL path that does not have a specific route defined.
+
+### `DEFAULT`
+#### Description
+A constant string representing the default route path.
+
+### `_convert_value`
+#### Description
+A method that returns the input value unchanged. It is a placeholder for converting values from the frontend to the backend.
+
+#### Inputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| value | str  | A string value. |
+
+#### Outputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| value | str  | The same string value. |
+
+### `batch`, `center`, `right`, `left`, `callout`, `style`
+#### Description
+These methods are overridden to raise a `TypeError`, indicating that they are not supported for the `routes` class.
+
+## References
+
+- `UIElement`: The base class from which `routes` inherits, providing the structure for UI components.
+- `as_html`: A utility function to convert objects to HTML.
+- `lazy`: A utility for lazy loading of components.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `as_html`  | Converts objects to HTML.                    |
+| `Html`     | Represents HTML content.                     |
+| `lazy`     | Provides lazy loading for content rendering. |
+
+## Error Handling
+
+The `batch`, `center`, `right`, `left`, `callout`, and `style` methods raise a `TypeError` to indicate that these operations are not supported for the `routes` class.
+
+## Logging
+
+No specific logging mechanisms are implemented in this code.
+
+## TODOs
+
+The class documentation suggests that nested and dynamic routes are not currently supported and invites users to request these features on GitHub.

@@ -1,0 +1,83 @@
+---
+title: "dynamic-favicon.tsx"
+---
+
+## High-level description
+
+The `dynamic-favicon.tsx` file is a React component that dynamically updates the browser's favicon based on the state of a notebook application. It changes the favicon to indicate whether the notebook is idle, running, successful, or has encountered errors. Additionally, it sends desktop notifications to the user when the notebook execution completes, especially if there are errors.
+
+## Code Structure
+
+The main symbols in the code are the `DynamicFavicon` component and the `maybeSendNotification` function. The `DynamicFavicon` component uses the `useCellErrors` hook to determine the number of errors in the notebook and updates the favicon accordingly. It also uses the `useEventListener` hook to reset the favicon when the window gains focus. The `maybeSendNotification` function is responsible for sending notifications to the user based on the number of errors.
+
+## References
+
+- `useCellErrors`: A hook imported from `@/core/cells/cells` that provides the current cell errors.
+- `useEventListener`: A hook imported from `@/hooks/useEventListener` that allows adding event listeners to DOM elements.
+- `usePrevious`: A utility from `@dnd-kit/utilities` to get the previous value of a state or prop.
+
+## Symbols
+
+### `DynamicFavicon`
+#### Description
+The `DynamicFavicon` component updates the browser's favicon based on the notebook's running state and error status. It also manages sending notifications to the user when the notebook execution completes.
+
+#### Inputs
+| Name     | Type    | Description                      |
+|:---------|:--------|:---------------------------------|
+| isRunning | boolean | Indicates if the notebook is currently running |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The component does not return any JSX elements |
+
+#### Internal Logic
+- Initializes the favicon element in the document head if it doesn't exist.
+- Uses `useEffect` to update the favicon based on the `isRunning` state and the number of errors.
+- If the notebook is running, sets the favicon to a "running" icon.
+- If the notebook has completed running, sets the favicon to either "success" or "error" based on the presence of errors.
+- Resets the favicon to "idle" after 3 seconds if the document is in focus.
+- Uses `usePrevious` to detect when the notebook stops running and calls `maybeSendNotification` to potentially send a notification.
+- Uses `useEventListener` to reset the favicon to "idle" when the window gains focus.
+
+### `maybeSendNotification`
+#### Description
+This function sends a desktop notification to the user when the notebook execution completes, indicating success or failure based on the number of errors.
+
+#### Inputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| numErrors | number | The number of errors encountered during execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function does not return any value |
+
+#### Internal Logic
+- Checks if the document is visible; if so, it does not send a notification.
+- Defines a `sendNotification` function that creates a notification with a success or error message.
+- Checks for notification permissions and sends the notification if permission is granted.
+- Requests notification permission from the user if it is not already granted or denied.
+
+## Side Effects
+- Modifies the favicon link element in the document head.
+- Sends desktop notifications to the user.
+
+## Dependencies
+
+| Dependency          | Purpose                                      |
+|:--------------------|:---------------------------------------------|
+| `@/core/cells/cells` | Provides the `useCellErrors` hook to access cell errors |
+| `@/hooks/useEventListener` | Provides the `useEventListener` hook to manage event listeners |
+| `@dnd-kit/utilities` | Provides the `usePrevious` utility to track previous state |
+
+## Error Handling
+- The code checks for the presence of the Notification API in the window object and handles cases where notification permissions are denied or need to be requested.
+
+## Logging
+- There is no explicit logging mechanism implemented in this code.
+
+## TODOs
+- There are no TODOs or notes left in the code.

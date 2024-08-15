@@ -1,0 +1,59 @@
+---
+title: "bokeh_formatters.py"
+---
+
+## High-level description
+
+The `bokeh_formatters.py` file defines a `BokehFormatter` class that extends the `FormatterFactory` abstract base class. This class is responsible for integrating Bokeh visualizations into the Marimo framework by registering a formatter that converts Bokeh plots into HTML content, which can then be embedded in an iframe for display.
+
+## Code Structure
+
+- `BokehFormatter` is a subclass of `FormatterFactory`.
+- The `register` method within `BokehFormatter` is used to register a formatter for Bokeh models, specifically for rendering Bokeh plots as HTML.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to specify the MIME type of the output.
+- `h` from `marimo._output.builder` is used to create HTML elements.
+- `src_or_src_doc` from `marimo._output.formatters.utils` is used to determine whether to use `src` or `srcdoc` attributes for iframes.
+- `flatten_string` from `marimo._output.utils` is used to process HTML content.
+
+## Symbols
+
+### `BokehFormatter`
+#### Description
+The `BokehFormatter` class is designed to handle the formatting of Bokeh plots within the Marimo framework. It registers a formatter that converts Bokeh models into HTML content, which can be embedded in an iframe for display in a web environment.
+
+#### Inputs
+- None directly, but it operates on Bokeh models when the formatter is registered.
+
+#### Outputs
+- None directly, but it returns a tuple of MIME type and HTML string when the formatter is invoked.
+
+#### Internal Logic
+- The `package_name` method returns the string "bokeh", indicating the third-party package this formatter is associated with.
+- The `register` method imports necessary Bokeh modules and defines a formatter function `_show_plot` for Bokeh models. This function:
+  - Retrieves the current theme from the Bokeh document.
+  - Uses `bokeh.embed.file_html` to generate HTML content for the plot.
+  - Returns a tuple containing the MIME type "text/html" and the HTML content wrapped in an iframe.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `bokeh.models` | Used to identify Bokeh models for formatting. |
+| `bokeh.embed` | Used to generate HTML content from Bokeh plots. |
+| `bokeh.resources` | Provides resources for embedding Bokeh plots. |
+| `bokeh.io.curdoc` | Retrieves the current document's theme. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `BokehFormatter` class. It assumes that the necessary Bokeh modules are available and that the operations will succeed.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

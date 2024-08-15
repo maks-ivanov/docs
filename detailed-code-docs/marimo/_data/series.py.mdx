@@ -1,0 +1,148 @@
+---
+title: "series.py"
+---
+
+## High-level description
+
+The code in `marimo/_data/series.py` provides utility functions to extract summary information from different types of data series, specifically numeric, categorical, and date series. It supports both Pandas and Polars data series, and uses a dependency manager to check for the availability of these libraries before processing the series.
+
+## Code Structure
+
+The main symbols in the code are the data classes `NumberSeriesInfo`, `CategorySeriesInfo`, and `DateSeriesInfo`, which encapsulate the summary information for numeric, categorical, and date series, respectively. The functions `get_number_series_info`, `get_category_series_info`, and `get_date_series_info` are responsible for generating instances of these data classes by analyzing the input data series. The `_get_name` function is a utility function used by these main functions to extract the name of the series.
+
+## References
+
+- `DependencyManager`: Used to check if the required libraries (Pandas or Polars) are available before processing the series.
+- `DataFrameSeries`: A type alias for a series from either Pandas or Polars, used as input to the main functions.
+
+## Symbols
+
+### `NumberSeriesInfo`
+#### Description
+Represents a summary of a numeric series, including its minimum and maximum values and a label.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| min | float | The minimum value in the series. |
+| max | float | The maximum value in the series. |
+| label | str | The label or name of the series. |
+
+#### Outputs
+N/A
+
+### `CategorySeriesInfo`
+#### Description
+Represents a summary of a categorical series, including the unique categories and a label.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| categories | list[str] | A sorted list of unique categories in the series. |
+| label | str | The label or name of the series. |
+
+#### Outputs
+N/A
+
+### `DateSeriesInfo`
+#### Description
+Represents a summary of a date series, including its minimum and maximum dates and a label.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| min | str | The earliest date in the series, formatted as a string. |
+| max | str | The latest date in the series, formatted as a string. |
+| label | str | The label or name of the series. |
+
+#### Outputs
+N/A
+
+### `_get_name`
+#### Description
+Extracts the name of a series, returning an empty string if the name is `None`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| series | DataFrameSeries | The data series from which to extract the name. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the series, or an empty string if unnamed. |
+
+### `get_number_series_info`
+#### Description
+Generates a `NumberSeriesInfo` object summarizing a numeric series, including its minimum and maximum values and label.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| series | Any | The numeric data series to summarize. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| info | NumberSeriesInfo | The summary information of the numeric series. |
+
+#### Internal Logic
+- Validates that the series is numeric.
+- Checks for the presence of Pandas or Polars and processes the series accordingly.
+- Raises a `ValueError` if the series type is unsupported.
+
+### `get_category_series_info`
+#### Description
+Generates a `CategorySeriesInfo` object summarizing a categorical series, including its unique categories and label.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| series | Any | The categorical data series to summarize. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| info | CategorySeriesInfo | The summary information of the categorical series. |
+
+#### Internal Logic
+- Checks for the presence of Pandas or Polars and processes the series accordingly.
+- Raises a `ValueError` if the series type is unsupported.
+
+### `get_date_series_info`
+#### Description
+Generates a `DateSeriesInfo` object summarizing a date series, including its minimum and maximum dates and label.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| series | Any | The date data series to summarize. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| info | DateSeriesInfo | The summary information of the date series. |
+
+#### Internal Logic
+- Validates that the series contains date objects.
+- Checks for the presence of Pandas or Polars and processes the series accordingly.
+- Raises a `ValueError` if the series type is unsupported.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pandas` | Used for handling data series if available. |
+| `polars` | Used for handling data series if available. |
+
+## Error Handling
+
+- The functions raise `ValueError` if the series type is unsupported or if the data type within the series is incorrect (e.g., non-numeric data in a numeric series).
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

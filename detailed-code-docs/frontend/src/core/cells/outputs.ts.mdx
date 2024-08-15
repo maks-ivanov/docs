@@ -1,0 +1,87 @@
+---
+title: "outputs.ts"
+---
+
+## High-level description
+
+The target file, `outputs.ts`, is part of a frontend application and is responsible for managing the state of cell outputs in a notebook-like interface. It provides utilities to track whether outputs are expanded and to check if an output is empty. The file uses a simple global map to store the expanded state of outputs, avoiding more complex state management solutions since the state is not shared between cells.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `expandedOutputs`: A global map that stores the expanded state of outputs for each cell.
+- `useExpandedOutput`: A custom hook that manages the expanded state of a specific cell's output.
+- `isOutputEmpty`: A utility function that checks if a given output is empty.
+
+## References
+
+- `CellId` from `./ids`: Used to type the keys in the `expandedOutputs` map.
+- `OutputMessage` from `../kernel/messages`: Used to type the input for the `isOutputEmpty` function.
+
+## Symbols
+
+### `expandedOutputs`
+#### Description
+A global map that stores the expanded state of outputs for each cell, keyed by `CellId`.
+
+#### Inputs
+None directly, but it is accessed and modified by the `useExpandedOutput` hook.
+
+#### Outputs
+None directly, but it is used to store and retrieve the expanded state of cell outputs.
+
+### `useExpandedOutput`
+#### Description
+A custom React hook that manages the expanded state of a specific cell's output. It provides a stateful value and a function to update it.
+
+#### Inputs
+| Name   | Type   | Description                |
+|:-------|:-------|:---------------------------|
+| cellId | CellId | The unique identifier for the cell whose output state is being managed. |
+
+#### Outputs
+| Name   | Type                | Description                                      |
+|:-------|:--------------------|:-------------------------------------------------|
+| state  | boolean             | The current expanded state of the cell's output. |
+| setState | (expanded: boolean) =&gt; void | Function to update the expanded state. |
+
+#### Internal Logic
+- Initializes the state using `useState` with the current value from `expandedOutputs` or `false` if not set.
+- Returns the state and a function that updates both the local state and the `expandedOutputs` map.
+
+### `isOutputEmpty`
+#### Description
+A utility function that checks if a given output is empty. It returns `true` if the output is `null`, `undefined`, or has no data.
+
+#### Inputs
+| Name   | Type                      | Description                      |
+|:-------|:--------------------------|:---------------------------------|
+| output | OutputMessage \| undefined \| null | The output message to check. |
+
+#### Outputs
+| Name   | Type    | Description                      |
+|:-------|:--------|:---------------------------------|
+| result | boolean | `true` if the output is empty, otherwise `false`. |
+
+#### Internal Logic
+- Checks if the `output` is `null` or `undefined`.
+- Checks if the `data` property of the `output` is `null` or an empty string.
+- Returns `true` if any of the above conditions are met, indicating the output is empty.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `useState` from React | Used to manage local state within the `useExpandedOutput` hook. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic checks for `null` or `undefined` values in the `isOutputEmpty` function.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+The code contains a comment suggesting that the state management does not need to be overcomplicated, indicating a design decision to use a simple global map instead of a more complex state management solution like Jotai.

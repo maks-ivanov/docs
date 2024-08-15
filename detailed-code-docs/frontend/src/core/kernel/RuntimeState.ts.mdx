@@ -1,0 +1,54 @@
+---
+title: "RuntimeState.ts"
+---
+
+## High-level description
+
+The `RuntimeState` class in the `RuntimeState.ts` file is designed to manage the state of running cells in a web application. It acts as a singleton to ensure a single instance is used throughout the application. The class listens for specific events from UI elements and updates the kernel with the values of these elements when they are ready.
+
+## Code Structure
+
+The `RuntimeState` class is the primary symbol in this file. It interacts with the `UIElementRegistry` to manage UI elements and uses the `Logger` for logging purposes. The class also relies on the `MarimoValueReadyEvent` to listen for events indicating that a UI element's value is ready to be sent to the kernel.
+
+## Symbols
+
+### `RuntimeState`
+#### Description
+The `RuntimeState` class manages the lifecycle of running cells by listening for events from UI elements and updating the kernel with the values of these elements. It ensures that only one instance of itself exists (singleton pattern) and provides methods to start and stop listening for events.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sendComponentValues | `RunRequests["sendComponentValues"]` | A function to send component values to the kernel. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| INSTANCE | `RuntimeState` | The singleton instance of the `RuntimeState` class. |
+
+#### Internal Logic
+- **Singleton Pattern**: The `INSTANCE` getter ensures that only one instance of `RuntimeState` exists by storing it in the global `window` object.
+- **Event Handling**: The `start` method registers an event listener for the `MarimoValueReadyEvent`. The `stop` method removes this listener.
+- **Event Processing**: The `handleReadyEvent` method processes events by checking if the `objectId` exists in the `UIElementRegistry`. If it does, it retrieves the value and sends it to the kernel using `sendComponentValues`.
+
+## Side Effects
+- Modifies the global `window` object to store the singleton instance.
+- Registers and unregisters event listeners on the `document`.
+
+## References
+- **`MarimoValueReadyEvent`**: Used to listen for events indicating that a UI element's value is ready.
+- **`UIElementRegistry`**: Used to check and retrieve values of UI elements.
+- **`Logger`**: Used for logging warnings and errors.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger` | Provides logging functionality. |
+| `UIElementRegistry` | Manages the state of UI elements. |
+| `MarimoValueReadyEvent` | Defines the custom event type for value readiness. |
+
+## Error Handling
+- Throws an error if `sendComponentValues` is not set when attempting to access it.
+
+## Logging
+- Uses the `Logger` to log warnings when attempting to start or stop the `RuntimeState` multiple times or when an error occurs during event handling.

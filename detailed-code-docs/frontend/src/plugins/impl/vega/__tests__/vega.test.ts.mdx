@@ -1,0 +1,99 @@
+---
+title: "vega.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the Vega loader functionality, specifically testing the `vegaLoadData` function and its associated utilities like `uniquifyColumnNames` and `replacePeriodsInColumnNames`. These tests ensure that CSV data is correctly parsed into JSON objects, handling various data types and edge cases such as dates, NaN values, floats, large integers, and duplicate column names.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `vegaLoadData`: The primary function being tested, responsible for loading and parsing data.
+- `vegaLoader`: A mocked loader used to simulate data loading in tests.
+- `exportedForTesting`: An object containing utility functions and constants used in the tests.
+- `uniquifyColumnNames` and `replacePeriodsInColumnNames`: Utility functions tested independently to ensure they handle CSV column names correctly.
+
+## References
+
+- `vegaLoadData`: This function is imported from the `loader` module and is the main focus of the tests.
+- `vegaLoader`: Also imported from the `loader` module, it is used to mock data loading.
+- `exportedForTesting`: Contains utility functions that are tested separately.
+
+## Symbols
+
+### `vegaLoadData`
+#### Description
+The `vegaLoadData` function is responsible for loading data from a URL and parsing it according to the specified format. It supports CSV and JSON formats and can handle special cases like large integers and period replacement in column names.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The URL or data string to load and parse. |
+| format | DataFormat or undefined | The format of the data, which can be CSV or JSON. |
+| opts | object | Options for handling BigInt and period replacement. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| results | Promise&lt;T[]&gt; | A promise that resolves to an array of parsed data objects. |
+
+#### Internal Logic
+- The function first checks if the format is specified; if not, it attempts to infer it.
+- For CSV data, it ensures column names are unique and optionally replaces periods.
+- It enables or disables BigInt handling based on the options provided.
+- The data is then read and parsed using the `read` function, with CSV data always set to parse automatically.
+
+### `uniquifyColumnNames`
+#### Description
+This function ensures that all column names in a CSV string are unique by appending a zero-width space to duplicates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data string with potential duplicate column names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The CSV data with unique column names. |
+
+#### Internal Logic
+- Splits the CSV data into lines and processes the header line.
+- Uses a set to track existing column names and appends zero-width spaces to duplicates.
+
+### `replacePeriodsInColumnNames`
+#### Description
+Replaces periods in CSV column names with a one-dot leader to avoid conflicts with downstream libraries that use periods as nested key separators.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data string with column names that may contain periods. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The CSV data with periods in column names replaced. |
+
+#### Internal Logic
+- Splits the CSV data into lines and processes the header line.
+- Replaces all periods in column names with a one-dot leader.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for writing and running unit tests. |
+
+## Error Handling
+
+The tests do not explicitly handle errors but rely on the `vitest` framework to catch and report any exceptions or mismatches in expected outcomes.
+
+## Logging
+
+No logging mechanisms are implemented in the test code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

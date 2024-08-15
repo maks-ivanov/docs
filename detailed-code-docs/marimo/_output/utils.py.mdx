@@ -1,0 +1,101 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The `marimo/_output/utils.py` file provides utility functions for handling data URLs, string manipulation, and URI encoding. These utilities are used to facilitate the creation of data URLs for embedding binary data in HTML, flattening multi-line strings, creating CSS style strings from key-value pairs, and encoding URI components in a manner similar to JavaScript's `encodeURIComponent`.
+
+## Code Structure
+
+The main symbols in the code are utility functions that operate independently. They are designed to perform specific tasks related to data handling and string manipulation. These functions are likely used throughout the Marimo codebase wherever such utilities are needed.
+
+## Symbols
+
+### `build_data_url`
+#### Description
+This function constructs a data URL for embedding binary data, such as images, directly into HTML documents. It assumes the data is already base64 encoded.
+
+#### Inputs
+| Name     | Type          | Description                  |
+|:---------|:--------------|:-----------------------------|
+| mimetype | KnownMimeType | The MIME type of the data.   |
+| data     | bytes         | Base64 encoded binary data.  |
+
+#### Outputs
+| Name   | Type | Description            |
+|:-------|:-----|:-----------------------|
+| output | str  | A data URL as a string.|
+
+#### Internal Logic
+- Decodes the base64 encoded data into a UTF-8 string.
+- Removes any newline characters from the string.
+- Constructs and returns a data URL string in the format `data:&lt;mimetype&gt;;base64,&lt;data&gt;`.
+
+### `flatten_string`
+#### Description
+Flattens a multi-line string by removing leading and trailing whitespace from each line and concatenating them into a single line.
+
+#### Inputs
+| Name | Type | Description          |
+|:-----|:-----|:---------------------|
+| text | str  | The multi-line string to flatten. |
+
+#### Outputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| output | str  | A single-line flattened string.|
+
+#### Internal Logic
+- Splits the input string by newline characters.
+- Strips whitespace from each line.
+- Joins the stripped lines into a single string.
+
+### `create_style`
+#### Description
+Generates a CSS style string from a dictionary of style properties and values.
+
+#### Inputs
+| Name  | Type                          | Description                        |
+|:------|:------------------------------|:-----------------------------------|
+| pairs | dict[str, Union[str, int, float, None]] | A dictionary of CSS properties and their values. |
+
+#### Outputs
+| Name   | Type          | Description                  |
+|:-------|:--------------|:-----------------------------|
+| output | Optional[str] | A CSS style string or None if the input is empty. |
+
+#### Internal Logic
+- Checks if the input dictionary is empty and returns `None` if so.
+- Iterates over the dictionary, creating a list of `key: value` strings for each non-`None` value.
+- Joins the list into a single string separated by semicolons.
+
+### `uri_encode_component`
+#### Description
+Encodes a URI component, similar to JavaScript's `encodeURIComponent`, ensuring that special characters are properly escaped.
+
+#### Inputs
+| Name | Type | Description                  |
+|:-----|:-----|:-----------------------------|
+| code | str  | The string to be URI encoded.|
+
+#### Outputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| output | str  | The URI encoded string.      |
+
+#### Internal Logic
+- Uses `urllib.parse.quote` to encode the input string, specifying a set of safe characters that should not be encoded.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to ensure that the MIME type provided to `build_data_url` is valid and recognized.
+
+## Dependencies
+
+| Dependency     | Purpose                                      |
+|:---------------|:---------------------------------------------|
+| `urllib.parse` | Used for URI encoding in `uri_encode_component`. |
+| `KnownMimeType` | Provides a type-safe way to handle MIME types. |
+
+The utility functions in this file are designed to be lightweight and efficient, providing essential functionality for handling data URLs, string manipulation, and URI encoding within the Marimo framework.

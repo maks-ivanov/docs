@@ -1,0 +1,61 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `frontend/src/core/islands` directory is a crucial part of a web application that integrates Python execution using WebAssembly and Pyodide. It manages the interaction between the frontend and a Web Worker running a Pyodide environment, processes custom HTML elements called "Marimo Islands," and renders notebook cell outputs. The directory includes components for managing the WebAssembly environment, handling remote procedure calls (RPC), and facilitating communication between the main thread and a Web Worker. It also contains utilities for parsing and formatting code, managing application state, and styling the user interface.
+
+## What does it do?
+
+The code in this directory enables a web application to execute Python code in the browser using WebAssembly and Pyodide. It sets up a Web Worker that initializes the Pyodide environment, allowing Python code to run asynchronously without blocking the main thread. The `IslandsPyodideBridge` class manages the lifecycle and communication with the worker, handling requests to start sessions, send code for execution, and process messages from the worker. The `ReadonlyWasmController` manages the Wasm environment, handling tasks like bootstrapping the Pyodide environment, mounting filesystems, and starting sessions.
+
+The directory also includes components for rendering the output of notebook cells and managing user interactions with these outputs. The `MarimoOutputWrapper` and `MarimoIslandElement` components handle the display and interaction of notebook cell outputs, providing a dynamic and interactive user experience. Additionally, the directory contains utility functions for parsing and formatting code, managing application state, and styling the user interface.
+
+## Entry points
+
+The main files in this directory are:
+
+- **`main.ts`**: Serves as the main entry point for initializing and managing the Marimo application, specifically for embedded Marimo apps. It sets up the environment by initializing plugins, handling UI elements, and managing communication with the kernel through the `IslandsPyodideBridge`.
+
+- **`controller.ts`**: Contains the `ReadonlyWasmController` class, which manages the WebAssembly environment for read-only operations. It provides methods for bootstrapping the Pyodide environment, mounting filesystems, and starting sessions.
+
+- **`worker.tsx`**: Sets up a Web Worker to execute Python code using Pyodide. It initializes the Pyodide environment, handles RPC requests, and manages communication with the main thread.
+
+- **`output-wrapper.tsx`**: Defines the `MarimoOutputWrapper` component, responsible for rendering the output of a notebook cell and providing interactive UI elements like buttons for copying code and re-running the cell.
+
+- **`web-components.tsx`**: Defines the `MarimoIslandElement` class, a custom HTML element that renders the output of a Marimo cell, integrating with the React ecosystem to provide a dynamic and interactive user experience.
+
+## Key Files
+
+- **`parse.ts`**: Provides functionality to parse custom HTML elements related to "Marimo Islands," extract relevant data, and convert this data into a format suitable for further processing or execution. It includes utility functions for handling code embedded within these elements.
+
+- **`bridge.ts`**: Contains the `IslandsPyodideBridge` class, which serves as a communication bridge between the frontend and a Web Worker running a Pyodide environment. It manages the initialization and communication with the worker, handling requests to start sessions, send code for execution, and process messages from the worker.
+
+- **`utils.ts`**: Contains utility functions, including `isIslands`, which checks if the application is running in a specific environment called "Islands" by evaluating an environment variable.
+
+- **`islands.css`**: A CSS stylesheet that imports several other CSS files to apply consistent styling across the web application. It defines a single CSS class, `.marimo`, which applies background and text color styles using Tailwind CSS utility classes.
+
+## Dependencies
+
+- **`pyodide`**: Provides the interface for running Python in the browser, enabling Python code execution within the web application.
+
+- **`rpc-anywhere`**: Facilitates RPC communication between the worker and the main thread, allowing for asynchronous operations and message handling.
+
+- **`Logger`**: Used for logging messages and errors throughout the code, aiding in debugging and monitoring.
+
+- **`Deferred`**: Manages asynchronous operations, particularly for the readiness of the Pyodide environment and the bridge.
+
+- **`jotai`**: Used for state management, allowing the components to access and manipulate the notebook state.
+
+- **`lucide-react`**: Provides icons used in the UI components.
+
+- **`react`**: Core library for building the user interface.
+
+- **`ReactDOM`**: Used to create a React root for rendering components.
+
+- **`react-error-boundary`**: Used to catch and handle errors in the React component tree.
+
+- **`html-react-parser`**: Parses HTML strings into React elements.
+
+These dependencies are crucial for enabling Python execution in the browser, managing asynchronous operations, facilitating communication between different components of the system, and building a dynamic and interactive user interface.

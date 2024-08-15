@@ -1,0 +1,143 @@
+---
+title: "keyboard-shortcuts.tsx"
+---
+
+## High-level description
+
+The `keyboard-shortcuts.tsx` file defines a React component that manages and displays keyboard shortcuts for an editor interface. It allows users to view, edit, and reset keyboard shortcuts, and it integrates with a user configuration system to persist changes. The component uses a dialog interface to present the shortcuts and provides functionality to handle user interactions such as editing and resetting shortcuts.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `KeyboardShortcuts` component is the primary React component that manages the display and interaction of keyboard shortcuts.
+- The `keyboardShortcutsAtom` is a Jotai atom used to manage the open/close state of the keyboard shortcuts dialog.
+- The `useHotkey` hook is used to toggle the visibility of the keyboard shortcuts dialog.
+- Functions like `saveConfigOptimistic`, `handleNewShortcut`, `handleResetShortcut`, and `handleResetAllShortcuts` manage the configuration of shortcuts, including saving changes and resetting to defaults.
+- The `renderItem` and `renderGroup` functions are used to render individual shortcut items and groups of shortcuts, respectively.
+
+## Symbols
+
+### `keyboardShortcutsAtom`
+#### Description
+A Jotai atom that holds a boolean value indicating whether the keyboard shortcuts dialog is open or closed.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isOpen | boolean | Indicates if the keyboard shortcuts dialog is open. |
+
+### `KeyboardShortcuts`
+#### Description
+A React functional component that displays and manages keyboard shortcuts. It provides a user interface for viewing, editing, and resetting keyboard shortcuts.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered keyboard shortcuts dialog. |
+
+#### Internal Logic
+- Uses the `useAtom` hook to manage the open state of the dialog.
+- Uses `useState` to manage the currently editing shortcut and the new shortcut being set.
+- Retrieves user configuration and hotkeys using `useUserConfig` and `useAtomValue`.
+- Registers a global hotkey to toggle the dialog using `useHotkey`.
+- Provides functions to save new configurations optimistically, handle new shortcuts, and reset shortcuts.
+- Renders the dialog with groups of shortcuts, allowing users to edit or reset them.
+
+### `saveConfigOptimistic`
+#### Description
+Saves the user configuration optimistically, reverting changes if the save operation fails.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| newConfig | UserConfig | The new user configuration to be saved. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Saves the current configuration state.
+- Updates the configuration with the new settings.
+- Attempts to save the configuration to the server.
+- Reverts to the previous configuration if the save operation fails.
+
+### `handleNewShortcut`
+#### Description
+Handles the creation of a new shortcut for a specific action.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| shortcut | string[] | The new shortcut keys to be set. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if there is an action currently being edited.
+- Constructs a new configuration with the updated shortcut.
+- Resets the editing state and saves the new configuration.
+
+### `handleResetShortcut`
+#### Description
+Resets a specific shortcut to its default value.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if there is an action currently being edited.
+- Removes the override for the current action in the configuration.
+- Resets the editing state and saves the updated configuration.
+
+### `handleResetAllShortcuts`
+#### Description
+Resets all shortcuts to their default values after user confirmation.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Confirms with the user before proceeding.
+- Clears all shortcut overrides in the configuration.
+- Resets the editing state and saves the updated configuration.
+
+## References
+
+- `useHotkey`: A custom hook used to register a global hotkey for toggling the dialog.
+- `useUserConfig`: A hook to access and update the user configuration.
+- `hotkeysAtom`: An atom that provides access to the current hotkey settings.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management for managing the open state of the dialog. |
+| `lucide-react` | Provides icons used in the UI. |
+| `@/core/config/config` | Provides hooks and atoms for user configuration management. |
+| `@/core/network/requests` | Handles network requests for saving user configurations. |
+| `@/core/hotkeys/hotkeys` | Provides default hotkey settings and utilities. |
+
+## Error Handling
+
+- The `saveConfigOptimistic` function includes error handling to revert the configuration to its previous state if saving fails.
+
+## Logging
+
+No explicit logging is implemented in this file.
+
+## TODOs
+
+No TODOs are present in the code.

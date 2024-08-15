@@ -1,0 +1,117 @@
+---
+title: "run_all.py"
+---
+
+## High-level description
+
+The `run_all.py` script is designed to execute smoke tests and example scripts for the Marimo project. It uses asynchronous programming to run multiple Python scripts concurrently, ensuring that they execute correctly without errors. The script reads configuration settings from a YAML file to determine which tests to run and how to handle expected failures.
+
+## Code Structure
+
+The main components of the script are the asynchronous functions `test_all_smoke_tests` and `test_all_examples`, which gather and execute Python scripts found in specified directories. The `_run_test` function is responsible for executing each script and handling its output. The `Cmd` class is used to encapsulate the execution of shell commands asynchronously.
+
+## Symbols
+
+### `test_all_smoke_tests`
+#### Description
+This asynchronous function locates and executes all smoke test scripts within the `_smoke_tests` directory of the Marimo project. It uses a semaphore to limit the number of concurrent tests and reads configuration settings from a YAML file to manage test execution.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Determines the root directory for smoke tests using `import_files`.
+- Collects all Python files in the directory.
+- Loads configuration settings from `config.yml`.
+- Creates a semaphore to limit concurrent test execution.
+- Initiates asynchronous execution of each test script using `_run_test`.
+
+### `test_all_examples`
+#### Description
+Similar to `test_all_smoke_tests`, this function executes example scripts located in the `examples` directory. It follows the same process of gathering scripts, reading configurations, and running tests concurrently.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Determines the root directory for examples using `import_files`.
+- Collects all Python files in the directory.
+- Loads configuration settings from `config.yml`.
+- Creates a semaphore to limit concurrent test execution.
+- Initiates asynchronous execution of each example script using `_run_test`.
+
+### `_run_test`
+#### Description
+Executes a single Python script, handling its input, output, and any expected errors based on configuration settings.
+
+#### Inputs
+| Name              | Type               | Description                                      |
+|:------------------|:-------------------|:-------------------------------------------------|
+| file              | `pathlib.Path`     | The path to the Python script to be executed.    |
+| root              | `str`              | The root directory for relative path calculation.|
+| smoke_test_config | `Dict[str, Any]`   | Configuration settings for the test.             |
+| semaphore         | `asyncio.Semaphore`| Semaphore to control concurrency.                |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses a semaphore to manage concurrent execution.
+- Checks if the script should be skipped or if an error is expected.
+- Reads the script content to ensure it contains a specific marker (`marimo.App(`).
+- Executes the script using the `Cmd` class.
+- Validates the script's execution based on expected outcomes and logs results.
+
+### `Cmd`
+#### Description
+Encapsulates the execution of a shell command asynchronously, handling input, output, and timeouts.
+
+#### Inputs
+| Name       | Type             | Description                                      |
+|:-----------|:-----------------|:-------------------------------------------------|
+| command    | `str`            | The shell command to execute.                    |
+| timeout    | `int`            | Maximum time to wait for command execution.      |
+| input_data | `Optional[str]`  | Input data to pass to the command.               |
+
+#### Outputs
+| Name       | Type             | Description                                      |
+|:-----------|:-----------------|:-------------------------------------------------|
+| process    | `asyncio.subprocess.Process` | The process object for the command. |
+| stdout     | `str`            | Standard output from the command.                |
+| stderr     | `str`            | Standard error from the command.                 |
+
+#### Internal Logic
+- Creates an asynchronous subprocess to execute the command.
+- Handles input data and waits for the command to complete within the specified timeout.
+- Decodes and returns the standard output and error streams.
+
+## References
+
+- `import_files` from `marimo._utils.paths`: Used to determine the root directory for test scripts.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `asyncio`  | Provides asynchronous I/O capabilities.      |
+| `pytest`   | Used for test assertions and failure handling.|
+| `yaml`     | Loads configuration settings from a YAML file.|
+
+## Error Handling
+
+- The script uses assertions to validate test outcomes, raising errors if expectations are not met.
+- A timeout error is handled by killing the process and failing the test using `pytest.fail`.
+
+## Logging
+
+- The script prints a success message for each test that passes without errors.
+
+## TODOs
+
+- No explicit TODOs are present in the code.

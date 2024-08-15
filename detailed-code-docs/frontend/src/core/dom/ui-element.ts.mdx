@@ -1,0 +1,109 @@
+---
+title: "ui-element.ts"
+---
+
+## High-level description
+
+The `ui-element.ts` file defines a custom web component called `UIElement` that is used to synchronize the state of its child elements across multiple instances and with a backend kernel. This component is part of a larger framework that facilitates communication and synchronization between the frontend UI and backend processes, using custom events and a registry to manage state and updates.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `UIElement`: A custom web component that extends `HTMLElement` and implements the `IUIElement` interface.
+- `initializeUIElement`: A function that defines the `UIElement` as a custom element and sets up its behavior.
+- `UI_ELEMENT_REGISTRY`: A singleton instance of `UIElementRegistry` that manages the registration and synchronization of `UIElement` instances.
+- `MarimoValueInputEvent` and `MarimoValueUpdateEvent`: Custom events used for communication between `UIElement` instances and their children.
+- `UIElementId`: A utility for parsing and managing unique identifiers for `UIElement` instances.
+
+## References
+
+- `UIElementId` from `ids.ts`: Used to parse and manage unique identifiers for `UIElement` instances.
+- `defineCustomElement` from `defineCustomElement.ts`: Used to safely define the `UIElement` as a custom element.
+- `MarimoValueInputEvent` and `MarimoValueUpdateEvent` from `events.ts`: Used for event-based communication between `UIElement` instances and their children.
+- `UI_ELEMENT_REGISTRY` from `uiregistry.ts`: Manages the registration and synchronization of `UIElement` instances.
+
+## Symbols
+
+### `initializeUIElement`
+#### Description
+Defines and initializes the `UIElement` custom web component, setting up its lifecycle methods and event handling for synchronization and communication.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Defines the `UIElement` class, extending `HTMLElement` and implementing `IUIElement`.
+- Sets up lifecycle methods (`connectedCallback`, `disconnectedCallback`, `attributeChangedCallback`) to manage registration, synchronization, and cleanup.
+- Uses `UI_ELEMENT_REGISTRY` to register and synchronize instances.
+- Listens for `MarimoValueInputEvent` to update values and broadcasts updates using `MarimoValueUpdateEvent`.
+
+### `UIElement`
+#### Description
+A custom web component that synchronizes the state of its first child element across multiple instances and with a backend kernel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| this | HTMLElement | The `UIElement` instance itself. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes the component by parsing its `object-id` and setting up event listeners.
+- Registers the component with `UI_ELEMENT_REGISTRY` to manage synchronization.
+- Handles attribute changes to manage re-rendering and synchronization of child elements.
+
+### `getUIElementObjectId`
+#### Description
+Retrieves the `objectId` of a `UIElement` or its parent if it is a `UIElement`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| target | HTMLElement | The target element to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| objectId | UIElementId \| null | The `objectId` if the target or its parent is a `UIElement`, otherwise `null`. |
+
+### `isUIElement`
+#### Description
+Checks if a given target is a `UIElement`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| target | HTMLElement | The target element to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isUIElement | boolean | `true` if the target is a `UIElement`, otherwise `false`. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger` | Used for logging errors and warnings. |
+| `Functions` | Provides utility functions like `NOOP`. |
+| `UIElementId` | Manages unique identifiers for `UIElement` instances. |
+| `defineCustomElement` | Safely defines custom elements. |
+| `MarimoValueInputEvent`, `MarimoValueUpdateEvent` | Custom events for communication and synchronization. |
+| `UI_ELEMENT_REGISTRY` | Manages registration and synchronization of `UIElement` instances. |
+
+## Error Handling
+
+- Uses `Logger` to log errors when required attributes or child elements are missing.
+- Throws errors using `UIElementId.parseOrThrow` if `object-id` is missing.
+
+## Logging
+
+- Logs errors using the `Logger` utility when critical attributes or elements are missing or invalid.
+
+## TODOs
+- There is a TODO comment suggesting an optimization for handling event broadcasting by reducing the number of event listeners on the document.

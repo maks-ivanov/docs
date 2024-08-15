@@ -1,0 +1,139 @@
+---
+title: "playwright.config.ts"
+---
+
+## High-level description
+
+The `playwright.config.ts` file is a configuration file for Playwright, a Node.js library used for browser automation and end-to-end testing. This file sets up the testing environment for various applications by defining server options, test configurations, and server commands. It also includes utility functions to manage application URLs, modes, and server operations.
+
+## Code Structure
+
+- **ServerOptions**: A type definition that specifies the configuration for running or editing applications.
+- **appToOptions**: An object mapping application filenames to their respective server options.
+- **Utility Functions**: Functions like `getAppUrl`, `getAppMode`, `resetFile`, and `startServer` that help manage application states and server operations.
+- **Playwright Configuration**: The main configuration object for Playwright, defining test directories, timeouts, parallel execution settings, and server commands.
+
+## References
+
+- **Playwright**: The configuration and utility functions rely on Playwright's testing framework.
+- **Node.js Modules**: Uses `path` and `child_process` modules for file path management and executing shell commands.
+
+## Symbols
+
+### `ServerOptions`
+#### Description
+Defines the configuration options for running or editing applications, including command type, port, and optional base URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| command | string | Specifies whether the application is in "run" or "edit" mode. |
+| port | number | The port number on which the server will run. |
+| baseUrl | string (optional) | The base URL for the application when in "run" mode. |
+
+#### Outputs
+N/A
+
+### `appToOptions`
+#### Description
+Maps application filenames to their respective server options, determining how each application should be served during testing.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| appToOptions | Record&lt;string, ServerOptions&gt; | A mapping of application filenames to server options. |
+
+### `getAppUrl`
+#### Description
+Generates the URL for a given application based on its server options, including port and base URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | ApplicationNames | The name of the application to generate the URL for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The generated URL for the application. |
+
+#### Internal Logic
+- Retrieves server options for the specified application.
+- Constructs the URL using the port, base URL, and query parameters if in "edit" mode.
+
+### `getAppMode`
+#### Description
+Determines the mode ("edit" or "run") of a given application based on its server options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | ApplicationNames | The name of the application to determine the mode for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mode | "edit" \| "run" | The mode of the application. |
+
+### `resetFile`
+#### Description
+Resets a specified application file to its original state using Git.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | ApplicationNames | The name of the application file to reset. |
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Constructs the file path for the application.
+- Executes a Git command to checkout the file, reverting any changes.
+
+### `startServer`
+#### Description
+Starts a Marimo server for a specified application using its server options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | ApplicationNames | The name of the application to start the server for. |
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Retrieves server options for the specified application.
+- Constructs and executes a command to start the Marimo server with the appropriate options.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the Playwright testing framework and device configurations. |
+| `node:path` | Used for file path manipulations. |
+| `node:child_process` | Used to execute shell commands for server operations. |
+
+## Configuration
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| testDir | string | "./e2e-tests" | Directory containing the end-to-end tests. |
+| timeout | number | 30000 | Maximum time a test can run. |
+| expect.timeout | number | 5000 | Maximum time for expect conditions. |
+| fullyParallel | boolean | false | Whether to run tests in parallel. |
+| forbidOnly | boolean | false | Prevents committing tests with `.only` in CI. |
+| retries | number | 0 or 2 | Number of retries for failed tests in CI. |
+| workers | number | 1 | Number of workers to use for running tests. |
+| reporter | string | "html" | Reporter type for test results. |
+| quiet | boolean | true | Suppresses test output. |
+| use.actionTimeout | number | 0 | Maximum time for each action. |
+| use.trace | string | "on-first-retry" | Collects trace on first retry of a failed test. |
+
+## TODOs
+
+- Consider testing on Firefox as indicated by the comment `// TODO: Consider testing on firefox`.

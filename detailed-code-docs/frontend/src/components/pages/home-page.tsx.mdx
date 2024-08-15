@@ -1,0 +1,190 @@
+---
+title: "home-page.tsx"
+---
+
+## High-level description
+
+The `home-page.tsx` file is a React component that serves as the main interface for the home page of a web application. It provides functionality to display and manage notebooks, including viewing recent and running notebooks, creating new notebooks, and managing workspace files. The component utilizes various hooks and context providers to handle asynchronous data fetching, state management, and UI interactions.
+
+## Code Structure
+
+The main component in this file is `HomePage`, which is a React functional component. It interacts with several other components and hooks to manage its state and UI. The `HomePage` component uses the `useAsyncData` hook to fetch data asynchronously and the `useInterval` hook to periodically refresh data. It also uses context providers like `RunningNotebooksContext` to manage the state of running notebooks. The component renders various UI elements, including buttons, lists, and trees, to display and interact with notebooks and files.
+
+## Symbols
+
+### `HomePage`
+#### Description
+The `HomePage` component is the main component for the application's home page. It fetches and displays recent files, workspace files, and running notebooks. It also provides functionality to create new notebooks and manage existing ones.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A | The component does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered UI of the home page. |
+
+#### Internal Logic
+- Uses `useAsyncData` to fetch recent files, workspace files, and running notebooks.
+- Uses `useInterval` to refresh data every 10 seconds or when the document becomes visible.
+- Combines data from multiple sources using `combineAsyncData`.
+- Renders a `Suspense` component to handle loading states.
+- Provides UI elements for creating new notebooks, viewing running and recent notebooks, and managing workspace files.
+
+### `CollapseAllButton`
+#### Description
+A button component that collapses all expanded folders in the file tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A | The component does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered button element. |
+
+#### Internal Logic
+- Uses `useSetAtom` to update the state of expanded folders to an empty object, effectively collapsing all folders.
+
+### `NotebookFileTree`
+#### Description
+A component that renders a tree view of files in the workspace, allowing users to search and navigate through files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | FileInfo[] | An array of file information objects. |
+| searchText | string | The text to filter files by name. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered file tree element. |
+
+#### Internal Logic
+- Uses `useAtom` to manage the state of expanded folders.
+- Collapses all folders if the open state is empty.
+- Renders a `Tree` component from `react-arborist` to display files.
+
+### `Node`
+#### Description
+A component that represents a single node in the file tree, which can be a file or a directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| node | NodeRendererProps&lt;FileInfo&gt; | The node data and rendering properties. |
+| style | React.CSSProperties | The style properties for the node. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered node element. |
+
+#### Internal Logic
+- Determines the file type and selects an appropriate icon.
+- Renders different UI elements based on whether the node is a file or directory.
+- Provides interaction handlers for toggling directories and opening files.
+
+### `NotebookList`
+#### Description
+A component that renders a list of notebooks, either running or recent.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| header | React.ReactNode | The header element for the list. |
+| files | MarimoFile[] | An array of notebook files. |
+| openNewTab | boolean | Whether to open notebooks in a new tab. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered list of notebooks. |
+
+#### Internal Logic
+- Maps over the list of files and renders a `MarimoFileComponent` for each file.
+
+### `MarimoFileComponent`
+#### Description
+A component that represents a single notebook file in a list.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | MarimoFile | The notebook file information. |
+| openNewTab | boolean | Whether to open the file in a new tab. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered notebook file element. |
+
+#### Internal Logic
+- Constructs the URL for the notebook file.
+- Renders the file name and additional information like last modified date.
+- Provides a shutdown button for running notebooks.
+
+### `SessionShutdownButton`
+#### Description
+A button component that allows users to shutdown a running notebook session.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filePath | string | The path of the notebook file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered shutdown button element. |
+
+#### Internal Logic
+- Uses `useImperativeModal` to open a confirmation dialog.
+- Calls `shutdownSession` to terminate the notebook session upon confirmation.
+
+### `CreateNewNotebook`
+#### Description
+A component that provides a button to create a new notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A | The component does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered button element. |
+
+#### Internal Logic
+- Generates a new session ID and constructs the URL for a new notebook.
+- Renders a button that links to the new notebook creation page.
+
+## References
+
+- `getRecentFiles`, `getWorkspaceFiles`, `getRunningNotebooks`, `shutdownSession` from `@/core/network/requests` are used to fetch and manage notebook data.
+- `useAsyncData` and `combineAsyncData` from `@/hooks/useAsyncData` are used for asynchronous data fetching and combining.
+- `useInterval` from `@/hooks/useInterval` is used to periodically refresh data.
+- `RunningNotebooksContext` from `../home/state` is used to manage the state of running notebooks.
+- `assertExists` from `@/utils/assertExists` is used to ensure certain values exist before proceeding with operations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-arborist` | Used for rendering the file tree component. |
+| `jotai` | Used for state management with atoms. |
+| `lucide-react` | Provides icon components for the UI. |
+
+## Error Handling
+
+- The component throws an error if the combined data response contains an error, which would typically be caught by an error boundary in the application.
+
+## Logging
+
+- The component uses a `toast` mechanism to display notifications, such as when a notebook is successfully shut down.

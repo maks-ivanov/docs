@@ -1,0 +1,144 @@
+---
+title: "dataframe.py"
+---
+
+## High-level description
+
+The target file, `dataframe.py`, is part of the Marimo UI plugin system and provides functionality for interacting with dataframes within a UI context. It defines a `dataframe` class that extends a UI element, allowing users to perform transformations on dataframes, such as sorting and retrieving column values. The class supports both Pandas and Polars dataframes and integrates with the Marimo framework to provide a rich, interactive experience for data manipulation.
+
+## Code Structure
+
+The main class in this file is `dataframe`, which inherits from `UIElement`. This class is responsible for managing the state and transformations of a dataframe within a UI component. It uses several helper classes and functions, such as `TransformsContainer` and `get_handler_for_dataframe`, to apply transformations and manage the dataframe's state. The file also defines several data classes for handling arguments and responses related to dataframe operations.
+
+## Symbols
+
+### `GetDataFrameResponse`
+#### Description
+A data class that encapsulates the response for retrieving a dataframe, including metadata such as the URL for downloading the dataframe, whether more data is available, and the total number of rows.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | URL to download the dataframe. |
+| has_more | bool | Indicates if there are more rows beyond the current view. |
+| total_rows | int | Total number of rows in the dataframe. |
+| row_headers | List[str] | List of column names that are row headers. |
+| supports_code_sample | bool | Indicates if code samples are supported. |
+
+### `GetColumnValuesArgs`
+#### Description
+A data class used to specify arguments for retrieving unique values from a specific column in the dataframe.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| column | str | The name of the column to retrieve values from. |
+
+#### Outputs
+None
+
+### `GetColumnValuesResponse`
+#### Description
+A data class that encapsulates the response for retrieving unique column values, including the values themselves and a flag indicating if there are too many values to display.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| values | List[Union[str, int, float]] | List of unique values in the column. |
+| too_many_values | bool | Indicates if there are too many values to display. |
+
+### `SortValuesArgs`
+#### Description
+A data class used to specify arguments for sorting the dataframe by a specific column.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| by | ColumnName | The column name to sort by. |
+| descending | bool | Whether to sort in descending order. |
+
+#### Outputs
+None
+
+### `ColumnNotFound`
+#### Description
+An exception raised when a specified column is not found in the dataframe.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| column | str | The name of the column that was not found. |
+
+#### Outputs
+None
+
+### `GetDataFrameError`
+#### Description
+An exception raised when there is an error retrieving the dataframe.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | str | The error message. |
+
+#### Outputs
+None
+
+### `dataframe`
+#### Description
+A class that represents a UI element for interacting with dataframes. It allows users to perform transformations on dataframes and provides methods for retrieving and sorting data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | DataFrameType | The dataframe or series to transform. |
+| on_change | Optional[Callable[[DataFrameType], None]] | Callback for when the dataframe changes. |
+| page_size | Optional[int] | Number of rows to display per page. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes with a dataframe and sets up handlers and managers for transformations.
+- Uses `get_handler_for_dataframe` to ensure the dataframe type is supported.
+- Provides methods like `get_dataframe`, `get_column_values`, and `sort_values` to interact with the dataframe.
+- Utilizes `TransformsContainer` to apply transformations incrementally.
+
+## References
+
+- `TransformsContainer` and `get_handler_for_dataframe` from `marimo._plugins.ui._impl.dataframes.transforms.apply`.
+- `UIElement` from `marimo._plugins.ui._core.ui_element`.
+- `Function` and `EmptyArgs` from `marimo._runtime.functions`.
+- `parse_raw` from `marimo._utils.parse_dataclass`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._output.data.data` | Used for data output operations. |
+| `marimo._output.rich_help` | Provides documentation utilities. |
+| `marimo._plugins.core.web_component` | Defines JSONType and other web component utilities. |
+| `marimo._plugins.ui._core.ui_element` | Base class for UI elements. |
+| `marimo._plugins.ui._impl.dataframes.transforms.apply` | Provides transformation handlers and containers. |
+| `marimo._plugins.ui._impl.tables.table_manager` | Manages table operations. |
+| `marimo._plugins.ui._impl.tables.utils` | Utility functions for table management. |
+| `marimo._runtime.functions` | Defines function-related utilities. |
+| `marimo._utils.parse_dataclass` | Utility for parsing dataclasses. |
+
+## Error Handling
+
+- Raises `ColumnNotFound` if a specified column does not exist.
+- Raises `GetDataFrameError` if there is an error retrieving the dataframe.
+
+## Logging
+
+- Errors during transformation application are written to `sys.stderr`.
+
+## TODOs
+None

@@ -1,0 +1,48 @@
+---
+title: "useLocalStorage.ts"
+---
+
+## High-level description
+The `useLocalStorage` file defines a custom React hook that facilitates the use of `localStorage` in a type-safe manner. It leverages a utility class, `TypedLocalStorage`, to manage the storage and retrieval of data, ensuring that the data is correctly typed and defaults are handled gracefully.
+
+## Code Structure
+The main symbol in this file is the `useLocalStorage` function, which is a custom React hook. It utilizes the `TypedLocalStorage` class from the `localStorage` utility to interact with the browser's `localStorage`. The hook provides a stateful value and a function to update this value, which is synchronized with `localStorage`.
+
+## References
+- `TypedLocalStorage` from `frontend/src/utils/localStorage.ts`: This class is used to handle the actual interaction with `localStorage`, providing methods to get and set values in a type-safe manner.
+
+## Symbols
+
+### `useLocalStorage`
+#### Description
+The `useLocalStorage` function is a custom React hook that provides a way to store and retrieve values from `localStorage` while maintaining React state. It ensures that the stored value is type-safe and defaults to a specified value if not present in `localStorage`.
+
+#### Inputs
+| Name         | Type | Description                          |
+|:-------------|:-----|:-------------------------------------|
+| `key`        | `string` | The key under which the value is stored in `localStorage`. |
+| `defaultValue` | `T` | The default value to use if no value is found in `localStorage`. |
+
+#### Outputs
+| Name          | Type | Description                          |
+|:--------------|:-----|:-------------------------------------|
+| `storedValue` | `T`  | The current value stored in `localStorage` and React state. |
+| `setValue`    | `(value: T) =&gt; void` | A function to update the stored value in both `localStorage` and React state. |
+
+#### Internal Logic
+1. **Initialization**: A `TypedLocalStorage` instance is created using the provided `key` and `defaultValue`.
+2. **State Management**: The `useState` hook is used to initialize the state with the value retrieved from `localStorage` via the `TypedLocalStorage` instance.
+3. **Value Update**: The `setValue` function updates both the React state and the `localStorage` with the new value.
+
+## Dependencies
+| Dependency         | Purpose                                      |
+|:-------------------|:---------------------------------------------|
+| `TypedLocalStorage` | Provides type-safe methods to interact with `localStorage`. |
+| `useState`         | React hook for managing state within a functional component. |
+
+## Error Handling
+The `TypedLocalStorage` class, which is used by `useLocalStorage`, includes basic error handling. If an error occurs during the retrieval of data from `localStorage` (e.g., JSON parsing error), it defaults to the provided default value.
+
+## Related Code Snippets
+- **`useRecentCommands`**: This hook uses `useLocalStorage` to manage a list of recent commands, demonstrating how `useLocalStorage` can be used in practice.
+- **`TypedLocalStorage`**: This class is crucial for understanding how `useLocalStorage` interacts with `localStorage`, providing methods to get and set values in a type-safe manner.

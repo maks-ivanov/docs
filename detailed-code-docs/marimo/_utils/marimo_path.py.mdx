@@ -1,0 +1,54 @@
+---
+title: "marimo_path.py"
+---
+
+## High-level description
+
+The `MarimoPath` class in the `marimo/_utils/marimo_path.py` file is a utility wrapper around Python's `pathlib.Path` class. It provides additional functionality specific to the Marimo application, such as validating file types and ensuring operations are restricted to the current working directory if specified. The class is designed to simplify file path operations while enforcing certain constraints, like file type validation and directory restrictions.
+
+## Code Structure
+
+The `MarimoPath` class is the primary symbol in this file. It encapsulates a `pathlib.Path` object and provides methods for file validation, renaming, reading, and writing. The class also includes properties for accessing file metadata, such as its name and modification time.
+
+## Symbols
+
+### `MarimoPath`
+#### Description
+The `MarimoPath` class is a wrapper around `pathlib.Path` that provides additional functionality for the Marimo application. It reduces the API surface area of `pathlib.Path` and adds constraints like file type validation and directory restrictions.
+
+#### Inputs
+| Name   | Type         | Description                                                                 |
+|:-------|:-------------|:----------------------------------------------------------------------------|
+| path   | str \| Path  | The file path to be wrapped and validated.                                  |
+| strict | bool         | If `True`, restricts operations to files under the current working directory.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value but raises exceptions on invalid operations. |
+
+#### Internal Logic
+- **Initialization**: Converts the input path to a `Path` object and stores the current working directory. If `strict` is `True`, it restricts operations to the current working directory.
+- **Validation**: Ensures the file is either a Python or Markdown file.
+- **File Operations**: Provides methods to rename, read, and write files, with checks for directory restrictions and file existence.
+- **Properties**: Offers properties to get the file's short name, relative name, absolute name, and last modification time.
+
+## Side Effects
+- The `rename` method can change the file's name on the filesystem.
+- The `write_text` method writes data to the file, potentially overwriting existing content.
+
+## References
+- The `MarimoPath` class is used in various parts of the Marimo application, such as in CLI commands and server file routing, to handle file paths and ensure they meet application-specific requirements.
+
+## Dependencies
+- **pathlib**: Used for handling and manipulating file system paths.
+- **os**: Utilized for operations like getting the current working directory and file modification times.
+
+## Error Handling
+- The class raises `ValueError` if the file is not a valid Python or Markdown file or if operations violate the `strict` directory constraints.
+
+## Logging
+- The class does not implement logging directly, but exceptions provide feedback on invalid operations.
+
+## TODOs
+- There are no TODOs or notes left in the code.

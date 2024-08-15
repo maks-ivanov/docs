@@ -1,0 +1,130 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/export/utils.py`, provides utility functions for handling file and markdown operations within the Marimo application. These utilities include formatting filenames, retrieving filenames and titles, and extracting markdown content from code cells. The functions are designed to work with the `AppFileManager` and `Cell` classes, facilitating the export and management of notebook files.
+
+## Code Structure
+
+The main symbols in the code are utility functions that interact with each other and with external classes like `AppFileManager` and `Cell`. The functions are primarily focused on file naming and markdown extraction, and they rely on Python's `ast` module for parsing code.
+
+## References
+
+- `AppFileManager`: Used to manage file operations and retrieve filenames.
+- `Cell`: Represents a notebook cell, used to extract markdown content.
+- `ast`: Python's Abstract Syntax Trees module, used for parsing and analyzing Python code.
+
+## Symbols
+
+### `format_filename_title`
+#### Description
+Formats a given filename by replacing underscores and hyphens with spaces and capitalizing the words to create a title-like string.
+
+#### Inputs
+| Name     | Type   | Description          |
+|:---------|:-------|:---------------------|
+| filename | str    | The filename to format. |
+
+#### Outputs
+| Name  | Type | Description                |
+|:------|:-----|:---------------------------|
+| title | str  | The formatted title string. |
+
+### `get_filename`
+#### Description
+Retrieves the filename from the `AppFileManager`. If no filename is set, it returns a default filename.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| file_manager | AppFileManager  | The file manager to retrieve the filename from. |
+| default      | str             | The default filename to use if none is set. |
+
+#### Outputs
+| Name     | Type | Description                |
+|:---------|:-----|:---------------------------|
+| filename | str  | The retrieved or default filename. |
+
+### `get_app_title`
+#### Description
+Determines the application title by checking the app's configuration for a title. If not set, it formats the filename as a title.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| file_manager | AppFileManager  | The file manager to retrieve the app title from. |
+
+#### Outputs
+| Name  | Type | Description                |
+|:------|:-----|:---------------------------|
+| title | str  | The application title. |
+
+### `get_download_filename`
+#### Description
+Generates a download filename by appending a specified extension to the base filename.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| file_manager | AppFileManager  | The file manager to retrieve the base filename from. |
+| extension    | str             | The file extension to append. |
+
+#### Outputs
+| Name     | Type | Description                |
+|:---------|:-----|:---------------------------|
+| filename | str  | The generated download filename. |
+
+### `_const_string`
+#### Description
+Extracts a constant string value from a list of AST statements.
+
+#### Inputs
+| Name | Type         | Description                        |
+|:-----|:-------------|:-----------------------------------|
+| args | list[ast.stmt] | The list of AST statements to extract the string from. |
+
+#### Outputs
+| Name  | Type | Description                |
+|:------|:-----|:---------------------------|
+| value | str  | The extracted string value. |
+
+### `get_markdown_from_cell`
+#### Description
+Attempts to extract markdown content from a `Cell` object based on specific conditions in the code. Returns `None` if the conditions are not met.
+
+#### Inputs
+| Name          | Type  | Description                        |
+|:--------------|:------|:-----------------------------------|
+| cell          | Cell  | The cell object to extract markdown from. |
+| code          | str   | The code within the cell.          |
+| native_callout | bool | Flag to determine if native callouts should be processed. |
+
+#### Outputs
+| Name     | Type          | Description                |
+|:---------|:--------------|:---------------------------|
+| markdown | Optional[str] | The extracted markdown content or `None`. |
+
+#### Internal Logic
+- Checks if the cell references "mo" and has no definitions.
+- Searches for lines starting with "mo.md(" in the code.
+- Parses the code using `ast` to identify markdown or callout functions.
+- Extracts and formats the markdown content, handling callouts if specified.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os`       | Used for file path operations. |
+| `re`       | Used for regular expression operations. |
+| `ast`      | Used for parsing and analyzing Python code. |
+| `textwrap` | Used for dedenting text. |
+
+## Error Handling
+
+- The `get_markdown_from_cell` function uses a try-except block to handle parsing errors, returning `None` if the code cannot be parsed into markdown.
+
+## TODOs
+
+- There is a comment in `get_markdown_from_cell` wishing for a more compact way to ignore `ignore[attr-defined]` for all attributes, indicating a potential area for improvement in handling attribute errors.

@@ -1,0 +1,80 @@
+---
+title: "useRecentCommands.ts"
+---
+
+## High-level description
+
+The `useRecentCommands` hook in the target file is designed to manage a list of recently used commands in a React application. It leverages local storage to persist the list of recent commands across sessions, allowing users to quickly access their most frequently used commands. The hook provides functionality to add new commands to the list while ensuring that the list remains unique and does not exceed a predefined maximum size.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `useRecentCommands`: The primary function that utilizes the `useLocalStorage` hook to manage recent commands.
+- `unique`: A helper function used within `useRecentCommands` to ensure the list of commands remains unique.
+
+## Symbols
+
+### `useRecentCommands`
+#### Description
+The `useRecentCommands` function is a custom React hook that manages a list of recent commands using local storage. It provides an interface to retrieve the current list of recent commands and to add new commands to this list, ensuring that the list remains unique and does not exceed a maximum length.
+
+#### Inputs
+None directly, but it uses the `useLocalStorage` hook internally.
+
+#### Outputs
+| Name            | Type                      | Description                                      |
+|:----------------|:--------------------------|:-------------------------------------------------|
+| recentCommands  | `RecentCommandId[]`       | The current list of recent commands.             |
+| addRecentCommand| `(command: RecentCommandId) =&gt; void` | Function to add a new command to the list. |
+
+#### Internal Logic
+- Initializes the `commands` state using the `useLocalStorage` hook with a key of `"marimo:commands"` and an empty array as the default value.
+- Provides a method `addRecentCommand` that:
+  - Adds a new command to the beginning of the list.
+  - Ensures the list remains unique using the `unique` function.
+  - Trims the list to a maximum of `MAX_RECENT_COMMANDS` items.
+
+### `unique`
+#### Description
+The `unique` function takes an array and returns a new array with duplicate elements removed, preserving the order of first occurrence.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| xs   | `T[]`| An array of elements of type `T`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `T[]` | A new array with duplicates removed. |
+
+#### Internal Logic
+- Utilizes a `Set` to filter out duplicate elements from the input array, leveraging the fact that a `Set` only stores unique values.
+
+## References
+
+- `HotkeyAction`: A type imported from `@/core/hotkeys/hotkeys`, representing possible command identifiers.
+- `useLocalStorage`: A custom hook imported from `./useLocalStorage`, used to persist the list of recent commands in local storage.
+
+## Dependencies
+
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `useLocalStorage`| Manages state with local storage persistence for the recent commands list. |
+
+## Error Handling
+
+The code does not explicitly handle errors, but relies on the `useLocalStorage` hook, which internally manages the retrieval and storage of data in local storage. Any errors related to local storage operations would need to be handled within the `useLocalStorage` implementation.
+
+## Side Effects
+
+- The `useRecentCommands` hook interacts with the browser's local storage to persist the list of recent commands, which is a side effect of using the `useLocalStorage` hook.
+
+## Performance Considerations
+
+- The use of a `Set` in the `unique` function is efficient for removing duplicates, as it operates in O(n) time complexity.
+- The list of recent commands is limited to a maximum of three items (`MAX_RECENT_COMMANDS`), which minimizes the performance impact of managing this list.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

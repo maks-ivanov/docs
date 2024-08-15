@@ -1,0 +1,60 @@
+---
+title: "extension.ts"
+---
+
+## High-level description
+
+The target file defines a drag-and-drop (DnD) extension for the CodeMirror editor, which allows users to drag text into the editor. The extension handles the `drop` and `dragover` events to facilitate this functionality, ensuring that text can be inserted at the correct position within the editor when dropped.
+
+## Code Structure
+
+The main symbol in the code is the `dndBundle` function, which returns an array of event handlers as an `Extension` for the CodeMirror editor. This extension is specifically designed to handle drag-and-drop events within the editor's view.
+
+## Symbols
+
+### `dndBundle`
+#### Description
+The `dndBundle` function creates and returns a CodeMirror extension that enables drag-and-drop functionality within the editor. It handles the `drop` event to insert text at the drop location and the `dragover` event to allow dropping by preventing the default browser behavior.
+
+#### Inputs
+This function does not take any inputs directly, but it operates on the `DragEvent` and `EditorView` objects provided by the CodeMirror framework.
+
+#### Outputs
+| Name      | Type      | Description                                      |
+|:----------|:----------|:-------------------------------------------------|
+| extension | Extension | An array of event handlers for drag-and-drop functionality in CodeMirror. |
+
+#### Internal Logic
+- **Drop Event Handling**: 
+  - The `drop` event handler retrieves the plain text data from the `dataTransfer` object of the event.
+  - If text is available, it prevents the default drop behavior.
+  - It calculates the position in the editor where the text should be inserted using `view.posAtCoords`, which converts the mouse coordinates to a document position.
+  - If a valid position is found, it dispatches a change to the editor's state to insert the text at the calculated position and scrolls the view to make the change visible.
+  
+- **Dragover Event Handling**: 
+  - The `dragover` event handler simply prevents the default behavior to allow the drop event to occur.
+
+## References
+
+The `dndBundle` function references the following CodeMirror components:
+- `EditorView`: Used to access the editor's view and handle DOM events.
+- `Extension`: Used to define the extension that will be applied to the editor.
+
+## Dependencies
+
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `@codemirror/state` | Provides the `Extension` type used to define editor extensions.       |
+| `@codemirror/view`  | Provides the `EditorView` class used to interact with the editor's view and handle DOM events. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond preventing default browser behaviors for drag-and-drop events. It assumes that the `dataTransfer` object will contain valid text data when a drop occurs.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## Side Effects
+
+The `dndBundle` function modifies the editor's state by inserting text at the drop location. It also prevents default browser behaviors for drag-and-drop events to ensure the custom functionality works as intended.

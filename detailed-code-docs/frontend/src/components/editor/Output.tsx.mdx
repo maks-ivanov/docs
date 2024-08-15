@@ -1,0 +1,97 @@
+---
+title: "Output.tsx"
+---
+
+## High-level description
+
+The `Output.tsx` file is a React component that is responsible for rendering different types of outputs based on the MIME type of the data it receives. It supports various formats such as JSON, HTML, images, videos, and more, and uses specific sub-components to handle each format. The component also includes functionality for handling errors and tracebacks specific to the Marimo application.
+
+## Code Structure
+
+The main symbols in the code are the `OutputRenderer` and `OutputArea` components. `OutputRenderer` is responsible for determining the type of output to render based on the MIME type and data provided in the `OutputMessage`. It uses various sub-components like `JsonOutput`, `HtmlOutput`, `ImageOutput`, etc., to render the appropriate output. `OutputArea` is a higher-level component that wraps `OutputRenderer` and provides additional functionality such as error handling and expandable output areas.
+
+## References
+
+- `OutputMessage` from `@/core/kernel/messages`: This type defines the structure of the message that contains the output data and its MIME type.
+- `CellId` from `@/core/cells/ids`: This type is used to uniquely identify cells in the application.
+- `ErrorBoundary` from `./boundary/ErrorBoundary`: This component is used to catch and handle errors that occur during the rendering of outputs.
+
+## Symbols
+
+### `OutputRenderer`
+#### Description
+`OutputRenderer` is a React functional component that renders different types of outputs based on the MIME type specified in the `OutputMessage`. It uses a switch-case structure to determine which sub-component to use for rendering the output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | OutputMessage | The message containing the output data and its MIME type. |
+| onRefactorWithAI | function (optional) | A callback function for AI-based refactoring, used in specific output types like tracebacks. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element or null | The rendered output component or null if no data is available. |
+
+#### Internal Logic
+- Uses `useMemo` to parse JSON data if the MIME type is `application/json`.
+- Switches on the MIME type to render the appropriate component, such as `HtmlOutput`, `TextOutput`, `JsonOutput`, etc.
+- Uses `invariant` to assert the expected data type for each MIME type.
+- Logs unexpected MIME types using `logNever`.
+
+### `OutputArea`
+#### Description
+`OutputArea` is a React component that wraps the `OutputRenderer` and provides additional functionality such as handling stale outputs and allowing outputs to be expandable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | OutputMessage or null | The output message to be rendered. |
+| cellId | CellId | The unique identifier for the cell associated with the output. |
+| stale | boolean | Indicates whether the output is stale. |
+| allowExpand | boolean | Determines if the output can be expanded. |
+| className | string (optional) | Additional CSS classes for styling. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element or null | The rendered output area component or null if no output is available. |
+
+#### Internal Logic
+- Checks if the output is null or empty and returns null if so.
+- Uses `ErrorBoundary` to catch and handle errors during rendering.
+- Determines the container component (`ExpandableOutput` or `Div`) based on the `allowExpand` prop.
+
+### `ExpandableOutput`
+#### Description
+`ExpandableOutput` is a component that detects overflow in the output area and provides a button to expand or collapse the output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | CellId | The unique identifier for the cell associated with the output. |
+| children | React.ReactNode | The content to be rendered inside the expandable area. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered expandable output component. |
+
+#### Internal Logic
+- Uses `useRef` to reference the container element and `useState` to manage the expanded state.
+- Uses `useEffect` to create a `ResizeObserver` that detects overflow and updates the state accordingly.
+- Provides buttons for expanding, collapsing, and fullscreen viewing of the output.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React | Used for building the component. |
+| `lucide-react` | Provides icons used in the component. |
+| `@/utils/cn` | Utility for merging CSS class names. |
+| `@/utils/invariant` | Utility for runtime assertions. |
+| `@/utils/assertNever` | Utility for exhaustive checks in switch statements. |
+
+## TODOs
+- The code includes TODO comments for supporting additional MIME types such as audio, PDF, CSV, and more.
+- There is a note to make the JSON format configurable once cells can support configuration.

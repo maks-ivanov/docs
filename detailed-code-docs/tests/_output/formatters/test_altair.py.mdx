@@ -1,0 +1,63 @@
+---
+title: "test_altair.py"
+---
+
+## High-level description
+
+The target file `tests/_output/formatters/test_altair.py` is a test module designed to verify the functionality of the Altair formatter within the Marimo framework. It checks if the Altair chart objects are correctly formatted into HTML when the necessary dependencies are installed. The test is executed asynchronously and is skipped if the Altair dependency is not available.
+
+## Code Structure
+
+The main components of the code are:
+- **Dependency Check**: Uses `DependencyManager` to verify if the Altair library is installed.
+- **Test Function**: An asynchronous test function `test_altair` that sets up the environment, runs a code snippet using the Marimo kernel, and asserts the expected output.
+
+## References
+
+- `DependencyManager`: Used to check if the Altair library is installed.
+- `Kernel`: Represents the execution environment for running code snippets.
+- `register_formatters`: Registers formatters for various data types, including Altair charts.
+- `ExecReqProvider`: Provides execution requests for the kernel.
+
+## Symbols
+
+### `test_altair`
+#### Description
+The `test_altair` function is an asynchronous test that verifies the Altair chart formatting functionality. It ensures that an Altair chart is correctly converted to an HTML representation when executed within the Marimo kernel.
+
+#### Inputs
+| Name            | Type            | Description                                      |
+|:----------------|:----------------|:-------------------------------------------------|
+| executing_kernel| `Kernel`        | The kernel instance used to execute the code.    |
+| exec_req        | `ExecReqProvider` | Provides execution requests for the kernel.     |
+
+#### Outputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| None   | None  | The function does not return a value but asserts the output. |
+
+#### Internal Logic
+1. **Dependency Check**: The test is skipped if the Altair dependency is not installed.
+2. **Formatter Registration**: Calls `register_formatters` to ensure all necessary formatters are available.
+3. **Code Execution**: Uses the `executing_kernel` to run a code snippet that creates an Altair chart and formats it.
+4. **Assertion**: Checks that the result is not `None`, and verifies that the output is an HTML iframe.
+
+## Side Effects
+- The test modifies the global state of the kernel by executing code within it.
+- It registers formatters which may affect other tests if they rely on the same kernel instance.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pytest`   | Used for marking the test and handling test execution. |
+| `marimo`   | The main framework being tested, specifically its formatting capabilities. |
+
+## Error Handling
+- The test uses `pytest.mark.skipif` to skip execution if the Altair dependency is not installed, preventing unnecessary test failures.
+
+## Logging
+- The test does not implement any logging mechanisms.
+
+## TODOs
+- No TODOs are present in the code.

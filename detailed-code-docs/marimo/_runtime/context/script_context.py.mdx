@@ -1,0 +1,83 @@
+---
+title: "script_context.py"
+---
+
+## High-level description
+
+The `script_context.py` file defines a `ScriptRuntimeContext` class that encapsulates the runtime state when running a Marimo application as a script. It provides mechanisms to manage command-line arguments, query parameters, and execution context for script-based execution. Additionally, it includes a function `initialize_script_context` to set up the context for each client thread, ensuring that the runtime environment is correctly initialized for script execution.
+
+## Code Structure
+
+The main symbol in this file is the `ScriptRuntimeContext` class, which extends the `RuntimeContext` class. This class interacts with various components such as `InternalApp`, `ExecutionContext`, `CLIArgs`, and `QueryParams` to manage the script execution environment. The `initialize_script_context` function is responsible for setting up the `ScriptRuntimeContext` for a given application and stream.
+
+## Symbols
+
+### `ScriptRuntimeContext`
+#### Description
+The `ScriptRuntimeContext` class encapsulates the runtime state for a Marimo application when it is executed as a script. It manages command-line arguments, query parameters, and the execution context, providing properties and methods to access and manipulate these elements.
+
+#### Inputs
+- `_app`: `InternalApp` - The internal representation of the Marimo application.
+
+#### Outputs
+- `graph`: `DirectedGraph` - The dataflow graph of the application.
+- `globals`: `dict[str, Any]` - A dictionary representing global variables, currently returns an empty dictionary.
+- `execution_context`: `ExecutionContext | None` - The current execution context, if any.
+- `cell_id`: `Optional[CellId_t]` - The ID of the currently executing cell, if any.
+- `cli_args`: `CLIArgs` - The command-line arguments passed to the script.
+- `query_params`: `QueryParams` - The query parameters for the script.
+
+#### Internal Logic
+- The class initializes with an `InternalApp` instance and sets up CLI arguments and query parameters.
+- It provides properties to access the application's graph, execution context, and other runtime elements.
+- Methods like `get_ui_initial_value`, `provide_ui_ids`, `take_id`, and `register_state_update` are placeholders or raise exceptions, indicating that certain functionalities are not supported in this context.
+
+### `initialize_script_context`
+#### Description
+The `initialize_script_context` function initializes the script runtime context for a given application and stream. It sets up a `ScriptRuntimeContext` instance and calls `initialize_context` to install it as the current runtime context.
+
+#### Inputs
+| Name  | Type        | Description                          |
+|:------|:------------|:-------------------------------------|
+| app   | `InternalApp` | The internal representation of the Marimo application. |
+| stream | `Stream`    | The stream for output and messaging. |
+
+#### Outputs
+- None
+
+#### Internal Logic
+- The function imports `VirtualFileRegistry` and creates a `ScriptRuntimeContext` instance with various registries and settings.
+- It calls `initialize_context` to set the created context as the current runtime context for the thread.
+
+## References
+
+- `InternalApp`: Used to represent the application within the `ScriptRuntimeContext`.
+- `ExecutionContext`: Represents the execution context of a cell.
+- `CLIArgs`: Manages command-line arguments for the script.
+- `QueryParams`: Manages query parameters for the script.
+- `initialize_context`: Function from `types.py` used to set the runtime context.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `contextlib.contextmanager` | Used to create context managers for certain methods. |
+| `dataclasses.dataclass` | Used to define the `ScriptRuntimeContext` as a data class. |
+| `typing` | Provides type annotations for better code clarity and type checking. |
+
+## Error Handling
+
+- The `take_id` method raises a `NoIDProviderException` to indicate that ID provision is not supported in this context.
+- The `get_ui_initial_value` method raises a `KeyError` to indicate that UI initial values are not available.
+
+## Side Effects
+
+- The `initialize_script_context` function modifies the global state by setting the runtime context for the current thread.
+
+## Performance Considerations
+
+- The lazy initialization of `cli_args` ensures that command-line arguments are only parsed when accessed, which can improve performance if they are not needed.
+
+## TODOs
+
+- The methods `get_ui_initial_value`, `provide_ui_ids`, and `register_state_update` are placeholders and may need implementation or removal based on future requirements.

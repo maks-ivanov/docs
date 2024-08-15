@@ -1,0 +1,114 @@
+---
+title: "PlotlyPlugin.tsx"
+---
+
+## High-level description
+
+The `PlotlyPlugin.tsx` file defines a React component that integrates Plotly, a graphing library, into a plugin system. This plugin allows for the rendering and interaction with Plotly charts within a React application, providing features such as state management, layout customization, and event handling for user interactions like selections and layout changes.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `PlotlyPlugin` is a class that implements the `IPlugin` interface, defining the structure and behavior of the plugin.
+- `PlotlyComponent` is a React component that handles the rendering of the Plotly chart and manages its state and interactions.
+- `LazyPlot` is a lazily loaded component for rendering Plotly charts, optimizing performance by loading the component only when needed.
+- Utility functions like `initialLayout` and `extractPoints` assist in setting up the chart's layout and processing user interactions.
+
+## Symbols
+
+### `PlotlyPlugin`
+#### Description
+The `PlotlyPlugin` class implements the `IPlugin` interface, providing a structure for rendering Plotly charts within a plugin system. It defines the plugin's tag name, data validation schema, and rendering logic.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;T, Data&gt;` | Properties passed to the plugin, including data, state, and host element. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered Plotly component. |
+
+#### Internal Logic
+- The `validator` uses `zod` to define and validate the structure of the data expected by the plugin.
+- The `render` method returns a `PlotlyComponent` with the necessary props for rendering the chart.
+
+### `PlotlyComponent`
+#### Description
+`PlotlyComponent` is a memoized React component that renders a Plotly chart and manages its state, including layout and user interactions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| figure | `Figure` | The Plotly figure data to be rendered. |
+| value | `T` | The current state of the plugin. |
+| setValue | `Setter&lt;T&gt;` | Function to update the plugin's state. |
+| config | `Partial&lt;Plotly.Config&gt;` | Configuration options for the Plotly chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered Plotly chart component. |
+
+#### Internal Logic
+- Initializes the chart layout using `initialLayout` and updates it based on user interactions.
+- Handles events like `onRelayout`, `onUpdate`, and `onSelected` to manage state changes and user selections.
+- Uses `useMemo` and `useEffect` hooks to optimize performance and manage side effects.
+
+### `initialLayout`
+#### Description
+A function that sets up the initial layout for a Plotly chart, enabling autosize if width is not specified and setting default layout properties.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| figure | `Figure` | The Plotly figure data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| layout | `Partial&lt;Plotly.Layout&gt;` | The initial layout configuration for the chart. |
+
+### `extractPoints`
+#### Description
+A utility function that extracts data points from a Plotly event using the hover template, preserving the original keys.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| points | `Plotly.PlotDatum[]` | Array of Plotly data points. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `Array&lt;Record&lt;AxisName, AxisDatum&gt;&gt;` | Extracted data points with original keys. |
+
+#### Internal Logic
+- Uses a regular expression to parse the hover template and extract key-value pairs from the data points.
+
+## References
+
+- `useDeepCompareMemoize` from `frontend/src/hooks/useDeepCompareMemoize.ts` is used to memoize configuration objects deeply.
+- `Logger` from `frontend/src/utils/Logger.ts` is used for error logging.
+- `Objects.omit` from `frontend/src/utils/objects.ts` is used to filter out specific keys from objects.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-plotly.js` | Used for rendering Plotly charts in React. |
+| `zod` | Used for data validation. |
+| `lodash-es` | Provides utility functions like `isEqual` and `set`. |
+| `react-use-event-hook` | Used for creating event handlers. |
+
+## Error Handling
+
+- Errors during chart rendering or interactions are logged using the `Logger` utility.
+
+## Logging
+
+- The `Logger` utility is used to log errors, providing a consistent logging mechanism that can be configured for different environments.
+
+## TODOs
+- No TODOs or notes are present in the code.

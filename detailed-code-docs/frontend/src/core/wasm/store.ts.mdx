@@ -1,0 +1,98 @@
+---
+title: "store.ts"
+---
+
+## High-level description
+
+The `store.ts` file defines a set of mechanisms for storing and retrieving file contents in various ways, such as using local storage, URL parameters, DOM elements, and remote fetching. It provides a unified interface, `FileStore`, for these storage mechanisms and combines them into composite stores to offer fallback strategies for file retrieval and storage.
+
+## Code Structure
+
+The main symbols in the code are different implementations of the `FileStore` interface, each providing specific methods for saving and reading file contents. These implementations include `localStorageFileStore`, `urlFileStore`, `domElementFileStore`, `remoteDefaultFileStore`, and `emptyFileStore`. The `CompositeFileStore` class is used to combine multiple `FileStore` implementations, allowing for a prioritized sequence of storage mechanisms. The `notebookFileStore` and `fallbackFileStore` are instances of `CompositeFileStore` that define specific sequences of storage strategies.
+
+## References
+
+- `TypedLocalStorage` from `localStorage.ts` is used for managing local storage operations.
+- `PyodideRouter` from `router.ts` is used for handling URL-based storage.
+- `compressToEncodedURIComponent` and `decompressFromEncodedURIComponent` from `lz-string` are used for compressing and decompressing strings for URL storage.
+
+## Symbols
+
+### `FileStore`
+#### Description
+An interface that defines methods for saving and reading file contents.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| contents | string | The content to be saved. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string \| null \| Promise&lt;string \| null&gt; | The content read from the store. |
+
+### `localStorageFileStore`
+#### Description
+Implements `FileStore` using `TypedLocalStorage` to store and retrieve file contents from the browser's local storage.
+
+### `urlFileStore`
+#### Description
+Implements `FileStore` using URL parameters to store and retrieve file contents. It compresses the content for storage in the URL hash.
+
+### `domElementFileStore`
+#### Description
+Implements `FileStore` by reading file contents from a DOM element with the tag `marimo-code`. It does not support saving.
+
+### `remoteDefaultFileStore`
+#### Description
+Implements `FileStore` by fetching file contents from a remote URL. It does not support saving.
+
+### `emptyFileStore`
+#### Description
+Implements `FileStore` with a default script as the file content. It does not support saving.
+
+### `CompositeFileStore`
+#### Description
+A class that implements `FileStore` by combining multiple `FileStore` instances. It attempts to read from each store in sequence until it finds content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stores | FileStore[] | An array of `FileStore` instances to combine. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string \| null | The content read from the first store that returns a non-null value. |
+
+#### Internal Logic
+- Iterates over the provided `FileStore` instances.
+- Calls `readFile` on each until a non-null result is found.
+- Calls `saveFile` on all stores when saving.
+
+### `notebookFileStore`
+#### Description
+An instance of `CompositeFileStore` that prioritizes reading from a DOM element, then from the URL.
+
+### `fallbackFileStore`
+#### Description
+An instance of `CompositeFileStore` that prioritizes reading from local storage, then from a remote URL, and finally defaults to a predefined script.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lz-string` | Used for compressing and decompressing strings for URL storage. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception handling in `TypedLocalStorage` and `ZodLocalStorage`, which return default values if an error occurs during JSON parsing.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

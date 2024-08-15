@@ -1,0 +1,109 @@
+---
+title: "underline.ts"
+---
+
+## High-level description
+
+The code in `underline.ts` is part of a CodeMirror plugin that provides functionality to underline variable names in a code editor when a user holds down the "Meta" or "Control" key and hovers over them. This underlining is part of a "go-to-definition" feature, where clicking on the underlined variable name triggers a callback function, typically to navigate to the variable's definition.
+
+## Code Structure
+
+The main components of the code are:
+- **Decorations and State Effects**: These are used to manage the visual underlining of text in the editor.
+- **State Field**: Manages the state of underlined text in the editor.
+- **MetaUnderlineVariablePlugin**: A class that handles the logic for detecting when the "Meta" or "Control" key is pressed, tracking mouse movements, and underlining variable names.
+- **createUnderlinePlugin**: A function that initializes the `MetaUnderlineVariablePlugin` with a specified click handler.
+
+## References
+
+- **`@codemirror/view`**: Provides the `EditorView`, `Decoration`, and `ViewPlugin` used for rendering and managing the editor's view.
+- **`@codemirror/state`**: Provides `StateField` and `StateEffect` for managing editor state.
+- **`@codemirror/language`**: Provides `syntaxTree` for accessing the syntax tree of the code in the editor.
+- **`@lezer/common`**: Provides `TreeCursor` for navigating the syntax tree.
+
+## Symbols
+
+### `underlineDecoration`
+#### Description
+Defines a decoration that visually marks text with an underline.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| underlineDecoration | Decoration | A decoration that applies an underline style to text. |
+
+### `addUnderline` and `removeUnderlines`
+#### Description
+State effects used to add or remove underlines in the editor.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| addUnderline | StateEffect | Effect to add an underline to a specified range. |
+| removeUnderlines | StateEffect | Effect to remove all underlines. |
+
+### `underlineField`
+#### Description
+A state field that manages the set of underlined decorations in the editor.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| underlineField | StateField | A state field that tracks underlined text. |
+
+#### Internal Logic
+- **create**: Initializes with no decorations.
+- **update**: Updates decorations based on state effects, adding or removing underlines as needed.
+
+### `MetaUnderlineVariablePlugin`
+#### Description
+Handles the logic for underlining variable names when the "Meta" or "Control" key is pressed and the mouse hovers over them.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view instance. |
+| onClick | function | Callback function triggered on click. |
+
+#### Internal Logic
+- **keydown**: Activates command-click mode, adding event listeners for mouse movements and clicks.
+- **keyup**: Deactivates command-click mode, removing event listeners and clearing underlines.
+- **windowBlur**: Resets state when the window loses focus.
+- **mousemove**: Tracks mouse movements to underline variable names.
+- **click**: Triggers the `onClick` callback and moves the cursor to the clicked position.
+- **clearUnderline**: Clears any existing underlines.
+
+### `createUnderlinePlugin`
+#### Description
+Creates an instance of `MetaUnderlineVariablePlugin` with a specified click handler.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| onClick | function | Callback function triggered on click. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plugin | ViewPlugin | A view plugin instance for underlining variables. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides components for rendering and managing the editor's view. |
+| `@codemirror/state` | Provides components for managing editor state. |
+| `@codemirror/language` | Provides access to the syntax tree of the code. |
+| `@lezer/common` | Provides tools for navigating the syntax tree. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic event handling and state management. It relies on the CodeMirror framework to manage state updates and view rendering.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The code does not expose an API but provides a plugin interface for CodeMirror, which can be integrated into a larger application to provide go-to-definition functionality.

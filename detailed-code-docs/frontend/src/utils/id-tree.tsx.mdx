@@ -1,0 +1,108 @@
+---
+title: "id-tree.tsx"
+---
+
+## High-level description
+
+The `id-tree.tsx` file defines a tree data structure specifically designed to handle nodes with unique identifiers and nested children. It provides functionality to manipulate these nodes, such as collapsing, expanding, moving, and inserting nodes, while maintaining the hierarchical structure. The primary classes, `TreeNode` and `CollapsibleTree`, offer methods to manage and query the tree's state, supporting operations like counting descendants, checking node equality, and converting the tree to a string representation.
+
+## Code Structure
+
+The main symbols in the code are the `TreeNode` and `CollapsibleTree` classes. `TreeNode` represents individual nodes in the tree, each with a value, a collapsed state, and a list of children. `CollapsibleTree` manages a collection of `TreeNode` instances, providing methods to manipulate the tree structure, such as collapsing or expanding nodes, moving nodes, and inserting or deleting nodes. The `CollapsibleTree` class also includes utility methods for querying the tree, such as retrieving descendants or checking if a node is collapsed.
+
+## Symbols
+
+### `TreeNode&lt;T&gt;`
+#### Description
+Represents a node in the tree with a value, a collapsed state, and a list of child nodes. It provides methods to count descendants, retrieve descendants, and check equality with another node.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | T | The value stored in the node. |
+| isCollapsed | boolean | Indicates if the node is collapsed. |
+| children | Array&lt;TreeNode&lt;T&gt;&gt; | List of child nodes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| geDescendantCount | number | The total number of descendant nodes. |
+| getDescendants | T[] | List of descendant node values. |
+| inOrderIds | T[] | List of node values in in-order traversal. |
+| toString | string | String representation of the node. |
+| equals | boolean | Whether the node equals another node. |
+
+#### Internal Logic
+- `geDescendantCount`: Recursively counts the number of descendant nodes.
+- `getDescendants`: Recursively retrieves the values of all descendant nodes.
+- `equals`: Compares the node's value with another node's value.
+
+### `CollapsibleTree&lt;T&gt;`
+#### Description
+Manages a collection of `TreeNode` instances, providing methods to manipulate the tree structure, such as collapsing, expanding, moving, inserting, and deleting nodes. It also offers utility methods for querying the tree.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| nodes | Array&lt;TreeNode&lt;T&gt;&gt; | List of top-level nodes in the tree. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| topLevelIds | T[] | List of top-level node values. |
+| inOrderIds | T[] | List of node values in in-order traversal. |
+| length | number | Number of top-level nodes. |
+| getDescendants | T[] | List of descendant node values for a given node. |
+| isCollapsed | boolean | Whether a given node is collapsed. |
+| indexOfOrThrow | number | Index of a given node, or throws an error if not found. |
+| moveToFront | CollapsibleTree&lt;T&gt; | New tree with a node moved to the front. |
+| moveToBack | CollapsibleTree&lt;T&gt; | New tree with a node moved to the back. |
+| collapse | CollapsibleTree&lt;T&gt; | New tree with a node collapsed. |
+| expand | CollapsibleTree&lt;T&gt; | New tree with a node expanded. |
+| move | CollapsibleTree&lt;T&gt; | New tree with a node moved to a new index. |
+| at | T | Value of the node at a given index. |
+| atOrThrow | T | Value of the node at a given index, or throws an error if not found. |
+| first | T | Value of the first node. |
+| last | T | Value of the last node. |
+| insert | CollapsibleTree&lt;T&gt; | New tree with a node inserted at a given index. |
+| insertAtEnd | CollapsibleTree&lt;T&gt; | New tree with a node inserted at the end. |
+| insertAtStart | CollapsibleTree&lt;T&gt; | New tree with a node inserted at the start. |
+| delete | CollapsibleTree&lt;T&gt; | New tree with a node deleted. |
+| getCount | number | Number of nodes in the tree, excluding a given node. |
+| findAndExpandDeep | CollapsibleTree&lt;T&gt; | New tree with a node and its children expanded. |
+| find | T[] | Path to a node, with the last element being the node itself. |
+| equals | boolean | Whether the tree equals another tree. |
+| toString | string | String representation of the tree. |
+
+#### Internal Logic
+- `collapse`: Collapses a node and its subsequent nodes up to a specified node or the end of the tree.
+- `expand`: Expands a collapsed node and reinserts its children into the tree.
+- `move`: Reorders nodes within the tree.
+- `insert` and `delete`: Modify the tree by adding or removing nodes.
+- `findAndExpandDeep`: Recursively finds a node and expands it along with its ancestors.
+
+## References
+
+- `Logger`: Used for logging warnings when nodes are not found.
+- `arrayMove`, `arrayDelete`, `arrayInsert`, `arrayInsertMany`: Utility functions for manipulating arrays, used extensively in the `CollapsibleTree` class.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@dnd-kit/sortable` | Provides the `arrayMove` function for reordering arrays. |
+| `typescript-memoize` | Used to memoize the `inOrderIds` getter in `CollapsibleTree`. |
+| `./arrays` | Provides utility functions for array manipulation. |
+| `./Logger` | Provides logging functionality. |
+
+## Error Handling
+
+The code handles errors by throwing exceptions when operations cannot be completed, such as when a node is not found or when attempting to collapse or expand a node that is already in the desired state.
+
+## Logging
+
+The `Logger` is used to log warnings when a node is not found in the tree, providing information about valid node IDs.
+
+## TODOs
+
+No TODOs or notes are present in the code.

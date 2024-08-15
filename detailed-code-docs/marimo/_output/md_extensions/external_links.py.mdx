@@ -1,0 +1,74 @@
+---
+title: "external_links.py"
+---
+
+## High-level description
+
+The target file, `external_links.py`, is part of a Markdown extension for the Marimo project. It defines a custom Markdown extension that processes HTML elements within Markdown content to modify external links. Specifically, it adds attributes to external links to ensure they open in a new tab and are secure from potential security vulnerabilities.
+
+## Code Structure
+
+The code consists of two main classes:
+
+1. `ExternalLinksTreeProcessor`: A tree processor that iterates over HTML elements in a Markdown document and modifies external links.
+2. `ExternalLinksExtension`: A Markdown extension that registers the `ExternalLinksTreeProcessor` to be used during the Markdown processing.
+
+The `ExternalLinksExtension` class is used in conjunction with the `markdown` library to extend its functionality by adding the `ExternalLinksTreeProcessor` to the Markdown processing pipeline.
+
+## Symbols
+
+### `ExternalLinksTreeProcessor`
+#### Description
+The `ExternalLinksTreeProcessor` class is a custom tree processor for the Markdown library. Its purpose is to iterate over the HTML elements generated from Markdown content and modify any external links by adding `target="_blank"` and `rel="noopener"` attributes. This ensures that external links open in a new tab and are protected from potential security vulnerabilities associated with the `window.opener` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| root | `Element` | The root element of the HTML tree generated from Markdown content. |
+
+#### Outputs
+This class does not return any outputs. It modifies the HTML elements in place.
+
+#### Internal Logic
+- The `run` method iterates over all elements in the HTML tree.
+- For each element, it checks if the tag is an anchor (`&lt;a&gt;`).
+- If the element is an anchor and its `href` attribute starts with `http` or `https`, it sets the `target` attribute to `_blank` and the `rel` attribute to `noopener`.
+
+### `ExternalLinksExtension`
+#### Description
+The `ExternalLinksExtension` class is a custom extension for the Markdown library. It registers the `ExternalLinksTreeProcessor` to be used during the Markdown processing, ensuring that external links are processed according to the logic defined in the `ExternalLinksTreeProcessor`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| md | `Markdown` | The Markdown instance to which the extension is being added. |
+
+#### Outputs
+This class does not produce direct outputs. It modifies the Markdown instance by registering the tree processor.
+
+#### Internal Logic
+- The `extendMarkdown` method registers the `ExternalLinksTreeProcessor` with a priority of `-1000`, ensuring it runs early in the processing pipeline.
+
+## References
+
+- The `ExternalLinksExtension` is used in the `marimo/_output/md.py` file, where it is added to the list of Markdown extensions to be applied during the conversion of Markdown text to HTML.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `urllib.parse` | Used to parse URLs to determine if they are external links. |
+| `xml.etree.ElementTree` | Used to manipulate the HTML elements generated from Markdown content. |
+| `markdown` | Provides the base classes and functionality for creating Markdown extensions. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the input to the `run` method is a valid HTML element tree and that URLs can be parsed without exceptions.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

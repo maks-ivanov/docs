@@ -1,0 +1,101 @@
+---
+title: "file_router.py"
+---
+
+## High-level description
+
+The `file_router.py` module defines an abstract class `AppFileRouter` and its concrete implementations for routing files to an `AppFileManager`. This module is responsible for determining how files and directories are managed and accessed within the Marimo application, providing mechanisms to handle single files, directories, and new file creation.
+
+## Code Structure
+
+The main symbols in the code are the `AppFileRouter` class and its subclasses: `NewFileAppFileRouter`, `ListOfFilesAppFileRouter`, and `LazyListOfFilesAppFileRouter`. The `AppFileRouter` class provides a framework for routing files, while its subclasses implement specific strategies for handling files and directories. The `AppFileRouter` class uses methods from the `AppFileManager` to manage file operations.
+
+## Symbols
+
+### `AppFileRouter`
+#### Description
+`AppFileRouter` is an abstract base class that defines the interface for routing files to an `AppFileManager`. It provides methods to infer the type of file path, create routers from filenames, directories, or lists of files, and manage file operations through an `AppFileManager`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The file or directory path to be routed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AppFileRouter | An instance of a subclass of `AppFileRouter` based on the input path. |
+
+#### Internal Logic
+- The `infer` method determines if the path is a file or directory and returns the appropriate router.
+- The `from_filename`, `from_directory`, and `from_files` methods create specific routers for handling files, directories, or lists of files.
+- The `get_file_manager` method retrieves an `AppFileManager` for a given file key, handling both absolute and relative paths.
+
+### `NewFileAppFileRouter`
+#### Description
+`NewFileAppFileRouter` is a subclass of `AppFileRouter` that handles the creation of new files. It provides methods to manage a new file context where no actual file exists yet.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | List[FileInfo] | An empty list, as no files are associated with a new file context. |
+
+### `ListOfFilesAppFileRouter`
+#### Description
+`ListOfFilesAppFileRouter` is a subclass of `AppFileRouter` that manages a predefined list of files. It provides methods to access and manage these files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | List[MarimoFile] | A list of `MarimoFile` objects representing the files to be managed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | List[FileInfo] | A list of `FileInfo` objects representing the managed files. |
+
+#### Internal Logic
+- The constructor initializes the router with a list of `MarimoFile` objects.
+- The `files` property converts these objects into `FileInfo` objects for further processing.
+
+### `LazyListOfFilesAppFileRouter`
+#### Description
+`LazyListOfFilesAppFileRouter` is a subclass of `AppFileRouter` that lazily loads files from a directory. It supports toggling the inclusion of markdown files and handles directory traversal.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| directory | str | The directory path to be managed. |
+| include_markdown | bool | Whether to include markdown files in the file list. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | List[FileInfo] | A list of `FileInfo` objects representing the files in the directory. |
+
+#### Internal Logic
+- The `files` property lazily loads files from the directory, applying filters for allowed extensions and directory depth.
+- The `_load_files` method recursively traverses the directory, applying sorting and filtering logic.
+
+## References
+
+- `AppFileManager`: Used by `AppFileRouter` to manage file operations.
+- `MarimoPath`: Utilized for path operations and validations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file and directory operations. |
+| `pathlib` | Provides path manipulation capabilities. |
+| `abc` | Used to define abstract base classes. |
+| `typing` | Provides type annotations for better code clarity. |
+
+## Error Handling
+
+- The `infer` method raises an `HTTPException` with a `BAD_REQUEST` status if the path is neither a file nor a directory.
+- The `get_file_manager` method raises an `HTTPException` with a `NOT_FOUND` status if the file key does not correspond to an existing file.
+
+## Logging
+
+- The module uses a logger (`LOGGER`) to log debug information about routing decisions and errors encountered during file operations.

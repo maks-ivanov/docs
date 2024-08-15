@@ -1,0 +1,73 @@
+---
+title: "marimo_pdb.py"
+---
+
+## High-level description
+
+The `marimo_pdb.py` file defines a custom debugger class `MarimoPdb` that extends Python's built-in `Pdb` class. This custom debugger is designed to integrate with the Marimo environment, allowing for debugging sessions that can be controlled through custom input and output streams. The file also provides a utility function `set_trace` to initiate a debugging session with the custom debugger.
+
+## Code Structure
+
+The main components of the code are the `MarimoPdb` class and the `set_trace` function. The `MarimoPdb` class inherits from `Pdb` and overrides its initialization to accept custom input and output streams. The `set_trace` function is a utility that simplifies starting a debugging session with a `MarimoPdb` instance.
+
+## Symbols
+
+### `MarimoPdb`
+#### Description
+The `MarimoPdb` class is a custom debugger that extends the functionality of Python's built-in `Pdb` class. It is designed to work within the Marimo environment, allowing for debugging with custom input and output streams.
+
+#### Inputs
+| Name   | Type          | Description                        |
+|:-------|:--------------|:-----------------------------------|
+| stdout | `Stdout` \| `None` | Custom output stream for the debugger. |
+| stdin  | `Stdin` \| `None`  | Custom input stream for the debugger.  |
+
+#### Outputs
+This class does not have a direct output but modifies the behavior of the debugger by using custom input and output streams.
+
+#### Internal Logic
+- The constructor initializes the `Pdb` class with the provided `stdout` and `stdin` streams.
+- It sets `use_rawinput` to `False` if `stdin` is provided, indicating that raw input should not be used.
+- The `set_trace` method optionally writes a header to `sys.stdout` before calling the parent class's `set_trace` method to start a debugging session.
+
+### `set_trace`
+#### Description
+The `set_trace` function is a utility function that starts a debugging session using a `MarimoPdb` instance. It ensures that the frame used for debugging points to user code.
+
+#### Inputs
+| Name     | Type          | Description                                      |
+|:---------|:--------------|:-------------------------------------------------|
+| debugger | `MarimoPdb`   | An instance of the custom debugger to use.       |
+| frame    | `FrameType` \| `None` | The frame to start debugging from. Defaults to the caller's frame. |
+| header   | `str` \| `None` | An optional header to display when starting the debugger. |
+
+#### Outputs
+This function does not return any output but initiates a debugging session.
+
+#### Internal Logic
+- If no frame is provided, it retrieves the current frame and sets the frame to the caller's frame.
+- Calls the `set_trace` method of the `MarimoPdb` instance to start the debugging session.
+
+## References
+
+- The `MarimoPdb` class uses the `Pdb` class from Python's `pdb` module.
+- The `LOGGER` is initialized using the `marimo_logger` function from the `_loggers` module.
+- The `Stdout` and `Stdin` types are imported from the `_messaging.types` module.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pdb`      | Provides the base `Pdb` class for debugging. |
+| `sys`      | Used for writing the header to standard output. |
+| `inspect`  | Used to retrieve the current frame for debugging. |
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._messaging.types` | Defines types for custom input and output streams. |
+
+## Error Handling
+
+The code does not explicitly handle errors but relies on the underlying `Pdb` class for error management during debugging sessions.
+
+## Logging
+
+The `LOGGER` is initialized but not used within this file. It is likely intended for logging debugging-related information in a broader context within the Marimo environment.

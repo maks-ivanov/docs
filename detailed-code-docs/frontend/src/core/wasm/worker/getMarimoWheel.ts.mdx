@@ -1,0 +1,49 @@
+---
+title: "getMarimoWheel.ts"
+---
+
+## High-level description
+
+The `getMarimoWheel` function in the target file is responsible for generating a string that specifies the version of the Marimo package to be used. This string can be a URL for a local development version, a specific version string, or a general version requirement. The function is used in the context of setting up a WebAssembly (Wasm) environment where Python packages are installed using Pyodide.
+
+## Code Structure
+
+The `getMarimoWheel` function is a standalone utility function that is used by other parts of the codebase, specifically in the `bootstrap.ts` file, to determine the correct Marimo package version or URL to install in a Pyodide environment.
+
+## References
+
+- The `getMarimoWheel` function is referenced in the `bootstrap.ts` file, where it is used to determine the Marimo package version or URL for installation in the `installDevMarimoAndDeps` and `installMarimoAndDeps` methods.
+
+## Symbols
+
+### `getMarimoWheel`
+#### Description
+The `getMarimoWheel` function generates a string that specifies the version of the Marimo package to be used. It handles different scenarios based on the input version string, such as returning a local development URL, a specific version, or a general version requirement.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| version | string | The version identifier for Marimo. |
+
+#### Outputs
+| Name   | Type   | Description                                      |
+|:-------|:-------|:-------------------------------------------------|
+| output | string | A string specifying the Marimo package version.  |
+
+#### Internal Logic
+- If the `version` is not provided, it defaults to returning `"marimo &gt;= 0.3.0"`.
+- If the `version` is `"local"`, it constructs a URL pointing to a local development server using the environment variable `VITE_MARIMO_VERSION`.
+- If the `version` is `"latest"`, it returns `"marimo"`, indicating the latest version should be used.
+- For any other `version` string, it returns a specific version requirement in the format `"marimo==&lt;version&gt;"`.
+
+## Dependencies
+
+The function relies on the `import.meta.env.VITE_MARIMO_VERSION` environment variable to construct the URL for the local development version of the Marimo package.
+
+## Error Handling
+
+The function does not include explicit error handling. It assumes that the `version` input is a valid string and that the environment variable `VITE_MARIMO_VERSION` is correctly set when needed.
+
+## Usage in Related Code
+
+In the `bootstrap.ts` file, the `getMarimoWheel` function is used to determine the correct Marimo package version or URL to install in a Pyodide environment. This is part of the process of setting up a WebAssembly environment for running Python code, where the Marimo package and its dependencies are installed using the `micropip` package manager in Pyodide.

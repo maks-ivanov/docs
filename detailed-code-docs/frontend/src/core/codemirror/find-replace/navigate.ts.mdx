@@ -1,0 +1,130 @@
+---
+title: "navigate.ts"
+---
+
+## High-level description
+
+The `navigate.ts` file is part of a frontend codebase that provides functionality for searching and replacing text within multiple editor views using the CodeMirror library. It defines several functions to navigate through search results, replace text, and manage search queries across different editor instances.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `searchCommand`: A higher-order function that creates search-related commands by accepting a function that operates on a search query.
+- `findInDirection`: A function that uses `searchCommand` to find text in a specified direction ("next" or "prev") across multiple editor views.
+- `findNext` and `findPrev`: Specific instances of `findInDirection` for finding the next and previous matches, respectively.
+- `replaceAll` and `replaceNext`: Functions that replace text matches across all views or the next match, respectively.
+- `getMatches`: A function that returns the number of matches for a search query in each editor view.
+
+## References
+
+- `findReplaceAtom`: An atom from the `state.ts` file that holds the state for find and replace operations.
+- `getAllEditorViews`: A function from the `cells.ts` file that retrieves all editor views.
+- `QueryType` and `asQueryCreator`: Types and functions from the `query.ts` file that define and create search queries.
+
+## Symbols
+
+### `searchCommand`
+#### Description
+A higher-order function that creates a command for executing a search operation. It initializes a `SearchQuery` based on the current state and executes a provided function if the query is valid.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| f | Function | A function that operates on a search query and returns a result. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | T or boolean | The result of the function `f` if the query is valid, otherwise `false`. |
+
+#### Internal Logic
+- Retrieves the current find and replace state from `findReplaceAtom`.
+- Constructs a `SearchQuery` using the state.
+- If the query is valid, executes the function `f` with the query and returns the result.
+
+### `findInDirection`
+#### Description
+Finds the next or previous match in the text across all editor views, wrapping around the document if necessary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| direction | "next" or "prev" | The direction to search for the next match. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | boolean | `true` if a match is found, otherwise `false`. |
+
+#### Internal Logic
+- Uses `searchCommand` to execute a search in the specified direction.
+- Iterates over all editor views, searching for the next or previous match.
+- Updates the selection and scrolls the view if a match is found.
+
+### `findNext`
+#### Description
+Finds the next match after the current selection across all editor views.
+
+### `findPrev`
+#### Description
+Finds the previous match before the current selection across all editor views.
+
+### `replaceAll`
+#### Description
+Replaces all matches of the current search query across all editor views.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Function | A function to undo the replace operation. |
+
+#### Internal Logic
+- Iterates over all editor views and applies replacements for all matches.
+- Stores undo handlers to revert changes if needed.
+
+### `replaceNext`
+#### Description
+Replaces the next match of the current search query across all editor views.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | boolean | `true` if a match is replaced, otherwise `false`. |
+
+#### Internal Logic
+- Searches for the next match and replaces it.
+- Calls `findNext` to continue searching for subsequent matches.
+
+### `getMatches`
+#### Description
+Returns the number of matches for the current search query in each editor view.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Object | An object containing the count of matches and their positions. |
+
+#### Internal Logic
+- Iterates over all editor views and counts the matches for the current query.
+- Stores the positions of matches in a map for each view.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/search` | Provides search functionality for CodeMirror editors. |
+| `@codemirror/state` | Manages the state of CodeMirror editors. |
+| `@codemirror/view` | Handles the view layer of CodeMirror editors. |
+| `jotai` | Manages global state using atoms. |
+
+## Error Handling
+
+The code checks the validity of search queries before executing search operations, returning `false` if a query is invalid.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

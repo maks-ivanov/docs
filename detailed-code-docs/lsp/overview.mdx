@@ -1,0 +1,63 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `lsp` directory is part of a Node.js project that implements a Language Server Protocol (LSP) server. The primary functionality of this directory is to set up a WebSocket server that facilitates JSON-RPC communication between clients and language server processes. This setup allows clients to connect to specific language servers, such as a "copilot" server, by specifying the appropriate URL path. The directory includes TypeScript code for the server setup, configuration files for TypeScript compilation, and a `package.json` file that manages dependencies and build scripts.
+
+## What does it do?
+
+The `lsp` directory's main functionality is to enable communication between clients and language servers using WebSockets and JSON-RPC. Here's a simplified explanation of the workflow:
+
+1. **WebSocket Server Setup**: The code initializes a WebSocket server that listens for incoming connections on a specified port. This server acts as a bridge between clients and language servers.
+
+2. **Language Server Mapping**: A record maps language server names to their respective command-line arguments. This mapping allows the server to identify which language server to connect to based on the client's request URL.
+
+3. **Connection Handling**: When a client establishes a WebSocket connection, the server checks the request URL to determine the appropriate language server. If a valid server is found, the server process is started, and a WebSocket connection is established.
+
+4. **Message Forwarding**: The server forwards messages between the client and the language server using JSON-RPC. This allows the client to send requests and receive responses from the language server.
+
+5. **Error Handling and Logging**: The server logs various events, such as when it starts listening on a port, when a new client connection is established, and when a connection is closed. It also handles errors, such as when a valid language server is not found for a request URL.
+
+## Entry points
+
+The main entry point for the `lsp` directory is the `index.ts` file. This file contains the code that sets up the WebSocket server, handles incoming connections, and manages communication between clients and language servers. The code is organized to first configure the server using command-line arguments, then set up the WebSocket server, and finally handle connections and message forwarding.
+
+## Key Files
+
+- **`index.ts`**: This file is the core of the LSP server implementation. It sets up the WebSocket server, handles connections, and manages communication between clients and language servers.
+
+- **`package.json`**: This configuration file defines the project's dependencies, development dependencies, and scripts for building and type-checking the project. It is essential for managing the project's build process and runtime requirements.
+
+- **`tsconfig.json`**: This file configures the TypeScript compiler options, such as enabling strict type-checking and interoperability between CommonJS and ES Modules. It ensures that the TypeScript code is compiled correctly and adheres to the specified type-checking rules.
+
+## Dependencies
+
+The `lsp` directory relies on several external libraries and frameworks:
+
+- **`ws`**: A WebSocket library for Node.js, used to create the WebSocket server and handle client connections.
+
+- **`@sourcegraph/vscode-ws-jsonrpc`**: A library that facilitates JSON-RPC communication over WebSockets, enabling the server to forward messages between clients and language servers.
+
+- **`minimist`**: A library for parsing command-line arguments, used to configure the server's port and other settings.
+
+- **`copilot-node-server`**: A package that provides server functionality for the LSP, specifically for the "copilot" language server.
+
+- **`tsup`**: A TypeScript bundler used to compile and minify the TypeScript code for production.
+
+- **`typescript`**: The TypeScript language and compiler, used to compile the TypeScript code into JavaScript.
+
+These dependencies are chosen to provide WebSocket functionality, JSON-RPC communication, command-line argument parsing, and TypeScript compilation, all of which are essential for the LSP server's operation.
+
+## Configuration
+
+The `lsp` directory uses several configuration files and settings:
+
+- **`package.json`**: Defines scripts for building and type-checking the project, as well as the project's dependencies and development dependencies.
+
+- **`tsconfig.json`**: Configures the TypeScript compiler options, such as `esModuleInterop` for module interoperability and `strict` for strict type-checking.
+
+- **Command-line arguments**: Parsed using `minimist`, these arguments configure the server's port and other settings. The default port is 3000 if not specified.
+
+These configurations ensure that the server is built, compiled, and run with the correct settings and dependencies.

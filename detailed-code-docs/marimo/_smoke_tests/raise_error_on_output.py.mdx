@@ -1,0 +1,73 @@
+---
+title: "raise_error_on_output.py"
+---
+
+## High-level description
+The code in the target file is a smoke test for the Marimo framework, designed to verify that the application can handle errors raised during the execution of a cell. It defines a simple application with a sequence of cells, where one of the cells intentionally raises a `ValueError` to test the error handling capabilities of the framework.
+
+## Code Structure
+The code is structured around the Marimo framework, using the `marimo.App` class to define an application. The application consists of three cells, each defined with the `@app.cell` decorator. These cells are executed in sequence, with the first cell defining a class that raises an error, the second cell instantiating this class, and the third cell simply referencing the instance.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of the `marimo.App` class, which is used to define and run the application. It serves as the main entry point for the application logic, managing the execution of the defined cells.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a cell within the Marimo application. Each decorated function represents a cell that is executed in sequence when the application runs.
+
+### `Mischief`
+#### Description
+The `Mischief` class is defined within the first cell. It contains a method `_mime_` that raises a `ValueError` with the message "error!". This is used to test the application's ability to handle errors during cell execution.
+
+#### Internal Logic
+- The `_mime_` method is defined to raise a `ValueError` when called. This is the key logic for testing error handling.
+
+### `__` (First Cell)
+#### Description
+The first cell defines the `Mischief` class and returns it as a tuple. This cell is responsible for setting up the class that will later be instantiated and used to raise an error.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Mischief | tuple | A tuple containing the `Mischief` class |
+
+### `__` (Second Cell)
+#### Description
+The second cell takes the `Mischief` class as input, creates an instance of it, and returns the instance. This cell prepares the instance that will be used in the next cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Mischief | class | The `Mischief` class defined in the first cell |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mischief | Mischief | An instance of the `Mischief` class |
+
+### `__` (Third Cell)
+#### Description
+The third cell takes the `mischief` instance as input and simply references it without performing any operations. This cell completes the sequence of operations defined in the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mischief | Mischief | An instance of the `Mischief` class |
+
+## Side Effects
+- The first cell raises a `ValueError` when the `_mime_` method of the `Mischief` class is called. This is an intentional side effect to test error handling.
+
+## Error Handling
+The code is designed to test error handling by raising a `ValueError` in the `_mime_` method of the `Mischief` class. The Marimo framework is expected to handle this error gracefully during the execution of the application.
+
+## Logging
+There is no explicit logging implemented in the code. The focus is on testing error handling through the raised exception.
+
+## API/Interface Reference
+The code does not define an API or public interface. It is a standalone script intended for testing purposes.
+
+## TODOs
+There are no TODOs or notes left in the code.

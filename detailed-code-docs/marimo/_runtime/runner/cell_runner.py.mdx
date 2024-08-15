@@ -1,0 +1,111 @@
+---
+title: "cell_runner.py"
+---
+
+## High-level description
+
+The `cell_runner.py` file is part of the Marimo runtime system, responsible for executing a collection of code cells in a directed acyclic graph (DAG) structure. It manages the execution flow, handles errors, and supports features like debugging, cancellation, and state updates. The `Runner` class is the core component, orchestrating the execution of cells based on their dependencies and the current execution mode.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- **`Runner` class**: Manages the execution of cells, handling dependencies, errors, and execution modes.
+- **`RunResult` class**: Represents the result of a cell execution, including output and exceptions.
+- **`cell_filename` function**: Generates a filename for a cell based on its ID.
+- **Error handling and logging**: Utilizes various error classes and logging mechanisms to manage and report errors during execution.
+
+## References
+
+The `Runner` class references several other parts of the codebase:
+- **`dataflow.DirectedGraph`**: Represents the graph structure of cells and their dependencies.
+- **`execute_cell` and `execute_cell_async`**: Functions for executing cells synchronously and asynchronously.
+- **`MarimoPdb`**: A custom debugger used during execution.
+- **Error classes**: Such as `MarimoExceptionRaisedError`, `MarimoStrictExecutionError`, and `UnknownError` for handling different types of execution errors.
+
+## Symbols
+
+### `cell_filename`
+#### Description
+Generates a filename string for a cell based on its ID, used when executing cells.
+
+#### Inputs
+| Name   | Type     | Description      |
+|:-------|:---------|:-----------------|
+| cell_id | CellId_t | The unique identifier of the cell |
+
+#### Outputs
+| Name     | Type | Description                |
+|:---------|:-----|:---------------------------|
+| filename | str  | The generated filename for the cell |
+
+### `RunResult`
+#### Description
+Represents the result of a cell execution, including the output, any exceptions raised, and accumulated output.
+
+#### Outputs
+| Name              | Type          | Description                              |
+|:------------------|:--------------|:-----------------------------------------|
+| output            | Any           | The last expression evaluated in the cell |
+| exception         | Optional[ErrorObjects] | The exception raised during execution, if any |
+| accumulated_output| Any           | Output accumulated during execution       |
+
+#### Internal Logic
+- The `success` method checks if the execution was successful by verifying that no exceptions were raised.
+
+### `Runner`
+#### Description
+Manages the execution of a collection of cells, handling dependencies, execution modes, and error management.
+
+#### Inputs
+| Name                | Type                                      | Description |
+|:--------------------|:------------------------------------------|:------------|
+| roots               | set[CellId_t]                             | The root cells to start execution from |
+| graph               | dataflow.DirectedGraph                    | The graph representing cell dependencies |
+| glbls               | dict[Any, Any]                            | The global variables available during execution |
+| debugger            | Optional[MarimoPdb]                       | The debugger instance for execution |
+| execution_mode      | OnCellChangeType                          | The mode of execution (e.g., autorun) |
+| execution_type      | ExecutionType                             | The type of execution (e.g., relaxed) |
+| excluded_cells      | Optional[set[CellId_t]]                   | Cells to exclude from execution |
+| execution_context   | Optional[Callable[[CellId_t], contextlib._GeneratorContextManager[ExecutionContext]]] | The context manager for execution |
+| preparation_hooks   | Optional[Sequence[PreparationHookType]]   | Hooks to run before execution |
+| pre_execution_hooks | Optional[Sequence[PreExecutionHookType]]  | Hooks to run before each cell execution |
+| post_execution_hooks| Optional[Sequence[PostExecutionHookType]] | Hooks to run after each cell execution |
+| on_finish_hooks     | Optional[Sequence[OnFinishHookType]]      | Hooks to run after all executions |
+
+#### Outputs
+| Name              | Type          | Description                              |
+|:------------------|:--------------|:-----------------------------------------|
+| cells_to_run      | list[CellId_t]| The list of cells to be executed         |
+
+#### Internal Logic
+- **Initialization**: Sets up the runner with the provided graph, globals, and hooks.
+- **compute_cells_to_run**: Determines which cells need to be executed based on the execution mode and dependencies.
+- **_cancel_on_sigint**: A context manager to handle SIGINT signals and cancel futures.
+- **cancel**: Marks a cell and its descendants as cancelled.
+- **run**: Executes a single cell, handling both synchronous and asynchronous execution paths.
+- **run_all**: Executes all cells in the determined order, applying hooks and handling errors.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio`  | For handling asynchronous execution and futures |
+| `contextlib` | Provides context managers for resource management |
+| `functools` | Used for partial function application in callbacks |
+| `signal`   | For handling system signals like SIGINT |
+| `threading`| For managing threads and synchronization |
+| `traceback`| For capturing and printing stack traces |
+
+## Error Handling
+
+The `Runner` class implements comprehensive error handling:
+- **MarimoRuntimeException**: Catches and wraps runtime exceptions.
+- **MarimoNameError** and **MarimoMissingRefError**: Handle specific errors related to missing references.
+- **BaseException**: Catches unexpected errors and logs them.
+
+## Logging
+
+The code uses the `marimo_logger` for logging errors and debugging information, ensuring that unexpected errors are captured and reported.
+
+## TODOs
+No TODOs are present in the code.

@@ -1,0 +1,104 @@
+---
+title: "output-wrapper.tsx"
+---
+
+## High-level description
+
+The `output-wrapper.tsx` file defines a React component, `MarimoOutputWrapper`, which is responsible for rendering the output of a notebook cell in a user interface. It provides functionality to display the output, handle keyboard events for toggling UI elements, and includes buttons for copying code and re-running the cell. The component integrates with the application's state management to access and manipulate the runtime state of notebook cells.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MarimoOutputWrapper` is the primary component that uses several hooks and utility functions to manage its state and behavior.
+- `IconButton` is a sub-component used within `MarimoOutputWrapper` to render buttons with tooltips.
+- `Indicator` is another sub-component that displays a loading spinner when a cell is running.
+- `DelayRender` is a utility component used to delay the rendering of its children.
+
+## References
+
+- `OutputRenderer` from `Output.tsx` is used to render the output message of a cell.
+- `notebookAtom` and `NotebookState` from `cells.ts` are used to access the state of the notebook.
+- `isOutputEmpty` from `outputs.ts` is used to check if a cell's output is empty.
+- `sendRun` from `requests.ts` is used to trigger the execution of a cell.
+- `useEventListener` from `useEventListener.ts` is used to handle keyboard events.
+- `Logger` from `Logger.ts` is used for logging errors.
+
+## Symbols
+
+### `IconButton`
+#### Description
+`IconButton` is a React functional component that renders a button with an icon and a tooltip. It is used to perform actions like copying code or re-running a cell.
+
+#### Inputs
+| Name   | Type       | Description                  |
+|:-------|:-----------|:-----------------------------|
+| tooltip| string     | The text to display in the tooltip. |
+| icon   | JSX.Element| The icon to display on the button. |
+| action | () =&gt; void | The function to execute on button click. |
+
+#### Outputs
+- Renders a button with the specified icon and tooltip.
+
+### `MarimoOutputWrapper`
+#### Description
+`MarimoOutputWrapper` is a React component that wraps the output of a notebook cell. It manages the display of the output, handles keyboard events to toggle UI elements, and provides buttons for copying code and re-running the cell.
+
+#### Inputs
+| Name          | Type       | Description                                      |
+|:--------------|:-----------|:-------------------------------------------------|
+| cellId        | CellId     | The unique identifier of the cell.               |
+| codeCallback  | () =&gt; string | A callback function to retrieve the cell's code. |
+| alwaysShowRun | boolean    | Determines if the run button should always be shown. |
+| children      | React.ReactNode | The content to render if there is no output. |
+
+#### Outputs
+- Renders the cell's output using `OutputRenderer` and additional UI elements like buttons and indicators.
+
+#### Internal Logic
+- Uses `useState` to manage the `pressed` state, which determines the visibility of the action buttons.
+- Uses `useCallback` and `useAtomValue` to select and retrieve the runtime state of the cell.
+- Registers keyboard event listeners to toggle the `pressed` state based on `metaKey` or `ctrlKey` presses.
+- Conditionally renders the output or children based on the presence and content of the cell's output.
+
+### `Indicator`
+#### Description
+`Indicator` is a React component that displays a loading spinner when the cell's status is "running".
+
+#### Inputs
+| Name  | Type            | Description                  |
+|:------|:----------------|:-----------------------------|
+| state | CellRuntimeState| The runtime state of the cell. |
+
+#### Outputs
+- Renders a loading spinner if the cell is currently running.
+
+### `DelayRender`
+#### Description
+`DelayRender` is a React component that delays the rendering of its children by 200ms using CSS animations.
+
+#### Inputs
+| Name     | Type            | Description                  |
+|:---------|:----------------|:-----------------------------|
+| children | React.ReactNode | The content to render with a delay. |
+
+#### Outputs
+- Renders its children with a delayed animation effect.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai`    | State management for accessing and manipulating the notebook state. |
+| `lucide-react` | Provides icons used in the UI components. |
+| `react`    | Core library for building the user interface. |
+
+## Error Handling
+
+- Errors during the execution of a cell are caught and logged using the `Logger.error` method.
+
+## Logging
+
+- The `Logger` utility is used to log errors that occur during the execution of a cell.
+
+## TODOs
+- There is a comment suggesting the possibility of configuring the component to fallback to displaying the code if there is no output to display.

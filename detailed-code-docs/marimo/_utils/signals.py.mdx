@@ -1,0 +1,67 @@
+---
+title: "signals.py"
+---
+
+## High-level description
+
+The `signals.py` file in the Marimo project provides utility functions for managing system signal handlers. It includes functions to restore default signal handlers for SIGTERM and SIGINT, which are crucial for ensuring that the process can be terminated or interrupted as expected. This is particularly important in server environments where custom signal handlers might interfere with normal process termination.
+
+## Code Structure
+
+The file contains two main functions: `restore_signals` and `get_signals`. These functions interact with the Python `signal` module to manage signal handlers.
+
+## Symbols
+
+### `restore_signals`
+#### Description
+The `restore_signals` function resets the signal handlers for SIGTERM and SIGINT to their default behaviors. This is important in server environments where custom signal handlers might be set by server frameworks (e.g., uvicorn), which could prevent the process from terminating correctly when receiving these signals.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `signal.set_wakeup_fd(-1)` to disable the wakeup file descriptor, which is used to handle signals in a non-blocking way.
+- Sets the signal handler for SIGTERM to the default handler using `signal.signal(signal.SIGTERM, signal.SIG_DFL)`.
+- Sets the signal handler for SIGINT to the default handler using `signal.signal(signal.SIGINT, signal.SIG_DFL)`.
+
+### `get_signals`
+#### Description
+The `get_signals` function retrieves the current signal handlers for SIGTERM and SIGINT. This can be useful for debugging or logging purposes to understand what handlers are currently set for these signals.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| signals | `dict[int, Any]` | A dictionary mapping signal numbers to their current handlers. |
+
+#### Internal Logic
+- Uses `signal.getsignal(signal.SIGTERM)` to get the current handler for SIGTERM.
+- Uses `signal.getsignal(signal.SIGINT)` to get the current handler for SIGINT.
+- Returns a dictionary with the signal numbers as keys and their handlers as values.
+
+## References
+
+- The `restore_signals` function is referenced in the `launch_kernel` function in the `marimo/_runtime/runtime.py` file. This indicates that the function is used to ensure that the kernel process can handle termination signals correctly, especially in edit mode.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `signal` | Used to manage signal handlers for the process. |
+
+## Error Handling
+
+The code does not explicitly handle errors, as the operations with the `signal` module are generally straightforward and unlikely to fail under normal circumstances. However, it assumes that the signals SIGTERM and SIGINT are available and that the default handlers can be set without issues.
+
+## Side Effects
+
+- Modifies the signal handlers for SIGTERM and SIGINT, which affects how the process responds to these signals.
+
+## Performance Considerations
+
+- The operations performed by these functions are lightweight and should not have significant performance implications. However, they are crucial for ensuring correct process behavior in response to signals.

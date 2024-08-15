@@ -1,0 +1,88 @@
+---
+title: "test_ops.py"
+---
+
+## High-level description
+
+The target file `tests/_messaging/test_ops.py` contains unit tests for the `VariableValue` class from the `marimo._messaging.ops` module. These tests verify the behavior of the `VariableValue` class when handling different types of input values, including UI elements, HTML content, and objects with broken string representations.
+
+## Code Structure
+
+The main symbol in this file is the `VariableValue` class, which is tested through three distinct test functions. Each test function creates an instance of `VariableValue` with different types of values and checks the resulting datatype and value attributes.
+
+## Symbols
+
+### `test_value_ui_element`
+#### Description
+This test function verifies that the `VariableValue` class correctly identifies and stores the datatype and value of a UI element, specifically a slider.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return any value. |
+
+#### Internal Logic
+- A `slider` UI element is created with a range from 1 to 10 and a default value of 5.
+- A `VariableValue` instance is created with this slider.
+- The test asserts that the `datatype` is "slider" and the `value` is "5".
+
+### `test_value_html`
+#### Description
+This test function checks that the `VariableValue` class can handle HTML content and correctly extract its text representation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return any value. |
+
+#### Internal Logic
+- An `Html` object is created with a simple HTML string.
+- A `VariableValue` instance is created with this HTML object.
+- The test asserts that the `datatype` is "Html" and the `value` matches the text of the HTML object.
+
+### `test_variable_value_broken_str`
+#### Description
+This test function ensures that the `VariableValue` class can handle objects that raise exceptions when their string representation is accessed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return any value. |
+
+#### Internal Logic
+- A `Broken` class is defined with a `__str__` method that raises a `BaseException`.
+- A `VariableValue` instance is created with an instance of `Broken`.
+- The test asserts that the `datatype` is "Broken" and the `value` is "&lt;UNKNOWN&gt;".
+
+## References
+
+- `VariableValue`: This class is defined in `marimo._messaging.ops` and is the primary focus of the tests in this file.
+- `Html`: This class is imported from `marimo._output.hypertext` and is used in the `test_value_html` function.
+- `slider`: This function is imported from `marimo._plugins.ui._impl.input` and is used in the `test_value_ui_element` function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._messaging.ops.VariableValue` | The class being tested. |
+| `marimo._output.hypertext.Html` | Used to test HTML content handling. |
+| `marimo._plugins.ui._impl.input.slider` | Used to test UI element handling. |
+
+## Error Handling
+
+The `VariableValue` class includes error handling for cases where accessing the string representation of an object might raise an exception. In such cases, it defaults the value to "&lt;UNKNOWN&gt;". This behavior is tested in the `test_variable_value_broken_str` function.

@@ -1,0 +1,102 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The `marimo/_config/utils.py` file provides utility functions for managing configuration files in the Marimo application. It includes functions to locate, load, and merge configuration settings from a user-defined file (`.marimo.toml`) with default settings. The file also handles potential errors during configuration file access and logs relevant information.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `_is_parent` and `_check_directory_for_file` are helper functions used by `get_config_path`.
+- `get_config_path` is responsible for locating the configuration file.
+- `load_config` uses `get_config_path` to load and merge the configuration settings.
+- The `LOGGER` is used throughout the file to log messages related to configuration loading and errors.
+
+## References
+
+- `DEFAULT_CONFIG`, `MarimoConfig`, and `merge_default_config` are imported from `marimo._config.config` and are crucial for understanding how configurations are managed and merged.
+- `LOGGER` is initialized using `marimo._loggers.marimo_logger()` to handle logging.
+
+## Symbols
+
+### `_is_parent`
+#### Description
+Determines if a given directory is a parent of another directory.
+
+#### Inputs
+| Name        | Type   | Description                        |
+|:------------|:-------|:-----------------------------------|
+| parent_path | str    | The supposed parent directory path |
+| child_path  | str    | The supposed child directory path  |
+
+#### Outputs
+| Name  | Type | Description                                      |
+|:------|:-----|:-------------------------------------------------|
+| bool  | bool | Returns `True` if `parent_path` is a parent of `child_path`, otherwise `False` |
+
+#### Internal Logic
+Uses `os.path.commonpath` to compare the common path of the parent and child paths.
+
+### `_check_directory_for_file`
+#### Description
+Checks if a specific file exists in a given directory.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| directory| str    | The directory to check       |
+| filename | str    | The filename to look for     |
+
+#### Outputs
+| Name         | Type          | Description                                      |
+|:-------------|:--------------|:-------------------------------------------------|
+| Optional[str]| Optional[str] | The full path to the file if it exists, otherwise `None` |
+
+### `get_config_path`
+#### Description
+Finds the path of the configuration file (`.marimo.toml`) by searching from the current directory up to the home directory.
+
+#### Outputs
+| Name         | Type          | Description                                      |
+|:-------------|:--------------|:-------------------------------------------------|
+| Optional[str]| Optional[str] | The path to the configuration file if found, otherwise `None` |
+
+#### Internal Logic
+- Uses `os.path.realpath` to canonicalize paths.
+- Searches from the current directory up to the home directory.
+- If the current directory is not within the home directory, it only checks the current and home directories.
+
+### `load_config`
+#### Description
+Loads the configuration settings, merging user-defined settings with default settings if a configuration file is found.
+
+#### Outputs
+| Name         | Type         | Description                                      |
+|:-------------|:-------------|:-------------------------------------------------|
+| MarimoConfig | MarimoConfig | The merged configuration settings                |
+
+#### Internal Logic
+- Attempts to find the configuration file using `get_config_path`.
+- If found, reads and parses the file using `tomlkit`.
+- Merges the parsed user configuration with the default configuration using `merge_default_config`.
+- Logs errors and warnings as necessary.
+
+## Side Effects
+- Logs messages using the `LOGGER`.
+- Reads from the filesystem to locate and load configuration files.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `os`       | Used for file and directory path operations. |
+| `tomlkit`  | Used to parse TOML configuration files.      |
+
+## Logging
+The code uses a logger (`LOGGER`) to log debug, warning, and error messages related to configuration file operations. This helps in diagnosing issues with configuration loading and merging.
+
+## Error Handling
+- Catches `OSError` when searching for the configuration file and logs a warning.
+- Catches general exceptions when reading and parsing the configuration file, logging an error and falling back to the default configuration.

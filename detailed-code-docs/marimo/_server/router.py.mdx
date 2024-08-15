@@ -1,0 +1,56 @@
+---
+title: "router.py"
+---
+
+## High-level description
+
+The `marimo/_server/router.py` file defines an `APIRouter` class that extends the functionality of the `Router` class from the Starlette framework. This class is designed to facilitate the creation and management of API routes for a web server, providing methods to define HTTP endpoints for various HTTP methods (GET, POST, DELETE) and WebSocket connections. It also supports route prefixing and the inclusion of other routers, allowing for modular and organized route management.
+
+## Code Structure
+
+The main symbol in this file is the `APIRouter` class, which inherits from the `Router` class. This class provides methods for defining routes for different HTTP methods and WebSocket connections. It also includes functionality for prefixing routes and including other routers, which allows for a hierarchical and organized structure of API endpoints.
+
+## Symbols
+
+### `APIRouter`
+#### Description
+The `APIRouter` class is a custom router that extends the Starlette `Router` class. It is used to define and manage API routes with additional features such as route prefixing and the inclusion of other routers. It provides methods to define routes for HTTP methods like GET, POST, DELETE, and WebSocket connections.
+
+#### Inputs
+- `prefix`: A string that is used as a prefix for all routes defined in this router.
+
+#### Outputs
+- None directly, but it manages the registration of routes and their handlers.
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the router with an optional prefix and calls the superclass constructor.
+- **Post Initialization**: The `__post_init__` method ensures that the prefix, if provided, starts with a '/' and does not end with a '/'.
+- **Route Methods**: The `post`, `get`, `delete`, and `websocket` methods are decorators that register a function as a handler for the respective HTTP method or WebSocket connection. They wrap the handler function to ensure the response is appropriately formatted and registered with the router.
+- **Include Router**: The `include_router` method allows another `APIRouter` instance to be included within this router, optionally with a prefix and name. It handles merging routes with the same path.
+
+## References
+
+- The `APIRouter` class references the `Router` class from the Starlette framework, which it extends.
+- The `deep_to_camel_case` function from `marimo._server.models.base` is used to convert response data to camel case format.
+- The `marimo_logger` function from `marimo._loggers` is used to obtain a logger instance for logging purposes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.responses` | Provides various response classes used to return HTTP responses. |
+| `starlette.routing` | Provides the `Router` class, which is extended by `APIRouter`. |
+| `marimo._loggers` | Provides logging functionality. |
+| `marimo._server.models.base` | Provides utility functions for data transformation. |
+
+## Error Handling
+
+- The `__post_init__` method uses assertions to ensure the prefix is correctly formatted, raising an `AssertionError` if the conditions are not met.
+
+## Logging
+
+- The `APIRouter` class uses a logger obtained from `marimo._loggers` to log messages, although specific logging calls are not detailed in the provided code.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

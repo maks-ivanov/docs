@@ -1,0 +1,59 @@
+---
+title: "useEventListener.ts"
+---
+
+## High-level description
+
+The `useEventListener` hook in the target file `frontend/src/hooks/useEventListener.ts` is a custom React hook designed to manage event listeners for DOM elements in a React application. It abstracts the process of adding and removing event listeners, ensuring that the listeners are properly updated when dependencies change, and are cleaned up when the component unmounts.
+
+## Code Structure
+
+The main symbol in this file is the `useEventListener` function. It utilizes React's `useRef` and `useEffect` hooks to manage the lifecycle of event listeners. The `useRef` hook is used to store a reference to the listener function, while `useEffect` is used to handle the addition and removal of the event listener based on the component's lifecycle.
+
+## Symbols
+
+### `useEventListener`
+#### Description
+The `useEventListener` function is a custom React hook that attaches an event listener to a specified target (such as a DOM element, the document, or the window). It ensures that the event listener is updated whenever the dependencies change and is removed when the component is unmounted, preventing memory leaks.
+
+#### Inputs
+| Name     | Type                                      | Description                                                                 |
+|:---------|:------------------------------------------|:----------------------------------------------------------------------------|
+| `target` | `Document \| HTMLElement \| Window \| null` | The target to which the event listener will be attached.                    |
+| `type`   | `K & string`                              | The type of event to listen for (e.g., "click", "keydown").                 |
+| `listener` | `(ev: EventMap&lt;T&gt;[K]) =&gt; unknown`       | The event handler function that will be called when the event is triggered. |
+| `options` | `boolean \| AddEventListenerOptions`     | Optional parameters for the event listener, such as capture, once, and passive. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not return any value. |
+
+#### Internal Logic
+1. **Reference Storage**: The `useRef` hook is used to store the current listener function, allowing it to persist across re-renders without causing the effect to re-run unnecessarily.
+2. **Effect for Listener Update**: A `useEffect` hook updates the `savedListener` reference whenever the `listener` function changes.
+3. **Effect for Event Listener Management**: Another `useEffect` hook manages the addition and removal of the event listener:
+   - It checks if the `target` is valid.
+   - It defines an `eventListener` function that calls the current `savedListener`.
+   - It adds the `eventListener` to the `target` using `addEventListener`.
+   - It returns a cleanup function that removes the `eventListener` using `removeEventListener`.
+
+## References
+
+The `useEventListener` hook is referenced in several other files, indicating its utility across different components for handling events. For example, it is used in components like `UndoButton`, `CommandPalette`, `DynamicFavicon`, and others to manage keyboard and focus events.
+
+## Dependencies
+
+The hook relies on React's `useRef` and `useEffect` hooks to manage state and side effects.
+
+## Error Handling
+
+The code does not explicitly handle errors, but it ensures that event listeners are only added if the `target` is valid, which prevents runtime errors related to invalid targets.
+
+## Side Effects
+
+The primary side effect of this hook is the addition and removal of event listeners on the specified target, which is managed through the `useEffect` cleanup mechanism.
+
+## Performance Considerations
+
+The use of `useRef` to store the listener function ensures that the event listener is not unnecessarily re-attached on every render, which optimizes performance by minimizing DOM operations.

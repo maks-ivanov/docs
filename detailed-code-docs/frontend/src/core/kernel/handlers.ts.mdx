@@ -1,0 +1,111 @@
+---
+title: "handlers.ts"
+---
+
+## High-level description
+
+The target file, `handlers.ts`, is part of the frontend core kernel module and is responsible for handling various operations related to the kernel's state and interactions with the user interface. It includes functions to manage the initialization of the kernel, update UI elements, and handle cell operations within a notebook-like environment. The file facilitates communication between the kernel and the UI, ensuring that the state of cells and UI elements is accurately reflected and updated based on kernel messages.
+
+## Code Structure
+
+The main symbols in the code are functions that handle specific kernel operations. These functions interact with other parts of the codebase, such as the UI element registry, virtual file tracker, and network requests, to perform their tasks. The functions are:
+
+- `handleKernelReady`: Initializes the kernel state and UI elements when the kernel is ready.
+- `handleRemoveUIElements`: Removes UI elements associated with a specific cell.
+- `handleCellOperation`: Manages state transitions for cells based on kernel messages.
+
+These functions rely on various imported modules and types, such as `UI_ELEMENT_REGISTRY`, `VirtualFileTracker`, and `OperationMessageData`, to perform their operations.
+
+## References
+
+- `deserializeLayout` from `plugins.ts`: Used to deserialize layout data.
+- `Objects` from `objects.ts`: Utilized for object manipulation.
+- `UI_ELEMENT_REGISTRY` from `uiregistry.ts`: Manages UI elements.
+- `sendInstantiate` from `requests.ts`: Sends instantiate requests to the kernel.
+- `VirtualFileTracker` from `virtual-file-tracker.ts`: Tracks virtual files associated with cells.
+- `isWasm` from `utils.ts`: Checks if the environment is WebAssembly.
+
+## Symbols
+
+### `handleKernelReady`
+#### Description
+Initializes the kernel state and UI elements when the kernel is ready. It sets up cells, layout data, application configuration, and capabilities based on the provided data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `OperationMessageData&lt;"kernel-ready"&gt;` | Data received from the kernel indicating readiness. |
+| opts | Object | Options for handling kernel readiness, including callbacks for setting cells, layout data, capabilities, and error handling. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Extracts relevant data from the `data` parameter.
+- Maps codes to cells, determining if they are edited based on the `autoInstantiate` and `resumed` flags.
+- Initializes the layout state and deserializes layout data if available.
+- Sets cells and layout data using provided callbacks.
+- Configures application settings and capabilities, enabling SQL if in a WebAssembly environment.
+- If resumed, updates UI element values from the kernel; otherwise, prepares for auto-instantiation.
+
+### `handleRemoveUIElements`
+#### Description
+Removes UI elements associated with a specific cell to clean up memory and prevent reuse of old values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `OperationMessageData&lt;"remove-ui-elements"&gt;` | Data indicating which UI elements to remove. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Extracts the `cell_id` from the data.
+- Removes elements associated with the `cell_id` from the `UI_ELEMENT_REGISTRY`.
+- Removes virtual files associated with the `cell_id` using `VirtualFileTracker`.
+
+### `handleCellOperation`
+#### Description
+Handles state transitions for cells based on kernel messages, updating their output and status.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `OperationMessageData&lt;"cell-op"&gt;` | Data containing information about the cell operation. |
+| handleCellMessage | Function | Callback to handle cell messages. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `handleCellMessage` with the provided data to update the cell's state.
+- Tracks virtual files associated with the cell using `VirtualFileTracker`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/components/editor/renderers/plugins` | Provides the `deserializeLayout` function for layout deserialization. |
+| `@/utils/objects` | Provides utility functions for object manipulation. |
+| `../dom/uiregistry` | Manages the registry of UI elements. |
+| `../network/requests` | Provides network request functions, including `sendInstantiate`. |
+| `../static/virtual-file-tracker` | Tracks virtual files associated with cells. |
+| `../wasm/utils` | Provides the `isWasm` function to check the environment. |
+
+## Error Handling
+
+- The `handleKernelReady` function includes error handling for the `sendInstantiate` request, invoking the `onError` callback if the request fails.
+
+## Side Effects
+
+- The `handleKernelReady` function modifies the global state by updating the UI element registry and potentially sending instantiate requests to the kernel.
+- The `handleRemoveUIElements` function modifies the global state by removing elements from the UI element registry and virtual file tracker.
+
+## Logging
+
+- Errors during the instantiation process in `handleKernelReady` are logged through the `onError` callback.
+
+## TODOs
+
+- The code mentions that auto-instantiation could be made configurable in the future.

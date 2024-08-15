@@ -1,0 +1,100 @@
+---
+title: "JsonOutput.tsx"
+---
+
+## High-level description
+
+The `JsonOutput.tsx` file defines a React component named `JsonOutput` that is responsible for rendering JSON data in a user-friendly format. It supports different display formats, such as a tree view or raw JSON text, and integrates with a theme system to adapt its appearance. The component also includes logic to infer the best display format based on the data type and provides mechanisms to render specific data types like images, videos, and text using custom renderers.
+
+## Code Structure
+
+- The `JsonOutput` component is the main export of the file and is responsible for rendering JSON data.
+- The `inferBestFormat` function determines the best format to display the JSON data based on its type.
+- The `LEAF_RENDERERS` object maps MIME type prefixes to specific rendering functions for different data types.
+- The `VALUE_TYPE` array is used to configure the `JsonViewer` component to handle specific data types using the renderers defined in `LEAF_RENDERERS`.
+- The `renderLeaf` function is responsible for rendering individual data items based on their MIME type.
+
+## Symbols
+
+### `JsonOutput`
+#### Description
+The `JsonOutput` component is a React functional component that renders JSON data in either a tree view or raw text format. It uses the `JsonViewer` component from the `@textea/json-viewer` library to display the data and supports theming through the `useTheme` hook.
+
+#### Inputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| data      | unknown| The JSON data to display.                        |
+| format    | string | The format to display the data: "auto", "tree", or "raw". Defaults to "auto". |
+| name      | string or false | A label for the JSON viewer. If `false`, no label is used. |
+| className | string | Additional CSS class names for styling.          |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered output of the JSON data. |
+
+#### Internal Logic
+- The component uses the `useTheme` hook to apply the current theme.
+- If the `format` is set to "auto", it calls `inferBestFormat` to determine the best format based on the data type.
+- Depending on the `format`, it either renders the data using the `JsonViewer` component in a tree format or as raw JSON text using a `&lt;pre&gt;` tag.
+- The `JsonViewer` is configured with custom value types to handle specific data types using the `VALUE_TYPE` array.
+
+### `inferBestFormat`
+#### Description
+Determines the best format to display the JSON data based on its type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | unknown | The data to infer the format for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | "tree" or "raw" | The inferred format for displaying the data. |
+
+#### Internal Logic
+- Checks if the data is an object and not null, returning "tree" if true, otherwise returns "raw".
+
+### `LEAF_RENDERERS`
+#### Description
+An object mapping MIME type prefixes to functions that render specific data types.
+
+### `VALUE_TYPE`
+#### Description
+An array of objects used to configure the `JsonViewer` component to handle specific data types using the renderers defined in `LEAF_RENDERERS`.
+
+### `renderLeaf`
+#### Description
+Renders a data item based on its MIME type using a specified render function.
+
+#### Inputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| leaf  | string | The data item to render, expected in the format `&lt;mimetype&gt;:&lt;data&gt;`. |
+| render| function | A function that takes the data and returns a JSX element. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered output of the data item. |
+
+#### Internal Logic
+- Extracts the data part from the `leaf` string using the `leafData` function.
+- Calls the `render` function with the extracted data.
+- Catches errors and returns a `TextOutput` component with an error message if the data is invalid.
+
+## References
+
+- The `JsonOutput` component is used in other parts of the codebase, such as in the `OutputRenderer` component in `Output.tsx`.
+- The `useTheme` hook is imported from `../../../theme/useTheme` to apply theming.
+- The `logNever` function from `../../../utils/assertNever` is used for handling unexpected cases.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@textea/json-viewer` | Used to render JSON data in a tree view format. |
+
+## TODOs
+- There is a TODO comment regarding disabling the clipboard functionality in the `JsonViewer` until a better solution is implemented.

@@ -1,0 +1,101 @@
+---
+title: "cell.ts"
+---
+
+## High-level description
+
+The target file, `cell.ts`, is part of a frontend application that manages the state and behavior of computational cells, likely in a notebook-like interface. It provides functions to handle state transitions of cells based on messages received from a kernel, prepare cells for execution, and determine if a cell's output is stale. The code is designed to manage the lifecycle of a cell, including its execution status, output, and any errors or interruptions that occur during execution.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `transitionCell`: This function updates the state of a cell based on a message received from the kernel.
+- `prepareCellForExecution`: This function prepares a cell for execution by resetting its state.
+- `outputIsStale`: This function checks if a cell's output is considered stale based on its current state and whether it has been edited.
+
+These functions interact with the `CellRuntimeState` and `CellMessage` types to manage the state and behavior of cells.
+
+## Symbols
+
+### `transitionCell`
+#### Description
+The `transitionCell` function updates the state of a cell based on a message received from the kernel. It handles various status transitions such as "queued", "running", "idle", and error states, updating the cell's properties accordingly.
+
+#### Inputs
+| Name    | Type           | Description                        |
+|:--------|:---------------|:-----------------------------------|
+| cell    | CellRuntimeState | The current state of the cell.    |
+| message | CellMessage    | The message from the kernel that may change the cell's state. |
+
+#### Outputs
+| Name     | Type             | Description                        |
+|:---------|:-----------------|:-----------------------------------|
+| nextCell | CellRuntimeState | The updated state of the cell.     |
+
+#### Internal Logic
+- The function creates a copy of the current cell state.
+- It uses a switch statement to handle different statuses from the message, updating the cell's properties like `interrupted`, `errored`, `runElapsedTimeMs`, and `debuggerActive`.
+- It processes error outputs and updates the cell's status and error flags.
+- It manages console outputs, collapsing them if necessary, and updates the cell's outline based on the output.
+
+### `prepareCellForExecution`
+#### Description
+The `prepareCellForExecution` function resets a cell's state in preparation for execution, setting its status to "queued" and clearing any error or interruption flags.
+
+#### Inputs
+| Name | Type           | Description                        |
+|:-----|:---------------|:-----------------------------------|
+| cell | CellRuntimeState | The current state of the cell.    |
+
+#### Outputs
+| Name     | Type             | Description                        |
+|:---------|:-----------------|:-----------------------------------|
+| nextCell | CellRuntimeState | The reset state of the cell.       |
+
+#### Internal Logic
+- The function creates a copy of the current cell state.
+- It sets the cell's status to "queued" unless it is "disabled-transitively".
+- It clears flags for `interrupted`, `errored`, `runElapsedTimeMs`, and `debuggerActive`.
+
+### `outputIsStale`
+#### Description
+The `outputIsStale` function determines if a cell's output is stale based on its current status, whether it has been edited, and other runtime properties.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| cell    | Pick&lt;CellRuntimeState, "status" \| "output" \| "runStartTimestamp" \| "interrupted" \| "staleInputs"&gt; | A subset of the cell's runtime state. |
+| edited  | boolean | Indicates if the cell has been edited. |
+
+#### Outputs
+| Name   | Type    | Description                        |
+|:-------|:--------|:-----------------------------------|
+| stale  | boolean | Whether the cell's output is stale.|
+
+#### Internal Logic
+- The function checks if the cell is interrupted, edited, or loading to determine staleness.
+- It considers the timing of output reception relative to the cell's run start timestamp.
+- It returns true if the cell is loading and no output has been received while running, or if the inputs are stale.
+
+## References
+
+- `collapseConsoleOutputs`: Used to manage and collapse console outputs during cell execution.
+- `parseOutline`: Used to derive an outline from the cell's output.
+- `Time`: Utilized for time calculations related to cell execution.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `assertNever` | Provides a utility for exhaustive checks in switch statements. |
+| `invariant` | Used for runtime assertions to ensure conditions are met. |
+| `time` | Provides utilities for handling time-related calculations. |
+
+## Error Handling
+
+- The code uses the `invariant` function to assert conditions, throwing errors if expectations are not met.
+- The `logNever` function is used to log unexpected statuses without throwing errors, aiding in debugging.
+
+## TODOs
+
+- There is a TODO comment suggesting that status management should be moved to the backend for better consistency and separation of concerns.

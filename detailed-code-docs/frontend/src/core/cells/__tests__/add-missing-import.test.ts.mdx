@@ -1,0 +1,91 @@
+---
+title: "add-missing-import.test.ts"
+---
+
+## High-level description
+
+The target file `add-missing-import.test.ts` contains unit tests for the `maybeAddMissingImport` function, which is responsible for checking if a Python import statement is missing in a notebook and adding it if necessary. The tests ensure that the function behaves correctly by not adding imports when they are already present in the notebook or in the variables state, and by adding them when they are missing.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `describe` block groups related tests for the `maybeAddMissingImport` function.
+- Each `it` block within the `describe` block defines a specific test case.
+- The `createStore` function from the `jotai` library is used to create a store for managing state during the tests.
+- The `variablesAtom` and `notebookAtom` are used to set up the initial state of the application store.
+- The `vi.fn()` function from `vitest` is used to create mock functions for testing purposes.
+
+## Symbols
+
+### `describe("maybeAddMissingImport")`
+#### Description
+This block groups all the test cases related to the `maybeAddMissingImport` function. It provides a context for the tests, indicating that they are all verifying the behavior of this specific function.
+
+### `it("should not add an import if the variable is already in the variables state")`
+#### Description
+This test case verifies that the `maybeAddMissingImport` function does not add an import statement if the variable is already present in the `variablesAtom` state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| "marimo" | string | The module name to import. |
+| "mo" | string | The variable name to import. |
+| onAddImport | function | A mock function to be called if an import is added. |
+| appStore | object | The application store containing the state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The test checks that `onAddImport` is not called. |
+
+### `it.each(VALID_IMPORTS)("should not add an import if the import statement already exists in the notebook")`
+#### Description
+This test case iterates over a set of valid import statements and verifies that the `maybeAddMissingImport` function does not add an import if the statement already exists in the notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | string | A string containing one or more import statements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The test checks that `onAddImport` is not called. |
+
+### `it("should add an import if the variable is not in the variables state and the import statement does not exist in the notebook")`
+#### Description
+This test case verifies that the `maybeAddMissingImport` function adds an import statement if the variable is not present in the `variablesAtom` state and the import statement does not exist in the notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| "marimo" | string | The module name to import. |
+| "mo" | string | The variable name to import. |
+| onAddImport | function | A mock function to be called if an import is added. |
+| appStore | object | The application store containing the state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The test checks that `onAddImport` is called with the correct import statement. |
+
+## References
+
+- `maybeAddMissingImport`: The function being tested, which is defined in `add-missing-import.ts`.
+- `variablesAtom`: An atom representing the state of variables, imported from `variables/state`.
+- `notebookAtom`: An atom representing the state of the notebook, imported from `cells`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management in the tests. |
+| `vitest` | Provides testing utilities such as `it`, `describe`, `expect`, and `vi.fn()`. |
+
+## Error Handling
+
+The tests do not explicitly handle errors, as they rely on the `vitest` framework to manage assertions and test failures.
+
+## Logging
+
+No logging mechanisms are implemented in the test file. The focus is on verifying the behavior of the `maybeAddMissingImport` function through assertions.

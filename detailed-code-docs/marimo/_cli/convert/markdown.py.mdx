@@ -1,0 +1,195 @@
+---
+title: "markdown.py"
+---
+
+## High-level description
+
+The `markdown.py` file in the `marimo/_cli/convert` directory is responsible for converting Markdown documents into a format compatible with Marimo notebooks. It provides functionality to parse Markdown, extract code blocks, and transform them into Marimo's internal representation. The file also includes mechanisms to sanitize Markdown to prevent code injection and to handle YAML front matter for metadata extraction.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MarimoParser`, `IdentityParser`, and `SanitizeParser` are classes that extend the `Markdown` class to parse and process Markdown content.
+- `FrontMatterPreprocessor` and `SanitizeProcessor` are preprocessors used by the parsers to handle specific tasks like extracting YAML front matter and sanitizing code blocks.
+- Helper functions like `_is_code_tag`, `formatted_code_block`, and `app_config_from_root` assist in processing and converting Markdown content.
+
+## References
+
+- The code references several classes and functions from the `marimo._ast` module, such as `App`, `InternalApp`, `_AppConfig`, `Cell`, `CellConfig`, and `compile_cell`.
+- It also uses utilities from the `marimo._cli.convert.utils` module, specifically `markdown_to_marimo`.
+
+## Symbols
+
+### `_is_code_tag`
+#### Description
+Determines if a given text block is a code tag by checking for specific patterns in the text.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The text to check for code tag patterns. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the text is identified as a code tag, otherwise False. |
+
+### `formatted_code_block`
+#### Description
+Wraps a given code string in a fenced code block with optional Marimo-specific attributes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code to be wrapped in a fenced block. |
+| attributes | Optional[dict[str, str]] | Optional attributes to include in the code block. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The formatted code block as a string. |
+
+#### Internal Logic
+- Constructs a string of attributes from the provided dictionary.
+- Ensures the code block is properly fenced, even if the code contains backticks.
+
+### `app_config_from_root`
+#### Description
+Extracts application configuration from an XML element's attributes and returns an `_AppConfig` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| root | Element | The XML element from which to extract configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | _AppConfig | The extracted application configuration. |
+
+### `get_source_from_tag`
+#### Description
+Retrieves the source code from an XML tag, converting it if necessary based on the tag type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tag | Element | The XML tag containing the source code. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source | str | The extracted source code. |
+
+### `get_cell_config_from_tag`
+#### Description
+Generates a `CellConfig` object from an XML tag's attributes, applying default values as needed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tag | Element | The XML tag containing cell configuration attributes. |
+| defaults | dict | Default boolean values for configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | CellConfig | The generated cell configuration. |
+
+### `SafeWrap`
+#### Description
+A simple data class that wraps an `App` object, providing a method to strip the wrapper and return the app.
+
+### `IdentityParser`
+#### Description
+A subclass of `Markdown` that leaves the Markdown content unchanged, primarily used as a base for other parsers.
+
+### `MarimoParser`
+#### Description
+Extends `IdentityParser` to parse Markdown into a Marimo notebook string, handling metadata and code blocks.
+
+### `SanitizeParser`
+#### Description
+A parser that sanitizes Markdown to ensure it is non-executable, preventing code injection.
+
+### `FrontMatterPreprocessor`
+#### Description
+A preprocessor that extracts YAML front matter from Markdown, storing it in the parser's metadata.
+
+### `SanitizeProcessor`
+#### Description
+A processor that prevents unintended executable code block injection by sanitizing Markdown fragments.
+
+### `IdentityProcessor`
+#### Description
+A block processor that leaves Markdown content unchanged, used to dequeue blocks in the parsing process.
+
+### `ExpandAndClassifyProcessor`
+#### Description
+Separates code blocks and Markdown blocks, classifying them for further processing.
+
+### `convert_from_md_to_app`
+#### Description
+Converts Markdown text into a Marimo `App` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The Markdown text to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | App | The resulting Marimo application object. |
+
+### `convert_from_md`
+#### Description
+Converts Markdown text into a string representation suitable for Marimo.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The Markdown text to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The converted Marimo-compatible string. |
+
+### `sanitize_markdown`
+#### Description
+Sanitizes Markdown text to ensure it is non-executable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The Markdown text to sanitize. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The sanitized Markdown text. |
+
+### `is_sanitized_markdown`
+#### Description
+Checks if the given Markdown text is sanitized, meaning it contains no executable code blocks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | The Markdown text to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the text is sanitized, otherwise False. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `markdown` | Used for parsing and processing Markdown content. |
+| `pymdownx.superfences` | Provides extended functionality for handling code fences in Markdown. |
+
+## TODOs
+- Consider upstreaming some logic to avoid hacks and potentially rewrite or override the Markdown parser for better integration.

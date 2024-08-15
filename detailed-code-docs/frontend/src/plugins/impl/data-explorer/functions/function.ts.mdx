@@ -1,0 +1,95 @@
+---
+title: "function.ts"
+---
+
+## High-level description
+
+The target file defines utility functions and constants for handling field query functions in a data visualization context. It provides mechanisms to convert between different representations of field functions, such as aggregations, time units, and binning, which are used in data queries to transform or summarize data fields.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `toFieldQueryFunctionMixins` and `fromFieldQueryFunctionMixins` are functions that convert between `FieldFunction` and `FieldQueryFunctionMixins`.
+- `isTimeUnit` is a helper function used by `toFieldQueryFunctionMixins` to determine if a given function is a time unit operation.
+- Constants `QUANTITATIVE_FUNCTIONS`, `SINGLE_TEMPORAL_FUNCTIONS`, and `MULTI_TEMPORAL_FUNCTIONS` define sets of field functions that can be used in different contexts.
+
+## References
+
+- `FieldQuery` from `compassql/build/src/query/encoding` is used to define the structure of field queries.
+- `isAggregateOp` from `vega-lite/build/src/aggregate` is used to check if a function is an aggregate operation.
+- `FieldFunction` and `TimeUnitOp` from `./types` are types used to define the nature of field functions.
+
+## Symbols
+
+### `toFieldQueryFunctionMixins`
+#### Description
+Converts a `FieldFunction` into a `FieldQueryFunctionMixins` object, which is a subset of a `FieldQuery` that includes possible transformations like aggregation, time unit, or binning.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fn | FieldFunction \| undefined | The field function to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | FieldQueryFunctionMixins | An object representing the field query function mixins. |
+
+#### Internal Logic
+- If `fn` is undefined, returns an empty object.
+- If `fn` is "bin", returns an object with `bin: true`.
+- If `fn` is an aggregate operation, returns an object with `aggregate: fn`.
+- If `fn` is a time unit operation, returns an object with `timeUnit: fn`.
+
+### `isTimeUnit`
+#### Description
+Determines if a given `FieldFunction` is a time unit operation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fn | FieldFunction | The field function to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | boolean | True if the function is a time unit operation, false otherwise. |
+
+#### Internal Logic
+- Checks if `fn` is included in either `SINGLE_TEMPORAL_FUNCTIONS` or `MULTI_TEMPORAL_FUNCTIONS`.
+
+### `fromFieldQueryFunctionMixins`
+#### Description
+Converts a `FieldQueryFunctionMixins` object back into a `FieldFunction`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fieldQuery | FieldQueryFunctionMixins | The field query function mixins to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | FieldFunction \| undefined | The corresponding field function, or undefined if none applies. |
+
+#### Internal Logic
+- Checks the `bin`, `aggregate`, and `timeUnit` properties of `fieldQuery` and returns the corresponding `FieldFunction`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `compassql/build/src/query/encoding` | Provides the `FieldQuery` type. |
+| `vega-lite/build/src/aggregate` | Provides the `isAggregateOp` function. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checks and returns default values when inputs are undefined.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

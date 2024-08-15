@@ -1,0 +1,116 @@
+---
+title: "test_formatters.py"
+---
+
+## High-level description
+
+The target file `test_formatters.py` contains unit tests for the formatter functionalities in the Marimo library. These tests ensure that various data types and objects are correctly formatted into specific MIME types, particularly focusing on JSON and HTML outputs. The tests also verify the integration of third-party libraries like pandas and polars, and check the robustness of the formatter registration system.
+
+## Code Structure
+
+The main symbols in the code are the test functions, which are used to validate the behavior of the formatter system. These functions utilize the `register_formatters`, `get_formatter`, `as_html`, and `try_format` functions from the Marimo library to perform their tests. The `DependencyManager` is used to check for the presence of optional dependencies like pandas and polars.
+
+## References
+
+- `register_formatters`: Registers formatters for various data types and third-party libraries.
+- `get_formatter`: Retrieves the appropriate formatter for a given object.
+- `as_html`: Converts objects to HTML format.
+- `try_format`: Attempts to format an object and handles exceptions.
+- `DependencyManager`: Checks for the presence of optional dependencies.
+
+## Symbols
+
+### `test_path_finder_find_spec`
+#### Description
+Tests the `find_spec` method of the `PathFinder` to ensure it works correctly after being patched by the formatter registration system.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `register_formatters` to ensure formatters are registered.
+- Uses `importlib.machinery.PathFinder.find_spec` to find the module specification for `test_formatters`.
+- Asserts that the specification is not `None`.
+
+### `test_formatters_with_opinionated_formatter`
+#### Description
+Tests the formatter system with various objects, including lists, pandas DataFrames, and polars DataFrames, ensuring they are formatted correctly.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if pandas and polars are installed using `DependencyManager`.
+- Registers formatters and creates test data using pandas and polars.
+- Tests formatting of a list, a `Plain` object, and DataFrames.
+- Asserts the MIME type and content of the formatted output.
+
+### `test_as_html_opinionated_formatter`
+#### Description
+Tests the `as_html` function to ensure it correctly converts objects to HTML format.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Similar to `test_formatters_with_opinionated_formatter`, but focuses on the `as_html` function.
+- Asserts that the HTML output contains or does not contain specific tags based on the input object.
+
+### `test_broken_formatter`
+#### Description
+Tests the behavior of the formatter system when a formatter raises an exception.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Defines a class and a formatter function that raises an exception.
+- Registers the formatter and attempts to format an instance of the class.
+- Asserts that the traceback in the formatted output is not `None` and contains the expected error message.
+
+### `test_pre_imported_formatter`
+#### Description
+Tests the registration of formatters for modules that are already imported.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_third_party_factories | Mock | Mock object for third-party formatter factories |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Mocks the `THIRD_PARTY_FACTORIES` and a fake module.
+- Registers formatters and asserts that the mock factory's `register` method is called once.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for running the test cases. |
+| `unittest.mock` | Used for mocking objects and patching modules. |
+
+## Error Handling
+
+The `try_format` function is used in `test_broken_formatter` to handle exceptions raised by formatters. It captures the exception and includes the traceback in the formatted output, allowing the test to verify that the error is correctly reported.
+
+## Logging
+
+No explicit logging is implemented in the test file, but the `try_format` function from the Marimo library includes logging capabilities for exceptions.
+
+## TODOs
+
+No TODOs or notes are present in the code.

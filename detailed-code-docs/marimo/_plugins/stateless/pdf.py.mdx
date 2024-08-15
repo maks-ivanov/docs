@@ -1,0 +1,65 @@
+---
+title: "pdf.py"
+---
+
+## High-level description
+
+The `pdf` function in the `marimo/_plugins/stateless/pdf.py` file is designed to render a PDF document within a web application using an HTML `iframe`. It supports both URLs and file-like objects as sources for the PDF and allows customization of the display dimensions and styles through optional parameters.
+
+## Code Structure
+
+The main symbol in this code is the `pdf` function, which utilizes several helper functions and classes from the `marimo` library to achieve its functionality. It references the `Html` class to encapsulate the HTML content and uses the `create_style` utility to generate CSS styles. The function also interacts with the `mo_data.pdf` method to handle file-like objects.
+
+## Symbols
+
+### `pdf`
+#### Description
+The `pdf` function is responsible for rendering a PDF document in a web application. It uses an HTML `iframe` to display the PDF, which can be sourced from a URL or a file-like object. The function allows customization of the initial page, width, height, and additional CSS styles.
+
+#### Inputs
+| Name         | Type                      | Description                                                                 |
+|:-------------|:--------------------------|:----------------------------------------------------------------------------|
+| `src`        | `Union[str, io.IOBase]`   | The source of the PDF, either a URL or a file-like object.                  |
+| `initial_page` | `Optional[int]`         | The page number to open the PDF to, applicable only if `src` is a URL.      |
+| `width`      | `Optional[Union[int, str]]` | The width of the PDF display, default is `"100%"`.                          |
+| `height`     | `Optional[Union[int, str]]` | The height of the PDF display, default is `"70vh"`.                         |
+| `style`      | `Optional[dict[str, Any]]` | Additional CSS styles to apply to the PDF display.                          |
+
+#### Outputs
+| Name  | Type  | Description          |
+|:------|:------|:---------------------|
+| `Html` | `Html` | An `Html` object representing the rendered PDF. |
+
+#### Internal Logic
+1. **Source Resolution**: If the `src` is a file-like object, it reads the content and uses `mo_data.pdf` to obtain a URL. If `src` is a string, it is used directly.
+2. **Initial Page Handling**: If `initial_page` is specified and `src` is a URL, it appends the page number and view settings to the URL.
+3. **Style Creation**: It uses the `create_style` function to generate a CSS style string from the provided `width`, `height`, and any additional styles.
+4. **HTML Generation**: Constructs an `Html` object containing an `iframe` with the resolved source and styles.
+
+## References
+
+- **`Html` Class**: Used to encapsulate the HTML content for rendering.
+- **`create_style` Function**: Utilized to generate CSS styles from a dictionary.
+- **`mo_data.pdf` Method**: Converts file-like objects to a URL for rendering.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `marimo._output.data.data` | Provides the `pdf` method for handling file-like objects. |
+| `marimo._output.builder` | Supplies the `h` object for HTML element creation. |
+| `marimo._output.hypertext` | Contains the `Html` class for HTML encapsulation. |
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for documentation. |
+| `marimo._output.utils` | Offers utility functions like `create_style`. |
+
+## Error Handling
+
+The function does not explicitly handle errors beyond basic type checking. It assumes that the provided `src` is either a valid URL or a readable file-like object.
+
+## Logging
+
+There is no logging implemented in this function.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

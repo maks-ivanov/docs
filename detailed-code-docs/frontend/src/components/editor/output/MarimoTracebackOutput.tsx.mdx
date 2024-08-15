@@ -1,0 +1,115 @@
+---
+title: "MarimoTracebackOutput.tsx"
+---
+
+## High-level description
+
+The `MarimoTracebackOutput` component in the target file is designed to render and display error tracebacks in a user-friendly manner within a web application. It processes the traceback string, transforms specific parts of it for better readability, and provides interactive elements like an accordion for collapsing/expanding the traceback details, a button to refactor code using AI, and a link to search the error on Google.
+
+## Code Structure
+
+- The `MarimoTracebackOutput` component is the main export of the file and is responsible for rendering the traceback.
+- Helper functions like `lastLine`, `matchesSelector`, `elementContainsMarimoCellFile`, `replaceTracebackFilenames`, and `replaceTracebackPrefix` are used to process and transform the traceback content.
+- The component uses several UI components such as `Accordion`, `Button`, and icons from the `lucide-react` library to enhance the user interface.
+
+## References
+
+- The `MarimoTracebackOutput` component is used in the `OutputRenderer` component from the related file `Output.tsx`.
+- The `CellLinkTraceback` component from `cell-link.tsx` is used to create links within the traceback.
+- The `renderHTML` function from `RenderHTML.tsx` is used to parse and render the HTML content of the traceback.
+
+## Symbols
+
+### `MarimoTracebackOutput`
+#### Description
+The `MarimoTracebackOutput` component renders a formatted traceback of errors, allowing users to view, collapse, and interact with the traceback details. It also provides options to refactor the code using AI or search for the error on Google.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `traceback` | `string` | The raw HTML string of the traceback to be displayed. |
+| `onRefactorWithAI` | `function` | Optional callback function to refactor code using AI. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `JSX.Element` | `JSX.Element` | The rendered JSX element for the traceback output. |
+
+#### Internal Logic
+- The component uses `renderHTML` to parse the `traceback` string and apply transformations using `replaceTracebackFilenames` and `replaceTracebackPrefix`.
+- It maintains a state `expanded` to control the accordion's open/close state.
+- It extracts the last line of the traceback to display a summary and use it in the AI refactor prompt.
+- It conditionally renders a button to refactor with AI if the feature is enabled and a link to search the error on Google.
+
+### `lastLine`
+#### Description
+Extracts the last non-empty line from a given text string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `text` | `string` | The input text from which the last line is extracted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `string` | `string` | The last non-empty line of the input text. |
+
+#### Internal Logic
+- Creates a temporary DOM element to parse the text content.
+- Splits the text into lines and filters out empty lines.
+- Returns the last line from the filtered list.
+
+### `replaceTracebackFilenames`
+#### Description
+Transforms specific parts of the traceback HTML to replace file paths with more readable cell links.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `domNode` | `DOMNode` | The DOM node to be transformed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `JSX.Element` | `JSX.Element` | The transformed JSX element if applicable. |
+
+#### Internal Logic
+- Checks if the `domNode` matches the expected structure of a traceback file path.
+- Extracts the cell ID and line number from the node's text content.
+- Returns a `CellLinkTraceback` component with the extracted information.
+
+### `replaceTracebackPrefix`
+#### Description
+Replaces the "File" prefix in traceback lines with "Cell" for lines containing Marimo cell files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `domNode` | `DOMNode` | The DOM node to be transformed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `JSX.Element` | `JSX.Element` | The transformed JSX element if applicable. |
+
+#### Internal Logic
+- Checks if the `domNode` is a text node containing the word "File" and is followed by a Marimo cell file.
+- Replaces "File" with "Cell" in the node's text content.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lucide-react` | Provides icons used in the component. |
+| `jotai` | Manages state for AI feature enablement. |
+| `html-react-parser` | Parses HTML strings into React components. |
+
+## Error Handling
+The component does not explicitly handle errors but relies on the `invariant` function from related files to ensure data types are as expected.
+
+## Logging
+No explicit logging is implemented in this component.
+
+## TODOs
+No TODOs are present in the target file.

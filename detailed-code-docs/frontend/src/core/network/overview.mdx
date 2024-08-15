@@ -1,0 +1,40 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `frontend/src/core/network` directory is a comprehensive module designed to handle network operations within a client-server architecture, specifically tailored for a web application environment. This directory encompasses various functionalities, including managing HTTP requests, WebSocket connections, and handling asynchronous operations. It provides a structured approach to making network requests, managing connection states, and ensuring secure and efficient communication between the frontend and backend services.
+
+The main components within this directory include:
+
+- **Deferred Request Management**: Handles asynchronous requests and responses using promises.
+- **API Utilities**: Facilitates HTTP requests with additional security headers.
+- **WebSocket Connection Management**: Manages the state of WebSocket connections.
+- **Request Handlers**: Provides different request handling strategies based on the application environment.
+- **Type Definitions**: Ensures type safety and consistency in network communication.
+
+## What does it do?
+
+The code in this directory is responsible for managing the network layer of a web application, ensuring that requests and responses are handled efficiently and securely. Here's a breakdown of the workflows and processes implemented:
+
+1. **Deferred Request Management**: 
+   - The `DeferredRequestRegistry` class manages deferred requests by sending them via HTTP and awaiting responses through a WebSocket connection. It uses unique identifiers to track requests and resolve or reject promises based on server responses.
+
+2. **API Utilities**:
+   - The `api.ts` file provides methods for making HTTP `POST` and `GET` requests with additional headers for XSRF tokens and session IDs. This ensures that requests are authenticated and secure, with error handling and logging mechanisms in place.
+
+3. **WebSocket Connection Management**:
+   - The `connection.ts` file uses the Jotai library to manage the connection status of a WebSocket. It provides an atom that holds the current state of the connection, allowing other parts of the application to react to changes in connection status.
+
+4. **Request Handlers**:
+   - The `requests.ts` file determines the appropriate request handler based on the environment (e.g., Islands, Wasm, static notebook) and provides a unified interface for making network requests related to editing and running code.
+   - The `requests-network.ts` and `requests-static.ts` files define specific request handlers for dynamic and static environments, respectively, ensuring that operations are handled appropriately based on the application's mode.
+
+5. **Error Handling and Toasting**:
+   - The `requests-toasting.ts` file enhances request handlers by adding error toasting functionality, displaying user-friendly error messages when requests fail.
+
+6. **Type Definitions**:
+   - The `types.ts` file defines TypeScript types and interfaces for request and response schemas, ensuring type safety and consistency in network communication.
+
+Overall, this directory provides a robust framework for managing network operations, ensuring that requests are handled efficiently, securely, and with appropriate error handling and user feedback mechanisms.

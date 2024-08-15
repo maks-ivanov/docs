@@ -1,0 +1,135 @@
+---
+title: "objects.ts"
+---
+
+## High-level description
+
+The `objects.ts` file provides a utility module named `Objects` that contains a collection of type-safe utility functions for working with JavaScript objects. These functions include operations such as mapping values, converting entries to objects, filtering, and grouping objects by keys. The utilities are designed to enhance type safety and provide common object manipulation functionalities in a consistent manner.
+
+## Code Structure
+
+The main symbol in this file is the `Objects` object, which acts as a namespace for various utility functions. Each function within `Objects` is designed to perform a specific operation on objects, such as mapping, filtering, or transforming entries. These functions are interconnected in that they often use each other to achieve their functionality, such as using `entries` and `fromEntries` to implement `mapValues`.
+
+## Symbols
+
+### `Objects`
+#### Description
+`Objects` is an exported constant that serves as a namespace for a collection of utility functions designed to manipulate and interact with JavaScript objects in a type-safe manner.
+
+#### Functions
+
+- **`EMPTY`**: A frozen empty object used as a default or placeholder where an empty object is needed.
+  
+- **`mapValues`**: Transforms the values of an object using a provided mapping function.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `obj`  | `Record&lt;K, T&gt;`                    | The object whose values are to be mapped. |
+  | `mapper` | `(value: T, key: K) =&gt; U`       | A function that maps each value to a new value. |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Record&lt;K, U&gt;`                  | A new object with mapped values.     |
+
+  #### Internal Logic
+  - Checks if the object is null or undefined and returns it as is.
+  - Uses `entries` to get key-value pairs, maps each value using the `mapper` function, and reconstructs the object using `fromEntries`.
+
+- **`fromEntries`**: Converts an array of key-value pairs into an object.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `obj`  | `Array&lt;[K, V]&gt;`                   | An array of key-value pairs.         |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Record&lt;K, V&gt;`                  | An object constructed from the key-value pairs. |
+
+- **`entries`**: Returns an array of key-value pairs from an object.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `obj`  | `Record&lt;K, V&gt;`                    | The object to extract entries from.  |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Array&lt;[K, V]&gt;`                 | An array of key-value pairs.         |
+
+- **`keys`**: Returns an array of keys from an object.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `obj`  | `Record&lt;K, unknown&gt;`              | The object to extract keys from.     |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `K[]`                           | An array of keys.                    |
+
+- **`keyBy`**: Creates an object composed of keys generated from the results of running each element of a collection through a key-generating function.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `items` | `T[]`                            | The array of items to process.       |
+  | `toKey` | `(item: T) =&gt; K | undefined`     | A function that returns a key for each item. |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Record&lt;K, T&gt;`                  | An object composed of keys and their corresponding items. |
+
+- **`groupBy`**: Groups the elements of an array based on a key-generating function and maps them to values using a value-generating function.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `items` | `T[]`                            | The array of items to process.       |
+  | `toKey` | `(item: T) =&gt; K | undefined`     | A function that returns a key for each item. |
+  | `toValue` | `(item: T) =&gt; V`               | A function that returns a value for each item. |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Record&lt;K, V[]&gt;`                | An object where each key is associated with an array of values. |
+
+- **`filter`**: Filters the properties of an object based on a predicate function.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `obj`  | `Record&lt;K, V&gt;`                    | The object to filter.                |
+  | `predicate` | `(value: V, key: K) =&gt; boolean` | A function that returns true for properties to keep. |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Record&lt;K, V&gt;`                  | A new object with filtered properties. |
+
+- **`omit`**: Creates an object composed of the properties of the input object, excluding the specified keys.
+
+  #### Inputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `obj`  | `V`                               | The source object.                   |
+  | `keys` | `K[] | Set&lt;K&gt;`                    | The keys to omit.                    |
+
+  #### Outputs
+  | Name   | Type                              | Description                          |
+  |:-------|:----------------------------------|:-------------------------------------|
+  | `result` | `Partial&lt;V&gt;`                    | A new object with the specified keys omitted. |
+
+## References
+
+- The `Objects` utility is referenced in various parts of the codebase, such as in `useNotebookActions`, `DataSourcesPanel`, and `CommandPalette`, where it is used to manipulate objects and collections in a type-safe manner.
+
+## Dependencies
+
+The code does not explicitly import external libraries, but it relies on TypeScript's type system to ensure type safety and correctness in its operations.

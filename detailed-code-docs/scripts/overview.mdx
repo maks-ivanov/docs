@@ -3,71 +3,29 @@ title: "Overview"
 ---
 
 ## High-level description
-The `scripts` directory contains essential scripts and Kubernetes configuration templates for setting up, configuring, and deploying a self-hosted instance of Trieve. It includes bash scripts for system preparation and configuration, as well as Kubernetes YAML templates for deploying the application in a Kubernetes cluster.
+
+The `scripts` directory contains development utilities designed to be executed from the root directory of the project. These utilities are intended to assist developers in managing and maintaining the codebase, particularly in the context of the Marimo framework.
 
 ## What does it do?
-This directory provides two main functionalities:
 
-1. Self-hosting setup and configuration:
-   - The bash scripts automate the process of preparing a system for hosting Trieve by installing necessary dependencies, setting up the environment, and configuring the instance based on system capabilities and user input.
-   - They handle package installation, Docker setup, GPU detection, resource allocation, and configuration of web servers, environment variables, and authentication.
-
-2. Kubernetes deployment:
-   - The Kubernetes YAML templates define the infrastructure-as-code for deploying Trieve in a Kubernetes cluster.
-   - They specify how the application should be deployed, scaled, accessed, and provided with persistent storage within the cluster.
+The primary functionality provided by the `scripts` directory is encapsulated in the `print_banned_cell_names.py` script. This script is responsible for identifying and printing a list of reserved keywords that should not be used as cell names within a Marimo application. It achieves this by combining reserved keywords from both the Marimo framework and Python's built-in keywords, formatting them, and then printing the list. This helps developers avoid naming conflicts and ensures that cell names do not clash with reserved terms.
 
 ## Entry points
-The main entry points for developers are:
 
-1. For self-hosting setup:
-   - `setup-self-hosting.sh`: Prepares the system by installing dependencies and setting up the environment.
-   - `configure-self-hosting.sh`: Configures the Trieve instance based on system capabilities and user input.
-
-2. For Kubernetes deployment:
-   - `template/deployment.yaml`: Defines the deployment strategy for the application.
-   - `template/service.yaml`: Exposes the application to the cluster via a Service.
-   - `template/pv.yaml`: Defines a PersistentVolume for storage in local environments.
-   - `template/pvc.yaml`: Defines a PersistentVolumeClaim for requesting storage.
+The main file in this directory is `print_banned_cell_names.py`. This script is organized using the Marimo framework, which structures the code into "cells" that encapsulate specific functionalities. Each cell is a function decorated with `@app.cell`, and these cells are executed in sequence to perform the script's tasks. The data flow involves importing necessary modules, defining reserved keywords, formatting them, and finally printing the combined list.
 
 ## Key Files
-1. Self-hosting scripts:
-   - `setup-self-hosting.sh`: Installs required packages, sets up Caddy web server, and installs Docker if needed.
-   - `configure-self-hosting.sh`: Detects GPU and system resources, generates Caddyfile for reverse proxy, configures environment files, modifies Docker Compose files, and sets up Keycloak authentication.
 
-2. Kubernetes templates:
-   - `template/deployment.yaml`: Core of the application deployment, defining Docker image, environment variables, volume mounts, and deployment strategy.
-   - `template/service.yaml`: Defines how the deployed application can be accessed within the cluster.
-   - `template/pv.yaml`: Provisions storage using a PersistentVolume, specifically for local development environments.
-   - `template/pvc.yaml`: Defines a PersistentVolumeClaim for requesting storage, with dynamic adjustment based on the environment.
+- **`print_banned_cell_names.py`**: This is the core script in the directory. It defines and prints reserved keywords that should not be used as cell names in a Marimo application. The script is structured into several key components:
+  - **`format_keywords`**: A function that formats a list of keywords for printing.
+  - **`RESERVED_BY_MARIMO`**: A list of keywords reserved by the Marimo framework.
+  - **`RESERVED_BY_PYTHON`**: A list of Python's reserved keywords, retrieved using the `keyword` module.
+  - **`print_reserved_keywords`**: A function that combines and prints the reserved keywords.
+  - **`import_keyword_module`**: A function that imports the Python `keyword` module.
 
 ## Dependencies
-The self-hosting scripts rely on several external tools and packages:
-- jq
-- git
-- caddy
-- curl
-- gawk
-- Docker
 
-The Kubernetes templates are designed to be used with Helm, utilizing Helm templating features for configuration.
+The script relies on the following external libraries:
 
-## Configuration
-1. Self-hosting configuration:
-   - Domain configuration: Set via the `DOMAIN` environment variable.
-   - GPU and resource detection: Automatically performed by the scripts.
-   - Environment file (.env) configuration: Modified based on detected capabilities and user input.
-   - Keycloak realm configuration: Modified in the realm-export.json file.
-
-2. Kubernetes configuration:
-   Configuration is primarily managed through a Helm values file (`.Values`). Key options include:
-
-   | Option | Description | Used in |
-   |:-------|:------------|:--------|
-   | `Release.Name` | Name of the Helm release. | `deployment.yaml`, `pvc.yaml` |
-   | `accountId` | AWS account ID (for ECR image URLs). | `deployment.yaml` |
-   | `region` | AWS region (for ECR image URLs). | `deployment.yaml` |
-   | `environment` | Environment identifier. | `deployment.yaml`, `pv.yaml`, `pvc.yaml` |
-   | `containers.$NAME.tag` | Docker image tag for the container. | `deployment.yaml` |
-   | `config.fixme` | Value for the `ENV_VAR` environment variable. | `deployment.yaml` |
-
-These configuration options allow for customization of the deployment based on the target environment and application requirements.
+- **Marimo**: This framework is used to create and manage the application and its cells. It provides the structure for defining and executing the script's functionalities.
+- **keyword**: A standard Python module used to access Python's list of reserved keywords. This module is essential for retrieving Python's built-in reserved terms, which are then combined with Marimo's reserved keywords.

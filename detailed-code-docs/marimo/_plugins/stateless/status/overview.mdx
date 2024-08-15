@@ -1,0 +1,51 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_plugins/stateless/status` directory is designed to provide visual feedback mechanisms for ongoing processes in user interfaces, particularly through progress indicators like progress bars and spinners. These components are essential for enhancing user experience by indicating the status of tasks, especially in environments like web applications or interactive notebooks. The directory consists of two main files: `__init__.py` and `_progress.py`. The `__init__.py` file serves as an entry point, exposing the `progress_bar` and `spinner` components, while `_progress.py` contains the implementation details of these components, including their classes and utility functions.
+
+## What does it do?
+
+The code in this directory provides two primary types of visual indicators:
+
+1. **Progress Bar**: This is a horizontal bar that fills up as a task progresses. It is useful for tasks where the total amount of work is known, such as downloading a file or processing a batch of data. The progress bar can display additional information like the rate of progress and the estimated time of arrival (ETA) for task completion.
+
+2. **Spinner**: This is a circular indicator that spins to show that a task is ongoing. It is typically used for tasks where the total amount of work is unknown or cannot be quantified, such as waiting for a response from a server. The spinner can also display a title and subtitle to provide context about the task.
+
+Both indicators can be used as context managers, which means they automatically handle their lifecycle, starting when the task begins and stopping when it ends. This makes them easy to integrate into existing workflows without requiring extensive changes to the code.
+
+## Entry points
+
+The main entry point for this directory is the `__init__.py` file, which imports and re-exports the `progress_bar` and `spinner` components from the `_progress.py` file. This setup allows other parts of the codebase to access these components directly from the `marimo._plugins.stateless.status` package, simplifying their usage.
+
+## Key Files
+
+### `_progress.py`
+
+This file contains the core implementation of the progress indicators. It defines several classes and functions:
+
+- **`_Progress`**: A base class that provides common functionality for progress indicators, such as updating progress, calculating rates, and rendering the indicator as HTML.
+
+- **`ProgressBar`**: A subclass of `_Progress` that represents a progress bar. It allows for incremental updates and can display additional information like the rate of progress and ETA.
+
+- **`Spinner`**: Another subclass of `_Progress` that represents a loading spinner. It is used for tasks without a known total and can display a title and subtitle.
+
+- **`spinner`**: A context manager class that facilitates the use of the `Spinner` class within a context, automatically handling its lifecycle.
+
+- **`progress_bar`**: A class that provides an iterable interface for a progress bar, allowing it to be used in loops to automatically update progress.
+
+## Dependencies
+
+The directory relies on several external modules and libraries:
+
+- **`marimo._runtime.output._output`**: Manages UI output operations like flushing and removing elements, which are essential for updating the progress indicators in real-time.
+
+- **`marimo._messaging.mimetypes`**: Provides known MIME types for rendering, which may be used to format the output of the progress indicators.
+
+- **`marimo._output.hypertext`**: Provides the `Html` class for rendering HTML content, which is used to display the progress indicators in a web-friendly format.
+
+- **`marimo._plugins.core.web_component`**: Provides functions to build stateless plugins, which may be used to integrate the progress indicators into larger web applications.
+
+- **`marimo._utils.debounce`**: Provides a decorator to limit the frequency of function calls, which is useful for optimizing the performance of the progress indicators by reducing unnecessary updates.

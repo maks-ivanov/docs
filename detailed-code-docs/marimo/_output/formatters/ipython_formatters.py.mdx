@@ -1,0 +1,52 @@
+---
+title: "ipython_formatters.py"
+---
+
+## High-level description
+
+The `ipython_formatters.py` file defines a custom formatter for IPython displays within the Marimo framework. It extends the `FormatterFactory` class to integrate with IPython's display system, allowing Marimo to capture and format outputs intended for IPython's display mechanism. This is achieved by monkey-patching the `IPython.display.display` function to redirect outputs to Marimo's internal output handling system.
+
+## Code Structure
+
+- The `IPythonFormatter` class inherits from `FormatterFactory`.
+- It overrides the `package_name` and `register` methods to provide specific functionality for IPython integration.
+- The `register` method is responsible for monkey-patching the `IPython.display.display` function and registering a custom HTML formatter.
+
+## References
+
+- `FormatterFactory`: The base class from which `IPythonFormatter` inherits.
+- `KnownMimeType`: A type from `marimo._messaging.mimetypes` used to specify MIME types.
+- `h`: An instance of `_HTMLBuilder` from `marimo._output.builder`, used to construct HTML elements.
+- `formatting.formatter`: A decorator from `marimo._output.formatters.formatter_factory` used to register formatters.
+
+## Symbols
+
+### `IPythonFormatter`
+#### Description
+The `IPythonFormatter` class is a custom formatter for IPython displays. It integrates with IPython's display system by monkey-patching the `display` function to redirect outputs to Marimo's internal system. It also registers a custom HTML formatter to handle IPython's HTML display objects.
+
+#### Inputs
+- None directly, but it interacts with IPython's display system and Marimo's output system.
+
+#### Outputs
+- Returns a callable `unpatch` function that restores the original `IPython.display.display` function.
+
+#### Internal Logic
+- **Monkey-patching**: The `register` method replaces `IPython.display.display` with a custom function that redirects outputs to Marimo's `_output` system.
+- **HTML Formatter**: Registers a formatter for `IPython.display.HTML` objects, converting them to HTML strings using Marimo's HTML builder.
+
+## Side Effects
+- Modifies the global state by replacing `IPython.display.display` with a custom function.
+- Registers a formatter that affects how HTML objects are displayed in IPython.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `IPython.display` | Used for accessing and modifying the IPython display function. |
+| `marimo._messaging.mimetypes.KnownMimeType` | Provides a type-safe way to specify MIME types. |
+| `marimo._output.builder.h` | Used to construct HTML elements for display. |
+| `marimo._output.formatters.formatter_factory.FormatterFactory` | Base class for creating formatters. |
+
+## TODOs
+- There is a TODO comment regarding resizing iframes, indicating that this functionality is not yet implemented.

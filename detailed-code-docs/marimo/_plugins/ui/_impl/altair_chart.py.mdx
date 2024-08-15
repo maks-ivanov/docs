@@ -1,0 +1,154 @@
+---
+title: "altair_chart.py"
+---
+
+## High-level description
+
+The `altair_chart.py` file is part of the Marimo library and is responsible for integrating Altair charts into Marimo's UI framework. It provides functionality to create reactive Altair charts that allow users to interact with the chart on the frontend and receive the selected data as a Pandas DataFrame in Python. This integration supports various selection types and handles data transformations to ensure the charts are interactive and responsive.
+
+## Code Structure
+
+The main components of the code are functions and a class that work together to facilitate the creation and management of Altair charts within the Marimo UI framework. The functions handle specific tasks like checking for binning or geoshape in a Vega specification, filtering dataframes based on user selections, and parsing Altair specifications. The `altair_chart` class extends the `UIElement` class to provide a reactive charting interface.
+
+## Symbols
+
+### `_has_binning`
+#### Description
+Checks if a given Vega specification includes binning in its encoding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaSpec` | The Vega specification to check for binning. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `bool` | Returns `True` if binning is present, otherwise `False`. |
+
+### `_has_geoshape`
+#### Description
+Determines if a given Vega specification includes a geoshape mark.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaSpec` | The Vega specification to check for geoshape. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `bool` | Returns `True` if a geoshape mark is present, otherwise `False`. |
+
+### `_filter_dataframe`
+#### Description
+Filters a Pandas DataFrame based on a given chart selection, supporting both point and interval selections.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | `pd.DataFrame` | The DataFrame to filter. |
+| selection | `ChartSelection` | The selection criteria to apply to the DataFrame. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filtered_df | `pd.DataFrame` | The filtered DataFrame based on the selection. |
+
+#### Internal Logic
+- Iterates over the selection criteria and applies filters to the DataFrame.
+- Handles different selection types, including point and interval selections.
+- Converts values to their original data types if necessary.
+
+### `_coerce_value`
+#### Description
+Converts a value to match the specified data type, particularly handling datetime conversions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtype | `Any` | The target data type. |
+| value | `Any` | The value to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| coerced_value | `Any` | The value converted to the specified data type. |
+
+### `_parse_spec`
+#### Description
+Parses an Altair chart specification into a Vega specification, considering data transformers and geoshape support.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `altair.TopLevelMixin` | The Altair chart specification to parse. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| vega_spec | `VegaSpec` | The parsed Vega specification. |
+
+### `_has_transforms`
+#### Description
+Checks if a Vega specification includes any data transformations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaSpec` | The Vega specification to check for transformations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `bool` | Returns `True` if transformations are present, otherwise `False`. |
+
+### `altair_chart`
+#### Description
+A class that extends `UIElement` to create reactive Altair charts within the Marimo UI framework. It allows users to interact with charts and receive selected data as a Pandas DataFrame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chart | `altair.Chart` | The Altair chart to be made reactive. |
+| chart_selection | `Literal["point"] | Literal["interval"] | bool` | The type of selection to enable on the chart. |
+| legend_selection | `list[str] | bool` | Fields for which to enable legend selection. |
+| label | `str` | An optional label for the chart. |
+| on_change | `Optional[Callable[[pd.DataFrame], None]]` | Callback for when the chart's value changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| instance | `altair_chart` | An instance of the reactive Altair chart. |
+
+#### Internal Logic
+- Initializes the chart with specified selections and configurations.
+- Parses the Altair specification to a Vega specification.
+- Handles data transformations and selections to update the chart's data.
+
+## References
+
+- `UIElement`: The base class for UI elements in Marimo, providing the framework for reactive components.
+- `DependencyManager`: Manages dependencies required for the functionality, such as Altair and Pandas.
+- `register_transformers`: Registers custom data transformers for Altair to handle large datasets efficiently.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `altair` | Used for creating and managing chart specifications. |
+| `pandas` | Utilized for handling DataFrame operations and selections. |
+| `numpy` | Used for numerical operations within the filtering logic. |
+
+## Error Handling
+
+- The code raises `ValueError` for invalid selections during DataFrame filtering.
+- Uses try-except blocks to handle data type conversions and potential import errors.
+
+## Logging
+
+- Utilizes a logger (`LOGGER`) to output warnings and errors related to unsupported features or configurations.
+
+## TODOs
+
+- The code includes comments indicating unsupported features, such as binning and geoshape selections, and suggests filing an issue for these features.

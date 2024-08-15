@@ -1,0 +1,95 @@
+---
+title: "rpc.ts"
+---
+
+## High-level description
+
+The target file, `rpc.ts`, is part of a TypeScript-based frontend plugin system. It defines types and utilities for creating Remote Procedure Call (RPC) interfaces for plugins. The file provides a way to define plugin functions with input and output schemas using the `zod` library for validation, ensuring that data passed to and from these functions adheres to specified types.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `PluginFunction`: A type representing a function that can be called from a plugin, returning a promise.
+- `PluginFunctions`: A record type mapping function names to `PluginFunction` types.
+- `ExtractInputSchema` and `ExtractOutputSchema`: Utility types for extracting input and output schemas from a `PluginFunction`.
+- `FunctionSchemas`: A type that maps each function in `PluginFunctions` to its input and output schemas.
+- `rpc`: An object providing a builder pattern to define input and output schemas for plugin functions.
+
+## Symbols
+
+### `PluginFunction`
+#### Description
+Represents a function that can be called from a plugin, which takes a request of type `REQ` and returns a promise of type `RES`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args | REQ | The request arguments for the function. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | Promise&lt;RES&gt; | A promise that resolves to the response of the function. |
+
+### `PluginFunctions`
+#### Description
+A record type that maps string keys to `PluginFunction` types, representing a collection of functions that can be called from a plugin.
+
+### `ExtractInputSchema`
+#### Description
+A utility type that extracts the input schema from a `PluginFunction` using TypeScript's conditional types and inference.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | ZodType&lt;REQ, ZodTypeDef, unknown&gt; | The Zod schema for the function's input. |
+
+### `ExtractOutputSchema`
+#### Description
+A utility type that extracts the output schema from a `PluginFunction`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | ZodType&lt;RES, ZodTypeDef, unknown&gt; | The Zod schema for the function's output. |
+
+### `FunctionSchemas`
+#### Description
+A type that maps each function in `PluginFunctions` to an object containing its input and output schemas.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input | ExtractInputSchema&lt;F[K]&gt; | The input schema for the function. |
+| output | ExtractOutputSchema&lt;F[K]&gt; | The output schema for the function. |
+
+### `rpc`
+#### Description
+An object that provides a builder pattern for defining input and output schemas for plugin functions.
+
+#### Internal Logic
+- The `input` method takes an input schema and returns an object with an `output` method.
+- The `output` method takes an output schema and returns an object containing both the input and output schemas.
+
+## References
+
+- The `zod` library is used extensively for schema validation, ensuring that the data passed to and from plugin functions adheres to specified types.
+- The `FunctionSchemas` type is used in other parts of the codebase, such as in the `createPlugin` function in `builder.ts`, to define and validate plugin functions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| zod | Used for defining and validating schemas for plugin function inputs and outputs. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic TypeScript type checking and schema validation using `zod`.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

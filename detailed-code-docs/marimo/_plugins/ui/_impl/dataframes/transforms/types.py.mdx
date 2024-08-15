@@ -1,0 +1,162 @@
+---
+title: "types.py"
+---
+
+## High-level description
+
+The target file defines a set of data structures and types used to represent various transformations that can be applied to data frames. These transformations include operations like filtering rows, renaming columns, sorting, and aggregating data. The file also defines an abstract base class for handling these transformations, which can be implemented for different data frame libraries like Pandas or Polars.
+
+## Code Structure
+
+The code is structured around several key components:
+
+1. **Enums and Type Aliases**: These define the types of operations and transformations that can be performed on data frames.
+2. **Data Classes**: These represent specific transformations, each with its own set of parameters.
+3. **Abstract Base Class**: This defines the interface for handling transformations, which must be implemented by specific handlers for different data frame types.
+
+## Symbols
+
+### `TransformType`
+#### Description
+An enumeration that defines the types of transformations that can be applied to a data frame, such as aggregation, column conversion, filtering rows, etc.
+
+### `Condition`
+#### Description
+A data class that represents a condition used in filtering rows. It specifies a column, an operator, and an optional value to compare against.
+
+#### Inputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| column_id | ColumnId | The identifier of the column to apply the condition on. |
+| operator  | Operator | The operation to perform for the condition. |
+| value     | Optional[Any] | The value to compare against, if applicable. |
+
+### `ColumnConversionTransform`
+#### Description
+A data class that represents a transformation to convert a column's data type.
+
+#### Inputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| type      | Literal[TransformType.COLUMN_CONVERSION] | The type of transformation. |
+| column_id | ColumnId | The identifier of the column to convert. |
+| data_type | NumpyDataType | The target data type for the conversion. |
+| errors    | Literal["ignore", "raise"] | How to handle errors during conversion. |
+
+### `RenameColumnTransform`
+#### Description
+A data class that represents a transformation to rename a column.
+
+#### Inputs
+| Name         | Type   | Description                        |
+|:-------------|:-------|:-----------------------------------|
+| type         | Literal[TransformType.RENAME_COLUMN] | The type of transformation. |
+| column_id    | ColumnId | The identifier of the column to rename. |
+| new_column_id | ColumnId | The new identifier for the column. |
+
+### `SortColumnTransform`
+#### Description
+A data class that represents a transformation to sort a column.
+
+#### Inputs
+| Name       | Type   | Description                        |
+|:-----------|:-------|:-----------------------------------|
+| type       | Literal[TransformType.SORT_COLUMN] | The type of transformation. |
+| column_id  | ColumnId | The identifier of the column to sort. |
+| ascending  | bool   | Whether to sort in ascending order. |
+| na_position | Literal["first", "last"] | Position of NA values in the sort order. |
+
+### `FilterRowsTransform`
+#### Description
+A data class that represents a transformation to filter rows based on conditions.
+
+#### Inputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| type      | Literal[TransformType.FILTER_ROWS] | The type of transformation. |
+| operation | Literal["keep_rows", "remove_rows"] | The operation to perform on the rows. |
+| where     | List[Condition] | The conditions to apply for filtering. |
+
+### `GroupByTransform`
+#### Description
+A data class that represents a transformation to group data by specified columns and apply an aggregation.
+
+#### Inputs
+| Name       | Type   | Description                        |
+|:-----------|:-------|:-----------------------------------|
+| type       | Literal[TransformType.GROUP_BY] | The type of transformation. |
+| column_ids | ColumnIds | The identifiers of the columns to group by. |
+| drop_na    | bool   | Whether to drop NA values in the grouping columns. |
+| aggregation | Aggregation | The aggregation function to apply. |
+
+### `AggregateTransform`
+#### Description
+A data class that represents a transformation to apply aggregations to specified columns.
+
+#### Inputs
+| Name         | Type   | Description                        |
+|:-------------|:-------|:-----------------------------------|
+| type         | Literal[TransformType.AGGREGATE] | The type of transformation. |
+| column_ids   | ColumnIds | The identifiers of the columns to aggregate. |
+| aggregations | List[Aggregation] | The aggregation functions to apply. |
+
+### `SelectColumnsTransform`
+#### Description
+A data class that represents a transformation to select specific columns from a data frame.
+
+#### Inputs
+| Name       | Type   | Description                        |
+|:-----------|:-------|:-----------------------------------|
+| type       | Literal[TransformType.SELECT_COLUMNS] | The type of transformation. |
+| column_ids | ColumnIds | The identifiers of the columns to select. |
+
+### `ShuffleRowsTransform`
+#### Description
+A data class that represents a transformation to shuffle the rows of a data frame.
+
+#### Inputs
+| Name | Type   | Description                        |
+|:-----|:-------|:-----------------------------------|
+| type | Literal[TransformType.SHUFFLE_ROWS] | The type of transformation. |
+| seed | int    | The seed for the random number generator. |
+
+### `SampleRowsTransform`
+#### Description
+A data class that represents a transformation to sample rows from a data frame.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| type    | Literal[TransformType.SAMPLE_ROWS] | The type of transformation. |
+| n       | int    | The number of rows to sample. |
+| replace | bool   | Whether to sample with replacement. |
+| seed    | int    | The seed for the random number generator. |
+
+### `TransformHandler`
+#### Description
+An abstract base class that defines the interface for handling transformations on data frames. It includes methods for each type of transformation, which must be implemented by subclasses.
+
+#### Internal Logic
+The class uses the `abc` module to define abstract methods, ensuring that any subclass must implement these methods to handle specific transformations.
+
+## References
+
+- The `TransformHandler` class is referenced in related files, where specific implementations for Pandas and Polars data frames are provided.
+- The `Transformations` class is used in related files to apply a sequence of transformations to a data frame.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `abc` | Used to define abstract base classes. |
+| `dataclasses` | Provides a decorator and functions for automatically adding special methods to classes. |
+| `enum` | Provides support for creating enumerations. |
+| `typing` | Provides support for type hints. |
+
+## Error Handling
+
+The abstract methods in `TransformHandler` raise `NotImplementedError` to indicate that they must be implemented by subclasses.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,75 @@
+---
+title: "debug.ts"
+---
+
+## High-level description
+
+The `debug.ts` file provides two custom React hooks, `useDebugMounting` and `usePropsDidChange`, designed to assist developers in debugging React components during development. These hooks log messages to the console when a component mounts, unmounts, renders, or when its props change, but only when the application is running in development mode.
+
+## Code Structure
+
+The file contains two main functions, `useDebugMounting` and `usePropsDidChange`, which are both custom hooks. These hooks utilize React's `useEffect` and `useRef` to track component lifecycle events and prop changes, respectively. They both rely on the `Logger` utility for logging messages to the console.
+
+## References
+
+- `Logger`: A utility for logging messages, imported from `@/utils/Logger`.
+- `dequal`: A utility for deep equality checks, used to compare previous and current props.
+
+## Symbols
+
+### `useDebugMounting`
+#### Description
+This hook logs messages to the console when a component mounts and unmounts, as well as each time it renders. It is intended for use in development mode to help developers track component lifecycle events.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the component being debugged, used in log messages. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses `useRef` to keep track of the number of renders.
+- Uses `useEffect` to log a message when the component mounts and another when it unmounts, including the total number of renders.
+- Increments the render count and logs a message each time the component renders.
+
+### `usePropsDidChange`
+#### Description
+This hook logs messages to the console when a component's props change. It identifies which props have changed and whether any of them are deeply equal to their previous values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the component being debugged, used in log messages. |
+| props | Record&lt;string, unknown&gt; | The current props of the component. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses `useRef` to store the previous props.
+- Uses `useEffect` to compare current props with previous props on each render.
+- Identifies changed props and logs them.
+- Uses `dequal` to check for deeply equal props and logs them if found.
+- Updates the reference to the previous props after each render.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Provides `useRef` and `useEffect` hooks for managing component lifecycle and state. |
+| `dequal` | Used for deep equality checks between previous and current props. |
+| `@/utils/Logger` | Provides logging functionality, allowing messages to be logged to the console. |
+
+## Error Handling
+
+The hooks do not implement specific error handling mechanisms beyond basic usage of the `Logger` utility for logging messages.
+
+## Logging
+
+The hooks utilize the `Logger` utility to log debug messages to the console. This logging is conditional on the environment being set to development mode, ensuring that these messages do not appear in production.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,149 @@
+---
+title: "Autocompleter.ts"
+---
+
+## High-level description
+
+The `Autocompleter.ts` file is part of a code editor's autocomplete feature, specifically designed to work with the CodeMirror library. It provides functionality to convert server-sent completion messages into a format that CodeMirror can use to display autocomplete suggestions and tooltips. The file also manages the lifecycle of autocomplete requests, ensuring that only the most recent request is processed.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `constructCompletionInfoNode`: A utility function to create HTML elements for displaying additional information about a completion option.
+- `AUTOCOMPLETER`: An instance of `DeferredRequestRegistry` that manages the lifecycle of autocomplete requests.
+- `Autocompleter`: An object containing methods to convert server messages into CodeMirror-compatible formats.
+- `getFirstOption`: A helper function to select the most appropriate completion option from a list.
+
+## References
+
+- `CompletionResult` and `Tooltip` from `@codemirror/autocomplete` and `@codemirror/view` are used to define the structure of autocomplete results and tooltips.
+- `sendCodeCompletionRequest` from `@/core/network/requests` is used to send requests for code completion.
+- `DeferredRequestRegistry` from `@/core/network/DeferredRequestRegistry` is used to manage asynchronous requests and responses.
+- `CompletionOption` and `CompletionResultMessage` from `../../kernel/messages` are used to define the structure of completion messages received from the server.
+
+## Symbols
+
+### `constructCompletionInfoNode`
+#### Description
+Creates an HTML element to display additional information about a completion option, such as documentation or type information.
+
+#### Inputs
+| Name      | Type   | Description                              |
+|:----------|:-------|:-----------------------------------------|
+| innerHtml | string | The HTML content to be displayed in the tooltip. |
+
+#### Outputs
+| Name   | Type       | Description                              |
+|:-------|:-----------|:-----------------------------------------|
+| output | HTMLElement | The constructed HTML element, or null if no content is provided. |
+
+#### Internal Logic
+- Checks if `innerHtml` is provided; if not, returns `null`.
+- Creates a `span` element, applies CSS classes for styling, and sets its inner HTML to `innerHtml`.
+- Returns the constructed element.
+
+### `AUTOCOMPLETER`
+#### Description
+A `DeferredRequestRegistry` instance that manages autocomplete requests, ensuring that only the latest request is processed and previous ones are resolved with an empty response.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req  | Omit&lt;CodeCompletionRequest, "id"&gt; | The request data for code completion, excluding the request ID. |
+
+#### Outputs
+| Name   | Type       | Description                              |
+|:-------|:-----------|:-----------------------------------------|
+| output | Promise&lt;CompletionResultMessage | null&gt; | The result of the autocomplete request. |
+
+#### Internal Logic
+- Uses `sendCodeCompletionRequest` to send the request to the server.
+- Resolves any existing requests with an empty response before processing the new request.
+
+### `Autocompleter`
+#### Description
+An object containing methods to convert server-sent completion messages into CodeMirror-compatible formats for autocomplete suggestions and tooltips.
+
+#### Methods
+
+##### `asCompletionResult`
+###### Description
+Converts a `CompletionResultMessage` into a `CompletionResult` that CodeMirror can use to display autocomplete suggestions.
+
+###### Inputs
+| Name     | Type                    | Description |
+|:---------|:------------------------|:------------|
+| position | number                  | The position in the document where the completion is requested. |
+| message  | CompletionResultMessage | The message containing completion options from the server. |
+
+###### Outputs
+| Name   | Type            | Description                              |
+|:-------|:----------------|:-----------------------------------------|
+| output | CompletionResult | The formatted completion result for CodeMirror. |
+
+###### Internal Logic
+- Calculates the starting position for the completion based on the message's prefix length.
+- Maps each option in the message to a format that includes a label, type, and an info function that generates a tooltip.
+
+##### `asHoverTooltip`
+###### Description
+Converts a `CompletionResultMessage` into a `Tooltip` for displaying additional information when hovering over a completion option.
+
+###### Inputs
+| Name         | Type                    | Description |
+|:-------------|:------------------------|:------------|
+| position     | number                  | The position in the document where the tooltip is requested. |
+| message      | CompletionResultMessage | The message containing completion options from the server. |
+| limitToType  | string (optional)       | Limits the tooltip to a specific type. |
+| excludeTypes | string[] (optional)     | Types to exclude from tooltip display. |
+| exactName    | string (optional)       | The exact name of the option to display. |
+
+###### Outputs
+| Name   | Type       | Description                              |
+|:-------|:-----------|:-----------------------------------------|
+| output | Tooltip | The formatted tooltip for CodeMirror, or undefined if no suitable option is found. |
+
+###### Internal Logic
+- Selects the first option that matches the criteria (exact name, type limits).
+- Constructs a tooltip using the selected option's information, if available.
+
+### `getFirstOption`
+#### Description
+Selects the most appropriate completion option from a list, optionally using a tie-breaker based on the option's name.
+
+#### Inputs
+| Name     | Type               | Description |
+|:---------|:-------------------|:------------|
+| options  | CompletionOption[] | The list of completion options. |
+| tieBreak | string (optional)  | The name to use as a tie-breaker if multiple options are available. |
+
+#### Outputs
+| Name   | Type              | Description                              |
+|:-------|:------------------|:-----------------------------------------|
+| output | CompletionOption | The selected completion option, or undefined if no suitable option is found. |
+
+#### Internal Logic
+- Returns the first option if only one is available.
+- Uses the `tieBreak` name to select an option if multiple are available.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/autocomplete` | Provides types and utilities for autocomplete functionality. |
+| `@codemirror/view` | Provides types and utilities for view-related functionality, such as tooltips. |
+| `@/core/network/requests` | Provides the function to send code completion requests to the server. |
+| `@/core/network/DeferredRequestRegistry` | Manages asynchronous requests and responses. |
+
+## Error Handling
+
+- The `AUTOCOMPLETER` resolves existing requests with an empty response to ensure that only the latest request is processed.
+- Errors during the request process are caught and used to reject the promise, ensuring that the request lifecycle is properly managed.
+
+## Logging
+
+No explicit logging is implemented in this file. However, related files like `completer.ts` and `hints.ts` use a `Logger` utility for error reporting.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

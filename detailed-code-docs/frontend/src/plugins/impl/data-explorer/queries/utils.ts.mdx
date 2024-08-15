@@ -1,0 +1,106 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file, `utils.ts`, is part of a data exploration plugin and provides utility functions to analyze and classify query specifications (`SpecQuery`). It determines whether a query is specific, full, or empty, and checks for the presence of wildcards in the query's encodings. These utilities are crucial for understanding and manipulating data visualization queries, particularly in the context of the Vega Voyager project.
+
+## Code Structure
+
+The main symbols in the code are functions that operate on `SpecQuery` objects. These functions are interconnected as they all serve the purpose of analyzing different aspects of a query's structure and content. The `hasWildcards` function is particularly important as it is used by `isQuerySpecific` to determine if a query is specific by checking for the absence of wildcards.
+
+## Symbols
+
+### `isQuerySpecific`
+#### Description
+Determines if a query is specific by checking if it contains any wildcards. A query is considered specific if it has no wildcards.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | SpecQuery | The query specification to be analyzed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns `true` if the query is specific (i.e., has no wildcards), otherwise `false`. |
+
+#### Internal Logic
+- Calls `hasWildcards` to check for any wildcards in the query.
+- Returns the negation of `hasAnyWildcard` from the `hasWildcards` result.
+
+### `isQueryFull`
+#### Description
+Checks if a query is considered "full" by verifying the presence of specific encoding channels and a facet.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | SpecQuery | The query specification to be analyzed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns `true` if the query is full, otherwise `false`. |
+
+#### Internal Logic
+- Defines required encoding channels (`x`, `y`, `color`) and possible facets (`row`, `column`).
+- Checks if all required channels are present in the query.
+- Verifies if at least one facet is present.
+- Returns `true` if both conditions are met.
+
+### `isQueryEmpty`
+#### Description
+Determines if a query is empty by checking if it has no encodings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | SpecQuery | The query specification to be analyzed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns `true` if the query has no encodings, otherwise `false`. |
+
+### `hasWildcards`
+#### Description
+Analyzes a query to determine the presence of wildcards in its encodings, including fields, functions, and channels.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | SpecQuery | The query specification to be analyzed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | HasWildcard | An object indicating the presence of wildcards in fields, functions, and channels. |
+
+#### Internal Logic
+- Iterates over each encoding in the query.
+- Checks for wildcards in fields, functions (aggregate, bin, timeUnit), and channels.
+- Returns an object with boolean flags indicating the presence of each type of wildcard.
+
+## References
+
+- `SpecQuery` from `compassql/build/src/query/spec`: The type of query specification being analyzed.
+- `isValueQuery`, `isAutoCountQuery` from `compassql/build/src/query/encoding`: Functions used to determine the type of query.
+- `isWildcard` from `compassql/build/src/wildcard`: Function used to check if a value is a wildcard.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `compassql/build/src/query/encoding` | Provides functions to analyze query encodings. |
+| `compassql/build/src/query/spec` | Defines the `SpecQuery` type. |
+| `compassql/build/src/wildcard` | Provides functionality to check for wildcards. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checks and logical conditions. It assumes that the input `SpecQuery` is well-formed and does not include any error handling for malformed queries.
+
+## Logging
+
+The code does not implement any logging mechanisms.

@@ -1,0 +1,90 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file `test_output.py` contains a set of asynchronous test functions designed to verify the behavior of the `marimo` library's output handling within a mocked kernel environment. These tests focus on ensuring that specific output-related functionalities, such as spinner removal, mutating appended outputs, and handling nested outputs, work as expected when executed in a simulated runtime context.
+
+## Code Structure
+
+The main symbols in the code are the asynchronous test functions: `test_spinner_removed`, `test_mutating_appended_outputs`, and `test_nested_output`. Each of these functions uses a `MockedKernel` and an `ExecReqProvider` to simulate the execution of code snippets and verify the resulting outputs. The `MockedKernel` and `ExecReqProvider` are defined in the related file `conftest.py`, which provides the necessary infrastructure for mocking the kernel and creating execution requests.
+
+## References
+
+- `MockedKernel`: A class from `conftest.py` that simulates a kernel environment for testing.
+- `ExecReqProvider`: A class from `conftest.py` that provides execution requests for the kernel.
+
+## Symbols
+
+### `test_spinner_removed`
+#### Description
+This test verifies that a spinner created by the `marimo` library is removed immediately after the context manager exits. It checks the messages in the mocked kernel's stream to ensure that the spinner's output is cleared.
+
+#### Inputs
+| Name          | Type           | Description                          |
+|:--------------|:---------------|:-------------------------------------|
+| mocked_kernel | MockedKernel   | A mocked kernel environment.         |
+| exec_req      | ExecReqProvider| Provides execution requests.         |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a code snippet that uses a spinner within a context manager.
+- Iterates through the messages in the mocked kernel's stream to find a message indicating the presence of a spinner.
+- Asserts that the spinner's output is cleared immediately after the context manager exits.
+
+### `test_mutating_appended_outputs`
+#### Description
+This test ensures that when an object is appended to the output multiple times with mutations in between, both versions of the object (before and after mutation) are captured in the final output messages.
+
+#### Inputs
+| Name          | Type           | Description                          |
+|:--------------|:---------------|:-------------------------------------|
+| mocked_kernel | MockedKernel   | A mocked kernel environment.         |
+| exec_req      | ExecReqProvider| Provides execution requests.         |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a code snippet that appends a list to the output, mutates it, and appends it again.
+- Collects the output messages from the mocked kernel's stream.
+- Asserts that both the initial and mutated states of the list are present in the output messages.
+
+### `test_nested_output`
+#### Description
+This test checks the handling of nested outputs, ensuring that deeply nested structures are represented correctly in the output.
+
+#### Inputs
+| Name          | Type           | Description                          |
+|:--------------|:---------------|:-------------------------------------|
+| mocked_kernel | MockedKernel   | A mocked kernel environment.         |
+| exec_req      | ExecReqProvider| Provides execution requests.         |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a code snippet that creates a nested list structure.
+- Collects the output messages from the mocked kernel's stream.
+- Asserts that the nested structure is correctly represented in the output.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pytest`   | Used for defining and running the test cases.|
+
+## Error Handling
+
+The test functions rely on assertions to validate expected behavior. If an assertion fails, it indicates that the test did not pass, and the error is reported by the testing framework (`pytest`).
+
+## Logging
+
+There is no explicit logging mechanism implemented in the code. The test results and any assertion failures are handled by the `pytest` framework.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

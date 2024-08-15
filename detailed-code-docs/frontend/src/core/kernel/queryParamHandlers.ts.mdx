@@ -1,0 +1,109 @@
+---
+title: "queryParamHandlers.ts"
+---
+
+## High-level description
+
+The `queryParamHandlers.ts` file defines a set of functions for manipulating URL query parameters in a web application. These functions allow appending, setting, deleting, and clearing query parameters in the current URL, and they update the browser's history state to reflect these changes.
+
+## Code Structure
+
+The main symbol in this file is the `queryParamHandlers` object, which contains four methods: `append`, `set`, `delete`, and `clear`. Each method is responsible for a specific operation on the URL's query parameters. The methods use the `URL` and `URLSearchParams` interfaces to manipulate the query parameters and the `window.history.pushState` method to update the browser's history.
+
+## References
+
+- `OperationMessageData` from `messages.ts`: This type is used to define the structure of the data passed to the query parameter handler functions.
+
+## Symbols
+
+### `queryParamHandlers`
+#### Description
+`queryParamHandlers` is an object that provides methods to manipulate the query parameters of the current URL. It includes methods to append, set, delete, and clear query parameters, updating the browser's history state accordingly.
+
+#### Methods
+
+##### `append`
+###### Description
+Appends a new query parameter to the current URL.
+
+###### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `OperationMessageData&lt;"query-params-append"&gt;` | Contains the key and value to append as a query parameter. |
+
+###### Outputs
+None
+
+###### Internal Logic
+- Creates a `URL` object from the current window location.
+- Uses `URLSearchParams.append` to add the new key-value pair.
+- Updates the browser's history state with `window.history.pushState`.
+
+##### `set`
+###### Description
+Sets a query parameter in the current URL, replacing any existing values for the same key.
+
+###### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `OperationMessageData&lt;"query-params-set"&gt;` | Contains the key and value(s) to set as a query parameter. |
+
+###### Outputs
+None
+
+###### Internal Logic
+- Creates a `URL` object from the current window location.
+- If the value is an array, deletes existing values for the key and appends each value.
+- Otherwise, uses `URLSearchParams.set` to set the key-value pair.
+- Updates the browser's history state with `window.history.pushState`.
+
+##### `delete`
+###### Description
+Deletes a specific query parameter from the current URL.
+
+###### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `OperationMessageData&lt;"query-params-delete"&gt;` | Contains the key and optionally the value to delete. |
+
+###### Outputs
+None
+
+###### Internal Logic
+- Creates a `URL` object from the current window location.
+- If the value is `null`, deletes all instances of the key.
+- Otherwise, deletes the specific key-value pair.
+- Updates the browser's history state with `window.history.pushState`.
+
+##### `clear`
+###### Description
+Clears all query parameters from the current URL.
+
+###### Inputs
+None
+
+###### Outputs
+None
+
+###### Internal Logic
+- Creates a `URL` object from the current window location.
+- Sets the search property to an empty string to clear all query parameters.
+- Updates the browser's history state with `window.history.pushState`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `OperationMessageData` | Defines the structure of the data used by the query parameter handlers. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the operations on the URL and history state will succeed. If any operation fails, it would likely result in a runtime error.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

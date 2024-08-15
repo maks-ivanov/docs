@@ -1,0 +1,133 @@
+---
+title: "drawing_graphs.py"
+---
+
+## High-level description
+
+The target file `drawing_graphs.py` is a script designed to create an interactive application using the `marimo` framework. It allows users to visualize and manipulate graph embeddings by selecting different parameters such as the number of items, penalty types, and loss functions. The application uses the `pymde` library to perform the actual embedding computations and visualizations.
+
+## Code Structure
+
+The code is structured around the `marimo` framework, which uses a cell-based approach to define interactive components. Each `@app.cell` decorator defines a function that contributes to the application's functionality. The main components include user interface elements (sliders and dropdowns), graph drawing functions, and embedding computations.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of the `marimo.App` class, which serves as the main application object for managing the interactive components and running the application.
+
+### `__generated_with`
+#### Description
+A string indicating the version of the tool or framework used to generate the script. In this case, it is "0.1.0".
+
+### `@app.cell` Decorated Functions
+Each function decorated with `@app.cell` represents a component or a step in the interactive application. These functions are executed in sequence to build the application's interface and logic.
+
+#### Inputs and Outputs
+The inputs and outputs of these functions vary, but they generally involve user interface elements, graph parameters, and embedding results.
+
+#### Internal Logic
+- **User Interface Elements**: Functions create UI components like sliders and dropdowns to allow user interaction.
+- **Graph Drawing**: Functions define how graphs are drawn based on user-selected parameters.
+- **Embedding Computations**: Functions use the `pymde` library to compute and visualize graph embeddings.
+
+### `draw_graphs`
+#### Description
+A function defined within a cell that draws graphs based on the number of items, penalty, and loss function selected by the user.
+
+#### Inputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| n_items  | int    | Number of items in the graph.         |
+| penalty  | str    | Type of penalty to apply.             |
+| loss     | str    | Type of loss function to use.         |
+
+#### Outputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| output   | UI     | Tabs containing graph visualizations. |
+
+#### Internal Logic
+- Constructs two tabs: one for a complete graph and another for a binary tree.
+- Uses the `complete_graph` and `tree` functions to generate the graph embeddings and visualizations.
+
+### `complete_graph`
+#### Description
+A cached function that generates a complete graph embedding using the specified penalty.
+
+#### Inputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| n_items  | int    | Number of items in the graph.         |
+| penalty  | str    | Type of penalty to apply.             |
+
+#### Outputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| output   | Plot   | Visualization of the complete graph.  |
+
+#### Internal Logic
+- Computes all possible edges for a complete graph.
+- Uses `pymde.MDE` to perform the embedding with the specified penalty.
+- Plots the resulting embedding.
+
+### `tree`
+#### Description
+A cached function that generates a binary tree embedding using the specified loss function.
+
+#### Inputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| n_items  | int    | Number of items in the graph.         |
+| loss     | str    | Type of loss function to use.         |
+
+#### Outputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| output   | Plot   | Visualization of the binary tree.     |
+
+#### Internal Logic
+- Constructs a binary tree by iteratively adding edges.
+- Uses `pymde.Graph` and `pymde.preprocess.graph.shortest_paths` to prepare the graph.
+- Performs the embedding with `pymde.MDE` using the specified loss function.
+- Plots the resulting embedding.
+
+### `format_axis`
+#### Description
+A function that formats the plot axis for graph visualizations.
+
+#### Outputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| ax       | Axis   | Formatted axis for the plot.          |
+
+#### Internal Logic
+- Sets the figure size and title.
+- Removes x and y ticks for a cleaner visualization.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `marimo`   | Framework for building interactive applications. |
+| `pymde`    | Library for performing multidimensional embeddings. |
+| `functools`| Provides caching for functions.              |
+| `numpy`    | Used for numerical operations (imported but not directly used in the target file). |
+| `scipy.sparse` | Used for sparse matrix operations (imported but not directly used in the target file). |
+| `torch`    | Used for tensor operations in graph processing. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond the basic functionality provided by the `marimo` and `pymde` libraries. Any exceptions or errors would likely be managed by these libraries' internal mechanisms.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The script does not expose an API but provides an interactive interface through the `marimo` framework. The interface includes sliders and dropdowns for user interaction, and tabs for displaying graph visualizations.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

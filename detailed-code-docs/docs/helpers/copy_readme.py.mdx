@@ -1,0 +1,62 @@
+---
+title: "copy_readme.py"
+---
+
+## High-level description
+
+The `copy_readme.py` file defines a custom Sphinx directive named `ReadmePartDirective`. This directive is used to extract a specific section from a `README.md` file based on a given header and integrate it into the Sphinx documentation. The directive reads the markdown content, identifies the specified section, and processes it for inclusion in the documentation.
+
+## Code Structure
+
+The main symbol in this code is the `ReadmePartDirective` class, which inherits from the `Directive` class provided by the `docutils.parsers.rst` module. This class is responsible for handling the custom directive logic, including reading the `README.md` file, extracting the specified section, and parsing it for inclusion in the documentation.
+
+## References
+
+- `Directive`: A base class from the `docutils.parsers.rst` module, which is extended to create custom directives.
+- `Parser`: A class from the `myst_parser.docutils_` module used to parse markdown content into a format suitable for Sphinx documentation.
+
+## Symbols
+
+### `ReadmePartDirective`
+#### Description
+The `ReadmePartDirective` class is a custom Sphinx directive that extracts a specified section from a `README.md` file and integrates it into the Sphinx documentation. It achieves this by reading the markdown file, locating the section based on a header, and parsing the content for inclusion.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| header | string | The header of the section to extract from the `README.md` file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | list | Returns an empty list if the header is not found or after processing the content. |
+
+#### Internal Logic
+1. **Header Extraction**: The directive takes a single required argument, which is the header of the section to be extracted from the `README.md` file.
+2. **File Reading**: It determines the path to the `README.md` file relative to the current script's location and reads its content.
+3. **Header Matching**: Using a regular expression, it searches for the specified header in the markdown content.
+4. **Content Extraction**: If the header is found, it extracts the content from the header to the next header of the same level or the end of the file.
+5. **Link Update**: It updates asset links in the extracted content to ensure they are correctly referenced in the documentation.
+6. **Content Parsing**: The extracted content is parsed using the `Parser` class from the `myst_parser` module to convert it into a format suitable for Sphinx documentation.
+7. **Return**: The method returns an empty list, which is a requirement for Sphinx directives.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `docutils.parsers.rst` | Provides the base `Directive` class for creating custom Sphinx directives. |
+| `re` | Used for regular expression operations to find and extract sections from the markdown content. |
+| `os` | Used to handle file paths and determine the location of the `README.md` file. |
+| `myst_parser.docutils_` | Provides the `Parser` class to parse markdown content for Sphinx documentation. |
+
+## Configuration
+
+The `ReadmePartDirective` is registered in the Sphinx configuration file (`docs/conf.py`) using the `app.add_directive` method, allowing it to be used within the Sphinx documentation.
+
+## Error Handling
+
+The code does not explicitly handle errors such as file not found or read errors. If the `README.md` file is missing or unreadable, the code will raise an exception when attempting to open the file. Additionally, if the specified header is not found, the method simply returns an empty list, effectively skipping the inclusion of that section.
+
+## Logging
+
+The code does not implement any logging mechanisms. Any issues or errors would need to be identified through exception handling or debugging during execution.

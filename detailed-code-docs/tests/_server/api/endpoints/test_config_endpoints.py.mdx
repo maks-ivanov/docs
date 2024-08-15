@@ -1,0 +1,74 @@
+---
+title: "test_config_endpoints.py"
+---
+
+## High-level description
+
+The target file `test_config_endpoints.py` contains unit tests for the API endpoints related to user configuration management in a server application. These tests verify the functionality of saving user configurations both with and without an active session, ensuring that the API responds correctly and the configurations are saved as expected.
+
+## Code Structure
+
+The main symbols in the code are the test functions `test_save_user_config_no_session` and `test_save_user_config_with_session`. These functions utilize a `TestClient` to simulate HTTP requests to the server's API endpoints. The `get_user_config_manager` function from `conftest.py` is used to retrieve the user configuration manager, which is then used to get the current configuration for testing purposes. The `with_session` decorator from `mocks.py` is used to manage session state during the tests.
+
+## Symbols
+
+### `test_save_user_config_no_session`
+#### Description
+This function tests the `/api/kernel/save_user_config` endpoint without an active session. It ensures that the endpoint can save user configurations and return a successful response.
+
+#### Inputs
+| Name   | Type       | Description                  |
+|:-------|:-----------|:-----------------------------|
+| client | TestClient | The test client for the API. |
+
+#### Outputs
+None. The function uses assertions to validate the response.
+
+#### Internal Logic
+1. Retrieve the user configuration manager using `get_user_config_manager`.
+2. Send a POST request to the `/api/kernel/save_user_config` endpoint with the current configuration.
+3. Assert that the response status code is 200.
+4. Assert that the response content type is `application/json`.
+5. Assert that the response JSON contains the key "success".
+
+### `test_save_user_config_with_session`
+#### Description
+This function tests the `/api/kernel/save_user_config` endpoint with an active session. It verifies that the endpoint can save user configurations and return a successful response when a session is active.
+
+#### Inputs
+| Name   | Type       | Description                  |
+|:-------|:-----------|:-----------------------------|
+| client | TestClient | The test client for the API. |
+
+#### Outputs
+None. The function uses assertions to validate the response.
+
+#### Internal Logic
+1. The `with_session` decorator is used to ensure a session is active during the test.
+2. Retrieve the user configuration manager using `get_user_config_manager`.
+3. Send a POST request to the `/api/kernel/save_user_config` endpoint with the current configuration.
+4. Assert that the response status code is 200.
+5. Assert that the response content type is `application/json`.
+6. Assert that the response JSON contains the key "success".
+
+## References
+
+- `get_user_config_manager`: This function is imported from `conftest.py` and is used to obtain the user configuration manager for the tests.
+- `token_header` and `with_session`: These are imported from `mocks.py` and are used to manage authentication headers and session state, respectively.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `TestClient` | Used to simulate HTTP requests to the server's API endpoints.          |
+| `get_user_config_manager` | Provides access to the user configuration manager for testing. |
+| `token_header` | Generates authentication headers for API requests.                  |
+| `with_session` | Manages session state during tests.                                 |
+
+## Error Handling
+
+The tests use assertions to handle errors. If an assertion fails, it indicates that the API did not behave as expected, and the test will fail, providing the response text for debugging.
+
+## Logging
+
+There is no explicit logging in the code. The test framework (e.g., pytest) will handle outputting test results and any assertion failures.

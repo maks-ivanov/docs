@@ -1,0 +1,189 @@
+---
+title: "machine-stats.tsx"
+---
+
+## High-level description
+
+The `machine-stats.tsx` file defines a React component named `MachineStats` that displays real-time statistics about a machine's memory and CPU usage, as well as the status of a WebSocket connection. It uses hooks to periodically fetch usage data and update the UI with memory and CPU usage bars, and connection status icons.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MachineStats` is the primary component that orchestrates the fetching and display of machine statistics.
+- `BackendConnection`, `MemoryUsageBar`, and `CPUBar` are sub-components used by `MachineStats` to display specific parts of the machine's status.
+- Utility functions like `asGB`, `asMB`, and `asGBorMB` are used to format memory sizes for display.
+- Hooks such as `useAsyncData` and `useInterval` are used to manage asynchronous data fetching and periodic updates.
+
+## References
+
+- `connectionAtom` from `@/core/network/connection` is used to get the current WebSocket connection state.
+- `getUsageStats` from `@/core/network/requests` is used to fetch the machine's usage statistics.
+- `WebSocketState` from `@/core/websocket/types` is used to determine the state of the WebSocket connection.
+- `isWasm` from `@/core/wasm/utils` is used to check if the environment is WebAssembly.
+
+## Symbols
+
+### `MachineStats`
+#### Description
+The `MachineStats` component fetches and displays the machine's memory and CPU usage, along with the WebSocket connection status. It periodically updates the data every 10 seconds or when the document becomes visible.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | React.FC | React functional component properties |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered component displaying machine stats |
+
+#### Internal Logic
+- Uses `useState` to manage a `nonce` state that triggers data refreshes.
+- Uses `useInterval` to increment the `nonce` every 10 seconds.
+- Uses `useAsyncData` to fetch usage statistics if the environment is not WebAssembly and the WebSocket connection is open.
+- Renders `MemoryUsageBar`, `CPUBar`, and `BackendConnection` components based on the fetched data.
+
+### `BackendConnection`
+#### Description
+Displays an icon representing the current state of the WebSocket connection.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| connection | WebSocketState | The current state of the WebSocket connection |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered component displaying connection status |
+
+#### Internal Logic
+- Uses a `Tooltip` to show the connection state.
+- Displays different icons based on the connection state (e.g., `CheckCircle2Icon` for open, `PowerOffIcon` for closed).
+
+### `MemoryUsageBar`
+#### Description
+Displays a bar representing the memory usage of the machine, kernel, and server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| memory | UsageResponse["memory"] | Memory usage data |
+| kernel | UsageResponse["kernel"] | Kernel memory data |
+| server | UsageResponse["server"] | Server memory data |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered component displaying memory usage |
+
+#### Internal Logic
+- Formats memory usage data using `asGB` and `asGBorMB`.
+- Displays a `MemoryStickIcon` and a `Bar` component to visualize memory usage.
+
+### `CPUBar`
+#### Description
+Displays a bar representing the CPU usage of the machine.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cpu | UsageResponse["cpu"] | CPU usage data |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered component displaying CPU usage |
+
+#### Internal Logic
+- Formats CPU usage percentage.
+- Displays a `CpuIcon` and a `Bar` component to visualize CPU usage.
+
+### `Bar`
+#### Description
+A visual component that represents a percentage as a filled bar.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| percent | number | The percentage to display as a filled bar |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered bar component |
+
+#### Internal Logic
+- Uses inline styles to set the width of the filled portion of the bar based on the `percent` input.
+
+### `asGBorMB`
+#### Description
+Converts a byte value to a string representation in either gigabytes or megabytes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bytes | number | The byte value to convert |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The formatted string in GB or MB |
+
+#### Internal Logic
+- Checks if the byte value is greater than 1 GB and formats accordingly using `asGB` or `asMB`.
+
+### `asMB`
+#### Description
+Converts a byte value to a string representation in megabytes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bytes | number | The byte value to convert |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The formatted string in MB |
+
+#### Internal Logic
+- Uses `Intl.NumberFormat` to format the byte value to megabytes with no decimal places.
+
+### `asGB`
+#### Description
+Converts a byte value to a string representation in gigabytes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bytes | number | The byte value to convert |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The formatted string in GB |
+
+#### Internal Logic
+- Uses `Intl.NumberFormat` to format the byte value to gigabytes with up to two decimal places.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management for the connection state |
+| `lodash-es` | Utility functions, specifically `startCase` for formatting strings |
+| `lucide-react` | Icons used in the UI components |
+| `@radix-ui/react-tooltip` | Tooltip component for displaying additional information |
+
+## Error Handling
+
+The `useAsyncData` hook handles errors during data fetching by setting an error state, which can be used to display error messages or handle errors gracefully in the UI.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

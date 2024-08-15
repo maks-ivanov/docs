@@ -1,0 +1,164 @@
+---
+title: "paths.ts"
+---
+
+## High-level description
+
+The `paths.ts` file provides utility functions and classes for handling file paths in a platform-independent manner. It includes methods to determine if a path is absolute, extract directory names, base names, and file extensions, and manipulate paths using a guessed delimiter based on the path format.
+
+## Code Structure
+
+The main symbols in the code are the `Paths` object and the `PathBuilder` class. The `Paths` object provides static utility functions for path manipulation, while the `PathBuilder` class offers methods to construct and deconstruct paths using a specified delimiter. The `FilePath` type is used to ensure type safety for path strings.
+
+## Symbols
+
+### `FilePath`
+#### Description
+`FilePath` is a type alias for a `TypedString` with the type `"FilePath"`. It is used to ensure that strings representing file paths are type-safe.
+
+### `Paths`
+#### Description
+`Paths` is an object that provides static utility functions for working with file paths, such as checking if a path is absolute, getting the directory name, base name, and file extension.
+
+#### Methods
+
+- **`isAbsolute`**
+  - **Description**: Checks if a given path is absolute.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | string | The path to check. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | result | boolean | `true` if the path is absolute, otherwise `false`. |
+
+- **`dirname`**
+  - **Description**: Returns the directory name of a given path.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | string | The path from which to extract the directory name. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | dirname | string | The directory name of the path. |
+
+- **`basename`**
+  - **Description**: Returns the base name of a given path.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | string | The path from which to extract the base name. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | basename | string | The base name of the path. |
+
+- **`rest`**
+  - **Description**: Returns the remaining part of a path after removing the root.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | string | The full path. |
+    | root | string | The root part to remove. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | rest | string | The remaining part of the path. |
+
+- **`extension`**
+  - **Description**: Returns the file extension of a given filename.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | filename | string | The filename from which to extract the extension. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | extension | string | The file extension. |
+
+### `PathBuilder`
+#### Description
+`PathBuilder` is a class that provides methods to manipulate file paths using a specified delimiter. It can join paths, extract base names, directory names, and the rest of the path after a root.
+
+#### Constructor
+- **Inputs**: 
+  | Name | Type | Description |
+  |:-----|:-----|:------------|
+  | deliminator | "/" or "\\" | The delimiter to use for path operations. |
+
+#### Methods
+
+- **`guessDeliminator`**
+  - **Description**: Static method to guess the delimiter of a path based on its format.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | string | The path to analyze. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | pathBuilder | PathBuilder | A `PathBuilder` instance with the guessed delimiter. |
+
+- **`join`**
+  - **Description**: Joins multiple path segments into a single path using the instance's delimiter.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | paths | string[] | The path segments to join. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | joinedPath | FilePath | The joined path. |
+
+- **`basename`**
+  - **Description**: Returns the base name of a given path.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | FilePath | The path from which to extract the base name. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | basename | FilePath | The base name of the path. |
+
+- **`rest`**
+  - **Description**: Returns the remaining part of a path after removing the root.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | FilePath | The full path. |
+    | root | FilePath | The root part to remove. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | rest | FilePath | The remaining part of the path. |
+
+- **`dirname`**
+  - **Description**: Returns the directory name of a given path.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | FilePath | The path from which to extract the directory name. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | dirname | FilePath | The directory name of the path. |
+
+## References
+
+- `TypedString` from `typed.ts` is used to create the `FilePath` type.
+- The `Paths` object and `PathBuilder` class are used in various parts of the codebase, such as in file handling components and plugins, to manage file paths consistently.
+
+## Dependencies
+
+No external libraries are directly imported in this file, but it relies on TypeScript's type system for type safety.
+
+## Error Handling
+
+The code does not explicitly handle errors, as it primarily deals with string manipulation. However, it assumes valid input paths and does not perform extensive validation.
+
+## Logging
+
+No logging mechanisms are implemented in this file.

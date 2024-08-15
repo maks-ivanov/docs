@@ -1,0 +1,72 @@
+---
+title: "main.ts"
+---
+
+## High-level description
+
+The `main.ts` file serves as the main entry point for initializing and managing the Marimo application, specifically for embedded Marimo apps. It sets up the environment by initializing plugins, handling UI elements, and managing communication with the kernel through the `IslandsPyodideBridge`. The file also processes various messages from the kernel to update the application's state and UI accordingly.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `initialize`: The primary function that sets up the Marimo app by initializing plugins, managing UI elements, and setting up message handling from the kernel.
+- `IslandsPyodideBridge`: A singleton class that facilitates communication between the JavaScript environment and the Pyodide kernel.
+- `store`, `notebookAtom`, `notebookReducer`: Used for managing the state of the notebook, including cell operations and UI updates.
+- Various handlers like `handleKernelReady`, `handleRemoveUIElements`, and `handleCellOperation` are used to process specific types of messages from the kernel.
+
+## References
+
+- `IslandsPyodideBridge`: Facilitates communication with the Pyodide kernel.
+- `store`, `notebookAtom`, `notebookReducer`: Manage the state of the notebook.
+- `UI_ELEMENT_REGISTRY`: Manages UI elements and their state.
+- `Logger`: Used for logging warnings and errors.
+- `Functions.NOOP`: A no-operation function used as a placeholder.
+- `jsonParseWithSpecialChar`: Parses JSON strings, handling special characters.
+
+## Symbols
+
+### `initialize`
+#### Description
+The `initialize` function is the main entry point for setting up the Marimo app. It initializes plugins, manages UI elements, and sets up message handling from the kernel.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Calls `initializePlugins` to set up all necessary plugins.
+2. Selects all `marimo-island` elements and adds a class name to them.
+3. If no islands are found, the function returns early.
+4. Sets up actions for notebook state management using `createNotebookActions`.
+5. Configures the `IslandsPyodideBridge` to consume messages from the kernel and handle them using a switch-case structure.
+6. Handles various message types like `kernel-ready`, `send-ui-element-message`, `remove-ui-elements`, `function-call-result`, and others.
+7. Starts the runtime using `RuntimeState.INSTANCE.start`.
+
+## Side Effects
+- Modifies the DOM by adding class names to elements.
+- Updates the global state of the application through the `store`.
+- Registers custom elements in the browser's `customElements` registry.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `iconify-icon` | Used for rendering icons. |
+| `@/plugins/plugins` | Initializes plugins for the application. |
+| `@/components/ui/use-toast` | Provides toast notifications. |
+| `@/utils/assertNever` | Provides utility functions for exhaustive checks. |
+| `@/utils/json/json-parser` | Parses JSON strings with special character handling. |
+| `@/utils/Logger` | Provides logging functionality. |
+| `@/utils/functions` | Provides utility functions like `NOOP`. |
+
+## Error Handling
+- Uses `logNever` to log unexpected messages from the kernel without throwing errors.
+- Uses `Logger` to log warnings and errors throughout the code.
+
+## Logging
+- The `Logger` is used to log various messages, including warnings and errors, to the console.
+
+## TODOs
+- There is a TODO comment indicating the need to support toast notifications with islands.

@@ -1,0 +1,55 @@
+---
+title: "requests.ts"
+---
+
+## High-level description
+
+The `requests.ts` file is responsible for determining the appropriate network request handler to use based on the current environment or mode of the application. It provides a unified interface for making network requests related to editing and running code, such as sending component values, running code, saving configurations, and more. The file dynamically selects the appropriate request handler based on the environment, such as Islands, WebAssembly (Wasm), or a static notebook.
+
+## Code Structure
+
+The main function in this file is `getRequest`, which determines the appropriate request handler to use based on the environment. It checks if the application is running in an Islands environment, a Wasm environment, or a static notebook environment, and returns the corresponding request handler. The file also exports a set of request functions that are destructured from the result of `getRequest`.
+
+## Symbols
+
+### `getRequest`
+#### Description
+The `getRequest` function determines the appropriate request handler to use based on the current environment or mode of the application. It returns an object that implements both `EditRequests` and `RunRequests` interfaces, which include various methods for handling network requests related to editing and running code.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `EditRequests & RunRequests` | An object containing methods for handling network requests. |
+
+#### Internal Logic
+- The function first checks if the application is running in an Islands environment using `isIslands()`. If true, it returns the `IslandsPyodideBridge.INSTANCE`.
+- If not in Islands, it checks if the environment is Wasm using `isWasm()`. If true, it returns `PyodideBridge.INSTANCE`.
+- If neither Islands nor Wasm, it checks if the environment is a static notebook using `isStaticNotebook()`. If true, it returns the result of `createStaticRequests()`.
+- If none of the above conditions are met, it defaults to returning the result of `createNetworkRequests()`.
+- The returned request handler is wrapped with error toasting using `createErrorToastingRequests(base)` unless it is in the Islands environment.
+
+## References
+
+- `IslandsPyodideBridge`: Used when the application is running in an Islands environment.
+- `PyodideBridge`: Used when the application is running in a Wasm environment.
+- `createNetworkRequests`: Used for network requests in a standard environment.
+- `createStaticRequests`: Used for network requests in a static notebook environment.
+- `createErrorToastingRequests`: Wraps the request handler to provide error toasting functionality.
+
+## Dependencies
+
+The file imports several utility functions and types from other parts of the codebase, such as:
+- `isIslands`, `isWasm`, `isStaticNotebook`: Utility functions to determine the current environment.
+- `createNetworkRequests`, `createStaticRequests`, `createErrorToastingRequests`: Functions to create different types of request handlers.
+- `EditRequests`, `RunRequests`: Type definitions for the request handler interfaces.
+
+## Error Handling
+
+The file uses `createErrorToastingRequests` to wrap the request handler with error toasting functionality, which provides user feedback in case of request failures.
+
+## Side Effects
+
+The `getRequest` function does not have direct side effects, but the request handlers it returns may perform network operations that affect the application's state or interact with external resources.

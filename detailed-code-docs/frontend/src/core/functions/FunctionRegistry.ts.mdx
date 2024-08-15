@@ -1,0 +1,61 @@
+---
+title: "FunctionRegistry.ts"
+---
+
+## High-level description
+
+The `FunctionRegistry.ts` file is responsible for managing the registration and invocation of function calls within a system that appears to involve remote procedure calls (RPC) or asynchronous operations. It utilizes a `DeferredRequestRegistry` to handle requests and responses, ensuring that function calls are sent and their results are processed correctly. This setup is crucial for managing asynchronous communication between different parts of the application, particularly when dealing with a kernel or backend service.
+
+## Code Structure
+
+The main symbol in this file is the `FUNCTIONS_REGISTRY`, which is an instance of the `DeferredRequestRegistry` class. This registry is configured to handle function call requests and their corresponding results. It uses the `sendFunctionRequest` function to send requests and expects responses of type `FunctionCallResultMessage`.
+
+## References
+
+- `sendFunctionRequest`: A function imported from `@/core/network/requests` that is used to send function call requests.
+- `FunctionCallResultMessage`: A type imported from `../kernel/messages` that represents the structure of a function call result message.
+- `DeferredRequestRegistry`: A class imported from `../network/DeferredRequestRegistry` that manages deferred requests and responses.
+- `FunctionCallRequest`: A type imported from `../network/types` that represents the structure of a function call request.
+
+## Symbols
+
+### `FUNCTIONS_REGISTRY`
+#### Description
+`FUNCTIONS_REGISTRY` is an instance of `DeferredRequestRegistry` that manages the lifecycle of function call requests and their results. It is configured to handle requests of type `FunctionCallRequest` (excluding the `functionCallId` field) and expects results of type `FunctionCallResultMessage`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| requestId | RequestId | A unique identifier for the function call request. |
+| req | Omit&lt;FunctionCallRequest, "functionCallId"&gt; | The function call request data, excluding the `functionCallId`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The registry does not directly output data but manages the request-response lifecycle. |
+
+#### Internal Logic
+- The `FUNCTIONS_REGISTRY` is initialized with a specific operation name, `"function-call-result"`, and a function that sends a function request using `sendFunctionRequest`.
+- When a request is made, it is assigned a unique `requestId`, and the request data is sent to the backend or kernel.
+- The registry listens for responses and resolves or rejects the corresponding deferred request based on the received result.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/core/network/requests` | Provides the `sendFunctionRequest` function used to send function call requests. |
+| `../kernel/messages` | Provides the `FunctionCallResultMessage` type used to define the expected structure of function call results. |
+| `../network/DeferredRequestRegistry` | Provides the `DeferredRequestRegistry` class used to manage deferred requests and responses. |
+| `../network/types` | Provides the `FunctionCallRequest` type used to define the structure of function call requests. |
+
+## Error Handling
+
+The `DeferredRequestRegistry` class, which `FUNCTIONS_REGISTRY` is an instance of, includes mechanisms for handling errors. If a request fails, the error is caught, and the corresponding deferred request is rejected, ensuring that the system can handle failures gracefully.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the `FunctionRegistry.ts` file itself. However, logging might be handled elsewhere in the application, particularly in the functions that interact with this registry.
+
+## TODOs
+
+There are no TODOs or notes left in the `FunctionRegistry.ts` file.

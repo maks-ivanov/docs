@@ -1,0 +1,234 @@
+---
+title: "file_path.py"
+---
+
+## High-level description
+
+The `file_path.py` module in the Marimo CLI is responsible for handling file paths and URLs related to Marimo notebooks and applications. It provides functionality to validate file names, handle GitHub URLs, and manage temporary files for downloaded content. This module is crucial for ensuring that the files being edited or run are valid and accessible, whether they are local files or remote resources.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific tasks related to file and URL handling. These functions often interact with each other, such as `validate_name` calling `_is_github_issue_url` and `_handle_github_issue`. The module also uses utility functions from other parts of the codebase, such as `is_url` from `marimo._utils.url`.
+
+## Symbols
+
+### `is_github_src`
+#### Description
+Determines if a given URL points to a GitHub source file with a specific extension.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The URL to check. |
+| ext | str | The file extension to validate against. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the URL is a GitHub source file with the specified extension, False otherwise. |
+
+#### Internal Logic
+- Checks if the URL is valid using `is_url`.
+- Parses the hostname and path from the URL.
+- Validates that the hostname is either `github.com` or `raw.githubusercontent.com`.
+- Ensures the path ends with the specified extension.
+
+### `get_github_src_url`
+#### Description
+Converts a GitHub URL to its raw content URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The GitHub URL to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The raw content URL. |
+
+#### Internal Logic
+- Parses the path from the URL.
+- Replaces `/blob/` with `/` to form the raw content URL.
+
+### `validate_name`
+#### Description
+Validates the name of a file to be edited or run, handling both local paths and URLs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name or URL of the file. |
+| allow_new_file | bool | Whether new files are allowed. |
+| allow_directory | bool | Whether directories are allowed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | tuple[str, Optional[TemporaryDirectory[str]]] | The validated file name and an optional temporary directory. |
+
+#### Internal Logic
+- Checks if the name is a GitHub issue URL or a static Marimo notebook URL and handles them accordingly.
+- Validates if the name is a directory or a valid file path.
+- Handles GitHub source URLs and general URLs by downloading them to temporary files.
+- Raises errors for invalid names or paths.
+
+### `_is_github_issue_url`
+#### Description
+Checks if a URL is a valid GitHub issue URL for the Marimo repository.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The URL to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the URL is a valid GitHub issue URL, False otherwise. |
+
+### `_is_static_marimo_notebook_url`
+#### Description
+Determines if a URL points to a static Marimo notebook and downloads it if applicable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The URL to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | tuple[bool, str] | A tuple indicating if it's a static notebook and the HTML content if applicable. |
+
+#### Internal Logic
+- Checks if the URL is valid and ends with `.html` or starts with `https://static.marimo.app/`.
+- Downloads the content and checks for specific HTML tags.
+
+### `_handle_github_issue`
+#### Description
+Handles a GitHub issue URL by extracting Python code from the issue body and saving it to a temporary file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The GitHub issue URL. |
+| temp_dir | TemporaryDirectory[str] | The temporary directory to save the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The path to the temporary file containing the extracted code. |
+
+#### Internal Logic
+- Fetches the issue data from GitHub's API.
+- Extracts Python code blocks from the issue body.
+- Saves the code to a temporary file.
+
+### `_find_python_code_in_github_issue`
+#### Description
+Extracts Python code from a GitHub issue body.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| body | str | The body of the GitHub issue. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The extracted Python code. |
+
+#### Internal Logic
+- Splits the body to find content between Python code markers.
+
+### `_handle_github_src`
+#### Description
+Handles a GitHub source URL by downloading the file content to a temporary file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The GitHub source URL. |
+| temp_dir | TemporaryDirectory[str] | The temporary directory to save the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The path to the temporary file. |
+
+### `_create_tmp_file_from_static_notebook`
+#### Description
+Creates a temporary file from a static Marimo notebook's HTML content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_contents | str | The HTML content of the notebook. |
+| temp_dir | TemporaryDirectory[str] | The temporary directory to save the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The path to the temporary file. |
+
+#### Internal Logic
+- Extracts code and filename from the HTML content.
+- Decodes and saves the code to a temporary file.
+
+### `_create_tmp_file_from_url`
+#### Description
+Downloads content from a URL and saves it to a temporary file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The URL to download. |
+| temp_dir | TemporaryDirectory[str] | The temporary directory to save the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The path to the temporary file. |
+
+### `_create_tmp_file_from_content`
+#### Description
+Creates a temporary file from given content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | str | The content to write to the file. |
+| name | str | The name of the file. |
+| temp_dir | TemporaryDirectory[str] | The temporary directory to save the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | str | The path to the temporary file. |
+
+## References
+
+- `is_url` from `marimo._utils.url` is used to validate URLs.
+- `MarimoPath` from `marimo._utils.marimo_path` is used to validate file paths.
+- `green` from `marimo._cli.print` is used for colored output in error messages.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `click` | Used for command-line interface utilities and error handling. |
+| `urllib` | Used for URL parsing and HTTP requests. |
+| `pathlib` | Used for file path manipulations. |
+| `tempfile` | Used for creating temporary directories and files. |
+| `json` | Used for parsing JSON responses from GitHub API. |
+| `logging` | Used for logging download and file creation activities. |
+
+## Error Handling
+
+- The module uses `click.UsageError` to handle invalid file names and paths, providing user-friendly error messages.
+- It also handles `IndexError` when extracting Python code from GitHub issues, raising a `click.UsageError` if no code is found.
+
+## Logging
+
+- The module logs information about downloading files and creating temporary files using the `logging` module.

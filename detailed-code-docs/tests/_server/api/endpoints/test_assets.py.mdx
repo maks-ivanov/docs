@@ -1,0 +1,146 @@
+---
+title: "test_assets.py"
+---
+
+## High-level description
+
+The target file `tests/_server/api/endpoints/test_assets.py` contains a suite of tests designed to verify the functionality of various API endpoints related to asset management in a web application. These tests primarily focus on ensuring that the server responds correctly to requests for the homepage, favicon, unknown files, and virtual files, as well as handling different file routing scenarios.
+
+## Code Structure
+
+The main symbols in the code are test functions that utilize the `TestClient` from the `starlette.testclient` module to simulate HTTP requests to the server. These functions are decorated with utilities like `with_file_router` to set up specific file routing contexts for the tests. The tests check the server's response status codes, content, and headers to ensure they meet expected outcomes.
+
+## Symbols
+
+### `test_index`
+#### Description
+Tests the server's response to a request for the homepage, both with and without authentication headers.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request to the homepage without headers and checks for a 200 status code and the presence of "Login" in the response.
+- Sends a GET request with authentication headers and verifies the presence of specific HTML elements related to file management.
+
+### `test_index_when_empty`
+#### Description
+Tests the homepage response when no files are present in the file router.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Similar to `test_index`, but uses a file router initialized with no files.
+- Verifies the presence of HTML elements indicating an empty state.
+
+### `test_index_when_new_file`
+#### Description
+Tests the homepage response when a new file is created in the file router.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses a file router initialized with a new file.
+- Checks for HTML elements indicating the presence of a new file.
+
+### `test_index_with_directory`
+#### Description
+Tests the homepage response when the file router is initialized with a directory.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses a temporary directory for the file router.
+- Verifies the presence of HTML elements indicating directory-based file management.
+
+### `test_favicon`
+#### Description
+Tests the server's response to a request for the favicon.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request for the favicon and checks for a 200 status code.
+- Verifies the content type of the response is appropriate for an icon.
+
+### `test_unknown_file`
+#### Description
+Tests the server's response to a request for a non-existent file.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a GET request for an unknown file and expects a 404 status code.
+- Checks that the response content type is JSON and contains a "Not Found" message.
+
+### `test_vfile`
+#### Description
+Tests the server's handling of virtual file requests.
+
+#### Inputs
+| Name   | Type        | Description          |
+|:-------|:------------|:---------------------|
+| client | TestClient  | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends requests for virtual files with and without authentication headers.
+- Verifies the status codes and content types for valid and invalid virtual file requests.
+
+## References
+
+- `AppState` from `marimo._server.api.deps`: Used to access the session manager.
+- `parse_title` from `marimo._server.api.utils`: Utilized to parse filenames into titles.
+- `AppFileRouter` from `marimo._server.file_router`: Used to manage file routing in tests.
+- `token_header` and `with_file_router` from `tests._server.mocks`: Utilities for setting up test environments.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.testclient` | Used to simulate HTTP requests in tests. |
+
+## Error Handling
+
+The tests assert expected outcomes and will raise assertion errors if the server responses do not match expectations. This is typical for test code, where the primary goal is to verify correctness rather than handle errors gracefully.
+
+## Logging
+
+No explicit logging is implemented in the test code, as it relies on assertions to validate behavior.

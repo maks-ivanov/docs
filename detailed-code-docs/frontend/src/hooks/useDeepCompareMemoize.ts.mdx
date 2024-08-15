@@ -1,0 +1,48 @@
+---
+title: "useDeepCompareMemoize.ts"
+---
+
+## High-level description
+
+The `useDeepCompareMemoize` function is a custom React hook designed to memoize a value by performing a deep comparison. This is particularly useful when you want to use an object as a dependency in a React hook and need to compare it by value rather than by reference. This approach helps in preventing unnecessary re-renders when the object structure remains the same, even if the reference changes.
+
+## Code Structure
+
+The main symbol in the code is the `useDeepCompareMemoize` function. It utilizes the `React.useRef` hook to store the current value and the `dequal` library to perform deep comparisons between the current and previous values.
+
+## Symbols
+
+### `useDeepCompareMemoize`
+#### Description
+The `useDeepCompareMemoize` function is a React hook that memoizes a given value by performing a deep comparison. It is useful for optimizing performance in React components by ensuring that dependencies in hooks like `useEffect` or `useMemo` only trigger updates when the actual content of the object changes, not just the reference.
+
+#### Inputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| value | T    | The value to be memoized, where `T` is a generic type representing any data structure. |
+
+#### Outputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| ref.current | T | The memoized value, which is updated only if a deep comparison shows a difference from the previous value. |
+
+#### Internal Logic
+1. **Reference Initialization**: A `React.useRef` is initialized with the input `value`.
+2. **Deep Comparison**: The `dequal` function is used to compare the current value with the value stored in the ref.
+3. **Update Logic**: If the values are not deeply equal, the ref is updated with the new value.
+4. **Return**: The current value of the ref is returned, ensuring that the same reference is used unless a deep change is detected.
+
+## References
+
+The `useDeepCompareMemoize` function references the `dequal` library for performing deep comparisons. It is also used in other parts of the codebase, such as in the `AnyWidgetPlugin`, `PlotlyPlugin`, and `VegaComponent`, to optimize rendering by ensuring that changes in complex objects are detected accurately.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dequal`   | Used for performing deep equality checks between objects to determine if the memoized value should be updated. |
+| `React`    | Provides the `useRef` hook, which is used to store and manage the memoized value. |
+
+## Performance Considerations
+
+The `useDeepCompareMemoize` function is designed to optimize performance by reducing unnecessary re-renders in React components. However, deep comparisons can be computationally expensive, so it should be used when the cost of re-rendering is higher than the cost of performing a deep comparison.

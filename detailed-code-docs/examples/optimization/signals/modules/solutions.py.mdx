@@ -1,0 +1,160 @@
+---
+title: "solutions.py"
+---
+
+## High-level description
+
+The target file, `solutions.py`, defines a set of functions that create and configure optimization problems for signal decomposition. These problems are constructed using various components from the `gfosd.components` module, and they are tailored to specific types of signals, such as CO2 emissions, solar power generation, and soiling effects on solar panels. The file provides preprocessing steps and problem definitions that are used to decompose signals into interpretable components.
+
+## Code Structure
+
+The main symbols in the code are functions that define specific signal decomposition problems. Each function creates a `Problem` instance from the `gfosd` library, using different components to model the signal's characteristics. The components are imported from the `gfosd.components` module and are used to specify the mathematical properties of the signal decomposition.
+
+## Symbols
+
+### `co2_problem`
+#### Description
+Creates a signal decomposition problem for CO2 emissions data, focusing on capturing seasonal trends and long-term averages.
+
+#### Inputs
+| Name          | Type         | Description                        |
+|:--------------|:-------------|:-----------------------------------|
+| co2_dataframe | DataFrame    | DataFrame containing CO2 data with an "average" column. |
+
+#### Outputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| Problem | Problem | Configured problem instance. |
+
+#### Internal Logic
+- Uses `SumSquare` components to model the signal and its first difference.
+- Uses `Aggregate` to combine periodic and average-equal components with a period of 53.
+
+### `_preprocess_pvdaq`
+#### Description
+Preprocesses solar power data by taking the logarithm of the DC power values.
+
+#### Inputs
+| Name         | Type       | Description                        |
+|:-------------|:-----------|:-----------------------------------|
+| pv_dataframe | DataFrame  | DataFrame containing solar power data with a "dc_power" column. |
+
+#### Outputs
+| Name | Type      | Description                  |
+|:-----|:----------|:-----------------------------|
+| y1   | ndarray   | Log-transformed DC power values. |
+
+#### Internal Logic
+- Extracts DC power values up to a specific date.
+- Applies a logarithmic transformation to positive values.
+
+### `pvdaq_problem`
+#### Description
+Defines a signal decomposition problem for solar power generation data, focusing on daily patterns and quantile-based components.
+
+#### Inputs
+| Name         | Type       | Description                        |
+|:-------------|:-----------|:-----------------------------------|
+| pv_dataframe | DataFrame  | DataFrame containing solar power data with a "dc_power" column. |
+
+#### Outputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| Problem | Problem | Configured problem instance. |
+
+#### Internal Logic
+- Determines the period based on the number of samples.
+- Uses `SumQuantile` and `Aggregate` components to model the signal.
+
+### `basic_changepoint_problem_exact`
+#### Description
+Creates a basic changepoint detection problem using exact methods.
+
+#### Inputs
+| Name   | Type    | Description                        |
+|:-------|:--------|:-----------------------------------|
+| signal | ndarray | Signal data for changepoint detection. |
+
+#### Outputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| Problem | Problem | Configured problem instance. |
+
+#### Internal Logic
+- Uses `SumSquare` and `SumCard` components to detect changepoints.
+
+### `basic_changepoint_problem_heuristic`
+#### Description
+Creates a basic changepoint detection problem using heuristic methods.
+
+#### Inputs
+| Name   | Type    | Description                        |
+|:-------|:--------|:-----------------------------------|
+| signal | ndarray | Signal data for changepoint detection. |
+
+#### Outputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| Problem | Problem | Configured problem instance. |
+
+#### Internal Logic
+- Uses `SumSquare` and `SumAbs` components to detect changepoints.
+
+### `hard_changepoint_problem`
+#### Description
+Defines a more complex changepoint detection problem with additional constraints.
+
+#### Inputs
+| Name   | Type    | Description                        |
+|:-------|:--------|:-----------------------------------|
+| signal | ndarray | Signal data for changepoint detection. |
+
+#### Outputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| Problem | Problem | Configured problem instance. |
+
+#### Internal Logic
+- Combines `SumSquare`, `SumCard`, and `Aggregate` components to model the signal with periodic and average-equal constraints.
+
+### `soiling_problem`
+#### Description
+Creates a signal decomposition problem for solar panel soiling data, focusing on various components like noise, linear degradation, and seasonal baselines.
+
+#### Inputs
+| Name | Type       | Description                        |
+|:-----|:-----------|:-----------------------------------|
+| ss_df | DataFrame | DataFrame containing soiling data with a "daily_norm" column. |
+
+#### Outputs
+| Name       | Type               | Description                  |
+|:-----------|:-------------------|:-----------------------------|
+| ss_problem | Problem            | Configured problem instance. |
+| xr         | ndarray            | Preprocessed real signal data. |
+
+#### Internal Logic
+- Preprocesses the data by taking the logarithm and scaling it.
+- Defines multiple components to capture different aspects of the signal, such as noise, linear degradation, and soiling effects.
+- Decomposes the problem and returns the real signal for further analysis.
+
+## References
+
+- `gfosd.components`: Provides the components used in the signal decomposition problems.
+- `Problem`: A class from the `gfosd` library used to define and solve optimization problems.
+
+## Dependencies
+
+| Dependency          | Purpose                                      |
+|:--------------------|:---------------------------------------------|
+| `gfosd`             | Provides the `Problem` class for optimization. |
+| `numpy`             | Used for numerical operations and data manipulation. |
+| `pandas`            | Used for handling data in DataFrame format. |
+| `sklearn.preprocessing.MinMaxScaler` | Used for scaling data in the `soiling_problem` function. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic function operations. It assumes that the input data is correctly formatted and that the necessary components are available in the `gfosd.components` module.
+
+## Logging
+
+The code does not implement any logging mechanisms.

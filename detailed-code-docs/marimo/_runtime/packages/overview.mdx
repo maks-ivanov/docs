@@ -1,0 +1,49 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_runtime/packages` directory is designed to manage Python package installations and module registrations within the Marimo runtime environment. It provides a flexible framework for handling different package managers, mapping module names to package names, and tracking module imports. The directory includes implementations for various package managers like Conda, Pixi, Pip, Micropip, and others, allowing dynamic selection based on the environment or user configuration. Additionally, it offers utilities to determine the running environment, such as virtual environments or Conda environments, and manages module registrations within a directed graph of cells.
+
+## What does it do?
+
+The code in this directory facilitates the installation and management of Python packages across different environments and package managers. It provides a system to map module names to their respective package names, which is crucial for resolving dependencies correctly. The package managers implemented here can install packages using various tools like Conda, Pixi, Pip, and others, each with its own method for handling installations. The directory also includes a module registry that tracks which modules are imported by which parts of the code, helping to identify missing modules that could cause import errors. This is particularly useful in environments where package availability can vary, such as in isolated or virtual environments.
+
+## Entry points
+
+The main files in this directory are:
+
+- **`conda_package_manager.py`**: Defines the `CondaPackageManager` and `PixiPackageManager` classes for managing packages using Conda and Pixi.
+- **`module_name_to_conda_name.py`**: Provides a function to map Python module names to Conda package names.
+- **`module_name_to_pypi_name.py`**: Offers a function to map Python module names to PyPI package names.
+- **`module_registry.py`**: Contains the `ModuleRegistry` class for managing module imports within a directed graph.
+- **`package_manager.py`**: Defines the abstract `PackageManager` class and the `CanonicalizingPackageManager` subclass for managing package installations.
+- **`package_managers.py`**: Manages different package managers and provides a function to create instances of them.
+- **`pypi_package_manager.py`**: Implements classes for managing packages using various PyPI-related package managers.
+- **`utils.py`**: Provides utility functions to determine the running environment, such as virtual or Conda environments.
+
+## Key Files
+
+- **`conda_package_manager.py`**: Implements the `CondaPackageManager` and `PixiPackageManager` classes, which extend the `CanonicalizingPackageManager` to handle package installations using Conda and Pixi.
+- **`module_name_to_conda_name.py`**: Adjusts mappings from module names to Conda package names, starting from PyPI mappings.
+- **`module_name_to_pypi_name.py`**: Provides a static dictionary mapping module names to PyPI package names.
+- **`module_registry.py`**: Manages module imports and tracks which modules are missing from the environment.
+- **`package_manager.py`**: Establishes the framework for package management with abstract and concrete classes.
+- **`package_managers.py`**: Facilitates the creation of package manager instances based on the environment.
+- **`pypi_package_manager.py`**: Contains implementations for managing packages using various PyPI-related package managers.
+- **`utils.py`**: Offers functions to check if the script is running in a virtual, Conda, or isolated environment.
+
+## Dependencies
+
+- **`subprocess`**: Used for executing shell commands to install packages.
+- **`shutil`**: Checks if a package manager is installed on the system.
+- **`abc`**: Provides the abstract base class for defining package manager interfaces.
+- **`os`**: Accesses environment variables to check for Conda environments.
+- **`sys`**: Accesses system-specific parameters to check for virtual environments.
+- **`importlib.util`**: Checks module availability in the current Python environment.
+- **`marimo._utils.platform`**: Provides the `is_pyodide` function to check for Pyodide environments.
+
+## Configuration
+
+The directory does not explicitly mention configuration files or environment variables, but it does rely on system environment variables to determine if the script is running in a Conda environment (`CONDA_DEFAULT_ENV`) or a virtual environment (`sys.prefix` vs `sys.base_prefix`). These checks are crucial for configuring the runtime behavior of applications based on the environment.

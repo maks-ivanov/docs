@@ -1,0 +1,129 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `commands.py` file in the `marimo/_cli/export` directory defines a command-line interface (CLI) for exporting Marimo notebooks to various formats such as HTML, script, Markdown, and Jupyter notebook formats. It uses the `click` library to handle command-line arguments and options, and it provides functionality to watch files for changes and automatically re-export them when modified.
+
+## Code Structure
+
+The main symbols in the code are the `export` command group and several subcommands (`html`, `script`, `md`, `ipynb`) that handle exporting notebooks to different formats. The `watch_and_export` function is a utility that supports file watching and exporting logic, which is used by each subcommand. The subcommands utilize specific export functions from the `marimo._server.export` module to perform the actual export operations.
+
+## References
+
+- `marimo._cli.parse_args.parse_args`: Used to parse additional command-line arguments.
+- `marimo._cli.print.green`: Used to print messages in green color.
+- `marimo._server.export`: Contains functions like `export_as_ipynb`, `export_as_md`, `export_as_script`, and `run_app_then_export_as_html` for exporting notebooks.
+- `marimo._server.utils.asyncio_run`: Used to run asynchronous functions.
+- `marimo._utils.file_watcher.FileWatcher`: Used to watch files for changes.
+- `marimo._utils.marimo_path.MarimoPath`: Used to handle file paths.
+- `marimo._utils.paths.maybe_make_dirs`: Used to create directories if they don't exist.
+
+## Symbols
+
+### `export`
+#### Description
+Defines a CLI command group for exporting notebooks to various formats. It serves as the entry point for the subcommands.
+
+### `watch_and_export`
+#### Description
+Handles the logic for exporting a notebook and optionally watching the file for changes to re-export it automatically.
+
+#### Inputs
+| Name            | Type       | Description                                                  |
+|:----------------|:-----------|:-------------------------------------------------------------|
+| marimo_path     | MarimoPath | The path to the notebook file to be exported.                |
+| output          | str        | The output file path where the exported content will be saved. |
+| watch           | bool       | Whether to watch the file for changes and re-export.         |
+| export_callback | Callable   | A callback function that performs the export operation.      |
+
+#### Outputs
+None
+
+#### Internal Logic
+- If `watch` is enabled and no `output` is provided, raises a `UsageError`.
+- Defines a `write_data` function to write the exported data to a file or print it to stdout.
+- If `watch` is not enabled, calls the `export_callback` once and writes the data.
+- If `watch` is enabled, sets up a file watcher using `FileWatcher` to monitor changes and re-export the file when modified.
+
+### `html`
+#### Description
+Exports a Marimo notebook as an HTML file, optionally including the notebook code and watching for changes.
+
+#### Inputs
+| Name         | Type  | Description                                      |
+|:-------------|:------|:-------------------------------------------------|
+| name         | str   | The name of the notebook file to export.         |
+| include_code | bool  | Whether to include the notebook code in the HTML.|
+| output       | str   | The output file path for the HTML export.        |
+| watch        | bool  | Whether to watch the file for changes.           |
+| args         | tuple | Additional command-line arguments for the notebook.|
+
+#### Outputs
+None
+
+### `script`
+#### Description
+Exports a Marimo notebook as a flat script in topological order, with an option to watch for changes.
+
+#### Inputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| name   | str   | The name of the notebook file to export.         |
+| output | str   | The output file path for the script export.      |
+| watch  | bool  | Whether to watch the file for changes.           |
+
+#### Outputs
+None
+
+### `md`
+#### Description
+Exports a Marimo notebook as a code-fenced Markdown file, with an option to watch for changes.
+
+#### Inputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| name   | str   | The name of the notebook file to export.         |
+| output | str   | The output file path for the Markdown export.    |
+| watch  | bool  | Whether to watch the file for changes.           |
+
+#### Outputs
+None
+
+### `ipynb`
+#### Description
+Exports a Marimo notebook as a Jupyter notebook in topological order, with an option to watch for changes. Requires the `nbformat` package.
+
+#### Inputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| name   | str   | The name of the notebook file to export.         |
+| output | str   | The output file path for the Jupyter notebook export. |
+| watch  | bool  | Whether to watch the file for changes.           |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if the `nbformat` package is installed; raises a `ModuleNotFoundError` if not.
+- Uses `watch_and_export` to handle the export and file watching logic.
+
+## Dependencies
+
+| Dependency | Purpose                                                  |
+|:-----------|:---------------------------------------------------------|
+| `click`    | Used for creating the command-line interface.            |
+| `asyncio`  | Used for asynchronous operations, particularly for file watching. |
+
+## Error Handling
+
+- The `watch_and_export` function raises a `click.UsageError` if `watch` is enabled without specifying an `output` file.
+- The `ipynb` command raises a `ModuleNotFoundError` if the `nbformat` package is not installed.
+
+## Logging
+
+- Uses the `click.echo` function to print messages to the console, including notifications about file changes and export operations.
+
+## TODOs
+None

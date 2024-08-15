@@ -1,0 +1,79 @@
+---
+title: "extension.ts"
+---
+
+## High-level description
+
+The target file, `extension.ts`, is part of a CodeMirror extension that integrates AI-based code completion features, specifically for Copilot-like functionality. It configures and returns a set of CodeMirror extensions based on the user's configuration, enabling either GitHub Copilot or Codeium for inline code suggestions within the editor.
+
+## Code Structure
+
+The main function in this file is `copilotBundle`, which constructs and returns a CodeMirror `Extension` based on the provided configuration. It interacts with other modules such as `client.ts` for server communication and `state.ts` for checking if Copilot is enabled. The function `offsetToPos` is a utility to convert a document offset to a line and character position.
+
+## References
+
+- `client.ts`: Provides functions and constants for interacting with the Copilot language server.
+- `state.ts`: Contains logic to determine if Copilot is enabled based on user configuration.
+- `getCodes.ts`: Provides a function to gather and format code from multiple editor views.
+
+## Symbols
+
+### `copilotBundle`
+#### Description
+The `copilotBundle` function creates a CodeMirror extension that integrates AI-based code completion features. It configures the extension based on the user's settings, enabling either GitHub Copilot or Codeium for inline code suggestions.
+
+#### Inputs
+| Name   | Type             | Description                        |
+|:-------|:-----------------|:-----------------------------------|
+| config | CompletionConfig | Configuration for code completion. |
+
+#### Outputs
+| Name       | Type       | Description                                      |
+|:-----------|:-----------|:-------------------------------------------------|
+| extensions | Extension[] | A list of CodeMirror extensions for code completion. |
+
+#### Internal Logic
+- Checks if the environment is set to "test" and returns an empty array if true.
+- Initializes an empty array of extensions.
+- If the configuration specifies Codeium and an API key is provided, it adds the Codeium plugin and document configuration to the extensions.
+- If the configuration specifies GitHub Copilot, it adds an inline suggestion extension with a custom fetch function.
+- The fetch function checks if Copilot is enabled and retrieves code suggestions from the Copilot client.
+- Returns the configured extensions, excluding the last two elements from the Copilot server setup.
+
+### `offsetToPos`
+#### Description
+Converts a document offset to a line and character position within the document.
+
+#### Inputs
+| Name  | Type | Description                  |
+|:------|:-----|:-----------------------------|
+| doc   | Text | The document to analyze.     |
+| offset| number | The offset to convert.     |
+
+#### Outputs
+| Name     | Type   | Description                           |
+|:---------|:-------|:--------------------------------------|
+| position | object | An object with `line` and `character` properties. |
+
+#### Internal Logic
+- Determines the line number and character position from the given offset using the document's line information.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `@codemirror/state` | Provides the `Extension` and `Text` types used in CodeMirror. |
+| `codemirror-extension-inline-suggestion` | Used for inline code suggestion functionality. |
+| `@valtown/codemirror-codeium` | Provides Codeium-specific plugins for code completion. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as verifying if Copilot is enabled or if the document has content before attempting to fetch suggestions.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+- The `getCodes` function in `getCodes.ts` mentions a TODO about sorting import statements topologically, which could improve the quality of code suggestions.

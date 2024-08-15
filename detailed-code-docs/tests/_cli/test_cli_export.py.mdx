@@ -1,0 +1,131 @@
+---
+title: "test_cli_export.py"
+---
+
+## High-level description
+
+The target file `tests/_cli/test_cli_export.py` contains a suite of tests for the command-line interface (CLI) of the `marimo` library, specifically focusing on the export functionality. The tests cover exporting marimo files to various formats such as HTML, script, markdown, and Jupyter notebooks (ipynb). The tests ensure that the export commands execute correctly, handle errors appropriately, and produce the expected output.
+
+## Code Structure
+
+The code is organized into several test classes, each focusing on a different aspect of the export functionality:
+
+- `TestExportHTML`: Tests exporting to HTML format.
+- `TestExportHtmlSmokeTests`: Smoke tests for exporting HTML using tutorial files.
+- `TestExportScript`: Tests exporting to script format.
+- `TestExportMarkdown`: Tests exporting to markdown format.
+- `TestExportIpynb`: Tests exporting to Jupyter notebook format.
+
+Each class contains multiple test methods that use the `subprocess` module to run CLI commands and verify their outputs.
+
+## References
+
+- `normalize_index_html`: A utility function from `tests._server.templates.utils` used to normalize HTML output for comparison.
+- `snapshotter`: A utility from `tests.mocks` used to create and compare snapshots of test outputs.
+- `DependencyManager`: A class from `marimo._dependencies.dependencies` used to check for the presence of certain dependencies.
+
+## Symbols
+
+### `TestExportHTML`
+#### Description
+Tests the CLI command for exporting marimo files to HTML format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| temp_marimo_file | str | Path to a temporary marimo file used for testing |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Runs the `marimo export html` command.
+- Normalizes the HTML output using `normalize_index_html`.
+- Verifies that the output does not contain certain unwanted elements.
+
+### `TestExportHtmlSmokeTests`
+#### Description
+Performs smoke tests for exporting HTML using various tutorial files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tmp_path | pathlib.Path | Temporary directory for creating test files |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Imports tutorial modules and writes their source code to temporary files.
+- Runs the `marimo export html` command on these files.
+- Uses `assert_not_errored` to ensure no errors occurred during export.
+
+### `TestExportScript`
+#### Description
+Tests the CLI command for exporting marimo files to script format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| temp_marimo_file | str | Path to a temporary marimo file used for testing |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Runs the `marimo export script` command.
+- Checks for specific error messages when exporting async code.
+- Uses `snapshot` to compare the output with expected results.
+
+### `TestExportMarkdown`
+#### Description
+Tests the CLI command for exporting marimo files to markdown format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| temp_marimo_file | str | Path to a temporary marimo file used for testing |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Runs the `marimo export md` command.
+- Normalizes the output and uses `snapshot` to verify it.
+
+### `TestExportIpynb`
+#### Description
+Tests the CLI command for exporting marimo files to Jupyter notebook format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| temp_marimo_file_with_md | str | Path to a temporary marimo file with markdown used for testing |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Runs the `marimo export ipynb` command.
+- Uses `snapshot` to verify the output.
+
+## Side Effects
+
+- The tests may create temporary files and directories for testing purposes.
+- The `snapshot` function updates snapshot files if the output differs from the expected result.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for structuring and running the tests |
+| `subprocess` | Used to execute CLI commands and capture their output |
+
+## Error Handling
+
+- The tests assert that the CLI commands return a zero exit code, indicating successful execution.
+- Specific error messages are checked in the output to ensure proper error handling by the CLI.
+
+## TODOs
+
+- There is a TODO comment indicating that the `test_export_watch` method hangs when the `watchdog` dependency is installed. This suggests a need for further investigation or a workaround.

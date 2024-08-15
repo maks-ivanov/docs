@@ -1,0 +1,142 @@
+---
+title: "hash.py"
+---
+
+## High-level description
+
+The `hash.py` file in the `marimo/_save` directory is responsible for generating hash values for Python code modules, abstract syntax trees (ASTs), and cell implementations. These hash values are used to determine if code has changed and to facilitate caching mechanisms. The file provides functions to compute hashes based on the content of code objects, the execution path of code, and the content of code cells, ensuring that the caching system can efficiently manage and retrieve cached results.
+
+## Code Structure
+
+The main symbols in the code are functions that compute hashes for different types of code representations. These functions are interconnected as they often call each other to process nested code structures. The file also interacts with other parts of the codebase, such as the `ScopedVisitor` class for AST traversal and the `Cache` class for managing cached data.
+
+## References
+
+- `ScopedVisitor` from `marimo._ast.visitor`: Used for traversing ASTs to gather definitions and references.
+- `Cache` and `ValidCacheSha` from `marimo._save.cache`: Used for managing cache entries and validating cache hashes.
+- `is_local_then_mangle` from `marimo._utils.variables`: Used for handling variable name mangling.
+
+## Symbols
+
+### `hash_module`
+#### Description
+Computes a SHA256 hash for a given Python code object, including its constants, names, and bytecode. This function is used to generate a unique identifier for a code module based on its content.
+
+#### Inputs
+| Name  | Type       | Description          |
+|:------|:-----------|:---------------------|
+| code  | CodeType   | The code object to hash. |
+
+#### Outputs
+| Name | Type  | Description          |
+|:-----|:------|:---------------------|
+| hash | bytes | The SHA256 hash of the code object. |
+
+#### Internal Logic
+- If the code object is `None`, returns a hash of 32 zero bytes.
+- Recursively processes constants that are code objects.
+- Updates the hash with the string representation of constants, names, and bytecode.
+
+### `hash_raw_module`
+#### Description
+Generates a hash for an AST module by first compiling it into a code object and then using `hash_module` to compute the hash.
+
+#### Inputs
+| Name   | Type      | Description          |
+|:-------|:----------|:---------------------|
+| module | ast.Module | The AST module to hash. |
+
+#### Outputs
+| Name | Type  | Description          |
+|:-----|:------|:---------------------|
+| hash | bytes | The SHA256 hash of the compiled module. |
+
+### `hash_cell_impl`
+#### Description
+Computes a hash for a cell implementation by hashing its body and last expression code objects.
+
+#### Inputs
+| Name | Type     | Description          |
+|:-----|:---------|:---------------------|
+| cell | CellImpl | The cell implementation to hash. |
+
+#### Outputs
+| Name | Type  | Description          |
+|:-----|:------|:---------------------|
+| hash | bytes | The combined hash of the cell's body and last expression. |
+
+### `build_execution_hash`
+#### Description
+Generates a hash based on the execution path of a cell within a directed graph, considering its ancestors.
+
+#### Inputs
+| Name     | Type          | Description          |
+|:---------|:--------------|:---------------------|
+| graph    | DirectedGraph | The dataflow graph of the notebook. |
+| cell_id  | CellId_t      | The ID of the cell to hash. |
+
+#### Outputs
+| Name | Type          | Description          |
+|:-----|:--------------|:---------------------|
+| hash | ValidCacheSha | The execution path hash and its type. |
+
+#### Internal Logic
+- Computes the hash by processing the cell's ancestors in the graph.
+- Sorts and hashes the cell implementations of the ancestors.
+
+### `build_content_hash`
+#### Description
+Creates a content-addressed hash for a cell by ensuring all references are accounted for and are primitive values.
+
+#### Inputs
+| Name    | Type          | Description          |
+|:--------|:--------------|:---------------------|
+| graph   | DirectedGraph | The dataflow graph of the notebook. |
+| cell_id | CellId_t      | The ID of the cell to hash. |
+| visitor | ScopedVisitor | The visitor for traversing the AST. |
+| defs    | dict[str, Any] | The definitions available in the execution context. |
+
+#### Outputs
+| Name | Type          | Description          |
+|:-----|:--------------|:---------------------|
+| hash | ValidCacheSha | The content-addressed hash and its type. |
+
+#### Internal Logic
+- Traverses references and checks if they are defined and primitive.
+- Updates the hash with the string representation of primitive values.
+
+### `cache_attempt_from_hash`
+#### Description
+Attempts to create a cache object by hashing the context of a module using either content-addressed or execution path hashing.
+
+#### Inputs
+| Name     | Type          | Description          |
+|:---------|:--------------|:---------------------|
+| module   | ast.Module    | The module to hash. |
+| graph    | DirectedGraph | The dataflow graph of the notebook. |
+| cell_id  | CellId_t      | The ID of the cell to hash. |
+| defs     | dict[str, Any] | The definitions available in the execution context. |
+| context  | Optional[ast.Module] | Additional execution context for the cell. |
+| loader   | Loader        | The loader object to create/save a cache object. |
+
+#### Outputs
+| Name | Type  | Description          |
+|:-----|:------|:---------------------|
+| cache | Cache | The resulting cache object. |
+
+#### Internal Logic
+- Uses `ScopedVisitor` to visit the module and gather definitions.
+- Attempts content-addressed hashing first; if unsuccessful, falls back to execution path hashing.
+- Updates the hash with the module and context, then encodes it for cache storage.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `hashlib`  | Used for computing SHA256 hashes. |
+| `ast`      | Used for parsing and compiling Python code into ASTs. |
+| `base64`   | Used for encoding hash digests. |
+
+## TODOs
+- The code contains a TODO to account for UI and state in the caching mechanism.
+- Another TODO suggests exploring containers recursively for hashing.

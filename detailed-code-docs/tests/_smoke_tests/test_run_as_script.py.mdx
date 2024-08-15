@@ -1,0 +1,63 @@
+---
+title: "test_run_as_script.py"
+---
+
+## High-level description
+
+The target file `test_run_as_script.py` is a test suite designed to verify the execution of various tutorial scripts from the `marimo` library as standalone Python scripts. It uses the `pytest` framework to run these scripts in a temporary directory and checks for expected outcomes, such as successful execution or specific error messages.
+
+## Code Structure
+
+The main class in the file is `TestRunTutorialsAsScripts`, which contains several test methods. Each method corresponds to a specific tutorial script from the `marimo` library. The methods use helper functions `assert_not_errored` and `assert_errored` to validate the execution results of the scripts.
+
+## Symbols
+
+### `TestRunTutorialsAsScripts`
+#### Description
+This class contains test methods that execute various tutorial scripts from the `marimo` library as standalone Python scripts. It verifies whether the scripts run without errors or produce expected error messages.
+
+#### Methods
+
+- **`assert_not_errored`**: Checks that a script executed successfully without errors.
+- **`assert_errored`**: Checks that a script execution failed with a specific error message.
+- **`test_run_intro_tutorial`**: Tests the `intro` tutorial script for successful execution.
+- **`test_run_ui_tutorial`**: Tests the `ui` tutorial script for successful execution.
+- **`test_run_dataflow_tutorial`**: Tests the `dataflow` tutorial script and expects a `CycleError`.
+- **`test_run_layout_tutorial`**: Tests the `layout` tutorial script for successful execution.
+- **`test_run_plots_tutorial`**: Tests the `plots` tutorial script for successful execution, conditional on the presence of the `matplotlib` library.
+- **`test_run_marimo_for_jupyter_users_tutorial`**: Tests the `for_jupyter_users` tutorial script and expects a `MultipleDefinitionError`.
+- **`test_run_disabled_cells`**: Tests a script with enabled and disabled cells, verifying that only the enabled cell's output is present.
+
+#### Inputs
+Each test method takes a `tmp_path` parameter, which is a temporary directory path provided by `pytest` for writing and executing the scripts.
+
+#### Outputs
+The methods do not return values but use assertions to validate the script execution results.
+
+#### Internal Logic
+- Each test method imports the relevant tutorial module, writes its source code to a temporary file, and executes it using `subprocess.run`.
+- The `assert_not_errored` method checks that the script's return code is zero and that there are no "Traceback" lines in the standard output or error.
+- The `assert_errored` method checks that the script's return code is non-zero and that a specific error message is present in the standard error.
+
+## Side Effects
+- The test methods create temporary files in the provided `tmp_path` directory.
+- They execute Python scripts as subprocesses, which may affect system resources during execution.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for structuring and running the test cases. |
+| `subprocess` | Used to execute the tutorial scripts as standalone Python scripts. |
+| `inspect` | Used to retrieve the source code of the tutorial modules. |
+| `sys` | Used to check the platform for conditional test execution. |
+| `pathlib` | Used for handling file paths in a platform-independent manner. |
+
+## Error Handling
+The test methods use assertions to handle errors. If a script does not execute as expected, the test will fail, providing information about the failure.
+
+## Logging
+There is no explicit logging in the code, but `pytest` will capture and report assertion failures and other test outcomes.
+
+## TODOs
+There are no TODOs or notes left in the code.

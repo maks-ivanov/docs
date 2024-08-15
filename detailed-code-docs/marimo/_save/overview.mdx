@@ -1,0 +1,25 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_save` directory is part of the Marimo project and is focused on implementing caching mechanisms for Python code execution. This directory provides tools to manage, store, and retrieve cached results of code execution, optimizing performance by avoiding redundant computations. The main components within this directory include modules for handling abstract syntax trees (ASTs), generating hashes for code modules, managing cache entries, and loading/saving cache data. The directory also includes a mechanism for persistent caching using context managers, which integrates with the Marimo framework's runtime context.
+
+## What does it do?
+
+The `marimo/_save` directory implements a caching system that enhances the efficiency of code execution by storing results of computations and reusing them when possible. This system is particularly useful for expensive operations that do not need to be recalculated if the input data has not changed. The caching mechanism supports two main strategies: content-addressed caching, which uses the content of the code to generate a unique hash, and execution-path-based caching, which considers the execution path within a dataflow graph.
+
+The workflow involves several steps:
+
+1. **AST Manipulation**: The system can transform and compile ASTs, particularly focusing on `with` blocks, to facilitate caching. This involves extracting specific blocks of code and compiling them into separate modules.
+
+2. **Hash Generation**: The system generates hashes for code modules, ASTs, and cell implementations. These hashes are used to uniquely identify code based on its content or execution path, enabling efficient cache management.
+
+3. **Cache Management**: The system defines structures and functions for managing cache entries, including resolving variable names within a specific execution context. It supports different types of caching strategies, identified by specific prefixes.
+
+4. **Loading and Saving Caches**: The system provides loaders for handling the persistence of cache data. The `PickleLoader` class, for example, uses Python's `pickle` module to serialize and deserialize cache data, allowing for efficient storage and retrieval.
+
+5. **Persistent Caching**: The `persistent_cache` class acts as a context manager for caching the results of code execution. It determines whether a block of code should be executed or skipped based on cache availability and manages the saving and loading of cache data.
+
+Overall, the `marimo/_save` directory provides a comprehensive caching solution that integrates with the Marimo framework, enhancing performance by reducing unnecessary computations.

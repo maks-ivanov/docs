@@ -1,0 +1,66 @@
+---
+title: "accordion.py"
+---
+
+## High-level description
+
+The `accordion` function in the `marimo/_plugins/stateless/accordion.py` file is designed to create an accordion component for a web application. This component allows users to expand and collapse sections of content, which can be loaded either immediately or lazily. The function returns an `Html` object that represents the accordion, which can be rendered in a web interface.
+
+## Code Structure
+
+The main function in this file is `accordion`, which utilizes several helper functions and classes from the `marimo` library to format and render content as HTML. It interacts with other components like `lazy` for lazy loading and `build_stateless_plugin` for constructing the HTML structure of the accordion.
+
+## Symbols
+
+### `accordion`
+#### Description
+The `accordion` function creates an accordion component with one or more items. It allows for the content of each item to be loaded lazily if specified. The function returns an `Html` object that represents the accordion, which can be rendered in a web interface.
+
+#### Inputs
+| Name     | Type            | Description                                                                 |
+|:---------|:----------------|:----------------------------------------------------------------------------|
+| `items`  | `dict[str, object]` | A dictionary mapping item names to their content. Strings are interpreted as markdown. |
+| `multiple` | `bool`         | A flag indicating whether multiple items can be open simultaneously.        |
+| `lazy`   | `bool`          | A flag indicating whether to lazily load the accordion content.             |
+
+#### Outputs
+| Name | Type  | Description          |
+|:-----|:------|:---------------------|
+| `output` | `Html` | An `Html` object representing the accordion. |
+
+#### Internal Logic
+1. **Render Content**: The function defines an internal helper `render_content` to convert each item's content into HTML. If `lazy` is `True`, it wraps the content in a `lazy` component; otherwise, it converts strings to markdown and other objects to HTML.
+2. **Item Labels and Content**: It generates a list of item labels by converting each key in the `items` dictionary to markdown. It then constructs the HTML content for each item by wrapping it in a `&lt;div&gt;` tag.
+3. **Build HTML**: The function uses `build_stateless_plugin` to create the HTML structure for the accordion, passing the labels, the `multiple` flag, and the slotted HTML content.
+
+## References
+
+- `as_html`: Converts objects to HTML.
+- `Html`: Represents HTML content.
+- `md`: Converts markdown text to HTML.
+- `mddoc`: A decorator for generating rich documentation.
+- `build_stateless_plugin`: Constructs the HTML for a stateless web component.
+- `lazy`: A component for lazy loading content.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._output.formatting` | Provides the `as_html` function for converting objects to HTML. |
+| `marimo._output.hypertext` | Provides the `Html` class for representing HTML content. |
+| `marimo._output.md` | Provides the `md` function for converting markdown to HTML. |
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for documentation. |
+| `marimo._plugins.core.web_component` | Provides the `build_stateless_plugin` function for building web components. |
+| `marimo._plugins.stateless.lazy` | Provides the `lazy` component for lazy loading. |
+
+## Error Handling
+
+The function does not explicitly handle errors. It assumes that the inputs are valid and that the helper functions it calls will handle any exceptions.
+
+## Logging
+
+There is no logging implemented in this function.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,107 @@
+---
+title: "test_upgrade.py"
+---
+
+## High-level description
+
+The target file `tests/_cli/test_upgrade.py` contains unit tests for the CLI upgrade functionality of the Marimo application. It specifically tests the behavior of functions related to checking for updates and updating the application to the latest version. The tests use the `unittest.mock` library to simulate different scenarios and verify that the functions behave as expected under various conditions.
+
+## Code Structure
+
+The main symbols in the code are the test functions that verify the behavior of the `check_for_updates` and `_update_with_latest_version` functions from the `marimo._cli.upgrade` module. These test functions use the `unittest.mock` library to patch dependencies and simulate different scenarios.
+
+## References
+
+The target file references the following symbols from the `marimo._cli.upgrade` module:
+- `MarimoCLIState`
+- `_update_with_latest_version`
+- `check_for_updates`
+
+## Symbols
+
+### `test_check_for_updates`
+#### Description
+This test function verifies the behavior of the `check_for_updates` function. It checks that the function correctly identifies when an update is available and prints the appropriate messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_print | Any | Mock object for the `print` function. |
+| mock_update_with_latest_version | Any | Mock object for the `_update_with_latest_version` function. |
+| mock_open_file | Any | Mock object for the `open` function. |
+| mock_makedirs | Any | Mock object for the `os.makedirs` function. |
+| mock_path_exists | Any | Mock object for the `os.path.exists` function. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Mocks the return value of `_update_with_latest_version` to simulate an available update.
+- Mocks `os.path.exists` to return `True`.
+- Simulates a `FileNotFoundError` when attempting to open a file.
+- Calls `check_for_updates`.
+- Asserts that `os.makedirs` was not called.
+- Asserts that the correct update messages were printed.
+
+### `test_update_with_latest_version`
+#### Description
+This test function verifies that `_update_with_latest_version` correctly updates the state with the latest version information from PyPI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_fetch_data_from_url | Any | Mock object for the `_fetch_data_from_url` function. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Mocks the return value of `_fetch_data_from_url` to simulate fetching version information.
+- Calls `_update_with_latest_version` with a mock state.
+- Asserts that the `latest_version` and `last_checked_at` fields in the state are updated correctly.
+
+### `test_update_with_latest_version_fails`
+#### Description
+This test function verifies that `_update_with_latest_version` does not alter the state if fetching the latest version fails.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_fetch_data_from_url | Any | Mock object for the `_fetch_data_from_url` function. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Mocks `_fetch_data_from_url` to raise an exception.
+- Calls `_update_with_latest_version` with a mock state.
+- Asserts that the state remains unchanged.
+
+### `test_update_with_within_the_same_day`
+#### Description
+This test function verifies that `_update_with_latest_version` does not update the state if the last check was performed within the same day.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mock_fetch_data_from_url | Any | Mock object for the `_fetch_data_from_url` function. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sets the `last_checked_at` field in the state to the current date.
+- Calls `_update_with_latest_version`.
+- Asserts that the state remains unchanged and `_fetch_data_from_url` is not called.
+
+## Dependencies
+
+The test file uses the `unittest.mock` library to mock dependencies and simulate different scenarios. It also imports functions and classes from the `marimo._cli.upgrade` module to test their behavior.
+
+## Error Handling
+
+The tests simulate error scenarios, such as file not found and network failures, to ensure that the functions handle these errors gracefully without altering the state or crashing.
+
+## Logging
+
+The tests verify that the correct messages are printed to the console when an update is available, ensuring that the user is informed about the update process.

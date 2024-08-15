@@ -1,0 +1,88 @@
+---
+title: "tracebacks.py"
+---
+
+## High-level description
+
+The `tracebacks.py` file in the `marimo/_messaging` module is responsible for handling and formatting Python tracebacks. It provides functionality to highlight tracebacks using HTML formatting and to write these formatted tracebacks to the standard error stream. This is particularly useful for displaying error messages in a more readable and visually appealing format.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `_highlight_traceback` is a helper function that formats a given traceback string using HTML and syntax highlighting.
+- `write_traceback` uses `_highlight_traceback` to format the traceback and then writes it to the standard error stream, which is expected to be an instance of the `Stderr` class.
+- `is_code_highlighting` is a utility function that checks if a given string contains HTML code highlighting.
+
+## Symbols
+
+### `_highlight_traceback`
+#### Description
+This function takes a traceback string and applies syntax highlighting to it using the Pygments library. The highlighted traceback is then wrapped in a span element with a specific class for styling.
+
+#### Inputs
+| Name      | Type   | Description                |
+|:----------|:-------|:---------------------------|
+| traceback | str    | The traceback string to be highlighted. |
+
+#### Outputs
+| Name      | Type   | Description                |
+|:----------|:-------|:---------------------------|
+| output    | str    | The HTML-formatted and highlighted traceback. |
+
+#### Internal Logic
+- Imports necessary components from the Pygments library.
+- Uses `highlight` function from Pygments to apply syntax highlighting to the traceback.
+- Wraps the highlighted output in a `&lt;span&gt;` element with the class `codehilite`.
+
+### `write_traceback`
+#### Description
+This function writes a given traceback to the standard error stream. If the standard error stream is an instance of `Stderr`, it writes the traceback with a specific MIME type; otherwise, it writes the raw traceback.
+
+#### Inputs
+| Name      | Type   | Description                |
+|:----------|:-------|:---------------------------|
+| traceback | str    | The traceback string to be written. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if `sys.stderr` is an instance of `Stderr`.
+- If true, it writes the highlighted traceback with a MIME type using `_write_with_mimetype`.
+- If false, it writes the raw traceback using the standard `write` method.
+
+### `is_code_highlighting`
+#### Description
+This function checks if a given string contains HTML code highlighting by looking for a specific class in the HTML.
+
+#### Inputs
+| Name  | Type   | Description                |
+|:------|:-------|:---------------------------|
+| value | str    | The string to check for code highlighting. |
+
+#### Outputs
+| Name  | Type   | Description                |
+|:------|:-------|:---------------------------|
+| output| bool   | True if the string contains code highlighting, otherwise False. |
+
+#### Internal Logic
+- Checks for the presence of the class `codehilite` in the input string.
+
+## References
+
+- The `Stderr` class from `marimo._messaging.types` is used to determine how to write the traceback to the standard error stream.
+- The Pygments library is used for syntax highlighting of tracebacks.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| pygments   | Used for syntax highlighting of Python tracebacks. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checking and conditional logic. It assumes that the input to the functions is valid and that the standard error stream is correctly set up.
+
+## Logging
+
+The code does not implement any logging mechanisms.

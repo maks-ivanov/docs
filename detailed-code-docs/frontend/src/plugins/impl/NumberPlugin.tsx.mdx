@@ -1,0 +1,78 @@
+---
+title: "NumberPlugin.tsx"
+---
+
+## High-level description
+
+The `NumberPlugin.tsx` file defines a React component plugin called `NumberPlugin` that is used to render a number input field with additional features such as debouncing, labeling, and full-width display options. It utilizes the `zod` library for data validation and integrates with other components and hooks to provide a customizable and interactive number input experience.
+
+## Code Structure
+
+- **NumberPlugin**: A class implementing the `IPlugin` interface, responsible for rendering the number input component and validating its data.
+- **NumberComponent**: A functional React component that renders the number input field with optional debouncing and labeling.
+
+## Symbols
+
+### `NumberPlugin`
+#### Description
+The `NumberPlugin` class implements the `IPlugin` interface to provide a number input field with customizable properties such as start, stop, step, label, debounce, and fullWidth. It validates the input data using `zod` and renders the `NumberComponent`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;T, Data&gt;` | The properties required to render the plugin, including state, data, and functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered number input component. |
+
+#### Internal Logic
+- The `validator` property uses `zod` to define the schema for the plugin's data, ensuring that the input values are valid.
+- The `render` method takes plugin properties and passes them to the `NumberComponent` for rendering.
+
+### `NumberComponent`
+#### Description
+The `NumberComponent` is a functional React component that renders a number input field with optional debouncing and labeling. It uses the `useDebounceControlledState` hook to manage the input value and debounce changes if required.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `NumberComponentProps` | The properties for the number component, including value, setValue, and other data attributes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered number input field with label and debouncing features. |
+
+#### Internal Logic
+- The component generates a unique ID using `useId`.
+- It uses the `useDebounceControlledState` hook to manage the input value, applying a debounce delay if specified.
+- The component is wrapped in a `Labeled` component to optionally display a label above the input field.
+- The `NumberField` component is used to render the actual input field, with properties such as `minValue`, `maxValue`, and `step` being passed down.
+
+## References
+
+- **`useDebounceControlledState`**: A custom hook used to manage the debounced state of the input value.
+- **`Labeled`**: A component used to wrap the input field with an optional label.
+- **`NumberField`**: A UI component that renders the number input field with additional styling and behavior.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Used for creating React components. |
+| `zod` | Used for data validation. |
+| `clsx` and `tailwind-merge` | Used for managing and merging CSS class names. |
+
+## Error Handling
+
+The `NumberPlugin` uses `zod` for data validation, which ensures that the input data conforms to the expected schema. If the data does not match the schema, `zod` will throw validation errors.
+
+## Logging
+
+There is no explicit logging implemented in this code.
+
+## API/Interface Reference
+
+The `NumberPlugin` class implements the `IPlugin` interface, which defines methods and properties for rendering and validating plugin data. The `render` method is the primary interface for rendering the plugin as a React component.

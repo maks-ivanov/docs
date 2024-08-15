@@ -1,0 +1,62 @@
+---
+title: "matplotlib_formatters.py"
+---
+
+## High-level description
+
+The `matplotlib_formatters.py` file defines a `MatplotlibFormatter` class that extends the `FormatterFactory` abstract base class. This class is responsible for integrating the `matplotlib` library with the Marimo framework, enabling the rendering of `matplotlib` plots within Marimo's environment, particularly in a notebook setting. It achieves this by registering custom formatters for `matplotlib` objects, allowing them to be displayed as images in the notebook.
+
+## Code Structure
+
+- `MatplotlibFormatter` is a subclass of `FormatterFactory`.
+- The `register` method in `MatplotlibFormatter` is responsible for setting up the integration with `matplotlib`, including monkey-patching and registering formatters for specific `matplotlib` objects.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to define the MIME types for the data being formatted.
+- `FormatterFactory` from `marimo._output.formatters.formatter_factory` is the base class that `MatplotlibFormatter` extends.
+- `running_in_notebook` from `marimo._runtime.context.utils` is used to determine if the code is running in a notebook environment.
+- `build_data_url` from `marimo._output.utils` is used to create data URLs for embedding images.
+
+## Symbols
+
+### `MatplotlibFormatter`
+#### Description
+The `MatplotlibFormatter` class is designed to integrate `matplotlib` with the Marimo framework by registering formatters that convert `matplotlib` objects into a format suitable for display in a notebook environment. It ensures that `matplotlib` plots are rendered as images and can be displayed inline in a notebook.
+
+#### Inputs
+No direct inputs; the class methods are invoked as part of the Marimo framework's formatter registration process.
+
+#### Outputs
+No direct outputs; the class methods modify the behavior of `matplotlib` objects to enable their display in a notebook.
+
+#### Internal Logic
+- **`package_name` Method**: Returns the string `"matplotlib"`, indicating the package this formatter is associated with.
+- **`register` Method**:
+  - Imports necessary modules, including `matplotlib`.
+  - Sets a flag in the global context to indicate that `matplotlib` is installed.
+  - If running in a notebook, sets the `matplotlib` backend to a custom Marimo backend.
+  - Defines a function `mime_data_artist` to convert `matplotlib` `Artist` objects to a MIME type and data URL.
+  - Monkey-patches the `Artist` class to include a `_mime_` method using `mime_data_artist`.
+  - Registers a specific formatter for `BarContainer` objects using the `formatting.formatter` decorator.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `matplotlib` | Used for creating and rendering plots. |
+| `base64` | Used for encoding plot data into base64 format. |
+| `io` | Used for handling in-memory byte streams. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `register` method. It assumes that the necessary imports and operations will succeed, which may not be the case if `matplotlib` is not installed or if there are issues with the environment.
+
+## Side Effects
+
+- The `register` method modifies the global state by setting a flag in the global context to indicate that `matplotlib` is installed.
+- It also monkey-patches the `Artist` class from `matplotlib` to include a `_mime_` method, affecting all instances of `Artist` and its subclasses.
+
+## Performance Considerations
+
+The `register` method is designed to be called lazily, only when `matplotlib` is imported, to avoid unnecessary overhead during the initial setup of the Marimo environment. This approach minimizes the impact on startup time by deferring the registration of formatters until they are needed.

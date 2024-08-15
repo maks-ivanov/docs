@@ -1,0 +1,192 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file, `utils.ts`, provides utility functions for navigating to the definition of variables within a CodeMirror editor environment. It includes functions to identify the word under the cursor, determine the cell ID where a variable is defined, and navigate to the definition of a variable or a specific line within a cell. These utilities are designed to enhance the user experience by allowing quick navigation to relevant code sections.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `getWordUnderCursor` is used to extract the word at the current cursor position in the editor.
+- `getCellIdOfDefinition` determines the cell ID where a variable is defined, using the `variablesAtom` state.
+- `goToDefinitionAtCursorPosition` and `goToDefinition` are responsible for navigating to the variable's definition, utilizing the `getEditorForVariable` function to find the appropriate editor view.
+- `goToCellLine` allows navigation to a specific line within a cell.
+- `getEditorForVariable` and `getEditorForCell` are helper functions to retrieve the editor view for a given variable or cell ID.
+
+## References
+
+- `getPositionAtWordBounds` from `../completion/hints` is used to determine the start and end positions of a word in the document.
+- `store` and `variablesAtom` from `../../state/jotai` and `../../variables/state` are used to access the global state and variable definitions.
+- `goToVariableDefinition` and `goToLine` from `./commands` are used to perform the actual navigation within the editor.
+
+## Symbols
+
+### `getWordUnderCursor`
+#### Description
+Extracts the word under the cursor in the editor state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `EditorState` | The current state of the editor. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| word | `string` | The word under the cursor, or an empty string if none. |
+
+#### Internal Logic
+- If the cursor is at a single position (not a range), it uses `getPositionAtWordBounds` to find the word boundaries and extracts the word.
+- If a range is selected, it extracts the text within the range.
+
+### `getCellIdOfDefinition`
+#### Description
+Finds the cell ID where a given variable is defined.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| variables | `Variables` | A map of variable names to their definitions. |
+| variableName | `string` | The name of the variable to find. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId \| null` | The cell ID where the variable is defined, or null if not found. |
+
+#### Internal Logic
+- Checks if the variable name is valid and exists in the variables map.
+- Returns the first cell ID from the `declaredBy` list if available.
+
+### `isPrivateVariable`
+#### Description
+Determines if a variable name represents a private variable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| variableName | `string` | The name of the variable to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isPrivate | `boolean` | True if the variable is private, false otherwise. |
+
+#### Internal Logic
+- Checks if the variable name starts with an underscore (`_`).
+
+### `goToDefinitionAtCursorPosition`
+#### Description
+Navigates to the definition of the variable under the cursor in the editor view.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | `EditorView` | The editor view where the command is invoked. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| success | `boolean` | True if navigation was successful, false otherwise. |
+
+#### Internal Logic
+- Retrieves the word under the cursor.
+- Closes any open completion or tooltip popovers.
+- Calls `goToDefinition` to perform the navigation.
+
+### `goToDefinition`
+#### Description
+Navigates to the definition of a specified variable within the editor view.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | `EditorView` | The editor view where the command is invoked. |
+| variableName | `string` | The name of the variable to navigate to. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| success | `boolean` | True if navigation was successful, false otherwise. |
+
+#### Internal Logic
+- Uses `getEditorForVariable` to find the editor view containing the variable.
+- Calls `goToVariableDefinition` to navigate to the variable's position.
+
+### `goToCellLine`
+#### Description
+Navigates to a specific line number in a cell identified by its ID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId` | The ID of the cell to navigate to. |
+| lineNumber | `number` | The line number to navigate to. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| success | `boolean` | True if navigation was successful, false otherwise. |
+
+#### Internal Logic
+- Retrieves the editor view for the specified cell ID using `getEditorForCell`.
+- Calls `goToLine` to navigate to the specified line.
+
+### `getEditorForVariable`
+#### Description
+Finds the editor view for a given variable, considering its scope and privacy.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editor | `EditorView` | The current editor view. |
+| variableName | `string` | The name of the variable to find. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editorView | `EditorView \| null` | The editor view containing the variable, or null if not found. |
+
+#### Internal Logic
+- Checks if the variable is private and returns the current editor if so.
+- Retrieves the cell ID of the variable's definition and returns the corresponding editor view.
+
+### `getEditorForCell`
+#### Description
+Retrieves the editor view for a specific cell ID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId` | The ID of the cell to retrieve the editor for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editorView | `EditorView \| null` | The editor view for the cell, or null if not found. |
+
+#### Internal Logic
+- Accesses the `notebookAtom` state to find the editor view associated with the cell ID.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides types and utilities for managing editor state. |
+| `@codemirror/view` | Provides the editor view and related utilities. |
+| `@codemirror/autocomplete` | Used for managing completion popovers. |
+| `jotai` | State management library used for global state access. |
+
+## Error Handling
+
+The code does not explicitly handle errors but returns `null` or `false` when operations fail, such as when a variable or cell ID is not found.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

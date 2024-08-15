@@ -1,0 +1,73 @@
+---
+title: ".gitpod.yml"
+---
+
+## High-level description
+The `.gitpod.yml` file is a configuration file for Gitpod, a cloud-based development environment. It specifies tasks to be executed when the workspace starts, including building the project from source and running the Marimo application in development mode. The file also handles the installation of necessary dependencies and the exposure of specific ports for development purposes.
+
+## Code Structure
+The file is structured into tasks that are executed sequentially when the Gitpod workspace is initialized. Each task has a name, and some tasks have a `before` script that runs prior to the main `init` script. The `init` script is used to set up the environment, and the `command` script is used to execute the main task.
+
+## Symbols
+
+### Task: build from source
+#### Description
+This task is responsible for setting up the environment by installing necessary dependencies and building the project from source.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pnpm install vite | command | Installs the Vite build tool using pnpm. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| make fe && make py | command | Builds the frontend and Python components of the project. |
+| gp sync-done bundle | command | Signals that the bundling process is complete. |
+
+#### Internal Logic
+- The `before` script installs Vite using pnpm, which is necessary for the build process.
+- The `init` script runs `make fe` and `make py` to build the frontend and Python components, respectively.
+- The `gp sync-done bundle` command is used to indicate that the bundling process is complete, allowing subsequent tasks to proceed.
+
+### Task: marimo app in dev mode
+#### Description
+This task runs the Marimo application in development mode and exposes a specific port for development access.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| gp sync-await bundle | command | Waits for the completion of the previous task's bundling process. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| marimo -d edit | command | Runs the Marimo application in development mode. |
+| gp ports expose 2718 | command | Exposes port 2718 for external access. |
+
+#### Internal Logic
+- The `init` script uses `gp sync-await bundle` to ensure that the previous task has completed before starting.
+- The `command` script runs the Marimo application in development mode with `marimo -d edit`.
+- The `gp ports expose 2718` command is used to make port 2718 accessible, which is necessary for interacting with the application during development.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| pnpm | Used to install the Vite build tool. |
+| make | Used to build the frontend and Python components. |
+| gp (Gitpod CLI) | Used for synchronization and port exposure tasks. |
+
+## Configuration
+The file does not define any additional configuration options beyond the tasks and commands specified.
+
+## Error Handling
+The file does not explicitly handle errors; it relies on the success or failure of the commands executed within each task.
+
+## Logging
+The file does not implement any logging mechanisms.
+
+## API/Interface Reference
+The file does not define an API or public interface.
+
+## TODOs
+There are no TODOs or notes left in the code.

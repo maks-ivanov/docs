@@ -1,0 +1,202 @@
+---
+title: "models.py"
+---
+
+## High-level description
+
+The `models.py` file in the `marimo/_server/models` directory defines a set of data structures using Python's `dataclasses` module. These data structures are primarily used for handling requests and responses within the Marimo application, which appears to be a system for managing and executing code cells, similar to a notebook environment. The file includes classes for various types of requests (e.g., executing code, renaming files) and responses (e.g., success indicators).
+
+## Code Structure
+
+The main symbols in the code are dataclasses that represent different types of requests and responses. These dataclasses are used to encapsulate data and provide methods for validation and transformation. The file imports several types and classes from other modules, indicating that these dataclasses are part of a larger system for managing code execution and configuration in the Marimo application.
+
+## References
+
+- `CellConfig` and `CellId_t` from `marimo._ast.cell`: Used for managing cell configurations and identifiers.
+- `MarimoConfig` from `marimo._config.config`: Used for handling user configuration settings.
+- Request classes from `marimo._runtime.requests`: Used for transforming certain request types into execution requests.
+
+## Symbols
+
+### `UpdateComponentValuesRequest`
+#### Description
+Represents a request to update the values of UI components identified by their IDs.
+
+#### Inputs
+| Name      | Type       | Description                        |
+|:----------|:-----------|:-----------------------------------|
+| object_ids | List[str] | List of UI element identifiers.    |
+| values    | List[Any]  | List of values corresponding to the UI elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | List[tuple[UIElementId, Any]] | Zipped list of object IDs and values. |
+
+#### Internal Logic
+- The `zip` method returns a list of tuples, pairing each object ID with its corresponding value.
+- The `__post_init__` method ensures that the lengths of `object_ids` and `values` are the same, raising an assertion error if they are not.
+
+### `InstantiateRequest`
+#### Description
+A subclass of `UpdateComponentValuesRequest` with no additional functionality, used to instantiate components.
+
+### `BaseResponse`
+#### Description
+A base class for response objects, indicating whether an operation was successful.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| success | bool | Indicates the success of the operation. |
+
+### `SuccessResponse`
+#### Description
+A subclass of `BaseResponse` that defaults the success attribute to `True`.
+
+### `FormatRequest`
+#### Description
+Represents a request to format code with a specified line length.
+
+#### Inputs
+| Name        | Type                | Description                  |
+|:------------|:--------------------|:-----------------------------|
+| codes       | Dict[CellId_t, str] | Mapping of cell IDs to code. |
+| line_length | int                 | Maximum line length for formatting. |
+
+### `FormatResponse`
+#### Description
+Represents a response containing formatted code.
+
+#### Inputs
+| Name | Type                | Description                  |
+|:-----|:--------------------|:-----------------------------|
+| codes | Dict[CellId_t, str] | Mapping of cell IDs to formatted code. |
+
+### `ReadCodeResponse`
+#### Description
+Represents a response containing the contents of a code file.
+
+#### Inputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| contents | str  | The contents of the code file. |
+
+### `RenameFileRequest`
+#### Description
+Represents a request to rename a file, providing a method to convert it into an execution request.
+
+#### Inputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| filename | str  | The new filename.    |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | RenameRequest | A request object for renaming a file. |
+
+#### Internal Logic
+- The `as_execution_request` method converts the filename to an absolute path and returns a `RenameRequest`.
+
+### `OpenFileRequest`
+#### Description
+Represents a request to open a file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str  | The path to the file to be opened. |
+
+### `RunRequest`
+#### Description
+Represents a request to run a set of code cells, providing a method to convert it into an execution request.
+
+#### Inputs
+| Name     | Type       | Description                  |
+|:---------|:-----------|:-----------------------------|
+| cell_ids | List[CellId_t] | List of cell identifiers. |
+| codes    | List[str]  | List of code strings.        |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | ExecuteMultipleRequest | A request object for executing multiple cells. |
+
+#### Internal Logic
+- The `as_execution_request` method creates an `ExecuteMultipleRequest` using the cell IDs and codes.
+- The `__post_init__` method ensures that the lengths of `cell_ids` and `codes` are the same, raising an assertion error if they are not.
+
+### `RunScratchpadRequest`
+#### Description
+Represents a request to run a scratchpad code snippet, providing a method to convert it into an execution request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str  | The code to be executed in the scratchpad. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | ExecuteScratchpadRequest | A request object for executing scratchpad code. |
+
+### `SaveNotebookRequest`
+#### Description
+Represents a request to save a notebook, including cell data and configuration.
+
+#### Inputs
+| Name     | Type                | Description                  |
+|:---------|:--------------------|:-----------------------------|
+| cell_ids | List[CellId_t]      | List of cell identifiers.    |
+| codes    | List[str]           | List of code strings.        |
+| names    | List[str]           | List of cell names.          |
+| configs  | List[CellConfig]    | List of cell configurations. |
+| filename | str                 | The filename to save to.     |
+| layout   | Optional[Dict[str, Any]] | Optional layout configuration. |
+| persist  | bool                | Whether to persist the file to disk. |
+
+#### Internal Logic
+- The `__post_init__` method ensures that the lengths of `cell_ids`, `codes`, `names`, and `configs` are the same, raising an assertion error if they are not.
+
+### `SaveAppConfigurationRequest`
+#### Description
+Represents a request to save a partial application configuration.
+
+#### Inputs
+| Name   | Type            | Description                  |
+|:-------|:----------------|:-----------------------------|
+| config | Dict[str, Any]  | Partial application configuration. |
+
+### `SaveUserConfigurationRequest`
+#### Description
+Represents a request to save user configuration settings.
+
+#### Inputs
+| Name   | Type         | Description                  |
+|:-------|:-------------|:-----------------------------|
+| config | MarimoConfig | User configuration settings. |
+
+### `StdinRequest`
+#### Description
+Represents a request to send input to the standard input stream.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str  | The input text to be sent. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used to define data structures with automatic method generation. |
+| `os` | Used for file path operations. |
+| `typing` | Provides type hints for better code clarity and error checking. |
+| `marimo._ast.cell` | Provides types for cell configuration and identifiers. |
+| `marimo._config.config` | Provides the `MarimoConfig` type for user configuration. |
+| `marimo._runtime.requests` | Provides request classes for execution transformations. |
+
+## Error Handling
+
+The code uses assertions in the `__post_init__` methods of dataclasses to ensure that lists of related data (e.g., `object_ids` and `values`) have the same length. If these assertions fail, an `AssertionError` is raised, indicating a mismatch in the data provided to the request objects.

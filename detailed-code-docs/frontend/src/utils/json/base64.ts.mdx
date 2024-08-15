@@ -1,0 +1,100 @@
+---
+title: "base64.ts"
+---
+
+## High-level description
+
+The target file, `base64.ts`, provides utility functions for handling Base64 and JSON string conversions. It defines types for strongly-typed strings representing JSON and Base64 data, and includes functions to deserialize Base64 strings to their original form, convert JSON strings to JavaScript objects, and create Data URLs from Base64 strings.
+
+## Code Structure
+
+The main symbols in the code are interconnected through the use of TypeScript types and utility functions. The `JsonString` and `Base64String` types are used to ensure type safety when dealing with JSON and Base64 encoded data. The utility functions `deserializeBase64`, `deserializeJson`, and `base64ToDataURL` operate on these types to perform their respective conversions.
+
+## Symbols
+
+### `JsonString`
+#### Description
+A TypeScript type representing a strongly-typed JSON string. It extends `TypedString` with a generic type parameter `_of_` to indicate the type of the JSON object it represents.
+
+### `Base64String`
+#### Description
+A TypeScript type representing a strongly-typed Base64 string. Similar to `JsonString`, it extends `TypedString` with a generic type parameter `_of_` to indicate the type of the original data.
+
+### `DataURLString`
+#### Description
+A TypeScript template literal type representing a Data URL string that includes a Base64 encoded string. It is constructed using a template literal to ensure the format is `data:&lt;mime-type&gt;;base64,&lt;Base64String&gt;`.
+
+### `deserializeBase64`
+#### Description
+Converts a Base64 encoded string back to its original form.
+
+#### Inputs
+| Name   | Type             | Description                      |
+|:-------|:-----------------|:---------------------------------|
+| base64 | `Base64String&lt;T&gt;`| The Base64 encoded string to decode. |
+
+#### Outputs
+| Name           | Type | Description                      |
+|:---------------|:-----|:---------------------------------|
+| decodedString  | `T`  | The decoded original data.       |
+
+#### Internal Logic
+- Uses `atob` to decode the Base64 string.
+- Uses `decodeURIComponent` to handle any URI encoding.
+- Casts the result to the expected type `T`.
+
+### `deserializeJson`
+#### Description
+Parses a JSON string into a JavaScript object.
+
+#### Inputs
+| Name       | Type           | Description                      |
+|:-----------|:---------------|:---------------------------------|
+| jsonString | `JsonString&lt;T&gt;`| The JSON string to parse.        |
+
+#### Outputs
+| Name | Type | Description                      |
+|:-----|:-----|:---------------------------------|
+| obj  | `T`  | The parsed JavaScript object.    |
+
+#### Internal Logic
+- Uses `JSON.parse` to convert the JSON string into a JavaScript object.
+- Casts the result to the expected type `T`.
+
+### `base64ToDataURL`
+#### Description
+Creates a Data URL from a Base64 encoded string and a MIME type.
+
+#### Inputs
+| Name     | Type             | Description                      |
+|:---------|:-----------------|:---------------------------------|
+| base64   | `Base64String&lt;T&gt;`| The Base64 encoded string.       |
+| mimeType | `string`         | The MIME type of the data.       |
+
+#### Outputs
+| Name    | Type            | Description                      |
+|:--------|:----------------|:---------------------------------|
+| dataURL | `string`        | The constructed Data URL.        |
+
+#### Internal Logic
+- Constructs a Data URL string using the provided MIME type and Base64 string.
+
+## References
+
+- `TypedString` from `../typed`: Used to create strongly-typed string representations for JSON and Base64 data.
+
+## Dependencies
+
+No external libraries or modules are used in this code.
+
+## Error Handling
+
+The code does not include explicit error handling mechanisms. It assumes that the input strings are correctly formatted Base64 or JSON strings.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

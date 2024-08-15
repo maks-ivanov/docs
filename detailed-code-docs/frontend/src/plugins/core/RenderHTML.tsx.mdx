@@ -1,0 +1,91 @@
+---
+title: "RenderHTML.tsx"
+---
+
+## High-level description
+
+The `RenderHTML.tsx` file provides a utility function, `renderHTML`, that is used to safely parse and render HTML strings into React components. It includes mechanisms to handle specific HTML elements like iframes and invalid tags, ensuring that the rendered content is both safe and functional within a React application.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `renderHTML` is the primary function that orchestrates the HTML parsing and rendering process.
+- `replaceValidTags` and `replaceValidIframes` are helper functions used by `renderHTML` to handle specific HTML elements during the parsing process.
+- The `Options` interface defines the structure of the input to `renderHTML`, including the HTML string and any additional replacement functions.
+
+## Symbols
+
+### `renderHTML`
+#### Description
+The `renderHTML` function is responsible for parsing an HTML string and rendering it as React components. It uses the `html-react-parser` library to convert the HTML into a DOM-like structure and applies a series of replacement functions to handle specific elements or conditions.
+
+#### Inputs
+| Name                  | Type   | Description                                                                 |
+|:----------------------|:-------|:----------------------------------------------------------------------------|
+| `html`                | string | The HTML string to be parsed and rendered.                                  |
+| `additionalReplacements` | ReplacementFn | An optional array of functions to apply additional custom replacements. |
+
+#### Outputs
+| Name   | Type         | Description                                      |
+|:-------|:-------------|:-------------------------------------------------|
+| output | JSX.Element  | The rendered React component from the HTML input.|
+
+#### Internal Logic
+- The function initializes a list of replacement functions, including `replaceValidTags` and `replaceValidIframes`, and any additional replacements provided.
+- It uses `html-react-parser` to parse the HTML string, applying each replacement function in sequence to each DOM node.
+- If a replacement function returns a valid JSX element, it replaces the original DOM node with this element.
+
+### `replaceValidTags`
+#### Description
+This function checks if a DOM node represents a valid HTML tag. If the tag is invalid, it returns a React fragment to prevent rendering.
+
+#### Inputs
+| Name    | Type     | Description                        |
+|:--------|:---------|:-----------------------------------|
+| `domNode` | DOMNode | The DOM node to be checked.        |
+
+#### Outputs
+| Name   | Type         | Description                                      |
+|:-------|:-------------|:-------------------------------------------------|
+| output | JSX.Element  | A React fragment if the tag is invalid, otherwise undefined.|
+
+#### Internal Logic
+- The function uses a regular expression to test if the tag name is valid.
+- If the tag is invalid, it returns a React fragment to prevent rendering.
+
+### `replaceValidIframes`
+#### Description
+This function handles the rendering of iframe elements, ensuring that they are remounted when their source changes and that event attributes are preserved.
+
+#### Inputs
+| Name    | Type     | Description                        |
+|:--------|:---------|:-----------------------------------|
+| `domNode` | DOMNode | The DOM node to be checked.        |
+
+#### Outputs
+| Name   | Type         | Description                                      |
+|:-------|:-------------|:-------------------------------------------------|
+| output | JSX.Element  | A div with dangerouslySetInnerHTML containing the iframe HTML.|
+
+#### Internal Logic
+- The function checks if the DOM node is an iframe and has attributes.
+- It creates a new iframe element, sets its attributes, and returns a div with `dangerouslySetInnerHTML` containing the iframe's outer HTML.
+
+## References
+
+- The `renderHTML` function is used in various components across the codebase, such as `DocumentationPanel`, `SnippetsPanel`, `NotebookBanner`, `HtmlOutput`, and more. These components utilize `renderHTML` to safely render HTML content within the application.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `html-react-parser` | Used to parse HTML strings into a DOM-like structure for React rendering. |
+| `React`            | Provides the necessary functions and components for rendering JSX elements.|
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks for valid tags and iframes. It relies on the `html-react-parser` library to manage the parsing process, which may throw errors if the HTML is malformed.
+
+## Logging
+
+No logging mechanisms are implemented in this code.

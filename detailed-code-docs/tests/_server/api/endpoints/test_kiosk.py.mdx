@@ -1,0 +1,116 @@
+---
+title: "test_kiosk.py"
+---
+
+## High-level description
+
+The target file `test_kiosk.py` is a test suite for the kiosk mode functionality of a web application using the Marimo framework. It primarily tests the WebSocket connections and API endpoints related to the kiosk mode, ensuring that the application behaves correctly when switching between regular and kiosk sessions, and that it properly handles operations like syncing cell IDs and running code cells.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `create_response`: A helper function to create a default response dictionary, which is used in assertions to verify the expected state of the application.
+- `assert_kernel_ready_response` and `assert_parse_ready_response`: Functions to assert that the kernel's state matches the expected state when it is ready.
+- `test_connect_kiosk_with_session`: An asynchronous test function that simulates connecting to the application in both regular and kiosk modes, and performs various operations to ensure correct behavior.
+- `_receive_until`: A helper function to receive WebSocket messages until a specific operation is encountered.
+
+## References
+
+- `KernelCapabilities` and `KernelReady` from `marimo._messaging.ops`: These are data classes used to define the capabilities of the kernel and its ready state.
+- `parse_raw` from `marimo._utils.parse_dataclass`: A utility function used to parse raw data into structured data classes.
+
+## Symbols
+
+### `create_response`
+#### Description
+Creates a default response dictionary with predefined keys and values, which can be updated with additional data. This is used to simulate expected responses in tests.
+
+#### Inputs
+| Name             | Type            | Description                        |
+|:-----------------|:----------------|:-----------------------------------|
+| partial_response | `dict[str, Any]`| Partial data to update the default response with. |
+
+#### Outputs
+| Name     | Type            | Description                        |
+|:---------|:----------------|:-----------------------------------|
+| response | `dict[str, Any]`| The complete response dictionary.  |
+
+### `assert_kernel_ready_response`
+#### Description
+Asserts that the raw data received from the kernel matches the expected response when the kernel is ready.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| raw_data| `dict[str, Any]`| The raw data received from the kernel. |
+| response| `Optional[dict[str, Any]]` | The expected response data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the raw data and expected response into `KernelReady` objects.
+- Compares various attributes of the parsed data to ensure they match.
+
+### `assert_parse_ready_response`
+#### Description
+Asserts that the raw data can be successfully parsed into a `KernelReady` object.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| raw_data| `dict[str, Any]`| The raw data received from the kernel. |
+
+#### Outputs
+None
+
+### `test_connect_kiosk_with_session`
+#### Description
+Tests the connection to the application in both regular and kiosk modes, verifying that the application correctly handles WebSocket connections and API requests.
+
+#### Inputs
+| Name  | Type         | Description                        |
+|:------|:-------------|:-----------------------------------|
+| client| `TestClient` | The test client used to simulate requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Connects to the WebSocket in regular mode and asserts the kernel's ready state.
+- Connects to the WebSocket in kiosk mode and performs operations like syncing cell IDs and running code cells.
+- Verifies that the kiosk session receives updates correctly.
+
+### `_receive_until`
+#### Description
+Receives WebSocket messages until a message with a specific operation is encountered.
+
+#### Inputs
+| Name     | Type                   | Description                        |
+|:---------|:-----------------------|:-----------------------------------|
+| op       | `str`                  | The operation to wait for.         |
+| websocket| `WebSocketTestSession` | The WebSocket session to receive messages from. |
+
+#### Outputs
+| Name | Type            | Description                        |
+|:-----|:----------------|:-----------------------------------|
+| data | `dict[str, Any]`| The received message with the specified operation. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for marking and running test functions. |
+| `starlette.testclient` | Provides the `TestClient` and `WebSocketTestSession` for testing. |
+
+## Error Handling
+
+The test functions use assertions to verify expected behavior. If an assertion fails, it indicates a discrepancy between the expected and actual behavior, which is reported as a test failure.
+
+## Logging
+
+No explicit logging is implemented in this test suite. The focus is on assertions to verify correct behavior.
+
+## TODOs
+
+No TODOs are present in the code.

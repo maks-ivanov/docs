@@ -1,0 +1,152 @@
+---
+title: "make-selectable.ts"
+---
+
+## High-level description
+
+The code in `make-selectable.ts` is designed to enhance Vega-Lite specifications by adding interactivity features such as selection, pan, and zoom capabilities. It modifies the given Vega-Lite specification to make charts and their legends selectable, allowing users to interact with the visualizations in a more dynamic way. The code supports different types of selections, including point and interval selections, and handles various chart configurations like layered, concatenated, and unit specifications.
+
+## Code Structure
+
+The main function `makeSelectable` is the entry point, which processes a Vega-Lite specification and applies various transformations to make it interactive. It utilizes helper functions such as `makeLegendSelectable`, `makeChartSelectable`, `makeChartPanZoom`, and `makeChartInteractive` to apply specific interactivity features. These functions work together to modify the specification based on the provided options and the structure of the chart.
+
+## Symbols
+
+### `makeSelectable`
+#### Description
+The `makeSelectable` function takes a Vega-Lite specification and options to add interactivity features like chart and field selection. It processes the specification to apply these features based on the chart's structure, such as layered or concatenated charts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteSpec` | The Vega-Lite specification to be modified. |
+| opts | `{ chartSelection?: boolean | "interval" | "point"; fieldSelection?: boolean | string[]; }` | Options to control the type of selection to be added. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `T` | The modified Vega-Lite specification with added interactivity. |
+
+#### Internal Logic
+- Checks if both `chartSelection` and `fieldSelection` are false, returning the original spec if true.
+- Handles different chart structures (`vconcat`, `hconcat`, `layer`) by recursively applying interactivity features.
+- For unit specs, it applies legend and chart selection, interactivity, and pan/zoom features.
+
+### `makeLegendSelectable`
+#### Description
+Adds parameters to the specification to make the legend selectable based on the specified fields.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteUnitSpec` | The unit specification to be modified. |
+| fieldSelection | `boolean | string[]` | Determines which fields should be selectable in the legend. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `VegaLiteUnitSpec` | The modified specification with selectable legends. |
+
+#### Internal Logic
+- Finds encoded fields in the spec.
+- Filters fields if `fieldSelection` is an array.
+- Adds legend selection parameters for the filtered fields.
+
+### `makeChartSelectable`
+#### Description
+Adds parameters to make the chart selectable, supporting point and interval selections.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteUnitSpec` | The unit specification to be modified. |
+| chartSelection | `boolean | "interval" | "point"` | The type of chart selection to be added. |
+| layerNum | `number | undefined` | The layer number for unique parameter naming. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `VegaLiteUnitSpec` | The modified specification with chart selection parameters. |
+
+#### Internal Logic
+- Determines the mark type and skips unsupported marks.
+- Resolves the best selection type for the mark.
+- Adds selection parameters based on the resolved selection type.
+
+### `makeChartPanZoom`
+#### Description
+Adds parameters to make the chart pan and zoomable, excluding unsupported marks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteUnitSpec` | The unit specification to be modified. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `VegaLiteUnitSpec` | The modified specification with pan/zoom parameters. |
+
+#### Internal Logic
+- Checks if the mark is unsupported for pan/zoom.
+- Adds a pan/zoom parameter if not already present.
+
+### `makeChartInteractive`
+#### Description
+Makes the chart clickable and adds opacity encoding for interactivity.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `GenericVegaSpec` | The specification to be modified. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `T` | The modified specification with interactive features. |
+
+#### Internal Logic
+- Checks if the mark is unsupported for interactivity.
+- Makes the mark clickable and updates opacity encoding.
+
+### `getBestSelectionForMark`
+#### Description
+Determines the best selection type for a given mark.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mark | `Mark` | The mark type to evaluate. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `SelectionType[] | undefined` | The best selection types for the mark. |
+
+#### Internal Logic
+- Returns appropriate selection types based on the mark type.
+
+## References
+
+- `findEncodedFields` and `makeEncodingInteractive` from `encodings.ts` are used to find fields and make encodings interactive.
+- `Params` from `params.ts` provides methods to create selection parameters.
+- `Marks` from `marks.ts` is used to determine mark types and make them clickable.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vega-lite` | Provides types and structures for Vega-Lite specifications. |
+
+## Error Handling
+
+- The code handles unsupported marks by skipping the addition of certain parameters.
+- Errors in determining mark types are caught and handled gracefully.
+
+## Logging
+
+- No explicit logging is implemented in this code.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

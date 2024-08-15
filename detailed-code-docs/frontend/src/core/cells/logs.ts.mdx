@@ -1,0 +1,105 @@
+---
+title: "logs.ts"
+---
+
+## High-level description
+
+The target file, `logs.ts`, is responsible for handling log messages related to cell operations in a notebook-like environment. It defines the structure of log messages, processes cell messages to extract logs, and formats these logs for display. The file also includes functionality to log messages to the console with appropriate styling based on the log level.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `CellLog` is an interface that defines the structure of a log message.
+- `getCellLogsForMessage` is a function that processes a `CellMessage` to extract log messages and returns them as an array of `CellLog` objects.
+- `CellLogLogger` is an object with a method to log `CellLog` messages to the console with specific styling.
+- `formatLogTimestamp` is a utility function to format timestamps into a human-readable time string.
+
+## Symbols
+
+### `CellLog`
+#### Description
+`CellLog` is an interface that defines the structure of a log message related to a cell operation. It includes a timestamp, log level, message content, and the associated cell ID.
+
+#### Inputs
+None directly, as this is a TypeScript interface.
+
+#### Outputs
+None directly, as this is a TypeScript interface.
+
+### `getCellLogsForMessage`
+#### Description
+This function processes a `CellMessage` to extract log messages. It filters the console outputs of the cell message, checks their type, and constructs `CellLog` objects for each valid output. These logs are then logged to the console and returned as an array.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | `CellMessage` | The message containing console outputs to be processed into logs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| logs | `CellLog[]` | An array of log messages extracted from the cell message. |
+
+#### Internal Logic
+- Filters the `console` property of the `CellMessage` to get valid `OutputMessage` objects.
+- For each output, checks if the `mimetype` is "text/plain" and the `data` is a string.
+- Determines the log level based on the `channel` of the output.
+- Constructs a `CellLog` object for each valid output and adds it to the logs array.
+- Logs each `CellLog` to the console using `CellLogLogger.log`.
+
+### `CellLogLogger`
+#### Description
+`CellLogLogger` is an object that provides a method to log `CellLog` messages to the console. It styles the log output based on the log level (stdout, stderr, or marimo-error).
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| payload | `CellLog` | The log message to be output to the console. |
+
+#### Outputs
+None directly, as this is a logging utility.
+
+#### Internal Logic
+- Determines the color and status text based on the log level.
+- Uses `console.log` to output the log message with styled formatting, including the timestamp, cell ID, and message content.
+
+### `formatLogTimestamp`
+#### Description
+This function formats a Unix timestamp into a human-readable time string in the format of "9:45:10 AM".
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| timestamp | `number` | The Unix timestamp to be formatted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formattedTime | `string` | The formatted time string. |
+
+#### Internal Logic
+- Converts the Unix timestamp to a Date object.
+- Formats the date into a time string using `toLocaleTimeString` with options for 12-hour format and numeric hour, minute, and second.
+
+## References
+
+- `CellMessage` and `OutputMessage` from `../kernel/messages` are used to define the structure of messages processed by `getCellLogsForMessage`.
+- `CellId` from `./ids` is used to type the `cellId` property in `CellLog`.
+- `invariant` from `@/utils/invariant` is used to assert conditions within `getCellLogsForMessage`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `date-fns` | Used for converting Unix timestamps to Date objects. |
+
+## Error Handling
+
+- The `invariant` function is used to ensure that the `data` property of an `OutputMessage` is a string when the `mimetype` is "text/plain". If this condition is not met, an error is thrown.
+
+## Logging
+
+- The `CellLogLogger` object provides a method to log messages to the console with specific styling based on the log level. This includes color coding and formatting of the log message.
+
+## TODOs
+None present in the code.

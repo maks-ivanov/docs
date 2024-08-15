@@ -1,0 +1,58 @@
+---
+title: "useNotebookActions.tsx"
+---
+
+## High-level description
+
+The `useNotebookActions` function in the `useNotebookActions.tsx` file is a custom React hook that provides a set of actions for managing and interacting with a notebook in a web application. These actions include sharing, downloading, presenting, and modifying the state of notebook cells. The hook leverages various utilities and state management tools to facilitate these actions, making it easier for developers to integrate complex functionalities into the notebook's user interface.
+
+## Code Structure
+
+The main symbol in this file is the `useNotebookActions` function, which defines a series of actions encapsulated in an array of `ActionButton` objects. Each action is associated with an icon, label, and a handler function that performs the action. The function utilizes several imported hooks and utilities to manage state and perform asynchronous operations.
+
+## Symbols
+
+### `useNotebookActions`
+#### Description
+The `useNotebookActions` function provides a collection of actions that can be performed on a notebook. These actions include sharing the notebook, downloading it in various formats, toggling presentation modes, and managing cell states. The function returns an array of `ActionButton` objects, each representing a specific action with associated metadata and handler functions.
+
+#### Inputs
+This function does not take any direct inputs but relies on various hooks and state atoms to gather necessary data and state.
+
+#### Outputs
+| Name    | Type          | Description                                      |
+|:--------|:--------------|:-------------------------------------------------|
+| actions | ActionButton[] | An array of action objects for notebook operations |
+
+#### Internal Logic
+- **State and Hooks Initialization**: The function initializes several state variables and hooks, such as `filename`, `openModal`, `openApplication`, `viewState`, and `kioskMode`, to manage the notebook's state and UI interactions.
+- **Action Definitions**: It defines a series of actions, each with an icon, label, and handler function. These actions are grouped into categories like sharing, downloading, and presentation.
+- **Conditional Logic**: Some actions are conditionally hidden based on the notebook's state, such as whether a filename is set or if cells are enabled/disabled.
+- **Asynchronous Operations**: Many actions involve asynchronous operations, such as reading code, creating shareable links, and downloading content, which are handled using async functions and promises.
+- **State Updates**: The function uses state update functions like `setCommandPaletteOpen` and `setKeyboardShortcutsOpen` to toggle UI components.
+
+## References
+
+- **`useRestartKernel`**: This function is imported and used to restart the notebook's kernel, which involves confirming the action and sending a restart request.
+- **`useChromeActions` and `useChromeState`**: These hooks are used to manage the state of the application's chrome, such as opening applications and managing panels.
+- **`useImperativeModal`**: This hook is used to open and close modals imperatively, allowing for user interactions like sharing the notebook.
+- **`runDuringPresentMode`**: A utility function that ensures certain actions are performed while the notebook is in presentation mode.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management for atoms and hooks. |
+| `lucide-react` | Provides icons for the UI components. |
+| `lodash-es` | Utility functions for operations like `startCase`. |
+
+## Error Handling
+
+The code includes error handling for scenarios like attempting to download a notebook without a filename, where it displays a toast notification with an error message.
+
+## Logging
+
+The code uses a `toast` mechanism to provide feedback to the user, such as when a link is copied to the clipboard or when a download starts.
+
+## TODOs
+There are no explicit TODOs in the code, but the structure allows for easy extension by adding more actions or modifying existing ones.

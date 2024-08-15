@@ -1,0 +1,63 @@
+---
+title: "useWebSocket.tsx"
+---
+
+## High-level description
+
+The `useWebSocket` function in the `useWebSocket.tsx` file is a custom React hook designed to establish and manage a WebSocket connection within a React application. It leverages the `ReconnectingWebSocket` from the `partysocket` library to provide automatic reconnection capabilities. The hook supports both dynamic and static WebSocket connections, with additional support for WebAssembly (WASM) environments through the `PyodideWebsocket`.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `useWebSocket`: The primary function that initializes and manages the WebSocket connection.
+- `IReconnectingWebSocket`: An interface type that represents the WebSocket connection, which can be either a `ReconnectingWebSocket`, `StaticWebsocket`, or `PyodideWebsocket`.
+- `UseWebSocketOptions`: An interface that defines the configuration options for the `useWebSocket` hook.
+
+## Symbols
+
+### `useWebSocket`
+#### Description
+The `useWebSocket` function is a React hook that establishes a WebSocket connection using the `ReconnectingWebSocket` library. It provides options to handle WebSocket events such as `onOpen`, `onMessage`, `onClose`, and `onError`. The hook also supports static WebSocket connections and WebAssembly environments.
+
+#### Inputs
+| Name    | Type                | Description                                                                 |
+|:--------|:--------------------|:----------------------------------------------------------------------------|
+| options | UseWebSocketOptions | Configuration options for the WebSocket connection, including event handlers.|
+
+#### Outputs
+| Name | Type                  | Description                          |
+|:-----|:----------------------|:-------------------------------------|
+| ws   | IReconnectingWebSocket | The WebSocket connection instance.   |
+
+#### Internal Logic
+1. **Initialization**: The hook initializes a WebSocket connection based on the environment (WASM or non-WASM) and the `static` option.
+2. **Event Listeners**: It attaches event listeners for `open`, `close`, `error`, and `message` events if the corresponding handlers are provided in the options.
+3. **Effect Hook**: A `useEffect` hook is used to manage the WebSocket lifecycle, ensuring it reconnects if closed and cleans up event listeners on unmount.
+
+## Side Effects
+- The hook modifies the WebSocket connection state and manages event listeners.
+- It logs a warning if the component using the hook is unmounted, indicating a potential bug.
+
+## References
+- `ReconnectingWebSocket`: A library used for WebSocket connections with automatic reconnection logic.
+- `StaticWebsocket`: A class used for static WebSocket connections.
+- `PyodideWebsocket`: A class used for WebSocket connections in WebAssembly environments.
+- `Logger`: A utility for logging warnings and errors.
+
+## Dependencies
+| Dependency          | Purpose                                                                 |
+|:--------------------|:------------------------------------------------------------------------|
+| `partysocket/ws`    | Provides the `ReconnectingWebSocket` for WebSocket connections.         |
+| `../wasm/utils`     | Contains the `isWasm` function to check for WebAssembly environments.   |
+| `../wasm/bridge`    | Provides the `PyodideBridge` and `PyodideWebsocket` for WASM support.   |
+| `./StaticWebsocket` | Provides the `StaticWebsocket` class for static WebSocket connections.  |
+| `@/utils/Logger`    | Provides logging capabilities for debugging and error reporting.        |
+
+## Error Handling
+The hook does not implement specific error handling beyond attaching an `onError` event listener if provided. It relies on the consumer of the hook to handle errors appropriately.
+
+## Logging
+The hook uses the `Logger` utility to log warnings when the component using the hook is unmounted, which may indicate a bug.
+
+## TODOs
+No TODOs or notes are present in the code.

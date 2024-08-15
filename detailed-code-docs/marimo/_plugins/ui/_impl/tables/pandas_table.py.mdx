@@ -1,0 +1,209 @@
+---
+title: "pandas_table.py"
+---
+
+## High-level description
+
+The `pandas_table.py` file defines a `PandasTableManagerFactory` class that creates a `PandasTableManager` for managing and manipulating pandas DataFrames. This manager provides various functionalities such as converting DataFrames to CSV or JSON, applying formatting, selecting rows or columns, sorting, and summarizing data. It is part of a plugin system for handling table data within the Marimo framework.
+
+## Code Structure
+
+- `PandasTableManagerFactory` is a factory class that provides methods to create instances of `PandasTableManager`.
+- `PandasTableManager` is a nested class within the factory that extends `TableManager` and implements various methods for DataFrame manipulation.
+
+## References
+
+- `ColumnSummary` and `ExternalDataType` from `marimo._data.models` are used for summarizing column data and defining data types.
+- `FormatMapping` and `format_value` from `marimo._plugins.ui._impl.tables.format` are used for applying formatting to DataFrame values.
+- `TableManager`, `ColumnName`, `FieldType`, `FieldTypes`, and `TableManagerFactory` from `marimo._plugins.ui._impl.tables.table_manager` are base classes and types that `PandasTableManager` extends and utilizes.
+
+## Symbols
+
+### `PandasTableManagerFactory`
+#### Description
+A factory class for creating `PandasTableManager` instances, which manage pandas DataFrames.
+
+#### Methods
+- `package_name`: Returns the name of the package, "pandas".
+- `create`: Returns the `PandasTableManager` class.
+
+### `PandasTableManager`
+#### Description
+A manager class for handling pandas DataFrames, providing methods for data manipulation and export.
+
+#### Methods
+
+- `to_csv`
+  - **Description**: Converts the DataFrame to a CSV format, optionally applying a format mapping.
+  - **Inputs**:
+    | Name            | Type               | Description                        |
+    |:----------------|:-------------------|:-----------------------------------|
+    | format_mapping  | Optional[FormatMapping] | Mapping for formatting values.     |
+  - **Outputs**:
+    | Name  | Type   | Description          |
+    |:------|:-------|:---------------------|
+    | bytes | bytes  | CSV representation of the DataFrame. |
+
+- `to_json`
+  - **Description**: Converts the DataFrame to a JSON format.
+  - **Outputs**:
+    | Name  | Type   | Description          |
+    |:------|:-------|:---------------------|
+    | bytes | bytes  | JSON representation of the DataFrame. |
+
+- `apply_formatting`
+  - **Description**: Applies a format mapping to the DataFrame, modifying its values.
+  - **Inputs**:
+    | Name            | Type               | Description                        |
+    |:----------------|:-------------------|:-----------------------------------|
+    | format_mapping  | FormatMapping      | Mapping for formatting values.     |
+  - **Outputs**:
+    | Name  | Type         | Description          |
+    |:------|:-------------|:---------------------|
+    | pd.DataFrame | pd.DataFrame | Formatted DataFrame. |
+
+- `supports_filters`
+  - **Description**: Indicates whether the manager supports filtering operations.
+  - **Outputs**:
+    | Name  | Type   | Description          |
+    |:------|:-------|:---------------------|
+    | bool  | bool   | Always returns True. |
+
+- `select_rows`
+  - **Description**: Selects specific rows from the DataFrame based on indices.
+  - **Inputs**:
+    | Name    | Type       | Description                        |
+    |:--------|:-----------|:-----------------------------------|
+    | indices | list[int]  | List of row indices to select.     |
+  - **Outputs**:
+    | Name  | Type                  | Description          |
+    |:------|:----------------------|:---------------------|
+    | TableManager[pd.DataFrame] | TableManager[pd.DataFrame] | Manager with selected rows. |
+
+- `select_columns`
+  - **Description**: Selects specific columns from the DataFrame.
+  - **Inputs**:
+    | Name    | Type       | Description                        |
+    |:--------|:-----------|:-----------------------------------|
+    | columns | list[str]  | List of column names to select.    |
+  - **Outputs**:
+    | Name  | Type                  | Description          |
+    |:------|:----------------------|:---------------------|
+    | TableManager[pd.DataFrame] | TableManager[pd.DataFrame] | Manager with selected columns. |
+
+- `get_row_headers`
+  - **Description**: Retrieves the headers for the rows, based on the DataFrame's index.
+  - **Outputs**:
+    | Name  | Type       | Description          |
+    |:------|:-----------|:---------------------|
+    | list[str] | list[str] | List of row headers. |
+
+- `is_type`
+  - **Description**: Checks if a given value is a pandas DataFrame.
+  - **Inputs**:
+    | Name  | Type | Description |
+    |:------|:-----|:------------|
+    | value | Any  | Value to check. |
+  - **Outputs**:
+    | Name  | Type | Description |
+    |:------|:-----|:------------|
+    | bool  | bool | True if value is a DataFrame, else False. |
+
+- `get_field_types`
+  - **Description**: Determines the field types of each column in the DataFrame.
+  - **Outputs**:
+    | Name  | Type       | Description          |
+    |:------|:-----------|:---------------------|
+    | FieldTypes | FieldTypes | Dictionary of column field types. |
+
+- `limit`
+  - **Description**: Limits the DataFrame to a specified number of rows.
+  - **Inputs**:
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | num  | int  | Number of rows to limit to. |
+  - **Outputs**:
+    | Name  | Type                  | Description          |
+    |:------|:----------------------|:---------------------|
+    | PandasTableManager | PandasTableManager | Manager with limited rows. |
+
+- `search`
+  - **Description**: Searches the DataFrame for rows containing a query string.
+  - **Inputs**:
+    | Name  | Type | Description |
+    |:------|:-----|:------------|
+    | query | str  | Query string to search for. |
+  - **Outputs**:
+    | Name  | Type                  | Description          |
+    |:------|:----------------------|:---------------------|
+    | TableManager[Any] | TableManager[Any] | Manager with rows matching the query. |
+
+- `get_summary`
+  - **Description**: Provides a summary of a specified column.
+  - **Inputs**:
+    | Name   | Type | Description |
+    |:-------|:-----|:------------|
+    | column | str  | Column name to summarize. |
+  - **Outputs**:
+    | Name  | Type          | Description          |
+    |:------|:--------------|:---------------------|
+    | ColumnSummary | ColumnSummary | Summary of the column. |
+
+- `get_num_rows`
+  - **Description**: Returns the number of rows in the DataFrame.
+  - **Outputs**:
+    | Name  | Type | Description          |
+    |:------|:-----|:---------------------|
+    | int   | int  | Number of rows. |
+
+- `get_num_columns`
+  - **Description**: Returns the number of columns in the DataFrame.
+  - **Outputs**:
+    | Name  | Type | Description          |
+    |:------|:-----|:---------------------|
+    | int   | int  | Number of columns. |
+
+- `get_column_names`
+  - **Description**: Retrieves the names of the columns in the DataFrame.
+  - **Outputs**:
+    | Name  | Type       | Description          |
+    |:------|:-----------|:---------------------|
+    | list[str] | list[str] | List of column names. |
+
+- `get_unique_column_values`
+  - **Description**: Gets unique values from a specified column.
+  - **Inputs**:
+    | Name   | Type | Description |
+    |:-------|:-----|:------------|
+    | column | str  | Column name to get unique values from. |
+  - **Outputs**:
+    | Name  | Type       | Description          |
+    |:------|:-----------|:---------------------|
+    | list[str | int | float] | list[str | int | float] | List of unique values. |
+
+- `sort_values`
+  - **Description**: Sorts the DataFrame by a specified column.
+  - **Inputs**:
+    | Name       | Type       | Description                        |
+    |:-----------|:-----------|:-----------------------------------|
+    | by         | ColumnName | Column name to sort by.            |
+    | descending | bool       | Whether to sort in descending order. |
+  - **Outputs**:
+    | Name  | Type                  | Description          |
+    |:------|:----------------------|:---------------------|
+    | PandasTableManager | PandasTableManager | Manager with sorted DataFrame. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| pandas     | Used for DataFrame operations and manipulations. |
+
+## Error Handling
+
+- The `limit` method raises a `ValueError` if the specified limit is negative.
+
+## Performance Considerations
+
+- The `search` method applies a search operation across the entire DataFrame, which may be computationally expensive for large datasets.
+- The `apply_formatting` method creates a copy of the DataFrame, which could impact memory usage for large datasets.

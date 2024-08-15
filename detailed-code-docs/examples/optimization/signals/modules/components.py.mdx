@@ -1,0 +1,125 @@
+---
+title: "components.py"
+---
+
+## High-level description
+
+The target file, `components.py`, defines a set of classes and functions for managing signal decomposition components and their parameters. It provides a structured way to define different types of components, their associated parameters, and methods to construct these components using a library of predefined component types. The file is part of a larger system that deals with signal decomposition, likely used in an application for analyzing and breaking down complex signals into simpler, interpretable components.
+
+## Code Structure
+
+The main symbols in the code are organized into classes and functions:
+
+- **Classes**: `Components`, `ResidualComponents`, `Parameters` - These classes use the `dataclass` decorator to define constants representing different types of components and parameters.
+- **Functions**: `_sorted`, `parameter_controls`, `construct_component` - These functions provide utility operations such as sorting, generating UI controls for parameters, and constructing component instances.
+
+## Symbols
+
+### `Components`
+#### Description
+Defines a set of string constants representing different types of signal components.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `ResidualComponents`
+#### Description
+Defines a subset of `Components` that are specifically used for residuals in signal decomposition.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `_sorted`
+#### Description
+Sorts a given collection and returns it as a list.
+
+#### Inputs
+| Name       | Type | Description          |
+|:-----------|:-----|:---------------------|
+| collection | list | Collection to sort   |
+
+#### Outputs
+| Name   | Type | Description          |
+|:-------|:-----|:---------------------|
+| result | list | Sorted list of items |
+
+### `Parameters`
+#### Description
+Defines a set of string constants representing different parameters that can be associated with components.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `parameter_controls`
+#### Description
+Generates a dictionary of UI controls for the parameters associated with a given component.
+
+#### Inputs
+| Name           | Type                  | Description                                      |
+|:---------------|:----------------------|:-------------------------------------------------|
+| component      | Components or ResidualComponents | The component for which to generate controls |
+| default_values | dict                  | Default values for the parameters                |
+
+#### Outputs
+| Name   | Type          | Description                      |
+|:-------|:--------------|:---------------------------------|
+| result | mo.ui.dictionary | Dictionary of UI controls for parameters |
+
+#### Internal Logic
+- Iterates over `PARAMETER_UNIVERSE` to find parameters applicable to the given component.
+- Uses `PARAMETER_DEFAULTS` to get default values and constructors for UI elements.
+- Constructs a dictionary of UI elements using the `mo.ui` library.
+
+### `construct_component`
+#### Description
+Constructs a component instance based on its name and parameters.
+
+#### Inputs
+| Name            | Type  | Description                                      |
+|:----------------|:------|:-------------------------------------------------|
+| name            | str   | Name of the component to construct               |
+| parameters      | dict  | Parameters for the component                     |
+| center_periodic | bool  | Flag to determine if periodic components should be centered |
+
+#### Outputs
+| Name   | Type | Description                      |
+|:-------|:-----|:---------------------------------|
+| result | gfc component | Constructed component instance |
+
+#### Internal Logic
+- Uses conditional logic to match the component name to a specific type of component.
+- Constructs the component using the `gfc` library, passing in relevant parameters.
+- Handles special cases like `PERIODIC` and `AGGREGATE` components with additional logic.
+
+## References
+
+- **`marimo`**: Used for UI elements and interactions.
+- **`gfosd.components`**: Provides the actual component classes used in the construction of signal components.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `marimo`   | Provides UI components and interactions      |
+| `gfosd`    | Provides component classes for signal decomposition |
+
+## Error Handling
+
+- The `construct_component` function raises a `ValueError` if an unknown component name is provided.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

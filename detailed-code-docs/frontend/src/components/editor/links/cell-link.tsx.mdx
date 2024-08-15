@@ -1,0 +1,118 @@
+---
+title: "cell-link.tsx"
+---
+
+## High-level description
+
+The `cell-link.tsx` file defines React components that create interactive links to cells within a notebook-like interface. These components allow users to navigate to specific cells, highlight them, and perform actions such as scrolling to the cell or executing a callback when the link is clicked. The file also includes utility functions to handle scrolling and highlighting of cells.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `CellLink`, `CellLinkError`, and `CellLinkTraceback` are React components that render links to cells with different styles and behaviors.
+- `scrollAndHighlightCell` is a utility function used by these components to scroll to and highlight a cell.
+- The components use hooks and utility functions from other parts of the codebase to access cell data and perform actions.
+
+## Symbols
+
+### `CellLink`
+#### Description
+`CellLink` is a React component that renders a link to a specific cell. When clicked, it can scroll to the cell, highlight it, and execute an optional callback function.
+
+#### Inputs
+| Name           | Type     | Description                                                                 |
+|:---------------|:---------|:----------------------------------------------------------------------------|
+| `cellId`       | `CellId` | The ID of the cell to link to.                                              |
+| `className`    | `string` | Optional CSS class for styling.                                             |
+| `shouldScroll` | `boolean`| Determines if the cell should be scrolled into view when clicked.           |
+| `skipScroll`   | `boolean`| If true, prevents scrolling when the link is clicked.                       |
+| `onClick`      | `() =&gt; void` | Optional callback function to execute when the link is clicked.         |
+| `formatCellName` | `(name: string) =&gt; string` | Optional function to format the cell's display name.   |
+| `variant`      | `"destructive" | "focus"` | Determines the styling variant for the link.              |
+
+#### Outputs
+| Name | Type       | Description                |
+|:-----|:-----------|:---------------------------|
+| -    | `JSX.Element` | The rendered link element. |
+
+#### Internal Logic
+- Retrieves the cell name and index using hooks.
+- Uses the `showCellIfHidden` action to ensure the cell is visible.
+- Calls `scrollAndHighlightCell` to scroll to and highlight the cell.
+- Executes the `onClick` callback if provided.
+
+### `CellLinkError`
+#### Description
+`CellLinkError` is a specialized version of `CellLink` used for linking to cells in error messages. It uses a "destructive" variant for styling.
+
+#### Inputs
+| Name        | Type     | Description                        |
+|:------------|:---------|:-----------------------------------|
+| `className` | `string` | Optional CSS class for styling.    |
+| `cellId`    | `CellId` | The ID of the cell to link to.     |
+
+#### Outputs
+| Name | Type       | Description                |
+|:-----|:-----------|:---------------------------|
+| -    | `JSX.Element` | The rendered link element. |
+
+### `CellLinkTraceback`
+#### Description
+`CellLinkTraceback` is a component for linking to cells in traceback outputs. It formats the cell name to include the filename and line number.
+
+#### Inputs
+| Name        | Type     | Description                        |
+|:------------|:---------|:-----------------------------------|
+| `cellId`    | `CellId` | The ID of the cell to link to.     |
+| `lineNumber`| `number` | The line number in the cell to link to. |
+
+#### Outputs
+| Name | Type       | Description                |
+|:-----|:-----------|:---------------------------|
+| -    | `JSX.Element` | The rendered link element. |
+
+### `scrollAndHighlightCell`
+#### Description
+A utility function that scrolls to a cell and applies a highlight effect based on the variant.
+
+#### Inputs
+| Name       | Type     | Description                                      |
+|:-----------|:---------|:-------------------------------------------------|
+| `cellId`   | `CellId` | The ID of the cell to scroll to and highlight.   |
+| `variant`  | `"destructive" | "focus"` | The highlight style to apply.   |
+| `skipScroll` | `boolean` | If true, prevents scrolling to the cell.      |
+
+#### Outputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| `succeeded` | `boolean` | Indicates if the cell was successfully found and highlighted. |
+
+#### Internal Logic
+- Retrieves the HTML element for the cell using its ID.
+- Logs an error if the cell is not found.
+- Scrolls the cell into view unless `skipScroll` is true.
+- Applies a CSS class to highlight the cell based on the `variant`.
+- Removes the highlight after a timeout.
+
+## References
+
+- `useCellNames`, `useCellIds`, `useCellActions`: Hooks from `cells.ts` to access cell data and actions.
+- `displayCellName`: Function from `names.ts` to format cell names.
+- `goToCellLine`: Function from `utils.ts` to navigate to a specific line in a cell.
+- `Logger`: Utility for logging errors.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `Logger`   | For logging errors when a cell is not found. |
+| `cn`       | Utility for merging CSS class names.         |
+
+## Error Handling
+
+- Logs an error using `Logger.error` if a cell element is not found on the page.
+
+## Side Effects
+
+- Modifies the DOM by scrolling to and highlighting cell elements.
+- Executes optional callback functions when links are clicked.

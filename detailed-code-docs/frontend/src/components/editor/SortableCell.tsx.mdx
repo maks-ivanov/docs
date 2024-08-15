@@ -1,0 +1,82 @@
+---
+title: "SortableCell.tsx"
+---
+
+## High-level description
+
+The `SortableCell.tsx` file defines a React component that represents a sortable cell in a user interface, allowing users to rearrange cells by dragging them vertically. It utilizes the `@dnd-kit` library for drag-and-drop functionality and provides a drag handle for user interaction. The component is designed to be used within a larger editor interface, where each cell can be moved independently.
+
+## Code Structure
+
+- **`SortableCell`**: The main component that represents a sortable cell. It uses the `useSortable` hook from `@dnd-kit` to manage drag-and-drop interactions.
+- **`CellDragHandle`**: A memoized component that provides a drag handle for the sortable cell, using a context to render the handle in a specific slot.
+- **`DragHandleSlot`**: A React context used to provide the drag handle to the `SortableCell`.
+
+## Symbols
+
+### `SortableCell`
+#### Description
+The `SortableCell` component is a memoized React component that represents a cell that can be sorted within a list. It uses the `useSortable` hook to handle drag-and-drop functionality, allowing the cell to be moved vertically within a container.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `cellId` | `CellId` | A unique identifier for the cell. |
+| `props` | `React.HTMLAttributes&lt;HTMLDivElement&gt;` | Additional HTML attributes for the cell. |
+| `ref` | `React.Ref&lt;HTMLDivElement&gt;` | A reference to the cell's DOM element. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `SortableCell` | `React.FC` | A functional component representing a sortable cell. |
+
+#### Internal Logic
+- The component uses the `useSortable` hook to obtain attributes, listeners, and styles necessary for drag-and-drop functionality.
+- It calculates the CSS transform and transition properties to animate the cell during dragging.
+- The `mergeRefs` utility is used to combine the forwarded ref with the ref provided by `useSortable`.
+- A drag handle is rendered using the `GripVerticalIcon` from `lucide-react`, and it is styled to change appearance on hover and active states.
+- The component uses the `cn` utility to conditionally apply CSS classes based on the cell's state (e.g., if it is moving).
+
+### `CellDragHandle`
+#### Description
+The `CellDragHandle` component is a memoized React component that renders the drag handle for a sortable cell. It uses the `DragHandleSlot` context to obtain the drag handle element.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `CellDragHandle` | `React.FC` | A functional component rendering the drag handle. |
+
+#### Internal Logic
+- The component uses `useContext` to access the `DragHandleSlot` context and render the drag handle.
+
+## References
+
+- **`useSortable`**: A hook from the `@dnd-kit/sortable` library used to manage sortable behavior.
+- **`mergeRefs`**: A utility function to merge multiple React refs into one.
+- **`cn`**: A utility function for conditionally applying CSS classes.
+- **`GripVerticalIcon`**: An icon component from `lucide-react` used as the drag handle.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@dnd-kit/sortable` | Provides hooks and utilities for implementing sortable drag-and-drop functionality. |
+| `@dnd-kit/utilities` | Provides utility functions for drag-and-drop operations. |
+| `lucide-react` | Provides icon components, including the `GripVerticalIcon`. |
+| `../../utils/mergeRefs` | Utility for merging multiple React refs. |
+| `../../utils/cn` | Utility for conditionally applying CSS classes. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic React component lifecycle management. The `useSortable` hook and other utilities are assumed to handle their own errors internally.
+
+## Logging
+
+There is no logging implemented in this file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

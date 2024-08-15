@@ -1,0 +1,90 @@
+---
+title: "ids.ts"
+---
+
+## High-level description
+
+The code in `frontend/src/core/cells/ids.ts` is responsible for managing unique identifiers for cells and UI elements within a frontend application. It defines types and functions to create, parse, and manipulate these identifiers, ensuring that each cell and UI element can be uniquely identified and interacted with in the application.
+
+## Code Structure
+
+The code is structured around three main types of identifiers: `CellId`, `HTMLCellId`, and `UIElementId`. Each identifier type has associated functions for creation, parsing, and manipulation. The `CellId` is a unique identifier for cells, `HTMLCellId` is used for HTML elements representing cells, and `UIElementId` is used for UI elements within the application.
+
+## Symbols
+
+### `CellId`
+#### Description
+`CellId` is a type representing a unique identifier for a cell. It is a string with a specific type annotation to distinguish it from other strings.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | `CellId` | A unique identifier for a cell. |
+
+#### Internal Logic
+The `create` function generates a random 4-letter string using a combination of uppercase and lowercase alphabets to ensure uniqueness.
+
+### `HTMLCellId`
+#### Description
+`HTMLCellId` is a type representing the identifier of an HTML element that corresponds to a cell. It is a template literal type that combines a prefix with a `CellId`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId` | The unique identifier of a cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | `HTMLCellId` | A unique identifier for an HTML element representing a cell. |
+
+#### Internal Logic
+- The `create` function constructs an `HTMLCellId` by prefixing a `CellId` with "cell-".
+- The `parse` function extracts the `CellId` from an `HTMLCellId`.
+- The `findElement` function searches for the closest ancestor element with an ID that starts with "cell-", effectively locating the cell container.
+
+### `UIElementId`
+#### Description
+`UIElementId` is a type representing a unique identifier for a UI element. It is a template literal type that combines a `CellId` with an arbitrary string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| element | `Element` | The HTML element from which to extract the UI element ID. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | `UIElementId` | A unique identifier for a UI element. |
+
+#### Internal Logic
+- The `parse` function retrieves the `UIElementId` from an element's "object-id" attribute.
+- The `parseOrThrow` function ensures that a valid `UIElementId` is retrieved, throwing an error if not.
+- The `create` function constructs a new `UIElementId` by combining a `CellId` with a string.
+
+## References
+
+- The `invariant` function from `@/utils/invariant` is used to ensure that certain conditions are met, throwing an error if they are not.
+- The `TypedString` type from `../../utils/typed` is used to create strongly-typed string identifiers.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/utils/invariant` | Used for runtime checks to ensure conditions are met. |
+| `../../utils/typed` | Provides utility types for creating strongly-typed identifiers. |
+
+## Error Handling
+
+The code uses the `invariant` function to handle errors by throwing exceptions when conditions are not met, such as when a required `cellId` is null.
+
+## Side Effects
+
+- The `create` functions for `CellId` and `HTMLCellId` generate random strings, which can lead to different outputs on each invocation.
+
+## Performance Considerations
+
+- The random generation of `CellId` could be a performance consideration if called frequently in a large-scale application, as it involves random number generation and string manipulation.

@@ -1,0 +1,80 @@
+---
+title: "jotai.ts"
+---
+
+## High-level description
+
+The target file `frontend/src/core/state/jotai.ts` is responsible for managing global state using the Jotai library. It provides a mechanism to create a global store that can be accessed and manipulated outside of React components. The file includes utility functions to wait for an atom to satisfy a certain condition and to create effects that trigger when an atom's state changes.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `store`: A global store created using Jotai's `createStore` function, which allows for state management outside of React components.
+- `waitFor`: A utility function that waits for a specific condition to be met by an atom's value.
+- `useJotaiEffect`: A hook that creates a side effect when an atom's value changes.
+
+## Symbols
+
+### `store`
+#### Description
+The `store` is a global state store created using Jotai's `createStore` function. It allows for getting and setting global state outside of React components.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Side Effects
+The `store` provides a global state that can be accessed and modified from anywhere in the application, potentially affecting the application's behavior globally.
+
+### `waitFor`
+#### Description
+`waitFor` is an asynchronous function that waits for an atom's value to satisfy a given predicate. If the predicate is initially satisfied, it returns the atom's value immediately. Otherwise, it subscribes to changes in the atom and resolves once the predicate is satisfied.
+
+#### Inputs
+| Name      | Type       | Description                          |
+|:----------|:-----------|:-------------------------------------|
+| `atom`    | `Atom&lt;T&gt;`  | The atom whose value is being checked. |
+| `predicate` | `(value: T) =&gt; boolean` | A function that determines if the atom's value satisfies a condition. |
+
+#### Outputs
+| Name   | Type | Description                          |
+|:-------|:-----|:-------------------------------------|
+| `value` | `T`  | The value of the atom once the predicate is satisfied. |
+
+#### Internal Logic
+- Checks if the predicate is satisfied with the current atom value.
+- If not, subscribes to the atom and waits for changes.
+- Resolves the promise when the predicate is satisfied.
+
+### `useJotaiEffect`
+#### Description
+`useJotaiEffect` is a React hook that runs a specified effect function whenever the value of a given atom changes. It uses the `useEffect` hook to manage subscriptions to the atom.
+
+#### Inputs
+| Name      | Type       | Description                          |
+|:----------|:-----------|:-------------------------------------|
+| `atom`    | `Atom&lt;T&gt;`  | The atom to watch for changes.       |
+| `effect`  | `(value: T, prevValue: T) =&gt; void` | The effect function to run on atom value changes. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the current value of the atom.
+- Subscribes to changes in the atom.
+- Executes the effect function with the new and previous values whenever the atom changes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai`    | Provides the `Atom`, `createStore`, and `useStore` functions for state management. |
+| `react`    | Provides the `useEffect` hook for managing side effects in React components. |
+
+## Error Handling
+The code does not explicitly handle errors, as it primarily deals with state management and subscriptions. Any errors would likely arise from incorrect usage of the Jotai library or React hooks.
+
+## Logging
+The code does not implement any logging mechanisms.

@@ -1,0 +1,109 @@
+---
+title: "validate_graph.py"
+---
+
+## High-level description
+
+The `validate_graph.py` file is responsible for validating a directed graph of computational cells in the Marimo runtime environment. It checks for semantic errors such as multiple definitions of the same variable, deletion of non-local variables, and cycles within the graph. These checks ensure that the graph adheres to the expected semantics and constraints of the Marimo environment, allowing for correct execution of the computational cells.
+
+## Code Structure
+
+The main functions in this file are `check_for_multiple_definitions`, `check_for_delete_nonlocal`, `check_for_cycles`, and `check_for_errors`. Each of these functions performs a specific validation check on the `DirectedGraph` object, which represents the computational cells and their dependencies. The results of these checks are returned as dictionaries mapping cell IDs to lists of error objects, which are defined in the `marimo._messaging.errors` module.
+
+## Symbols
+
+### `check_for_multiple_definitions`
+#### Description
+This function checks if multiple cells define the same global name, which is a semantic error in the Marimo environment.
+
+#### Inputs
+| Name  | Type           | Description                        |
+|:------|:---------------|:-----------------------------------|
+| graph | `DirectedGraph` | The graph of cells to be validated |
+
+#### Outputs
+| Name   | Type                                      | Description                                      |
+|:-------|:------------------------------------------|:-------------------------------------------------|
+| errors | `dict[CellId_t, list[MultipleDefinitionError]]` | A dictionary mapping cell IDs to multiple definition errors |
+
+#### Internal Logic
+- The function collects all unique definitions from the cells in the graph.
+- For each definition, it checks if more than one cell defines it.
+- If so, it records a `MultipleDefinitionError` for each cell involved.
+
+### `check_for_delete_nonlocal`
+#### Description
+This function checks if any cell deletes a reference that is defined non-locally, which is not allowed.
+
+#### Inputs
+| Name  | Type           | Description                        |
+|:------|:---------------|:-----------------------------------|
+| graph | `DirectedGraph` | The graph of cells to be validated |
+
+#### Outputs
+| Name   | Type                                      | Description                                      |
+|:-------|:------------------------------------------|:-------------------------------------------------|
+| errors | `dict[CellId_t, list[DeleteNonlocalError]]` | A dictionary mapping cell IDs to delete nonlocal errors |
+
+#### Internal Logic
+- The function iterates over each cell and its deleted references.
+- It checks if any deleted reference is defined elsewhere in the graph.
+- If so, it records a `DeleteNonlocalError` for the cell.
+
+### `check_for_cycles`
+#### Description
+This function checks for cycles in the graph, which indicate circular dependencies between cells.
+
+#### Inputs
+| Name  | Type           | Description                        |
+|:------|:---------------|:-----------------------------------|
+| graph | `DirectedGraph` | The graph of cells to be validated |
+
+#### Outputs
+| Name   | Type                              | Description                                      |
+|:-------|:----------------------------------|:-------------------------------------------------|
+| errors | `dict[CellId_t, list[CycleError]]` | A dictionary mapping cell IDs to cycle errors    |
+
+#### Internal Logic
+- The function iterates over detected cycles in the graph.
+- For each cycle, it annotates the cycle with the variable names that link its cells.
+- It records a `CycleError` for each cell involved in the cycle.
+
+### `check_for_errors`
+#### Description
+This function aggregates all the semantic checks into a single function call, returning a comprehensive list of errors for the graph.
+
+#### Inputs
+| Name  | Type           | Description                        |
+|:------|:---------------|:-----------------------------------|
+| graph | `DirectedGraph` | The graph of cells to be validated |
+
+#### Outputs
+| Name   | Type                          | Description                                      |
+|:-------|:------------------------------|:-------------------------------------------------|
+| errors | `dict[CellId_t, tuple[Error, ...]]` | A dictionary mapping cell IDs to tuples of errors |
+
+#### Internal Logic
+- The function calls `check_for_multiple_definitions`, `check_for_delete_nonlocal`, and `check_for_cycles`.
+- It combines the results into a single dictionary, mapping each cell ID to a tuple of errors.
+
+## References
+
+- `CellId_t`: Defined in `marimo._ast.cell`, represents the unique identifier for a cell.
+- `DirectedGraph`: Defined in `marimo._runtime.dataflow`, represents the graph structure of cells.
+- Error classes (`CycleError`, `DeleteNonlocalError`, `MultipleDefinitionError`): Defined in `marimo._messaging.errors`, represent different types of semantic errors.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `itertools` | Used for chaining iterables together. |
+| `collections.defaultdict` | Used for creating dictionaries with default list values. |
+
+## Error Handling
+
+The functions in this file do not raise exceptions directly. Instead, they return structured error objects that describe the semantic issues found in the graph. These error objects can then be used by other parts of the system to handle errors appropriately.
+
+## Tests
+
+The related test file `tests/_runtime/test_validate_graph.py` contains unit tests for the functions in `validate_graph.py`. These tests cover various scenarios, including multiple definitions, deletion of non-local variables, and cycles in the graph.

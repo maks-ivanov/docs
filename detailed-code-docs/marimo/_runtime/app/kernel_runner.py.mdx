@@ -1,0 +1,64 @@
+---
+title: "kernel_runner.py"
+---
+
+## High-level description
+
+The `AppKernelRunner` class in the `kernel_runner.py` file is responsible for executing a Marimo application within a kernel context. It manages the execution of cells within the application, handles the caching of outputs, and interacts with the kernel to run code, set UI element values, and handle function calls. This class is crucial for integrating the application logic with the kernel's execution environment, ensuring that the application runs smoothly and efficiently.
+
+## Code Structure
+
+The `AppKernelRunner` class is the main symbol in this file. It interacts with several other components, such as the kernel, context, and runner, to manage the execution of application cells. It uses the `Kernel` class to execute code and manage outputs, and it relies on the `InternalApp` class to access application-specific data like cell configurations and execution order.
+
+## References
+
+- `InternalApp`: Provides access to the application's cell manager and execution context.
+- `Kernel`: Manages the execution of code and the handling of outputs.
+- `ExecutionRequest`, `FunctionCallRequest`, `SetUIElementValueRequest`: Used to create requests for executing code, calling functions, and setting UI element values.
+- `RunOutput`: Represents the output of a run operation, including both the outputs and global variables.
+
+## Symbols
+
+### `AppKernelRunner`
+#### Description
+The `AppKernelRunner` class is designed to run a Marimo application within a kernel context. It initializes the kernel with the necessary configurations, manages the execution of cells, and handles requests to set UI element values and perform function calls. The class ensures that the application's outputs are cached and updated correctly after each execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | InternalApp | The application instance to be run by the kernel runner. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outputs | dict[CellId_t, Any] | Cached outputs of the executed cells. |
+| globals | dict[CellId_t, Any] | Global variables available after execution. |
+
+#### Internal Logic
+- **Initialization**: Sets up the kernel with the application's metadata and configurations. It also creates a runtime context specific to the application.
+- **Cache Output**: A function to update the cached outputs of the application after a cell is executed.
+- **Run Method**: Asynchronously executes a set of cells and returns their outputs and global variables.
+- **Set UI Element Value**: Asynchronously sets the value of a UI element and returns a boolean indicating success.
+- **Function Call**: Asynchronously handles a function call request and returns the status, result, and a boolean indicating success.
+
+## Side Effects
+- Modifies the application's cached outputs and global variables.
+- Alters the kernel's execution state by running cells and handling requests.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._ast.cell` | Provides cell-related classes and types. |
+| `marimo._config.config` | Supplies default configuration settings. |
+| `marimo._runtime.context.types` | Manages runtime context and execution context. |
+| `marimo._runtime.patches` | Provides utilities for creating and managing the main module. |
+| `marimo._runtime.requests` | Defines request types for execution, function calls, and UI element updates. |
+| `marimo._runtime.runner` | Contains the runner logic for executing cells. |
+
+## Error Handling
+- Raises a `RuntimeError` if the `AppKernelRunner` is initialized without a kernel context.
+
+## Logging
+- The code does not explicitly implement logging, but it relies on the broader Marimo framework, which may include logging mechanisms.
+
+This documentation provides a comprehensive overview of the `AppKernelRunner` class, detailing its purpose, functionality, and interactions with other components in the Marimo framework.

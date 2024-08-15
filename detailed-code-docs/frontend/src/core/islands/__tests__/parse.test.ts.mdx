@@ -1,0 +1,74 @@
+---
+title: "parse.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for two functions, `createMarimoFile` and `parseIslandCode`, which are part of a system that processes and formats code for a framework called Marimo. The tests ensure that these functions correctly format code cells into a Marimo application file and parse code strings by removing unnecessary whitespace.
+
+## Code Structure
+
+The target file uses the `vitest` testing framework to define test cases for the functions `createMarimoFile` and `parseIslandCode`. These functions are imported from the `parse.ts` file, which contains their implementations. The tests are organized into two main `describe` blocks, each focusing on one of the functions.
+
+## References
+
+- `createMarimoFile`: This function is defined in the related file `parse.ts` and is responsible for formatting code cells into a Marimo application file.
+- `parseIslandCode`: This function is also defined in `parse.ts` and is used to parse and clean up code strings.
+
+## Symbols
+
+### `createMarimoFile`
+#### Description
+The `createMarimoFile` function formats a given application object, which contains code cells, into a string that represents a Marimo application file. It wraps each cell's code in a function and adds necessary Marimo-specific decorators and imports.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | object | An object containing an array of code cells. Each cell is an object with a `code` string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | A formatted string representing a Marimo application file. |
+
+#### Internal Logic
+- The function starts by initializing an array with the necessary import statement and Marimo app initialization.
+- It iterates over each cell in the `app.cells` array, formatting the code by adding indentation and wrapping it in a function with a Marimo decorator.
+- The formatted code for each cell is concatenated into a single string, which is returned as the result.
+
+### `parseIslandCode`
+#### Description
+The `parseIslandCode` function takes a code string, decodes any URI components, and trims leading and trailing whitespace. This ensures the code is in a clean format for further processing.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | string \| undefined \| null | A string containing the code to be parsed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The cleaned and trimmed code string. |
+
+#### Internal Logic
+- The function first checks if the input `code` is null or undefined, returning an empty string if so.
+- It then decodes any URI components in the code and trims whitespace from both ends of the string.
+- The cleaned code is returned.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| vitest | Used for defining and running unit tests. |
+
+## Error Handling
+
+The `parseIslandCode` function handles potential null or undefined inputs by returning an empty string, ensuring that the function does not throw an error in these cases.
+
+## Logging
+
+No logging mechanisms are implemented in the target file.
+
+## TODOs
+
+There is a TODO comment in the `createMarimoFile` function in the related file `parse.ts`, indicating that handling of asynchronous cells should be improved. This suggests that the current method of checking for async code may not be optimal and could be refined in future updates.

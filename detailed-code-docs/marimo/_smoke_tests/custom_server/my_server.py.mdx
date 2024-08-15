@@ -1,0 +1,106 @@
+---
+title: "my_server.py"
+---
+
+## High-level description
+
+The target file `my_server.py` is a FastAPI application that sets up a simple web server with authentication middleware. It mounts several applications at different paths and provides basic authentication by redirecting users to a login page if they do not have a valid token. The server also includes a simple endpoint to check server availability.
+
+## Code Structure
+
+The main components of the code are:
+- The `server` object, which is an ASGI application created using the `marimo` library and mounts several sub-applications.
+- The `app` object, which is a FastAPI application that includes middleware for authentication and several endpoints for login and server status.
+- The `auth_middleware` function, which handles authentication by checking for a token in cookies and redirecting to a login page if absent.
+- The `get_login` and `post_login` functions, which handle the login process by displaying a form and setting a token in cookies, respectively.
+- The `root` function, which provides a simple "ping" endpoint to check server status.
+
+## Symbols
+
+### `server`
+#### Description
+The `server` is an ASGI application created using the `marimo` library. It mounts several sub-applications at specified paths.
+
+#### Internal Logic
+- Uses `marimo.create_asgi_app()` to create the base ASGI application.
+- Mounts additional applications using `.with_app()` at paths `/dataframes`, `/ansi`, and the root path.
+
+### `app`
+#### Description
+The `app` is a FastAPI application that includes middleware for authentication and several endpoints for login and server status.
+
+### `auth_middleware`
+#### Description
+This middleware function checks for the presence of a "token" in the request cookies. If the token is absent and the request is not for the login page, it redirects the user to the login page.
+
+#### Inputs
+| Name     | Type     | Description                          |
+|:---------|:---------|:-------------------------------------|
+| request  | Request  | The incoming HTTP request.           |
+| call_next| Callable | The next middleware or endpoint to call. |
+
+#### Outputs
+| Name     | Type     | Description                          |
+|:---------|:---------|:-------------------------------------|
+| response | Response | The HTTP response to be returned.    |
+
+#### Internal Logic
+- Checks if the request path is `/login`. If so, it proceeds without redirection.
+- Checks for the presence of a "token" in cookies. If absent, redirects to `/login`.
+- Calls the next middleware or endpoint if the token is present.
+
+### `get_login`
+#### Description
+Handles GET requests to the `/login` endpoint by returning an HTML form for token submission.
+
+#### Outputs
+| Name     | Type         | Description                          |
+|:---------|:-------------|:-------------------------------------|
+| response | HTMLResponse | The HTML form for login.             |
+
+### `post_login`
+#### Description
+Handles POST requests to the `/login` endpoint by setting a "token" cookie and redirecting to the root path.
+
+#### Inputs
+| Name  | Type   | Description                          |
+|:------|:-------|:-------------------------------------|
+| token | str    | The token submitted via the form.    |
+
+#### Outputs
+| Name     | Type           | Description                          |
+|:---------|:---------------|:-------------------------------------|
+| response | RedirectResponse | Redirects to the root path.        |
+
+#### Internal Logic
+- Sets a cookie named "token" with the value provided in the form.
+- Redirects the user to the root path.
+
+### `root`
+#### Description
+Provides a simple "ping" endpoint at `/ping` that returns a JSON message.
+
+#### Outputs
+| Name     | Type  | Description                          |
+|:---------|:------|:-------------------------------------|
+| response | dict  | A JSON message indicating server status. |
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| FastAPI    | To create the web application and handle HTTP requests. |
+| marimo     | To create and manage the ASGI application.   |
+| uvicorn    | To run the ASGI application server.          |
+
+## Error Handling
+
+The code does not implement specific error handling beyond basic exception raising. The FastAPI framework will handle any unhandled exceptions by returning a 500 Internal Server Error response.
+
+## Logging
+
+The code does not explicitly implement logging. However, when running the server with `uvicorn`, logging can be enabled by setting the `log_level` parameter.
+
+## TODOs
+
+No TODOs or notes are present in the code.

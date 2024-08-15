@@ -1,0 +1,120 @@
+---
+title: "mode.spec.ts"
+---
+
+## High-level description
+
+The `mode.spec.ts` file is an end-to-end (E2E) test script using Playwright to verify the functionality of a web application in different modes, such as "edit" and "read" modes. It tests the rendering of pages, the presence of specific UI elements, and the ability to toggle between different modes, ensuring that the application behaves as expected in various scenarios.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `gotoPage` function is used to navigate to a specific page and verify its loading based on the application mode.
+- The `test` functions define various test cases that utilize `gotoPage` and other helper functions to perform specific checks and actions on the web application.
+- The `beforeAll` and `afterAll` hooks manage the lifecycle of the `Page` object used across tests.
+
+## References
+
+- `getAppMode` and `getAppUrl` from `playwright.config.ts` are used to determine the mode and URL of the application being tested.
+- `maybeRestartKernel` and `takeScreenshot` from `helper.ts` are used to manage kernel restarts and take screenshots during tests.
+
+## Symbols
+
+### `gotoPage`
+#### Description
+Navigates to a specified application page and verifies its loading based on the mode (edit or run).
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| app     | ApplicationNames| The name of the application to load|
+| page    | Page            | The Playwright page object         |
+| context | BrowserContext  | The browser context for the page   |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the URL and mode of the application using `getAppUrl` and `getAppMode`.
+- Navigates to the URL using `page.goto`.
+- If the mode is "edit", it calls `maybeRestartKernel` to ensure the kernel is properly initialized.
+
+### `test.beforeAll`
+#### Description
+Sets up a new Playwright page before all tests are executed.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| browser | Browser         | The Playwright browser instance    |
+
+#### Outputs
+None
+
+### `test.afterAll`
+#### Description
+Closes the Playwright page after all tests have been executed.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `test("page renders edit feature in edit mode")`
+#### Description
+Tests that the page renders correctly in edit mode, verifying the presence of specific elements and taking a screenshot.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| context | BrowserContext  | The browser context for the page   |
+
+#### Outputs
+None
+
+### `test.skip("can bring up the find/replace dialog")`
+#### Description
+Intended to test the find/replace dialog functionality, but currently skipped due to issues.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| context | BrowserContext  | The browser context for the page   |
+
+#### Outputs
+None
+
+### `test("can toggle to presenter mode")`
+#### Description
+Tests the ability to toggle between presenter and edit modes, verifying the visibility of code and output.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| context | BrowserContext  | The browser context for the page   |
+
+#### Outputs
+None
+
+### `test("page renders read only view in read mode")`
+#### Description
+Tests that the page renders correctly in read mode, ensuring specific elements are not visible and taking a screenshot.
+
+#### Inputs
+| Name    | Type            | Description                        |
+|:--------|:----------------|:-----------------------------------|
+| context | BrowserContext  | The browser context for the page   |
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency       | Purpose                                      |
+|:-----------------|:---------------------------------------------|
+| `@playwright/test` | Provides the testing framework and utilities for browser automation. |
+| `node:url`       | Used to convert the module URL to a file path. |
+
+## TODOs
+- The test for bringing up the find/replace dialog is marked with a TODO comment indicating that it is not currently working and needs to be addressed.

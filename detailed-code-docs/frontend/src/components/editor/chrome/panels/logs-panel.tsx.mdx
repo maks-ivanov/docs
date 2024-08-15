@@ -1,0 +1,99 @@
+---
+title: "logs-panel.tsx"
+---
+
+## High-level description
+
+The `logs-panel.tsx` file defines a React component for displaying logs related to cell operations in a notebook-like application. It provides a user interface for viewing and clearing logs, which are categorized by their source (stdout or stderr) and timestamped for clarity. The component is designed to handle both the presence and absence of logs, offering a clear user experience in both scenarios.
+
+## Code Structure
+
+The main symbols in the code are the `LogsPanel` and `LogViewer` components. The `LogsPanel` component is responsible for fetching and displaying logs, as well as providing a button to clear them. The `LogViewer` component is used within `LogsPanel` to render the logs in a formatted manner. The `formatLog` function is used to format individual log entries for display.
+
+## References
+
+- `useCellLogs` and `useCellActions` from `@/core/cells/cells` are used to fetch logs and provide actions like clearing logs.
+- `CellLog` and `formatLogTimestamp` from `@/core/cells/logs` are used to define the structure of log entries and format their timestamps.
+- `cn` from `@/utils/cn` is used for class name merging.
+- `CellLink` from `../../links/cell-link` is used to create links to specific cells in the logs.
+- `PanelEmptyState` from `./empty-state` is used to display a message when there are no logs.
+
+## Symbols
+
+### `LogsPanel`
+#### Description
+The `LogsPanel` component is a React functional component that displays a panel of logs related to cell operations. It fetches logs using the `useCellLogs` hook and provides a button to clear them using the `useCellActions` hook.
+
+#### Inputs
+None directly, but it uses hooks to fetch data and actions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered logs panel component. |
+
+#### Internal Logic
+- Fetches logs using `useCellLogs`.
+- Provides a "Clear" button that triggers the `clearLogs` action.
+- Displays a `PanelEmptyState` if no logs are present.
+- Uses `LogViewer` to render logs if they are present.
+
+### `LogViewer`
+#### Description
+The `LogViewer` component is responsible for rendering a list of logs. It formats each log entry with a timestamp, log level, and message, and provides a link to the associated cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| logs | CellLog[] | An array of log entries to display. |
+| className | string | Additional CSS classes for styling. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered log viewer component. |
+
+#### Internal Logic
+- Iterates over the `logs` array and formats each log using the `formatLog` function.
+- Uses CSS classes to style the log entries, including hover effects.
+
+### `formatLog`
+#### Description
+Formats a single log entry for display, including the timestamp, log level, and message, with a link to the associated cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log | CellLog | A log entry to format. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The formatted log entry. |
+
+#### Internal Logic
+- Formats the timestamp using `formatLogTimestamp`.
+- Determines the color based on the log level.
+- Constructs a JSX element with the formatted timestamp, log level, cell link, and message.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating React components. |
+| `lucide-react` | Provides the `FileTextIcon` used in the empty state. |
+| `@/utils/cn` | Utility for merging CSS class names. |
+| `@/core/cells/cells` | Provides hooks for cell actions and logs. |
+| `@/core/cells/logs` | Provides log-related types and utilities. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic React component rendering. It assumes that the hooks used (`useCellLogs`, `useCellActions`) handle their own error states.
+
+## Logging
+
+The code itself does not implement logging but is designed to display logs generated elsewhere in the application.
+
+## TODOs
+
+No TODOs or notes are present in the code.

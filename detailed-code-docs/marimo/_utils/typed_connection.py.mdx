@@ -1,0 +1,57 @@
+---
+title: "typed_connection.py"
+---
+
+## High-level description
+
+The `TypedConnection` class in the `marimo/_utils/typed_connection.py` file is a utility that provides a strongly-typed wrapper around a `multiprocessing.connection.Connection` object. It is designed to facilitate type-safe communication over multiprocessing connections by enforcing type constraints on the data being sent and received.
+
+## Code Structure
+
+The main symbol in this code is the `TypedConnection` class, which is a generic class that wraps a `Connection` object. It provides methods to send and receive data with type safety, as well as other utility methods to interact with the underlying connection.
+
+## Symbols
+
+### `TypedConnection`
+#### Description
+The `TypedConnection` class is a generic wrapper around a `multiprocessing.connection.Connection` object. It provides a type-safe interface for sending and receiving data over a connection, ensuring that the data types are consistent with the specified generic type `T`.
+
+#### Inputs
+| Name     | Type       | Description                          |
+|:---------|:-----------|:-------------------------------------|
+| delegate | Connection | The underlying connection to wrap.   |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+#### Internal Logic
+- **Constructor (`__init__`)**: Initializes the `TypedConnection` with a given `Connection` object.
+- **`of` Method**: A class method that creates a `TypedConnection` from an existing `Connection`. It returns the delegate connection, bypassing the type system with a type ignore comment.
+- **`send` Method**: Sends an object of type `T` over the connection.
+- **`recv` Method**: Receives an object of type `T` from the connection.
+- **`poll` Method**: Checks if there is any data available to be read from the connection.
+- **`fileno` Method**: Returns the file descriptor for the connection.
+- **`closed` Property**: Checks if the connection is closed.
+- **`close` Method**: Closes the connection.
+
+## References
+
+The `TypedConnection` class is used in other parts of the codebase, such as in the `marimo/_messaging/streams.py`, `marimo/_runtime/runtime.py`, `marimo/_server/sessions.py`, and `marimo/_utils/distributor.py` files. These references indicate that `TypedConnection` is utilized for managing communication between different components of the system, particularly in scenarios involving multiprocessing or threading.
+
+## Dependencies
+
+The code relies on the `multiprocessing.connection.Connection` class from Python's standard library to provide the underlying connection functionality.
+
+## Error Handling
+
+The code uses type ignore comments to bypass type checking in certain scenarios, such as when returning the delegate connection in the `of` method and when receiving data in the `recv` method. This indicates that the code assumes the correctness of the operations and does not explicitly handle type-related errors.
+
+## Side Effects
+
+The `TypedConnection` class directly interacts with the underlying `Connection` object, which may involve I/O operations such as sending and receiving data over a network or inter-process communication channel. These operations can have side effects, such as blocking the execution if the connection is not ready for I/O operations.
+
+## Performance Considerations
+
+The `TypedConnection` class provides a thin wrapper around the `Connection` object, so its performance characteristics are largely determined by the underlying connection implementation. The use of type checking may introduce some overhead, but it is generally negligible compared to the I/O operations performed by the connection.

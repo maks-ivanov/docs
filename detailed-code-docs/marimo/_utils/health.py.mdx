@@ -1,0 +1,86 @@
+---
+title: "health.py"
+---
+
+## High-level description
+
+The `marimo/_utils/health.py` file provides utility functions to check the versions of Node.js and Google Chrome installed on the system, as well as to retrieve the versions of a list of required Python packages. These utilities are useful for ensuring that the necessary software dependencies are present and up-to-date for the Marimo application.
+
+## Code Structure
+
+The main symbols in the code are three functions: `get_node_version`, `get_required_modules_list`, and `get_chrome_version`. Each function is responsible for retrieving version information for different software components. The `get_chrome_version` function further contains platform-specific helper functions to handle version retrieval on Windows, macOS, and Linux.
+
+## Symbols
+
+### `get_node_version`
+#### Description
+This function attempts to retrieve the version of Node.js installed on the system by executing the `node --version` command. It returns the version as a string if successful, or `None` if Node.js is not installed or an error occurs.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type         | Description                        |
+|:-------|:-------------|:-----------------------------------|
+| output | Optional[str]| The version of Node.js, or `None`. |
+
+#### Internal Logic
+- Uses `subprocess.Popen` to execute the `node --version` command.
+- Captures the standard output and error.
+- Returns the version string if no error is captured; otherwise, returns `None`.
+
+### `get_required_modules_list`
+#### Description
+This function checks for the presence and versions of a predefined list of Python packages. It returns a dictionary mapping package names to their installed versions or "missing" if a package is not found.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type          | Description                                      |
+|:-------|:--------------|:-------------------------------------------------|
+| output | dict[str, str]| A dictionary of package names and their versions.|
+
+#### Internal Logic
+- Defines a list of required packages.
+- Iterates over the list, using `importlib.metadata.version` to get each package's version.
+- Catches `PackageNotFoundError` to mark missing packages.
+
+### `get_chrome_version`
+#### Description
+This function determines the version of Google Chrome installed on the system. It uses platform-specific methods to retrieve the version and returns it as a string, or `None` if Chrome is not installed or an error occurs.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type         | Description                          |
+|:-------|:-------------|:-------------------------------------|
+| output | Optional[str]| The version of Google Chrome, or `None`. |
+
+#### Internal Logic
+- Contains three helper functions for Windows, macOS, and Linux.
+- Each helper function uses `subprocess.Popen` to execute a command that retrieves the Chrome version.
+- The main function checks the system platform and calls the appropriate helper function.
+- Returns the version string if successful; otherwise, returns `None`.
+
+## References
+
+- The `get_node_version`, `get_required_modules_list`, and `get_chrome_version` functions are used in the `marimo/_cli/envinfo.py` and `marimo/_server/api/endpoints/health.py` files to gather system and application environment information.
+
+## Dependencies
+
+| Dependency          | Purpose                                           |
+|:--------------------|:--------------------------------------------------|
+| `importlib.metadata`| To retrieve the version of installed Python packages. |
+| `subprocess`        | To execute system commands for retrieving software versions. |
+| `sys`               | To determine the platform for Chrome version retrieval. |
+
+## Error Handling
+
+- The functions handle `FileNotFoundError` when the executable (Node.js or Chrome) is not found on the system.
+- The `get_required_modules_list` function handles `PackageNotFoundError` to identify missing Python packages.
+
+## Logging
+
+No explicit logging is implemented in this code.

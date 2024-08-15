@@ -1,0 +1,142 @@
+---
+title: "types.py"
+---
+
+## High-level description
+
+The code in `marimo/_runtime/context/types.py` defines the structure and management of runtime contexts in a multi-threaded environment. It provides mechanisms for managing global and thread-local contexts, which are essential for handling session-specific data and operations in a concurrent setting. The code ensures that each client or session has its own isolated context, while also maintaining a shared global context for all sessions.
+
+## Code Structure
+
+The main symbols in the code are `GlobalContext`, `ExecutionContext`, `RuntimeContext`, `_ThreadLocalContext`, and several functions for managing these contexts. `GlobalContext` is a singleton shared across all sessions, while `ExecutionContext` and `RuntimeContext` are specific to individual sessions or threads. `_ThreadLocalContext` is used to store session-specific state in a thread-local manner. Functions like `get_global_context`, `initialize_context`, and `get_context` are used to manage and access these contexts.
+
+## Symbols
+
+### `GlobalContext`
+#### Description
+`GlobalContext` is a singleton class that holds context shared by all sessions. It primarily manages the state of whether the `matplotlib` library is installed.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- The class has a private attribute `_mpl_installed` to track the installation status of `matplotlib`.
+- It provides a property `mpl_installed` to access this status and a method `set_mpl_installed` to update it.
+
+### `ExecutionContext`
+#### Description
+`ExecutionContext` is a data class that holds information about the execution state of a cell, including its ID and output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell_id | CellId_t | The ID of the cell being executed. |
+| setting_element_value | bool | Indicates if a UI element value is being set. |
+| local_cell_id | Optional[CellId_t] | Local ID of the cell, if applicable. |
+| output | Optional[list[Html]] | The output of the cell execution. |
+
+#### Outputs
+- None
+
+### `RuntimeContext`
+#### Description
+`RuntimeContext` is an abstract base class that defines the interface for session-specific runtime contexts. It includes properties and methods for managing UI elements, function registries, and execution contexts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ui_element_registry | UIElementRegistry | Registry for UI elements. |
+| function_registry | FunctionRegistry | Registry for functions. |
+| cell_lifecycle_registry | CellLifecycleRegistry | Registry for cell lifecycle management. |
+| virtual_file_registry | VirtualFileRegistry | Registry for virtual files. |
+| virtual_files_supported | bool | Indicates if virtual files are supported. |
+| stream | Stream | Stream for output. |
+| stdout | Stdout | Standard output stream. |
+| stderr | Stderr | Standard error stream. |
+| children | list[RuntimeContext] | Child contexts. |
+| parent | RuntimeContext | Parent context. |
+
+#### Outputs
+- None
+
+#### Internal Logic
+- The class defines several abstract properties and methods that must be implemented by subclasses, such as `graph`, `globals`, `execution_context`, and methods for managing UI IDs and state updates.
+
+### `_ThreadLocalContext`
+#### Description
+`_ThreadLocalContext` is a class that provides a thread-local storage for runtime contexts, ensuring that each thread has its own isolated context.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- It uses Python's `threading.local` to store a `RuntimeContext` specific to each thread.
+- It provides an `initialize` method to set the runtime context for the current thread.
+
+### `initialize_context`
+#### Description
+Initializes the thread-local context with a given `RuntimeContext`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runtime_context | RuntimeContext | The runtime context to initialize. |
+
+#### Outputs
+- None
+
+#### Internal Logic
+- It checks if a context is already initialized and raises an error if so. Otherwise, it sets the provided `runtime_context` in the thread-local storage.
+
+### `get_context`
+#### Description
+Retrieves the current thread's runtime context.
+
+#### Inputs
+- None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runtime_context | RuntimeContext | The current thread's runtime context. |
+
+#### Internal Logic
+- It checks if a runtime context is set in the thread-local storage and raises a `ContextNotInitializedError` if not.
+
+### `runtime_context_installed`
+#### Description
+Checks if a runtime context is installed for the current thread.
+
+#### Inputs
+- None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| installed | bool | True if a runtime context is installed, False otherwise. |
+
+#### Internal Logic
+- It attempts to retrieve the current context and returns False if a `ContextNotInitializedError` is raised, otherwise True.
+
+## Dependencies
+
+The code relies on several modules and classes from the `marimo` package, such as `UIElementRegistry`, `FunctionRegistry`, `CellLifecycleRegistry`, `VirtualFileRegistry`, and various types from `marimo._messaging.types` and `marimo._runtime`.
+
+## Error Handling
+
+The code raises a `ContextNotInitializedError` if an attempt is made to access a runtime context that has not been initialized. This ensures that operations dependent on a context are not performed without a valid context.
+
+## Side Effects
+
+- The `initialize_context` function modifies the global state by setting the runtime context in thread-local storage.
+- The `teardown_context` function unsets the runtime context, which is useful for testing and cleanup.
+
+## Performance Considerations
+
+- The use of `threading.local` ensures that context operations are thread-safe and do not incur significant overhead, as each thread has its own isolated storage.

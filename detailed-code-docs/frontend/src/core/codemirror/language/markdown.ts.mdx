@@ -1,0 +1,59 @@
+---
+title: "markdown.ts"
+---
+
+## High-level description
+
+The `MarkdownLanguageAdapter` class in the target file is a language adapter for integrating Markdown support into a CodeMirror-based editor. It provides methods to transform Python code that contains Markdown content into a format suitable for editing and back into Python code. Additionally, it configures the editor with Markdown-specific extensions, including syntax highlighting and autocompletion features.
+
+## Code Structure
+
+The main symbol in the code is the `MarkdownLanguageAdapter` class, which implements the `LanguageAdapter` interface. This class interacts with various utilities and libraries to provide Markdown support within a CodeMirror editor. It uses regular expressions to parse and transform code, and it configures the editor with extensions for Markdown syntax and autocompletion.
+
+## Symbols
+
+### `MarkdownLanguageAdapter`
+#### Description
+The `MarkdownLanguageAdapter` class is responsible for adapting Markdown content within a Python environment. It provides methods to transform Python code containing Markdown into a format suitable for editing and back into Python code. It also configures the CodeMirror editor with Markdown-specific extensions.
+
+#### Inputs
+- `pythonCode` (string): Python code that may contain Markdown content.
+- `code` (string): Markdown content to be transformed back into Python code.
+- `_completionConfig` (CompletionConfig): Configuration for autocompletion.
+- `hotkeys` (HotkeyProvider): Provider for hotkey configurations.
+
+#### Outputs
+- `[string, number]`: A tuple containing the transformed code and an offset.
+- `boolean`: Indicates whether the given Python code is supported for Markdown transformation.
+- `Extension[]`: An array of CodeMirror extensions for Markdown support.
+
+#### Internal Logic
+- **Transform In**: Uses regular expressions to identify and extract Markdown content from Python code. It handles different quote styles and unescapes content as needed.
+- **Transform Out**: Converts Markdown content back into a Python-compatible format, ensuring proper escaping and formatting.
+- **Is Supported**: Checks if the given Python code is in a format that can be transformed into Markdown.
+- **Get Extension**: Configures the CodeMirror editor with extensions for Markdown syntax highlighting, autocompletion, and mixed-language parsing.
+
+## Side Effects
+- Fetches an emoji list from a CDN for autocompletion purposes, which may fail if the network is unavailable.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides the `Extension` type for configuring CodeMirror. |
+| `@codemirror/lang-markdown` | Provides Markdown language support for CodeMirror. |
+| `@codemirror/language-data` | Supplies language data for CodeMirror. |
+| `@lezer/common` | Used for mixed-language parsing. |
+| `@codemirror/lang-python` | Provides Python language support for CodeMirror. |
+| `string-dedent` | Used to dedent strings. |
+| `@codemirror/autocomplete` | Provides autocompletion features. |
+| `lodash-es` | Provides utility functions, such as `once`. |
+
+## Error Handling
+- The `getEmojiList` function handles errors by returning an empty list if fetching the emoji list fails.
+
+## Logging
+- No explicit logging is implemented in the target file.
+
+## TODOs
+- The code contains a note about the lack of support for f-strings due to issues with string escaping and syntax highlighting. This might be an area for future improvement.

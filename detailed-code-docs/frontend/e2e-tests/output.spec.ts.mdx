@@ -1,0 +1,64 @@
+---
+title: "output.spec.ts"
+---
+
+## High-level description
+
+The target file `output.spec.ts` is an end-to-end (E2E) test script using Playwright to automate browser interactions. It tests the functionality of a web application by navigating to a specific URL, verifying the presence or absence of certain text elements on the page, and taking a screenshot of the final state. The test ensures that the application's output behaves as expected, particularly in terms of text visibility and replacement.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `test` function from Playwright is used to define a test case.
+- The `expect` function is used to assert conditions on the page.
+- The `getAppUrl` function from `playwright.config` is used to construct the URL for the application being tested.
+- The `takeScreenshot` function from `helper.ts` is used to capture a screenshot of the page.
+
+## References
+
+- `getAppUrl` from `playwright.config.ts`: Used to get the URL of the application to be tested.
+- `takeScreenshot` from `helper.ts`: Used to take a screenshot of the page during the test.
+
+## Symbols
+
+### `test("it can clear and append output", async ({ page }) =&gt; { ... })`
+#### Description
+This function defines an end-to-end test case that verifies the behavior of a web application related to clearing and appending output. It navigates to a specific URL, checks for the presence or absence of certain text elements, and takes a screenshot of the page.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | `Page` | Represents a single tab or page in the browser where the test actions are performed. |
+
+#### Outputs
+None. The function performs assertions and side effects (like taking screenshots) but does not return a value.
+
+#### Internal Logic
+1. **Navigate to URL**: The test navigates to the application URL obtained from `getAppUrl("output.py//run")`.
+2. **Assertions**:
+   - Verifies that the text "Loading replace" is initially visible.
+   - Checks that "Replaced!" becomes visible, and "Loading replace" is no longer visible.
+   - Confirms the presence of "Appended!" and specific loading states ("Loading 0/5" and "Loading 4/5").
+   - Ensures "Cleared!" is not visible.
+   - Verifies that "To be replaced." is not visible, but "Replaced by index!" is visible.
+3. **Screenshot**: Takes a screenshot of the page using the `takeScreenshot` function.
+
+## Side Effects
+- The test navigates to a URL and interacts with the page, which may affect the state of the application being tested.
+- A screenshot is saved to the file system.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the testing framework and utilities for browser automation. |
+| `node:url` | Used to convert the module URL to a file path. |
+
+## Error Handling
+The test uses Playwright's `expect` function to handle assertions. If any assertion fails, the test will throw an error, indicating that the expected condition was not met.
+
+## Logging
+No explicit logging is implemented in the code. However, Playwright's test runner typically provides output related to test execution and results.
+
+## TODOs
+No TODOs or notes are present in the code.

@@ -1,0 +1,157 @@
+---
+title: "mocks.py"
+---
+
+## High-level description
+
+The `mocks.py` file in the `tests/_server` directory provides utility functions and decorators for setting up mock sessions and session managers in a testing environment. It includes functions to create mock session managers, manage session states, and handle authentication tokens. These utilities are primarily used to facilitate testing of server-side components in the Marimo application.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `get_session_manager` and `get_mock_session_manager` are utility functions to retrieve or create a session manager.
+- Decorators like `with_file_router`, `with_session`, `with_websocket_session`, and `with_read_session` are used to manage session states during tests.
+- The `token_header` function is used to generate authentication headers for requests.
+
+## Symbols
+
+### `get_session_manager`
+#### Description
+Retrieves the session manager from a given `TestClient` instance. This is used to access the session manager's state during tests.
+
+#### Inputs
+| Name   | Type        | Description                  |
+|:-------|:------------|:-----------------------------|
+| client | TestClient  | The test client instance.    |
+
+#### Outputs
+| Name            | Type           | Description                  |
+|:----------------|:---------------|:-----------------------------|
+| session_manager | SessionManager | The session manager instance.|
+
+### `get_mock_session_manager`
+#### Description
+Creates and returns a mock session manager configured with a temporary file and a no-operation LSP server. This is used to simulate session management in tests without affecting the actual application state.
+
+#### Outputs
+| Name            | Type           | Description                  |
+|:----------------|:---------------|:-----------------------------|
+| session_manager | SessionManager | A mock session manager.      |
+
+### `with_file_router`
+#### Description
+A decorator that temporarily replaces the session manager's file router with a specified `AppFileRouter` during the execution of a test function. It ensures that the original file router is restored after the test.
+
+#### Inputs
+| Name        | Type          | Description                  |
+|:------------|:--------------|:-----------------------------|
+| file_router | AppFileRouter | The file router to use.      |
+
+#### Outputs
+| Name     | Type                               | Description                  |
+|:---------|:-----------------------------------|:-----------------------------|
+| decorator| Callable[[Callable[..., None]], Callable[..., None]] | The decorated function. |
+
+#### Internal Logic
+- Temporarily replaces the session manager's file router with the provided `file_router`.
+- Executes the test function.
+- Restores the original file router after the test.
+
+### `with_session`
+#### Description
+A decorator that establishes a session with a given session ID and optionally shuts it down after the test. It manages the session lifecycle for tests that require a session context.
+
+#### Inputs
+| Name         | Type   | Description                              |
+|:-------------|:-------|:-----------------------------------------|
+| session_id   | str    | The session ID to use.                   |
+| auto_shutdown| bool   | Whether to shut down the session after the test. |
+
+#### Outputs
+| Name     | Type                               | Description                  |
+|:---------|:-----------------------------------|:-----------------------------|
+| decorator| Callable[[Callable[..., None]], Callable[..., None]] | The decorated function. |
+
+#### Internal Logic
+- Connects to a WebSocket with the specified session ID.
+- Executes the test function within the session context.
+- Optionally shuts down the session after the test.
+
+### `with_websocket_session`
+#### Description
+Similar to `with_session`, but provides a WebSocket connection to the test function, allowing for interaction with the WebSocket during the test.
+
+#### Inputs
+| Name         | Type   | Description                              |
+|:-------------|:-------|:-----------------------------------------|
+| session_id   | str    | The session ID to use.                   |
+| auto_shutdown| bool   | Whether to shut down the session after the test. |
+
+#### Outputs
+| Name     | Type                               | Description                  |
+|:---------|:-----------------------------------|:-----------------------------|
+| decorator| Callable[[Callable[..., None]], Callable[..., None]] | The decorated function. |
+
+#### Internal Logic
+- Connects to a WebSocket with the specified session ID.
+- Passes the WebSocket connection to the test function.
+- Optionally shuts down the session after the test.
+
+### `with_read_session`
+#### Description
+A decorator that sets up a session in read mode, allowing tests to interact with a session that is configured for read-only operations.
+
+#### Inputs
+| Name      | Type   | Description                  |
+|:----------|:-------|:-----------------------------|
+| session_id| str    | The session ID to use.       |
+
+#### Outputs
+| Name     | Type                               | Description                  |
+|:---------|:-----------------------------------|:-----------------------------|
+| decorator| Callable[[Callable[..., None]], Callable[..., None]] | The decorated function. |
+
+#### Internal Logic
+- Connects to a WebSocket with the specified session ID in read mode.
+- Executes the test function within the session context.
+- Ensures the session is shut down after the test.
+
+### `token_header`
+#### Description
+Generates an authentication header for requests, encoding the provided token and skew ID using base64 encoding. This is used to simulate authenticated requests in tests.
+
+#### Inputs
+| Name   | Type   | Description                  |
+|:-------|:-------|:-----------------------------|
+| token  | str    | The authentication token.    |
+| skew_id| str    | The skew protection token.   |
+
+#### Outputs
+| Name   | Type          | Description                  |
+|:-------|:--------------|:-----------------------------|
+| header | dict[str, str]| The generated header.        |
+
+#### Internal Logic
+- Encodes the token and skew ID using base64.
+- Constructs the authorization header with the encoded values.
+
+## Dependencies
+
+The code relies on several external modules and libraries:
+| Dependency | Purpose |
+|:-----------|:--------|
+| `tempfile` | To create temporary files for mock sessions. |
+| `base64`   | To encode authentication tokens. |
+| `fastapi.testclient` | To simulate HTTP requests and WebSocket connections in tests. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic exception raising. It assumes that the test environment is correctly set up and that the provided inputs are valid.
+
+## Logging
+
+The code does not implement any logging mechanisms. It is focused on providing utility functions for testing rather than logging or monitoring.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

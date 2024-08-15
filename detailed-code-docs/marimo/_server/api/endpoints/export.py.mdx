@@ -1,0 +1,112 @@
+---
+title: "export.py"
+---
+
+## High-level description
+
+The target file, `export.py`, defines API endpoints for exporting notebook content in various formats such as HTML, script, and markdown. It utilizes the Starlette framework to handle HTTP requests and responses, and it leverages the `Exporter` class to perform the actual export operations. The endpoints are protected by authentication requirements and handle different request types to facilitate the export process.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `APIRouter` is used to define and manage the API endpoints.
+- Each endpoint function (`export_as_html`, `export_as_script`, `export_as_markdown`) is decorated with `@router.post` to handle POST requests.
+- The `AppState` class is used to manage the application state and session information.
+- The `Exporter` class is responsible for the actual export logic, converting notebook content into the desired format.
+- The `parse_request` utility function is used to parse incoming requests into specific request models (`ExportAsHTMLRequest`, `ExportAsScriptRequest`, `ExportAsMarkdownRequest`).
+
+## References
+
+- `AppState` from `marimo._server.api.deps`: Manages application state and session information.
+- `Exporter` from `marimo._server.export.exporter`: Handles the logic for exporting notebook content.
+- `parse_request` from `marimo._server.api.utils`: Parses incoming requests into specific request models.
+- `HTTPStatus` from `marimo._server.api.status`: Provides HTTP status codes for error handling.
+
+## Symbols
+
+### `export_as_html`
+#### Description
+Handles the export of notebook content as HTML. It checks the session mode and includes code and console outputs if in edit mode. It uses the `Exporter` class to generate the HTML content.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The incoming HTTP request.   |
+
+#### Outputs
+| Name     | Type        | Description                        |
+|:---------|:------------|:-----------------------------------|
+| response | HTMLResponse | The HTML content of the notebook. |
+
+#### Internal Logic
+- Initializes `AppState` with the request.
+- Parses the request body into an `ExportAsHTMLRequest`.
+- Checks the session mode and adjusts the request parameters accordingly.
+- Calls `Exporter.export_as_html` to generate the HTML content.
+- Sets appropriate headers for downloading if requested.
+- Returns an `HTMLResponse` with the generated content.
+
+### `export_as_script`
+#### Description
+Handles the export of notebook content as a script. It uses the `Exporter` class to convert the notebook into a script format.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The incoming HTTP request.   |
+
+#### Outputs
+| Name     | Type            | Description                          |
+|:---------|:----------------|:-------------------------------------|
+| response | PlainTextResponse | The script content of the notebook. |
+
+#### Internal Logic
+- Initializes `AppState` with the request.
+- Parses the request body into an `ExportAsScriptRequest`.
+- Calls `Exporter.export_as_script` to generate the script content.
+- Sets appropriate headers for downloading if requested.
+- Returns a `PlainTextResponse` with the generated content.
+
+### `export_as_markdown`
+#### Description
+Handles the export of notebook content as markdown. It ensures the file is saved before exporting and uses the `Exporter` class to generate the markdown content.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The incoming HTTP request.   |
+
+#### Outputs
+| Name     | Type            | Description                             |
+|:---------|:----------------|:----------------------------------------|
+| response | PlainTextResponse | The markdown content of the notebook. |
+
+#### Internal Logic
+- Initializes `AppState` with the request.
+- Parses the request body into an `ExportAsMarkdownRequest`.
+- Reloads the file manager to ensure the latest state.
+- Checks if the file path is set, raising an error if not.
+- Calls `Exporter.export_as_md` to generate the markdown content.
+- Sets appropriate headers for downloading if requested.
+- Returns a `PlainTextResponse` with the generated content.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| starlette  | Provides the framework for handling HTTP requests and responses. |
+
+## Error Handling
+
+- The `export_as_markdown` function raises an `HTTPException` with a `BAD_REQUEST` status if the file is not saved before downloading.
+
+## API/Interface Reference
+
+| Endpoint     | Method | Request Format | Response Format | Description                          |
+|:-------------|:-------|:---------------|:----------------|:-------------------------------------|
+| `/html`      | POST   | JSON           | HTML            | Exports the notebook as HTML.        |
+| `/script`    | POST   | JSON           | Plain Text      | Exports the notebook as a script.    |
+| `/markdown`  | POST   | JSON           | Plain Text      | Exports the notebook as markdown.    |
+
+## TODOs
+None.

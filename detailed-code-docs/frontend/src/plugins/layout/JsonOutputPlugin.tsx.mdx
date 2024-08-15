@@ -1,0 +1,61 @@
+---
+title: "JsonOutputPlugin.tsx"
+---
+
+## High-level description
+
+The `JsonOutputPlugin` is a stateless plugin designed to render JSON data within a web application. It utilizes the `JsonOutput` component to display JSON data in a formatted manner, and it leverages the `EmotionCacheProvider` to manage styling within a shadow DOM. The plugin is part of a larger framework for handling UI components and plugins, as indicated by its integration with other plugins in the system.
+
+## Code Structure
+
+- **JsonOutputPlugin**: Implements the `IStatelessPlugin` interface, providing a mechanism to render JSON data.
+- **Data Interface**: Defines the structure of the data that the plugin will handle, including optional `name` and `jsonData` properties.
+- **EmotionCacheProvider**: Used to manage styles within a shadow DOM, ensuring that the `JsonOutput` component is styled correctly.
+- **JsonOutput**: A component responsible for rendering the JSON data, supporting different formats like "tree" and "raw".
+
+## Symbols
+
+### `JsonOutputPlugin`
+#### Description
+The `JsonOutputPlugin` is a class that implements the `IStatelessPlugin` interface, designed to render JSON data using the `JsonOutput` component. It validates the input data using a schema defined by `zod` and renders the JSON data within a shadow DOM using the `EmotionCacheProvider`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `Data` | The data object containing optional `name` and `jsonData` properties. |
+| host | `HTMLElement` | The host element where the plugin will be rendered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered JSX element for the JSON output. |
+
+#### Internal Logic
+- **Validation**: Uses `zod` to define a schema for the data, ensuring that `name` is a nullable string and `jsonData` is of unknown type.
+- **Rendering**: The `render` method checks if a `name` is provided and defaults to `false` if not. It then uses the `EmotionCacheProvider` to wrap the `JsonOutput` component, passing the `jsonData` and formatting options.
+
+## References
+
+- **JsonOutput**: The component used to display the JSON data.
+- **EmotionCacheProvider**: Provides styling capabilities within a shadow DOM.
+- **IStatelessPlugin**: An interface that `JsonOutputPlugin` implements, defining the structure and behavior of stateless plugins.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation. |
+| `@emotion/cache` and `@emotion/react` | Used for managing styles within a shadow DOM. |
+| `@textea/json-viewer` | Provides the `JsonViewer` component used in `JsonOutput`. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond the validation provided by `zod`. Any issues with rendering or data processing would likely result in runtime errors.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the `JsonOutputPlugin`.
+
+## TODOs
+
+There are no TODOs or notes left in the `JsonOutputPlugin` code. However, the `JsonOutput` component has a TODO comment regarding clipboard functionality, indicating a potential area for future improvement.

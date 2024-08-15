@@ -1,0 +1,58 @@
+---
+title: "PyodideLoader.tsx"
+---
+
+## High-level description
+
+The `PyodideLoader.tsx` file defines a React component, `PyodideLoader`, which acts as a higher-order component (HOC) to ensure that the Pyodide environment is loaded and initialized before rendering its child components. It checks if WebAssembly (WASM) is supported and, if so, uses asynchronous data fetching to manage the loading state of Pyodide, displaying a loading spinner while Pyodide is being initialized.
+
+## Code Structure
+
+The main symbol in this file is the `PyodideLoader` component. It utilizes several imported utilities and components, such as `useAsyncData` for handling asynchronous data fetching, `isWasm` to check for WebAssembly support, `PyodideBridge` for managing Pyodide initialization, and `LargeSpinner` for displaying a loading indicator.
+
+## Symbols
+
+### `PyodideLoader`
+#### Description
+The `PyodideLoader` component is a React functional component that ensures the Pyodide environment is loaded before rendering its children. It checks if WebAssembly is supported and, if so, waits for the Pyodide initialization to complete. During the loading process, it displays a spinner, and if an error occurs, it throws the error to be handled by an error boundary.
+
+#### Inputs
+| Name     | Type             | Description                  |
+|:---------|:-----------------|:-----------------------------|
+| children | `React.ReactNode` | The child components to render once Pyodide is loaded. |
+
+#### Outputs
+| Name     | Type             | Description                  |
+|:---------|:-----------------|:-----------------------------|
+| children | `React.ReactNode` | The rendered child components if Pyodide is loaded, or a spinner/error otherwise. |
+
+#### Internal Logic
+1. **WASM Check**: The component first checks if WebAssembly is supported using the `isWasm` utility. If not, it immediately returns the children.
+2. **Async Data Fetching**: It uses the `useAsyncData` hook to asynchronously wait for the Pyodide environment to initialize via `PyodideBridge.INSTANCE.initialized.promise`.
+3. **Loading State**: While waiting for initialization, it displays a `LargeSpinner` component.
+4. **Error Handling**: If an error occurs during initialization, it throws the error to be caught by an error boundary.
+
+## References
+
+- **`useAsyncData`**: A custom hook used to manage asynchronous data fetching and loading states.
+- **`isWasm`**: A utility function that checks if the current environment supports WebAssembly.
+- **`PyodideBridge`**: A class that manages the initialization and interaction with the Pyodide environment.
+- **`LargeSpinner`**: A component that displays a loading spinner.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating the React component. |
+| `useAsyncData` | Manages asynchronous data fetching and state. |
+| `isWasm` | Checks for WebAssembly support. |
+| `PyodideBridge` | Manages Pyodide initialization. |
+| `LargeSpinner` | Displays a loading spinner during Pyodide initialization. |
+
+## Error Handling
+
+The component throws any errors encountered during the Pyodide initialization process, which are expected to be caught by an error boundary in the parent component tree.
+
+## Logging
+
+No explicit logging is implemented in this file. However, errors are thrown to be handled by an error boundary, which may include logging as part of its error handling strategy.

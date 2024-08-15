@@ -1,0 +1,84 @@
+---
+title: "conf.py"
+---
+
+## High-level description
+
+The `conf.py` file is a configuration script for the Sphinx documentation builder, specifically tailored for the "marimo" project. It sets up various Sphinx extensions, project metadata, and HTML output options to generate comprehensive and styled documentation. The file also includes custom directives and configurations to enhance the documentation process, such as converting markdown to reStructuredText and embedding specific content.
+
+## Code Structure
+
+The main components of the `conf.py` file are organized into sections that configure different aspects of the Sphinx documentation process:
+
+1. **Project Information**: Sets metadata like project name, author, and version.
+2. **General Configuration**: Lists Sphinx extensions and general settings for documentation generation.
+3. **HTML Output Options**: Configures the theme, static paths, and additional HTML settings for the documentation's appearance.
+4. **Hooks**: Defines custom setup functions to connect Sphinx events with custom processing logic.
+
+## References
+
+The `conf.py` file references several helper modules that provide additional functionality:
+- `helpers.md2rst`: Converts markdown docstrings to reStructuredText.
+- `helpers.sections`: Defines custom sections for documentation.
+- `helpers.marimo_embed`: Provides a directive to embed Marimo applications.
+- `helpers.copy_readme`: Implements a directive to include parts of the README file in the documentation.
+
+## Symbols
+
+### `setup`
+#### Description
+The `setup` function is a Sphinx hook that connects custom processing functions and directives to Sphinx events. It is used to enhance the documentation generation process by adding custom behavior.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app  | Sphinx Application | The Sphinx application object that allows connecting events and adding directives. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Connects the `autodoc-process-docstring` event to the `md2rst` function, which converts markdown docstrings to reStructuredText.
+- Adds custom directives `readmepart` and `marimo-embed` using `ReadmePartDirective` and `MarimoEmbed` classes, respectively.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `datetime` | Used to dynamically set the current year in the copyright notice. |
+| `os`       | Used for path manipulations to include directories in `sys.path`. |
+| `sys`      | Used to modify the Python path for module imports. |
+| `marimo`   | The main project module, from which the version is extracted. |
+
+## Configuration
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `extensions` | list | N/A | List of Sphinx extensions to be used. |
+| `myst_enable_extensions` | list | N/A | List of MyST parser extensions enabled. |
+| `autoclasstoc_sections` | list | N/A | Sections for the `autoclasstoc` extension. |
+| `autodoc_member_order` | str | "bysource" | Order of members in autodoc. |
+| `templates_path` | list | ["_templates"] | Path to templates used in documentation. |
+| `exclude_patterns` | list | ["_build", "Thumbs.db", ".DS_Store"] | Patterns to exclude from the build. |
+| `html_theme` | str | "furo" | Theme for HTML output. |
+| `html_static_path` | list | ["_static"] | Path to static files for HTML output. |
+| `html_favicon` | str | "_static/favicon-32x32.png" | Path to the favicon. |
+| `html_baseurl` | str | "https://docs.marimo.io/" | Base URL for the documentation. |
+| `html_css_files` | list | N/A | List of CSS files to include in HTML output. |
+| `html_js_files` | list | N/A | List of JavaScript files to include in HTML output. |
+| `html_title` | str | Project name | Title of the HTML documentation. |
+| `html_theme_options` | dict | N/A | Options for customizing the HTML theme. |
+| `pygments_style` | str | "monokai" | Style for syntax highlighting. |
+| `pygments_dark_style` | str | "monokai" | Style for syntax highlighting in dark mode. |
+
+## Error Handling
+
+The `conf.py` file does not explicitly handle errors, as it primarily consists of configuration settings. Any issues would typically arise during the Sphinx build process, where errors would be reported by Sphinx itself.
+
+## Logging
+
+There is no explicit logging implemented in the `conf.py` file. Any logging would be handled by Sphinx or the Python environment in which it runs.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

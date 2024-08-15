@@ -1,0 +1,134 @@
+---
+title: "google_cloud_bigquery.py"
+---
+
+## High-level description
+
+The target file `google_cloud_bigquery.py` is an example integration script that demonstrates how to interact with Google Cloud BigQuery using the `marimo` framework. It provides a user interface to configure credentials, select datasets and tables, and display a preview of the data from a selected table. The script is structured as a series of `marimo` cells, each performing a specific task in the data retrieval and display process.
+
+## Code Structure
+
+The script is organized into several `marimo` cells, each encapsulated in a function decorated with `@app.cell`. These cells are executed in sequence to build a user interface for interacting with Google Cloud BigQuery. The main symbols in the code are:
+
+- `app`: An instance of `marimo.App`, which manages the lifecycle and execution of the cells.
+- `bigquery`: The Google Cloud BigQuery client library, used to interact with BigQuery datasets and tables.
+- `mo`: The `marimo` module, used for creating UI components and managing application state.
+- `credentials`: A UI component for inputting the path to a Google Cloud credentials file.
+- `client`: A BigQuery client object used to list datasets and tables.
+- `datasets`: A list of datasets available in the BigQuery project.
+- `selected_dataset`: A UI dropdown component for selecting a dataset.
+- `dataset`: The selected BigQuery dataset.
+- `tables`: A list of tables within the selected dataset.
+- `selected_table`: A UI dropdown component for selecting a table.
+- `results`: The rows retrieved from the selected table, displayed in a UI table.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of `marimo.App` that serves as the main application object, managing the execution of the cells and the user interface.
+
+### `@app.cell`
+#### Description
+A decorator used to define a cell in the `marimo` application. Each cell is a function that performs a specific task, such as importing libraries, configuring settings, or interacting with BigQuery.
+
+### `bigquery`
+#### Description
+The Google Cloud BigQuery client library, imported within a cell to interact with BigQuery services.
+
+### `mo`
+#### Description
+The `marimo` module, used to create UI components and manage application state.
+
+### `credentials`
+#### Description
+A UI text input component for specifying the path to a Google Cloud credentials file. This is used to authenticate the BigQuery client if provided.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| label | str | The label for the text input field. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| credentials | str | The path to the credentials file entered by the user. |
+
+### `client`
+#### Description
+A BigQuery client object used to interact with datasets and tables. It is configured using the provided credentials or the default authentication method.
+
+### `datasets`
+#### Description
+A list of datasets retrieved from the BigQuery client, used to populate a dropdown for dataset selection.
+
+### `selected_dataset`
+#### Description
+A UI dropdown component that allows the user to select a dataset from the list of available datasets.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| label | str | The label for the dropdown. |
+| options | list | The list of dataset IDs to display in the dropdown. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| selected_dataset | str | The ID of the selected dataset. |
+
+### `dataset`
+#### Description
+The selected BigQuery dataset, used to list tables and retrieve data.
+
+### `tables`
+#### Description
+A list of tables within the selected dataset, used to populate a dropdown for table selection.
+
+### `selected_table`
+#### Description
+A UI dropdown component that allows the user to select a table from the list of available tables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| label | str | The label for the dropdown. |
+| options | list | The list of table IDs to display in the dropdown. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| selected_table | str | The ID of the selected table. |
+
+### `results`
+#### Description
+The rows retrieved from the selected table, displayed in a UI table for preview.
+
+#### Internal Logic
+The `results` are obtained by calling `client.list_rows()` on the selected table, with a limit of 10 rows for preview. The results are then converted to a DataFrame and displayed using `mo.ui.table()`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used to create the application and UI components. |
+| `google-cloud-bigquery` | Provides the client library for interacting with Google Cloud BigQuery. |
+| `os` | Used to manage environment variables for authentication. |
+
+## Configuration
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| credentials | str | None | Path to the Google Cloud credentials file. |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond setting environment variables for authentication. It assumes that the user has correctly configured their Google Cloud environment or provided valid credentials.
+
+## Logging
+
+The script does not implement any logging mechanisms. It relies on the `marimo` framework to manage application state and UI interactions.
+
+## API/Interface Reference
+
+The script does not expose an API but provides a user interface for interacting with Google Cloud BigQuery through the `marimo` framework. The interface includes text input for credentials, dropdowns for dataset and table selection, and a table for displaying query results.

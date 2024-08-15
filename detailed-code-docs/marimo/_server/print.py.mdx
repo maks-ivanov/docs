@@ -1,0 +1,94 @@
+---
+title: "print.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/print.py`, is responsible for handling the printing of startup and shutdown messages for the Marimo server. It provides functions to display messages in the console, with support for UTF-8 encoded symbols, to indicate the status of the server and guide the user on how to interact with it.
+
+## Code Structure
+
+The main symbols in the code are the functions `print_startup`, `print_shutdown`, and `_utf8`. These functions work together to format and print messages to the console. The `print_startup` and `print_shutdown` functions utilize the `_utf8` function to conditionally include UTF-8 symbols in their output based on the system's encoding capabilities. The `print_tabbed` function from `marimo._server.utils` is used to format the printed messages with indentation.
+
+## Symbols
+
+### `print_startup`
+#### Description
+The `print_startup` function is responsible for printing a startup message to the console. It informs the user about the current state of the server, such as whether a file is being edited or run, or if a new notebook is being created. It also displays the URL where the server can be accessed.
+
+#### Inputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| file_name | Optional[str] | The name of the file being edited or run.   |
+| url       | str     | The URL where the server can be accessed.         |
+| run       | bool    | Indicates if the server is running a file.        |
+| new       | bool    | Indicates if a new notebook is being created.     |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value. |
+
+#### Internal Logic
+- The function first prints a blank line for spacing.
+- It checks the conditions of `file_name`, `run`, and `new` to determine which message to print.
+- It uses ANSI escape codes to color the text and appends a UTF-8 symbol if supported.
+- It prints the URL in a formatted manner.
+- Finally, it prints another blank line for spacing.
+
+### `print_shutdown`
+#### Description
+The `print_shutdown` function prints a shutdown message to the console, thanking the user for using Marimo.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value. |
+
+#### Internal Logic
+- The function prints a blank line for spacing.
+- It prints a thank you message with a UTF-8 symbol if supported.
+- It prints another blank line for spacing.
+
+### `_utf8`
+#### Description
+The `_utf8` function checks if UTF-8 encoding is supported by the system's standard output and returns the given message if it is, or an empty string if it is not.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg  | str  | The message to be conditionally returned. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str  | str  | The original message if UTF-8 is supported, otherwise an empty string. |
+
+#### Internal Logic
+- The function checks the global variable `UTF8_SUPPORTED`.
+- If `UTF8_SUPPORTED` is `True`, it returns the input message.
+- If `UTF8_SUPPORTED` is `False`, it returns an empty string.
+
+## Side Effects
+- The functions `print_startup` and `print_shutdown` print messages to the console, which is a side effect of their execution.
+
+## References
+- The `print_tabbed` function from `marimo._server.utils` is used to format the printed messages with indentation.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os`       | Used to manipulate file paths. |
+| `sys`      | Used to check the system's encoding capabilities. |
+| `print_tabbed` | Used to format the printed messages with indentation. |
+
+## Error Handling
+- The code uses a try-except block to determine if UTF-8 encoding is supported by attempting to encode a string with UTF-8 symbols. If an exception occurs, it sets `UTF8_SUPPORTED` to `False`.
+
+## Logging
+- There is no explicit logging mechanism implemented in this code. The output is directly printed to the console.

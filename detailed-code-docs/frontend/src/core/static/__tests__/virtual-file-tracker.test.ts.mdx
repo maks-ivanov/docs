@@ -1,0 +1,76 @@
+---
+title: "virtual-file-tracker.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `VirtualFileTracker` class and the `findVirtualFiles` function. These tests are designed to verify the functionality of tracking and identifying virtual file paths within strings, ensuring that the `VirtualFileTracker` can correctly manage virtual files associated with specific cell IDs and that `findVirtualFiles` can accurately extract virtual file paths from various input formats.
+
+## Code Structure
+
+The code is structured into two main test suites using the `vitest` testing framework:
+
+1. **`findVirtualFiles` Test Suite**: This suite tests the `findVirtualFiles` function, which is responsible for extracting virtual file paths from a given input string or object.
+
+2. **`VirtualFileTracker` Test Suite**: This suite tests the `VirtualFileTracker` class, which tracks virtual files associated with specific cell IDs, allowing for operations like appending new files and clearing tracked files.
+
+## References
+
+- `VirtualFileTracker` and `findVirtualFiles` are imported from `../virtual-file-tracker`.
+- `CellId` is imported from `@/core/cells/ids`.
+- `OutputMessage` is imported from `@/core/kernel/messages`.
+
+## Symbols
+
+### `findVirtualFiles`
+#### Description
+The `findVirtualFiles` function extracts virtual file paths from a given input, which can be a string or an object. It identifies paths that match the pattern `/@file/&lt;file-name&gt;.&lt;extension&gt;`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str  | unknown | The input from which to extract virtual file paths. Can be a string or an object. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | Set&lt;string&gt; | A set containing all identified virtual file paths. |
+
+#### Internal Logic
+- Converts non-string inputs to JSON strings.
+- Uses a regular expression to match virtual file paths.
+- Adds each matched path to a set, ensuring uniqueness.
+
+### `VirtualFileTracker`
+#### Description
+The `VirtualFileTracker` class is a singleton that tracks virtual files associated with specific cell IDs. It allows for adding new files, retrieving all tracked filenames, and removing files associated with a particular cell ID.
+
+#### Inputs
+- The `track` method takes a `CellMessage` object containing a `cell_id` and an `output` with a `mimetype` and `data`.
+
+#### Outputs
+- The `filenames` method returns an array of all tracked virtual file paths.
+
+#### Internal Logic
+- Maintains a map of cell IDs to sets of virtual file paths.
+- The `track` method updates the map based on the `output` data's mimetype.
+- The `removeForCellId` method deletes entries from the map for a given cell ID.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest`   | Used for writing and running unit tests. |
+
+## Error Handling
+
+- The `findVirtualFiles` function handles null or undefined inputs by returning an empty set.
+- The `track` method in `VirtualFileTracker` checks for the presence of `output` before proceeding.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

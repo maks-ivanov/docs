@@ -1,0 +1,115 @@
+---
+title: "CellStatus.tsx"
+---
+
+## High-level description
+
+The `CellStatus.tsx` file defines a React component, `CellStatusComponent`, which is responsible for displaying the status of a cell in an editor interface. This component uses various icons and tooltips to visually represent different states of a cell, such as running, queued, disabled, or stale, based on the cell's runtime state and other properties.
+
+## Code Structure
+
+The main symbol in this file is the `CellStatusComponent`, which is a React functional component. It uses several imported icons and utility functions to render the appropriate status indicators. The component relies on the `CellRuntimeState` type to determine the cell's current status and uses the `Tooltip` component to provide additional information to the user.
+
+## Symbols
+
+### `CellStatusComponent`
+#### Description
+The `CellStatusComponent` is a React functional component that displays the current status of a cell in an editor. It uses icons and tooltips to indicate various states such as running, queued, disabled, stale, edited, or interrupted. The component decides which status to display based on the properties passed to it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editing | boolean | Indicates if the cell is currently being edited. |
+| status | string | The current status of the cell (e.g., "running", "queued"). |
+| disabled | boolean | Indicates if the cell is disabled. |
+| staleInputs | boolean | Indicates if the cell has stale inputs. |
+| edited | boolean | Indicates if the cell has been edited since the last run. |
+| interrupted | boolean | Indicates if the cell was interrupted during its last run. |
+| elapsedTime | number or null | The elapsed time since the cell started running, in milliseconds. |
+| runStartTimestamp | number or null | The timestamp when the cell started running. |
+| uninstantiated | boolean | Indicates if the cell has not yet been run. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element or null | JSX.Element | The rendered status component or null if not applicable. |
+
+#### Internal Logic
+- The component first checks if the cell is being edited. If not, it returns null.
+- It then evaluates various conditions to determine the cell's status:
+  - If the cell is disabled and running, it logs an error and returns null.
+  - If the cell is stale and disabled, it displays a tooltip indicating the cell is stale and cannot be run.
+  - If the cell is disabled but not stale, it shows a disabled icon.
+  - If the cell is disabled due to a parent cell, it shows a transitive disabled icon.
+  - If the cell is running, it displays a running icon with a timer.
+  - If the cell is queued, it shows a queued icon.
+  - If the cell is outdated due to being edited, interrupted, or having stale inputs, it shows a refresh icon with a tooltip.
+  - If the cell has an elapsed time, it displays the elapsed time.
+- The component uses the `formatElapsedTime` function to format the elapsed time for display.
+
+### `formatElapsedTime`
+#### Description
+Formats the elapsed time from milliseconds into a human-readable string format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| elapsedTime | number or null | The elapsed time in milliseconds. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The formatted elapsed time as a string. |
+
+#### Internal Logic
+- If `elapsedTime` is null, it returns an empty string.
+- If the elapsed time is greater than a minute, it formats it as minutes and seconds.
+- If the elapsed time is greater than a second, it formats it as seconds.
+- Otherwise, it formats it as milliseconds.
+
+### `CellTimer`
+#### Description
+A React component that displays the elapsed time since a given start time.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| startTime | Time | The start time from which to calculate the elapsed time. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | A span element containing the formatted elapsed time. |
+
+#### Internal Logic
+- Uses the `useElapsedTime` hook to calculate the elapsed time since the `startTime`.
+- Formats the elapsed time using `formatElapsedTime` and displays it in a span element.
+
+## References
+
+- `CellRuntimeState` from `../../../core/cells/types`: Provides the structure for the cell's runtime state.
+- `useElapsedTime` from `../../../hooks/useElapsedTime`: A hook used to calculate elapsed time.
+- `Logger` from `@/utils/Logger`: Used for logging errors.
+- `MultiIcon` from `@/components/icons/multi-icon`: Used to display multiple icons layered together.
+- `Tooltip` from `../../ui/tooltip`: Used to display tooltips for status icons.
+- `Time` from `@/utils/time`: Utility for handling time-related operations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lucide-react` | Provides icon components used in the status display. |
+| `@/utils/Logger` | Provides logging functionality for error reporting. |
+| `@/utils/time` | Provides time utilities for handling timestamps and elapsed time. |
+
+## Error Handling
+
+- The component logs an error using `Logger.error` if a cell is both disabled and running, which is considered an unexpected state.
+
+## Logging
+
+- The component uses the `Logger` utility to log errors when unexpected states are encountered.
+
+## TODOs
+
+- No TODOs are present in the code.

@@ -1,0 +1,81 @@
+---
+title: "format.ts"
+---
+
+## High-level description
+
+The target file, `format.ts`, is part of a frontend codebase that integrates with the CodeMirror editor. It provides functionality to format code within editor views by sending the code to a server for formatting and then updating the editor views with the formatted code. This is achieved through two main functions: `formatEditorViews`, which formats specific editor views, and `formatAll`, which formats all cells in a notebook.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `formatEditorViews` is the core function that handles the formatting of code in specific editor views.
+- `formatAll` utilizes `formatEditorViews` to format all cells in a notebook.
+- The `formattingChangeEffect` is a state effect used to signal formatting changes within the editor.
+
+## Symbols
+
+### `formattingChangeEffect`
+#### Description
+A state effect defined to signal when a formatting change has occurred in the editor. This effect is used to track changes that are specifically due to formatting operations.
+
+### `formatEditorViews`
+#### Description
+Formats the code in the provided editor views by sending the code to a server for formatting and updating the views with the formatted code.
+
+#### Inputs
+| Name          | Type                              | Description                                      |
+|:--------------|:----------------------------------|:-------------------------------------------------|
+| `views`       | `Record&lt;CellId, EditorView&gt;`      | A record of cell IDs to their corresponding editor views. |
+| `updateCellCode` | `CellActions["updateCellCode"]` | A function to update the code of a cell.         |
+
+#### Outputs
+None (the function performs updates directly on the editor views).
+
+#### Internal Logic
+1. Extracts the current code from each editor view and converts it to Python using `getEditorCodeAsPython`.
+2. Sends the extracted code to a server for formatting via `sendFormat`.
+3. Iterates over the formatted code returned by the server:
+   - If the formatted code differs from the original, it updates the cell's code using `updateCellCode`.
+   - Updates the editor view with the new formatted code using `updateEditorCodeFromPython`.
+
+### `formatAll`
+#### Description
+Formats all cells in the notebook by retrieving all editor views and passing them to `formatEditorViews`.
+
+#### Inputs
+| Name          | Type                              | Description                                      |
+|:--------------|:----------------------------------|:-------------------------------------------------|
+| `updateCellCode` | `CellActions["updateCellCode"]` | A function to update the code of a cell.         |
+
+#### Outputs
+None (the function performs updates directly on the editor views).
+
+#### Internal Logic
+1. Retrieves all editor views for the notebook using `notebookCellEditorViews`.
+2. Calls `formatEditorViews` with the retrieved views and the `updateCellCode` function.
+
+## References
+
+- `sendFormat`: A function imported from `../network/requests` that sends code to a server for formatting.
+- `getEditorCodeAsPython` and `updateEditorCodeFromPython`: Utility functions from `./language/utils` for handling code conversion between Python and the editor's current language.
+- `getUserConfig`: A function from `../config/config` that retrieves user configuration settings, such as line length for formatting.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `@codemirror/view` | Provides types and functionalities for CodeMirror editor views.         |
+| `@codemirror/state`| Used for defining state effects like `formattingChangeEffect`.          |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `formatEditorViews` function. It assumes that the `sendFormat` function will handle any network-related errors, and any issues with updating the editor views are not directly addressed.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the target file. Any logging would likely be handled by the functions it calls, such as `sendFormat`.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

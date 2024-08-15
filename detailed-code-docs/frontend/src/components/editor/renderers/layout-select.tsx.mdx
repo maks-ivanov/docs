@@ -1,0 +1,117 @@
+---
+title: "layout-select.tsx"
+---
+
+## High-level description
+
+The `layout-select.tsx` file defines a React component named `LayoutSelect` that provides a user interface for selecting different layout types for a notebook or editor. It uses a dropdown menu to allow users to choose from predefined layout types, and it handles the selection logic, including feature flag checks for WebAssembly (WASM) environments.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `LayoutSelect` is the main React component that renders the layout selection UI.
+- `renderIcon`, `getLayoutIcon`, and `displayLayoutName` are utility functions used by `LayoutSelect` to render icons and display names for each layout type.
+- The component interacts with layout state and actions through hooks `useLayoutState` and `useLayoutActions`.
+- It checks for feature flags using the `getFeatureFlag` function and determines the environment using the `isWasm` function.
+
+## References
+
+- `LAYOUT_TYPES` and `LayoutType` from `./types` define the available layout types.
+- `useLayoutState` and `useLayoutActions` from `@/core/layout/layout` manage the layout state.
+- `isWasm` from `@/core/wasm/utils` checks if the environment is WASM.
+- `getFeatureFlag` from `@/core/config/feature-flag` retrieves feature flag settings.
+- `logNever` from `@/utils/assertNever` is used for handling unexpected layout types.
+
+## Symbols
+
+### `LayoutSelect`
+#### Description
+The `LayoutSelect` component renders a dropdown menu that allows users to select a layout type for the editor. It ensures that layout selection is only available if the environment supports it, particularly checking for WASM compatibility.
+
+#### Inputs
+None directly, but it uses hooks to access layout state and actions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered dropdown menu for layout selection. |
+
+#### Internal Logic
+- Checks if the environment is WASM and if the `wasm_layouts` feature flag is enabled. If not, it returns `null`.
+- Uses the `Select` component to render a dropdown menu.
+- Maps over `LAYOUT_TYPES` to create `SelectItem` components for each layout type.
+- Uses `renderIcon` and `displayLayoutName` to display the appropriate icon and name for each layout type.
+
+### `renderIcon`
+#### Description
+Renders the icon associated with a given layout type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| layoutType | LayoutType | The type of layout for which to render an icon. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The icon component for the specified layout type. |
+
+#### Internal Logic
+- Calls `getLayoutIcon` to retrieve the appropriate icon component for the given layout type.
+- Returns the icon component with specified styling.
+
+### `getLayoutIcon`
+#### Description
+Determines the icon to use for a given layout type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| layoutType | LayoutType | The type of layout for which to get an icon. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| IconComponent | React Component | The icon component corresponding to the layout type. |
+
+#### Internal Logic
+- Uses a switch statement to return the appropriate icon component based on the layout type.
+- Calls `logNever` for unexpected layout types and defaults to `SquareIcon`.
+
+### `displayLayoutName`
+#### Description
+Formats the layout type name for display purposes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| layoutType | LayoutType | The type of layout for which to display a name. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The formatted name of the layout type. |
+
+#### Internal Logic
+- Uses the `startCase` function from `lodash-es` to convert the layout type string into a human-readable format.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Used for creating React components. |
+| `lucide-react` | Provides icon components used in the UI. |
+| `lodash-es` | Used for string manipulation with `startCase`. |
+| `@/components/ui/select` | Provides UI components for the dropdown menu. |
+| `@/core/wasm/utils` | Provides utility functions for WASM environment checks. |
+| `@/core/layout/layout` | Provides hooks for managing layout state. |
+| `@/utils/assertNever` | Provides utility functions for handling unexpected cases. |
+| `@/core/config/feature-flag` | Provides functions for feature flag management. |
+
+## Error Handling
+
+- The `logNever` function is used to log unexpected layout types without throwing an error, ensuring that the application can continue running even if an unexpected layout type is encountered.
+
+## TODOs
+
+No TODOs or notes are present in the code.

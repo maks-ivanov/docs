@@ -1,0 +1,150 @@
+---
+title: "file_explorer.py"
+---
+
+## High-level description
+
+The `file_explorer.py` file defines a set of API endpoints for managing files and directories on a server. It provides functionalities such as listing files, retrieving file details, creating, deleting, moving, and updating files or directories. These operations are exposed as HTTP POST endpoints and require authentication with "edit" permissions.
+
+## Code Structure
+
+The main components of the code are the API endpoints defined using the `APIRouter` class. Each endpoint corresponds to a specific file operation and interacts with the `OSFileSystem` class to perform the actual file system operations. The endpoints use request and response models defined in `marimo._server.models.files` to structure the data exchanged with clients.
+
+## References
+
+- `OSFileSystem`: This class is used to perform file system operations such as listing, creating, deleting, moving, and updating files or directories.
+- `parse_request`: A utility function used to parse incoming requests into specific request models.
+- `marimo._server.models.files`: Contains the data models for requests and responses used by the endpoints.
+- `APIRouter`: A custom router class used to define and manage API routes.
+
+## Symbols
+
+### `list_files`
+#### Description
+Lists files and directories in a specified path or the root directory if no path is provided.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object containing the path to list files from. |
+
+#### Outputs
+| Name       | Type            | Description                                      |
+|:-----------|:----------------|:-------------------------------------------------|
+| response   | FileListResponse | A response containing the list of files and directories. |
+
+#### Internal Logic
+- Parses the request to extract the path.
+- Uses `OSFileSystem.list_files` to retrieve the list of files and directories.
+- Returns a `FileListResponse` with the retrieved files and the root path.
+
+### `file_details`
+#### Description
+Retrieves details of a specific file or directory.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object containing the path of the file or directory. |
+
+#### Outputs
+| Name       | Type               | Description                                      |
+|:-----------|:-------------------|:-------------------------------------------------|
+| response   | FileDetailsResponse | A response containing the details of the file or directory. |
+
+#### Internal Logic
+- Parses the request to extract the file path.
+- Uses `OSFileSystem.get_details` to retrieve file details.
+- Returns a `FileDetailsResponse` with the file details.
+
+### `create_file_or_directory`
+#### Description
+Creates a new file or directory at a specified path.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object containing the creation details. |
+
+#### Outputs
+| Name       | Type               | Description                                      |
+|:-----------|:-------------------|:-------------------------------------------------|
+| response   | FileCreateResponse | A response indicating the success or failure of the operation. |
+
+#### Internal Logic
+- Parses the request to extract creation details.
+- Decodes the file contents if provided.
+- Uses `OSFileSystem.create_file_or_directory` to create the file or directory.
+- Returns a `FileCreateResponse` indicating success or failure.
+
+### `delete_file_or_directory`
+#### Description
+Deletes a specified file or directory.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object containing the path of the file or directory to delete. |
+
+#### Outputs
+| Name       | Type               | Description                                      |
+|:-----------|:-------------------|:-------------------------------------------------|
+| response   | FileDeleteResponse | A response indicating the success or failure of the operation. |
+
+#### Internal Logic
+- Parses the request to extract the path.
+- Uses `OSFileSystem.delete_file_or_directory` to delete the file or directory.
+- Returns a `FileDeleteResponse` indicating success or failure.
+
+### `move_file_or_directory`
+#### Description
+Moves a file or directory to a new path.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object containing the current and new paths. |
+
+#### Outputs
+| Name       | Type             | Description                                      |
+|:-----------|:-----------------|:-------------------------------------------------|
+| response   | FileMoveResponse | A response indicating the success or failure of the operation. |
+
+#### Internal Logic
+- Parses the request to extract the current and new paths.
+- Uses `OSFileSystem.move_file_or_directory` to move the file or directory.
+- Returns a `FileMoveResponse` indicating success or failure.
+
+### `update_file`
+#### Description
+Updates the contents of a specified file.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object containing the path and new contents of the file. |
+
+#### Outputs
+| Name       | Type             | Description                                      |
+|:-----------|:-----------------|:-------------------------------------------------|
+| response   | FileUpdateResponse | A response indicating the success or failure of the operation. |
+
+#### Internal Logic
+- Parses the request to extract the file path and new contents.
+- Uses `OSFileSystem.update_file` to update the file.
+- Returns a `FileUpdateResponse` indicating success or failure.
+
+## Side Effects
+- The endpoints modify the file system by creating, deleting, moving, or updating files and directories.
+- Errors during these operations are logged using the `marimo_logger`.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.authentication.requires` | Used to enforce authentication requirements for the endpoints. |
+| `marimo._loggers` | Provides logging capabilities for error handling and debugging. |
+| `marimo._server.api.utils.parse_request` | Utility function for parsing request bodies into data models. |
+| `marimo._server.files.os_file_system.OSFileSystem` | Provides the file system operations used by the endpoints. |
+
+## TODOs
+- The `file_details` function has a TODO comment indicating the need to support returning raw bytes for files not encoded as UTF-8.

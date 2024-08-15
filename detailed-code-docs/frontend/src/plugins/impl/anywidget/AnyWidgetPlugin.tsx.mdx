@@ -1,0 +1,111 @@
+---
+title: "AnyWidgetPlugin.tsx"
+---
+
+## High-level description
+
+The `AnyWidgetPlugin.tsx` file defines a plugin for rendering and managing custom widgets in a web application. It uses a modular approach to load JavaScript modules dynamically, apply CSS styles, and manage widget state and communication. The plugin is designed to be flexible, allowing for the integration of various widget types by defining a standard interface for initialization and rendering.
+
+## Code Structure
+
+The main components of the code are the `AnyWidgetPlugin`, `AnyWidgetSlot`, `LoadedSlot`, and `Model` class. The `AnyWidgetPlugin` is created using a builder pattern that defines data schemas and functions. The `AnyWidgetSlot` component handles the loading and validation of the widget module. The `LoadedSlot` component manages the lifecycle and state updates of the widget. The `Model` class provides an interface for managing widget state and handling events.
+
+## References
+
+- `createPlugin` from `@/plugins/core/builder`: Used to create the plugin with a specific structure.
+- `rpc` from `@/plugins/core/rpc`: Used to define the input and output schemas for plugin functions.
+- `useAsyncData`, `useOnMount`, `useDeepCompareMemoize`, `useEventListener`: Custom hooks used for data fetching, lifecycle management, and event handling.
+- `ErrorBanner` from `../common/error-banner`: Used to display errors.
+- `Logger` from `@/utils/Logger`: Used for logging warnings and errors.
+- `MarimoIncomingMessageEvent` from `@/core/dom/events`: Custom event type used for handling incoming messages.
+
+## Symbols
+
+### `AnyWidgetPlugin`
+#### Description
+The `AnyWidgetPlugin` is a plugin that allows for the dynamic loading and rendering of custom widgets. It defines the data schema and functions that the widget can use, and it renders the widget using the `AnyWidgetSlot` component.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| T | `Record&lt;string, any&gt;` | The state type for the plugin. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `IPlugin&lt;T, Data, PluginFunctions&gt;` | The configured plugin instance. |
+
+### `AnyWidgetSlot`
+#### Description
+The `AnyWidgetSlot` component is responsible for loading the widget's JavaScript module and applying any associated CSS. It validates the module to ensure it conforms to the expected widget interface.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `Props` | The properties passed to the component, including data and functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered widget or an error banner if loading fails. |
+
+#### Internal Logic
+- Uses `useAsyncData` to load the JavaScript module dynamically.
+- Applies CSS styles to the widget's shadow DOM.
+- Validates the module using `isAnyWidgetModule`.
+
+### `LoadedSlot`
+#### Description
+The `LoadedSlot` component manages the lifecycle of the widget, including initialization, rendering, and state updates. It listens for incoming messages and updates the widget's model accordingly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `Props & { widget: AnyWidget }` | The properties passed to the component, including the widget definition. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered widget container. |
+
+#### Internal Logic
+- Uses `useRef` to maintain a reference to the DOM element.
+- Initializes the widget using `runAnyWidgetModule`.
+- Updates the model when the value changes using `useEffect`.
+
+### `Model`
+#### Description
+The `Model` class provides an interface for managing the widget's state and handling events. It supports setting and getting state values, sending messages, and managing event listeners.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `T` | The initial state data for the model. |
+| onChange | `(value: T) =&gt; void` | Callback to handle state changes. |
+| send_to_widget | `(req: { content?: any }) =&gt; Promise&lt;null | undefined&gt;` | Function to send messages to the widget. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `void` | The class does not return a value but manages state and events. |
+
+#### Internal Logic
+- Manages state using `get`, `set`, and `save_changes` methods.
+- Handles custom messages and events with `on`, `off`, and `emit` methods.
+- Uses a proxy for `widget_manager` to throw errors if accessed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation schemas. |
+| `dequal` | Used for deep comparison of objects. |
+
+## Error Handling
+
+- Errors during module loading or validation are displayed using the `ErrorBanner` component.
+- The `Logger` is used to log warnings and errors, providing feedback during development and debugging.
+
+## Logging
+
+- The `Logger` utility is used to log warnings and errors, particularly when unsupported features are accessed or when errors occur during widget operations.

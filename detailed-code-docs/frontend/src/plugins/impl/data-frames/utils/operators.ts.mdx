@@ -1,0 +1,165 @@
+---
+title: "operators.ts"
+---
+
+## High-level description
+
+The target file, `operators.ts`, defines a set of operators and schemas for different data types, such as numbers, strings, dates, and booleans, to be used in data frame operations. It provides utility functions to map data types to their corresponding operators and schemas, and to validate condition values against these schemas.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- **Schemas**: Defined using `zod` to validate and describe data types.
+- **Operators**: Grouped by data type (boolean, numeric, date, string) and used to perform operations on data frames.
+- **Utility Functions**: Convert data types to operators and schemas, and validate condition values.
+
+## References
+
+- `FieldOptions` from `../forms/options`: Used to describe fields in schemas.
+- `DataType` from `@/core/kernel/messages`: Used in the `numpyTypeToDataType` function to map numpy types to data types.
+
+## Symbols
+
+### `Schema`
+#### Description
+Defines validation schemas for different data types using `zod`. These schemas are used to ensure that values conform to expected types and formats.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| number | z.ZodType | Schema for numbers |
+| string | z.ZodType | Schema for strings |
+| stringColumnValues | z.ZodType | Schema for string column values |
+| stringMultiColumnValues | z.ZodType | Schema for multiple string column values |
+| date | z.ZodType | Schema for dates |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Schema | object | An object containing schemas for different data types |
+
+### `BOOLEAN_OPERATORS`, `NUMERIC_OPERATORS`, `DATE_OPERATORS`, `STRING_OPERATORS`
+#### Description
+These constants define the available operators for boolean, numeric, date, and string data types, respectively. Each operator is associated with a schema that validates the input values.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| BOOLEAN_OPERATORS | object | Operators for boolean data types |
+| NUMERIC_OPERATORS | object | Operators for numeric data types |
+| DATE_OPERATORS | object | Operators for date data types |
+| STRING_OPERATORS | object | Operators for string data types |
+
+### `ALL_OPERATORS`
+#### Description
+Combines all the individual operator groups into a single object, allowing for easy access to all operators regardless of data type.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ALL_OPERATORS | object | Combined operators for all data types |
+
+### `numpyTypeToDataType`
+#### Description
+Maps a numpy data type string to a corresponding `DataType`. This function helps in determining the data type of a column based on its numpy type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | Numpy data type string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| DataType | string | Corresponding data type |
+
+#### Internal Logic
+- Checks the prefix of the numpy type string to determine the data type.
+- Returns "unknown" if the type does not match any known prefixes.
+
+### `getOperatorForDtype`
+#### Description
+Returns the list of operators applicable to a given data type. This function is used to determine which operations can be performed on a column of a specific data type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtype | string | Data type string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| operators | string[] | List of applicable operators |
+
+### `getSchemaForOperator`
+#### Description
+Retrieves the schema associated with a specific operator for a given data type. This is used to validate values against the operator's requirements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dtype | string | Data type string |
+| operator | string | Operator string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| schema | [z.ZodType] | Schema for the operator |
+
+### `isConditionValueValid`
+#### Description
+Checks if a given value is valid for a specified operator by using the associated schema. This function ensures that values used in conditions meet the expected criteria.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| operator | string | Operator string |
+| value | unknown | Value to be validated |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isValid | boolean | Whether the value is valid |
+
+#### Internal Logic
+- Retrieves possible schemas for the operator.
+- Validates the value against each schema and returns true if any validation succeeds.
+
+### `safeGet`
+#### Description
+Safely retrieves a value from an object by key, returning an empty array if the key does not exist. This utility function prevents errors when accessing non-existent keys.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | any | Object to retrieve from |
+| key | string | Key to access |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | [z.ZodType] | Retrieved value or empty array |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| zod | Used for schema validation and description |
+
+## Error Handling
+
+The code uses the `safeGet` function to handle cases where an operator might not exist in the operator objects, returning an empty array to prevent errors.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

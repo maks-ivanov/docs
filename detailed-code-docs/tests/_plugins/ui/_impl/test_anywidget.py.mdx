@@ -1,0 +1,84 @@
+---
+title: "test_anywidget.py"
+---
+
+## High-level description
+
+The target file `test_anywidget.py` is a test suite for verifying the functionality of the `anywidget` integration within the Marimo framework. It uses the `pytest` framework to define and execute tests that ensure the correct behavior of widgets created using the `anywidget` library, particularly focusing on the `CounterWidget` class. The tests check the instantiation, state synchronization, and value retrieval of these widgets when integrated with Marimo's UI system.
+
+## Code Structure
+
+The main components of the code are:
+- `CounterWidget`: A class that extends `AnyWidget` from the `anywidget` library, defining a simple counter widget with JavaScript and CSS for rendering.
+- `TestAnywidget`: A test class containing asynchronous test methods to verify the behavior of `CounterWidget` instances within the Marimo framework.
+
+## Symbols
+
+### `CounterWidget`
+#### Description
+`CounterWidget` is a custom widget class that extends `_anywidget.AnyWidget`. It defines a simple counter widget with JavaScript for rendering and CSS for styling. The widget maintains a `count` property that can be synchronized between Python and JavaScript.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model | object | The model object representing the widget's state. |
+| el | HTMLElement | The HTML element where the widget is rendered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| button | HTMLElement | A button element displaying the current count. |
+
+#### Internal Logic
+- The `_esm` attribute contains JavaScript code that renders a button displaying the current count.
+- The `_css` attribute provides styling for the button.
+- The `count` attribute is a `traitlets.Int` that is synchronized with the frontend.
+
+### `TestAnywidget`
+#### Description
+`TestAnywidget` is a test class that uses `pytest` to define tests for the `CounterWidget`. It checks the instantiation and value synchronization of the widget within the Marimo framework.
+
+#### Methods
+
+##### `test_instances`
+- **Description**: Tests the instantiation of `CounterWidget` and verifies that multiple instances have the same HTML representation and that new instances are distinct.
+- **Inputs**: 
+  - `k`: An instance of `Kernel`.
+  - `exec_req`: An instance of `ExecReqProvider`.
+- **Outputs**: None.
+- **Internal Logic**: 
+  - Runs a script to create and compare `CounterWidget` instances.
+  - Asserts that the HTML representation of the same instance is identical and that of different instances is distinct.
+  - Verifies the count value and type of the widget.
+
+##### `test_value`
+- **Description**: Tests the value synchronization of `CounterWidget` within the Marimo framework.
+- **Inputs**: 
+  - `k`: An instance of `Kernel`.
+  - `exec_req`: An instance of `ExecReqProvider`.
+- **Outputs**: None.
+- **Internal Logic**: 
+  - Runs scripts to create a `CounterWidget` and retrieve its value.
+  - Asserts that the widget's value and count are correctly synchronized and accessible.
+
+## References
+
+- `DependencyManager`: Used to check if the `anywidget` dependency is available.
+- `Kernel`: Represents the execution environment for running the test scripts.
+- `ExecReqProvider`: A utility for creating execution requests for the kernel.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for defining and running the test cases. |
+| `anywidget` | The library being tested for integration with Marimo. |
+| `traitlets` | Used for defining synchronized properties in widgets. |
+
+## Error Handling
+
+The test class uses `pytest.mark.skipif` to skip tests if the `anywidget` dependency is not installed, ensuring that tests are only run when the necessary dependencies are available.
+
+## Logging
+
+No explicit logging is implemented in the test file. However, assertions are used to verify expected outcomes, and any failures will be reported by the `pytest` framework.

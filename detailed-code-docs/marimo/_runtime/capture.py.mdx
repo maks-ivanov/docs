@@ -1,0 +1,112 @@
+---
+title: "capture.py"
+---
+
+## High-level description
+
+The `capture.py` file in the Marimo library provides utilities for capturing and redirecting standard output (`stdout`) and standard error (`stderr`). It includes context managers to capture these outputs into buffers or redirect them to a cell's output area, which is particularly useful in interactive notebook environments where console outputs need to be displayed within the notebook interface.
+
+## Code Structure
+
+The main symbols in the code are context managers and a helper function:
+- `capture_stdout` and `capture_stderr` are context managers for capturing `stdout` and `stderr` respectively.
+- `redirect_stdout` and `redirect_stderr` are context managers for redirecting `stdout` and `stderr` to a cell's output area.
+- `_redirect` is a helper function used by the redirect context managers to append messages to the output.
+
+## Symbols
+
+### `capture_stdout`
+#### Description
+Captures the standard output (`stdout`) into a buffer, allowing the user to access any printed output within the context.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type      | Description                        |
+|:-------|:----------|:-----------------------------------|
+| buffer | `io.StringIO` | A buffer containing captured `stdout`. |
+
+#### Internal Logic
+Uses `contextlib.redirect_stdout` to temporarily redirect `stdout` to an `io.StringIO` buffer, which is then yielded to the user.
+
+### `capture_stderr`
+#### Description
+Captures the standard error (`stderr`) into a buffer, allowing the user to access any error messages or logs within the context.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type      | Description                        |
+|:-------|:----------|:-----------------------------------|
+| buffer | `io.StringIO` | A buffer containing captured `stderr`. |
+
+#### Internal Logic
+Uses `contextlib.redirect_stderr` to temporarily redirect `stderr` to an `io.StringIO` buffer, which is then yielded to the user.
+
+### `_redirect`
+#### Description
+A helper function that appends a given message to the output using the `plain_text` function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg  | `str` | The message to be redirected. |
+
+#### Outputs
+None
+
+#### Internal Logic
+Appends the message to the output by converting it to a plain text format using the `plain_text` function.
+
+### `redirect_stdout`
+#### Description
+Redirects the standard output (`stdout`) to a cell's output area, making it visible in the notebook interface.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+Temporarily replaces `sys.stdout.write` with the `_redirect` function to capture and redirect output to the cell's output area. Restores the original `sys.stdout.write` after the context is exited.
+
+### `redirect_stderr`
+#### Description
+Redirects the standard error (`stderr`) to a cell's output area, making it visible in the notebook interface.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+Temporarily replaces `sys.stderr.write` with the `_redirect` function to capture and redirect error messages to the cell's output area. Restores the original `sys.stderr.write` after the context is exited.
+
+## References
+
+- The `plain_text` function from `marimo._plugins.stateless.plain_text` is used to format messages for output.
+- The `_output` module from `marimo._runtime.output` is used to append messages to the output.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `contextlib` | Provides context manager utilities for redirecting streams. |
+| `io` | Used for creating in-memory stream buffers. |
+| `sys` | Accesses system-specific parameters and functions, particularly for `stdout` and `stderr`. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond the basic context management provided by `contextlib`. It assumes that the redirection and restoration of `stdout` and `stderr` will succeed without exceptions.
+
+## Logging
+
+No explicit logging is implemented in this code. The focus is on capturing and redirecting output rather than logging it.
+
+## API/Interface Reference
+
+The file does not define an API with endpoints but provides context managers that can be used in Python code to capture or redirect output streams. These are typically used in interactive environments like Jupyter notebooks.

@@ -1,0 +1,73 @@
+---
+title: "envinfo.py"
+---
+
+## High-level description
+
+The `envinfo.py` file in the `marimo` library is designed to gather and provide detailed information about the system environment. This includes the operating system details, Python version, and versions of certain binaries and required modules. The primary purpose of this file is to facilitate debugging and system diagnostics by providing a comprehensive snapshot of the environment in which the `marimo` library is running.
+
+## Code Structure
+
+The main symbols in the code are two functions: `is_win11` and `get_system_info`. The `is_win11` function is used within `get_system_info` to determine if the operating system is Windows 11. The `get_system_info` function aggregates various system details into a dictionary, utilizing helper functions from the `marimo._utils.health` module to gather specific information about installed binaries and required modules.
+
+## Symbols
+
+### `is_win11`
+#### Description
+The `is_win11` function checks if the current operating system is Windows 11. It does this by examining the build number of the Windows version.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Returns `True` if the OS is Windows 11, otherwise `False`. |
+
+#### Internal Logic
+- The function checks if the `sys` module has the attribute `getwindowsversion`.
+- If it does, it retrieves the Windows version and checks if the build number is 22000 or higher, which corresponds to Windows 11.
+- If the build number is 22000 or higher, it returns `True`; otherwise, it returns `False`.
+
+### `get_system_info`
+#### Description
+The `get_system_info` function collects and returns a dictionary containing information about the system environment, including the operating system, processor, Python version, and versions of certain binaries and required modules.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| system_info | dict[str, Union[str, dict[str, str]]] | A dictionary containing system information. |
+
+#### Internal Logic
+- The function first determines the operating system version using the `platform` module.
+- It checks if the system is Windows and if it is Windows 11 using the `is_win11` function.
+- It constructs a dictionary `info` with keys for the `marimo` version, operating system, OS version, processor type, and Python version.
+- It then creates a `binaries` dictionary to store the versions of Chrome and Node.js, using `get_chrome_version` and `get_node_version` functions from `marimo._utils.health`.
+- It retrieves a list of required modules and their versions using `get_required_modules_list`.
+- Finally, it combines all this information into a single dictionary and returns it.
+
+## References
+
+- `get_chrome_version`: A function from `marimo._utils.health` that retrieves the version of Google Chrome installed on the system.
+- `get_node_version`: A function from `marimo._utils.health` that retrieves the version of Node.js installed on the system.
+- `get_required_modules_list`: A function from `marimo._utils.health` that retrieves a list of required Python modules and their versions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `platform` | Used to retrieve information about the operating system. |
+| `sys` | Used to access system-specific parameters and functions. |
+| `marimo.__version__` | Provides the current version of the `marimo` library. |
+| `marimo._utils.health` | Provides utility functions to retrieve versions of Chrome, Node.js, and required modules. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `envinfo.py` file. However, the functions from `marimo._utils.health` used in this file handle potential errors, such as missing binaries or modules, by returning `None` or indicating that a module is "missing".
+
+## Logging
+
+There is no explicit logging implemented in this file. However, the information returned by `get_system_info` can be used for logging purposes in other parts of the application to aid in debugging and diagnostics.

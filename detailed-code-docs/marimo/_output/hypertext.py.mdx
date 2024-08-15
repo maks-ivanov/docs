@@ -1,0 +1,87 @@
+---
+title: "hypertext.py"
+---
+
+## High-level description
+
+The `hypertext.py` file in the Marimo library defines a class `Html` that serves as a wrapper around HTML text, allowing it to be used as an output in applications. This class provides methods for rendering HTML content, managing virtual file references, and formatting HTML elements with various styles and alignments. Additionally, the file includes a utility function `_hypertext_cleanup` for cleaning up virtual file references and a helper function `_js` for embedding JavaScript within HTML.
+
+## Code Structure
+
+The main symbol in this file is the `Html` class, which inherits from the `MIME` protocol. The `Html` class interacts with the runtime context to manage virtual file references and provides several methods for manipulating HTML content. The `_hypertext_cleanup` function is used internally by the `Html` class to manage virtual file references. The `_js` function is a standalone utility for embedding JavaScript in HTML.
+
+## Symbols
+
+### `Html`
+#### Description
+The `Html` class is a wrapper around HTML text that can be used as an output in applications. It allows for rendering HTML content, managing virtual file references, and formatting HTML elements with various styles and alignments.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | A string of HTML content to be wrapped by the `Html` class. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _mime_ | tuple[KnownMimeType, str] | A tuple containing the MIME type and the HTML text. |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the HTML element with the provided text and manages virtual file references by interacting with the runtime context.
+- **Virtual File Management**: The class maintains a list of virtual file names referenced by the HTML element and ensures proper reference counting to prevent premature disposal.
+- **Formatting Methods**: The class provides methods such as `batch`, `callout`, `center`, `right`, `left`, and `style` to format and style the HTML content.
+- **Destruction**: A finalizer is set up to clean up virtual file references when the object is destroyed.
+
+### `_hypertext_cleanup`
+#### Description
+Cleans up side-effects related to the initialization of `Html` by dereferencing virtual file names in the runtime context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_filenames | list[str] | A list of virtual file names to be dereferenced. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Attempts to get the current runtime context.
+- If the context supports virtual files, it dereferences each file in the provided list.
+
+### `_js`
+#### Description
+Creates an `Html` object containing a JavaScript `&lt;script&gt;` tag with the provided text.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str | JavaScript code to be embedded within a `&lt;script&gt;` tag. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Html | Html | An `Html` object containing the JavaScript code. |
+
+## References
+
+- The `Html` class references the `MIME` protocol from `marimo._output.mime`.
+- The `_hypertext_cleanup` function references the `get_context` and `ContextNotInitializedError` from `marimo._runtime.context`.
+- The `Html` class uses utilities like `flatten_string` from `marimo._output.utils`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `weakref` | Used for setting up a finalizer to clean up virtual file references. |
+| `marimo._messaging.mimetypes.KnownMimeType` | Provides a literal type for known MIME types. |
+| `marimo._output.mime.MIME` | Protocol for objects that can be displayed using Marimo's media viewer. |
+| `marimo._output.rich_help.mddoc` | Decorator for adding rich help documentation to classes and methods. |
+| `marimo._output.utils.flatten_string` | Utility function for flattening strings by removing newlines. |
+
+## Error Handling
+
+- The `_hypertext_cleanup` function handles `ContextNotInitializedError` to ensure that cleanup operations do not fail if the context is not initialized.
+
+## TODOs
+
+- The `_js` function contains a TODO comment indicating the need for interpolation of Python values into JavaScript.

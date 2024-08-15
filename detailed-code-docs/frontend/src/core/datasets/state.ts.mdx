@@ -1,0 +1,80 @@
+---
+title: "state.ts"
+---
+
+## High-level description
+
+The target file, `state.ts`, is part of the frontend codebase and is responsible for managing the state of datasets within the application. It defines the initial state of datasets, provides a set of actions to manipulate this state, and exposes hooks for accessing the state and actions. The file uses the `jotai` library for state management and integrates with other parts of the application to handle datasets and their columns.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `initialState`: Defines the initial structure of the datasets state.
+- `createReducerAndAtoms`: A utility function that creates a reducer and associated atoms for state management.
+- `datasetsAtom`: An atom representing the current state of datasets.
+- `useDatasets` and `useDatasetsActions`: Hooks for accessing the datasets state and actions, respectively.
+- `exportedForTesting`: An object that exports certain internal components for testing purposes.
+
+## Symbols
+
+### `initialState`
+#### Description
+Defines the initial state of the datasets, including tables, expanded tables, expanded columns, and column previews.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `DatasetsState` | The initial state of the datasets. |
+
+### `createReducerAndAtoms`
+#### Description
+A utility function that creates a reducer and associated atoms for managing the datasets state. It defines actions for manipulating the state, such as adding datasets, filtering datasets, toggling tables and columns, and managing column previews.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| initialState | `() =&gt; DatasetsState` | A function that returns the initial state. |
+| reducers | `object` | An object defining reducer functions for state manipulation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| reducer | `Reducer` | The reducer function for state management. |
+| createActions | `Function` | A function to create actions for dispatching state changes. |
+| valueAtom | `Atom` | An atom representing the current state. |
+| useActions | `Function` | A hook to access the actions. |
+
+### `datasetsAtom`
+#### Description
+An atom that holds the current state of datasets, allowing components to subscribe to changes in the datasets state.
+
+### `useDatasets`
+#### Description
+A React hook that provides access to the current datasets state by using the `useAtomValue` hook from `jotai`.
+
+### `useDatasetsActions`
+#### Description
+A React hook that provides access to the actions for manipulating the datasets state, allowing components to dispatch actions to update the state.
+
+### `exportedForTesting`
+#### Description
+An object that exports the reducer, actions creator, and initial state for testing purposes, enabling unit tests to verify the functionality of the state management logic.
+
+## References
+
+- `createReducerAndAtoms` from `@/utils/createReducer`: This utility function is crucial for understanding how the reducer and atoms are created and managed.
+- `previewDatasetColumn` from `../network/requests`: This function is used to fetch previews of dataset columns, indicating integration with network requests.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management, providing atoms and hooks for accessing and manipulating state. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the reducer functions. It assumes that the actions and state transitions are valid and do not produce errors. Any network-related errors, such as those from `previewDatasetColumn`, would need to be handled elsewhere in the application.
+
+## Logging
+
+The code does not include any logging mechanisms. If logging is required, it would need to be added to the reducer functions or the network request functions to capture state changes and network interactions.

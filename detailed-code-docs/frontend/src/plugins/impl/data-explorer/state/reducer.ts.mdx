@@ -1,0 +1,74 @@
+---
+title: "reducer.ts"
+---
+
+## High-level description
+
+The code in `frontend/src/plugins/impl/data-explorer/state/reducer.ts` is responsible for managing the state of a chart specification in a data exploration tool. It defines a reducer and associated actions to manipulate the state of a chart, including its schema, mark type, and encoding. Additionally, it provides mechanisms to derive related chart specifications based on the current state and query conditions.
+
+## Code Structure
+
+- **State Management**: The code uses a reducer pattern to manage the state of a chart specification (`ChartSpec`), which includes properties like `mark`, `encoding`, `config`, and `schema`.
+- **Atoms**: The state is managed using Jotai atoms, which are used to create reactive state management in the application.
+- **Actions**: A set of actions is defined to update different parts of the chart specification state, such as setting the schema, mark, and encoding.
+- **Derived State**: The code also defines a derived state (`relatedChartSpecsAtom`) that computes related chart specifications based on the current state and query conditions.
+
+## References
+
+- **Jotai**: The code uses Jotai for state management, specifically the `atom` and `useSetAtom` functions.
+- **CompassQL**: The code references several utilities from CompassQL, such as `Schema`, `SHORT_WILDCARD`, and query-related functions.
+- **Utility Functions**: Functions like `removeUndefined` and `toQuery` are used to process and transform the state and queries.
+
+## Symbols
+
+### `initialState`
+#### Description
+Defines the initial state of a `ChartSpec` with default values for `mark`, `encoding`, `config`, and `schema`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `ChartSpec` | The initial state of the chart specification. |
+
+### `chartSpecAtom`
+#### Description
+An atom that holds the current state of the chart specification, allowing components to reactively access and update this state.
+
+### `useChartSpecActions`
+#### Description
+Provides a hook to access actions that can update the chart specification state.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Object | An object containing functions to update the chart specification state. |
+
+### `relatedChartSpecsAtom`
+#### Description
+An atom that computes related chart specifications based on the current chart specification and query conditions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `Partial&lt;ResultingCharts&gt;` | A partial set of resulting charts based on the current query and chart specification. |
+
+#### Internal Logic
+- Checks if the current chart specification has a schema.
+- Converts the chart specification to a query using `toQuery`.
+- Determines the type of related views to show based on the query's specificity and completeness.
+- Returns different sets of related charts depending on the query's characteristics.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management with atoms. |
+| `compassql` | Provides utilities for schema and query handling. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the reducer or atom logic, as it primarily focuses on state management. Error handling is likely managed at a higher level in the application.
+
+## Logging
+
+No logging mechanisms are implemented in this code. Any logging would be handled by the utilities or higher-level components that use this state management logic.

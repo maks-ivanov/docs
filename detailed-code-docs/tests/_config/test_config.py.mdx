@@ -1,0 +1,164 @@
+---
+title: "test_config.py"
+---
+
+## High-level description
+
+The `test_config.py` file contains unit tests for the configuration management functionalities of the Marimo application. These tests ensure that configuration settings can be correctly merged, overridden, and manipulated, including handling sensitive information like API keys. The tests validate the behavior of configuration-related functions such as merging configurations, masking secrets, and removing secret placeholders.
+
+## Code Structure
+
+The main symbols in the code are functions that test various aspects of the configuration management system. These functions utilize configuration-related utilities imported from the `marimo._config.config` module. The tests are organized to cover different scenarios, such as partial and full configuration overrides, handling unknown configuration keys, and managing sensitive information.
+
+## References
+
+The code references several functions and constants from the `marimo._config.config` module, including:
+- `DEFAULT_CONFIG`
+- `MarimoConfig`
+- `mask_secrets`
+- `merge_config`
+- `merge_default_config`
+- `remove_secret_placeholders`
+
+These references are crucial for understanding how the tests interact with the configuration management system.
+
+## Symbols
+
+### `assert_config`
+#### Description
+The `assert_config` function is a helper function used to assert that a given configuration override, when merged with the default configuration, results in the expected configuration.
+
+#### Inputs
+| Name     | Type         | Description                        |
+|:---------|:-------------|:-----------------------------------|
+| override | MarimoConfig | The configuration to be overridden |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Merges the provided `override` configuration with the default configuration using `merge_default_config`.
+- Asserts that the resulting configuration matches the expected configuration, which is a combination of `DEFAULT_CONFIG` and the `override`.
+
+### `test_configure_partial_keymap`
+#### Description
+Tests the configuration of a partial keymap override.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `assert_config` with a `MarimoConfig` that specifies a partial keymap configuration.
+
+### `test_configure_full`
+#### Description
+Tests the configuration of a full set of configuration options.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `assert_config` with a `MarimoConfig` that specifies a comprehensive set of configuration options, including completion, save, keymap, and package management settings.
+
+### `test_configure_unknown`
+#### Description
+Tests the behavior when an unknown configuration key is provided.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `assert_config` with a configuration that includes an unknown key, ensuring that the system can handle unexpected configuration keys gracefully.
+
+### `test_merge_config`
+#### Description
+Tests the merging of configurations, ensuring that existing keys are preserved and new keys are added.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Merges a configuration containing an API key with another configuration specifying a model.
+- Asserts that the API key is preserved and the model is added in the resulting configuration.
+
+### `test_merge_config_with_keymap_overrides`
+#### Description
+Tests the merging of configurations with keymap overrides, ensuring that overrides are correctly handled.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Merges configurations with different keymap presets and overrides.
+- Asserts that the resulting configuration reflects the correct merging behavior, including the removal of specific overrides.
+
+### `test_mask_secrets`
+#### Description
+Tests the masking of secrets in a configuration, ensuring sensitive information is obscured.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Masks the API key in a configuration and asserts that it is replaced with a placeholder.
+- Ensures that the original configuration remains unmodified.
+
+### `test_mask_secrets_empty`
+#### Description
+Tests the masking of secrets when the secret key is absent or empty.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Masks a configuration without an API key and asserts that no placeholder is added.
+- Tests the behavior when the API key is an empty string, ensuring it remains unchanged.
+
+### `test_remove_secret_placeholders`
+#### Description
+Tests the removal of secret placeholders from a configuration.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Removes placeholders from a configuration and asserts that the keys with placeholders are removed.
+- Ensures that the original configuration remains unmodified.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._config.config` | Provides configuration management utilities and constants used in the tests. |
+
+## Error Handling
+
+The tests include type ignore comments to handle specific type-checking scenarios, such as unknown keys in typed dictionaries. This ensures that the tests can focus on functional correctness without being hindered by type-checking limitations.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the test code. The tests rely on assertions to validate behavior, which is typical for unit tests.

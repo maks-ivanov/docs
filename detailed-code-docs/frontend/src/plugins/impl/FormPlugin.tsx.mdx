@@ -1,0 +1,125 @@
+---
+title: "FormPlugin.tsx"
+---
+
+## High-level description
+
+The `FormPlugin.tsx` file defines a React component called `FormPlugin` that is used to create a form with customizable buttons and validation logic. It leverages a plugin architecture to associate a form with a submit button, capturing value updates from an associated plugin and handling form submission, validation, and input clearing. The form can be customized with various properties such as labels, tooltips, and button states.
+
+## Code Structure
+
+- **FormPlugin**: The main export of the file, created using a plugin builder pattern. It defines the data schema, functions, and rendering logic for the form.
+- **FormWrapper**: A React component that wraps the form logic, handling state synchronization, validation, and button interactions.
+- **Form**: A component that manages the internal state of the form and listens for value updates from associated UI elements.
+- **clearInputs**: A utility function to reset input elements within the form.
+
+## References
+
+- **UI_ELEMENT_REGISTRY**: Used to manage and synchronize UI elements' values.
+- **MarimoValueInputEvent**: Custom event used to handle value updates from UI elements.
+- **Button**: A UI component used for rendering form buttons.
+- **Tooltip**: A UI component used to provide tooltips for form buttons.
+
+## Symbols
+
+### `FormPlugin`
+#### Description
+The `FormPlugin` is a plugin that creates a form with a submit button, capturing value updates from an associated plugin. It handles form submission, validation, and input clearing.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Data | Configuration data for the form, including labels, tooltips, and button states. |
+| functions | Functions | Functions available to the form, such as validation logic. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered form component. |
+
+### `FormWrapper`
+#### Description
+`FormWrapper` is a React component that manages the form's state, handling validation, submission, and button interactions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| children | React.ReactNode | The child components to be rendered within the form. |
+| currentValue | T | The current value of the form. |
+| newValue | T | The new value to be set upon form submission. |
+| setValue | Setter&lt;T&gt; | Function to update the form's value. |
+| label | string | The label for the form. |
+| bordered | boolean | Whether the form should have a border. |
+| loading | boolean | Whether the form is in a loading state. |
+| submitButtonLabel | string | The label for the submit button. |
+| submitButtonTooltip | string | Tooltip for the submit button. |
+| submitButtonDisabled | boolean | Whether the submit button is disabled. |
+| clearOnSubmit | boolean | Whether to clear inputs upon submission. |
+| showClearButton | boolean | Whether to show a clear button. |
+| clearButtonLabel | string | The label for the clear button. |
+| clearButtonTooltip | string | Tooltip for the clear button. |
+| validate | Function | Validation function for the form. |
+| shouldValidate | boolean | Whether validation should be performed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered form component. |
+
+#### Internal Logic
+- Manages form state and synchronization between `currentValue` and `newValue`.
+- Handles form submission, including validation and state updates.
+- Provides button interactions, including submit and clear actions.
+
+### `Form`
+#### Description
+`Form` is a component that manages the internal state of the form and listens for value updates from associated UI elements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| elementId | string | The ID of the associated UI element. |
+| value | T | The current value of the form. |
+| setValue | Setter&lt;T&gt; | Function to update the form's value. |
+| children | React.ReactNode | The child components to be rendered within the form. |
+| validate | Function | Validation function for the form. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered form component. |
+
+#### Internal Logic
+- Initializes and manages the internal state of the form.
+- Listens for `MarimoValueInputEvent` to update the form's value.
+- Synchronizes the form's value with the associated UI element.
+
+### `clearInputs`
+#### Description
+`clearInputs` is a utility function that traverses input elements within a form and resets them.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| element | Element | The root element to start the traversal. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | void | Resets input elements within the form. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation and schema definition. |
+| `lucide-react` | Provides icons for the UI, such as the loading spinner. |
+
+## Error Handling
+- The `FormWrapper` component handles validation errors by setting an error state and displaying an error banner if validation fails.
+
+## Logging
+- Errors are logged using the `Logger` utility when validation fails or when there are issues with UI elements.
+
+## TODOs
+- There is a TODO comment in the `UIElement` class suggesting an optimization for event handling by reducing the number of event listeners on the document.

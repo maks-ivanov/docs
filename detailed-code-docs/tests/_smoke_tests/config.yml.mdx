@@ -1,0 +1,77 @@
+---
+title: "config.yml"
+---
+
+## High-level description
+
+The `config.yml` file is a configuration file used for smoke testing various Python scripts. It categorizes scripts into different sections based on their input requirements, error conditions, and whether they should be skipped during testing. The file provides specific reasons for test failures or skips, which helps in identifying issues and managing test execution.
+
+## Code Structure
+
+The configuration file is structured into several sections, each representing a category of scripts:
+
+1. **Inputs**: Scripts that require specific input values for testing.
+2. **Errors**: Scripts that are expected to fail with specific error messages.
+3. **Not a marimo app**: Scripts that are not relevant to the Marimo application and should be skipped.
+4. **Should be fixed**: Scripts that are known to be flaky or have specific issues that need fixing.
+
+Each script is associated with specific attributes such as `input`, `failed_reason`, or `skip`, which dictate how the script should be handled during testing.
+
+## Symbols
+
+### `files`
+#### Description
+The `files` section is the main container in the configuration file, listing all the scripts to be tested along with their respective configurations. It organizes scripts into categories based on their testing requirements and expected outcomes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ansi.py | string | Script that requires input "y". |
+| stdin.py | string | Script that requires input "y". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bugs/924.py | string | Expected to fail with "ModuleNotFoundError: No module named 'micropip'". |
+| third_party/ipython_display.py | string | Expected to fail with "ModuleNotFoundError: No module named 'tikz'". |
+| bugs/1055.py | string | Expected to fail with "ModuleNotFoundError: No module named 'manim_slides'". |
+| bugs/1270.py | string | Expected to fail with "UDF failed: DataFrame constructor". |
+| stop.py | string | Expected to fail with "MarimoStopError". |
+| charts/1mil_flights.py | string | Expected to fail with "MarimoStopError". |
+| errors.py | string | Expected to fail with "UnparsableError". |
+| reactive_plots.py | string | Expected to fail with "MarimoStopError". |
+| model_comparison/model_comparison.py | string | Expected to fail with "MarimoStopError". |
+| third_party/duckdb_example.py | string | Expected to fail with "MarimoStopError". |
+| custom_server/my_server.py | boolean | Skipped because it is not a Marimo app. |
+| bugs/1086.py | boolean | Skipped because it runs `plt.show()` which blocks the test. |
+| ws.py | boolean | Skipped. |
+| embeddings/debugging_embeddings.py | boolean | Skipped. |
+| embeddings/embedding_numbers.py | boolean | Skipped. |
+| embeddings/interactive_cluster_analysis.py | boolean | Skipped. |
+| embeddings/rotational_invariance.py | boolean | Skipped. |
+| embeddings/google_scholar.py | boolean | Skipped. |
+| embeddings/us_counties.py | boolean | Skipped. |
+| ai/question-pdf.py | boolean | Skipped. |
+| optimization/smallest_enclosing_circle.py | boolean | Skipped because it doesn't work on macOS. |
+| optimization/regularization_and_sparsity.py | boolean | Skipped because it doesn't work on macOS. |
+| optimization/signals/examples.py | boolean | Skipped because it doesn't work on macOS. |
+| optimization/signals/app.py | boolean | Skipped because it doesn't work on macOS. |
+| refresh.py | boolean | Skipped because it is flaky and fails with "MarimoStopError". |
+| iplot.py | boolean | Skipped because it fails with "RuntimeError: cannot schedule new futures after interpreter shutdown". |
+| pdb_test.py | string | Expected to fail with "AttributeError: module 'marimo' has no attribute 'pdb'". |
+
+## Side Effects
+
+There are no direct side effects from this configuration file itself, as it is used to guide the testing framework on how to handle each script.
+
+## Dependencies
+
+This configuration file does not directly list dependencies, but it references scripts that may have their own dependencies, such as specific Python modules.
+
+## Error Handling
+
+The file specifies expected error messages for certain scripts, which helps in identifying known issues and preventing unnecessary debugging during test execution.
+
+## TODOs
+
+The file implicitly suggests TODOs for scripts listed under the "Should be fixed" section, indicating that these scripts require attention to resolve the issues mentioned.

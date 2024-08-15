@@ -1,0 +1,130 @@
+---
+title: "conftest.py"
+---
+
+## High-level description
+
+The `tests/conftest.py` file is a configuration file for the pytest testing framework. It defines fixtures and mock classes that are used to set up the testing environment for the `marimo` project. These fixtures provide a controlled environment for testing various components of the `marimo` application, such as the kernel, streams, and temporary files. The file also includes mock implementations of standard input, output, and error streams to capture and test the behavior of the application during execution.
+
+## Code Structure
+
+The main components in the code are interconnected through the use of fixtures and mock classes. The `MockedKernel` class is a central component that initializes a mock kernel environment, including mock streams for capturing input and output. The fixtures defined in the file provide instances of these mock components to the test functions, allowing them to interact with the mock environment. The temporary file fixtures create and manage temporary files for testing file-related functionality.
+
+## Symbols
+
+### `_MockStream`
+#### Description
+The `_MockStream` class is a mock implementation of the `ThreadSafeStream` class. It captures the operations sent through the stream by storing them in a list of messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| op | str | The operation to be written to the stream. |
+| data | dict[Any, Any] | The data associated with the operation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The method does not return a value. |
+
+#### Internal Logic
+The `write` method appends a tuple of the operation and data to the `messages` list, capturing the stream's output.
+
+### `MockStdout`
+#### Description
+The `MockStdout` class is a mock implementation of the `ThreadSafeStdout` class. It captures the output sent through the stream by storing it in a list of messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | _MockStream | The mock stream to which the output is written. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The method does not return a value. |
+
+#### Internal Logic
+The `_write_with_mimetype` method appends the data to the `messages` list and returns the length of the data.
+
+### `MockStderr`
+#### Description
+The `MockStderr` class is a mock implementation of the `ThreadSafeStderr` class. It captures the error output sent through the stream by storing it in a list of messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | _MockStream | The mock stream to which the error output is written. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The method does not return a value. |
+
+#### Internal Logic
+The `_write_with_mimetype` method appends the data to the `messages` list and returns the length of the data.
+
+### `MockStdin`
+#### Description
+The `MockStdin` class is a mock implementation of the `ThreadSafeStdin` class. It echoes the prompt provided to it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | _MockStream | The mock stream from which input is read. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str | str | The echoed prompt. |
+
+#### Internal Logic
+The `_readline_with_prompt` method returns the prompt string, simulating user input.
+
+### `MockedKernel`
+#### Description
+The `MockedKernel` class initializes a mock kernel environment, including mock streams and a kernel instance. It is used to set up a controlled environment for testing the `marimo` application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not take inputs directly. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class does not return a value. |
+
+#### Internal Logic
+The `__post_init__` method initializes the mock streams and kernel, patches the main module, and sets up the kernel context. The `teardown` method cleans up the context and stops the watchers for the streams.
+
+### `ExecReqProvider`
+#### Description
+The `ExecReqProvider` class is a factory for creating `ExecutionRequest` objects, abstracting away the cell ID management.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code to be executed in the request. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ExecutionRequest | ExecutionRequest | The execution request object. |
+
+#### Internal Logic
+The `get` method creates a new cell ID using the `CellManager` and returns an `ExecutionRequest` with the provided code. The `get_with_id` method allows specifying a custom cell ID.
+
+## Dependencies
+
+The code relies on several external libraries and modules, including `pytest` for testing, `dataclasses` for defining data structures, and various components from the `marimo` package for managing the kernel, streams, and execution requests.
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| pytest | Used for defining and managing test fixtures. |
+| dataclasses | Used for defining data structures with default values. |
+| marimo | Provides components for managing the kernel, streams, and execution requests. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic exception raising. The mock classes and fixtures are designed to simulate the behavior of the `marimo` application in a controlled environment, and any errors encountered during testing would be handled by the pytest framework.

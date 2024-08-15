@@ -1,0 +1,101 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file `types.ts` defines TypeScript types and utility functions related to data frames, specifically focusing on column identifiers and data types. It provides a mapping between NumPy data types and a more general `DataType` used within the application, ensuring type safety and consistency when handling data frames.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ColumnId` is a type alias for a strongly typed string or number, used to uniquely identify columns.
+- `NumPyType` and `DataType` are used to represent data types, with `NumPyType` being a string and `DataType` being imported from another module.
+- `RawColumnDataTypes` and `ColumnDataTypes` are types that map `ColumnId` to data types, with `ColumnDataTypes` using a `Map` for key preservation.
+- `NUMPY_DTYPES` is a constant array of supported NumPy data types.
+- `numpyTypeToDataType` is a function that converts a `NumPyType` to a `DataType`.
+
+## Symbols
+
+### `ColumnId`
+#### Description
+`ColumnId` is a type alias for a strongly typed string or number, used to uniquely identify columns in a data frame. It ensures that only valid identifiers are used for columns.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `NumPyType`
+#### Description
+`NumPyType` is a type alias for a string representing a NumPy data type. It is used to specify the data type of a column in a data frame.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `RawColumnDataTypes`
+#### Description
+`RawColumnDataTypes` is a type alias for an array of tuples, where each tuple contains a `ColumnId` and a pair of `DataType` and `NumPyType`. It represents a list of column identifiers and their associated data types.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `ColumnDataTypes`
+#### Description
+`ColumnDataTypes` is a type alias for a `Map` that associates a `ColumnId` with a `NumPyType`. It is used to store and retrieve the data type of a column efficiently, preserving the distinction between string and number keys.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `NUMPY_DTYPES`
+#### Description
+`NUMPY_DTYPES` is a constant array of strings representing the supported NumPy data types. It is used to validate and convert data types within the application.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `numpyTypeToDataType`
+#### Description
+The `numpyTypeToDataType` function converts a given `NumPyType` to a more general `DataType`. It uses a switch statement to map specific NumPy data types to broader categories like "integer", "number", "string", "boolean", and "date".
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| nptype | string | A NumPy data type to be converted. |
+
+#### Outputs
+| Name     | Type     | Description                          |
+|:---------|:---------|:-------------------------------------|
+| dataType | DataType | The corresponding general data type. |
+
+#### Internal Logic
+The function uses a switch statement to match the input `nptype` against known NumPy data types. It returns a corresponding `DataType` based on the category of the NumPy type. If the `nptype` does not match any known type, it logs the unexpected type using `logNever` and returns "unknown".
+
+## References
+
+- `DataType` is imported from `@/core/kernel/messages`, indicating its use in defining the general data type within the application.
+- `logNever` is imported from `@/utils/assertNever`, used for logging unexpected cases in the `numpyTypeToDataType` function.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `@/core/kernel/messages` | Provides the `DataType` type.  |
+| `@/utils/assertNever`    | Provides the `logNever` function for logging unexpected cases. |
+
+## Error Handling
+
+The `numpyTypeToDataType` function uses `logNever` to handle unexpected `NumPyType` values, logging them as warnings without throwing an error. This approach allows the application to continue running even if an unknown data type is encountered.

@@ -1,0 +1,70 @@
+---
+title: "form.test.tsx"
+---
+
+## High-level description
+
+The target file is a test suite for a React component that renders forms based on Zod schemas. It uses the `vitest` testing framework to ensure that forms generated from different schema options render correctly and match expected snapshots. The test suite is designed to verify that the form rendering logic does not change unexpectedly, ensuring consistency in the UI.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `Subject`: A React component that sets up a form using `react-hook-form` and a Zod schema, providing context for column types.
+- `describe` and `it.each`: Functions from `vitest` used to define and execute test cases.
+- `render`: A function from `@testing-library/react` used to render the `Subject` component for testing.
+- `TransformTypeSchema`: A Zod schema that defines various transformation types, used to generate different form configurations for testing.
+
+## Symbols
+
+### `Subject`
+#### Description
+The `Subject` component is a React component that sets up a form using `react-hook-form` and a Zod schema. It provides a context for column types using `ColumnInfoContext`.
+
+#### Inputs
+| Name  | Type     | Description          |
+|:------|:---------|:---------------------|
+| schema | z.ZodType | The Zod schema used to define the form structure and validation rules. |
+
+#### Outputs
+The `Subject` component does not have direct outputs but renders a form based on the provided schema.
+
+#### Internal Logic
+- Uses `useForm` from `react-hook-form` to create a form instance with a Zod resolver for validation.
+- Wraps the `ZodForm` component with a `ColumnInfoContext.Provider` to provide column type information.
+
+### `describe("renderZodSchema", () =&gt; {...})`
+#### Description
+This is a test suite that verifies the rendering of forms based on different Zod schema options. It ensures that the forms match expected snapshots.
+
+#### Internal Logic
+- Retrieves the options from `TransformTypeSchema`.
+- Uses `it.each` to iterate over each schema option and render the `Subject` component.
+- Compares the rendered form's snapshot to ensure it matches the expected output.
+
+## References
+
+- `ZodForm`: A component from `form.tsx` that renders a form based on a Zod schema.
+- `TransformTypeSchema`: A Zod schema from `schema.ts` that defines various transformation types.
+- `ColumnInfoContext`: A context from `context.ts` that provides column type information.
+
+## Dependencies
+
+| Dependency                  | Purpose                                                                 |
+|:----------------------------|:------------------------------------------------------------------------|
+| `vitest`                    | Provides the testing framework for defining and running test cases.     |
+| `@testing-library/react`    | Used for rendering React components in a test environment.              |
+| `react-hook-form`           | Manages form state and validation in React components.                  |
+| `@hookform/resolvers/zod`   | Integrates Zod validation with `react-hook-form`.                       |
+| `zod`                       | A TypeScript-first schema declaration and validation library.           |
+
+## Error Handling
+
+The test suite does not explicitly handle errors beyond the basic assertions provided by `vitest`. If a form does not render as expected, the test will fail, indicating a potential issue with the form rendering logic.
+
+## Logging
+
+The test suite does not implement any logging mechanisms. It relies on `vitest` to report test results and any assertion failures.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

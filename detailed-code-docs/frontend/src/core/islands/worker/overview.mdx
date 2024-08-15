@@ -1,0 +1,37 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The directory is focused on integrating Python execution within a web application using WebAssembly (Wasm) and Pyodide. It contains components that manage the WebAssembly environment, handle remote procedure calls (RPC), and facilitate communication between the main thread and a Web Worker. The main components include the `ReadonlyWasmController` for managing a read-only Wasm environment and the `worker.tsx` file for setting up a Web Worker to execute Python code.
+
+## What does it do?
+
+The code in this directory enables a web application to execute Python code in the browser using WebAssembly and Pyodide. It sets up a Web Worker that initializes the Pyodide environment, allowing Python code to run asynchronously without blocking the main thread. The `ReadonlyWasmController` manages the Wasm environment, handling tasks like bootstrapping the Pyodide environment, mounting filesystems, and starting sessions. The worker communicates with the main thread through a message-based system, processing requests to start sessions, load Python packages, and execute functions on a Python bridge. This setup allows for efficient and isolated execution of Python code within a web application, leveraging the capabilities of WebAssembly and Pyodide.
+
+## Entry points
+
+The main files in this directory are `controller.ts` and `worker.tsx`. 
+
+- `controller.ts` contains the `ReadonlyWasmController` class, which extends the `DefaultWasmController` to manage a read-only WebAssembly environment. It provides methods for bootstrapping the Pyodide environment, mounting filesystems, and starting sessions with specific configurations.
+
+- `worker.tsx` is responsible for setting up a Web Worker that integrates with the Pyodide environment. It initializes Pyodide, handles RPC for starting sessions, loading packages, and executing functions on a Python bridge. The worker uses a message-based transport system to communicate with the main thread, allowing for asynchronous operations and error handling.
+
+## Key Files
+
+- **`controller.ts`**: Contains the `ReadonlyWasmController` class, which manages the WebAssembly environment for read-only operations. It provides methods for bootstrapping the Pyodide environment, mounting filesystems, and starting sessions.
+
+- **`worker.tsx`**: Sets up a Web Worker to execute Python code using Pyodide. It initializes the Pyodide environment, handles RPC requests, and manages communication with the main thread.
+
+## Dependencies
+
+- **`pyodide`**: Provides the interface for running Python in the browser, enabling Python code execution within the web application.
+
+- **`rpc-anywhere`**: Facilitates RPC communication between the worker and the main thread, allowing for asynchronous operations and message handling.
+
+- **`Logger`**: Used for logging messages and errors throughout the code, aiding in debugging and monitoring.
+
+- **`Deferred`**: Manages asynchronous operations, particularly for the readiness of the Pyodide environment and the bridge.
+
+These dependencies are crucial for enabling Python execution in the browser, managing asynchronous operations, and facilitating communication between different components of the system.

@@ -1,0 +1,82 @@
+---
+title: "playwright.yml"
+---
+
+## High-level description
+
+The `playwright.yml` file is a GitHub Actions workflow configuration designed to automate the testing and deployment process for a project using Playwright. It is triggered on pushes to the `main` branch and on pull requests. The workflow includes steps for setting up the environment, building the frontend, running Playwright tests, and uploading test results and artifacts to cloud storage.
+
+## Code Structure
+
+The workflow is structured into a series of jobs and steps that are executed sequentially. The main job, `test`, is responsible for setting up the environment, running tests, and handling the results. Each step within the job performs a specific task, such as checking out the repository, setting up Node.js and Python, installing dependencies, running tests, and uploading results.
+
+## Symbols
+
+### `name: playwright`
+#### Description
+This defines the name of the workflow as "playwright".
+
+### `on`
+#### Description
+Specifies the events that trigger the workflow. It is triggered on pushes to the `main` branch and on any pull request.
+
+### `env`
+#### Description
+Sets environment variables for the workflow. It includes `TURBO_TOKEN` and `TURBO_TEAM`.
+
+### `jobs`
+#### Description
+Defines the jobs to be run in the workflow. In this file, there is a single job named `test`.
+
+### `test`
+#### Description
+The main job in the workflow that runs the Playwright tests and handles related tasks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| timeout-minutes | integer | Maximum time allowed for the job to run. |
+| runs-on | string | Specifies the type of runner to execute the job. |
+
+#### Outputs
+None directly, but it produces artifacts and logs.
+
+#### Internal Logic
+- **Cancel Previous Runs**: Uses `styfle/cancel-workflow-action` to cancel any previous runs of the workflow.
+- **Checkout Repo**: Uses `actions/checkout` to clone the repository.
+- **Write TOML**: Creates a `.marimo.toml` file with experimental settings.
+- **Setup Node.js and Python**: Installs Node.js and Python with specified versions and caches dependencies.
+- **Build Frontend**: Executes a make command to build the frontend.
+- **Install Playwright Browsers**: Installs necessary Playwright browsers if not cached.
+- **Run Playwright Tests**: Executes Playwright tests and continues on error if not all tests pass.
+- **Google Auth and Upload**: Authenticates with Google and uploads test results to cloud storage based on branch conditions.
+- **Upload Report**: Uploads the Playwright test report as an artifact.
+
+### `steps`
+#### Description
+A sequence of actions executed within the `test` job. Each step performs a specific task.
+
+## Side Effects
+
+- Modifies the `.marimo.toml` file.
+- Installs Node.js, Python, and Playwright dependencies.
+- Uploads artifacts and test results to Google Cloud Storage.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `styfle/cancel-workflow-action` | Cancels previous workflow runs. |
+| `actions/checkout` | Checks out the repository code. |
+| `pnpm/action-setup` | Sets up pnpm for package management. |
+| `actions/setup-node` | Installs Node.js. |
+| `actions/setup-python` | Installs Python. |
+| `turbocache-build/turbocache-action` | Caches build artifacts. |
+| `actions/cache` | Caches Playwright binaries. |
+| `google-github-actions/auth` | Authenticates with Google Cloud. |
+| `google-github-actions/upload-cloud-storage` | Uploads files to Google Cloud Storage. |
+| `actions/upload-artifact` | Uploads artifacts to GitHub. |
+
+## TODOs
+
+- There is a TODO comment to remove `continue-on-error` when all Playwright tests pass, indicating that the tests are currently allowed to fail without failing the entire workflow.

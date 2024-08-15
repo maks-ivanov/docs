@@ -1,0 +1,150 @@
+---
+title: "tree.py"
+---
+
+## High-level description
+
+The target file `examples/embeddings/tree.py` is a script that uses the `marimo` framework to create an interactive application for visualizing binary trees. It leverages the PyMDE library to embed and plot binary trees, allowing users to adjust the size of the tree through a slider interface. The script is structured using `marimo`'s cell-based approach to define different parts of the application logic.
+
+## Code Structure
+
+The script is organized into several `@app.cell` functions, each responsible for a specific part of the application logic. These functions are executed in a sequence to set up the user interface, generate a binary tree, compute its embedding, and visualize it. The `marimo` library is used to manage the application and its UI components, while `pymde` and `torch` are used for graph processing and embedding.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which serves as the main application object. It manages the lifecycle and execution of the cell functions defined in the script.
+
+### `@app.cell` Decorator
+#### Description
+The `@app.cell` decorator is used to define a function as a cell in the `marimo` application. Each cell function encapsulates a piece of the application logic, such as UI setup, data processing, or visualization.
+
+### `__(mo, n_items)`
+#### Description
+This cell function generates markdown content to describe the purpose of the application and the current number of items (vertices) in the binary tree.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| mo      | module | The `marimo` module instance.      |
+| n_items | int    | The number of vertices in the tree. |
+
+#### Outputs
+None
+
+### `__(embedding, pymde, tree)`
+#### Description
+This cell function plots the binary tree using the PyMDE library, displaying the tree's edges.
+
+#### Inputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| embedding | object | The embedding of the graph.        |
+| pymde     | module | The PyMDE module instance.         |
+| tree      | object | The binary tree graph object.      |
+
+#### Outputs
+None
+
+### `__(embed, make_graph, n_items)`
+#### Description
+This cell function creates a binary tree graph and computes its embedding.
+
+#### Inputs
+| Name       | Type   | Description                        |
+|:-----------|:-------|:-----------------------------------|
+| embed      | func   | Function to compute the embedding. |
+| make_graph | func   | Function to create the graph.      |
+| n_items    | int    | The number of vertices in the tree.|
+
+#### Outputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| embedding | object | The embedding of the graph.        |
+| graph     | object | The graph object.                  |
+| tree      | object | The binary tree graph object.      |
+
+### `__(mo)`
+#### Description
+This cell function creates a slider UI component to select the number of vertices in the binary tree.
+
+#### Inputs
+| Name | Type   | Description                   |
+|:-----|:-------|:------------------------------|
+| mo   | module | The `marimo` module instance. |
+
+#### Outputs
+| Name    | Type | Description                        |
+|:--------|:-----|:-----------------------------------|
+| n_items | int  | The number of vertices in the tree. |
+
+### `__(functools, pymde, torch)`
+#### Description
+This cell function defines a cached function `make_graph` to generate a binary tree graph and compute shortest paths.
+
+#### Inputs
+| Name     | Type   | Description                        |
+|:---------|:-------|:-----------------------------------|
+| functools| module | The `functools` module instance.   |
+| pymde    | module | The PyMDE module instance.         |
+| torch    | module | The `torch` module instance.       |
+
+#### Outputs
+| Name       | Type   | Description                        |
+|:-----------|:-------|:-----------------------------------|
+| make_graph | func   | Function to create the graph.      |
+
+#### Internal Logic
+- Uses a stack-based approach to generate edges of a binary tree.
+- Converts the edge list to a PyMDE graph and computes shortest paths.
+
+### `__(functools, pymde)`
+#### Description
+This cell function defines a cached function `embed` to compute the embedding of a graph using PyMDE.
+
+#### Inputs
+| Name     | Type   | Description                        |
+|:---------|:-------|:-----------------------------------|
+| functools| module | The `functools` module instance.   |
+| pymde    | module | The PyMDE module instance.         |
+
+#### Outputs
+| Name  | Type | Description                        |
+|:------|:-----|:-----------------------------------|
+| embed | func | Function to compute the embedding. |
+
+#### Internal Logic
+- Uses PyMDE to create an embedding with a specified distortion function.
+
+### `__()`
+#### Description
+This cell function imports necessary modules and returns them for use in other cells.
+
+#### Outputs
+| Name     | Type   | Description                        |
+|:---------|:-------|:-----------------------------------|
+| functools| module | The `functools` module instance.   |
+| mo       | module | The `marimo` module instance.      |
+| pymde    | module | The PyMDE module instance.         |
+| torch    | module | The `torch` module instance.       |
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| marimo     | Framework for building interactive apps.     |
+| pymde      | Library for manifold learning and embedding. |
+| torch      | Library for tensor computations.             |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond basic function execution. It relies on the robustness of the imported libraries (`marimo`, `pymde`, `torch`) to manage any exceptions that may arise during execution.
+
+## Logging
+
+The script does not implement any logging mechanisms. It focuses on defining the application logic and UI components.
+
+## API/Interface Reference
+
+The script does not expose an API. It is designed to be run as a standalone application using the `marimo` framework.

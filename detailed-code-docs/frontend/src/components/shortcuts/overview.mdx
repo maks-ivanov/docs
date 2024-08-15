@@ -1,0 +1,137 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `renderShortcut.tsx` file is responsible for rendering UI components that display keyboard shortcuts in a user-friendly manner. It provides components to render shortcuts with different levels of detail, such as full descriptions or minimal representations, and adapts the display based on the user's platform (e.g., Mac or Windows).
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `renderShortcut` and `renderMinimalShortcut` are functions that render the `Shortcut` and `MinimalShortcut` components, respectively.
+- `Shortcut` and `MinimalShortcut` are React functional components that use the `KeyboardHotkeys` and `MinimalHotkeys` components to display the actual keyboard shortcuts.
+- `prettyPrintHotkey` is a utility function used by `KeyboardHotkeys` and `MinimalHotkeys` to format the display of individual keys based on platform-specific symbols.
+
+## Symbols
+
+### `renderShortcut`
+#### Description
+Renders a `Shortcut` component for a given `HotkeyAction`.
+
+#### Inputs
+| Name     | Type         | Description            |
+|:---------|:-------------|:-----------------------|
+| shortcut | HotkeyAction | The action to render.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | JSX  | A JSX element representing the shortcut. |
+
+### `Shortcut`
+#### Description
+A React component that displays a keyboard shortcut with its name and key combination.
+
+#### Inputs
+| Name     | Type         | Description            |
+|:---------|:-------------|:-----------------------|
+| shortcut | HotkeyAction | The action to display. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | JSX  | A JSX element representing the shortcut. |
+
+#### Internal Logic
+- Retrieves the hotkey configuration using `useAtomValue(hotkeysAtom)`.
+- Displays the hotkey name and its key combination using `KeyboardHotkeys`.
+
+### `KeyboardHotkeys`
+#### Description
+Displays a sequence of keys for a given shortcut, formatted for the user's platform.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| shortcut | string | The key combination to display. |
+| className | string | Optional CSS class names.   |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | JSX  | A JSX element representing the keys. |
+
+#### Internal Logic
+- Splits the shortcut string into individual keys.
+- Uses `prettyPrintHotkey` to format each key.
+- Wraps keys in `Kbd` components, optionally with tooltips.
+
+### `renderMinimalShortcut`
+#### Description
+Renders a `MinimalShortcut` component for a given `HotkeyAction`.
+
+#### Inputs
+| Name     | Type         | Description            |
+|:---------|:-------------|:-----------------------|
+| shortcut | HotkeyAction | The action to render.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | JSX  | A JSX element representing the shortcut. |
+
+### `MinimalShortcut`
+#### Description
+A React component that displays a minimal representation of a keyboard shortcut.
+
+#### Inputs
+| Name     | Type         | Description            |
+|:---------|:-------------|:-----------------------|
+| shortcut | HotkeyAction | The action to display. |
+| className | string | Optional CSS class names.   |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | JSX  | A JSX element representing the shortcut. |
+
+#### Internal Logic
+- Similar to `Shortcut`, but uses `MinimalHotkeys` for a more compact display.
+
+### `prettyPrintHotkey`
+#### Description
+Formats a key string into a label and symbol, considering platform-specific differences.
+
+#### Inputs
+| Name | Type   | Description          |
+|:-----|:-------|:---------------------|
+| key  | string | The key to format.   |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| label  | string | The human-readable label for the key. |
+| symbol | string | The platform-specific symbol, if available. |
+
+#### Internal Logic
+- Determines the platform using `isPlatformMac`.
+- Looks up the key in `KEY_MAPPINGS` to find the appropriate label and symbol.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management, particularly for accessing hotkey configurations. |
+| `@/core/hotkeys/hotkeys` | Provides types and functions related to hotkey actions. |
+| `@/core/hotkeys/shortcuts` | Provides utility functions for platform detection and shortcut parsing. |
+| `@/utils/cn` | Utility for merging CSS class names. |
+
+## Error Handling
+The code does not explicitly handle errors, but it assumes that the hotkey configurations and platform checks will succeed. If a key is not found in `KEY_MAPPINGS`, it defaults to using the lowercase version of the key.
+
+## Logging
+No logging mechanisms are implemented in this code.
+
+## TODOs
+No TODOs are present in the code.

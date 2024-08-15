@@ -1,0 +1,124 @@
+---
+title: "test_auth.py"
+---
+
+## High-level description
+
+The target file `tests/_server/api/test_auth.py` contains a suite of asynchronous test functions designed to validate the authentication mechanisms of a Starlette-based web application. These tests focus on the `CustomSessionMiddleware` and `validate_auth` functions, ensuring that session cookies, access tokens, and basic authentication are correctly handled and validated.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `CustomSessionMiddleware` is a middleware class that customizes session handling based on the application's port.
+- `validate_auth` is a function that checks various authentication methods (session cookies, access tokens, basic auth) to validate a user's identity.
+- The test functions use a `Starlette` app instance, created with the `create_starlette_app` function, to simulate HTTP connections and test the authentication logic.
+
+## References
+
+- `CustomSessionMiddleware` and `validate_auth` are imported from `marimo._server.api.auth`.
+- `create_starlette_app` is imported from `marimo._server.main`.
+- `get_mock_session_manager` is imported from `tests._server.mocks`.
+
+## Symbols
+
+### `mock_receive`
+#### Description
+An asynchronous mock function that simulates receiving a message in an ASGI application.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | `Any` | An empty dictionary, simulating no message received. |
+
+### `mock_send`
+#### Description
+An asynchronous mock function that simulates sending a message in an ASGI application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | `Any` | The message to be sent, which is ignored in this mock. |
+
+### `test_custom_session_middleware_call`
+#### Description
+Tests the `CustomSessionMiddleware` to ensure it sets the session cookie correctly when a port is specified.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | `Starlette` | The Starlette application instance. |
+
+### `test_custom_session_middleware_call_with_port`
+#### Description
+Tests the `CustomSessionMiddleware` to ensure it sets the session cookie correctly when no port is specified.
+
+### `app` (fixture)
+#### Description
+A pytest fixture that creates and configures a `Starlette` application with mock session and configuration managers.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | `Starlette` | A configured Starlette application instance. |
+
+### `create_connection`
+#### Description
+Creates an `HTTPConnection` object for testing purposes, simulating an HTTP request to the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | `Starlette` | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | `HTTPConnection` | An HTTP connection object with a predefined scope. |
+
+### `test_validate_auth_with_valid_cookie`
+#### Description
+Tests the `validate_auth` function to ensure it returns `True` when a valid session cookie is present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | `Starlette` | The Starlette application instance. |
+
+### `test_validate_auth_with_bad_cookie`
+#### Description
+Tests the `validate_auth` function to ensure it returns `False` when an invalid session cookie is present.
+
+### `test_validate_auth_with_valid_access_token`
+#### Description
+Tests the `validate_auth` function to ensure it returns `True` when a valid access token is provided in the query parameters.
+
+### `test_validate_auth_with_invalid_access_token`
+#### Description
+Tests the `validate_auth` function to ensure it returns `False` when an invalid access token is provided in the query parameters.
+
+### `test_validate_auth_with_valid_basic_auth`
+#### Description
+Tests the `validate_auth` function to ensure it returns `True` when valid basic authentication credentials are provided.
+
+### `test_validate_auth_with_missing_password_in_basic_auth`
+#### Description
+Tests the `validate_auth` function to ensure it returns `False` when the basic authentication header is missing a password.
+
+### `test_validate_auth_with_no_auth`
+#### Description
+Tests the `validate_auth` function to ensure it returns `False` when no authentication information is provided.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing test cases. |
+| `starlette` | Provides the web framework and ASGI components used in the application. |
+
+## Error Handling
+
+The test functions rely on assertions to validate expected outcomes. If an assertion fails, it indicates that the authentication logic did not behave as expected, which is a common practice in testing to identify issues.
+
+## Logging
+
+The `validate_auth` function includes logging statements to provide debug information about the authentication process, which can be useful for diagnosing issues during testing.

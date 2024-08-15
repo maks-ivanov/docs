@@ -1,0 +1,66 @@
+---
+title: "copilot-config.tsx"
+---
+
+## High-level description
+
+The `CopilotConfig` component in the target file is a React component that manages the sign-in and connection state for GitHub Copilot within a CodeMirror-based editor. It handles user interactions for signing in, signing out, and displaying the current connection status, utilizing a state management library (`jotai`) to track whether the user is signed in.
+
+## Code Structure
+
+- The `CopilotConfig` component is the main symbol in this file, which uses several hooks and utility functions to manage its state and behavior.
+- It interacts with the `copilotSignedInState` atom from the `state.ts` file to track the sign-in status.
+- It uses the `getCopilotClient` function from the `client.ts` file to interact with the Copilot language server.
+- UI components such as `Button`, `Label`, and icons from `lucide-react` are used to render the interface.
+
+## References
+
+- **`copilotSignedInState`**: An atom from `state.ts` that stores the sign-in state.
+- **`getCopilotClient`**: A function from `client.ts` that provides a client for interacting with the Copilot language server.
+- **UI Components**: `Button`, `Label`, and icons are imported from various UI component files to build the user interface.
+
+## Symbols
+
+### `CopilotConfig`
+#### Description
+The `CopilotConfig` component manages the user interface and logic for signing in and out of GitHub Copilot. It displays different UI elements based on the current connection state and handles user interactions for signing in, signing out, and retrying failed sign-ins.
+
+#### Inputs
+- None directly, but it uses hooks to manage internal state and side effects.
+
+#### Outputs
+- Returns a JSX element representing the current UI state of the Copilot connection.
+
+#### Internal Logic
+- **State Management**: Uses `useAtom` to manage the sign-in state and `useState` for local component states like `step`, `localData`, and `loading`.
+- **Effect Hook**: On component mount, it checks the connection status using `getCopilotClient` and updates the state accordingly.
+- **Sign-In Logic**: 
+  - `trySignIn`: Initiates the sign-in process, updates the UI to show the verification code and URL if needed.
+  - `tryFinishSignIn`: Completes the sign-in process by confirming the user code, with retries if necessary.
+- **Sign-Out Logic**: `signOut` function signs the user out and updates the state.
+- **UI Rendering**: `renderBody` function returns different UI elements based on the current `step` state, such as buttons for signing in, messages for connection status, and error messages.
+
+## Side Effects
+- Modifies the global sign-in state using `copilotChangeSignIn`.
+- Interacts with the clipboard to copy the verification code.
+- Displays toast notifications for user feedback.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management for tracking sign-in status. |
+| `lucide-react` | Provides icons for UI elements. |
+| `@/components/ui/button` | UI component for rendering buttons. |
+| `@/components/ui/label` | UI component for rendering labels. |
+| `@/components/ui/use-toast` | Utility for displaying toast notifications. |
+
+## Error Handling
+- Catches errors during the initialization and sign-in processes, updating the UI to reflect connection failures or sign-in errors.
+- Implements retry logic for confirming sign-in, attempting up to three times with a delay.
+
+## Logging
+- Uses toast notifications to provide user feedback, such as when a code is copied to the clipboard or when sign-in fails.
+
+## TODOs
+- No explicit TODOs are present in the code.

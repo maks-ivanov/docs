@@ -1,0 +1,100 @@
+---
+title: "custom-node.tsx"
+---
+
+## High-level description
+
+The `custom-node.tsx` file defines a React component called `CustomNode` that is used to render a custom node within a dependency graph. This component is part of a larger system that visualizes dependencies between different cells or components, likely in a notebook or similar environment. The `CustomNode` component is designed to be highly customizable, allowing for dynamic sizing and styling based on its properties and context.
+
+## Code Structure
+
+- **`CustomNode` Component**: The main component that renders a custom node in the dependency graph.
+- **`EdgeMarkerContext`**: A React context used to determine the layout direction of the graph edges.
+- **`EQUALITY_CHECK`**: A function used to optimize rendering by checking if certain properties of the node have changed.
+
+## References
+
+- **`TinyCode`**: A component used within `CustomNode` to render the code associated with a cell.
+- **`cn`**: A utility function for merging class names.
+- **`useAtomValue`**: A hook from the `jotai` library used to access the state of a cell.
+- **`Handle` and `Position`**: Components and utilities from `reactflow` used to define connection points on the node.
+- **`getNodeHeight`**: A function that calculates the height of the node based on the number of lines of code.
+- **`displayCellName`**: A function that formats the display name of a cell.
+
+## Symbols
+
+### `getWidth`
+#### Description
+Calculates the width of the node based on the canvas width, ensuring it stays within a specified range.
+
+#### Inputs
+| Name        | Type   | Description                  |
+|:------------|:-------|:-----------------------------|
+| canvasWidth | number | The width of the canvas area |
+
+#### Outputs
+| Name   | Type   | Description                      |
+|:-------|:-------|:---------------------------------|
+| width  | number | The calculated width of the node |
+
+#### Internal Logic
+- The function subtracts padding from the canvas width and ensures the result is between `minWidth` and `maxWidth`.
+
+### `EdgeMarkerContext`
+#### Description
+A React context that provides the layout direction for edge markers, defaulting to "LR" (left-to-right).
+
+### `EQUALITY_CHECK`
+#### Description
+A function used to determine if the `CustomNode` component should re-render by comparing specific properties of the node.
+
+#### Inputs
+| Name      | Type             | Description                      |
+|:----------|:-----------------|:---------------------------------|
+| prevProps | CustomNodeProps  | The previous properties of the node |
+| nextProps | CustomNodeProps  | The next properties of the node  |
+
+#### Outputs
+| Name   | Type    | Description                                  |
+|:-------|:--------|:---------------------------------------------|
+| result | boolean | `true` if the properties are equal, `false` otherwise |
+
+#### Internal Logic
+- Compares the `data`, `selected`, and `id` properties of the node to determine equality.
+
+### `CustomNode`
+#### Description
+A memoized React component that renders a custom node in the dependency graph, including handles for connections and a display area for the cell's code.
+
+#### Inputs
+| Name  | Type             | Description                  |
+|:------|:-----------------|:-----------------------------|
+| props | CustomNodeProps  | Properties of the custom node |
+
+#### Outputs
+- Renders a JSX element representing the node.
+
+#### Internal Logic
+- Uses `useAtomValue` to get the current state of the cell.
+- Determines the color of the node based on its selection state.
+- Uses `useStore` to get the current width of the React Flow canvas.
+- Uses `useContext` to get the current edge marker direction.
+- Renders handles for input and output connections, adjusting their positions based on the edge marker direction.
+- Renders the cell's name and code using `displayCellName` and `TinyCode`.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `reactflow`| Provides components and utilities for building interactive graphs. |
+| `jotai`    | Manages state for the cells within the graph. |
+| `clsx` and `tailwind-merge` | Used for class name manipulation and merging. |
+
+## Error Handling
+- The code does not explicitly handle errors but relies on React's error boundaries and the underlying libraries for error management.
+
+## Logging
+- There is no explicit logging in this file.
+
+## TODOs
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,60 @@
+---
+title: "download-actions.tsx"
+---
+
+## High-level description
+
+The `download-actions.tsx` file defines a React component named `DownloadAs` that provides a user interface for downloading data in different formats, specifically CSV and JSON. It utilizes a dropdown menu to allow users to select the desired format and then triggers a download process using a provided function to obtain the download URL.
+
+## Code Structure
+
+The main symbol in this file is the `DownloadAs` component, which is a React functional component. It uses several UI components such as `Button`, `DropdownMenu`, `DropdownMenuContent`, `DropdownMenuItem`, and `DropdownMenuTrigger` to create a dropdown menu interface. The component relies on a `downloadAs` function passed via props to fetch the download URL for the selected format.
+
+## Symbols
+
+### `DownloadAs`
+#### Description
+The `DownloadAs` component renders a button that, when clicked, displays a dropdown menu with options to download data in either CSV or JSON format. Upon selecting an option, it calls the `downloadAs` function with the selected format, retrieves the download URL, and initiates the download process.
+
+#### Inputs
+| Name       | Type                                      | Description                                      |
+|:-----------|:------------------------------------------|:-------------------------------------------------|
+| `downloadAs` | `(req: { format: "csv" | "json" }) =&gt; Promise&lt;string&gt;` | A function that returns a promise resolving to a download URL for the specified format. |
+
+#### Outputs
+The component does not have direct outputs but performs actions such as triggering a download and displaying a toast notification in case of an error.
+
+#### Internal Logic
+1. **Button Creation**: A button is created using the `Button` component, styled with a small size and link variant, and includes a `ChevronDownIcon`.
+2. **Dropdown Menu**: The button is wrapped in a `DropdownMenu` component, which is configured to not be modal.
+3. **Menu Options**: The dropdown menu contains items for each download format (CSV and JSON). These items are mapped from the `options` array.
+4. **Download Process**:
+   - When a menu item is selected, the `downloadAs` function is called with the selected format.
+   - If the function resolves successfully, the `downloadByURL` utility function is used to initiate the download.
+   - If an error occurs, a toast notification is displayed with the error message.
+
+## Side Effects
+- **Toast Notifications**: Displays a toast notification if the download process fails.
+- **File Download**: Initiates a file download using the browser's download capabilities.
+
+## References
+- **`Button`**: A UI component used to render the download button.
+- **`DropdownMenu`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuTrigger`**: UI components used to create and manage the dropdown menu.
+- **`toast`**: A utility function for displaying toast notifications.
+- **`downloadByURL`**: A utility function that handles the actual file download process.
+
+## Dependencies
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `react`          | Provides the base for creating React components.                        |
+| `lucide-react`   | Provides the `ChevronDownIcon` used in the button.                      |
+| `@/utils/download` | Contains the `downloadByURL` function used to initiate downloads.     |
+| `@/components/ui/button` | Provides the `Button` component for rendering the download button. |
+| `@/components/ui/dropdown-menu` | Provides components for creating the dropdown menu.      |
+| `@/components/ui/use-toast` | Provides the `toast` function for displaying notifications.   |
+
+## Error Handling
+- The component handles errors during the download process by catching exceptions from the `downloadAs` function and displaying a toast notification with the error message.
+
+## Logging
+- There is no explicit logging mechanism implemented in this code. However, error messages are displayed to the user via toast notifications.

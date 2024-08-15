@@ -1,0 +1,63 @@
+---
+title: "app-config-form.tsx"
+---
+
+## High-level description
+
+The `AppConfigForm` component in the target file is a React functional component that provides a form interface for configuring application settings, specifically the application's width and title. It utilizes the `react-hook-form` library for form management and validation, and it integrates with a backend service to save the configuration changes.
+
+## Code Structure
+
+- The `AppConfigForm` component is the main symbol in this file.
+- It uses several UI components like `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormMessage`, `Input`, and `NativeSelect` to build the form interface.
+- It interacts with the application's configuration state through the `useAppConfig` hook and the `saveAppConfig` function to persist changes.
+
+## References
+
+- `useAppConfig` from `../../core/config/config` is used to access and update the application's configuration state.
+- `saveAppConfig` from `../../core/network/requests` is used to persist the configuration changes to a backend service.
+- `AppConfigSchema` and `AppTitleSchema` from `../../core/config/config-schema` are used for form validation.
+
+## Symbols
+
+### `AppConfigForm`
+#### Description
+The `AppConfigForm` component renders a form that allows users to configure the application's width and title. It uses `react-hook-form` for form state management and validation, and it updates the application state and backend with the new configuration upon submission.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The component does not take any props. It uses hooks to manage state and effects. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered form component. |
+
+#### Internal Logic
+- **Form Initialization**: The form is initialized using `useForm` with `AppConfigSchema` for validation and default values from the current configuration.
+- **Form Submission**: The `onSubmit` function is defined to handle form submission. It calls `saveAppConfig` to persist the changes and updates the local configuration state using `setConfig`.
+- **Effect Hook**: A `useEffect` hook is used to dispatch a resize event whenever the width configuration changes, ensuring that UI components adjust to the new width.
+- **Form Rendering**: The form includes fields for `width` and `app_title`, each with associated labels, controls, and validation messages. The `width` field uses a `NativeSelect` component, while the `app_title` field uses an `Input` component.
+
+## Side Effects
+- Dispatches a `resize` event on the `window` object when the width configuration changes.
+- Updates the document's title when the `app_title` field is valid and changes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-hook-form` | Manages form state and validation. |
+| `@hookform/resolvers/zod` | Integrates Zod schema validation with `react-hook-form`. |
+| `zod` | Provides schema validation for form inputs. |
+
+## Error Handling
+- The form uses Zod schemas (`AppConfigSchema` and `AppTitleSchema`) to validate inputs, ensuring that only valid data is submitted.
+- Errors are displayed using the `FormMessage` component, which shows validation messages when inputs are invalid.
+
+## Logging
+- No explicit logging is implemented in this component. However, errors during form submission are caught and handled silently by updating the configuration state.
+
+## TODOs
+- There are no TODOs or notes left in the code.

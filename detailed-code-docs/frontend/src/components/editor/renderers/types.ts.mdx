@@ -1,0 +1,87 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file `types.ts` defines TypeScript types and interfaces for cell rendering components in a frontend application. It provides a structure for the properties and plugins used by cell renderers, including layout types and validation mechanisms. The file is crucial for ensuring type safety and consistency across different cell rendering implementations.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ICellRendererProps` is an interface that defines the properties passed to a cell renderer component.
+- `LayoutType` is a type alias for the supported layout types.
+- `ICellRendererPlugin` is an interface that defines the structure of a cell renderer plugin, including methods for layout serialization and deserialization, and a React component for rendering.
+
+## Symbols
+
+### `ICellRendererProps&lt;L&gt;`
+#### Description
+This interface defines the properties that are passed to a cell renderer component. It includes configuration details, the cells to be rendered, the layout, the application mode, and a callback to set the layout.
+
+#### Inputs
+| Name     | Type                  | Description                          |
+|:---------|:----------------------|:-------------------------------------|
+| appConfig| `AppConfig`           | The application configuration.       |
+| cells    | `Array&lt;CellRuntimeState & CellData&gt;` | The cells to render. |
+| layout   | `L`                   | The layout configuration.            |
+| mode     | `AppMode`             | The current application mode.        |
+| setLayout| `(layout: L) =&gt; void` | Callback to set the layout.          |
+
+#### Outputs
+None
+
+### `LayoutType`
+#### Description
+A type alias for the supported layout types, which are "vertical", "grid", and "slides".
+
+### `LAYOUT_TYPES`
+#### Description
+An array of `LayoutType` that lists the supported layout types in the order they should be displayed.
+
+### `OVERRIDABLE_LAYOUT_TYPES`
+#### Description
+An array of `LayoutType` that specifies which layout types can be overridden via a URL parameter.
+
+### `ICellRendererPlugin&lt;S, L&gt;`
+#### Description
+This interface defines the structure of a cell renderer plugin. It includes the layout type, a name, a validator for layout data, methods for serializing and deserializing layouts, a React component for rendering, and a method to get the initial layout.
+
+#### Inputs
+| Name              | Type                                      | Description                          |
+|:------------------|:------------------------------------------|:-------------------------------------|
+| type              | `LayoutType`                              | The type of layout.                  |
+| name              | `string`                                  | The name of the plugin.              |
+| validator         | `ZodType&lt;S, ZodTypeDef, unknown&gt;`         | Validator for the layout data.       |
+| deserializeLayout | `(layout: S, cells: CellData[]) =&gt; L`     | Function to deserialize layout data. |
+| serializeLayout   | `(layout: L, cells: CellData[]) =&gt; S`     | Function to serialize layout data.   |
+| Component         | `React.FC&lt;ICellRendererProps&lt;L&gt;&gt;`         | React component for rendering.       |
+| getInitialLayout  | `(cells: CellData[]) =&gt; L`                | Function to get the initial layout.  |
+
+#### Outputs
+None
+
+## References
+
+- `AppConfig` from `config-schema.ts` is used to define the application configuration.
+- `CellData` and `CellRuntimeState` from `cells/types.ts` are used to define the structure of cell data and runtime state.
+- `AppMode` from `mode.ts` is used to define the application mode.
+- `ZodType` and `ZodTypeDef` from the `zod` library are used for data validation.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `zod`      | Used for defining and validating data schemas.|
+
+## Error Handling
+
+The code uses `ZodType` for validating layout data, ensuring that the data conforms to the expected schema before being used.
+
+## Logging
+
+No explicit logging is implemented in this file.
+
+## TODOs
+
+No TODOs are present in the code.

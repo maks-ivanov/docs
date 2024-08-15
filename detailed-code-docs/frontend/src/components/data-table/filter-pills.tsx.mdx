@@ -1,0 +1,105 @@
+---
+title: "filter-pills.tsx"
+---
+
+## High-level description
+
+The `filter-pills.tsx` file defines a React component named `FilterPills` that is used to display active filters in a data table as visual "pills". Each pill represents a filter applied to a column and includes a button to remove the filter. The component is designed to work with the `@tanstack/react-table` library, which is used for managing table data and state.
+
+## Code Structure
+
+- The `FilterPills` component is the main export of the file and is responsible for rendering the filter pills.
+- The `formatValue` function is used to format the filter values for display.
+- The `formatMinMax` function is a helper function used by `formatValue` to format range-based filters (e.g., number or date ranges).
+
+## References
+
+- The `FilterPills` component uses the `Badge` component from `../ui/badge` to render each filter pill.
+- The `ColumnFilterValue` type from `./filters` is used to define the structure of filter values.
+- The `logNever` function from `@/utils/assertNever` is used for exhaustive type checking in the `formatValue` function.
+- The `XIcon` from `lucide-react` is used as a visual element to represent the removal of a filter.
+
+## Symbols
+
+### `FilterPills`
+#### Description
+The `FilterPills` component renders a list of filter pills based on the provided filters. Each pill displays the filter's column ID and formatted value, and includes a button to remove the filter from the table.
+
+#### Inputs
+| Name   | Type                | Description                                      |
+|:-------|:--------------------|:-------------------------------------------------|
+| filters | ColumnFiltersState | The current state of column filters.             |
+| table  | Table&lt;TData&gt;        | The table instance from `@tanstack/react-table`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | The component does not return a value. It renders UI elements. |
+
+#### Internal Logic
+- The component first checks if there are any filters to display. If not, it returns `null`.
+- For each filter, it calls `renderFilterPill`, which formats the filter value using `formatValue`.
+- If the formatted value is valid, it renders a `Badge` component with the filter ID and value.
+- Each badge includes a clickable `XIcon` that, when clicked, removes the filter from the table by updating the table's filter state.
+
+### `formatValue`
+#### Description
+Formats a `ColumnFilterValue` into a human-readable string for display in a filter pill.
+
+#### Inputs
+| Name  | Type             | Description                        |
+|:------|:-----------------|:-----------------------------------|
+| value | ColumnFilterValue | The filter value to be formatted.  |
+
+#### Outputs
+| Name            | Type   | Description                        |
+|:----------------|:-------|:-----------------------------------|
+| formattedValue  | string | The formatted filter value string. |
+
+#### Internal Logic
+- The function checks the type of the filter value and formats it accordingly:
+  - For "number" and "date" types, it uses `formatMinMax` to format range values.
+  - For "boolean", it returns a string indicating the boolean state.
+  - For "select", it lists the selected options.
+  - For "text", it indicates the text to be contained.
+- If the type is not recognized, it calls `logNever` for exhaustive type checking.
+
+### `formatMinMax`
+#### Description
+Formats minimum and maximum values into a range string for display.
+
+#### Inputs
+| Name | Type   | Description                        |
+|:-----|:-------|:-----------------------------------|
+| min  | string or number | The minimum value of the range. |
+| max  | string or number | The maximum value of the range. |
+
+#### Outputs
+| Name           | Type   | Description                        |
+|:---------------|:-------|:-----------------------------------|
+| formattedRange | string | The formatted range string.        |
+
+#### Internal Logic
+- If both `min` and `max` are undefined, it returns undefined.
+- If `min` equals `max`, it returns a string indicating equality.
+- If only `min` is defined, it returns a string indicating a minimum constraint.
+- If only `max` is defined, it returns a string indicating a maximum constraint.
+- If both are defined, it returns a range string.
+
+## Dependencies
+
+| Dependency                | Purpose                                                                 |
+|:--------------------------|:------------------------------------------------------------------------|
+| `@tanstack/react-table`   | Provides types and utilities for managing table data and state.         |
+| `../ui/badge`             | Used to render the visual representation of filter pills.               |
+| `./filters`               | Provides the `ColumnFilterValue` type used for filter value formatting. |
+| `@/utils/assertNever`     | Provides the `logNever` function for exhaustive type checking.          |
+| `lucide-react`            | Provides the `XIcon` used for the filter removal button.                |
+
+## Error Handling
+
+- The `logNever` function is used in `formatValue` to log unexpected filter value types, ensuring exhaustive type checking without throwing an error.
+
+## Logging
+
+- The `logNever` function logs unexpected filter value types to the console, aiding in debugging and ensuring that all possible filter types are handled.

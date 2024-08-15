@@ -1,0 +1,86 @@
+---
+title: "error-banner.tsx"
+---
+
+## High-level description
+
+The `error-banner.tsx` file defines a React component called `ErrorBanner` that is used to display error messages in a user-friendly manner. It utilizes a modal dialog to show detailed error information when the user interacts with the banner. The component is designed to be reusable and customizable, allowing for different styles and behaviors based on the error type.
+
+## Code Structure
+
+The main symbols in the code are the `ErrorBanner` and `Banner` components. The `ErrorBanner` component is responsible for rendering an error message and handling user interactions to display more detailed information in a modal dialog. The `Banner` component is a styled container that can be used to display various types of messages, not limited to errors. The `Banner` component uses the `class-variance-authority` library to manage its styling variants.
+
+## Symbols
+
+### `ErrorBanner`
+#### Description
+The `ErrorBanner` component is designed to display error messages in a banner format. It logs the error, formats it for display, and provides an interactive element that, when clicked, opens a modal dialog with more detailed error information.
+
+#### Inputs
+| Name      | Type          | Description                      |
+|:----------|:--------------|:---------------------------------|
+| `error`   | `Error | string` | The error message or object to display. |
+| `className` | `string`    | Optional CSS class for styling the banner. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `JSX.Element` | `JSX.Element` | The rendered error banner component. |
+
+#### Internal Logic
+1. **State Management**: Uses the `useState` hook to manage the open state of the modal dialog.
+2. **Error Handling**: If no error is provided, the component returns `null`. Otherwise, it logs the error using the `Logger` utility.
+3. **Error Formatting**: Utilizes the `prettyError` function to format the error message for display.
+4. **Rendering**: Renders a `Banner` component with the error message. When clicked, it opens an `AlertDialog` to show detailed error information.
+
+### `Banner`
+#### Description
+The `Banner` component is a styled container that can display messages with different styles based on the `kind` and `clickable` properties. It is used by the `ErrorBanner` to display error messages.
+
+#### Inputs
+| Name       | Type   | Description                          |
+|:-----------|:-------|:-------------------------------------|
+| `kind`     | `string` | The type of message (e.g., "danger", "info", "warn"). |
+| `clickable`| `boolean` | Determines if the banner is interactive. |
+| `className`| `string` | Additional CSS classes for styling. |
+| `children` | `React.ReactNode` | The content to display inside the banner. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `JSX.Element` | `JSX.Element` | The rendered banner component. |
+
+#### Internal Logic
+1. **Styling**: Uses the `cva` function from `class-variance-authority` to define styling variants based on the `kind` and `clickable` properties.
+2. **Rendering**: Combines the computed styles with any additional classes and renders a `div` containing the children elements.
+
+## References
+
+- `prettyError`: A utility function imported from `@/utils/errors` used to format error messages.
+- `Logger`: A logging utility imported from `@/utils/Logger` used to log errors.
+- `AlertDialog` and related components: Imported from `@/components/ui/alert-dialog`, these are used to create the modal dialog for detailed error display.
+- `cn`: A utility function imported from `@/utils/cn` used to merge CSS class names.
+- `cva`: A function from `class-variance-authority` used to manage styling variants.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `class-variance-authority` | Used for managing styling variants. |
+| `@/utils/errors` | Provides the `prettyError` function for error formatting. |
+| `@/utils/Logger` | Provides logging functionality. |
+| `@/components/ui/alert-dialog` | Provides components for creating modal dialogs. |
+| `@/utils/cn` | Utility for merging CSS class names. |
+
+## Error Handling
+
+The `ErrorBanner` component handles errors by logging them and displaying a formatted message. If no error is provided, it returns `null`, effectively rendering nothing.
+
+## Side Effects
+
+- Logs errors using the `Logger` utility.
+- Manages the open state of the modal dialog using React's `useState` hook.
+
+## Performance Considerations
+
+The component uses React's `useState` to manage the modal's open state, which is efficient for this use case. The `prettyError` function is called only when an error is present, minimizing unnecessary computations.

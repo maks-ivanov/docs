@@ -1,0 +1,87 @@
+---
+title: "useTheme.ts"
+---
+
+## High-level description
+
+The `useTheme.ts` file is responsible for managing and determining the theme of a frontend application, specifically whether it should be in "light", "dark", or "system" mode. It uses the Jotai state management library to create atoms that store and resolve the theme based on user configuration and system preferences.
+
+## Code Structure
+
+The main symbols in the code are interconnected through the use of Jotai atoms. The `themeAtom` determines the theme based on user configuration or system settings. The `prefersDarkModeAtom` listens to system theme changes, and the `resolvedThemeAtom` resolves the final theme to be used. The `useTheme` function is a React hook that provides the resolved theme to components.
+
+## Symbols
+
+### `Theme`
+#### Description
+A TypeScript type that defines the possible theme options: "light", "dark", or "system".
+
+### `ResolvedTheme`
+#### Description
+A TypeScript type that defines the resolved theme options: "light" or "dark".
+
+### `THEMES`
+#### Description
+An array of all possible theme options, used for validation and selection purposes.
+
+### `themeAtom`
+#### Description
+A Jotai atom that determines the theme based on user configuration or system settings. It checks if the application is running in an "islands" environment and attempts to infer the theme from the document's body classes or data attributes.
+
+#### Internal Logic
+- Checks if the application is in an "islands" environment using `isIslands()`.
+- If in "islands", it checks for specific classes or data attributes on the document body to determine if dark mode should be used.
+- Defaults to "light" if no dark mode indicators are found.
+- If not in "islands", it retrieves the theme from the `userConfigAtom`.
+
+### `prefersDarkModeAtom`
+#### Description
+A Jotai atom that stores whether the system prefers dark mode. It is updated by listening to changes in the system's color scheme preference.
+
+### `setupThemeListener`
+#### Description
+A function that sets up a listener for changes in the system's color scheme preference. It updates the `prefersDarkModeAtom` based on the system's current preference.
+
+#### Side Effects
+- Modifies the `prefersDarkModeAtom` based on system settings.
+
+### `resolvedThemeAtom`
+#### Description
+A Jotai atom that resolves the final theme to be used by the application. It considers the user's theme preference and the system's dark mode preference.
+
+#### Internal Logic
+- Retrieves the current theme from `themeAtom`.
+- If the theme is set to "system", it checks `prefersDarkModeAtom` to decide between "light" and "dark".
+- Otherwise, it uses the theme directly from `themeAtom`.
+
+### `useTheme`
+#### Description
+A React hook that provides the resolved theme to components. It uses `useAtomValue` to access the value of `resolvedThemeAtom`.
+
+#### Outputs
+| Name  | Type           | Description          |
+|:------|:---------------|:---------------------|
+| theme | ResolvedTheme  | The current theme of the app. |
+
+## References
+
+- `userConfigAtom` from `config.ts` is used to retrieve the user's theme preference.
+- `isIslands` from `utils.ts` is used to determine if the application is running in an "islands" environment.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| jotai      | State management for atoms. |
+
+## Error Handling
+
+The code does not explicitly handle errors, but it assumes that the environment and document body will provide the necessary information to determine the theme.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

@@ -1,0 +1,86 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file `utils.ts` in the `frontend/src/plugins/impl/vega` directory provides utility functions for handling data types and merging arrays in the context of Vega visualizations. It includes functions to merge arrays and to determine the field types for Vega data, with special handling for date types to ensure correct formatting.
+
+## Code Structure
+
+The main symbols in the code are two functions: `mergeAsArrays` and `getVegaFieldTypes`. These functions are designed to work with data types and arrays, particularly in the context of preparing data for Vega visualizations. The `Objects` utility from `@/utils/objects` is used to manipulate object values, specifically in the `getVegaFieldTypes` function.
+
+## References
+
+- `Objects.mapValues`: This utility function is used in `getVegaFieldTypes` to transform the values of an object, specifically to convert date types to strings.
+
+## Symbols
+
+### `mergeAsArrays`
+#### Description
+The `mergeAsArrays` function takes two inputs, which can be single items or arrays, and merges them into a single array. This is useful for combining data from different sources into a unified format.
+
+#### Inputs
+| Name  | Type         | Description                                      |
+|:------|:-------------|:-------------------------------------------------|
+| left  | `T \| T[] \| undefined` | The first item or array to merge.          |
+| right | `T \| T[] \| undefined` | The second item or array to merge.         |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| result | `T[]` | The merged array of items. |
+
+#### Internal Logic
+- The function uses a helper function `toArray` to ensure each input is converted to an array.
+- It then concatenates the two arrays using the spread operator.
+
+### `toArray`
+#### Description
+A helper function that ensures a given value is returned as an array. If the value is already an array, it returns it as is; if it's a single item, it wraps it in an array.
+
+#### Inputs
+| Name  | Type         | Description                        |
+|:------|:-------------|:-----------------------------------|
+| value | `T \| T[] \| undefined` | The value to convert to an array. |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| result | `T[]` | The value converted to an array. |
+
+### `getVegaFieldTypes`
+#### Description
+The `getVegaFieldTypes` function determines the field types for Vega data. If no types are provided, it defaults to "auto". It also converts any 'date' types to 'string' to avoid formatting issues.
+
+#### Inputs
+| Name  | Type                      | Description                        |
+|:------|:--------------------------|:-----------------------------------|
+| types | `FieldTypes \| undefined \| null` | The field types to process.         |
+
+#### Outputs
+| Name  | Type                  | Description                                      |
+|:------|:----------------------|:-------------------------------------------------|
+| result | `FieldTypes \| "auto"` | The processed field types or "auto" if undefined. |
+
+#### Internal Logic
+- Checks if `types` is undefined or empty, returning "auto" in such cases.
+- Uses `Objects.mapValues` to iterate over the field types, converting 'date' types to 'string'.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `Objects`  | Provides utility functions for object manipulation, specifically `mapValues` is used to transform field types. |
+
+## Error Handling
+
+The code does not explicitly handle errors, as it primarily deals with type transformations and array manipulations, which are generally safe operations in JavaScript/TypeScript.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

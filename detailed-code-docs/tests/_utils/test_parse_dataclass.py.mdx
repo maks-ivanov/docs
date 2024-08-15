@@ -1,0 +1,92 @@
+---
+title: "test_parse_dataclass.py"
+---
+
+## High-level description
+
+The target file `test_parse_dataclass.py` contains unit tests for the functions `parse_raw` and `build_dataclass` from the `marimo._utils.parse_dataclass` module. These functions are designed to parse JSON-like data into Python dataclass instances, handling various data structures and type conversions, including nested dataclasses, lists, tuples, dictionaries, and enums.
+
+## Code Structure
+
+The code is structured into a series of test cases, each testing different aspects of the `parse_raw` and `build_dataclass` functions. The tests are organized within the `TestParseRaw` class and as standalone functions. The tests cover scenarios such as parsing flat and nested dataclasses, handling different data types like lists, tuples, and dictionaries, and managing type unions and enums.
+
+## References
+
+- `parse_raw`: A function from `marimo._utils.parse_dataclass` that parses a JSON message into a specified dataclass type.
+- `build_dataclass`: A function from `marimo._utils.parse_dataclass` that constructs a dataclass instance from a dictionary of values.
+- `SetCellConfigRequest`: A dataclass from `marimo._runtime.requests` used in one of the test cases.
+
+## Symbols
+
+### `Config`, `ConfigOne`, `ConfigTwo`
+#### Description
+These are simple dataclasses used to define configurations with boolean fields. They serve as test subjects for parsing and serialization.
+
+### `AnimalType`
+#### Description
+An enumeration representing different types of animals, used to test enum parsing.
+
+### `Dog`, `Cat`
+#### Description
+Dataclasses representing specific animal types with associated behaviors, used to test discriminated unions.
+
+### `serialize`
+#### Description
+Serializes a given object (dataclass or dictionary) into a JSON-encoded byte string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj  | Any  | The object to serialize, either a dataclass or a dictionary. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | bytes | JSON-encoded byte string representation of the object. |
+
+### `TestParseRaw`
+#### Description
+A test class containing various test methods to validate the functionality of the `parse_raw` function.
+
+#### Internal Logic
+- **test_invalid_message**: Tests that a non-dictionary JSON string raises a `ValueError`.
+- **test_flat**: Tests parsing of a simple flat dataclass.
+- **test_camel_case_to_snake**: Tests conversion from camel case to snake case in field names.
+- **test_nested_singleton**: Tests parsing of a dataclass with a nested dataclass.
+- **test_nested_list**: Tests parsing of a dataclass containing a list of dataclasses.
+- **test_nested_dict**: Tests parsing of a dataclass containing a dictionary of dataclasses.
+- **test_nested_tuple_ellipses**: Tests parsing of a dataclass with a tuple of variable length.
+- **test_nested_tuple_fixed**: Tests parsing of a dataclass with a fixed-length tuple.
+- **test_set_cell_config**: Tests parsing of a `SetCellConfigRequest` dataclass.
+- **test_unions**: Tests parsing of dataclasses with union types.
+- **test_enums**: Tests parsing of dataclasses with enum fields.
+- **test_discriminated_union**: Tests parsing of dataclasses with discriminated unions.
+
+### `test_build_optional`
+#### Description
+Tests the `build_dataclass` function with an optional field in a dataclass.
+
+### `test_build_empty_dataclass`
+#### Description
+Tests the `build_dataclass` function with an empty dataclass.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for writing and running the unit tests. |
+| `json`     | Used for JSON serialization and deserialization. |
+| `dataclasses` | Provides the `dataclass` decorator for creating dataclasses. |
+| `enum`     | Provides the `Enum` class for creating enumerations. |
+
+## Error Handling
+
+The tests check for `ValueError` exceptions in scenarios where the input data does not match the expected structure or type, ensuring that the `parse_raw` and `build_dataclass` functions handle errors gracefully.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on using assertions to validate expected outcomes.
+
+## TODOs
+
+No TODOs are present in the code.

@@ -1,0 +1,114 @@
+---
+title: "columns.tsx"
+---
+
+## High-level description
+
+The target file, `columns.tsx`, is part of a data table component in a frontend application. It defines functions to generate column definitions for a data table, determining the type and behavior of each column based on the data provided. The file includes logic for handling different data types, enabling sorting, and rendering custom headers and cells for the table.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `getColumnInfo`: Analyzes the data items to determine the type of each column.
+- `generateColumns`: Uses the column information to create column definitions for the data table.
+- `isPrimitiveOrNullish` and `getFilterTypeForFieldType`: Helper functions used within `generateColumns` to determine data types and filter types.
+
+## Symbols
+
+### `getColumnInfo`
+#### Description
+Determines the type of each column in a dataset by sampling the data and checking the type of each field.
+
+#### Inputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| items | T[]  | An array of data items to analyze for column information. |
+
+#### Outputs
+| Name       | Type          | Description |
+|:-----------|:--------------|:------------|
+| columnInfo | ColumnInfo[]  | An array of objects containing the key and type of each column. |
+
+#### Internal Logic
+- If the dataset is empty or the first item is not an object, it returns an empty array.
+- Samples up to 10 items from the dataset to determine the type of each field.
+- Uses `isPrimitiveOrNullish` to classify fields as either "primitive" or "mime".
+
+### `generateColumns`
+#### Description
+Generates column definitions for a data table based on the provided data and configuration options.
+
+#### Inputs
+| Name                | Type                        | Description |
+|:--------------------|:----------------------------|:------------|
+| items               | T[]                         | The data items to generate columns for. |
+| rowHeaders          | string[]                    | Keys that should be treated as row headers. |
+| selection           | "single" \| "multi" \| null | Selection mode for the table rows. |
+| showColumnSummaries | boolean                     | Whether to show summaries in the column headers. |
+| fieldTypes          | FieldTypesWithExternalType? | Optional field types for the columns. |
+
+#### Outputs
+| Name    | Type          | Description |
+|:--------|:--------------|:------------|
+| columns | ColumnDef&lt;T&gt;[] | An array of column definitions for the data table. |
+
+#### Internal Logic
+- Calls `getColumnInfo` to get the type information for each column.
+- Maps over the column information to create column definitions, setting properties like `id`, `accessorFn`, `header`, `cell`, and `meta`.
+- Adds a selection column if the selection mode is "single" or "multi".
+- Configures sorting and filtering based on the column type and row header status.
+
+### `isPrimitiveOrNullish`
+#### Description
+Checks if a value is primitive or nullish (null or undefined).
+
+#### Inputs
+| Name  | Type   | Description |
+|:------|:-------|:------------|
+| value | unknown | The value to check. |
+
+#### Outputs
+| Name | Type    | Description |
+|:-----|:--------|:------------|
+| -    | boolean | True if the value is primitive or nullish, false otherwise. |
+
+### `getFilterTypeForFieldType`
+#### Description
+Maps a data type to a filter type for use in the data table.
+
+#### Inputs
+| Name | Type    | Description |
+|:-----|:--------|:------------|
+| type | DataType | The data type to map to a filter type. |
+
+#### Outputs
+| Name       | Type       | Description |
+|:-----------|:-----------|:------------|
+| filterType | FilterType | The corresponding filter type, or undefined if not applicable. |
+
+## References
+
+- `DataTableColumnHeader` and `DataTableColumnHeaderWithSummary` from `column-header.tsx` are used to render the headers of the columns.
+- `MimeCell` from `mime-cell.tsx` is used to render cells with MIME type data.
+- `uniformSample` from `uniformSample.tsx` is used to sample data items for column type determination.
+- `UrlDetector` from `url-detector.tsx` is used to detect and render URLs in string data.
+- `TableColumnSummary` from `column-summary.tsx` is used to render summaries in column headers.
+
+## Dependencies
+
+| Dependency               | Purpose                                      |
+|:-------------------------|:---------------------------------------------|
+| `@tanstack/react-table`  | Provides types and utilities for table columns. |
+| `react`                  | Used for rendering React components.         |
+
+## Error Handling
+
+The code does not explicitly handle errors but uses defensive programming techniques, such as checking if items are objects before processing them.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

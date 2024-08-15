@@ -1,0 +1,211 @@
+---
+title: "test_copy.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_copy.py` contains a suite of unit tests designed to verify the functionality of various copy mechanisms implemented in the `marimo._runtime.copy` module. These tests focus on ensuring that the `shadow_wrap`, `zero_copy`, and `shallow_copy` functions behave as expected, particularly in terms of object immutability and reference handling.
+
+## Code Structure
+
+The test file is structured around several test functions, each targeting a specific aspect of the copy mechanisms. The main symbols from the `marimo._runtime.copy` module that are tested include `shadow_wrap`, `zero_copy`, `shallow_copy`, and `unwrap_copy`. These functions are used to create wrapped versions of objects that either prevent copying, allow shallow copying, or enforce read-only attributes.
+
+## Symbols
+
+### `test_shadow_wrap`
+#### Description
+Tests the `shadow_wrap` function to ensure it correctly wraps a base object, making it appear as the original while enforcing read-only attributes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Wraps an integer using `shadow_wrap` and verifies its behavior and type.
+- Ensures that the wrapped object behaves like the original integer.
+
+### `test_shadow_wrap_ro_attr`
+#### Description
+Tests the `shadow_wrap` function to ensure that attributes of the wrapped object are read-only.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Wraps a custom object with an attribute using `shadow_wrap`.
+- Attempts to modify the attribute and expects a `ReadOnlyError`.
+
+### `test_shadow_wrap_ro_get`
+#### Description
+Tests the `shadow_wrap` function to ensure that list items of the wrapped object are read-only.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Wraps a list using `shadow_wrap`.
+- Attempts to modify a list item and expects a `ReadOnlyError`.
+
+### `test_shadow_wrap_mutable_ref`
+#### Description
+Tests the `shadow_wrap` function to ensure that mutable references within the wrapped object remain consistent.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Wraps a custom object with a mutable list attribute using `shadow_wrap`.
+- Modifies the list and verifies that the changes are reflected in the shadow.
+
+### `test_zero_copy`
+#### Description
+Tests the `zero_copy` function to ensure it correctly wraps an object, preventing deep copying.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Wraps a list using `zero_copy`.
+- Verifies that the wrapped object behaves like the original and that the original can be retrieved using `unwrap_copy`.
+
+### `test_shallow_copy`
+#### Description
+Tests the `shallow_copy` function to ensure it correctly wraps an object, allowing shallow copying.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Wraps a list using `shallow_copy`.
+- Verifies that the wrapped object behaves like the original and that the original can be retrieved using `unwrap_copy`.
+
+### `test_double_zero`
+#### Description
+Tests the behavior of applying `zero_copy` twice on the same object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Applies `zero_copy` twice and verifies that the original object is still accessible and not wrapped twice.
+
+### `test_double_shallow`
+#### Description
+Tests the behavior of applying `shallow_copy` twice on the same object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Applies `shallow_copy` twice and verifies that the original object is still accessible and not wrapped twice.
+
+### `test_cross_zero_shallow`
+#### Description
+Tests the behavior of applying `zero_copy` followed by `shallow_copy` on the same object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Applies `zero_copy` followed by `shallow_copy` and verifies that the original object is still accessible and not wrapped twice.
+
+### `test_cross_shallow_zero`
+#### Description
+Tests the behavior of applying `shallow_copy` followed by `zero_copy` on the same object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This test function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts conditions and raises exceptions if they fail. |
+
+#### Internal Logic
+- Applies `shallow_copy` followed by `zero_copy` and verifies that the original object is still accessible and not wrapped twice.
+
+## References
+
+- `shadow_wrap`: A function from `marimo._runtime.copy` that wraps objects to enforce read-only attributes.
+- `zero_copy`: A function from `marimo._runtime.copy` that prevents deep copying of objects.
+- `shallow_copy`: A function from `marimo._runtime.copy` that allows shallow copying of objects.
+- `unwrap_copy`: A function from `marimo._runtime.copy` that retrieves the original object from a wrapped one.
+- `ReadOnlyError`: An exception from `marimo._runtime.copy` raised when attempting to modify a read-only object.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for running the test suite and handling assertions and exceptions. |
+
+## Error Handling
+
+The tests use `pytest.raises` to verify that certain operations raise the expected `ReadOnlyError` when attempting to modify read-only attributes or items.
+
+## Logging
+
+No logging mechanisms are implemented in this test file.

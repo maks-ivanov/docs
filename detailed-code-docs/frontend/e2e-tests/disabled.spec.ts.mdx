@@ -1,0 +1,82 @@
+---
+title: "disabled.spec.ts"
+---
+
+## High-level description
+
+The target file, `disabled.spec.ts`, is an end-to-end test script using Playwright to verify the behavior of a web application when dealing with "disabled cells" in a notebook-like interface. The test checks the visibility and status of cells, ensures that certain UI elements are not visible, and verifies the correct behavior when cells are disabled and re-enabled.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `test` function from Playwright is used to define test cases.
+- Helper functions like `getAppUrl`, `resetFile`, `maybeRestartKernel`, and `takeScreenshot` are imported from other modules to assist in setting up the test environment and verifying test outcomes.
+- The test case is structured with `beforeEach` and `afterEach` hooks to set up and clean up the test environment.
+
+## References
+
+- `getAppUrl` and `resetFile` from `playwright.config.ts` are used to configure the test environment.
+- `maybeRestartKernel` and `takeScreenshot` from `helper.ts` are used to manage the test state and capture screenshots.
+
+## Symbols
+
+### `test.beforeEach`
+#### Description
+Sets up the test environment before each test case by navigating to the application URL and potentially reloading the page if the test is being retried.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+| info | Object | Contains information about the test run, such as retry status. |
+
+#### Outputs
+None
+
+### `test.afterEach`
+#### Description
+Cleans up the test environment after each test case by resetting the modified file to its original state.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `test("disabled cells")`
+#### Description
+Tests the behavior of the application when cells are disabled and re-enabled. It verifies the visibility of cell elements, the absence of add buttons, and the correct status of cells when they are disabled, modified, and re-enabled.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Navigates to the application URL and verifies the visibility of cell headers.
+- Ensures that no "add cell" buttons are visible.
+- Simulates user interactions to disable and enable cells, checking the status of cells after each action.
+- Modifies the content of a cell and verifies that the status changes to "stale."
+- Takes a screenshot of the final state of the page.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the testing framework and utilities for browser automation. |
+| `node:url` | Used to resolve the file path of the current module. |
+
+## Error Handling
+
+The test script relies on Playwright's built-in error handling mechanisms. If an expectation fails, Playwright will automatically report the error and retry the test if configured to do so.
+
+## Logging
+
+The script does not implement explicit logging but uses Playwright's built-in reporting and screenshot capabilities to capture the test state.
+
+## TODOs
+
+No TODOs are present in the code.

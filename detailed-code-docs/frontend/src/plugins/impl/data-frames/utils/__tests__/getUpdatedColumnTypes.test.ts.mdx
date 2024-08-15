@@ -1,0 +1,98 @@
+---
+title: "getUpdatedColumnTypes.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `getUpdatedColumnTypes` function, which is responsible for updating the data types of columns in a data frame based on a series of transformation operations. These transformations include operations like column conversion, renaming, grouping, aggregation, and selection. The tests ensure that the function correctly updates the column types according to the specified transformations.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `getUpdatedColumnTypes`: The function being tested, which updates column types based on transformations.
+- `Transforms`: A set of predefined transformation objects that simulate different operations on columns.
+- `INITIAL_COLUMN_TYPES`: A map representing the initial data types of columns before any transformations are applied.
+- `describe`, `it`, `expect`: Functions from the `vitest` testing library used to define and execute test cases.
+
+## References
+
+- `getUpdatedColumnTypes`: The function under test, defined in `getUpdatedColumnTypes.ts`.
+- `TransformType`: A type imported from `schema.ts` that defines the structure of transformation objects.
+- `ColumnId`: A type imported from `types.ts` that represents column identifiers.
+
+## Symbols
+
+### `describe`
+#### Description
+Defines a test suite for the `getUpdatedColumnTypes` function, grouping related test cases together.
+
+### `it`
+#### Description
+Defines individual test cases within the test suite, each testing a specific aspect of the `getUpdatedColumnTypes` function.
+
+### `expect`
+#### Description
+Asserts that the result of the `getUpdatedColumnTypes` function matches the expected output for each test case.
+
+### `getUpdatedColumnTypes`
+#### Description
+Updates the data types of columns in a data frame based on a series of transformation operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| transforms | `TransformType[]` | An array of transformation operations to apply. |
+| columnTypes | `ColumnDataTypes` | A map of initial column identifiers to their data types. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `ColumnDataTypes` | A map of updated column identifiers to their data types. |
+
+#### Internal Logic
+- Initializes a new map `next` with the current column types.
+- Iterates over each transformation in the `transforms` array.
+- Applies the transformation to the `next` map using the `handleTransform` function.
+- Returns the updated `next` map.
+
+### `handleTransform`
+#### Description
+Applies a single transformation to the column types map.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| transform | `TransformType` | A single transformation operation to apply. |
+| next | `ColumnDataTypes` | The current map of column identifiers to their data types. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `ColumnDataTypes` | The updated map of column identifiers to their data types. |
+
+#### Internal Logic
+- Uses a switch statement to handle different types of transformations.
+- For `column_conversion`, updates the data type of the specified column.
+- For `rename_column`, renames the column and retains its data type.
+- For `group_by`, removes columns not included in the group-by operation.
+- For `aggregate`, retains only the columns included in the aggregation.
+- For `select_columns`, retains only the selected columns.
+- Returns the updated map after applying the transformation.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Provides the testing framework for defining and running test cases. |
+
+## Error Handling
+
+The `handleTransform` function uses a `logNever` utility to handle unexpected transformation types, ensuring that any unhandled cases are logged for debugging purposes.
+
+## Logging
+
+The `logNever` function is used to log unexpected transformation types, aiding in debugging and ensuring that all cases are handled appropriately.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,61 @@
+---
+title: "extension.ts"
+---
+
+## High-level description
+
+The target file, `extension.ts`, defines an enhanced Markdown extension for the CodeMirror editor. It integrates various Markdown editing commands with customizable hotkeys, allowing users to perform actions like inserting bold, italic, links, and other Markdown elements using keyboard shortcuts. Additionally, it includes a smart paste feature that automatically converts pasted URLs into Markdown links when text is selected.
+
+## Code Structure
+
+The main function in this file is `enhancedMarkdownExtension`, which returns an array of CodeMirror extensions. These extensions include key mappings for Markdown commands and a custom paste handler. The key mappings are defined using the `keymap` from `@codemirror/view`, and the paste handler is implemented using `EditorView.domEventHandlers`.
+
+## References
+
+- The file imports several Markdown command functions from `./commands`, such as `insertBoldMarker`, `insertItalicMarker`, and `insertLink`.
+- It uses the `HotkeyProvider` from `@/core/hotkeys/hotkeys` to retrieve hotkey configurations.
+- The `Extension` and `Prec` are imported from `@codemirror/state`, and `EditorView` and `keymap` are imported from `@codemirror/view`.
+
+## Symbols
+
+### `enhancedMarkdownExtension`
+#### Description
+The `enhancedMarkdownExtension` function creates a set of CodeMirror extensions that enhance Markdown editing capabilities. It maps specific keyboard shortcuts to Markdown formatting commands and handles URL pasting intelligently.
+
+#### Inputs
+| Name   | Type           | Description                      |
+|:-------|:---------------|:---------------------------------|
+| hotkeys | HotkeyProvider | Provides hotkey configurations. |
+
+#### Outputs
+| Name      | Type        | Description                                      |
+|:----------|:------------|:-------------------------------------------------|
+| extension | Extension[] | An array of CodeMirror extensions for Markdown. |
+
+#### Internal Logic
+- The function first creates a keymap with the highest precedence using `Prec.highest`. This keymap includes:
+  - Hotkey mappings for Markdown commands like bold, italic, link, ordered list, unordered list, blockquote, and code.
+  - A direct key mapping for the backtick character to insert code markers.
+- It then defines a paste event handler using `EditorView.domEventHandlers`. This handler:
+  - Checks if there is a text selection in the editor.
+  - If a URL is detected in the clipboard data, it prevents the default paste action and inserts the URL as a Markdown link.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `@codemirror/state` | Provides the `Extension` and `Prec` for defining CodeMirror extensions. |
+| `@codemirror/view`  | Supplies `EditorView` and `keymap` for editor view manipulation.        |
+| `@/core/hotkeys/hotkeys` | Manages hotkey configurations through the `HotkeyProvider`.        |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as verifying if a selection is present before applying certain commands. The paste handler checks for the presence of URL data before attempting to insert a link.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

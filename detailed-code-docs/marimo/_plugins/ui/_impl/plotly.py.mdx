@@ -1,0 +1,65 @@
+---
+title: "plotly.py"
+---
+
+## High-level description
+
+The target file `marimo/_plugins/ui/_impl/plotly.py` defines a class `plotly` that extends the `UIElement` class to create interactive, reactive plots using the Plotly library. This class allows users to create Plotly plots that can react to user interactions on the frontend, such as selecting data points, and then access the selected data in Python as a list of dictionaries.
+
+## Code Structure
+
+The main symbol in this code is the `plotly` class, which inherits from `UIElement`. The `plotly` class is responsible for initializing a Plotly plot with optional configurations and handling user interactions by updating its internal state based on selections made on the plot. It uses the `DependencyManager` to ensure that the Plotly library is available and logs warnings using the `LOGGER` from the `_loggers` module.
+
+## References
+
+- `UIElement`: The base class from which `plotly` inherits, providing core functionality for UI elements.
+- `DependencyManager`: Ensures that the necessary dependencies, like Plotly, are available.
+- `LOGGER`: Used for logging warnings and other messages.
+- `plotly.graph_objects`: Used for creating Plotly figures.
+- `plotly.io`: Used for converting Plotly figures to JSON format.
+
+## Symbols
+
+### `plotly`
+#### Description
+The `plotly` class is a UI element that allows for the creation of interactive Plotly plots. It enables users to select data points on the plot and access these selections in Python. The class supports custom configurations and renderers for the Plotly plots.
+
+#### Inputs
+| Name          | Type                      | Description                                                                 |
+|:--------------|:--------------------------|:----------------------------------------------------------------------------|
+| `figure`      | `go.Figure`               | A Plotly figure object to be rendered.                                      |
+| `config`      | `Optional[Dict[str, Any]]`| Optional configuration dictionary for the Plotly plot.                      |
+| `renderer_name` | `Optional[str]`         | Optional name of the renderer to use for the plot.                          |
+| `label`       | `str`                     | Optional text label for the UI element.                                     |
+| `on_change`   | `Optional[Callable[[JSONType], None]]` | Optional callback function to run when the element's value changes.         |
+
+#### Outputs
+| Name   | Type                      | Description                                                                 |
+|:-------|:--------------------------|:----------------------------------------------------------------------------|
+| `value`| `List[Dict[str, Any]]`    | A list of dictionaries representing the selected data points on the plot.   |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the Plotly plot by converting the figure to JSON and resolving the configuration. It uses the `DependencyManager` to ensure Plotly is available and logs any issues with the renderer configuration.
+- **Properties**: The class provides properties `ranges`, `points`, and `indices` to access different parts of the selection data.
+- **Value Conversion**: The `_convert_value` method stores the selection data and returns the selected points.
+
+## Side Effects
+- The class modifies its internal state based on user interactions with the plot.
+- It logs warnings if the default renderer configuration cannot be found.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `plotly`   | Used for creating and rendering interactive plots.                      |
+| `marimo._loggers` | Provides logging capabilities for the class.                     |
+| `marimo._dependencies.dependencies` | Manages and checks for required dependencies.  |
+
+## Error Handling
+- The class logs a warning if it cannot find the default renderer configuration, using the `LOGGER`.
+
+## Logging
+- The class uses the `LOGGER` from the `_loggers` module to log warnings related to renderer configuration issues.
+
+## TODOs
+- There are no explicit TODOs or notes left in the code.

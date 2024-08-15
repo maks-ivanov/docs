@@ -1,0 +1,79 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The target file, `utils.py`, is part of a larger system designed to manage and interact with various types of table-like data structures. It provides utility functions to obtain a suitable `TableManager` for a given data input, which can be a DataFrame or a similar structure. The file primarily focuses on determining the appropriate manager for handling different data types, including Pandas, Polars, PyArrow, and custom DataFrame-like objects.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `get_table_manager` and `get_table_manager_or_none` are the primary functions that determine the appropriate `TableManager` for a given data input.
+- `MANAGERS` is a list of `TableManagerFactory` instances, each responsible for creating a `TableManager` for a specific data type.
+- The `DependencyManager` is used to check if the necessary dependencies for each data type are available.
+
+## References
+
+- `DependencyManager`: Used to check for the presence of required libraries.
+- `DefaultTableManager`, `DataFrameProtocolTableManager`, `PandasTableManagerFactory`, `PolarsTableManagerFactory`, `PyArrowTableManagerFactory`: These are various table manager classes and factories used to handle different data types.
+- `is_dataframe_like`: A utility function to check if a data object is DataFrame-like.
+
+## Symbols
+
+### `get_table_manager`
+#### Description
+This function returns a `TableManager` for the given data. If no specific manager is found, it defaults to using `DefaultTableManager`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The data for which a table manager is needed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| TableManager | `TableManager[Any]` | A manager suitable for handling the given data. |
+
+#### Internal Logic
+- Calls `get_table_manager_or_none` to attempt to find a specific manager.
+- If no specific manager is found, it defaults to `DefaultTableManager`.
+
+### `get_table_manager_or_none`
+#### Description
+Attempts to find a specific `TableManager` for the given data. Returns `None` if no suitable manager is found.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The data for which a table manager is needed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| TableManager | `TableManager[Any] | None` | A manager suitable for handling the given data, or `None` if not found. |
+
+#### Internal Logic
+- Iterates over the `MANAGERS` list to find a manager that can handle the data type.
+- Uses `DependencyManager` to check if the required package for each manager is available.
+- If the data is a Narwhal DataFrame, it attempts to convert it to a native format and retry.
+- If the data is DataFrame-like, it uses `DataFrameProtocolTableManager`.
+- Returns `None` if no suitable manager is found.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `DependencyManager` | Checks for the presence of required libraries for different data types. |
+
+## Error Handling
+
+The functions handle errors gracefully by returning `None` when a suitable manager cannot be found, rather than raising exceptions. This allows the calling code to handle the absence of a manager appropriately.
+
+## Logging
+
+No explicit logging is implemented in this file. However, related files, such as those handling datasets, do include logging for error conditions.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,63 @@
+---
+title: "router.py"
+---
+
+## High-level description
+
+The `marimo/_server/api/router.py` file is responsible for setting up the API routing for the Marimo server application. It imports various endpoint routers from different modules and includes them in a main application router, which is then used to define the routes for the application. This setup allows the application to handle requests to different API endpoints, each managed by its respective router.
+
+## Code Structure
+
+The main symbol in this file is the `build_routes` function, which constructs and returns a list of routes for the application. It uses the `APIRouter` class to create a router and includes various endpoint routers, each with a specific prefix and name, to handle different parts of the API.
+
+## Symbols
+
+### `build_routes`
+#### Description
+The `build_routes` function is responsible for constructing the application's routing configuration. It creates an instance of `APIRouter`, includes various endpoint routers with specific prefixes and names, and returns the list of routes.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| base_url | str    | The base URL prefix for all routes. Defaults to an empty string. |
+
+#### Outputs
+| Name  | Type          | Description                |
+|:------|:--------------|:---------------------------|
+| routes | List[BaseRoute] | A list of routes configured for the application. |
+
+#### Internal Logic
+1. An `APIRouter` instance is created with the specified `base_url` as a prefix.
+2. Various endpoint routers are included in the `app_router` with specific prefixes and names:
+   - `execution_router` with prefix `/api/kernel` and name `execution`.
+   - `config_router` with prefix `/api/kernel` and name `config`.
+   - `editing_router` with prefix `/api/kernel` and name `editing`.
+   - `files_router` with prefix `/api/kernel` and name `files`.
+   - `file_explorer_router` with prefix `/api/files` and name `file_explorer`.
+   - `documentation_router` with prefix `/api/documentation` and name `documentation`.
+   - `datasources_router` with prefix `/api/datasources` and name `datasources`.
+   - `ai_router` with prefix `/api/ai` and name `ai`.
+   - `home_router` with prefix `/api/home` and name `home`.
+   - `login_router` with prefix `/auth` and name `auth`.
+   - `export_router` with prefix `/api/export` and name `export`.
+   - `terminal_router` with prefix `/terminal` and name `terminal`.
+   - `health_router` with no prefix and name `health`.
+   - `ws_router` with no prefix and name `ws`.
+   - `assets_router` with no prefix and name `assets`.
+3. The function returns the list of routes from the `app_router`.
+
+## References
+
+- `APIRouter`: A custom router class used to define and manage API routes.
+- Various endpoint routers such as `ai_router`, `assets_router`, `config_router`, etc., which are imported from their respective modules and included in the main router.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._server.router.APIRouter` | Used to create and manage the main application router. |
+| `starlette.routing.BaseRoute` | Used as the return type for the list of routes. |
+
+## Error Handling
+
+The `build_routes` function does not implement specific error handling mechanisms, as it primarily focuses on setting up the routing configuration. Any errors related to route inclusion or configuration would likely be handled at a higher level in the application.

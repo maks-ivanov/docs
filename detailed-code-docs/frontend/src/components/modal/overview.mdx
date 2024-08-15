@@ -1,0 +1,91 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `ImperativeModal.tsx` file provides a mechanism for managing modal dialogs in a React application using a context-based approach. It defines a `ModalProvider` component that supplies modal state and control functions to its children, and a `useImperativeModal` hook that allows components to open and close modals imperatively. The file supports different types of modals, including standard dialogs, alerts, prompts, and confirmation dialogs.
+
+## Code Structure
+
+- **ModalContext**: A React context that holds the current modal state and a function to update it.
+- **ModalProvider**: A React component that provides the modal context to its children.
+- **useImperativeModal**: A custom hook that provides functions to open and close various types of modals.
+
+## Symbols
+
+### `ModalContext`
+#### Description
+`ModalContext` is a React context that holds the current modal state (`modal`) and a function (`setModal`) to update this state. It is used to manage the display of modal dialogs across the application.
+
+#### Inputs
+- None directly, but it is used within the `ModalProvider` to provide context values.
+
+#### Outputs
+- Provides `modal` and `setModal` to components within the `ModalProvider`.
+
+### `ModalProvider`
+#### Description
+`ModalProvider` is a React component that wraps its children with a context provider, supplying the current modal state and a function to update it. This allows any component within the provider to access and manipulate the modal state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `PropsWithChildren&lt;{}&gt;` | The children components that will have access to the modal context. |
+
+#### Outputs
+- Renders the current modal and its children.
+
+#### Internal Logic
+- Uses `React.useState` to manage the modal state.
+- Provides the `modal` and `setModal` through `ModalContext.Provider`.
+
+### `useImperativeModal`
+#### Description
+`useImperativeModal` is a custom hook that provides functions to open and close modals imperatively. It ensures that the hook is used within a `ModalProvider` and offers methods to open different types of modals, such as standard dialogs, alerts, prompts, and confirmations.
+
+#### Inputs
+- None directly, but it uses the `ModalContext` to access and manipulate modal state.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| openModal | `(content: React.ReactNode) =&gt; void` | Opens a standard dialog with the provided content. |
+| openAlert | `(content: React.ReactNode) =&gt; void` | Opens an alert dialog with the provided content. |
+| openPrompt | `(opts: { title: React.ReactNode; description?: React.ReactNode; defaultValue?: string; onConfirm: (value: string) =&gt; void; }) =&gt; void` | Opens a prompt dialog with input and confirmation logic. |
+| openConfirm | `(opts: { title: React.ReactNode; description?: React.ReactNode; confirmAction: React.ReactNode; variant?: "destructive"; }) =&gt; void` | Opens a confirmation dialog with a customizable action. |
+| closeModal | `() =&gt; void` | Closes the currently open modal. |
+
+#### Internal Logic
+- Uses `React.useContext` to access the `ModalContext`.
+- Throws an error if used outside of a `ModalProvider`.
+- Defines `closeModal` to set the modal state to `null`.
+- Defines `openModal`, `openAlert`, `openPrompt`, and `openConfirm` to set the modal state with specific dialog components and logic.
+
+## References
+
+- **Dialog**: Used in `openModal` to render a standard dialog.
+- **AlertDialog**: Used in `openAlert`, `openPrompt`, and `openConfirm` to render alert dialogs with specific content and actions.
+- **AlertDialogAction**, **AlertDialogContent**, **AlertDialogFooter**, **AlertDialogCancel**, **AlertDialogDescription**, **AlertDialogHeader**, **AlertDialogTitle**: Components used to structure the content and actions within alert dialogs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating components, hooks, and context. |
+| `../ui/dialog` | Provides dialog components for rendering modals. |
+| `../ui/alert-dialog` | Provides alert dialog components for rendering alert modals. |
+| `../ui/input` | Used for rendering input fields in prompt dialogs. |
+| `../ui/button` | Used for rendering buttons in dialogs. |
+
+## Error Handling
+
+- The `useImperativeModal` hook throws an error if it is used outside of a `ModalProvider`, ensuring that the modal context is available.
+
+## Logging
+
+- No explicit logging is implemented in this file.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

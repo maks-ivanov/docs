@@ -1,0 +1,62 @@
+---
+title: "message-buffer.ts"
+---
+
+## High-level description
+
+The `MessageBuffer` class in the target file `message-buffer.ts` is designed to manage messages that arrive before a worker is ready to process them. It temporarily stores these messages in a buffer and processes them once the worker is ready. This ensures that no messages are lost during the initialization phase of the worker.
+
+## Code Structure
+
+The `MessageBuffer` class is a standalone utility that is used to handle message buffering. It is instantiated with a callback function that processes messages. The class provides methods to add messages to the buffer and to start processing the buffered messages once the worker is ready.
+
+## Symbols
+
+### `MessageBuffer&lt;T&gt;`
+#### Description
+The `MessageBuffer` class is a generic class that manages a buffer of messages of type `T`. It stores messages in an internal array until the worker is ready to process them. Once the worker is ready, it processes all buffered messages and any new messages immediately.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| onMessage | `(data: T) =&gt; void` | A callback function that processes each message of type `T`. |
+
+#### Outputs
+There are no direct outputs from the class, but it processes messages through the provided callback function.
+
+#### Internal Logic
+- **Constructor**: Initializes the buffer as an empty array and sets the `started` flag to `false`.
+- **`push(data: T)`**: Adds a message to the buffer if the worker is not ready (`started` is `false`). If the worker is ready, it immediately processes the message using the `onMessage` callback.
+- **`start()`**: Sets the `started` flag to `true` and processes all messages in the buffer using the `onMessage` callback. After processing, it clears the buffer.
+
+## References
+
+The `MessageBuffer` class is referenced in the related files `worker.tsx` and `worker.ts`, where it is used to manage messages in a web worker environment. The class is instantiated with a callback function that sends messages to a remote procedure call (RPC) interface.
+
+## Dependencies
+
+The `MessageBuffer` class does not have any external dependencies. It is a self-contained utility.
+
+## Side Effects
+
+The `MessageBuffer` class modifies its internal state by adding messages to the buffer and clearing the buffer once messages are processed. It also invokes the `onMessage` callback, which may have side effects depending on its implementation.
+
+## Performance Considerations
+
+The `MessageBuffer` class is designed to handle messages efficiently by storing them in an array and processing them in bulk once the worker is ready. This minimizes the overhead of handling messages individually during the initialization phase.
+
+## Error Handling
+
+The `MessageBuffer` class does not implement any specific error handling mechanisms. It assumes that the `onMessage` callback is robust and can handle any errors that occur during message processing.
+
+## Logging
+
+The `MessageBuffer` class does not implement any logging mechanisms. Any logging would need to be handled by the `onMessage` callback or the surrounding code that uses the `MessageBuffer`.
+
+## API/Interface Reference
+
+The `MessageBuffer` class does not expose an API or public interface beyond its constructor and methods (`push` and `start`). It is intended to be used as a utility within a larger system, such as a web worker.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,149 @@
+---
+title: "ws.py"
+---
+
+## High-level description
+
+The target file `marimo/_smoke_tests/ws.py` is a script designed to create a web application using the Marimo framework. It connects to the Coinbase WebSocket API to receive real-time cryptocurrency data, processes this data, and displays it in a user interface. The application includes input fields for API credentials, a data table, statistics, and a chart to visualize the data.
+
+## Code Structure
+
+The code is structured around the Marimo framework's concept of "cells," which are essentially functions that define parts of the application's behavior or UI. Each cell is decorated with `@app.cell`, indicating that it is a component of the Marimo application. The main components include input handling, data state management, data visualization, and WebSocket communication.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which represents the Marimo application. It is configured with a full-width layout.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a function as a cell in the Marimo application. Each cell can handle different aspects of the application, such as UI components or data processing.
+
+### `__(mo, os)`
+#### Description
+This cell handles the UI for inputting API credentials. It retrieves API keys from the environment and creates text input fields for the user to enter their Coinbase API key and secret.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | Marimo object | Provides UI components and state management functions. |
+| os | Module | Used to access environment variables. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| api_key_input | UI component | Text input for the API key. |
+| api_secret_input | UI component | Text input for the API secret. |
+| env_api_key | str | API key from the environment. |
+| env_api_secret | str | API secret from the environment. |
+
+### `__(mo, pd)`
+#### Description
+This cell initializes a Pandas DataFrame to store cryptocurrency data and provides functions to get and set this data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | Marimo object | Provides state management functions. |
+| pd | Module | Pandas library for data manipulation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get_df | function | Function to retrieve the current DataFrame. |
+| set_df | function | Function to update the DataFrame. |
+
+### `__(mo)`
+#### Description
+This cell defines a function to generate statistics from the DataFrame and display them using Marimo's UI components.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | Marimo object | Provides UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output_stats | function | Function to generate and display statistics. |
+
+#### Internal Logic
+- Checks if the DataFrame is empty and displays a waiting message if so.
+- Extracts the latest data and calculates differences and percentages for high and low prices.
+- Displays statistics using Marimo's `stat` component.
+
+### `__(alt, mo)`
+#### Description
+This cell defines a function to create a line chart using Altair to visualize the price data over time.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | Module | Altair library for data visualization. |
+| mo | Marimo object | Provides UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output_chart | function | Function to generate and display a chart. |
+
+### `__(mo)`
+#### Description
+This cell defines a function to display the DataFrame as a table in the UI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | Marimo object | Provides UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output_table | function | Function to display the DataFrame as a table. |
+
+### `__(...)`
+#### Description
+This cell manages the WebSocket connection to Coinbase, processes incoming data, and updates the UI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Various | Various | Includes WebSocket and threading modules, UI components, and data functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Various | Various | Includes functions and variables related to WebSocket management. |
+
+#### Internal Logic
+- Validates API credentials and stops execution if they are missing.
+- Defines functions for signing WebSocket messages, handling new ticker data, and managing WebSocket threads.
+- Connects to the WebSocket, subscribes to the ticker channel, and processes incoming messages.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Framework for building the web application. |
+| pandas | Data manipulation and analysis. |
+| altair | Data visualization. |
+| os | Accessing environment variables. |
+| json | Parsing JSON data. |
+| time | Handling time-related functions. |
+| hmac | Creating cryptographic signatures. |
+| hashlib | Hashing algorithms for security. |
+| threading | Managing concurrent execution. |
+| websocket | Handling WebSocket connections. |
+
+## Error Handling
+
+- The code includes try-except blocks to handle exceptions during WebSocket communication, such as JSON parsing errors and connection issues.
+
+## Logging
+
+- The code uses `print` statements to log errors and data received from the WebSocket.
+
+## TODOs
+
+- The code contains comments indicating a need for asynchronous execution to prevent blocking other cells and improve UI responsiveness.

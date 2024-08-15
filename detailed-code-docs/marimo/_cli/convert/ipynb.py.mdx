@@ -1,0 +1,99 @@
+---
+title: "ipynb.py"
+---
+
+## High-level description
+
+The target file, `marimo/_cli/convert/ipynb.py`, provides functionality to convert Jupyter notebooks (in `.ipynb` format) into a format compatible with the Marimo framework. It processes the notebook's cells, handling both code and markdown cells, and resolves issues such as multiple definitions within the code cells. The conversion process involves transforming markdown to a Marimo-specific format and ensuring that the code is syntactically correct for further processing.
+
+## Code Structure
+
+The main symbols in the code are functions that handle different aspects of the conversion process. The `fixup_multiple_definitions` function is responsible for resolving multiple definitions in the code cells, while `convert_from_ipynb` and `convert_from_ipynb_file` handle the conversion of the notebook content from a string or file, respectively. These functions utilize utilities and classes from other parts of the Marimo framework, such as `compile_cell`, `NameTransformer`, and `DirectedGraph`.
+
+## Symbols
+
+### `fixup_multiple_definitions`
+#### Description
+This function resolves issues with multiple definitions in the code cells of a Jupyter notebook. It uses an abstract syntax tree (AST) to parse and transform the code, ensuring that variable names are unique where necessary.
+
+#### Inputs
+| Name    | Type       | Description                        |
+|:--------|:-----------|:-----------------------------------|
+| sources | list[str]  | A list of source code strings from the notebook cells. |
+
+#### Outputs
+| Name    | Type       | Description                        |
+|:--------|:-----------|:-----------------------------------|
+| output  | list[str]  | A list of transformed source code strings with unique variable names. |
+
+#### Internal Logic
+- Checks if the Python version supports `ast.unparse`.
+- Compiles each source code string into a cell using `compile_cell`.
+- Constructs a `DirectedGraph` to track variable definitions and references.
+- Identifies multiply defined names and applies transformations using `NameTransformer` to ensure uniqueness.
+
+### `convert_from_ipynb`
+#### Description
+Converts a raw Jupyter notebook JSON string into a Marimo-compatible format by processing its cells and handling markdown conversion.
+
+#### Inputs
+| Name          | Type  | Description                        |
+|:--------------|:------|:-----------------------------------|
+| raw_notebook  | str   | JSON string of the Jupyter notebook. |
+
+#### Outputs
+| Name    | Type  | Description                        |
+|:--------|:------|:-----------------------------------|
+| output  | str   | Converted notebook content in Marimo format. |
+
+#### Internal Logic
+- Parses the JSON string to extract notebook cells.
+- Iterates over cells, converting markdown cells using `markdown_to_marimo` and collecting source code.
+- Calls `fixup_multiple_definitions` to resolve any multiple definitions.
+- Appends an import statement for Marimo if markdown cells are present.
+- Generates the final output using `generate_from_sources`.
+
+### `convert_from_ipynb_file`
+#### Description
+Converts a Jupyter notebook file into a Marimo-compatible format by reading the file and processing its content.
+
+#### Inputs
+| Name      | Type  | Description                        |
+|:----------|:------|:-----------------------------------|
+| file_path | str   | Path to the Jupyter notebook file. |
+
+#### Outputs
+| Name    | Type  | Description                        |
+|:--------|:------|:-----------------------------------|
+| output  | str   | Converted notebook content in Marimo format. |
+
+#### Internal Logic
+- Loads the notebook file content using `load_external_file`.
+- Calls `convert_from_ipynb` to process the loaded content.
+
+## References
+
+- `compile_cell` from `marimo._ast.compiler`: Used to compile source code strings into cell objects.
+- `NameTransformer` from `marimo._ast.transformers`: Utilized to transform variable names in the AST.
+- `DirectedGraph` from `marimo._runtime.dataflow`: Used to track variable definitions and references across cells.
+- `generate_from_sources`, `load_external_file`, `markdown_to_marimo` from `marimo._cli.convert.utils`: Utility functions for generating output, loading files, and converting markdown.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast`      | Used for parsing and transforming Python code. |
+| `json`     | Used for parsing the JSON content of Jupyter notebooks. |
+| `sys`      | Used to check the Python version for compatibility. |
+
+## Error Handling
+
+- The `fixup_multiple_definitions` function handles `SyntaxError` exceptions by returning the original sources if compilation fails.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

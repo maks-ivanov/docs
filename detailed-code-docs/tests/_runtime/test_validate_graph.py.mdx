@@ -1,0 +1,135 @@
+---
+title: "test_validate_graph.py"
+---
+
+## High-level description
+
+The target file `test_validate_graph.py` contains a suite of unit tests designed to validate the functionality of the `check_for_errors` function from the `validate_graph` module in the `marimo` package. These tests ensure that the function correctly identifies and reports various types of errors in a directed graph representing data flow, such as multiple definitions of the same variable, deletion of non-local variables, and cycles within the graph.
+
+## Code Structure
+
+The main symbols in the code are the test functions, each of which creates a `DirectedGraph` instance, registers cells with specific code, and then checks for errors using the `check_for_errors` function. The errors are then asserted against expected outcomes to verify the correctness of the error detection logic.
+
+## References
+
+- `check_for_errors`: This function is imported from `marimo._runtime.validate_graph` and is the primary function being tested.
+- `DirectedGraph`: A class from `marimo._runtime.dataflow` used to represent the graph structure in which the cells are registered.
+- Error classes (`CycleError`, `DeleteNonlocalError`, `MultipleDefinitionError`): These are imported from `marimo._messaging.errors` and are used to represent different types of errors that can occur in the graph.
+
+## Symbols
+
+### `test_multiple_definition_error`
+#### Description
+Tests the detection of multiple definitions of the same variable across different cells in the graph.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a `DirectedGraph` and registers cells with code that defines the same variable `x` in different cells.
+- Calls `check_for_errors` to detect errors.
+- Asserts that the errors include `MultipleDefinitionError` for each cell with the correct conflicting cell IDs.
+
+### `test_overlapping_multiple_definition_errors`
+#### Description
+Tests the detection of overlapping multiple definitions for different variables across cells.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers cells with overlapping definitions for variables `x`, `y`, and `z`.
+- Checks for errors and asserts that the correct `MultipleDefinitionError` instances are reported for each cell.
+
+### `test_underscore_variables_are_private`
+#### Description
+Tests that variables prefixed with an underscore are treated as private and do not trigger multiple definition errors.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers cells with underscore-prefixed variables and checks for errors.
+- Asserts that no errors are reported, confirming the private nature of underscore-prefixed variables.
+
+### `test_delete_nonlocal_error`
+#### Description
+Tests the detection of attempts to delete non-local variables.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers cells where a variable is defined in one cell and deleted in another.
+- Checks for errors and asserts that a `DeleteNonlocalError` is reported for the cell attempting the deletion.
+
+### `test_two_node_cycle`
+#### Description
+Tests the detection of a cycle involving two nodes in the graph.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers cells that reference each other, creating a cycle.
+- Checks for errors and asserts that a `CycleError` is reported for both cells involved in the cycle.
+
+### `test_three_node_cycle`
+#### Description
+Tests the detection of a cycle involving three nodes in the graph.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers cells that form a cycle across three nodes.
+- Checks for errors and asserts that a `CycleError` is reported for each cell, with the correct cycle edges.
+
+### `test_cycle_and_multiple_def`
+#### Description
+Tests the detection of both a cycle and multiple definitions within the same graph.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers cells that create both a cycle and multiple definitions.
+- Checks for errors and asserts that both `CycleError` and `MultipleDefinitionError` are reported for the relevant cells.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._ast.compiler` | Provides the `compile_cell` function used to parse and compile cell code. |
+| `marimo._messaging.errors` | Defines error classes used to represent different types of graph errors. |
+| `marimo._runtime.dataflow` | Provides the `DirectedGraph` class used to model the graph structure. |
+| `marimo._runtime.validate_graph` | Contains the `check_for_errors` function that is the primary focus of the tests. |
+
+## Error Handling
+
+The tests rely on assertions to verify that the `check_for_errors` function correctly identifies and reports errors. If the function does not behave as expected, the assertions will fail, indicating a problem with the error detection logic.
+
+## Logging
+
+No explicit logging is implemented in the test file. The tests use assertions to validate outcomes, which is typical for unit tests.

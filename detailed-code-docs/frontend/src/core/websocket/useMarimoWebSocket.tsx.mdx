@@ -1,0 +1,62 @@
+---
+title: "useMarimoWebSocket.tsx"
+---
+
+## High-level description
+
+The `useMarimoWebSocket` function in the target file is a custom React hook that manages a WebSocket connection to the Marimo kernel. It handles various WebSocket events such as opening, closing, and receiving messages, and processes these messages to update the application's state accordingly. This hook is crucial for maintaining real-time communication between the client and the server, enabling dynamic updates and interactions within the application.
+
+## Code Structure
+
+The `useMarimoWebSocket` function is the primary symbol in this file. It interacts with several other components and hooks to manage the WebSocket connection and handle incoming messages. It uses various actions and state management utilities from the Jotai library to update the application's state based on the messages received from the WebSocket.
+
+## References
+
+- `useWebSocket`: A hook used to establish and manage the WebSocket connection.
+- `handleKernelReady`, `handleCellOperation`, `handleRemoveUIElements`: Functions that process specific types of messages received from the WebSocket.
+- `UI_ELEMENT_REGISTRY`, `AUTOCOMPLETER`, `FUNCTIONS_REGISTRY`: Registries used to manage UI elements, autocompletion, and function calls, respectively.
+- `toast`: A utility for displaying notifications to the user.
+
+## Symbols
+
+### `useMarimoWebSocket`
+#### Description
+The `useMarimoWebSocket` function establishes a WebSocket connection to the Marimo kernel and handles incoming messages to update the application's state. It processes various message types to perform actions such as reloading the page, updating cell data, managing UI elements, and handling alerts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | object | Configuration options for the WebSocket connection, including session ID, auto-instantiation flag, and a callback to set cell data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| connection | object | The current state of the WebSocket connection. |
+
+#### Internal Logic
+- **Initialization**: Sets up state and actions for managing cells, variables, datasets, layout, and connection status.
+- **Message Handling**: Defines a `handleMessage` function to process different types of messages received from the WebSocket. Each message type triggers specific actions, such as updating cell data, handling UI elements, or displaying alerts.
+- **Reconnection Logic**: Implements a `tryReconnecting` function to attempt reconnection if the WebSocket connection is closed unexpectedly.
+- **WebSocket Setup**: Uses the `useWebSocket` hook to establish the connection, providing callbacks for open, message, close, and error events.
+
+## Side Effects
+- Updates global state using Jotai atoms and actions.
+- Modifies the DOM by reloading the page or focusing elements.
+- Displays notifications using the `toast` utility.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management library used for managing application state. |
+| `react-error-boundary` | Provides error boundary functionality for handling errors gracefully. |
+| `Logger` | Utility for logging messages and warnings. |
+| `toast` | Utility for displaying user notifications. |
+
+## Error Handling
+- Uses `try-catch` blocks to handle errors during message processing, displaying an error notification if a message cannot be handled.
+
+## Logging
+- Utilizes the `Logger` utility to log warnings and errors related to WebSocket events and message handling.
+
+## TODOs
+- No explicit TODOs are present in the code.

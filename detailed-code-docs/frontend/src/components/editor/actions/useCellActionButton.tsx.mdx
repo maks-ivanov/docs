@@ -1,0 +1,65 @@
+---
+title: "useCellActionButton.tsx"
+---
+
+## High-level description
+
+The `useCellActionButton.tsx` file defines a React hook, `useCellActionButtons`, which provides a set of action buttons for interacting with cells in a code editor interface. These actions include running, formatting, renaming, and deleting cells, as well as toggling between different views and configurations such as hiding code or changing the language of the cell. The hook leverages various state management and UI components to enable these functionalities.
+
+## Code Structure
+
+The main symbol in this file is the `useCellActionButtons` function, which is a custom React hook. It interacts with several other components and hooks to manage cell actions, including `useCellActions`, `useRunCell`, and `useDeleteCellCallback`. It also uses state management from the `jotai` library to handle global state atoms like `hasOnlyOneCellAtom` and `aiEnabledAtom`.
+
+## Symbols
+
+### `useCellActionButtons`
+#### Description
+The `useCellActionButtons` function is a custom React hook that generates a list of action buttons for a given cell in a code editor. These buttons allow users to perform various operations on the cell, such as running the cell, renaming it, toggling its visibility, and changing its language. The hook returns an array of action button groups, each containing several action buttons with associated icons, labels, and handlers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | `CellActionButtonProps` | The properties of the cell for which action buttons are being generated. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| actions | `ActionButton[][]` | A two-dimensional array of action buttons grouped by functionality. |
+
+#### Internal Logic
+- The hook first extracts necessary actions from `useCellActions` and other hooks like `useRunCell` and `useDeleteCellCallback`.
+- It checks if the cell is null or if the application is in kiosk mode, returning an empty array if so.
+- It defines several action button groups:
+  - **Cell Operations**: Includes actions like renaming, running, AI completion, exporting output, formatting, and toggling code visibility.
+  - **Movement**: Actions for creating new cells above or below, moving cells up or down, and sending cells to the top or bottom.
+  - **Delete**: An action for deleting the cell, which is only available if there is more than one cell.
+- Each action button is defined with properties such as `icon`, `label`, `handle`, and `hotkey`.
+- The hook filters out any hidden actions before returning the final list of action button groups.
+
+## References
+
+- **`useCellActions`**: Provides functions to manipulate cell data, such as creating, moving, and updating cells.
+- **`useRunCell`**: A hook that returns a function to execute a specific cell.
+- **`useDeleteCellCallback`**: Provides a callback function to delete a cell.
+- **`useImperativeModal`**: Used to open modals for actions like renaming a cell.
+- **`jotai`**: Used for state management, particularly for checking conditions like whether AI features are enabled or if the application is in kiosk mode.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management library used for managing global state atoms. |
+| `lucide-react` | Provides icon components used in the action buttons. |
+| `@codemirror/view` | Used for interacting with the CodeMirror editor views. |
+
+## Error Handling
+
+The code includes basic error handling for asynchronous operations, such as saving cell configurations. If an operation fails, it typically does not propagate errors but may log them or silently fail.
+
+## Logging
+
+There is no explicit logging mechanism implemented in this file. However, related files like `useRunCells.ts` use a `Logger` utility for error logging.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

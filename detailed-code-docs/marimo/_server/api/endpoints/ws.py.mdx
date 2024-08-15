@@ -1,0 +1,96 @@
+---
+title: "ws.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/endpoints/ws.py`, implements a WebSocket endpoint for managing real-time communication between a client and a server in a Marimo application. It handles WebSocket connections, manages session states, and facilitates message exchange between the server and connected clients, including handling reconnections and kiosk mode operations.
+
+## Code Structure
+
+The main components of the code are the `WebSocketCodes` enumeration, the `websocket_endpoint` function, and the `WebsocketHandler` class. The `websocket_endpoint` function is a WebSocket route handler that initializes a `WebsocketHandler` instance for each connection. The `WebsocketHandler` class manages the lifecycle of a WebSocket connection, including session management, message handling, and reconnection logic.
+
+## Symbols
+
+### `WebSocketCodes`
+#### Description
+An enumeration that defines specific WebSocket close codes used to indicate different types of connection closures, such as normal closure or forbidden access.
+
+#### Members
+- `ALREADY_CONNECTED`: Indicates a connection attempt when a session is already connected.
+- `NORMAL_CLOSE`: Represents a normal closure of the WebSocket connection.
+- `FORBIDDEN`: Used when access to the WebSocket is forbidden.
+
+### `websocket_endpoint`
+#### Description
+Handles incoming WebSocket connections, validates query parameters, and initializes a `WebsocketHandler` to manage the connection.
+
+#### Inputs
+| Name     | Type       | Description                  |
+|:---------|:-----------|:-----------------------------|
+| websocket | `WebSocket` | The WebSocket connection object |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Extracts session ID and file key from query parameters.
+- Validates the presence of required parameters.
+- Initializes a `WebsocketHandler` with the session details and starts it.
+
+### `WebsocketHandler`
+#### Description
+Manages a WebSocket connection for a session, handling message exchange, session reconnection, and kiosk mode operations.
+
+#### Inputs
+| Name       | Type            | Description                          |
+|:-----------|:----------------|:-------------------------------------|
+| websocket  | `WebSocket`     | The WebSocket connection object      |
+| manager    | `SessionManager`| Manages session state and operations |
+| session_id | `str`           | Unique identifier for the session    |
+| mode       | `SessionMode`   | The mode of the session (EDIT/RUN)   |
+| file_key   | `MarimoFileKey` | Identifier for the file being edited |
+| kiosk      | `bool`          | Indicates if the session is in kiosk mode |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes session state and message queue.
+- Handles session reconnection and kiosk mode connection.
+- Manages message sending and receiving through the WebSocket.
+- Implements logic for session disconnection and cleanup.
+
+## References
+
+- `AppState`: Used to manage application state and extract query parameters.
+- `SessionManager`: Manages session creation, retrieval, and state.
+- `KernelReady`, `Reconnected`, `Alert`, `Banner`: Message operations used to communicate session state and events to the client.
+- `WebComponentEncoder`: Used for JSON serialization of messages.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `starlette.websockets` | Provides WebSocket support for handling connections |
+| `asyncio` | Used for asynchronous operations and task management |
+| `json` | Serialization and deserialization of messages   |
+
+## Error Handling
+
+- Uses WebSocket close codes to indicate specific reasons for connection closure.
+- Handles exceptions during message sending to manage disconnections gracefully.
+
+## Logging
+
+- Utilizes a logger (`LOGGER`) to record debug information about connection states, message handling, and errors.
+
+## API/Interface Reference
+
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| `/ws`    | WEBSOCKET | WebSocket connection | WebSocket messages | Manages WebSocket connections for real-time communication |
+
+## TODOs
+
+No TODOs are present in the code.

@@ -1,0 +1,103 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The `utils.py` file in the `marimo/_server/api` directory provides utility functions for handling HTTP request headers, parsing request bodies into dataclasses, parsing filenames into titles, and opening URLs in web browsers. These utilities are designed to support the broader functionality of the Marimo server API, facilitating tasks such as request validation, data parsing, and user interface interactions.
+
+## Code Structure
+
+The main symbols in the code are utility functions that serve different purposes:
+- `require_header`: Validates and extracts a single header value from a list.
+- `parse_request`: Asynchronously parses the body of a request into a specified dataclass.
+- `parse_title`: Converts a filename into a more readable title format.
+- `open_url_in_browser`: Opens a specified URL in a web browser, with platform-specific handling.
+
+## References
+
+- `parse_raw`: A function from `marimo._utils.parse_dataclass` used to parse raw data into a dataclass.
+- `Request`: A type from `starlette.requests` used to represent HTTP requests.
+
+## Symbols
+
+### `require_header`
+#### Description
+This function ensures that a given list of headers contains exactly one value and returns that value. It raises a `ValueError` if the list is `None` or does not contain exactly one item.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| header | list[str] or None | A list of header values to validate. |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | str  | The single header value from the list. |
+
+### `parse_request`
+#### Description
+Asynchronously parses the body of a request into a specified dataclass type. This function is useful for converting JSON request bodies into structured Python objects.
+
+#### Inputs
+| Name    | Type       | Description                        |
+|:--------|:-----------|:-----------------------------------|
+| request | Request    | The HTTP request to parse.         |
+| cls     | Type[T]    | The dataclass type to parse into.  |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | T    | An instance of the specified dataclass type. |
+
+#### Internal Logic
+- The function reads the request body asynchronously.
+- It uses the `parse_raw` function to convert the raw data into an instance of the specified dataclass.
+
+### `parse_title`
+#### Description
+Converts a filename into a more readable title by stripping the file extension, replacing underscores with spaces, and using the base name of the file.
+
+#### Inputs
+| Name     | Type          | Description                        |
+|:---------|:--------------|:-----------------------------------|
+| filename | Optional[str] | The filename to parse.             |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | str  | The parsed title.                  |
+
+### `open_url_in_browser`
+#### Description
+Opens a specified URL in a web browser. It handles different platforms and browser specifications, using `xdg-open` on Unix-like systems and the `webbrowser` module as a fallback.
+
+#### Inputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| browser | str | The browser to use, or "default" for the system default. |
+| url     | str | The URL to open.                   |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if `xdg-open` is available and uses it if the browser is set to "default".
+- Uses the `webbrowser` module to open the URL if `xdg-open` is not available or a specific browser is specified.
+
+## Side Effects
+- `open_url_in_browser` may launch a web browser process, which can affect system resources.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file and process operations. |
+| `subprocess` | Used to open URLs in a browser. |
+| `sys` | Used to check the platform. |
+| `webbrowser` | Used to open URLs in a browser. |
+| `shutil.which` | Used to check for the presence of `xdg-open`. |
+| `starlette.requests.Request` | Represents HTTP requests. |
+
+## TODOs
+- There is a TODO comment questioning the necessity of the `require_header` function, suggesting a review of its usage and relevance.

@@ -1,0 +1,111 @@
+---
+title: "regularization_and_sparsity.py"
+---
+
+## High-level description
+
+The target file is a Python script that demonstrates the impact of different regularization techniques on the sparsity of solutions in a least squares regression problem. It uses the `marimo` library to create an interactive application that allows users to experiment with different regularization strengths and observe how the solutions change in terms of sparsity when using L1 and L2 norms.
+
+## Code Structure
+
+The script is structured using the `marimo` library, which organizes the code into cells that are executed as part of an interactive application. The main components include setting up the problem data, defining solvers for L1 and L2 regularization, and providing a user interface to adjust the regularization parameter and visualize the results.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of `marimo.App`, which is used to define and run the interactive application.
+
+### `@app.cell`
+#### Description
+A decorator provided by the `marimo` library that defines a cell in the application. Each cell can contain code that is executed as part of the app's workflow.
+
+### `sparse_solver`
+#### Description
+A function that creates a solver for the regularized least squares problem using CVXPY.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| A | numpy.ndarray | The matrix in the least squares problem. |
+| b | numpy.ndarray | The vector in the least squares problem. |
+| p | int | The norm to use for regularization (1 for L1, 2 for L2). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| solve | function | A function that solves the optimization problem for a given regularization parameter. |
+
+#### Internal Logic
+- Defines an optimization variable `x` and a parameter `lambd` using CVXPY.
+- Sets up the objective function to minimize the least squares error plus the regularization term.
+- Constructs a CVXPY problem and returns a function that solves it for a given value of `lambd`.
+
+### `solve`
+#### Description
+A cached function that solves the optimization problem for both L1 and L2 regularization given a regularization parameter.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lambd | float | The regularization parameter. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (x_l2, x_l1) | tuple | Solutions for L2 and L1 regularization, respectively. |
+
+### `number_of_zeros`
+#### Description
+A function that counts the number of elements in a vector that are close to zero.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x | numpy.ndarray | The vector to analyze. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| count | int | The number of elements close to zero. |
+
+### `cdf`
+#### Description
+A function that plots the cumulative distribution function (CDF) of a vector's elements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x | numpy.ndarray | The vector to plot. |
+| ax | matplotlib.axes.Axes | The axes on which to plot the CDF. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ax | matplotlib.axes.Axes | The modified axes with the CDF plot. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `cvxpy` | Used for defining and solving the optimization problem. |
+| `numpy` | Used for numerical operations and random data generation. |
+| `matplotlib.pyplot` | Used for plotting the CDF of the solutions. |
+| `marimo` | Provides the framework for creating the interactive application. |
+| `functools` | Used for caching the `solve` function. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond what is provided by the libraries used. CVXPY will raise exceptions if the optimization problem is infeasible or if there are issues with the problem setup.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The script does not expose an API but provides an interactive interface through the `marimo` application. Users can adjust the regularization parameter using a slider and observe the effects on the sparsity of the solutions.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

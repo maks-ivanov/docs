@@ -1,0 +1,63 @@
+---
+title: "share.ts"
+---
+
+## High-level description
+
+The target file, `share.ts`, provides a utility function `createShareableLink` that generates a shareable URL for a given code snippet. This function compresses the code using the `lz-string` library and appends it to a base URL as a hash, allowing the code to be easily shared and accessed via a web link.
+
+## Code Structure
+
+The main symbol in this file is the `createShareableLink` function. It utilizes the `compressToEncodedURIComponent` function from the `lz-string` library to compress the code before appending it to the URL. The function takes an options object as input, which includes the code to be shared and an optional base URL.
+
+## Symbols
+
+### `createShareableLink`
+#### Description
+The `createShareableLink` function generates a URL that includes a compressed version of the provided code snippet. This URL can be used to share the code in a compact and efficient manner.
+
+#### Inputs
+| Name   | Type   | Description                                      |
+|:-------|:-------|:-------------------------------------------------|
+| `opts` | object | An object containing the code and optional base URL. |
+
+- `opts.code`: A string or null, representing the code to be shared.
+- `opts.baseUrl`: An optional string representing the base URL. Defaults to "https://marimo.app" if not provided.
+
+#### Outputs
+| Name   | Type   | Description                                      |
+|:-------|:-------|:-------------------------------------------------|
+| `url`  | string | A URL containing the compressed code as a hash.  |
+
+#### Internal Logic
+1. The function destructures the `opts` object to extract `code` and `baseUrl`, defaulting `baseUrl` to "https://marimo.app" if not provided.
+2. It creates a new `URL` object using the `baseUrl`.
+3. If `code` is provided, it compresses the code using `compressToEncodedURIComponent` and sets the URL's hash to `#code/{compressed}`.
+4. Finally, it returns the complete URL as a string.
+
+## References
+
+- The `createShareableLink` function is used in other parts of the codebase, such as in `useNotebookActions` and `StaticBannerDialog`, to generate shareable links for code snippets.
+- The `compressToEncodedURIComponent` function from the `lz-string` library is used to compress the code.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `lz-string`| Used to compress the code into a URI component. |
+
+## Error Handling
+
+The function does not explicitly handle errors. It assumes that the inputs are valid and that the `compressToEncodedURIComponent` function will not throw errors.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The function does not expose an API or interface beyond its own function signature.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

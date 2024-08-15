@@ -1,0 +1,67 @@
+---
+title: "pyarrow_table.py"
+---
+
+## High-level description
+
+The `pyarrow_table.py` file defines a factory class, `PyArrowTableManagerFactory`, which creates a `PyArrowTableManager` class. This manager class is responsible for handling data tables using the PyArrow library, providing functionalities such as converting data to CSV or JSON formats, applying formatting, selecting rows or columns, and generating column summaries. The manager is designed to work with PyArrow's `Table` and `RecordBatch` data structures, offering a range of data manipulation and querying capabilities.
+
+## Code Structure
+
+The main class in this file is `PyArrowTableManagerFactory`, which is responsible for creating instances of `PyArrowTableManager`. The `PyArrowTableManager` class extends the `TableManager` abstract class, implementing various methods for data manipulation and querying. The `PyArrowTableManager` class uses PyArrow's data structures and functions to perform operations on tables and record batches.
+
+## Symbols
+
+### `PyArrowTableManagerFactory`
+#### Description
+The `PyArrowTableManagerFactory` is a factory class that provides methods to create instances of `PyArrowTableManager`. It specifies the package name as "pyarrow" and includes a static method to create the manager class.
+
+#### Methods
+- `package_name()`: Returns the string "pyarrow".
+- `create()`: Dynamically defines and returns the `PyArrowTableManager` class, which is a subclass of `TableManager`.
+
+### `PyArrowTableManager`
+#### Description
+The `PyArrowTableManager` class is responsible for managing data tables using PyArrow's `Table` and `RecordBatch` structures. It provides methods for data conversion, formatting, selection, and summarization.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `Union[pa.Table, pa.RecordBatch]` | The PyArrow data structure to manage. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Various | Various | Outputs depend on the method called, such as bytes for CSV/JSON conversion or lists for column names. |
+
+#### Internal Logic
+- **Data Conversion**: Methods like `to_csv` and `to_json` convert the data to CSV and JSON formats, respectively.
+- **Data Formatting**: The `apply_formatting` method applies a given format mapping to the data, transforming column values as specified.
+- **Data Selection**: Methods like `select_rows` and `select_columns` allow for selecting specific rows or columns from the data.
+- **Data Summarization**: The `get_summary` method generates a summary of a specified column, including statistics like total count, null count, and unique values.
+- **Data Querying**: The `search` method allows for searching the data based on a query string, returning rows that match the query.
+
+## References
+
+- `ColumnSummary`: A data class from `marimo._data.models` used to represent column summaries.
+- `FormatMapping` and `format_value`: Imported from `marimo._plugins.ui._impl.tables.format`, used for applying formatting to data.
+- `TableManager` and `TableManagerFactory`: Abstract classes from `marimo._plugins.ui._impl.tables.table_manager` that `PyArrowTableManager` and `PyArrowTableManagerFactory` extend and implement.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pyarrow` | Used for handling data tables and record batches, providing functionalities for data manipulation and conversion. |
+
+## Error Handling
+
+- The `apply_formatting` method raises a `ValueError` if a column is a `ChunkedArray`, which is not supported by the current implementation.
+
+## Performance Considerations
+
+- The `limit` method ensures that the number of rows returned does not exceed the specified limit, which can help manage memory usage when dealing with large datasets.
+- The `search` method uses PyArrow's compute functions to efficiently filter data based on a query string.
+
+## TODOs
+
+- The `supports_filters` method currently returns `False`, indicating that filter support is not yet implemented. This is noted as a future enhancement once a `PyArrowTransformHandler` is available.

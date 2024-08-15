@@ -1,0 +1,72 @@
+---
+title: "Logger.ts"
+---
+
+## High-level description
+
+The `Logger.ts` file provides a logging utility that wraps around the native `console` methods to facilitate logging in a controlled manner. It allows for conditional logging based on the environment, enabling or disabling certain log levels in production environments. This utility is designed to be used globally within the application, providing a consistent interface for logging messages, warnings, errors, and other debug information.
+
+## Code Structure
+
+The main symbols in the code are the `ILogger` interface, the `ConsoleLogger` object, and the `getLogger` function. The `ILogger` interface defines the structure for the logging methods, which are implemented by the `ConsoleLogger` object. The `getLogger` function determines which logger to use, either the `ConsoleLogger` or a custom logger defined on the `window` object.
+
+## Symbols
+
+### `ILogger`
+#### Description
+The `ILogger` interface defines the structure for a logger object, specifying the methods that a logger should implement. These methods correspond to the standard console methods: `debug`, `log`, `warn`, `error`, and `trace`.
+
+#### Inputs
+None directly, as this is an interface definition.
+
+#### Outputs
+None directly, as this is an interface definition.
+
+### `ConsoleLogger`
+#### Description
+`ConsoleLogger` is an object that implements the `ILogger` interface. It provides methods for logging messages to the console. In non-production environments, it logs debug messages; in all environments, it logs standard messages, warnings, errors, and traces.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args | any[] | The arguments to be logged, passed to the respective console method. |
+
+#### Outputs
+None directly, as this is an object with methods that perform side effects (logging).
+
+#### Internal Logic
+- The `debug` method checks if the environment is not production before logging.
+- The `log`, `warn`, `error`, and `trace` methods directly call the corresponding console methods.
+
+### `getLogger`
+#### Description
+The `getLogger` function determines which logger to use. It checks if a custom logger is defined on the `window` object and returns it if available; otherwise, it defaults to the `ConsoleLogger`.
+
+#### Inputs
+None directly, as this is a function without parameters.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Logger | `ILogger` | The logger object to be used for logging. |
+
+#### Internal Logic
+- Checks if the `window` object is defined and if a `Logger` is present on it.
+- Returns the custom `Logger` if available, otherwise returns `ConsoleLogger`.
+
+## Side Effects
+- The `ConsoleLogger` methods produce side effects by writing to the console.
+- The `getLogger` function may affect global state by checking the `window` object.
+
+## Dependencies
+No external libraries or modules are used in this code. It relies on the native `console` object and the `process.env.NODE_ENV` environment variable to determine the logging behavior.
+
+## Error Handling
+There is no explicit error handling in this code, as it primarily wraps around the native console methods, which do not throw errors under normal circumstances.
+
+## Logging
+The file itself is a logging utility, providing methods to log messages at different levels (`debug`, `log`, `warn`, `error`, `trace`). The `debug` method is conditionally enabled based on the environment.
+
+## References
+- The `Logger` object is used in various parts of the codebase, as seen in the related files, to log messages, errors, and other information.
+- The `Logger` is referenced in components like `Cell.tsx`, `CellStatus.tsx`, and others for debugging and error reporting.

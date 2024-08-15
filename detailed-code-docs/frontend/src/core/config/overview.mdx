@@ -1,0 +1,41 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `frontend/src/core/config` directory is a crucial part of the frontend application, responsible for managing configuration settings and capabilities. It includes modules for defining configuration schemas, managing state with Jotai atoms, handling feature flags, and conditionally rendering components based on capabilities. The directory ensures that both application and user configurations are validated and accessible throughout the application, enabling dynamic feature management and state-driven UI rendering.
+
+## What does it do?
+
+The directory provides a comprehensive system for managing configurations and capabilities within a frontend application. It defines schemas for application and user configurations, ensuring they adhere to expected structures and default values. The configurations are parsed and validated using the `zod` library, and any errors during parsing are logged, with default configurations provided as fallbacks.
+
+State management is handled using the Jotai library, which allows for the creation of atoms that store configuration data and capabilities. These atoms enable different parts of the application to access and react to changes in configuration and capabilities, such as enabling or disabling features like SQL execution or terminal access.
+
+Feature flags are managed through a dedicated module that allows for the conditional rendering of components based on the status of experimental features. This module also provides a mechanism for setting feature flags from the console for debugging purposes.
+
+The directory also includes components that conditionally render UI elements based on the current capabilities, ensuring that only the features supported by the system are accessible to users.
+
+## Entry points
+
+The main files in the directory are:
+
+- **`config-schema.ts`**: Defines the configuration schemas for the application and user settings using the `zod` library. It includes functions for parsing and validating these configurations.
+- **`config.ts`**: Manages the application's configuration settings using Jotai atoms. It provides hooks for accessing and updating configurations and includes logic for handling specific configuration aspects like hotkeys and AI features.
+- **`capabilities.ts`**: Defines a Jotai atom that holds the system's capabilities, allowing different parts of the application to react to changes in these capabilities.
+- **`feature-flag.tsx`**: Manages experimental feature flags, providing functions to get and set the status of these features and a React component for conditional rendering based on feature flags.
+- **`if-capability.tsx`**: Defines a React component that conditionally renders its children based on the presence of a specified capability.
+
+## Key Files
+
+- **`__tests__/config-schema.test.ts`**: Contains unit tests for validating the default configurations of the application and user settings using the schemas defined in `config-schema.ts`. These tests ensure that the schemas correctly parse and provide default values.
+
+## Dependencies
+
+- **`zod`**: Used for defining and validating configuration schemas. It ensures that configurations adhere to the expected structure and default values.
+- **`jotai`**: A state management library used for creating and managing atoms that store configuration data and capabilities. It allows for efficient state-driven UI rendering.
+- **`vitest`**: Provides testing utilities for writing and running unit tests, ensuring the reliability of configuration parsing and validation.
+
+## Configuration
+
+The directory uses configuration schemas defined in `config-schema.ts` to specify the structure and default values for application and user settings. These schemas include various configuration categories such as completion, saving, formatting, key mapping, runtime, display, package management, AI, and experimental features. The `parseAppConfig` and `parseUserConfig` functions are responsible for parsing and validating these configurations, logging errors, and returning default configurations if necessary.

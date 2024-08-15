@@ -1,0 +1,102 @@
+---
+title: "__init__.py"
+---
+
+## High-level description
+
+The `marimo/_tutorials/__init__.py` file is responsible for managing and retrieving the source content of various tutorials within the Marimo project. It defines a set of tutorial names, categorizes them into Python and Markdown tutorials, and provides a function to fetch the source code or content of a specified tutorial.
+
+## Code Structure
+
+The main symbols in the code are:
+- `PythonTutorial` and `MarkdownTutorial`: These are type aliases that define the valid names for Python and Markdown tutorials, respectively.
+- `Tutorial`: A union type that encompasses both `PythonTutorial` and `MarkdownTutorial`.
+- `tutorial_order`: A list that specifies the order in which tutorials should be presented.
+- `get_tutorial_source`: A function that retrieves the source content of a given tutorial, either as Python code or Markdown text.
+
+## Symbols
+
+### `PythonTutorial`
+#### Description
+A type alias using `Literal` to define a set of valid names for Python tutorials.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `MarkdownTutorial`
+#### Description
+A type alias using `Literal` to define a set of valid names for Markdown tutorials.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `Tutorial`
+#### Description
+A union type that combines `PythonTutorial` and `MarkdownTutorial`, representing all possible tutorial names.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `tutorial_order`
+#### Description
+A list that specifies the order in which tutorials should be presented. It includes both Python and Markdown tutorials.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `get_tutorial_source`
+#### Description
+Fetches the source content of a specified tutorial. If the tutorial is a Python tutorial, it retrieves the source code of the corresponding module. If it is a Markdown tutorial, it reads the content from a Markdown file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | Tutorial | The name of the tutorial to retrieve. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source | str | The source content of the specified tutorial. |
+
+#### Internal Logic
+1. Checks if the tutorial name is part of `PythonTutorial`.
+   - If true, replaces hyphens with underscores in the name.
+   - Dynamically imports the corresponding module from `marimo._tutorials` and retrieves its source code using `inspect.getsource`.
+2. If the tutorial name is part of `MarkdownTutorial`, it constructs the file path for the Markdown file, reads its content, and returns it.
+
+## References
+
+- The `get_tutorial_source` function is referenced in the `marimo/_cli/cli.py` file, where it is used to fetch tutorial content for display or execution.
+- The `tutorial_order` list is also referenced in `marimo/_cli/cli.py` to provide a recommended sequence for tutorials.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `inspect` | Used to retrieve the source code of Python modules. |
+| `os` | Used to construct file paths and read files. |
+| `typing` | Provides type hints and constructs like `Literal` and `Union`. |
+
+## Error Handling
+
+- An assertion is used to ensure that all tutorials listed in `tutorial_order` are accounted for in either `PythonTutorial` or `MarkdownTutorial`. If a tutorial is missing, an assertion error is raised.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

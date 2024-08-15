@@ -1,0 +1,103 @@
+---
+title: "data_labeler.py"
+---
+
+## High-level description
+
+The `data_labeler.py` file is a Python script designed to create an interactive data labeling application using the `marimo` framework. It provides a user interface for labeling a set of examples as either "Real" or "AI Generated" and allows users to add notes to each example. The application manages the state of the labels and notes, saving them to a JSON file, and provides navigation controls to move through the examples.
+
+## Code Structure
+
+The code is structured using the `marimo` framework, which organizes the application into cells. Each cell is a function decorated with `@app.cell`, and these cells collectively define the application's behavior and UI. The main components include state management for the current example index, UI elements for navigation and labeling, and functions for loading and saving label data.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which serves as the main application object. It is used to define and run the interactive application.
+
+### `__generated_with`
+#### Description
+A string indicating the version of the tool used to generate this script, set to "0.1.4".
+
+### `@app.cell`
+#### Description
+A decorator provided by the `marimo` framework that designates a function as a cell in the application. Each cell can define UI elements, manage state, or perform other tasks.
+
+### `increment_index`, `decrement_index`, `get_index`, `set_index`
+#### Description
+These functions manage the current index of the example being labeled. `increment_index` and `decrement_index` adjust the index within bounds, while `get_index` and `set_index` retrieve and update the index state, respectively.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NUMBER_OF_EXAMPLES | int | Total number of examples available for labeling. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| decrement_index | function | Decreases the current index. |
+| get_index | function | Retrieves the current index. |
+| increment_index | function | Increases the current index. |
+| set_index | function | Sets the current index. |
+
+### `next_button`, `previous_button`
+#### Description
+UI buttons for navigating through the examples. `next_button` increments the index, while `previous_button` decrements it.
+
+### `index`
+#### Description
+A UI element that allows users to select the current example by number. It is a number input field with a range from 0 to `NUMBER_OF_EXAMPLES - 1`.
+
+### `load_labels`, `write_labels`
+#### Description
+Functions for loading and saving label data to a JSON file. `load_labels` reads the labels from a file or initializes them if the file doesn't exist. `write_labels` saves the current labels to the file, truncating notes to 100 characters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | Path to the labels JSON file. |
+| number_of_examples | int | Number of examples to label. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| labels | list | List of label dictionaries. |
+
+### `update_label`, `update_notes`
+#### Description
+Functions to update the label and notes for a specific example. They modify the in-memory labels and write the changes to the JSON file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | New label or note value. |
+| index | int | Index of the example to update. |
+
+### `mo`
+#### Description
+An alias for the `marimo` module, used within cells to access UI components and other functionalities.
+
+### `LABELS_PATH`, `NUMBER_OF_EXAMPLES`
+#### Description
+Constants defining the path to the labels file and the number of examples, respectively.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Provides the framework for building the interactive application. |
+| `json` | Used for reading and writing JSON files. |
+| `os` | Used to check the existence of the labels file. |
+
+## Error Handling
+
+The code uses assertions to ensure that the number of labels loaded from the file matches the expected number of examples. This is a basic form of error handling to prevent mismatches between the data and the application state.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the code. However, the use of assertions and UI feedback (e.g., character count alerts) provides some level of runtime feedback to the user.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,107 @@
+---
+title: "test_cli.yaml"
+---
+
+## High-level description
+
+The `test_cli.yaml` file is a GitHub Actions workflow configuration designed to automate the testing of a command-line interface (CLI) for a project named "marimo". It is triggered on pushes to the main branch and on pull requests. The workflow consists of three main jobs: building a Python wheel for the project, testing the CLI across different operating systems, and running example and smoke tests.
+
+## Code Structure
+
+The workflow is structured into three main jobs:
+
+1. **build_wheel**: This job builds a Python wheel for the "marimo" project. It sets up the necessary environment, including Node.js and Python, and then builds the frontend and the Python package.
+
+2. **test_cli**: This job tests the CLI on different operating systems (Ubuntu, macOS, and Windows) using the Python version specified in the matrix. It installs the built wheel and runs CLI tests using pytest.
+
+3. **test_examples**: This job runs example and smoke tests to ensure the functionality of the project. It installs necessary dependencies and runs tests, allowing for errors to continue without failing the job.
+
+## Symbols
+
+### `build_wheel`
+#### Description
+The `build_wheel` job is responsible for building the "marimo" Python package into a wheel format. It sets up the environment, checks out the repository, installs dependencies, and builds the package.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This job does not take direct inputs but relies on the repository's code and configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| testwheel | Artifact | The built wheel file for the "marimo" project. |
+
+#### Internal Logic
+- Cancels any previous runs of the workflow.
+- Checks out the repository with full history for caching purposes.
+- Sets up Node.js and Python environments.
+- Builds the frontend using a `make` command.
+- Builds the Python wheel using `uv pip install` and `python -m build`.
+- Uploads the built wheel as an artifact.
+
+### `test_cli`
+#### Description
+The `test_cli` job tests the CLI functionality of the "marimo" project across different operating systems and Python versions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| os | String | Operating system to run the tests on (Ubuntu, macOS, Windows). |
+| python-version | String | Python version to use for testing. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This job does not produce direct outputs but logs test results. |
+
+#### Internal Logic
+- Cancels any previous runs of the workflow.
+- Checks out the repository.
+- Sets up the specified Python environment.
+- Installs test dependencies and the built wheel.
+- Runs CLI tests using pytest.
+
+### `test_examples`
+#### Description
+The `test_examples` job runs example and smoke tests to verify the project's functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This job does not take direct inputs but relies on the repository's code and configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This job does not produce direct outputs but logs test results. |
+
+#### Internal Logic
+- Cancels any previous runs of the workflow.
+- Checks out the repository.
+- Sets up the Python environment.
+- Installs test dependencies and the built wheel.
+- Runs example tests using pytest, allowing for errors to continue without failing the job.
+
+## References
+
+- The workflow uses several GitHub Actions such as `actions/checkout`, `actions/setup-node`, `actions/setup-python`, and others for setting up the environment and managing dependencies.
+- The `pnpm` and `turbocache` actions are used for managing Node.js dependencies and caching.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `actions/checkout` | Checks out the repository code. |
+| `actions/setup-node` | Sets up the Node.js environment. |
+| `actions/setup-python` | Sets up the Python environment. |
+| `pnpm/action-setup` | Installs and sets up pnpm for Node.js package management. |
+| `turbocache-build/turbocache-action` | Caches build artifacts for faster builds. |
+| `styfle/cancel-workflow-action` | Cancels previous runs of the workflow to save resources. |
+| `actions/upload-artifact` | Uploads build artifacts for later use. |
+| `actions/download-artifact` | Downloads previously uploaded artifacts for testing. |
+
+## TODOs
+
+- Consider adding support for Python versions 3.8 and 3.9 in the `test_cli` job.
+- Remove `continue-on-error` in the `test_examples` job once all tests pass successfully.

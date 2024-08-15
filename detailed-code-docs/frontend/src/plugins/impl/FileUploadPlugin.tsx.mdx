@@ -1,0 +1,94 @@
+---
+title: "FileUploadPlugin.tsx"
+---
+
+## High-level description
+
+The `FileUploadPlugin.tsx` file defines a React component for a file upload plugin that can be integrated into a web application. It provides both a button and a drag-and-drop area for users to upload files, supporting multiple file types and multiple file uploads. The plugin handles file validation, conversion to base64, and error reporting through a user interface.
+
+## Code Structure
+
+- **FileUploadPlugin**: A class implementing the `IPlugin` interface, responsible for rendering the file upload component.
+- **FileUpload**: A functional React component that provides the UI and logic for file uploads, including drag-and-drop and button-based uploads.
+- **groupFileTypesByMIMEType**: A utility function to categorize file extensions by their MIME types.
+
+## References
+
+- **`useDropzone`**: From `react-dropzone`, used for handling file drag-and-drop functionality.
+- **`filesToBase64`**: A utility function that converts files to base64-encoded strings.
+- **`toast`**: From `use-toast`, used for displaying error messages to the user.
+- **`Logger`**: A utility for logging errors.
+- **`buttonVariants`**: From `button.tsx`, used to style buttons.
+- **`renderHTML`**: From `RenderHTML.tsx`, used to render HTML content safely.
+- **`cn`**: A utility function for merging class names.
+
+## Symbols
+
+### `FileUploadPlugin`
+#### Description
+The `FileUploadPlugin` class implements the `IPlugin` interface, providing a file upload component that can be rendered as either a button or a drag-and-drop area. It validates input data using `zod` and renders the `FileUpload` component with the appropriate props.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;T, Data&gt;` | Plugin properties including data and state management functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered file upload component. |
+
+### `FileUpload`
+#### Description
+The `FileUpload` component provides the UI and logic for uploading files. It supports both button and drag-and-drop interfaces, handles file validation, and converts files to base64 before updating the state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `FileUploadProps` | Properties including file types, upload kind, label, current value, and state setter. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered file upload UI. |
+
+#### Internal Logic
+- Uses `useDropzone` to manage file drag-and-drop and input interactions.
+- Validates file types and sizes, displaying errors using `toast` if validation fails.
+- Converts accepted files to base64 using `filesToBase64` and updates the state with `setValue`.
+- Provides UI feedback for uploaded files and allows clearing of uploaded files.
+
+### `groupFileTypesByMIMEType`
+#### Description
+Groups file extensions by their corresponding MIME types to facilitate file type validation in the upload process.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| extensions | `string[]` | Array of file extensions to group by MIME type. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `Record&lt;string, string[]&gt;` | A record mapping MIME types to arrays of file extensions. |
+
+## Side Effects
+
+- The `FileUpload` component modifies the state of uploaded files using the `setValue` function.
+- Displays error messages using the `toast` function.
+- Logs errors using the `Logger`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-dropzone` | Manages file drag-and-drop functionality. |
+| `zod` | Validates input data for the plugin. |
+| `lucide-react` | Provides icons for the UI. |
+| `use-toast` | Displays toast notifications for errors. |
+| `Logger` | Logs errors to the console. |
+
+## TODOs
+
+- Allow uploading files one-by-one and removing uploaded files when multiple uploads are enabled.
+- React to changes in `value` due to updates from other instances of the file upload element.

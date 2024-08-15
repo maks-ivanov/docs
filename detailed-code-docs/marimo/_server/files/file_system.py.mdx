@@ -1,0 +1,129 @@
+---
+title: "file_system.py"
+---
+
+## High-level description
+
+The `file_system.py` file defines an abstract base class `FileSystem` that outlines a set of methods for interacting with a file system. These methods include operations such as listing files, retrieving file details, opening files, creating files or directories, deleting, moving, and updating files. This abstract class serves as a blueprint for concrete implementations that will provide the actual logic for these operations.
+
+## Code Structure
+
+The `FileSystem` class is an abstract base class (ABC) that defines several abstract methods. These methods are intended to be implemented by any subclass that inherits from `FileSystem`. The related file `os_file_system.py` provides a concrete implementation of this abstract class, named `OSFileSystem`, which uses the Python `os` and `shutil` modules to perform file system operations on a local operating system.
+
+## References
+
+- `FileDetailsResponse` and `FileInfo` from `marimo._server.models.files` are used as return types for some methods, indicating that these methods provide detailed information about files or directories.
+
+## Symbols
+
+### `FileSystem`
+#### Description
+The `FileSystem` class is an abstract base class that defines a set of methods for file system operations. These methods are abstract, meaning they must be implemented by any subclass. The class provides a standardized interface for file system interactions, which can be adapted for different environments or storage backends.
+
+#### Methods
+
+- **`get_root`**
+  - **Description**: Returns the root path of the file system.
+  - **Inputs**: None
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | root_path | str | The root path of the file system. |
+
+- **`list_files`**
+  - **Description**: Lists files and directories at a specified path.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The directory path to list files from. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | files | List[FileInfo] | A list of file and directory information objects. |
+
+- **`get_details`**
+  - **Description**: Retrieves details of a specific file or directory.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The path of the file or directory. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | details | FileDetailsResponse | Detailed information about the file or directory. |
+
+- **`open_file`**
+  - **Description**: Opens and reads the content of a file.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The path of the file to open. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | content | str | The content of the file. |
+
+- **`create_file_or_directory`**
+  - **Description**: Creates a new file or directory. If a name conflict occurs, a new name is generated.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The path where to create the file or directory. |
+    | file_type | Literal["file", "directory"] | Specifies whether to create a file or directory. |
+    | name | str | The name of the file or directory. |
+    | contents | Optional[bytes] | The contents of the file, if applicable. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | info | FileInfo | Information about the created file or directory. |
+
+- **`delete_file_or_directory`**
+  - **Description**: Deletes a file or directory.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The path of the file or directory to delete. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | success | bool | Indicates whether the deletion was successful. |
+
+- **`move_file_or_directory`**
+  - **Description**: Renames or moves a file or directory to a new path.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The current path of the file or directory. |
+    | new_path | str | The new path or name for the file or directory. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | info | FileInfo | Information about the moved or renamed file or directory. |
+
+- **`update_file`**
+  - **Description**: Updates the contents of a file.
+  - **Inputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | path | str | The path of the file to update. |
+    | contents | str | The new contents of the file. |
+  - **Outputs**: 
+    | Name | Type | Description |
+    |:-----|:-----|:------------|
+    | info | FileInfo | Information about the updated file. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `abc` | Provides the `ABC` and `abstractmethod` for defining abstract base classes. |
+| `typing` | Used for type hinting, including `List`, `Literal`, and `Optional`. |
+| `marimo._server.models.files` | Provides the `FileDetailsResponse` and `FileInfo` classes used for file information and responses. |
+
+## Error Handling
+
+The abstract methods in `FileSystem` do not implement error handling directly, as they are intended to be overridden by subclasses. Error handling would be implemented in the concrete subclass methods, such as those in `OSFileSystem`.
+
+## Logging
+
+The `FileSystem` class does not implement any logging. Logging would typically be handled in the concrete implementations of these methods, where actual file system operations are performed.

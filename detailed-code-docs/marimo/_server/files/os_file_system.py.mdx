@@ -1,0 +1,72 @@
+---
+title: "os_file_system.py"
+---
+
+## High-level description
+
+The `os_file_system.py` file defines the `OSFileSystem` class, which is a concrete implementation of the `FileSystem` abstract base class. This class provides methods for interacting with the file system, such as listing files, retrieving file details, creating, deleting, moving, and updating files or directories. It also includes utility functions for sorting files naturally and determining if a file is a Marimo application file.
+
+## Code Structure
+
+The `OSFileSystem` class inherits from the `FileSystem` abstract base class and implements its abstract methods. It uses Python's built-in `os`, `shutil`, and `mimetypes` modules to perform file system operations. The class also interacts with the `FileInfo` and `FileDetailsResponse` data models to structure file information.
+
+## References
+
+- `FileSystem`: The abstract base class that `OSFileSystem` implements.
+- `FileInfo` and `FileDetailsResponse`: Data models used to represent file information and details.
+- `natural_sort_file` and `natural_sort`: Utility functions for sorting files.
+
+## Symbols
+
+### `OSFileSystem`
+#### Description
+The `OSFileSystem` class provides methods to interact with the operating system's file system. It allows listing files, retrieving file details, creating, deleting, moving, and updating files or directories. It also includes functionality to check if a file is a Marimo application file.
+
+#### Methods
+
+- **`get_root`**: Returns the current working directory as the root path.
+- **`list_files`**: Lists files and directories in a specified path, excluding those in the `IGNORE_LIST`.
+- **`_get_file_info`**: Retrieves detailed information about a specific file or directory.
+- **`get_details`**: Provides detailed information about a file or directory, including its contents and MIME type.
+- **`_is_marimo_file`**: Checks if a file is a Marimo application file by looking for specific content.
+- **`open_file`**: Opens and reads the content of a file, handling both text and binary files.
+- **`create_file_or_directory`**: Creates a new file or directory, ensuring unique naming if a name conflict occurs.
+- **`delete_file_or_directory`**: Deletes a specified file or directory.
+- **`move_file_or_directory`**: Moves or renames a file or directory, ensuring the new name is not disallowed.
+- **`update_file`**: Updates the contents of a specified file.
+
+#### Inputs
+- **`path`**: The file or directory path for various operations.
+- **`name`**: The name of the file or directory to be created.
+- **`contents`**: The contents to be written to a file.
+- **`file_type`**: Specifies whether to create a file or directory.
+
+#### Outputs
+- **`FileInfo`**: Provides structured information about files and directories.
+- **`FileDetailsResponse`**: Contains detailed information about a file, including its contents and MIME type.
+
+#### Internal Logic
+- **File Listing**: Uses `os.scandir` to iterate over directory entries, filtering out ignored files and handling errors gracefully.
+- **File Creation**: Checks for name conflicts and generates a unique name if necessary.
+- **File Reading**: Handles both text and binary files, using base64 encoding for binary content.
+- **Marimo File Check**: Reads the file content to determine if it contains specific Marimo application indicators.
+
+## Side Effects
+- Modifies the file system by creating, deleting, moving, or updating files and directories.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Provides functions for interacting with the operating system. |
+| `shutil` | Offers high-level file operations like copying and removing directories. |
+| `mimetypes` | Used to guess the MIME type of a file based on its extension. |
+
+## Error Handling
+- Uses try-except blocks to handle `OSError` during file operations, ensuring robustness against file system errors.
+
+## Logging
+- The code does not explicitly implement logging, but it could be beneficial to add logging for operations like file creation, deletion, and errors for better traceability.
+
+## TODOs
+- No TODOs are present in the code.

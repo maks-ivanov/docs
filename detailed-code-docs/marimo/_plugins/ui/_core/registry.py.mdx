@@ -1,0 +1,62 @@
+---
+title: "registry.py"
+---
+
+## High-level description
+
+The `UIElementRegistry` class in the `marimo/_plugins/ui/_core/registry.py` file is responsible for managing the lifecycle of UI elements within the Marimo framework. It provides functionality to register, retrieve, and delete UI elements, as well as manage their bindings and constructing cells. This registry ensures that UI elements are properly tracked and managed, especially in dynamic environments where elements may be re-registered or deleted.
+
+## Code Structure
+
+The main symbol in this file is the `UIElementRegistry` class, which contains several methods to manage UI elements. It interacts with other components such as `UIElement`, `CellId_t`, and the execution context obtained from `get_context()`. The registry uses weak references to manage UI elements, ensuring that they can be garbage collected when no longer needed.
+
+## Symbols
+
+### `UIElementRegistry`
+#### Description
+The `UIElementRegistry` class manages the registration, retrieval, and deletion of UI elements. It maintains mappings between UI element IDs and their corresponding objects, bindings, and constructing cells. This class ensures that UI elements are properly tracked and managed within the Marimo framework.
+
+#### Inputs
+- `object_id`: `UIElementId` (str) - The unique identifier for the UI element.
+- `ui_element`: `UIElement[Any, Any]` - The UI element object to be registered.
+
+#### Outputs
+- None for most methods, but `get_object` returns a `UIElement[Any, Any]`.
+
+#### Internal Logic
+- **Initialization**: Initializes dictionaries to track objects, bindings, and constructing cells.
+- **Register**: Registers a UI element by its ID, updating the internal mappings and handling re-registration scenarios.
+- **Bound Names**: Retrieves or lazily registers the names bound to a UI element.
+- **Has Parent ID**: Checks if a UI element is a child or view of another element.
+- **Find Bindings in Namespace**: Searches for variable names bound to a UI element within a given namespace.
+- **Register Bindings**: Registers bindings for a UI element by examining the current execution context.
+- **Get Object**: Retrieves a UI element by its ID, raising an error if not found.
+- **Get Cell**: Returns the cell ID that constructed a given UI element.
+- **Resolve Lens**: Resolves a lens to an object ID and value update, handling nested lens scenarios.
+- **Delete**: Deletes a UI element from the registry, ensuring proper cleanup and avoiding race conditions.
+
+## References
+
+- `UIElement`: Represents the UI elements managed by the registry.
+- `CellId_t`: Represents the ID of the cell that constructs a UI element.
+- `get_context()`: Retrieves the current execution context, used to manage UI element lifecycle and bindings.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `weakref` | Used to hold weak references to UI elements, allowing for garbage collection. |
+| `get_context` | Retrieves the current execution context for managing UI elements. |
+
+## Error Handling
+
+- The `get_object` method raises a `KeyError` if a UI element with the specified ID is not found.
+- The `resolve_lens` method raises a `KeyError` if the object ID does not exist in the registry and a `RuntimeError` if the object was deleted.
+
+## Side Effects
+
+- The `delete` method may be called by the Python garbage collector, and it ensures that no logs are generated during this process to avoid confusing the user.
+
+## Performance Considerations
+
+- The use of weak references in the registry helps manage memory efficiently by allowing UI elements to be garbage collected when no longer in use.

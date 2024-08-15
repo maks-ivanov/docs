@@ -1,0 +1,97 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `vscode-bindings.ts` file is responsible for integrating specific keyboard and mouse event bindings when the application is running inside a VS Code environment. It ensures that certain actions, such as copy, cut, paste, and opening external links, are correctly handled and dispatched to the parent window when the application is embedded in an iframe. This is particularly useful for maintaining consistent behavior of these actions within the VS Code interface.
+
+## Code Structure
+
+The main function in this file is `maybeRegisterVSCodeBindings`, which checks if the application is running in a VS Code environment and, if so, registers various event listeners for keyboard and mouse actions. These listeners are defined in helper functions such as `registerCopyPaste`, `registerKeyboard`, `registerOpenExternalLink`, and `registerContextMenu`. The `sendToPanelManager` function is used to communicate these actions to the parent window.
+
+## References
+
+- `KnownQueryParams` from `constants.ts` is used to check if the application is running in VS Code mode.
+- `isWasm` from `wasm/utils.ts` is used to determine if the environment is WebAssembly.
+- `isPlatformMac` from `hotkeys/shortcuts.ts` is used to check if the platform is macOS.
+- `Logger` from `utils/Logger.ts` is used for logging purposes.
+
+## Symbols
+
+### `isEmbedded`
+#### Description
+A boolean constant that checks if the current window is embedded within another window (i.e., running in an iframe).
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isEmbedded | boolean | True if the window is embedded, false otherwise. |
+
+### `maybeRegisterVSCodeBindings`
+#### Description
+This function checks if the application is running in a VS Code environment and registers event listeners for keyboard and mouse actions if certain conditions are met.
+
+#### Internal Logic
+- Checks if the `vscode` query parameter is present in the URL.
+- Verifies if the application is embedded and not running in a WebAssembly environment.
+- Logs the registration of VS Code bindings and calls functions to register event listeners for keyboard shortcuts, copy-paste actions, external link handling, and context menu actions.
+
+### `registerCopyPaste`
+#### Description
+Registers event listeners for copy and cut actions, and handles paste messages from the parent window.
+
+#### Internal Logic
+- Listens for `copy` and `cut` events, retrieves the selected text, and sends it to the parent window.
+- Clears the selection on macOS when cutting.
+- Listens for `message` events to handle paste commands.
+
+### `registerKeyboard`
+#### Description
+Registers keyboard shortcuts for copy, cut, and paste actions.
+
+#### Internal Logic
+- Listens for `keydown` events and checks for specific key combinations (Ctrl/Cmd + C, X, V).
+- Sends the corresponding command and selected text to the parent window.
+
+### `registerOpenExternalLink`
+#### Description
+Registers a click event listener to handle external link clicks and prevent default behavior.
+
+#### Internal Logic
+- Listens for `click` events on anchor elements.
+- Checks if the link is external (http/https) and sends the URL to the parent window.
+
+### `registerContextMenu`
+#### Description
+Registers a context menu event listener to prevent the default context menu and notify the parent window.
+
+#### Internal Logic
+- Listens for `contextmenu` events and prevents the default action.
+- Sends a context menu command to the parent window.
+
+### `sendToPanelManager`
+#### Description
+Sends a message to the parent window using the `postMessage` API.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | VscodeMessage | The message to be sent to the parent window. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger` | Used for logging messages to the console. |
+| `isWasm` | Checks if the environment is WebAssembly. |
+| `isPlatformMac` | Determines if the platform is macOS. |
+| `KnownQueryParams` | Provides known query parameters for URL checks. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks and conditions. It assumes that the environment and conditions are correctly set up for the event listeners to function as expected.
+
+## Logging
+
+The `Logger` is used to log the registration of VS Code bindings, which helps in debugging and understanding when the bindings are activated.

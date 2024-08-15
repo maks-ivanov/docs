@@ -1,0 +1,191 @@
+---
+title: "config.ts"
+---
+
+## High-level description
+
+The `config.ts` file is responsible for managing and providing access to the application's configuration settings using the Jotai state management library. It defines atoms for storing user and application configurations, provides hooks for accessing and updating these configurations, and includes logic for handling specific configuration aspects like hotkeys and AI features.
+
+## Code Structure
+
+The main symbols in the code are interconnected through the use of Jotai atoms and hooks. The `userConfigAtom` and `appConfigAtom` are central to storing configuration data. Other atoms like `autoInstantiateAtom`, `hotkeyOverridesAtom`, and `aiEnabledAtom` derive their values from `userConfigAtom`. Functions like `useUserConfig`, `getUserConfig`, `useAppConfig`, and `useSetAppConfig` provide interfaces for interacting with these atoms.
+
+## References
+
+- `config-schema`: Provides the types and parsing functions for application and user configurations.
+- `jotai`: Used for state management.
+- `OverridingHotkeyProvider`: Utilized for managing hotkey overrides.
+- `store`: A Jotai store used for accessing atom values outside of React components.
+
+## Symbols
+
+### `userConfigAtom`
+#### Description
+Stores the user configuration settings parsed from the `config-schema`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| userConfig | `UserConfig` | The parsed user configuration object. |
+
+### `autoInstantiateAtom`
+#### Description
+Determines if the application should automatically instantiate certain features based on the user configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get | Function | Function to get the current state of atoms. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| autoInstantiate | boolean | Indicates if auto-instantiation is enabled. |
+
+### `hotkeyOverridesAtom`
+#### Description
+Stores the hotkey overrides specified in the user configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get | Function | Function to get the current state of atoms. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| overrides | object | The hotkey overrides from the user configuration. |
+
+### `hotkeysAtom`
+#### Description
+Provides an instance of `OverridingHotkeyProvider` initialized with the hotkey overrides.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get | Function | Function to get the current state of atoms. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hotkeysProvider | `OverridingHotkeyProvider` | Manages hotkey overrides. |
+
+### `useUserConfig`
+#### Description
+A hook that returns the current user configuration and a setter function to update it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| userConfig | `UserConfig` | The current user configuration. |
+| setUserConfig | Function | Function to update the user configuration. |
+
+### `getUserConfig`
+#### Description
+Retrieves the current user configuration from the store.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| userConfig | `UserConfig` | The current user configuration. |
+
+### `aiEnabledAtom`
+#### Description
+Determines if AI features are enabled based on the presence of an API key in the user configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get | Function | Function to get the current state of atoms. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| aiEnabled | boolean | Indicates if AI features are enabled. |
+
+### `appConfigAtom`
+#### Description
+Stores the application configuration settings parsed from the `config-schema`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| appConfig | `AppConfig` | The parsed application configuration object. |
+
+### `useAppConfig`
+#### Description
+A hook that returns the current application configuration and a setter function to update it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| appConfig | `AppConfig` | The current application configuration. |
+| setAppConfig | Function | Function to update the application configuration. |
+
+### `useSetAppConfig`
+#### Description
+A hook that provides a setter function to update the application configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| setAppConfig | Function | Function to update the application configuration. |
+
+### `getAppConfig`
+#### Description
+Retrieves the current application configuration from the store.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| appConfig | `AppConfig` | The current application configuration. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management library used for creating and managing atoms. |
+| `config-schema` | Provides types and parsing functions for configuration data. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the functions and atoms. However, it relies on the `parseAppConfig` and `parseUserConfig` functions from `config-schema` to handle parsing errors and return default configurations if parsing fails.
+
+## Logging
+
+The code does not implement logging directly. However, it relies on the `Logger` utility in the `config-schema` to log errors during configuration parsing.

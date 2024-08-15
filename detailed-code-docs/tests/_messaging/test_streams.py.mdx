@@ -1,0 +1,78 @@
+---
+title: "test_streams.py"
+---
+
+## High-level description
+
+The target file `test_streams.py` contains a suite of asynchronous unit tests designed to verify the functionality of standard input, output, and error streams within a mocked kernel environment. These tests ensure that the mocked kernel's stream handling behaves as expected, particularly in terms of encoding, input handling, and output capturing. The tests are part of a larger testing framework for the Marimo runtime, which is a system for managing and executing code cells in a notebook-like environment.
+
+## Code Structure
+
+The code is organized into three main classes, each responsible for testing a different standard stream: `TestStdin`, `TestStdout`, and `TestStderr`. Each class contains several static asynchronous methods that perform specific tests on the corresponding stream. The tests utilize a mocked kernel and execution request provider to simulate the execution of code and verify the behavior of the streams.
+
+## Symbols
+
+### `TestStdin`
+#### Description
+This class contains tests for verifying the behavior of the standard input (`stdin`) stream in the mocked kernel environment.
+
+#### Methods
+
+- **`test_encoding`**: Verifies that the encoding of the mocked kernel's `stdin` matches the system's `stdin` encoding.
+- **`test_input_installed`**: Checks if the `input` function is correctly installed and functional within the kernel.
+- **`test_readline_installed`**: Ensures that the `readline` method of `stdin` is installed and returns the expected output.
+- **`test_readlines_installed`**: Verifies that the `readlines` method of `stdin` is installed and returns the expected output.
+
+### `TestStdout`
+#### Description
+This class contains tests for verifying the behavior of the standard output (`stdout`) stream in the mocked kernel environment.
+
+#### Methods
+
+- **`test_encoding`**: Verifies that the encoding of the mocked kernel's `stdout` matches the system's `stdout` encoding.
+- **`test_fileno`**: Checks if the `fileno` method of `stdout` is functional and returns a non-null value.
+- **`test_print`**: Tests the `print` function to ensure it outputs the expected messages to `stdout`.
+- **`test_write`**: Verifies that the `write` method of `stdout` correctly outputs a string.
+- **`test_writelines`**: Ensures that the `writelines` method of `stdout` correctly outputs a list of strings.
+
+### `TestStderr`
+#### Description
+This class contains tests for verifying the behavior of the standard error (`stderr`) stream in the mocked kernel environment.
+
+#### Methods
+
+- **`test_encoding`**: Verifies that the encoding of the mocked kernel's `stderr` matches the system's `stderr` encoding.
+- **`test_fileno`**: Checks if the `fileno` method of `stderr` is functional and returns a non-null value.
+- **`test_write`**: Verifies that the `write` method of `stderr` correctly outputs a string.
+- **`test_writelines`**: Ensures that the `writelines` method of `stderr` correctly outputs a list of strings.
+
+### `test_import_multiprocessing`
+#### Description
+This standalone test verifies that the `multiprocessing` module can be imported and used within the mocked kernel environment without causing issues.
+
+## References
+
+- **`MockedKernel`**: A class from `tests/conftest.py` that provides a mocked kernel environment for testing.
+- **`ExecReqProvider`**: A class from `tests/conftest.py` that provides execution requests for testing code execution within the kernel.
+- **`Kernel`**: A class from `marimo/_runtime/runtime.py` that represents the core execution environment for code cells.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `sys` | Used to access system-level input/output streams for comparison. |
+| `marimo._runtime.runtime.Kernel` | Provides the kernel environment for executing code cells. |
+| `tests.conftest.ExecReqProvider` | Supplies execution requests for testing. |
+| `tests.conftest.MockedKernel` | Provides a mocked kernel environment for testing. |
+
+## Error Handling
+
+The tests use assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the stream handling in the mocked kernel.
+
+## Logging
+
+The code does not implement any logging mechanisms. It relies on assertions to report test failures.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

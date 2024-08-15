@@ -1,0 +1,65 @@
+---
+title: "common.tsx"
+---
+
+## High-level description
+
+The target file `common.tsx` defines a React functional component named `VariableName`. This component is designed to display a variable's name within a styled badge, and it provides functionality to copy the variable's name to the clipboard when clicked. The component also uses a toast notification to inform the user that the name has been copied.
+
+## Code Structure
+
+The main symbol in this file is the `VariableName` component. It utilizes the `Badge` component from the `ui/badge` module to display the variable name and the `toast` function from the `ui/use-toast` module to show a notification when the name is copied to the clipboard.
+
+## Symbols
+
+### `VariableName`
+#### Description
+The `VariableName` component is a React functional component that displays a variable's name in a badge. It allows users to copy the variable's name to the clipboard by clicking on it. If the `onClick` prop is provided, it will execute that function instead of the default clipboard copy action.
+
+#### Inputs
+| Name      | Type   | Description                           |
+|:----------|:-------|:--------------------------------------|
+| name      | string | The name of the variable to display.  |
+| declaredBy| string[] | An array of identifiers indicating where the variable is declared. |
+| onClick   | function | An optional click handler function. |
+| ...rest   | object | Additional HTML attributes for the div element. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | A JSX element representing the variable name badge. |
+
+#### Internal Logic
+- The component renders a `div` containing a `Badge` component.
+- The `Badge` component's `variant` is determined by the length of the `declaredBy` array: if more than one, it uses the "destructive" variant; otherwise, it uses the "outline" variant.
+- The `onClick` event of the `Badge` is handled to either execute the provided `onClick` function or perform the default action of copying the `name` to the clipboard and showing a toast notification.
+
+## References
+
+- **Badge**: Imported from `../ui/badge`, used to display the variable name with specific styling.
+- **toast**: Imported from `../ui/use-toast`, used to show a notification when the variable name is copied to the clipboard.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React      | Used for creating the functional component. |
+| Badge      | Provides a styled badge component for displaying the variable name. |
+| toast      | Provides a mechanism to show toast notifications. |
+
+## Side Effects
+
+- The component interacts with the clipboard API to copy text.
+- It triggers a toast notification to inform the user of the copy action.
+
+## Performance Considerations
+
+- The component uses the `navigator.clipboard` API, which is asynchronous and may have performance implications if used excessively in a high-frequency context.
+
+## Error Handling
+
+- The component does not explicitly handle errors from the clipboard API or the toast notification system. It assumes these operations succeed.
+
+## Logging
+
+- There is no logging implemented in this component.

@@ -1,0 +1,114 @@
+---
+title: "renderers.tsx"
+---
+
+## High-level description
+
+The target file, `renderers.tsx`, defines React components for rendering different types of file content within a file tree editor. It includes components for viewing CSV data, images, audio, and video files. These components utilize various utility functions and components from other parts of the codebase to parse data and render it appropriately.
+
+## Code Structure
+
+The main symbols in the code are React functional components that serve as viewers for different file types. These components are interconnected through the use of utility functions and components imported from other modules. The `CsvViewer` component uses the `parseCsvData` function to parse CSV content and the `generateColumns` function to create table columns. The `ImageViewer`, `AudioViewer`, and `VideoViewer` components use the `base64ToDataURL` function to convert base64 strings into data URLs for rendering media content.
+
+## Symbols
+
+### `CsvViewer`
+#### Description
+The `CsvViewer` component is responsible for rendering CSV data in a tabular format. It parses the CSV content and generates columns for display using a data table component.
+
+#### Inputs
+| Name     | Type   | Description        |
+|:---------|:-------|:-------------------|
+| contents | string | The CSV data as a string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | A data table displaying the parsed CSV content. |
+
+#### Internal Logic
+- Uses `useMemo` to parse CSV data with `parseCsvData` and generate columns with `generateColumns`.
+- Renders a `DataTable` component with the parsed data and generated columns.
+
+### `ImageViewer`
+#### Description
+The `ImageViewer` component renders an image from a base64-encoded string.
+
+#### Inputs
+| Name  | Type         | Description                  |
+|:------|:-------------|:-----------------------------|
+| base64 | Base64String | The base64-encoded image data. |
+| mime  | string       | The MIME type of the image.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | An `img` element displaying the image. |
+
+#### Internal Logic
+- Converts the base64 string to a data URL using `base64ToDataURL`.
+- Renders an `img` element with the data URL as the source.
+
+### `AudioViewer`
+#### Description
+The `AudioViewer` component renders an audio player for audio content encoded in base64.
+
+#### Inputs
+| Name  | Type         | Description                  |
+|:------|:-------------|:-----------------------------|
+| base64 | Base64String | The base64-encoded audio data. |
+| mime  | string       | The MIME type of the audio.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | An `audio` element with controls enabled. |
+
+#### Internal Logic
+- Converts the base64 string to a data URL using `base64ToDataURL`.
+- Renders an `audio` element with the data URL as the source and controls enabled.
+
+### `VideoViewer`
+#### Description
+The `VideoViewer` component renders a video player for video content encoded in base64.
+
+#### Inputs
+| Name  | Type         | Description                  |
+|:------|:-------------|:-----------------------------|
+| base64 | Base64String | The base64-encoded video data. |
+| mime  | string       | The MIME type of the video.  |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | A `video` element with controls enabled. |
+
+#### Internal Logic
+- Converts the base64 string to a data URL using `base64ToDataURL`.
+- Renders a `video` element with the data URL as the source and controls enabled.
+
+## References
+
+- `generateColumns` from `columns.tsx`: Used by `CsvViewer` to generate table columns.
+- `DataTable` from `data-table.tsx`: Used by `CsvViewer` to render the CSV data.
+- `parseCsvData` from `loader.ts`: Used by `CsvViewer` to parse CSV content.
+- `base64ToDataURL` from `base64.ts`: Used by `ImageViewer`, `AudioViewer`, and `VideoViewer` to convert base64 strings to data URLs.
+- `Objects.EMPTY` from `objects.ts`: Used by `CsvViewer` for row selection.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React      | Used for creating React components. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the components. It assumes that the inputs are valid and correctly formatted. Any errors in parsing or rendering would likely result in runtime exceptions.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+No TODOs are present in the code.

@@ -1,0 +1,120 @@
+---
+title: "elements.ts"
+---
+
+## High-level description
+
+The target file, `elements.ts`, is part of a frontend component that constructs a dependency graph for a set of cells. It defines two classes, `VerticalElementsBuilder` and `TreeElementsBuilder`, which are responsible for creating nodes and edges that represent the dependencies between cells. These classes use the `reactflow` library to structure the graph elements, and they handle different layouts and configurations for displaying the graph.
+
+## Code Structure
+
+The main symbols in the code are the `VerticalElementsBuilder` and `TreeElementsBuilder` classes, which implement the `ElementsBuilder` interface. These classes are responsible for creating graph elements (nodes and edges) based on cell data and variable dependencies. The `getNodeHeight` function is used to calculate the height of nodes based on the number of lines of code they contain. The `NodeData` interface and `CustomNodeProps` type define the structure of the data associated with each node.
+
+## Symbols
+
+### `NodeData`
+#### Description
+`NodeData` is an interface that defines the data structure for a node in the dependency graph. It includes an atom of type `Atom&lt;CellData&gt;` and an optional `forceWidth` property.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| atom | Atom&lt;CellData&gt; | Represents the state of a cell. |
+| forceWidth | number (optional) | Specifies a fixed width for the node. |
+
+#### Outputs
+N/A
+
+### `CustomNodeProps`
+#### Description
+`CustomNodeProps` is a type alias for `NodeProps` with `NodeData` as its generic parameter. It defines the properties for custom nodes in the graph.
+
+### `getNodeHeight`
+#### Description
+Calculates the height of a node based on the number of lines of code it contains.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| linesOfCode | number | The number of lines of code in the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| height | number | The calculated height of the node. |
+
+#### Internal Logic
+- Multiplies the number of lines of code by a constant line height.
+- Adds a base height to account for additional node elements.
+- Caps the height at a maximum value of 200.
+
+### `VerticalElementsBuilder`
+#### Description
+A class that implements the `ElementsBuilder` interface to create graph elements in a vertical layout.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellIds | CellId[] | Array of cell identifiers. |
+| cellAtoms | Array&lt;Atom&lt;CellData&gt;&gt; | Array of cell state atoms. |
+| variables | Variables | Object containing variable dependencies. |
+| hidePureMarkdown | boolean | Flag to hide pure markdown cells. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| nodes | Array&lt;Node&lt;NodeData&gt;&gt; | Array of nodes for the graph. |
+| edges | Edge[] | Array of edges representing dependencies. |
+
+#### Internal Logic
+- Iterates over cell IDs and atoms to create nodes.
+- Uses variable dependencies to create edges between nodes.
+- Ensures no duplicate edges are created by tracking visited connections.
+
+### `TreeElementsBuilder`
+#### Description
+A class that implements the `ElementsBuilder` interface to create graph elements in a tree layout.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellIds | CellId[] | Array of cell identifiers. |
+| cellAtoms | Array&lt;Atom&lt;CellData&gt;&gt; | Array of cell state atoms. |
+| variables | Variables | Object containing variable dependencies. |
+| hidePureMarkdown | boolean | Flag to hide pure markdown cells. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| nodes | Array&lt;Node&lt;NodeData&gt;&gt; | Array of nodes for the graph. |
+| edges | Edge[] | Array of edges representing dependencies. |
+
+#### Internal Logic
+- Similar to `VerticalElementsBuilder`, but with a different layout strategy.
+- Filters out certain variables and ensures nodes with edges are always shown.
+- Creates edges with specific styles and animations.
+
+## References
+
+- `CellData`, `CellId`, and `Variables` are imported from core modules and are essential for understanding the structure and dependencies of cells.
+- `Atom` from `jotai` is used to manage state for each cell.
+- `Edge`, `MarkerType`, `Node`, and `NodeProps` from `reactflow` are used to define the graph structure.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| reactflow | Used for creating and managing the graph elements. |
+| jotai | Used for state management of cell data. |
+
+## Error Handling
+
+The code does not explicitly handle errors but uses assertions (via `invariant`) to ensure that arrays are of the same length when zipping them together.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

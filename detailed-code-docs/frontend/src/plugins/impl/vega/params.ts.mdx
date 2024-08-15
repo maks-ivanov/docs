@@ -1,0 +1,103 @@
+---
+title: "params.ts"
+---
+
+## High-level description
+
+The target file, `params.ts`, is part of a Vega-Lite plugin implementation. It defines a set of parameters and utility functions to facilitate interactive visualizations using Vega-Lite. The file provides mechanisms to create and manage selection parameters for different types of interactions, such as point selection, interval selection, legend selection, and pan/zoom functionality, which can be applied to Vega-Lite specifications.
+
+## Code Structure
+
+The main symbols in the code are organized into two primary objects: `ParamNames` and `Params`. `ParamNames` provides utility functions and constants for naming selection parameters, while `Params` defines functions that return configuration objects for different types of selections. Additionally, there are utility functions like `getEncodingAxisForMark`, `getSelectionParamNames`, and `getDirectionOfBar` that assist in determining the appropriate encodings and directions for visual elements.
+
+## Symbols
+
+### `ParamNames`
+#### Description
+`ParamNames` is an object that provides utility functions and constants for generating and checking the names of selection parameters used in Vega-Lite specifications.
+
+#### Methods
+- **point(layerNum)**: Generates a name for point selection, optionally appending a layer number.
+- **interval(layerNum)**: Generates a name for interval selection, optionally appending a layer number.
+- **legendSelection(field)**: Generates a name for legend selection based on a field name.
+- **hasPoint(names)**: Checks if any of the provided names correspond to point selections.
+- **hasInterval(names)**: Checks if any of the provided names correspond to interval selections.
+- **hasLegend(names)**: Checks if any of the provided names correspond to legend selections.
+- **hasPanZoom(names)**: Checks if any of the provided names correspond to pan/zoom selections.
+
+### `Params`
+#### Description
+`Params` is an object that defines functions to create selection parameter configurations for different types of interactions in Vega-Lite visualizations.
+
+#### Methods
+- **highlight()**: Returns a configuration for a highlight interaction triggered by mouseover.
+- **interval(spec, layerNum)**: Returns a configuration for an interval selection, using the provided specification and optional layer number.
+- **point(spec, layerNum)**: Returns a configuration for a point selection, using the provided specification and optional layer number.
+- **legend(field)**: Returns a configuration for a legend-based point selection, binding it to a legend.
+- **panZoom()**: Returns a configuration for pan and zoom interactions, using the meta key for activation.
+
+### `getEncodingAxisForMark`
+#### Description
+Determines the appropriate encoding axes for a given mark type in a Vega-Lite specification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | VegaLiteUnitSpec | The Vega-Lite unit specification containing the mark type. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | SingleDefUnitChannel[] \| undefined | The encoding axes for the mark, or undefined if not applicable. |
+
+#### Internal Logic
+The function retrieves the mark type from the specification and returns the corresponding encoding axes based on predefined rules for each mark type.
+
+### `getSelectionParamNames`
+#### Description
+Extracts the names of selection parameters from a given Vega-Lite specification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | TopLevelSpec \| LayerSpec&lt;Field&gt; \| UnitSpec&lt;Field&gt; | The Vega-Lite specification to extract selection parameter names from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string[] | A list of selection parameter names found in the specification. |
+
+#### Internal Logic
+The function checks for the presence of selection parameters in the specification and its layers, if applicable, and collects their names.
+
+### `getDirectionOfBar`
+#### Description
+Determines the orientation (horizontal or vertical) of a bar chart based on its encoding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | VegaLiteUnitSpec | The Vega-Lite unit specification containing the bar chart encoding. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | "horizontal" \| "vertical" \| undefined | The orientation of the bar chart, or undefined if it cannot be determined. |
+
+#### Internal Logic
+The function examines the encoding of the x and y axes to determine if they are nominal or aggregated, which influences the chart's orientation.
+
+## References
+
+- `Marks.getMarkType`: Used to determine the type of mark in a specification.
+- `VegaLiteUnitSpec`, `SelectionParameter`, `SingleDefUnitChannel`: Types imported from other modules to define the structure of specifications and parameters.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| vega-lite | Provides types and structures for defining Vega-Lite specifications and interactions. |
+
+## Error Handling
+
+The code includes type checks and conditions to handle cases where specifications or encodings might be undefined or not applicable, ensuring robust behavior when interacting with Vega-Lite specifications.

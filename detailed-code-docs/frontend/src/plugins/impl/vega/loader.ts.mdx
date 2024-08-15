@@ -1,0 +1,127 @@
+---
+title: "loader.ts"
+---
+
+## High-level description
+
+The target file, `loader.ts`, is part of a plugin implementation for handling data loading and parsing in a frontend application. It extends the functionality of the `vega-loader` by customizing data parsers to handle specific data types like BigInt, and provides functions to load and parse data from URLs, particularly CSV and JSON formats. The file also includes utility functions to ensure unique column names and replace periods in column names to avoid conflicts with downstream libraries.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `typeParsers`: A set of parsers for different data types, which are augmented to handle additional cases like BigInt and specific string representations of booleans.
+- `vegaLoader`: An instance of a loader created using `createLoader`, which is used to fetch and parse data from URLs.
+- `vegaLoadData`: A function that uses `vegaLoader` to load data from a URL and parse it according to a specified format.
+- Utility functions like `uniquifyColumnNames` and `replacePeriodsInColumnNames` are used to preprocess CSV data before parsing.
+
+## References
+
+- `vega-loader`: The base library used for loading and parsing data.
+- `lodash-es`: Used for utility functions like `isNumber`.
+- `vega-loader` functions such as `read` and `createLoader` are re-exported with TypeScript types.
+
+## Symbols
+
+### `typeParsers`
+#### Description
+`typeParsers` is an object that holds functions for parsing different data types. It is extended in this file to handle additional cases such as parsing dates, BigInt, and specific string representations of booleans.
+
+#### Internal Logic
+- The `date` parser converts a string to an ISO date string.
+- The `boolean` parser converts "True"/"False" strings to boolean values.
+- The `integer` and `number` parsers are customized to handle "inf", "-inf", and BigInt values.
+
+### `enableBigInt` and `disableBigInt`
+#### Description
+These functions toggle the use of custom parsers for integers and numbers to handle BigInt values.
+
+#### Side Effects
+They modify the `typeParsers` object to switch between custom and default parsers.
+
+### `vegaLoader`
+#### Description
+`vegaLoader` is an instance of a loader created using `createLoader`, which is used to load data from URLs.
+
+### `vegaLoadData`
+#### Description
+This function loads data from a given URL and parses it according to the specified format, supporting CSV and JSON data types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The URL from which to load data. |
+| format | DataFormat or undefined | The format in which to parse the data. |
+| opts | object | Options to handle BigInt and replace periods in column names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| results | Promise&lt;T[]&gt; | A promise that resolves to an array of parsed data objects. |
+
+#### Internal Logic
+- Determines the data format if not provided.
+- Uniquifies and optionally replaces periods in CSV column names.
+- Enables BigInt handling if specified.
+- Uses `read` to parse the data and returns the results.
+
+### `parseCsvData`
+#### Description
+Parses CSV data using the `read` function, with optional BigInt handling.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data to parse. |
+| handleBigInt | boolean | Whether to handle BigInt values. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | object[] | An array of parsed data objects. |
+
+### `uniquifyColumnNames`
+#### Description
+Ensures that column names in CSV data are unique by appending a zero-width space to duplicates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data with potential duplicate column names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data with unique column names. |
+
+### `replacePeriodsInColumnNames`
+#### Description
+Replaces periods in CSV column names with a one-dot leader to avoid conflicts with libraries that use periods as nested key separators.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data with periods in column names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| csvData | string | The CSV data with periods replaced. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lodash-es` | Provides utility functions like `isNumber`. |
+| `vega-loader` | Used for loading and parsing data. |
+
+## Error Handling
+
+The code uses try-catch blocks to handle parsing errors, such as when attempting to parse invalid JSON or BigInt values.
+
+## Logging
+
+No explicit logging is implemented in this file.
+
+## TODOs
+
+No TODOs are present in the code.

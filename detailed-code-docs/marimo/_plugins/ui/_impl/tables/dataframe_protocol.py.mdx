@@ -1,0 +1,72 @@
+---
+title: "dataframe_protocol.py"
+---
+
+## High-level description
+
+The target file `dataframe_protocol.py` defines an interface for a DataFrame interchange protocol. This protocol is designed to facilitate the exchange of data between different DataFrame implementations by defining a standard set of methods and properties that a DataFrame and its columns must implement. The file includes abstract base classes for `Column` and `DataFrame`, as well as enumerations for device types and data types.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+
+- **Enumerations**: `DlpackDeviceType` and `DtypeKind` are enums that define constants for device types and data types, respectively.
+- **TypedDict**: `CategoricalDescription` is a typed dictionary that describes categorical data.
+- **Abstract Base Classes**: `Column` and `DataFrame` are abstract base classes that define the methods and properties required for the interchange protocol. These classes are meant to be subclassed by specific DataFrame implementations.
+
+## Symbols
+
+### `DlpackDeviceType`
+#### Description
+An enumeration that defines integer codes for different device types, such as CPU, CUDA, and others, matching the DLPack specification.
+
+### `DtypeKind`
+#### Description
+An enumeration that defines integer codes for different data types, such as integer, float, boolean, string, and categorical.
+
+### `Dtype`
+#### Description
+A tuple type alias representing a data type description, including kind, bit-width, format string, and endianness.
+
+### `CategoricalDescription`
+#### Description
+A typed dictionary that provides a description of categorical data, including whether it is ordered, if it has a dictionary mapping, and the categories themselves.
+
+### `Column`
+#### Description
+An abstract base class representing a column in a DataFrame. It defines methods and properties required by the interchange protocol, such as `size`, `offset`, `dtype`, `describe_categorical`, `null_count`, and `metadata`.
+
+#### Inputs
+None directly, as this is an abstract class.
+
+#### Outputs
+None directly, as this is an abstract class.
+
+#### Internal Logic
+The class defines abstract methods and properties that must be implemented by subclasses to provide specific functionality for different DataFrame implementations.
+
+### `DataFrame`
+#### Description
+An abstract base class representing a DataFrame. It defines methods required by the interchange protocol, such as `__dataframe__`, `metadata`, `num_columns`, `num_rows`, `num_chunks`, `column_names`, `get_column`, `get_column_by_name`, `get_columns`, `select_columns`, `select_columns_by_name`, and `get_chunks`.
+
+#### Inputs
+None directly, as this is an abstract class.
+
+#### Outputs
+None directly, as this is an abstract class.
+
+#### Internal Logic
+The class defines abstract methods and properties that must be implemented by subclasses to provide specific functionality for different DataFrame implementations.
+
+## References
+
+- The `Column` and `DataFrame` classes are referenced in the related file `df_protocol_table.py`, where they are used to implement a `DataFrameProtocolTableManager` class.
+- The `DtypeKind` enumeration is used in the `df_protocol_table.py` file to map data types to field types.
+
+## Dependencies
+
+The file uses standard Python libraries such as `enum`, `abc`, and `typing` for defining enumerations, abstract base classes, and type hints.
+
+## TODOs
+
+- There is a TODO comment in the `DataFrame` class regarding the use of `Optional` for the `num_rows` method, questioning the necessity and implications of allowing it to return `None`.

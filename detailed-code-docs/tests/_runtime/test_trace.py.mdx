@@ -1,0 +1,74 @@
+---
+title: "test_trace.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_trace.py` contains a set of unit tests designed to verify the functionality of error tracing in Python scripts and applications. These tests ensure that when a script or application encounters an error, the error messages and stack traces are correctly captured and formatted. The tests cover various scenarios, including errors in standalone scripts, scripts with output, scripts with imported functions, and applications running within a kernel environment.
+
+## Code Structure
+
+The code is organized into three main classes, each containing static methods that define individual test cases:
+
+1. **TestScriptTrace**: Contains tests for tracing errors in standalone Python scripts.
+2. **TestAppTrace**: Contains tests for tracing errors in applications running within a kernel environment.
+3. **TestEmbedTrace**: Contains tests for tracing errors in embedded applications.
+
+Each test method uses Python's `subprocess` module to execute scripts and capture their output, which is then analyzed to ensure the correct error messages and stack traces are produced.
+
+## References
+
+- **`ExecutionRequest`**: Used in `TestAppTrace` and `TestEmbedTrace` to execute code within a kernel.
+- **`Kernel`**: Represents the execution environment for running code in `TestAppTrace` and `TestEmbedTrace`.
+
+## Symbols
+
+### `TestScriptTrace`
+#### Description
+This class contains static methods to test error tracing in standalone Python scripts. It verifies that errors are correctly reported with appropriate messages and line numbers.
+
+#### Methods
+
+- **`test_script_trace`**: Tests error tracing for a script that raises a `NameError`.
+- **`test_script_trace_with_output`**: Tests error tracing for a script that raises a `ZeroDivisionError` and produces output.
+- **`test_script_trace_with_imported_file`**: Tests error tracing for a script that raises a `ZeroDivisionError` in an imported function.
+
+### `TestAppTrace`
+#### Description
+This class contains static methods to test error tracing in applications running within a kernel environment. It verifies that errors are correctly reported with appropriate messages and line numbers, even when code is executed asynchronously.
+
+#### Methods
+
+- **`test_app_trace_body_line_number`**: Tests error tracing for a division by zero error within a kernel execution.
+- **`test_app_trace_output_line_number`**: Tests error tracing for a division by zero error within a function call in a kernel execution.
+- **`test_app_trace_name_error_reference_caught`**: Tests error tracing for a `NameError` when a variable is referenced before definition.
+
+### `TestEmbedTrace`
+#### Description
+This class contains a static method to test error tracing in embedded applications. It verifies that errors are correctly reported with appropriate messages and line numbers.
+
+#### Methods
+
+- **`test_embed_trace`**: Tests error tracing for an embedded application that raises a `ZeroDivisionError`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for path normalization to ensure compatibility across different operating systems. |
+| `re` | Used for regular expression operations to strip HTML tags from error messages. |
+| `subprocess` | Used to execute scripts and capture their output for testing. |
+| `sys` | Used to determine the Python version and executable path. |
+| `textwrap` | Used to dedent multi-line strings for cleaner code formatting. |
+
+## Error Handling
+
+The tests assert specific error messages and line numbers in the output to ensure that errors are correctly traced and reported. The tests also account for differences in error message formatting across Python versions.
+
+## Logging
+
+The tests do not implement any logging mechanisms. They rely on assertions to verify the correctness of error messages and stack traces.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

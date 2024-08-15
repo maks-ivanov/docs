@@ -1,0 +1,104 @@
+---
+title: "strings.ts"
+---
+
+## High-level description
+
+The `strings.ts` file provides utility functions for string manipulation in a frontend application. It includes functions to convert strings to start case, escape HTML characters, and remove trailing slashes from URLs. These utilities are designed to handle edge cases such as non-string inputs and strings without letters.
+
+## Code Structure
+
+The main symbols in the code are organized as methods within the `Strings` object. Each method serves a specific purpose related to string manipulation. The `Logger` from the `Logger.ts` file is used for error logging within the `startCase` method.
+
+## Symbols
+
+### `Strings`
+#### Description
+The `Strings` object contains utility functions for string manipulation, including converting strings to start case, escaping HTML characters, and removing trailing slashes from URLs.
+
+#### Methods
+
+- **startCase**
+  - Converts a string to start case, handling non-letter characters and logging errors for non-string inputs.
+  
+- **htmlEscape**
+  - Escapes HTML characters in a string to prevent XSS attacks.
+  
+- **withoutTrailingSlash**
+  - Removes the trailing slash from a URL string if it exists.
+
+### `startCase`
+#### Description
+Converts a string to start case, which capitalizes the first letter of each word and converts the rest to lowercase. It handles non-letter characters and logs an error if the input is not a string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str  | string | The input string to be converted to start case. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The converted string in start case. |
+
+#### Internal Logic
+- Checks if the input is a string; if not, logs an error and throws a `TypeError`.
+- If the string contains no letters, returns the string as is.
+- Uses the `startCase` function from `lodash-es` to convert the string to start case.
+
+### `htmlEscape`
+#### Description
+Escapes HTML characters in a string to prevent XSS attacks by replacing special characters with their corresponding HTML entities.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str  | string or undefined | The input string to be escaped. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string or undefined | The escaped string with HTML entities. |
+
+#### Internal Logic
+- Returns the input string if it is undefined.
+- Replaces special HTML characters (`&`, `&lt;`, `&gt;`, `"`, `'`, `\n`) with their corresponding HTML entities.
+
+### `withoutTrailingSlash`
+#### Description
+Removes the trailing slash from a URL string if it exists, ensuring a consistent URL format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url  | string | The URL string to be processed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The URL string without a trailing slash. |
+
+#### Internal Logic
+- Checks if the URL ends with a slash and removes it if present.
+
+## References
+
+- **Logger**: The `Logger` from `Logger.ts` is used in the `startCase` method to log errors when the input is not a string.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| lodash-es  | Provides the `startCase` function for converting strings to start case. |
+
+## Error Handling
+
+- The `startCase` method logs an error and throws a `TypeError` if the input is not a string, ensuring that only valid string inputs are processed.
+
+## Side Effects
+
+- The `startCase` method logs errors using the `Logger` when the input is not a string, which can be useful for debugging purposes.
+
+## Performance Considerations
+
+- The `htmlEscape` method uses multiple `replaceAll` calls, which may have performance implications for very large strings. However, this is generally acceptable for typical use cases involving HTML content.

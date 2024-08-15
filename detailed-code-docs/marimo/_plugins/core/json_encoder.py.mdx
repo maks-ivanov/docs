@@ -1,0 +1,62 @@
+---
+title: "json_encoder.py"
+---
+
+## High-level description
+
+The `WebComponentEncoder` class in the `json_encoder.py` file is a custom JSON encoder designed to handle the serialization of various complex Python objects into JSON format. It extends the default `JSONEncoder` class to provide custom serialization logic for objects from libraries like NumPy and Pandas, as well as other Python data types such as dataclasses, bytes, sets, and datetime objects. This encoder is particularly useful for converting data structures into a format that can be easily transmitted over the web or stored in JSON format.
+
+## Code Structure
+
+The main symbol in this file is the `WebComponentEncoder` class, which extends the `JSONEncoder` class from Python's `json` module. The `default` method of this class is overridden to provide custom serialization logic for various data types. The `DependencyManager` class from the `marimo._dependencies.dependencies` module is used to check for the presence of optional dependencies like NumPy and Pandas, which influence the serialization logic.
+
+## Symbols
+
+### `WebComponentEncoder`
+#### Description
+The `WebComponentEncoder` class is a custom JSON encoder that extends the `JSONEncoder` class to handle the serialization of complex Python objects, including those from NumPy and Pandas, as well as other data types like dataclasses, bytes, sets, and datetime objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| o | Any | The object to be serialized into JSON format. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Any | The JSON-serializable representation of the input object. |
+
+#### Internal Logic
+- **NumPy Objects**: If NumPy is available, the encoder handles various NumPy data types such as `np.datetime64`, `np.complexfloating`, `np.integer`, `np.floating`, `np.ndarray`, and `np.dtype`. These are converted to their string or list representations as appropriate.
+- **Pandas Objects**: If Pandas is available, the encoder handles objects like `pd.DataFrame`, `pd.Series`, `pd.Categorical`, `pd.Timestamp`, `pd.Timedelta`, and `pd.Interval`. These are converted to dictionaries, lists, or strings.
+- **MIME Objects**: If an object has a `_mime_` method, it is assumed to be a MIME object and is serialized into a dictionary with `mimetype` and `data` keys.
+- **Dataclasses**: If the object is a dataclass, it is converted to a dictionary using `dataclasses.asdict`.
+- **Bytes**: Bytes objects are decoded into UTF-8 strings.
+- **Sets**: Sets are converted to lists.
+- **Datetime**: Datetime objects are converted to ISO format strings.
+- **Fallback**: If none of the custom handlers apply, the default JSONEncoder's `default` method is used.
+
+## References
+
+- **`DependencyManager`**: This class is used to check for the presence of optional dependencies like NumPy and Pandas, which influence the serialization logic.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `json` | Provides the base `JSONEncoder` class that `WebComponentEncoder` extends. |
+| `dataclasses` | Used to check if an object is a dataclass and to convert it to a dictionary. |
+| `datetime` | Used to handle serialization of datetime objects. |
+| `marimo._dependencies.dependencies.DependencyManager` | Checks for the presence of optional dependencies like NumPy and Pandas. |
+
+## Error Handling
+
+The `default` method of `WebComponentEncoder` uses a try-except block to catch `AttributeError` when attempting to serialize Pandas objects. This ensures that if an object does not have the expected attributes, the method will not fail but will instead fall back to the default serialization logic.
+
+## Logging
+
+No explicit logging is implemented in this file. However, the use of `DependencyManager` implies that dependency-related issues might be logged elsewhere in the codebase.
+
+## TODOs
+
+No TODOs are present in the code.

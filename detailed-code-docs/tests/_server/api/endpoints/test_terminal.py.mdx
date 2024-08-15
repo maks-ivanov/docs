@@ -1,0 +1,73 @@
+---
+title: "test_terminal.py"
+---
+
+## High-level description
+
+The target file `test_terminal.py` contains test cases for WebSocket interactions with a terminal endpoint in a server application. It uses the `pytest` framework to verify the behavior of WebSocket connections under different session modes, specifically focusing on the `EDIT` and `RUN` modes. The tests ensure that WebSocket connections can be established and messages can be sent and received correctly, and that certain operations are restricted based on the session mode.
+
+## Code Structure
+
+The main symbols in the code are the test functions `test_terminal_ws` and `test_terminal_ws_not_allowed_in_run`. These functions use the `pytest` framework to perform WebSocket operations and assertions. The `SessionManager` and `SessionMode` from the `marimo` server modules are used to manage session states and modes, which are crucial for the tests.
+
+## Symbols
+
+### `test_terminal_ws`
+#### Description
+This test function verifies that a WebSocket connection can be established with the `/terminal/ws` endpoint and that messages can be sent and received correctly. It is skipped on Windows platforms due to platform-specific issues.
+
+#### Inputs
+| Name  | Type         | Description                  |
+|:------|:-------------|:-----------------------------|
+| client | TestClient | A test client for making requests to the server. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function uses the `client` to connect to the WebSocket endpoint `/terminal/ws`.
+- It sends a text message "echo hello" through the WebSocket.
+- It receives a response and asserts that the response contains the sent message.
+
+### `test_terminal_ws_not_allowed_in_run`
+#### Description
+This test function checks that WebSocket connections to the `/terminal/ws` endpoint are not allowed when the session is in `RUN` mode. It expects a `WebSocketDisconnect` exception to be raised in this scenario.
+
+#### Inputs
+| Name  | Type         | Description                  |
+|:------|:-------------|:-----------------------------|
+| client | TestClient | A test client for making requests to the server. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function retrieves the `SessionManager` using `get_session_manager`.
+- It sets the session mode to `RUN`.
+- It attempts to connect to the WebSocket endpoint `/terminal/ws` and expects a `WebSocketDisconnect` exception.
+- After the test, it resets the session mode to `EDIT`.
+
+## References
+
+- `SessionMode` from `marimo._server.model`: Used to determine the session mode (`EDIT` or `RUN`).
+- `SessionManager` from `marimo._server.sessions`: Manages session states and is used to set the session mode in the tests.
+- `get_session_manager` from `tests._server.conftest`: A helper function to retrieve the session manager for the test client.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing test cases. |
+| `starlette.websockets.WebSocketDisconnect` | Exception used to handle WebSocket disconnection scenarios. |
+
+## Error Handling
+
+- The test `test_terminal_ws_not_allowed_in_run` uses `pytest.raises` to assert that a `WebSocketDisconnect` exception is raised when attempting to connect to the WebSocket in `RUN` mode.
+
+## Logging
+
+No explicit logging is implemented in the target file. However, the `pytest` framework may log test results and exceptions.
+
+## TODOs
+
+No TODOs or notes are present in the code.

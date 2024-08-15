@@ -1,0 +1,136 @@
+---
+title: "test_ipynb_to_marimo.py"
+---
+
+## High-level description
+
+The target file `tests/_cli/test_ipynb_to_marimo.py` is a test suite designed to validate the functionality of converting Jupyter Notebook files (with `.ipynb` extension) into a format compatible with the Marimo framework. It uses the `pytest` framework to define and execute a series of test cases that check the conversion of different types of notebook content, such as markdown, arithmetic operations, blank cells, and unparsable content.
+
+## Code Structure
+
+The main function in this file is `get_codes`, which is used by multiple test functions to convert a given notebook file into a sequence of code strings and their corresponding names. The test functions then assert the correctness of these outputs against expected values.
+
+## References
+
+- `convert_from_ipynb_file`: This function from `marimo._cli.convert.ipynb` is used to convert the contents of a Jupyter Notebook file into a string format that can be processed by the Marimo framework.
+- `codegen.get_app`: This function from `marimo._ast.codegen` is used to generate an application object from the converted code, which is then used to extract the code and names of the cells.
+
+## Symbols
+
+### `get_codes`
+#### Description
+The `get_codes` function is responsible for converting a Jupyter Notebook file into a sequence of code strings and their corresponding names using the Marimo framework. It writes the converted content to a temporary Python file, loads it as a Marimo application, and extracts the code and names from the application's cell manager.
+
+#### Inputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| ipynb_name | str    | The name of the Jupyter Notebook file to convert. |
+
+#### Outputs
+| Name  | Type                 | Description                                      |
+|:------|:---------------------|:-------------------------------------------------|
+| codes | Sequence[str]        | A sequence of code strings extracted from the notebook. |
+| names | Sequence[str]        | A sequence of names corresponding to the code cells.    |
+
+#### Internal Logic
+1. The function constructs the file path for the notebook using the provided `ipynb_name`.
+2. It calls `convert_from_ipynb_file` to convert the notebook into a string of Python code.
+3. A temporary file is created to store this code, which is then used to generate a Marimo application using `codegen.get_app`.
+4. The function retrieves the code and names from the application's cell manager and returns them.
+5. The temporary file is deleted after use.
+
+### `test_markdown`
+#### Description
+This test function checks the conversion of markdown content in a Jupyter Notebook to Marimo format.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Calls `get_codes` with the notebook name "markdown".
+2. Asserts that the number of code cells is 3.
+3. Verifies the content of each code cell against expected markdown conversion results.
+4. Checks that all names are "_".
+
+### `test_arithmetic`
+#### Description
+This test function verifies the conversion of arithmetic operations in a Jupyter Notebook.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Calls `get_codes` with the notebook name "arithmetic".
+2. Asserts that there are 2 code cells.
+3. Verifies the content of each code cell against expected arithmetic results.
+4. Checks that all names are "__".
+
+### `test_blank`
+#### Description
+This test function ensures that blank cells in a Jupyter Notebook are handled correctly.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Calls `get_codes` with the notebook name "blank".
+2. Asserts that there is 1 code cell.
+3. Verifies that the code cell is empty.
+4. Checks that the name is "__".
+
+### `test_unparsable`
+#### Description
+This test function checks the handling of unparsable content in a Jupyter Notebook.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Calls `get_codes` with the notebook name "unparsable".
+2. Asserts that there are 2 code cells.
+3. Verifies the content of each code cell against expected unparsable results.
+4. Checks that all names are "__".
+
+### `test_multiple_defs`
+#### Description
+This test function verifies the handling of multiple definitions in a Jupyter Notebook, but only runs on Python 3.9 or later.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Uses `pytest.mark.skipif` to skip the test if the Python version is below 3.9.
+2. Calls `get_codes` with the notebook name "multiple_defs".
+3. Asserts that there are 7 code cells.
+4. Verifies the content of each code cell against expected results for multiple definitions.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `pytest`   | Used for defining and running the test cases.                           |
+| `marimo._ast.codegen` | Provides functionality to generate a Marimo application from code. |
+| `marimo._cli.convert.ipynb` | Contains the function to convert Jupyter Notebook files to Marimo format. |
+
+## Error Handling
+
+The `get_codes` function uses a `try-finally` block to ensure that the temporary file is deleted, even if an error occurs during the conversion or application generation process.
+
+## Logging
+
+No explicit logging is implemented in this code.
