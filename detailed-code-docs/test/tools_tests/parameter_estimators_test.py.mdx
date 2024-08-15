@@ -3,58 +3,113 @@ title: "parameter_estimators_test.py"
 ---
 
 ## High-level description
-
-The target file `parameter_estimators_test.py` is a unit test suite for testing the functionality of parameter estimation methods in the `cassiopeia.tools.parameter_estimators` module. It uses the `unittest` framework to verify the correctness of functions that estimate mutation rates and missing data rates in phylogenetic trees represented by the `CassiopeiaTree` class. The tests cover both discrete and continuous models of mutation and missing data estimation.
+This file contains unit tests for the `parameter_estimators.py` module in Cassiopeia. The tests cover functions that estimate parameters related to mutation rates and missing data in lineage tracing data.
 
 ## Code Structure
-
-The main class in this file is `TestCassiopeiaTree`, which inherits from `unittest.TestCase`. This class contains several test methods that validate the behavior of functions from the `parameter_estimators` module. The tests are organized into methods that test specific functionalities, such as mutation rate estimation and missing data rate estimation. The `setUp` method initializes test data, including small phylogenetic trees and character matrices, which are used across multiple test cases.
-
-## References
-
-The test file references the following components from the codebase:
-- `cassiopeia.tools.parameter_estimators`: The module containing the functions being tested.
-- `cassiopeia.data.CassiopeiaTree`: The class used to represent phylogenetic trees and character matrices.
-- `cassiopeia.mixins.ParameterEstimateError` and `cassiopeia.mixins.ParameterEstimateWarning`: Custom exceptions and warnings used in the parameter estimation functions.
+The `TestCassiopeiaTree` class contains multiple test methods, each testing different aspects of the parameter estimation functions. The tests are structured around two example trees: `self.discrete_tree` and `self.continuous_tree`, representing discrete and continuous character data respectively.
 
 ## Symbols
-
 ### `TestCassiopeiaTree`
 #### Description
-This class contains unit tests for the parameter estimation functions in the `cassiopeia.tools.parameter_estimators` module. It tests the correctness of mutation rate and missing data rate estimations using both discrete and continuous models.
+A class containing unit tests for parameter estimation functions.
 
 #### Inputs
-- None directly, but it uses initialized data structures like `CassiopeiaTree` instances with specific character matrices and priors.
+None
 
 #### Outputs
-- None directly, but it asserts expected outcomes using the `unittest` framework.
+None
 
 #### Internal Logic
-- **`setUp` Method**: Initializes two `CassiopeiaTree` instances (`discrete_tree` and `continuous_tree`) with predefined network structures and character matrices. These trees are used in the test methods to verify the parameter estimation functions.
-- **`test_proportions` Method**: Tests the `get_proportion_of_mutation` and `get_proportion_of_missing_data` functions for both discrete and continuous trees, asserting the expected proportions.
-- **`test_estimate_mutation_rate` Method**: Tests the `estimate_mutation_rate` function for both discrete and continuous models, with and without assuming an implicit root branch, asserting the expected mutation rates.
-- **`test_estimate_missing_data_bad_cases` Method**: Tests the `estimate_missing_data_rates` function for scenarios expected to raise `ParameterEstimateError` or `ParameterEstimateWarning`.
-- **`test_estimate_stochastic_missing_data_probability` Method**: Tests the estimation of stochastic missing data probability, asserting the expected values.
-- **`test_estimate_heritable_missing_data_rate` Method**: Tests the estimation of heritable missing data rate, asserting the expected values.
+The class uses the `unittest` framework to define and run tests. It sets up two example trees (`self.discrete_tree` and `self.continuous_tree`) in the `setUp` method, which are then used by the individual test methods.
+
+___
+
+### `test_proportions`
+#### Description
+Tests the `get_proportion_of_mutation` and `get_proportion_of_missing_data` functions.
+
+#### Inputs
+Uses `self.discrete_tree` and `self.continuous_tree`
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calculates the proportion of mutations and missing data for both trees using the functions being tested.
+- Asserts that the calculated proportions match the expected values.
+
+___
+
+### `test_estimate_mutation_rate`
+#### Description
+Tests the `estimate_mutation_rate` function.
+
+#### Inputs
+Uses `self.discrete_tree` and `self.continuous_tree`
+
+#### Outputs
+None
+
+#### Internal Logic
+- Estimates the mutation rate for both trees using the function being tested, with different combinations of the `continuous` and `assume_root_implicit_branch` parameters.
+- Asserts that the estimated mutation rates are close to the expected values.
+
+___
+
+### `test_estimate_missing_data_bad_cases`
+#### Description
+Tests the error handling of the `estimate_missing_data_rates` function.
+
+#### Inputs
+Uses `self.discrete_tree` and `self.continuous_tree`
+
+#### Outputs
+None
+
+#### Internal Logic
+- Defines several scenarios where the `estimate_missing_data_rates` function should raise either a `ParameterEstimateError` or a `ParameterEstimateWarning`.
+- Uses `assertRaises` to verify that the expected exceptions are raised in each scenario.
+
+___
+
+### `test_estimate_stochastic_missing_data_probability`
+#### Description
+Tests the `estimate_missing_data_rates` function for estimating the stochastic missing data probability.
+
+#### Inputs
+Uses `self.discrete_tree` and `self.continuous_tree`
+
+#### Outputs
+None
+
+#### Internal Logic
+- Estimates the stochastic missing data probability for both trees using the function being tested, with different combinations of the `continuous`, `assume_root_implicit_branch`, and `heritable_missing_rate` parameters.
+- Asserts that the estimated probabilities are close to the expected values.
+
+___
+
+### `test_estimate_heritable_missing_data_rate`
+#### Description
+Tests the `estimate_missing_data_rates` function for estimating the heritable missing data rate.
+
+#### Inputs
+Uses `self.discrete_tree` and `self.continuous_tree`
+
+#### Outputs
+None
+
+#### Internal Logic
+- Estimates the heritable missing data rate for both trees using the function being tested, with different combinations of the `continuous`, `assume_root_implicit_branch`, and `stochastic_missing_probability` parameters.
+- Asserts that the estimated rates are close to the expected values.
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework for writing and running tests. |
-| `networkx` | Used to create and manipulate the directed graph structure of the phylogenetic trees. |
-| `numpy` | Used for numerical operations and assertions involving floating-point comparisons. |
-| `pandas` | Used to create and manipulate the character matrices as DataFrames. |
-| `cassiopeia` | The main library being tested, specifically its `tools` and `data` modules. |
+- unittest
+- networkx
+- numpy
+- pandas
+- cassiopeia
+- cassiopeia.tools.parameter_estimators
+- cassiopeia.mixins
 
 ## Error Handling
-
-The test methods expect certain functions to raise `ParameterEstimateError` or `ParameterEstimateWarning` under specific conditions, which are verified using `unittest`'s `assertRaises` context manager.
-
-## Logging
-
-No explicit logging is implemented in this test file. The `unittest` framework handles test results and outputs.
-
-## TODOs
-
-No TODOs or notes are present in the code.
+The tests in this file primarily focus on verifying the correct error handling of the parameter estimation functions. They check for scenarios where `ParameterEstimateError` and `ParameterEstimateWarning` exceptions should be raised due to invalid input parameters or estimated values.

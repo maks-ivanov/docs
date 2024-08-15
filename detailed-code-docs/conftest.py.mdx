@@ -3,77 +3,62 @@ title: "conftest.py"
 ---
 
 ## High-level description
-The `conftest.py` file is a configuration script for the pytest testing framework. It adds a command-line option to control the execution of slow tests and configures pytest to skip tests marked as slow unless explicitly instructed to run them.
-
-## Code Structure
-The code consists of three main functions that interact with pytest's configuration and test collection process:
-- `pytest_addoption`: Adds a command-line option for running slow tests.
-- `pytest_configure`: Configures pytest to recognize a custom marker for slow tests.
-- `pytest_collection_modifyitems`: Modifies the test collection process to skip slow tests unless the command-line option is specified.
+This file, `conftest.py`, is a pytest configuration file that sets up custom options and behaviors for running tests. It specifically introduces a mechanism to mark and optionally skip slow tests, allowing for more efficient test execution in different scenarios.
 
 ## Symbols
 
 ### `pytest_addoption`
 #### Description
-This function adds a custom command-line option `--runslow` to the pytest framework, allowing users to specify whether slow tests should be executed.
+This function adds a custom command-line option `--runslow` to pytest.
 
 #### Inputs
-| Name   | Type   | Description                        |
-|:-------|:-------|:-----------------------------------|
-| parser | object | The pytest parser object for adding command-line options. |
-
-#### Outputs
-None
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parser | pytest.Parser | The pytest command-line options parser |
 
 #### Internal Logic
-- The function uses `parser.addoption` to define a new command-line option `--runslow`.
-- The option is a boolean flag (`store_true`) with a default value of `False`.
-- A help message is provided to describe the option's purpose.
+The function adds a boolean option `--runslow` to the pytest command-line interface. When used, this option allows slow tests to run.
 
 ### `pytest_configure`
 #### Description
-This function configures pytest to recognize a custom marker named `slow`, which can be used to mark tests as slow.
+This function adds a custom marker `slow` to pytest's configuration.
 
 #### Inputs
-| Name  | Type   | Description                        |
-|:------|:-------|:-----------------------------------|
-| config | object | The pytest configuration object. |
-
-#### Outputs
-None
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | pytest.Config | The pytest configuration object |
 
 #### Internal Logic
-- The function uses `config.addinivalue_line` to add a new marker `slow` to pytest's configuration.
-- This marker can be used in test functions to indicate that they are slow to run.
+The function adds a new line to pytest's ini-file configuration, defining a `slow` marker that can be used to identify slow tests.
 
 ### `pytest_collection_modifyitems`
 #### Description
-This function modifies the test collection process to skip tests marked as slow unless the `--runslow` option is specified.
+This function modifies the collected test items based on whether the `--runslow` option is provided.
 
 #### Inputs
-| Name  | Type   | Description                        |
-|:------|:-------|:-----------------------------------|
-| config | object | The pytest configuration object. |
-| items  | list   | A list of collected test items.   |
-
-#### Outputs
-None
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | pytest.Config | The pytest configuration object |
+| items | List[pytest.Item] | The list of collected test items |
 
 #### Internal Logic
-- The function checks if the `--runslow` option is set in the configuration.
-- If not set, it creates a skip marker with a reason indicating that the `--runslow` option is needed.
-- It iterates over the collected test items and applies the skip marker to those marked as `slow`.
-
-## Side Effects
-- The code modifies the behavior of pytest by adding a new command-line option and altering the test collection process based on this option.
+1. Checks if the `--runslow` option is provided.
+2. If not provided, it creates a `skip_slow` marker.
+3. Iterates through all test items and adds the `skip_slow` marker to any test marked as "slow".
 
 ## Dependencies
 | Dependency | Purpose |
 |:-----------|:--------|
-| pytest     | Provides the testing framework and API for configuring and modifying test behavior. |
+| pytest | The testing framework being configured |
 
-## Error Handling
-The code does not implement specific error handling mechanisms beyond the basic functionality provided by pytest.
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| --runslow | boolean | False | When set, allows slow tests to run |
 
-## Logging
-The code does not implement any logging mechanisms.
+## API/Interface Reference
+| Marker | Description |
+|:-------|:------------|
+| slow | Marks a test as slow to run |
+
+This configuration file extends pytest's functionality by introducing a way to mark tests as slow and optionally skip them during test execution. It provides a command-line option `--runslow` that, when not specified, will cause all tests marked as "slow" to be skipped. This allows for faster test runs in scenarios where running slow tests is not necessary or desired, while still maintaining the ability to run all tests when needed.

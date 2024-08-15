@@ -2,87 +2,95 @@
 title: "percolation_test.py"
 ---
 
-## High-level description
+Here's a detailed documentation of the target file `test/solver_tests/percolation_test.py`:
 
-The `percolation_test.py` file is a unit test suite for the `PercolationSolver` class in the `Cassiopeia` library. It uses the `unittest` framework to verify the functionality of the `PercolationSolver` by testing its ability to reconstruct phylogenetic trees from character matrices using different solving strategies and dissimilarity functions. The tests ensure that the solver produces expected tree topologies under various conditions, including handling missing data and using different dissimilarity metrics.
+## High-level description
+This file contains unit tests for the PercolationSolver in Cassiopeia's solver module. It tests the solver's ability to construct phylogenetic trees from character matrices using different joining solvers and dissimilarity functions.
 
 ## Code Structure
-
-The main components of the code are the test cases defined within the `PercolationSolverTest` class. Each test case sets up a character matrix, configures a solver with specific parameters, and verifies the output tree topology against an expected result. The `find_triplet_structure` function is used to compare the structure of triplets in the observed and expected trees.
+The main class `PercolationSolverTest` inherits from `unittest.TestCase` and contains several test methods. These methods create character matrices, solve them using different configurations of the PercolationSolver, and compare the resulting trees to expected structures.
 
 ## Symbols
 
 ### `find_triplet_structure`
 #### Description
-This function determines the structure of a triplet (a set of three nodes) in a given tree. It identifies which pair of nodes in the triplet shares the most common ancestors, indicating their closer relationship in the tree.
+This function determines the structure of a triplet of nodes in a given tree.
 
 #### Inputs
-| Name   | Type       | Description                        |
-|:-------|:-----------|:-----------------------------------|
-| triplet| List[str]  | A list of three node identifiers.  |
-| T      | nx.DiGraph | A directed graph representing a tree.|
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| triplet | tuple | A tuple of three node labels |
+| T | networkx.DiGraph | The tree to analyze |
 
 #### Outputs
-| Name      | Type   | Description                                      |
-|:----------|:-------|:-------------------------------------------------|
-| structure | str    | A string indicating the closest pair in the triplet ("ab", "ac", "bc", or "-"). |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| structure | str | The structure of the triplet ("ab", "ac", "bc", or "-") |
 
 #### Internal Logic
-- The function computes the set of ancestors for each node in the triplet.
-- It calculates the number of common ancestors for each pair of nodes.
-- It returns the pair with the most common ancestors, or "-" if no pair is significantly closer.
+1. Find ancestors for each node in the triplet.
+2. Count common ancestors between pairs of nodes.
+3. Determine the structure based on which pair has the most common ancestors.
 
 ### `neg_hamming_similarity_without_missing`
 #### Description
-This function computes the negative Hamming similarity between two samples, ignoring missing data. It is used as a dissimilarity function for tree reconstruction.
+This function computes the negative Hamming similarity between two sequences, ignoring missing data.
 
 #### Inputs
-| Name                  | Type          | Description                                      |
-|:----------------------|:--------------|:-------------------------------------------------|
-| s1                    | np.array      | Character states of the first sample.            |
-| s2                    | np.array      | Character states of the second sample.           |
-| missing_state_indicator | int         | Indicator for missing data.                      |
-| weights               | Optional[Dict[int, Dict[int, float]]] | Optional weights for character states. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s1 | np.array | First sequence |
+| s2 | np.array | Second sequence |
+| missing_state_indicator | int | Value indicating missing data |
+| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for states |
 
 #### Outputs
-| Name      | Type  | Description                                      |
-|:----------|:------|:-------------------------------------------------|
-| similarity| float | The negative Hamming similarity score.           |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity | float | Negative Hamming similarity |
 
-#### Internal Logic
-- The function calls a JIT-compiled version of the `hamming_similarity_without_missing` function from `dissimilarity_functions`.
-- It returns the negative of the computed similarity score.
-
-### `PercolationSolverTest`
+### `class PercolationSolverTest(unittest.TestCase)`
 #### Description
-A test suite for the `PercolationSolver` class, containing multiple test cases to verify its functionality under different conditions.
+This class contains unit tests for the PercolationSolver.
+
+#### Test Methods
+
+##### `test_NJ_negative_similarity`
+Tests the PercolationSolver using NeighborJoiningSolver with negative Hamming similarity.
+
+##### `test_NJ_weighted_hamming_distance`
+Tests the PercolationSolver using NeighborJoiningSolver with weighted Hamming distance.
+
+##### `test_Greedy`
+Tests the PercolationSolver using VanillaGreedySolver.
+
+##### `test_priors_case`
+Tests the PercolationSolver with prior probabilities for mutations.
 
 #### Internal Logic
-- Each test case initializes a character matrix and a `CassiopeiaTree`.
-- It configures a solver with a specific dissimilarity function and solving strategy.
-- The solver is used to reconstruct a tree, and the resulting topology is compared against an expected tree using triplet structures.
-
-## References
-
-- `dissimilarity_functions.hamming_similarity_without_missing`: A function from the `dissimilarity_functions` module used to compute Hamming similarity.
-- `CassiopeiaTree`: A class from the `cassiopeia.data` module used to represent phylogenetic trees.
-- `NeighborJoiningSolver`, `VanillaGreedySolver`, `PercolationSolver`: Solver classes from the `cassiopeia.solver` module used for tree reconstruction.
+For each test:
+1. Create a character matrix.
+2. Initialize a CassiopeiaTree with the character matrix.
+3. Set up a joining solver (NeighborJoiningSolver or VanillaGreedySolver).
+4. Create a PercolationSolver with the joining solver.
+5. Solve the tree.
+6. Compare the resulting tree structure with the expected structure using triplet comparisons.
 
 ## Dependencies
-
-| Dependency | Purpose                                      |
-|:-----------|:---------------------------------------------|
-| `unittest` | Provides the framework for writing and running tests. |
-| `networkx` | Used for graph operations and tree representations. |
-| `numba`    | JIT compilation for performance optimization. |
-| `numpy`    | Numerical operations and array handling.      |
-| `pandas`   | Data manipulation and character matrix creation. |
-| `cassiopeia` | The main library being tested, providing tree and solver classes. |
+| Dependency | Purpose |
+|:-----------|:--------|
+| unittest | For creating and running unit tests |
+| itertools | For generating combinations |
+| networkx | For graph operations |
+| numba | For JIT compilation of functions |
+| numpy | For numerical operations |
+| pandas | For data manipulation |
+| cassiopeia | The main package being tested |
 
 ## Error Handling
-
-The test cases use assertions to verify the correctness of the solver's output. If the observed tree topology does not match the expected topology, an assertion error is raised, indicating a failure in the test.
+The tests use assertions to check if the resulting tree structures match the expected structures. If any assertion fails, the test will raise an AssertionError.
 
 ## Logging
+This file does not implement any explicit logging. However, the unittest framework will log test results.
 
-No explicit logging is implemented in this test suite. The focus is on using assertions to validate the solver's behavior.
+Your response should not exceed 3000 words or 4000 tokens. Focus on providing clear, concise information that can be directly inferred from the code. Include optional sections only when they provide significant value for understanding the code.

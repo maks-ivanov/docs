@@ -3,171 +3,123 @@ title: "override.css"
 ---
 
 ## High-level description
+This CSS file overrides default styles in the Furo Sphinx theme to customize the appearance of Streamlink's documentation. It specifically targets elements like code blocks, citations, headings, and buttons to enhance readability and visual appeal. 
 
-The `override.css` file is a custom CSS stylesheet used to override and customize the default styles provided by the Furo theme and potentially other themes or stylesheets. It defines specific styles for various HTML elements and classes to ensure consistent and visually appealing documentation presentation. The file includes styles for code blocks, citations, introductory cards, buttons, and notebook input/output containers.
+The file also includes styles for elements specific to the "Getting Started" page, such as intro cards and custom buttons, and it adjusts the display of Jupyter Notebook elements for better integration within the documentation.
 
 ## Code Structure
-
-The CSS file is structured into several sections, each targeting different elements or classes within the documentation. These sections include styles for code elements, citation lists, introductory cards, custom buttons, and notebook containers. The styles are applied using CSS selectors that target specific HTML elements and classes.
+This CSS file is structured as a series of style rules. Each rule targets specific HTML elements or classes and applies styles to modify their appearance. There's no complex interrelation between the rules, they primarily function independently to style different aspects of the documentation.
 
 ## Symbols
 
 ### `dt:target, span.highlighted`
 #### Description
-This style rule applies a background color to targeted definition terms and highlighted spans.
+This rule styles the definition term (`&lt;dt&gt;`) of a definition list when it's the target of a hyperlink and any element with the class "highlighted". It gives them a light gray background color.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| background-color | CSS property | Sets the background color to `#f0f0f0` for targeted elements. |
+#### Internal Logic
+The rule uses the `:target` pseudo-class to select the `dt` element that is currently being linked to. It also selects any element with the class `highlighted`. Both are styled with a light gray background.
 
 ### `code.docutils.literal.notranslate.xref, a code`
 #### Description
-This rule styles code elements within links and specific literal code elements, making them bold and transparent in background.
+This rule styles inline code snippets within links (`&lt;a&gt;`) and cross-references (`xref`). It removes any background color, sets the font weight to bold, and inherits the text color from the parent element.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| background | CSS property | Sets the background to transparent. |
-| font-weight | CSS property | Sets the font weight to bold. |
-| color | CSS property | Inherits the color from the parent element. |
+#### Internal Logic
+The rule targets `&lt;code&gt;` elements with specific classes (`docutils`, `literal`, `notranslate`, `xref`) that are either direct children of `&lt;a&gt;` elements or standalone within an `&lt;a&gt;` element. It then applies the defined styles.
 
 ### `a &gt; code`
 #### Description
-Ensures that code elements within anchor tags inherit the color of their parent.
+This rule ensures that inline code snippets within links inherit the link's text color.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| color | CSS property | Inherits the color from the parent element. |
+#### Internal Logic
+It targets `&lt;code&gt;` elements that are direct children of `&lt;a&gt;` elements and sets the `color` property to `inherit`.
 
 ### `code.docutils.literal.notranslate`
 #### Description
-Styles literal code elements with a specific background, font size, border radius, and padding.
+This rule styles standard inline code snippets. It applies a light gray background, reduces font size slightly, rounds the corners, sets text color to black, allows line breaks within the code, and adds padding.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| background | CSS property | Sets the background to `#f8f9fb`. |
-| font-size | CSS property | Sets the font size to `87.5%`. |
-| border-radius | CSS property | Sets the border radius to `.2em`. |
-| color | CSS property | Sets the color to `#000000`. |
-| word-wrap | CSS property | Enables word wrapping. |
-| padding | CSS property | Sets padding to `.1em .2em`. |
+#### Internal Logic
+The rule targets `&lt;code&gt;` elements with specific classes (`docutils`, `literal`, `notranslate`) and applies the defined styles to create a visually distinct code block.
 
 ### `dl.citation &gt; dt`
 #### Description
-Styles the definition term within citation lists to float left and have a bold font weight.
+This rule styles the definition term in a citation list. It floats the term to the left, adds a right margin, and sets the font weight to bold.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| float | CSS property | Floats the element to the left. |
-| margin-right | CSS property | Sets the right margin to `15px`. |
-| font-weight | CSS property | Sets the font weight to bold. |
+#### Internal Logic
+The rule targets `dt` elements that are direct children of `dl` elements with the class `citation`. It then applies the float, margin, and font weight styles.
 
 ### `dl.c .field-list dt, dl.cpp .field-list dt, dl.js .field-list dt, dl.py .field-list dt`
 #### Description
-Normalizes the font size and text transformation for field list definition terms in various programming language documentation.
+This rule normalizes the font size and removes text transformation for parameter lists in code blocks for various programming languages (C, C++, JavaScript, Python).
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| font-size | CSS property | Uses a CSS variable for normal font size. |
-| text-transform | CSS property | Sets text transformation to none. |
+#### Internal Logic
+The rule targets `dt` elements within nested `dl` and `.field-list` elements that are descendants of `dl` elements with specific language classes (`c`, `cpp`, `js`, `py`). It then sets the font size and removes any text transformation.
 
 ### `p.rubric`
 #### Description
-Styles rubric paragraphs with a normal font size, no text transformation, and medium font weight.
+This rule styles paragraphs with the class "rubric" (often used for examples and headings within classes). It sets the font size, removes text transformation, and sets a medium font weight.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| font-size | CSS property | Uses a CSS variable for normal font size. |
-| text-transform | CSS property | Sets text transformation to none. |
-| font-weight | CSS property | Sets the font weight to 500. |
+#### Internal Logic
+The rule targets `&lt;p&gt;` elements with the class `rubric` and applies the defined font size, text transformation, and font weight styles.
 
 ### `.intro-card`
 #### Description
-Styles introductory cards with a white background, no border radius, and specific padding and margin.
+This rule styles elements with the class "intro-card", likely used on the "Getting Started" page. It sets a white background, removes border radius, adds padding, and sets top and bottom margins.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| background | CSS property | Sets the background to white. |
-| border-radius | CSS property | Sets the border radius to 0. |
-| padding | CSS property | Sets padding to `30px 10px 10px 10px`. |
-| margin | CSS property | Sets margin to `10px 0px`. |
+#### Internal Logic
+The rule targets elements with the class `intro-card` and applies the background, border radius, padding, and margin styles.
+
+### `.intro-card .card-text`
+#### Description
+This rule styles elements with the class "card-text" that are descendants of elements with the class "intro-card". It sets top and bottom margins.
+
+#### Internal Logic
+The rule targets elements with the class `card-text` that are nested within elements with the class `intro-card` and applies the margin styles.
 
 ### `.custom-button`
 #### Description
-Defines the appearance of custom buttons with a specific background color, text color, and other styling properties.
+This rule styles elements with the class "custom-button". It sets a light gray background, removes default border, sets text color to dark gray, centers text, removes underlines from links, styles it as an inline-block element, sets font size, rounds corners, sets maximum width, and adds padding.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| background-color | CSS property | Sets the background color to `#dcdcdc`. |
-| border | CSS property | Sets the border to none. |
-| color | CSS property | Sets the text color to `#484848`. |
-| text-align | CSS property | Centers the text. |
-| text-decoration | CSS property | Removes text decoration. |
-| display | CSS property | Sets display to inline-block. |
-| font-size | CSS property | Sets the font size to `0.9rem`. |
-| border-radius | CSS property | Sets the border radius to `0.5rem`. |
-| max-width | CSS property | Sets the maximum width to `220px`. |
-| padding | CSS property | Sets padding to `0.5rem 0rem`. |
+#### Internal Logic
+The rule targets elements with the class `custom-button` and applies the defined styles to create a custom button appearance.
+
+### `.custom-button a`
+#### Description
+This rule styles links within elements with the class "custom-button". It sets the link color to dark gray and makes it a block-level element.
+
+#### Internal Logic
+The rule targets `&lt;a&gt;` elements that are descendants of elements with the class `custom-button` and applies the color and display styles.
+
+### `.custom-button p`
+#### Description
+This rule styles paragraphs within elements with the class "custom-button". It removes top and bottom margins and sets the text color to dark gray.
+
+#### Internal Logic
+The rule targets `&lt;p&gt;` elements that are descendants of elements with the class `custom-button` and applies the margin and color styles.
 
 ### `.nbinput .prompt, .nboutput .prompt`
 #### Description
-Hides the prompt in notebook input and output containers.
+This rule hides the prompt elements within Jupyter Notebook input and output cells.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| display | CSS property | Sets display to none. |
+#### Internal Logic
+The rule targets elements with the class `prompt` that are descendants of elements with the classes `nbinput` and `nboutput` and sets their display to `none`.
 
 ### `.nboutput .stderr`
 #### Description
-Hides the standard error output in notebook output containers.
+This rule hides the standard error output within Jupyter Notebook output cells.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| display | CSS property | Sets display to none. |
+#### Internal Logic
+The rule targets elements with the class `stderr` that are descendants of elements with the class `nboutput` and sets their display to `none`.
 
 ### `div.nblast.container`
 #### Description
-Styles the last notebook container with specific padding and margin.
+This rule styles the container for the last cell in a Jupyter Notebook. It adds padding to the bottom, removes padding from the sides, and adds a bottom margin.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| padding-bottom | CSS property | Sets bottom padding to `5px`. |
-| padding-right | CSS property | Sets right padding to `0px`. |
-| padding-left | CSS property | Sets left padding to `0px`. |
-| margin-bottom | CSS property | Sets bottom margin to `10px`. |
+#### Internal Logic
+The rule targets `div` elements with the classes `nblast` and `container` and applies the padding and margin styles.
 
 ### `div.nbinput.container, div.nboutput.container`
 #### Description
-Styles notebook input and output containers with flex display, alignment, and specific margin and padding.
+This rule styles the containers for input and output cells in a Jupyter Notebook. It uses flexbox for layout, aligns items to the start, sets margins, removes padding, and sets the width to 100%.
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| display | CSS property | Sets display to flex. |
-| align-items | CSS property | Aligns items to flex-start. |
-| margin | CSS property | Sets margin to `0px 0px 5px 0px`. |
-| padding | CSS property | Sets padding to `0px`. |
-| width | CSS property | Sets width to `100%`. |
-
-## References
-
-The file references CSS variables and styles from the Furo theme and other external stylesheets, as indicated by the comments at the top of the file. These references suggest that the file is intended to customize or override styles from these sources.
-
-## Dependencies
-
-The file does not explicitly import or depend on external libraries, but it is designed to work in conjunction with the Furo theme and potentially other themes or stylesheets used in the documentation.
-
-## TODOs
-
-There are no TODOs or notes left in the code.
+#### Internal Logic
+The rule targets `div` elements with the class combinations `nbinput` and `container`, and `nboutput` and `container`. It then applies the flexbox properties, alignment, margins, padding, and width.

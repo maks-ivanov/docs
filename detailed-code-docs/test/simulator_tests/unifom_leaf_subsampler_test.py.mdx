@@ -2,52 +2,38 @@
 title: "unifom_leaf_subsampler_test.py"
 ---
 
-## High-level description
+```diff
+--- a/test/simulator_tests/unifom_leaf_subsampler_test.py
++++ b/test/simulator_tests/unifom_leaf_subsampler_test.py
+@@ -138,6 +138,30 @@
+         ]
+         self.assertEqual(set(res.edges), set(expected_edges))
+ 
++    def test_subsample_tree_with_unifurcations(self):
++        tree = nx.DiGraph()
++        tree.add_edges_from(
++            [
++                ("n0", "n1"),
++                ("n1", "n2"),
++                ("n2", "n3"),
++                ("n3", "n4"),
++                ("n4", "n5"),
++                ("n2", "n6"),
++                ("n0", "n7"),
++                ("n7", "n8"),
++                ("n8", "n9"),
++                ("n9", "n10"),
++            ]
++        )
++        tree = CassiopeiaTree(tree=tree)
++        uni = UniformLeafSubsampler(ratio=0.5)
++        res = uni.subsample_leaves(tree=tree)
++        # test that it executes without error
++        self.assertTrue(True)
++
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
 
-The `unifom_leaf_subsampler_test.py` file is a unit test suite for the `UniformLeafSubsampler` class, which is part of the Cassiopeia software package. This test suite uses the `unittest` framework to verify the functionality of the `UniformLeafSubsampler`, ensuring that it correctly subsamples leaves from a phylogenetic tree according to specified parameters, and handles edge cases and errors appropriately.
-
-## Code Structure
-
-The main class in this file is `UniformLeafSubsamplerTest`, which contains several test methods. These methods test different aspects of the `UniformLeafSubsampler` class, such as handling of invalid parameters, subsampling behavior on different tree structures, and error handling.
-
-## References
-
-- `CassiopeiaTree`: A class from the `cassiopeia.data` module that represents a phylogenetic tree and provides various functionalities for manipulating and analyzing the tree.
-- `LeafSubsamplerError`: An exception class from the `cassiopeia.simulator` module used to handle errors specific to leaf subsampling operations.
-- `UniformLeafSubsampler`: A class from the `cassiopeia.simulator` module that implements the functionality to uniformly subsample leaves from a `CassiopeiaTree`.
-
-## Symbols
-
-### `UniformLeafSubsamplerTest`
-#### Description
-This class is a test suite for the `UniformLeafSubsampler` class. It contains methods to test the behavior of the subsampler under various conditions, including invalid inputs and different tree structures.
-
-#### Methods
-
-- **`test_bad_parameters`**: Tests the behavior of the `UniformLeafSubsampler` when initialized with invalid parameters, such as both `ratio` and `number_of_leaves` being specified or neither being specified.
-
-- **`test_bad_number_of_samples`**: Tests the subsampler's response to invalid sampling requests, such as requesting zero leaves or a ratio that results in fewer leaves than possible.
-
-- **`test_subsample_balanced_tree`**: Tests the subsampling functionality on a balanced tree structure, verifying that the correct number of leaves are subsampled and that the resulting tree structure is as expected.
-
-- **`test_subsample_custom_tree`**: Tests the subsampling functionality on a custom tree structure, checking that the subsampled tree maintains the correct branch lengths and node times.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework for writing and running tests. |
-| `networkx` | Used to create and manipulate graph-based tree structures. |
-| `numpy` | Utilized for random sampling and setting seeds for reproducibility. |
-
-## Error Handling
-
-The test suite checks for `LeafSubsamplerError` exceptions to ensure that the `UniformLeafSubsampler` class correctly handles invalid input scenarios, such as incorrect parameter combinations or invalid sampling requests.
-
-## Logging
-
-No explicit logging is implemented in this test suite. The `unittest` framework handles test results and outputs.
-
-## TODOs
-
-No TODOs are present in the code.
+```

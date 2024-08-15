@@ -3,94 +3,94 @@ title: "PercolationSolver.py"
 ---
 
 ## High-level description
-
-The `PercolationSolver` class in the `PercolationSolver.py` file is a specialized solver for phylogenetic tree reconstruction. It implements a top-down percolation-based algorithm that recursively partitions a set of samples based on their similarity in observed mutations. The solver constructs a similarity graph, percolates it by removing edges, and clusters the resulting components to build a phylogenetic tree. This approach is an implicit version of Aho's algorithm for tree discovery.
+The `PercolationSolver` class implements a top-down, percolation-based algorithm for reconstructing phylogenetic trees. It recursively partitions a set of samples based on their similarity in observed mutations, creating a tree structure where similar samples are grouped closer together.
 
 ## Code Structure
+The `PercolationSolver` class is initialized with a joining solver, prior transformation function, similarity function, and a threshold. The `solve` method orchestrates the tree reconstruction process by recursively partitioning the sample set using the `percolate` method. The `percolate` method constructs a similarity graph, removes edges based on similarity, and partitions the graph into clades. If more than two clades are formed, the `joining_solver` is used to cluster them. Finally, the `__add_duplicates_to_tree` method adds duplicate samples to the tree.
 
-The `PercolationSolver` class extends the abstract `CassiopeiaSolver` class, inheriting its structure and implementing the `solve` method. The class uses several utility functions and classes from the `cassiopeia` package, such as `CassiopeiaTree`, `solver_utilities`, and `dissimilarity_functions`.
+## References
+This code references the following symbols:
+- `CassiopeiaSolver` (from `cassiopeia.solver`)
+- `dissimilarity_functions` (from `cassiopeia.solver`)
+- `solver_utilities` (from `cassiopeia.solver`)
+- `CassiopeiaTree` (from `cassiopeia.data`)
+- `data_utilities` (from `cassiopeia.data.utilities`)
 
 ## Symbols
 
 ### `PercolationSolver`
 #### Description
-The `PercolationSolver` class is designed to solve phylogenetic tree reconstruction problems using a percolation-based approach. It partitions samples into clusters based on their mutation similarities and constructs a tree by recursively solving these partitions.
+This class implements the Percolation algorithm for phylogenetic tree reconstruction. It takes a character matrix and optional priors as input and builds a tree by recursively partitioning the sample set based on their similarity in observed mutations.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| joining_solver | CassiopeiaSolver | Solver used to cluster groups of samples when more than two groups are produced. |
-| prior_transformation | str | Transformation function for priors, default is "negative_log". |
-| similarity_function | Callable | Function to calculate similarity between samples, default is `hamming_similarity_without_missing`. |
-| threshold | int | Minimum similarity threshold for graph edges, default is 0. |
+| joining_solver | CassiopeiaSolver.CassiopeiaSolver | The CassiopeiaSolver used to cluster groups of samples if percolation produces more than two groups. |
+| prior_transformation | str | A string specifying the transformation to apply to the priors. Defaults to "negative_log". |
+| similarity_function | Optional[Callable[[np.array, np.array, int, Optional[Dict[int, Dict[int, float]]]], float]] | A function that calculates the similarity score between two samples. Defaults to `hamming_similarity_without_missing`. |
+| threshold | Optional[int] | The minimum similarity threshold for adding an edge in the similarity graph. Defaults to 0. |
 
 #### Outputs
-The class does not have direct outputs but modifies the `CassiopeiaTree` object by populating it with a reconstructed tree.
+This class doesn't directly return any output. It modifies the input `CassiopeiaTree` object to store the reconstructed tree.
 
 #### Internal Logic
-- **Initialization**: Sets up the solver with a joining solver, prior transformation, similarity function, and threshold.
-- **`solve` Method**: Implements the recursive partitioning and tree-building process. It uses a helper function `_solve` to handle the recursive logic.
-- **`percolate` Method**: Constructs a similarity graph, removes edges to form connected components, and clusters these components to partition the samples.
-- **`__add_duplicates_to_tree` Method**: Handles duplicate samples by adding them to the tree as sister nodes to their corresponding unique samples.
+1. **Initialization:** The class is initialized with a joining solver, prior transformation function, similarity function, and a threshold.
+2. **Solve:** The `solve` method orchestrates the tree reconstruction process.
+    - It first extracts the character matrix and transforms the priors into weights if provided.
+    - It then creates a NetworkX graph and recursively partitions the sample set using the `percolate` method.
+    - Finally, it adds duplicate samples to the tree and populates the input `CassiopeiaTree` object.
+3. **Percolate:** The `percolate` method partitions a set of samples into two groups based on their similarity.
+    - It constructs a similarity graph with samples as nodes and edges weighted by their similarity.
+    - It then iteratively removes the minimum weighted edges until the graph is disconnected into multiple components.
+    - If more than two components are formed, it clusters them using the `joining_solver` and returns the two resulting groups.
+4. **Add Duplicates:** The `__add_duplicates_to_tree` method adds duplicate samples to the tree by finding groups of samples with identical character states and placing them as sister nodes under a new internal node.
 
-### `solve`
-#### Description
-The `solve` method is the main entry point for the percolation algorithm. It recursively partitions samples and constructs a phylogenetic tree.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| cassiopeia_tree | CassiopeiaTree | Tree object storing character matrix and priors. |
-| layer | str | Layer storing the character matrix for solving. |
-| collapse_mutationless_edges | bool | Whether to collapse mutationless edges in the final tree. |
-| logfile | str | Location to write standard output. |
-
-#### Outputs
-The method modifies the `cassiopeia_tree` by populating it with the reconstructed tree.
-
-#### Internal Logic
-- Extracts the character matrix and initializes a directed graph for the tree.
-- Uses the `_solve` helper function to recursively partition samples and build the tree.
-- Handles duplicate samples and optionally collapses mutationless edges.
+#### Side Effects
+- Modifies the input `CassiopeiaTree` object to store the reconstructed tree.
 
 ### `percolate`
 #### Description
-The `percolate` method partitions a set of samples into two groups by constructing and percolating a similarity graph.
+Partitions a set of samples into two groups based on their similarity in the character matrix.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| character_matrix | pd.DataFrame | Character matrix of samples. |
-| samples | List[str] | List of sample names to partition. |
-| priors | Dict | Priors for character mutations. |
-| weights | Dict | Weights for character-state pairs. |
-| missing_state_indicator | int | Indicator for missing data. |
+| character_matrix | pd.DataFrame | The character matrix representing the mutation profiles of the samples. |
+| samples | List[str] | A list of sample names to be partitioned. |
+| priors | Optional[Dict[int, Dict[int, float]]] | A dictionary of prior probabilities for each character/state pair. |
+| weights | Optional[Dict[int, Dict[int, float]]] | A dictionary of weights for each character/state pair, typically derived from the priors. |
+| missing_state_indicator | int | The character representing missing data in the character matrix. Defaults to -1. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| partition_named | Tuple[List[str], List[str]] | Two lists representing the partitioned sample groups. |
+| partition_named | Tuple[List[str], List[str]] | A tuple containing two lists of sample names, representing the left and right partitions. |
 
 #### Internal Logic
-- Constructs a similarity graph with samples as nodes and edges weighted by similarity.
-- Percolates the graph by removing edges until multiple connected components are formed.
-- Clusters components into two groups if more than two are formed, using the joining solver.
+1. **Similarity Graph:** Constructs a weighted graph with samples as nodes and edges weighted by their similarity calculated using the provided `similarity_function`.
+2. **Percolation:** Iteratively removes the minimum weighted edges until the graph is disconnected into multiple connected components.
+3. **Component Merging (if necessary):** If more than two connected components are formed, it clusters them using the `joining_solver` based on the LCA of each component and returns the two resulting groups.
+4. **Return Partitions:** Returns a tuple containing two lists of sample names, representing the left and right partitions.
 
-## References
+### `__add_duplicates_to_tree`
+#### Description
+Adds duplicate samples to the tree.
 
-- `CassiopeiaSolver`: The abstract base class that `PercolationSolver` extends.
-- `CassiopeiaTree`: A data structure used to store the character matrix and reconstructed tree.
-- `solver_utilities`: Provides utility functions like `node_name_generator` and `transform_priors`.
-- `dissimilarity_functions`: Contains functions for calculating similarity scores between samples.
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.DiGraph | The tree to which duplicate samples need to be added. |
+| character_matrix | pd.DataFrame | The character matrix representing the mutation profiles of the samples. |
+| node_name_generator | Generator[str, None, None] | A generator object that produces unique node names. |
 
-## Dependencies
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.DiGraph | The tree with duplicate samples added. |
 
-| Dependency | Purpose |
-|:-----------|:--------|
-| `networkx` | Used for graph operations and tree construction. |
-| `numpy` | Used for numerical operations and array manipulations. |
-| `pandas` | Used for handling character matrices as data frames. |
-
-## TODOs
-
-- Experiment to find the best default similarity function, as indicated by the TODO comment in the class docstring.
+#### Internal Logic
+1. **Identify Duplicates:** Identifies groups of samples with identical character states in the character matrix.
+2. **Add Duplicates:** For each group of duplicates:
+    - Creates a new internal node as the parent of the duplicates.
+    - Connects the original sample and all its duplicates as children of this new internal node.
+3. **Return Tree:** Returns the modified tree with the duplicate samples added.

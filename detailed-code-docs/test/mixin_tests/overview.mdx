@@ -3,93 +3,58 @@ title: "Overview"
 ---
 
 ## High-level description
-
-The `mixin_utilities_test.py` file is a unit test suite designed to validate the functionality of utility functions defined in the `cassiopeia.mixins.utilities` module. It uses the `unittest` framework to test functions that handle ambiguous states and identify duplicate character states in a matrix. The tests ensure that these utility functions behave as expected when dealing with both ambiguous and non-ambiguous data.
-
-## Code Structure
-
-The main class in this file is `TestMixinUtilities`, which inherits from `unittest.TestCase`. This class contains several test methods, each of which tests a specific function from the `utilities` module. The test methods are:
-
-- `test_is_ambiguous_state`: Tests the `is_ambiguous_state` function.
-- `test_unravel_states`: Tests the `unravel_ambiguous_states` function.
-- `test_find_duplicated_character_states`: Tests the `find_duplicate_groups` function.
-
-## References
-
-The test file references the following functions from the `cassiopeia.mixins.utilities` module:
-
-- `is_ambiguous_state`
-- `unravel_ambiguous_states`
-- `find_duplicate_groups`
+This file contains unit tests for the utility functions defined in `cassiopeia/mixins/utilities.py`. It tests the functionality of various utility functions related to handling ambiguous states in character matrices and finding duplicate groups.
 
 ## Symbols
 
-### `TestMixinUtilities`
+### TestMixinUtilities
 #### Description
-`TestMixinUtilities` is a test class that contains unit tests for the utility functions in the `cassiopeia.mixins.utilities` module. It extends `unittest.TestCase` to leverage the testing framework provided by Python's `unittest` module.
-
-#### Methods
-
-### `test_is_ambiguous_state`
-#### Description
-Tests the `is_ambiguous_state` function to verify if it correctly identifies ambiguous states, which are represented as tuples.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| state | Union[int, Tuple[int, ...]] | A single character state, which can be an integer or a tuple. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| result | bool | True if the state is a tuple (ambiguous), False otherwise. |
-
-### `test_unravel_states`
-#### Description
-Tests the `unravel_ambiguous_states` function to ensure it correctly expands lists of states containing ambiguous states into a flat list of unique states.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| state_array | List[Union[int, Tuple[int, ...]]] | A list of states, potentially containing ambiguous states. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| result | List[int] | A flat list of unique states. |
+This is a test class that inherits from `unittest.TestCase`. It contains several test methods to verify the functionality of utility functions from the `cassiopeia.mixins.utilities` module.
 
 #### Internal Logic
-The test checks two scenarios: one where the input list contains ambiguous states and one where it does not. It verifies that the function correctly unravels the ambiguous states into individual elements.
+The class defines three test methods:
+1. `test_is_ambiguous_state`: Tests the `is_ambiguous_state` function.
+2. `test_unravel_states`: Tests the `unravel_ambiguous_states` function.
+3. `test_find_duplicated_character_states`: Tests the `find_duplicate_groups` function.
 
-### `test_find_duplicated_character_states`
+### test_is_ambiguous_state
 #### Description
-Tests the `find_duplicate_groups` function to ensure it correctly identifies and groups duplicated character states in a character matrix.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| character_matrix | pd.DataFrame | A DataFrame representing a character matrix with potential ambiguous states. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| result | Dict[str, Tuple[str, ...]] | A mapping of sample names to groups of samples with identical character states. |
+This method tests the `is_ambiguous_state` function from the utilities module.
 
 #### Internal Logic
-The test constructs a character matrix with known duplicated states and verifies that the function correctly identifies and groups these duplicates.
+- Asserts that `(1, 2)` is recognized as an ambiguous state.
+- Asserts that `1` is not recognized as an ambiguous state.
+
+### test_unravel_states
+#### Description
+This method tests the `unravel_ambiguous_states` function from the utilities module.
+
+#### Internal Logic
+- Tests the function with an array containing both ambiguous and non-ambiguous states.
+- Tests the function with an array containing only non-ambiguous states.
+- Asserts that the output matches the expected unraveled list in both cases.
+
+### test_find_duplicated_character_states
+#### Description
+This method tests the `find_duplicate_groups` function from the utilities module.
+
+#### Internal Logic
+- Creates a sample character matrix using pandas DataFrame.
+- Calls the `find_duplicate_groups` function on the character matrix.
+- Checks if the returned duplicate mappings contain the expected entries.
+- Verifies that the keys and values in the duplicate mappings match the expected groups.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `unittest` | Provides the testing framework for writing and running tests. |
-| `pandas` | Used to create and manipulate the character matrix for testing. |
-| `cassiopeia.mixins.utilities` | Contains the utility functions being tested. |
+| unittest | Provides the testing framework |
+| pandas | Used to create and manipulate the character matrix |
+| cassiopeia.mixins.utilities | Module containing the utility functions being tested |
 
 ## Error Handling
+The test methods use assertions to verify the correctness of the utility functions. If any assertion fails, an `AssertionError` will be raised, indicating a test failure.
 
-The test suite uses assertions provided by the `unittest` framework to handle errors. If a test fails, an assertion error is raised, indicating that the function did not behave as expected.
-
-## Logging
-
-No explicit logging is implemented in this test suite. The `unittest` framework provides output regarding test results, including any failures or errors encountered during execution.
+## Notes
+- The test file uses the `unittest` framework, which is a standard Python testing library.
+- The tests cover various scenarios, including ambiguous states and duplicate character states in matrices.
+- The `test_find_duplicated_character_states` method uses a complex character matrix with ambiguous states to thoroughly test the `find_duplicate_groups` function.

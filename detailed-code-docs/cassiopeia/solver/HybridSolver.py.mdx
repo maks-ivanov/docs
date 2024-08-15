@@ -3,148 +3,167 @@ title: "HybridSolver.py"
 ---
 
 ## High-level description
-
-The `HybridSolver` class in the `HybridSolver.py` file is a specialized solver for phylogenetic inference that combines two different solving strategies: a top-down greedy approach and a more complex bottom-up approach. The solver first applies a greedy algorithm to partition the data until a specified criterion is met, such as a maximum distance to the latest common ancestor (LCA) or a minimum number of cells. Once this criterion is reached, a more sophisticated solver is used to resolve the remaining subproblems. This hybrid approach allows for efficient and accurate reconstruction of phylogenetic trees.
+The `HybridSolver` class in Cassiopeia implements a hybrid approach to phylogenetic tree reconstruction. It combines a top-down greedy solver with a more precise bottom-up solver to efficiently infer relationships in large datasets. The greedy solver is applied initially to cluster cells until a specified cutoff is reached (either based on the number of cells or the distance to the latest common ancestor). Then, the bottom solver is used to reconstruct subtrees for each cluster, resulting in a complete tree.
 
 ## Code Structure
-
-The `HybridSolver` class is a subclass of `CassiopeiaSolver`, which is an abstract class for phylogenetic inference algorithms. The `HybridSolver` uses two main components: a `top_solver` that must be a subclass of `GreedySolver`, and a `bottom_solver` that can be any subclass of `CassiopeiaSolver`. The `solve` method orchestrates the process by first applying the `top_solver` and then the `bottom_solver` to the subproblems identified by the top-down approach.
+The `HybridSolver` class inherits from the `CassiopeiaSolver` class and utilizes two solver instances: `top_solver` (a subclass of `GreedySolver`) and `bottom_solver` (any subclass of `CassiopeiaSolver`). The `solve` method orchestrates the hybrid solving process, while `apply_top_solver` and `apply_bottom_solver` handle the respective solver applications. `assess_cutoff` determines when to switch from the top solver to the bottom solver.
 
 ## References
-
-- `CassiopeiaSolver`: The abstract base class for all solvers, providing the interface and common functionality.
-- `GreedySolver`: A subclass of `CassiopeiaSolver` that implements a top-down greedy approach for phylogenetic inference.
-- `CassiopeiaTree`: A data structure that stores the character matrix and other relevant data for phylogenetic inference.
-- `solver_utilities`: A module providing utility functions for solver operations, such as node name generation and prior transformation.
+- `GreedySolver`: The `HybridSolver` relies on a `GreedySolver` instance for the initial top-down clustering.
+- `CassiopeiaSolver`: Both `top_solver` and `bottom_solver` are subclasses of `CassiopeiaSolver`, providing a common interface for tree reconstruction.
+- `CassiopeiaTree`: The `HybridSolver` operates on a `CassiopeiaTree` object, which stores the character matrix, priors, and the resulting tree.
 
 ## Symbols
 
 ### `HybridSolver`
 #### Description
-The `HybridSolver` class implements a hybrid approach to phylogenetic inference by combining a top-down greedy solver with a bottom-up solver. It first applies the greedy solver to partition the data until a specified criterion is met, then uses the bottom solver to resolve the remaining subproblems.
+This class implements the hybrid phylogenetic tree reconstruction algorithm. It combines a greedy top-down solver with a more precise bottom-up solver to handle large datasets efficiently.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| top_solver | `GreedySolver` | The greedy solver to apply at the top of the tree. |
-| bottom_solver | `CassiopeiaSolver` | The solver to apply at the bottom of the tree. |
-| lca_cutoff | `float` | The LCA distance cutoff for switching to the bottom solver. |
-| cell_cutoff | `int` | The cell count cutoff for switching to the bottom solver. |
-| threads | `int` | The number of threads for concurrent subproblem solving. |
-| prior_transformation | `str` | The method for transforming priors into weights. |
-| progress_bar | `bool` | Whether to display a progress bar during solving. |
+| top_solver | GreedySolver.GreedySolver | An algorithm to be applied at the top of the tree. Must be a subclass of GreedySolver. |
+| bottom_solver | CassiopeiaSolver.CassiopeiaSolver | An algorithm to be applied at the bottom of the tree. Must be a subclass of CassiopeiaSolver. |
+| lca_cutoff | float | Distance to the latest-common-ancestor (LCA) of a subclade to be used as a cutoff for transitioning to the bottom solver. |
+| cell_cutoff | int | Number of cells in a subclade to be used as a cutoff for transitioning to the bottom solver. |
+| threads | int | Number of threads to be used. This corresponds to the number of subproblems to be run concurrently with the bottom solver. |
+| prior_transformation | str | Function to use when transforming priors into weights. |
+| progress_bar | bool | Indicates if a progress bar should be shown when `solve` is called. |
 
 #### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | None | The method modifies the `CassiopeiaTree` in place. |
+The `HybridSolver` does not directly return any outputs. It modifies the input `CassiopeiaTree` object by populating it with the reconstructed tree.
 
 #### Internal Logic
-1. **Initialization**: Validates input parameters and initializes the solver with the specified top and bottom solvers.
-2. **Solve Method**: 
-   - Applies the `top_solver` to partition the data until the cutoff criteria are met.
-   - Uses the `bottom_solver` to solve the subproblems identified by the top-down approach.
-   - Supports multi-threading for concurrent subproblem solving.
-   - Logs progress and optionally collapses mutationless edges in the final tree.
+1. **Apply Top Solver:** The `apply_top_solver` method is used to recursively cluster cells using the `top_solver` until the specified cutoff is reached (either `lca_cutoff` or `cell_cutoff`).
+2. **Generate Subproblems:** As the top solver clusters cells, it generates subproblems, each consisting of a subtree root and a list of samples within that subtree.
+3. **Apply Bottom Solver:** The `apply_bottom_solver` method is applied to each subproblem, using the `bottom_solver` to reconstruct the subtree for the corresponding samples.
+4. **Combine Subtrees:** The resulting subtrees are combined into a single tree, forming the complete reconstructed phylogeny.
+5. **Add Duplicates and Prune:** Duplicate samples are added to the tree, and any spurious leaves (not present in the original character matrix) are pruned.
+6. **Populate CassiopeiaTree:** The final reconstructed tree is used to populate the input `CassiopeiaTree` object.
 
-### `solve`
-#### Description
-The `solve` method orchestrates the hybrid solving process by first applying the top-down greedy solver and then the bottom-up solver to the identified subproblems.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| cassiopeia_tree | `CassiopeiaTree` | The tree structure containing the character matrix and priors. |
-| layer | `Optional[str]` | The layer of the character matrix to use. |
-| collapse_mutationless_edges | `bool` | Whether to collapse mutationless edges in the final tree. |
-| logfile | `str` | The file to log progress. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | None | The method modifies the `CassiopeiaTree` in place. |
-
-#### Internal Logic
-1. **Character Matrix Preparation**: Extracts and deduplicates the character matrix from the `CassiopeiaTree`.
-2. **Top Solver Application**: Uses the `top_solver` to partition the data until the cutoff criteria are met.
-3. **Bottom Solver Application**: Solves each subproblem using the `bottom_solver`, potentially in parallel.
-4. **Tree Construction**: Combines the results into a single tree, adds duplicate samples, and optionally collapses mutationless edges.
+#### Side Effects
+- Modifies the input `CassiopeiaTree` object by populating it with the reconstructed tree.
+- Creates log files for each subproblem solved by the bottom solver.
 
 ### `apply_top_solver`
 #### Description
-Applies the top-down greedy solver to partition the samples until the cutoff criteria are met, returning the root node and subproblems.
+This method recursively applies the top solver to cluster cells until the specified cutoff is reached.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| character_matrix | `pd.DataFrame` | The character matrix for the samples. |
-| samples | `List[str]` | The list of sample names. |
-| tree | `nx.DiGraph` | The current tree structure. |
-| node_name_generator | `Generator[str, None, None]` | A generator for unique node names. |
-| weights | `Optional[Dict[int, Dict[int, float]]]` | Weights for character-state combinations. |
-| missing_state_indicator | `int` | Indicator for missing data. |
-| root | `Optional[int]` | The root node ID for the subtree. |
+| character_matrix | pd.DataFrame | Character matrix |
+| samples | List[str] | Samples in the subclade of interest. |
+| tree | nx.DiGraph | In progress tree for the HybridSolver. |
+| node_name_generator | Generator[str, None, None] | Generator for creating unique node names while applying the top-solver. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weights of character-state combinations, derived from priors if these are available. |
+| missing_state_indicator | int | Indicator for missing data |
+| root | Optional[int] | Node ID of the root in the subtree containing the samples. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| root | `int` | The root node ID for the tree containing the samples. |
-| subproblems | `List[Tuple[int, List[str]]]` | A list of subproblems as (root, samples) pairs. |
-| tree | `nx.DiGraph` | The updated tree structure. |
+| root | int | The ID of the node serving as the root of the tree containing the samples. |
+| subproblems | List[Tuple[int, List[str]]] | A list of subproblems in the form [subtree-root, subtree-samples]. |
+| tree | nx.DiGraph | The updated tree with the top solver applied. |
+
+#### Internal Logic
+1. **Base Case:** If there is only one sample, return the sample ID, an empty list of subproblems, and the unmodified tree.
+2. **Perform Split:** Use the `top_solver` to partition the samples based on the character matrix and weights.
+3. **Create Root:** Generate a unique node name for the root of the current subtree.
+4. **Handle Single Clade:** If the split results in a single clade, connect all samples in the clade to the root and return.
+5. **Recursive Application:** For each clade resulting from the split:
+    - If the cutoff is reached, add the clade as a subproblem.
+    - Otherwise, recursively apply `apply_top_solver` to the clade, connect the resulting subtree to the current root, and add any new subproblems.
+6. **Return Results:** Return the root ID, the list of subproblems, and the updated tree.
 
 ### `apply_bottom_solver`
 #### Description
-Applies the bottom solver to solve subproblems identified by the top-down solver, returning the subproblem tree and root.
+This method applies the bottom solver to a given subproblem, reconstructing the subtree for the corresponding samples.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| cassiopeia_tree | `CassiopeiaTree` | The tree structure for the dataset. |
-| root | `int` | The root node ID in the master tree. |
-| samples | `List[str]` | The list of sample names for the subproblem. |
-| logfile | `str` | The file to log progress. |
-| layer | `Optional[str]` | The layer of the character matrix to use. |
+| cassiopeia_tree | CassiopeiaTree | CassiopeiaTree for the entire dataset. This will be subsetted with respect to the samples specified. |
+| root | int | Identifier of the root in the master tree |
+| samples | List[str] | A list of samples for which to infer a tree. |
+| logfile | str | Base location for logging output. A specific logfile will be created from this base logfile name. |
+| layer | Optional[str] | Layer storing the character matrix for solving. If None, the default character matrix is used in the CassiopeiaTree. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| subproblem_tree | `nx.DiGraph` | The tree structure for the subproblem. |
-| root | `int` | The root node ID for the subproblem tree. |
+| subproblem_tree | nx.DiGraph | A tree in the form of a Networkx graph for the subproblem. |
+| root | int | The original root identifier. |
+
+#### Internal Logic
+1. **Base Case:** If there is only one sample, create a simple tree with the root connected to the sample and return.
+2. **Subset Character Matrix:** Extract the relevant portion of the character matrix corresponding to the input samples.
+3. **Create Subtree:** Create a new `CassiopeiaTree` object for the subproblem, using the subsetted character matrix and priors from the original tree.
+4. **Solve Subproblem:** Apply the `bottom_solver` to the subtree, reconstructing the phylogeny for the subproblem samples.
+5. **Connect to Root:** Connect the root of the reconstructed subtree to the input root ID.
+6. **Return Results:** Return the reconstructed subtree and the original root ID.
 
 ### `assess_cutoff`
 #### Description
-Evaluates whether a given set of samples meets the criteria for switching from the top solver to the bottom solver.
+This method determines whether the specified cutoff has been reached for a given set of samples.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| samples | `List[str]` | The list of sample names in the clade. |
-| character_matrix | `pd.DataFrame` | The character matrix for the samples. |
-| missing_state_indicator | `int` | Indicator for missing data. |
+| samples | List[str] | A list of samples in a clade. |
+| character_matrix | pd.DataFrame | Character matrix |
+| missing_state_indicator | int | Indicator for missing data. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| result | `bool` | True if the cutoff is reached, False otherwise. |
+| cutoff_reached | bool | True if the cutoff is reached, False if not. |
+
+#### Internal Logic
+1. **Cell Cutoff:** If `cell_cutoff` is specified, check if the number of samples is less than or equal to the cutoff. If so, return True.
+2. **LCA Cutoff:** If `lca_cutoff` is specified:
+    - Calculate the LCA character states for the samples.
+    - Calculate the Hamming distance between each sample's character states and the LCA character states.
+    - If the maximum distance is less than or equal to the `lca_cutoff`, return True.
+3. **Return False:** If neither cutoff is reached, return False.
+
+### `__add_duplicates_to_tree_and_remove_spurious_leaves`
+#### Description
+This private method adds duplicate samples to the tree and removes any spurious leaves that are not present in the original character matrix.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.DiGraph | The tree after solving. |
+| character_matrix | pd.DataFrame | Character matrix |
+| node_name_generator | Generator[str, None, None] | Generator for creating unique node names. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.DiGraph | The tree with duplicates added and spurious leaves pruned. |
+
+#### Internal Logic
+1. **Add Duplicates:**
+    - Identify groups of duplicate samples based on their character states.
+    - For each group, create a new internal node and connect it to the original sample and all its duplicates.
+2. **Remove Spurious Leaves:**
+    - Identify leaves in the tree that are not present in the character matrix.
+    - For each spurious leaf, remove it and prune its lineage until a node with at least two children is reached.
+3. **Return Tree:** Return the updated tree.
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `networkx` | Used for graph operations and tree construction. |
-| `numpy` | Used for numerical operations and data manipulation. |
-| `pandas` | Used for handling character matrices and data frames. |
-| `tqdm` | Used for displaying progress bars during solving. |
-| `multiprocessing` | Used for parallel processing of subproblems. |
+- `networkx`: Used for representing and manipulating the tree structure.
+- `pandas`: Used for handling the character matrix and dissimilarity map.
+- `multiprocessing`: Used for parallelizing the bottom solver application.
+- `tqdm`: Used for displaying progress bars.
 
 ## Error Handling
-
-- The `HybridSolverError` is raised if neither `lca_cutoff` nor `cell_cutoff` is specified during initialization.
+- `HybridSolverError` is raised if no cutoff is specified (either `lca_cutoff` or `cell_cutoff`).
 
 ## Logging
-
-- The `solve` method logs progress to a specified file, with separate logs for each subproblem when using multiple threads.
+The `solve` method creates log files for each subproblem solved by the bottom solver. The base file name for the log files is specified by the `logfile` argument, and a unique identifier is appended to each file name.
 
 ## TODOs
-
-- None present in the target file.
+None.

@@ -2,83 +2,80 @@
 title: "compare.py"
 ---
 
-## High-level description
+Here's a comprehensive documentation for the `compare.py` file in the `cassiopeia/critique` module:
 
-The `compare.py` file in the `cassiopeia.critique` module provides functions to compare two phylogenetic trees. It includes methods to calculate the triplet correctness, which measures the similarity of triplet structures between two trees, and the Robinson-Foulds distance, a metric for comparing tree topologies.
+## High-level description
+This module provides functions for comparing two phylogenetic trees. It includes implementations for calculating the triplets correct accuracy and the Robinson-Foulds distance between two trees.
 
 ## Code Structure
-
-The main symbols in the code are two functions: `triplets_correct` and `robinson_foulds`. Both functions take two `CassiopeiaTree` objects as input and return metrics that quantify the similarity between these trees. The `triplets_correct` function relies on utility functions from `critique_utilities` to sample triplets and determine their outgroups, while `robinson_foulds` uses the `ete3` library to compute the distance.
-
-## References
-
-- `CassiopeiaTree`: A class from the `cassiopeia.data` module representing a phylogenetic tree.
-- `critique_utilities`: A module providing utility functions for tree analysis, such as `annotate_tree_depths`, `sample_triplet_at_depth`, and `get_outgroup`.
-- `ete3`: A library used for tree manipulation and comparison, specifically for computing the Robinson-Foulds distance.
+The module contains two main functions: `triplets_correct` and `robinson_foulds`. These functions operate on `CassiopeiaTree` objects, which represent phylogenetic trees. The `triplets_correct` function is more complex, involving sampling and comparison of triplets at different depths of the trees, while the `robinson_foulds` function is a wrapper around the Ete3 library's implementation of the Robinson-Foulds distance.
 
 ## Symbols
 
 ### `triplets_correct`
 #### Description
-Calculates the triplet correctness between two trees, which is the proportion of triplets (sets of three leaves) that have the same structure in both trees. This function samples triplets at various depths to minimize sampling bias.
+This function calculates the triplets correct accuracy between two trees. It samples triplets (sets of three leaves) at each depth of the tree and compares their topology between the two input trees.
 
 #### Inputs
-| Name                  | Type             | Description                                                                 |
-|:----------------------|:-----------------|:----------------------------------------------------------------------------|
-| `tree1`               | `CassiopeiaTree` | The first tree to compare.                                                  |
-| `tree2`               | `CassiopeiaTree` | The second tree to compare.                                                 |
-| `number_of_trials`    | `int`            | Number of triplets to sample at each depth.                                 |
-| `min_triplets_at_depth` | `int`          | Minimum number of triplets needed at a depth for it to be included in the analysis. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree1 | CassiopeiaTree | The first input tree |
+| tree2 | CassiopeiaTree | The second input tree to be compared |
+| number_of_trials | int | Number of triplets to sample at each depth (default: 1000) |
+| min_triplets_at_depth | int | Minimum number of triplets needed at a depth for inclusion (default: 1) |
 
 #### Outputs
-| Name                          | Type            | Description                                                                 |
-|:------------------------------|:----------------|:----------------------------------------------------------------------------|
-| `all_triplets_correct`        | `Dict[int, float]` | Proportion of all triplets that are correct at each depth.                  |
-| `resolvable_triplets_correct` | `Dict[int, float]` | Proportion of resolvable triplets that are correct at each depth.           |
-| `unresolved_triplets_correct` | `Dict[int, float]` | Proportion of unresolved triplets that are correct at each depth.           |
-| `proportion_unresolvable`     | `Dict[int, float]` | Proportion of unresolvable triplets at each depth.                          |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| all_triplets_correct | Dict[int, float] | The proportion of all triplets correct at each depth |
+| resolvable_triplets_correct | Dict[int, float] | The proportion of resolvable triplets correct at each depth |
+| unresolved_triplets_correct | Dict[int, float] | The proportion of unresolvable triplets correct at each depth |
+| proportion_unresolvable | Dict[int, float] | The proportion of unresolvable triplets at each depth |
 
 #### Internal Logic
-1. Create deep copies of the input trees and collapse unifurcations.
-2. Annotate tree depths and calculate the number of triplets at each depth.
-3. For each depth, sample triplets and determine their outgroups using utility functions.
-4. Compare the outgroups between the two trees and update the correctness scores.
-5. Normalize the scores by the number of trials and return the results.
+1. Initialize dictionaries to store results
+2. Create copies of input trees and collapse unifurcations
+3. Annotate tree depths and compute number of triplets at each depth
+4. For each depth:
+   - Sample triplets and compare their topology between the two trees
+   - Calculate various statistics (all, resolvable, unresolved triplets correct)
+5. Return the computed statistics
 
 ### `robinson_foulds`
 #### Description
-Calculates the Robinson-Foulds distance between two trees, a measure of the topological difference between them. This function uses the `ete3` library to perform the calculation.
+This function computes the Robinson-Foulds distance between two trees. It's a wrapper around the Ete3 library's implementation.
 
 #### Inputs
-| Name   | Type             | Description                        |
-|:-------|:-----------------|:-----------------------------------|
-| `tree1`| `CassiopeiaTree` | The first tree to compare.         |
-| `tree2`| `CassiopeiaTree` | The second tree to compare.        |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree1 | CassiopeiaTree | The first input tree |
+| tree2 | CassiopeiaTree | The second input tree to be compared |
 
 #### Outputs
-| Name   | Type   | Description                                                                 |
-|:-------|:-------|:----------------------------------------------------------------------------|
-| `rf`   | `float`| The Robinson-Foulds distance between the two trees.                         |
-| `rf_max` | `float` | The maximum possible Robinson-Foulds distance for normalization purposes. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rf | float | The Robinson-Foulds distance between the two trees |
+| rf_max | float | The maximum possible Robinson-Foulds distance for these trees |
 
 #### Internal Logic
-1. Create deep copies of the input trees and collapse unifurcations.
-2. Convert the trees to `ete3` format.
-3. Use the `robinson_foulds` method from `ete3` to compute the distance and maximum possible distance.
-4. Return the computed distances.
+1. Create copies of input trees and collapse unifurcations
+2. Convert trees to Ete3 format
+3. Compute Robinson-Foulds distance using Ete3's implementation
+4. Return the distance and maximum possible distance
 
 ## Dependencies
-
-| Dependency | Purpose                                                                 |
-|:-----------|:------------------------------------------------------------------------|
-| `ete3`     | Used for tree manipulation and computing the Robinson-Foulds distance.  |
-| `networkx` | Utilized for graph-based operations on trees.                           |
-| `numpy`    | Provides numerical operations, such as finding maximum values.          |
+| Dependency | Purpose |
+|:-----------|:--------|
+| collections | Used for defaultdict |
+| copy | Used for deep copying trees |
+| ete3 | Used for Robinson-Foulds distance calculation |
+| networkx | Not directly used in this file, but likely used in CassiopeiaTree |
+| numpy | Used for numerical operations |
+| typing | Used for type hinting |
+| cassiopeia.critique.critique_utilities | Used for utility functions |
+| cassiopeia.data.CassiopeiaTree | Used as the main data structure for trees |
 
 ## Error Handling
+The code does not implement explicit error handling. It relies on the underlying libraries and data structures to raise appropriate exceptions.
 
-The code does not explicitly handle errors but relies on the robustness of the `CassiopeiaTree` methods and the `ete3` library. If the input trees are not properly initialized or formatted, exceptions may be raised by these underlying libraries.
-
-## Logging
-
-The code does not implement any logging mechanisms.
+This module provides essential functionality for comparing phylogenetic trees in the Cassiopeia project. The `triplets_correct` function offers a detailed comparison of tree topologies at different depths, while the `robinson_foulds` function provides a standard distance metric for tree comparison. These functions are likely used in various analysis and validation tasks within the larger Cassiopeia framework.

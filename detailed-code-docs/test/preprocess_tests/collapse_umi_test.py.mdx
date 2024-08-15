@@ -2,59 +2,100 @@
 title: "collapse_umi_test.py"
 ---
 
-## High-level description
+Here's a detailed documentation of the target file `test/preprocess_tests/collapse_umi_test.py`:
 
-The `collapse_umi_test.py` file is a unit test suite designed to validate the functionality of the UMI (Unique Molecular Identifier) collapsing process in a bioinformatics pipeline. It uses the `unittest` framework to ensure that BAM files are correctly sorted and collapsed based on UMI sequences, with tests covering different scenarios such as uncorrected UMIs, Bayesian collapsing, and header information handling.
+## High-level description
+This file contains unit tests for the UMI Collapsing module in the Cassiopeia preprocessing pipeline. It tests various aspects of UMI collapsing, including sorting BAM files, forming collapsed clusters, and converting BAM files to DataFrames.
 
 ## Code Structure
-
-The main class in this file is `TestCollapseUMIs`, which inherits from `unittest.TestCase`. This class contains several test methods that validate different aspects of the UMI collapsing process. The tests rely on utility functions from the `UMI_utils` and `utilities` modules, which handle the sorting and collapsing of BAM files.
+The main class `TestCollapseUMIs` inherits from `unittest.TestCase` and contains several test methods. The `setUp` method prepares the test environment by creating test files and running UMI collapsing operations. The test methods then verify the correctness of these operations.
 
 ## Symbols
 
-### `TestCollapseUMIs`
+### TestCollapseUMIs
 #### Description
-This class contains unit tests for verifying the UMI collapsing functionality. It sets up test files, sorts and collapses them using different methods, and checks the results against expected values.
-
-#### Inputs
-- None directly, but it uses test BAM files located in a `test_files` directory.
-
-#### Outputs
-- None directly, but it asserts conditions to validate the correctness of the UMI collapsing process.
+A test class that contains unit tests for the UMI Collapsing functionality.
 
 #### Internal Logic
-- **`setUp` Method**: Prepares the test environment by creating necessary directories and files. It sorts and collapses BAM files using different methods and stores the results for use in test methods.
-- **`test_sort_bam` Method**: Validates that the sorted BAM file has the expected cell barcodes and UMIs.
-- **`test_sort_bam_uncorrected` Method**: Similar to `test_sort_bam`, but for uncorrected BAM files.
-- **`test_collapse_bam` Method**: Checks that the collapsed BAM file has the expected number of reads, cell barcodes, UMIs, and quality scores.
-- **`test_collapse_bam_bayesian` Method**: Similar to `test_collapse_bam`, but for Bayesian collapsed BAM files.
-- **`test_collapse_bam_uncorrected` Method**: Validates the collapsing process for uncorrected BAM files.
-- **`test_bam2DF` Method**: Converts a collapsed BAM file to a DataFrame and checks its contents against expected values.
-- **`test_collapsing_passes_header` Method**: Ensures that header information is correctly passed during the collapsing process.
+1. Sets up test files and performs UMI collapsing operations in `setUp`.
+2. Tests various aspects of UMI collapsing in individual test methods.
 
-## References
+### setUp
+#### Description
+Prepares the test environment by creating test files and running UMI collapsing operations.
 
-- **`UMI_utils.sort_bam`**: Used to sort BAM files based on specified keys.
-- **`UMI_utils.form_collapsed_clusters`**: Used to collapse UMIs in BAM files.
-- **`utilities.convert_bam_to_df`**: Converts BAM files to Pandas DataFrames for easier manipulation and validation.
+#### Internal Logic
+1. Creates test directories and files.
+2. Sorts BAM files.
+3. Performs UMI collapsing using different methods and parameters.
+
+### test_sort_bam
+#### Description
+Tests the sorting of BAM files.
+
+#### Internal Logic
+1. Opens the sorted BAM file.
+2. Extracts cell barcodes and UMIs.
+3. Verifies the correctness of specific entries.
+
+### test_sort_bam_uncorrected
+#### Description
+Tests the sorting of uncorrected BAM files.
+
+#### Internal Logic
+Similar to `test_sort_bam`, but uses uncorrected test files.
+
+### test_collapse_bam
+#### Description
+Tests the collapsing of BAM files.
+
+#### Internal Logic
+1. Opens the collapsed BAM file.
+2. Extracts various fields (cell barcodes, UMIs, read counts, cluster IDs, qualities).
+3. Verifies the correctness of specific entries and counts.
+
+### test_collapse_bam_bayesian
+#### Description
+Tests the Bayesian collapsing of BAM files.
+
+#### Internal Logic
+Similar to `test_collapse_bam`, but uses Bayesian collapsed files.
+
+### test_collapse_bam_uncorrected
+#### Description
+Tests the collapsing of uncorrected BAM files.
+
+#### Internal Logic
+Similar to `test_collapse_bam`, but uses uncorrected collapsed files.
+
+### test_bam2DF
+#### Description
+Tests the conversion of BAM files to DataFrames.
+
+#### Internal Logic
+1. Converts BAM to DataFrame.
+2. Verifies specific entries in the resulting DataFrame.
+3. Compares with a separately loaded DataFrame from a text file.
+
+### test_collapsing_passes_header
+#### Description
+Tests that the collapsing process correctly passes header information.
+
+#### Internal Logic
+1. Opens the collapsed BAM file.
+2. Verifies that the alignment has non-None query sequence and qualities.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `pandas` | Used for data manipulation and validation. |
-| `pysam` | Used for reading and writing BAM files. |
-| `os`, `pathlib` | Used for file and directory operations. |
+| os | File and directory operations |
+| unittest | Unit testing framework |
+| pandas | Data manipulation and analysis |
+| pathlib | Object-oriented filesystem paths |
+| pysam | Reading/writing SAM/BAM/VCF/BCF files |
+| cassiopeia.preprocess | UMI collapsing functionality |
 
 ## Error Handling
+The tests use assertions to verify the correctness of operations. If any assertion fails, an `AssertionError` will be raised, indicating a test failure.
 
-The test methods use assertions to validate expected outcomes. If any assertion fails, it indicates a problem with the UMI collapsing process, and the test will report an error.
-
-## Logging
-
-No explicit logging is implemented in this test suite. The focus is on using assertions to validate functionality.
-
-## TODOs
-
-No TODOs are present in the code.
+This file is crucial for ensuring the correctness of the UMI collapsing functionality in the Cassiopeia preprocessing pipeline. It covers various scenarios and edge cases, helping to maintain the reliability of the UMI collapsing process.

@@ -3,77 +3,71 @@ title: "sfs.py"
 ---
 
 ## High-level description
-
-The code in the target file is designed to generate beta coalescent trees and calculate their Site Frequency Spectrum (SFS). It provides a class `SFS` that inherits from `betatree`, which is responsible for generating trees and accumulating the SFS. The code also includes functionality to bin the SFS data and save or load it from files, as well as a script to visualize the SFS using different binning methods.
+This code defines a class `SFS` that simulates the evolution of genetic sequences under a beta coalescent model and calculates the Site Frequency Spectrum (SFS) from the generated genealogical trees. The SFS represents the distribution of allele frequencies in a population sample.
 
 ## Code Structure
+The `SFS` class inherits from the `betatree` class, which is responsible for generating the beta coalescent trees. The `SFS` class extends this functionality by accumulating allele frequency information from multiple trees and calculating the SFS. It also provides methods for binning and saving the calculated SFS.
 
-- The `SFS` class inherits from the `betatree` class, which is assumed to be defined in the `betatree` module.
-- The `SFS` class provides methods to generate trees, calculate the SFS, bin the SFS data, and save/load the SFS to/from files.
-- The script at the end of the file demonstrates how to use the `SFS` class to calculate and visualize the SFS for different values of the parameter `alpha`.
+## References
+This code references the `betatree` class from the same package, specifically the `coalesce` method for generating the trees and accessing tree nodes for allele frequency calculations. It also uses the `Bio.Phylo` module for working with phylogenetic trees.
 
 ## Symbols
 
-### `logit`
-#### Description
-The `logit` function computes the logit transformation of a given value `x`, which is the natural logarithm of the odds `x / (1 - x)`.
+### Symbol Name: `SFS`
+#### Description:
+This class simulates the evolution of genetic sequences under a beta coalescent model and calculates the Site Frequency Spectrum (SFS).
 
-#### Inputs
+#### Inputs:
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| x | float | A value between 0 and 1 to be transformed using the logit function. |
+| sample_size | int | The number of individuals in the sample. |
+| alpha | float | The alpha parameter of the beta coalescent model (default: 2). |
 
-#### Outputs
+#### Outputs:
+The class does not have a direct return value. It stores the calculated SFS and related data in its internal attributes.
+
+#### Internal Logic:
+1. **Initialization:** Initializes the `SFS` object by calling the constructor of the parent class `betatree` and initializing internal variables to store allele frequencies and the SFS.
+2. **Tree Generation and SFS Calculation:** The `glob_trees` method generates multiple beta coalescent trees using the inherited `coalesce` method. For each tree, it extracts the branch lengths and corresponding allele counts (weights) and stores them. The `getSFS` method then uses this accumulated data to calculate the average SFS over all generated trees.
+3. **SFS Binning:** The `binSFS` method allows for binning the calculated SFS using different modes (linear, log, logit) and binning schemes. It calculates the bin edges, bin widths, and the binned SFS values.
+4. **SFS Input/Output:** The `saveSFS` method saves a calculated SFS to a file, while the `loadSFS` method loads a previously saved SFS from a file.
+
+#### Side Effects:
+The `glob_trees` and `getSFS` methods modify the internal state of the `SFS` object by generating trees, accumulating allele frequencies, and calculating the SFS.
+
+### Symbol Name: `logit`
+#### Description:
+This function calculates the logit of a given value.
+
+#### Inputs:
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| result | float | The logit-transformed value. |
+| x | float | The input value. |
 
-___
-
-### `SFS`
-#### Description
-The `SFS` class is responsible for generating beta coalescent trees and accumulating the Site Frequency Spectrum (SFS). It provides methods to generate multiple trees, calculate the SFS, bin the SFS data, and save/load the SFS to/from files.
-
-#### Inputs
+#### Outputs:
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| sample_size | int | The number of samples for the coalescent tree. |
-| alpha | float | The alpha parameter for the beta coalescent process, default is 2. |
+| logit(x) | float | The logit of the input value. |
 
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| SFS instance | SFS | An instance of the SFS class with initialized parameters. |
-
-#### Internal Logic
-- **Initialization**: Calls the constructor of the `betatree` class with `sample_size` and `alpha`. Initializes `alleles` as an empty list and `sfs` as `None`.
-- **Tree Generation**: The `glob_trees` method generates multiple trees and accumulates allele data.
-- **SFS Calculation**: The `getSFS` method calculates the SFS by coalescing trees and accumulating branch lengths.
-- **Binning**: The `binSFS` method bins the SFS data using specified modes (`linear`, `log`, `logit`) and number of bins.
-- **File Operations**: The `saveSFS` and `loadSFS` methods handle saving and loading the SFS data to/from files.
-
-## Side Effects
-- The `saveSFS` method writes the SFS data to a file, potentially compressing it if the filename ends with `.gz`.
-- The `loadSFS` method reads SFS data from a file and updates the instance's state.
+#### Internal Logic:
+The function calculates the logit using the formula: `log(x / (1 - x))`.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `numpy` | Used for numerical operations and array manipulations. |
-| `scipy.special` | Provides special mathematical functions. |
-| `Bio.Phylo` | Used for handling phylogenetic trees. |
-| `matplotlib.pyplot` | Used for plotting and visualizing the SFS data. |
+| numpy | Numerical operations, array handling. |
+| scipy.special | Special functions, including the gamma function used in beta coalescent calculations. |
+| Bio.Phylo | Working with phylogenetic trees. |
+| matplotlib.pyplot | Plotting the SFS (only in the example usage). |
 
 ## Error Handling
-- The `loadSFS` method checks if the file exists before attempting to load it and prints an error message if it does not.
-- It also checks if the loaded data is a one-dimensional vector and prints an error message if it is not.
+The code includes basic error handling when loading an SFS from a file. It checks if the file exists and if the loaded data has the expected one-dimensional shape. If an error occurs, it prints an error message but does not raise an exception.
 
 ## Logging
-No explicit logging is implemented in the code. Error messages are printed directly to the console.
+The code does not implement any specific logging mechanisms. It uses `print` statements for informational output.
 
 ## API/Interface Reference
-The code does not explicitly define an API or public interface beyond the `SFS` class and its methods. The script at the end of the file demonstrates how to use the class.
+This code does not define an explicit API. It provides a class `SFS` with methods for simulating the evolutionary process, calculating the SFS, and interacting with SFS data.
 
 ## TODOs
-No TODOs or notes are present in the code.
+There are no explicit TODOs or notes left in the code.

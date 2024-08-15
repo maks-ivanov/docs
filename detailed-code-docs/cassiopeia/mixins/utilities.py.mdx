@@ -3,97 +3,95 @@ title: "utilities.py"
 ---
 
 ## High-level description
-
-The `cassiopeia/mixins/utilities.py` file provides utility functions that are used to handle ambiguous states, import modules dynamically, unravel ambiguous states, and find duplicate groups in a character matrix. These utilities are essential for processing character matrices that may contain ambiguous states and for managing dependencies that may not be installed.
+This file contains a set of utility functions for working with character matrices and trees in Cassiopeia. These functions include importing modules, checking for ambiguous states, unraveling ambiguous states, finding duplicate groups in a character matrix, and other helper functions.
 
 ## Code Structure
+The code consists of a set of independent utility functions that can be used in various parts of the Cassiopeia codebase. Some functions are used by other functions, such as `is_ambiguous_state` being used by `unravel_ambiguous_states` and `find_duplicate_groups`.
 
-The main symbols in the code are utility functions that operate independently. They are designed to be used as helper functions in various parts of the codebase, particularly in handling character matrices and dynamic module imports.
+## References
+This file references the `ngs_tools` and `functools` libraries. It also references the `is_ambiguous_state` function from the `cassiopeia.mixins` module.
 
 ## Symbols
 
 ### `is_ambiguous_state`
 #### Description
-Determines whether a given state is ambiguous. An ambiguous state is represented as a tuple of integers.
+Determines if a given state is ambiguous. An ambiguous state is represented as a tuple of integers.
 
 #### Inputs
-| Name  | Type                  | Description                          |
-|:------|:----------------------|:-------------------------------------|
-| state | `Union[int, Tuple[int, ...]]` | A single character state, which may be ambiguous. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | Union[int, Tuple[int, ...]] | A single character state, which can be an integer or a tuple of integers. |
 
 #### Outputs
-| Name   | Type    | Description                          |
-|:-------|:--------|:-------------------------------------|
-| result | `bool`  | `True` if the state is ambiguous, `False` otherwise. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+|  | bool | True if the state is ambiguous (i.e., a tuple), False otherwise. |
+
+#### Internal Logic
+The function simply checks if the input `state` is an instance of a tuple. If it is, it returns True, indicating an ambiguous state. Otherwise, it returns False.
 
 ### `try_import`
 #### Description
-Attempts to import a module by name and returns the module if successful, or `None` if the module is not installed.
+Attempts to import a module and returns it if successful, otherwise returns None. This is useful for handling optional dependencies.
 
 #### Inputs
-| Name   | Type   | Description                |
-|:-------|:-------|:---------------------------|
-| module | `str`  | The name of the module to import. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| module | str | The name of the module to import. |
 
 #### Outputs
-| Name   | Type               | Description                          |
-|:-------|:-------------------|:-------------------------------------|
-| result | `Optional[ModuleType]` | The imported module, or `None` if the module is not found. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+|  | Optional[ModuleType] | The imported module if successful, otherwise None. |
+
+#### Internal Logic
+The function uses a try-except block to attempt importing the module using `importlib.import_module`. If a `ModuleNotFoundError` is raised, it returns None. Otherwise, it returns the imported module.
 
 ### `unravel_ambiguous_states`
 #### Description
-Unravels a list of states, expanding any ambiguous states (tuples) into individual states.
+Unravels a list of potentially ambiguous states into a list of unique states.
 
 #### Inputs
-| Name        | Type                                | Description                          |
-|:------------|:------------------------------------|:-------------------------------------|
-| state_array | `List[Union[int, Tuple[int, ...]]]` | A list of states, potentially containing ambiguous states. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state_array | List[Union[int, Tuple[int, ...]]] | A list of character states, potentially containing ambiguous states represented as tuples. |
 
 #### Outputs
-| Name   | Type      | Description                          |
-|:-------|:----------|:-------------------------------------|
-| result | `List[int]` | A list of unique states contained in the input list. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+|  | List[int] | A list of unique integer states present in the input `state_array`. |
 
 #### Internal Logic
-- Iterates over each state in the input list.
-- If a state is ambiguous (a tuple), it converts it into a list of individual states.
-- Uses `functools.reduce` to concatenate all lists of states into a single list.
+The function iterates through the `state_array`. For each state, if it's ambiguous (a tuple), it converts it to a list. Otherwise, it creates a list containing the single state. Finally, it uses `functools.reduce` to concatenate all the lists into a single list of unique states.
 
 ### `find_duplicate_groups`
 #### Description
-Identifies groups of samples in a character matrix that have identical character states, including handling ambiguous states.
+Identifies groups of samples in a character matrix that have identical character states and maps them to a dictionary.
 
 #### Inputs
-| Name             | Type            | Description                          |
-|:-----------------|:----------------|:-------------------------------------|
-| character_matrix | `pd.DataFrame`  | A character matrix, potentially with ambiguous states. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| character_matrix | pd.DataFrame | A character matrix potentially containing ambiguous states. |
 
 #### Outputs
-| Name   | Type                      | Description                          |
-|:-------|:--------------------------|:-------------------------------------|
-| result | `Dict[str, Tuple[str, ...]]` | A mapping of a single sample name to the set of samples that have the same character states. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+|  | Dict[str, Tuple[str, ...]] | A dictionary mapping a single sample name to a tuple of sample names that share the same character states. |
 
 #### Internal Logic
-- Converts each character state to a set to handle ambiguous states.
-- Identifies duplicated rows in the character matrix.
-- Groups samples with identical character states and returns them as a dictionary.
-
-## References
-
-- The `is_ambiguous_state` function is referenced in multiple files, such as `CassiopeiaTree.py` and `utilities.py`, indicating its utility in handling ambiguous states across the codebase.
-- The `try_import` function is used in `local_3d.py` and `ClonalSpatialDataSimulator.py` to manage optional dependencies.
+1. Sets the index name of the character matrix to "index".
+2. Creates a copy of the character matrix and converts each element to a set to handle ambiguous states.
+3. Identifies duplicated rows in the converted matrix using `pd.DataFrame.duplicated`.
+4. Finds unique duplicated states.
+5. Groups sample names based on unique duplicated states.
+6. Creates a dictionary mapping the first sample name in each group to a tuple of all sample names in that group.
 
 ## Dependencies
+This file depends on the following external libraries:
+| Dependency | Purpose |
+|:-----------|:--------|
+| functools | Used for reducing a list of lists into a single list in `unravel_ambiguous_states`. |
+| importlib | Used for importing modules in `try_import`. |
+| numpy | Used for array operations in `find_duplicate_groups`. |
+| pandas | Used for data manipulation in `find_duplicate_groups`. |
 
-- `functools`: Used for reducing lists of states.
-- `importlib`: Used for dynamic module imports.
-- `numpy`: Used for handling arrays and unique operations.
-- `pandas`: Used for handling character matrices as DataFrames.
-
-## Error Handling
-
-- The `try_import` function handles `ModuleNotFoundError` by returning `None`, allowing the code to gracefully handle missing optional dependencies.
-
-## Logging
-
-- No explicit logging is implemented in this file.

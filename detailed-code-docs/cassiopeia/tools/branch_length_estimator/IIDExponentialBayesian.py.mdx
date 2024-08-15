@@ -3,23 +3,21 @@ title: "IIDExponentialBayesian.py"
 ---
 
 ## High-level description
-
-The `IIDExponentialBayesian` class is a subclass of `BranchLengthEstimator` that estimates branch lengths in a phylogenetic tree using a Bayesian approach. It models CRISPR/Cas9 mutations as independent and identically distributed (IID) events with exponential waiting times and assumes the phylogeny follows a subsampled Birth Process. The class computes posterior mean branch lengths based on observed topology and character data, which are used as branch length estimates.
+The `IIDExponentialBayesian` class in `cassiopeia/tools/branch_length_estimator/IIDExponentialBayesian.py` implements a Bayesian method for estimating branch lengths in a phylogenetic tree, assuming a subsampled Birth Process for the phylogeny and independent, identically distributed (IID) exponential waiting times for mutations at each site. The estimator calculates the posterior mean branch lengths conditional on the observed tree topology and character data.
 
 ## Code Structure
-
-The main class in this file is `IIDExponentialBayesian`, which inherits from `BranchLengthEstimator`. It uses several helper functions to process the tree data and compute the necessary statistics for branch length estimation. The class relies on a C++ implementation for efficient computation of posterior times and other related statistics.
+The `IIDExponentialBayesian` class inherits from the abstract base class `BranchLengthEstimator` and implements the `estimate_branch_lengths` method. The core logic resides in `_populate_attributes_with_cpp_implementation`, which leverages a C++ implementation (`_PyInferPosteriorTimes`) for efficient computation of posterior node times and related attributes.
 
 ## References
-
-- `CassiopeiaTree`: A data structure from `cassiopeia.data` that represents the phylogenetic tree and provides methods for manipulating and querying tree properties.
-- `_PyInferPosteriorTimes`: A C++ implementation used for efficient computation of posterior times and related statistics.
+- `cassiopeia.data.CassiopeiaTree`: Used to represent and manipulate phylogenetic trees.
+- `._iid_exponential_bayesian._PyInferPosteriorTimes`: C++ module for efficient posterior time inference.
+- `.BranchLengthEstimator.BranchLengthEstimator`: Abstract base class for branch length estimators.
 
 ## Symbols
 
 ### `IIDExponentialBayesian`
 #### Description
-The `IIDExponentialBayesian` class estimates branch lengths in a phylogenetic tree using a Bayesian model. It assumes IID exponential mutations and a subsampled Birth Process for the phylogeny. The class computes posterior mean branch lengths based on observed topology and character data.
+This class implements the IID Exponential Bayesian branch length estimation method. It assumes a subsampled Birth Process for the phylogeny and IID exponential waiting times for mutations.
 
 #### Inputs
 | Name | Type | Description |
@@ -27,66 +25,85 @@ The `IIDExponentialBayesian` class estimates branch lengths in a phylogenetic tr
 | mutation_rate | float | The CRISPR/Cas9 mutation rate. |
 | birth_rate | float | The phylogeny birth rate. |
 | sampling_probability | float | The probability that a leaf in the ground truth tree was sampled. Must be in (0, 1]. |
-| discretization_level | int | How many timesteps are used to discretize time. Default is 600. |
+| discretization_level | int | How many timesteps are used to discretize time. Defaults to 600. |
 
 #### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | None | The class does not return a value but modifies the input tree with estimated branch lengths. |
+The class doesn't directly return outputs. Instead, it modifies the input `CassiopeiaTree` object in place, populating its branch lengths based on the estimated posterior mean times.
 
 #### Internal Logic
-1. **Initialization**: Validates the `sampling_probability` and initializes the class attributes.
-2. **Branch Length Estimation**: The `estimate_branch_lengths` method validates the input tree, imputes missing states, and computes posterior means using a C++ implementation.
-3. **Validation**: The `_validate_input_tree` method checks that the tree is binary, except for the root.
-4. **C++ Integration**: The `_populate_attributes_with_cpp_implementation` method interfaces with a C++ module to compute necessary statistics efficiently.
-5. **Posterior Computation**: The class computes log joint probabilities and posterior distributions for node times.
+1. **Input Validation:** Ensures the input tree is valid (binary except for the root) and the sampling probability is within the acceptable range.
+2. **Data Preprocessing:** Imputes unambiguous missing states in the character matrix for easier dynamic programming.
+3. **C++ Implementation:** Calls the `_PyInferPosteriorTimes` C++ module to efficiently compute the log joint probabilities, posterior means, and posterior distributions of node times.
+4. **Branch Length Population:** Uses the computed posterior mean times to populate the branch lengths of the input `CassiopeiaTree`.
 
-### `_get_number_of_mutated_characters_in_node`
+#### Side Effects
+- Modifies the input `CassiopeiaTree` object in place by populating its branch lengths.
+
+#### Performance Considerations
+- The computational complexity of the branch length estimation is O(discretization_level * tree.n_cell * tree.n_character).
+- The C++ implementation (`_PyInferPosteriorTimes`) is used for performance optimization.
+
+### `estimate_branch_lengths`
 #### Description
-Calculates the number of mutated characters in a given node, excluding missing characters.
+This method estimates the branch lengths of the provided `CassiopeiaTree` using the IID Exponential Bayesian model.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | CassiopeiaTree | The phylogenetic tree. |
-| v | str | The node identifier. |
+| tree | CassiopeiaTree | The input `CassiopeiaTree` object for which to estimate branch lengths. |
 
 #### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| int | int | The number of mutated characters in the node. |
+The method doesn't directly return outputs. Instead, it modifies the input `CassiopeiaTree` object in place, populating its branch lengths.
 
-### `_non_root_internal_nodes`
+#### Internal Logic
+1. **Input Validation:** Validates the input tree topology.
+2. **Data Preprocessing:** Creates a deepcopy of the input tree and imputes deducible missing states.
+3. **Posterior Time Inference:** Calls `_populate_attributes_with_cpp_implementation` to infer posterior node times using the C++ implementation.
+4. **Branch Length Population:** Calls `_populate_branch_lengths` to populate the branch lengths of the original input tree using the inferred posterior means.
+
+#### Side Effects
+- Modifies the input `CassiopeiaTree` object in place by populating its branch lengths.
+
+### `log_joints`
 #### Description
-Returns a list of internal nodes in the tree, excluding the root.
+This method returns the log joint probability density of the observed tree topology, state vectors, and all possible times for a given node.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | CassiopeiaTree | The phylogenetic tree. |
+| node | str | The internal node for which to compute the log joint probabilities. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| List[str] | list | A list of internal node identifiers, excluding the root. |
+| log_joints | np.array | An array of log joint probabilities for each discretized time point. |
+
+### `posterior_time`
+#### Description
+This method returns the posterior distribution of the time for a given node, conditional on the observed character states and tree topology.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| node | str | The internal node for which to compute the posterior time distribution. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| posterior_time | np.array | An array representing the posterior time distribution for the given node. |
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `numpy` | Used for numerical operations and array manipulations. |
-| `deepcopy` | Used to create deep copies of the tree to avoid modifying the original data. |
+- numpy
+- copy
+- typing
+- scipy (used in related code snippets)
+- networkx (used in related code snippets)
+- parameterized (used in related code snippets)
+- pytest (used in related code snippets)
+- unittest (used in related code snippets)
 
 ## Error Handling
-
-- The class raises a `ValueError` if the `sampling_probability` is not in the range (0, 1].
-- The `_validate_input_tree` method raises a `ValueError` if the tree topology is not binary as expected.
-- The `_populate_attributes_with_cpp_implementation` method raises a `ValueError` if the C++ implementation returns unexpected results.
-
-## Logging
-
-The code does not explicitly implement logging, but it raises exceptions with descriptive error messages to indicate issues during execution.
+- Raises `ValueError` for invalid input parameters or tree topology.
 
 ## TODOs
-
-- There are no explicit TODOs in the code, but potential improvements could include more detailed logging and handling of edge cases in tree validation.
+None found.

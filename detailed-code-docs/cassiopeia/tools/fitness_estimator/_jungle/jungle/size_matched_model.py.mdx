@@ -3,145 +3,135 @@ title: "size_matched_model.py"
 ---
 
 ## High-level description
-
-The `SizeMatchedModel` class in the `size_matched_model.py` file is designed to manage statistical models that are matched to specific size bins. It allows for the initialization of models with specific parameters and distributions, and provides functionality to load and save these models from and to JSON files. Additionally, it offers methods to calculate p-values and model means for given sizes, using the specified distribution and parameters.
+The code defines a `SizeMatchedModel` class that represents a statistical model where parameters vary based on the size of the input data. It provides methods for loading and saving the model, calculating p-values, and determining model means based on input size.
 
 ## Code Structure
-
-The main symbol in this code is the `SizeMatchedModel` class, which encapsulates the functionality for handling size-matched statistical models. The class provides methods for initialization, JSON serialization/deserialization, and statistical calculations based on the model's parameters and distribution.
+The `SizeMatchedModel` class is the central component. It uses a list of bins to partition the input size range and associates a set of parameters with each bin. The `distribution` attribute holds a statistical distribution object (not defined in this file) used for calculations.
 
 ## Symbols
 
 ### `SizeMatchedModel`
 #### Description
-The `SizeMatchedModel` class is responsible for managing a statistical model that is matched to specific size bins. It allows for the initialization of the model with bins, parameters, and a distribution, and provides methods to calculate p-values and means for given sizes. The class also supports loading from and saving to JSON files.
+This class represents a statistical model where parameters are determined by the size of the input data. It uses bins to divide the size range and associates a set of parameters with each bin.
 
 #### Inputs
-- **`bins`**: `list` - A list of bin edges that define the size intervals.
-- **`params`**: `list` - A list of parameters corresponding to each bin, used by the distribution.
-- **`distribution`**: `object` - A statistical distribution object that provides methods like `cdf` and `mean`.
-- **`name`**: `str` (optional) - An optional name for the model.
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bins | list | List of bin edges defining the size ranges. |
+| params | list | List of parameter sets, one for each bin. |
+| distribution | object | An instance of a statistical distribution class (e.g., from scipy.stats). |
+| name | str | Optional name for the model. |
 
 #### Outputs
-- **`SizeMatchedModel` instance**: An instance of the `SizeMatchedModel` class initialized with the provided bins, parameters, and distribution.
+N/A - This is a class definition, not a function.
 
 #### Internal Logic
-- The constructor asserts that the number of parameters is one less than the number of bins, ensuring each bin has a corresponding parameter set.
-- The class provides methods to serialize and deserialize the model to and from JSON, using the `json` and `ast` modules.
-- The `_params_for_size` method determines the appropriate parameters for a given size by finding the corresponding bin.
-- The `pvalue` method calculates the p-value for a given observation `x` and size, using the cumulative distribution function (CDF) of the specified distribution.
-- The `model_mean` method calculates the mean of the model for a given size using the distribution's mean function.
+The class stores the bins, parameters, distribution, and name. It provides methods for:
+- Loading and saving the model from/to JSON files.
+- Finding the appropriate parameters for a given size using `_params_for_size`.
+- Calculating p-values using the provided distribution and parameters.
+- Determining the model mean for a given size.
 
-### `from_json`
+### `SizeMatchedModel.from_json`
 #### Description
-Loads a `SizeMatchedModel` from a JSON file, reconstructing the model's attributes and distribution.
+This class method loads a `SizeMatchedModel` instance from a JSON file.
 
 #### Inputs
-| Name     | Type   | Description                |
-|:---------|:-------|:---------------------------|
-| filename | string | The path to the JSON file. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | Path to the JSON file containing the model data. |
 
 #### Outputs
-| Name                | Type              | Description                        |
-|:--------------------|:------------------|:-----------------------------------|
-| `SizeMatchedModel`  | `SizeMatchedModel`| An instance of the class initialized with data from the JSON file. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model | SizeMatchedModel | A new `SizeMatchedModel` instance loaded from the file. |
 
 #### Internal Logic
-- Opens the JSON file and reads the attributes as strings.
-- Uses `ast.literal_eval` to safely evaluate the string representations of lists and other data structures.
-- Evaluates the distribution class name and instantiates it.
-- Returns a new `SizeMatchedModel` instance with the loaded attributes.
+- Opens the JSON file and loads the data.
+- Converts string representations of lists and the distribution name to their respective Python objects.
+- Instantiates a new `SizeMatchedModel` with the loaded data.
 
-### `to_json`
+### `SizeMatchedModel.to_json`
 #### Description
-Serializes the `SizeMatchedModel` to a JSON file, saving its attributes and distribution.
+This method saves the `SizeMatchedModel` instance to a JSON file.
 
 #### Inputs
-| Name    | Type   | Description                |
-|:--------|:-------|:---------------------------|
-| outfile | string | The path to the output JSON file. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outfile | str | Path to the output JSON file. |
 
 #### Outputs
-- None (writes to a file).
+N/A - The method writes data to a file as a side effect.
 
 #### Internal Logic
-- Converts the model's attributes to JSON-compatible strings.
-- Extracts the distribution's class name and module for serialization.
-- Writes the serialized attributes to the specified JSON file.
+- Creates a dictionary containing the model's attributes.
+- Converts lists to JSON-serializable strings.
+- Extracts the distribution's class name for serialization.
+- Writes the dictionary to the specified JSON file.
 
-### `_params_for_size`
+### `SizeMatchedModel._params_for_size`
 #### Description
-Finds the parameters for the bin that matches a given size.
+This private method retrieves the appropriate parameters for a given size based on the defined bins.
 
 #### Inputs
-| Name          | Type    | Description                                      |
-|:--------------|:--------|:-------------------------------------------------|
-| size          | numeric | The size for which to find matching parameters.  |
-| strict_bounds | boolean | Whether to enforce strict bin boundaries.        |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| size | float | The size value for which to find the parameters. |
+| strict_bounds | bool | If True, raises an error if the size is outside the defined bins. If False, uses the parameters of the nearest bin. |
 
 #### Outputs
-| Name          | Type | Description                                      |
-|:--------------|:-----|:-------------------------------------------------|
-| `params_match`| list | The parameters corresponding to the matching bin.|
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| params_match | tuple | The parameters associated with the bin containing the given size. |
 
 #### Internal Logic
-- Uses `np.digitize` to find the index of the bin that the size falls into.
-- Adjusts the bin index based on the `strict_bounds` flag.
-- Returns the parameters for the identified bin.
+- Uses `np.digitize` to find the index of the bin corresponding to the input size.
+- Handles cases where the size is outside the defined bins based on `strict_bounds`.
+- Adjusts the bin index to match the zero-based indexing of the `params` list.
+- Returns the parameters for the selected bin.
 
-### `pvalue`
+### `SizeMatchedModel.pvalue`
 #### Description
-Calculates the p-value of an observation under the model for a given size.
+This method calculates the p-value of a given value `x` under the model for a specific size.
 
 #### Inputs
-| Name         | Type    | Description                                      |
-|:-------------|:--------|:-------------------------------------------------|
-| x            | numeric | The observed value for which to calculate the p-value. |
-| size         | numeric | The size to match against the model's bins.      |
-| invert_cdf   | boolean | Whether to invert the CDF to calculate the p-value. |
-| strict_bounds| boolean | Whether to enforce strict bin boundaries.        |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x | float | The value for which to calculate the p-value. |
+| size | float | The size value used to determine the model parameters. |
+| invert_cdf | bool | If True, calculates 1 - CDF(x) instead of CDF(x). |
+| strict_bounds | bool | Passed to `_params_for_size` to control behavior for sizes outside the defined bins. |
 
 #### Outputs
-| Name | Type   | Description                        |
-|:-----|:-------|:-----------------------------------|
-| p    | float  | The calculated p-value.            |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| p | float | The calculated p-value. |
 
 #### Internal Logic
-- Retrieves the parameters for the matching bin using `_params_for_size`.
-- Calculates the CDF of `x` using the distribution and parameters.
-- Inverts the CDF if `invert_cdf` is `True`.
-- Returns the p-value.
+- Retrieves the model parameters for the given size using `_params_for_size`.
+- Calculates the cumulative distribution function (CDF) of `x` using the model's distribution and parameters.
+- Inverts the CDF if `invert_cdf` is True.
+- Returns the calculated p-value.
 
-### `model_mean`
+### `SizeMatchedModel.model_mean`
 #### Description
-Calculates the mean of the model for a given size.
+This method calculates the mean of the model for a given size.
 
 #### Inputs
-| Name          | Type    | Description                                      |
-|:--------------|:--------|:-------------------------------------------------|
-| size          | numeric | The size to match against the model's bins.      |
-| strict_bounds | boolean | Whether to enforce strict bin boundaries.        |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| size | float | The size value used to determine the model parameters. |
+| strict_bounds | bool | Passed to `_params_for_size` to control behavior for sizes outside the defined bins. |
 
 #### Outputs
-| Name | Type   | Description                        |
-|:-----|:-------|:-----------------------------------|
-| mean | float  | The calculated mean of the model.  |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mean | float | The calculated mean of the model. |
 
 #### Internal Logic
-- Retrieves the parameters for the matching bin using `_params_for_size`.
-- Calculates the mean using the distribution's mean function.
-- Returns the mean.
-
-## Side Effects
-- The `from_json` and `to_json` methods read from and write to the file system, respectively.
-
-## Dependencies
-| Dependency | Purpose |
-|:-----------|:--------|
-| `numpy`    | Used for bin digitization to find the appropriate bin for a given size. |
-| `scipy`    | Provides statistical distributions used in the model. |
-| `json`     | Used for reading and writing JSON files. |
-| `ast`      | Used for safely evaluating string representations of Python literals. |
+- Retrieves the model parameters for the given size using `_params_for_size`.
+- Calculates the mean of the distribution using the retrieved parameters.
+- Returns the calculated mean.
 
 ## TODOs
-- There is a TODO comment suggesting that the distribution should be evaluated in the global namespace to avoid the need for importing `scipy` in this file.
+- Evaluate distribution in global namespace, so that import is not necessary here

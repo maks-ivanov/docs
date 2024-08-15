@@ -2,73 +2,96 @@
 title: "maxcut_test.py"
 ---
 
-## High-level description
+Here's a detailed documentation of the target file `test/solver_tests/maxcut_test.py`:
 
-The `maxcut_test.py` file is a unit test suite for the `MaxCutSolver` class, which is part of the Cassiopeia library. This test suite verifies the functionality of the `MaxCutSolver` by testing its ability to construct connectivity graphs, evaluate cuts, and solve phylogenetic trees using the max-cut approach. The tests ensure that the solver correctly partitions samples based on their mutation data and handles various scenarios, including base cases and the use of priors.
+## High-level description
+This file contains unit tests for the MaxCutSolver class, which is part of the Cassiopeia lineage reconstruction framework. The tests verify the functionality of various components of the MaxCutSolver, including graph construction, cut evaluation, and the overall solving process.
 
 ## Code Structure
-
-The main components of the code are the `MaxCutSolverTest` class, which contains several test methods, and the `find_triplet_structure` function. The `MaxCutSolverTest` class uses the `unittest` framework to define test cases for different functionalities of the `MaxCutSolver`. The `find_triplet_structure` function is a utility used within the tests to determine the structure of triplets in a tree.
-
-## References
-
-- `MaxCutSolver`: The class being tested, which is responsible for solving the max-cut problem on connectivity graphs.
-- `graph_utilities`: A module that provides utility functions for graph operations, such as checking cuts and constructing connectivity graphs.
+The main class `MaxCutSolverTest` inherits from `unittest.TestCase` and contains several test methods. It uses sample character matrices and trees to test different aspects of the MaxCutSolver. The file also includes a helper function `find_triplet_structure` used in comparing tree topologies.
 
 ## Symbols
 
 ### `find_triplet_structure`
 #### Description
-Determines the structure of a triplet (three nodes) in a given tree by comparing the common ancestors of the nodes.
+This function determines the structure of a triplet in a given tree.
 
 #### Inputs
-| Name   | Type         | Description                        |
-|:-------|:-------------|:-----------------------------------|
-| triplet| list         | A list of three nodes (a, b, c).   |
-| T      | nx.DiGraph   | A directed graph representing a tree.|
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| triplet | tuple | A tuple of three node labels |
+| T | networkx.DiGraph | The tree to analyze |
 
 #### Outputs
-| Name     | Type   | Description                                      |
-|:---------|:-------|:-------------------------------------------------|
-| structure| str    | A string indicating the structure of the triplet.|
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| structure | str | The structure of the triplet ("ab", "ac", "bc", or "-") |
 
 #### Internal Logic
-- Computes the ancestors of each node in the triplet.
-- Determines the number of common ancestors between each pair of nodes.
-- Returns a string indicating which pair of nodes has the most common ancestors.
+1. Find ancestors for each node in the triplet.
+2. Compare the number of common ancestors between pairs.
+3. Return the structure based on which pair has the most common ancestors.
 
 ### `MaxCutSolverTest`
 #### Description
-A test class that uses the `unittest` framework to test the functionality of the `MaxCutSolver`.
+This is the main test class containing various unit tests for the MaxCutSolver.
 
 #### Methods
-- `setUp`: Initializes test data and instances of `CassiopeiaTree` and `MaxCutSolver`.
-- `test_check_if_cut`: Tests the `check_if_cut` function from `graph_utilities`.
-- `test_evaluate_cut`: Tests the `evaluate_cut` method of `MaxCutSolver`.
-- `test_graph_construction`: Tests the construction of connectivity graphs.
-- `test_graph_construction_weights`: Tests graph construction with specified weights.
-- `test_hill_climb`: Tests the hill-climbing optimization of cuts.
-- `test_polytomy_base_case`: Tests the solver's handling of unresolved samples (polytomy).
-- `test_simple_base_case`: Tests a simple case of tree resolution.
-- `test_simple_base_case_priors`: Tests tree resolution with priors.
+
+##### `setUp`
+###### Description
+Initializes test data and objects for use in the test methods.
+
+###### Internal Logic
+1. Creates sample character matrices.
+2. Initializes CassiopeiaTrees and a MaxCutSolver.
+3. Computes mutation frequencies.
+
+##### `test_check_if_cut`
+###### Description
+Tests the `check_if_cut` function from graph_utilities.
+
+##### `test_evaluate_cut`
+###### Description
+Tests the `evaluate_cut` method of MaxCutSolver.
+
+##### `test_graph_construction`
+###### Description
+Tests the construction of the connectivity graph.
+
+##### `test_graph_construction_weights`
+###### Description
+Tests the construction of the connectivity graph with custom weights.
+
+##### `test_hill_climb`
+###### Description
+Tests the hill-climbing procedure for improving cuts.
+
+##### `test_polytomy_base_case`
+###### Description
+Tests the solver's handling of polytomies (unresolved relationships).
+
+##### `test_simple_base_case`
+###### Description
+Tests the solver on a simple case without priors.
+
+##### `test_simple_base_case_priors`
+###### Description
+Tests the solver on a simple case with priors.
 
 ## Dependencies
-
-| Dependency | Purpose                                      |
-|:-----------|:---------------------------------------------|
-| `unittest` | Provides the testing framework.              |
-| `networkx` | Used for graph operations and tree structures.|
-| `pandas`   | Used for handling character matrices.        |
-| `cassiopeia`| Provides the `MaxCutSolver` and related classes.|
+| Dependency | Purpose |
+|:-----------|:--------|
+| unittest | Provides testing framework |
+| itertools | Used for combinations in triplet analysis |
+| networkx | Used for graph operations |
+| pandas | Used for data manipulation |
+| cassiopeia | The main package being tested |
 
 ## Error Handling
+The tests use assertions provided by the unittest framework to check for expected outcomes. No explicit error handling is implemented in this test file.
 
-The test suite uses assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the `MaxCutSolver`.
+## Performance Considerations
+The tests involve graph operations and tree comparisons, which can be computationally expensive for large datasets. However, as these are unit tests with small sample data, performance is not a significant concern.
 
-## Logging
-
-No explicit logging is implemented in the test suite. The `unittest` framework handles test results and outputs.
-
-## TODOs
-
-- There is a TODO comment in the `construct_connectivity_graph` function in the related `graph_utilities.py` file suggesting optimization with `numba`. This is not directly related to the test file but indicates potential future improvements in the utility functions used by the solver.
+This documentation provides a comprehensive overview of the `maxcut_test.py` file, explaining its purpose, structure, and key components. The file is crucial for ensuring the correct functionality of the MaxCutSolver in the Cassiopeia framework.

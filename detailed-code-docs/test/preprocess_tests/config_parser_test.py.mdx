@@ -3,64 +3,79 @@ title: "config_parser_test.py"
 ---
 
 ## High-level description
-
-The `config_parser_test.py` file is a unit test suite designed to validate the configuration parsing functionality for the `cassiopeia_preprocess` pipeline. It uses the `unittest` framework to ensure that configuration files are correctly parsed, that errors are raised for invalid configurations, and that the pipeline setup is correctly initialized based on the configuration parameters.
+This file contains unit tests for the config parsing functionality of the cassiopeia_preprocess pipeline. It tests the parsing of configuration files, the creation of pipeline stages, and the handling of various configuration scenarios.
 
 ## Code Structure
-
-The main class in this file is `TestCollapseUMIs`, which inherits from `unittest.TestCase`. This class contains several test methods that validate different aspects of the configuration parsing and pipeline setup. The tests rely on the `setup_utilities` module to parse configuration strings and create pipeline procedures.
+The main class `TestCollapseUMIs` inherits from `unittest.TestCase` and contains several test methods. The `setUp` method initializes test data, including different configuration scenarios. The test methods then use this data to verify the correct behavior of the config parsing and pipeline setup functions.
 
 ## Symbols
 
-### `TestCollapseUMIs`
+### TestCollapseUMIs
 #### Description
-This class contains unit tests for verifying the configuration parsing and pipeline setup for the `cassiopeia_preprocess` pipeline. It checks that configurations are read correctly, that errors are raised for missing parameters, and that the pipeline is set up as expected.
-
-#### Methods
-
-- **`setUp`**: Initializes configuration strings and dictionaries used in the tests.
-- **`test_read_good_config`**: Validates that a well-formed configuration string is parsed correctly and that default parameters are set as expected.
-- **`test_unspecified_config_raises_error`**: Ensures that an error is raised when required configuration parameters are missing.
-- **`test_pipeline_setup_correct`**: Checks that the pipeline is set up correctly from the entry to the exit point using a full configuration.
-- **`test_subset_pipeline_setup_correct`**: Verifies that a subset of the pipeline is set up correctly based on specified entry and exit points.
-
-#### Inputs
-- **`basic_config_string`**: A string representation of a complete configuration.
-- **`subset_config_string`**: A string representation of a partial configuration.
-- **`failure_config_string`**: A string representation of an incomplete configuration.
-
-#### Outputs
-- **`parameters`**: A dictionary of parsed configuration parameters.
-- **`pipeline_procedures`**: A list of pipeline stages to be executed.
+A test class that inherits from `unittest.TestCase`, containing methods to test the configuration parsing and pipeline setup for the cassiopeia_preprocess pipeline.
 
 #### Internal Logic
-- The `setUp` method constructs configuration strings from dictionaries for use in tests.
-- The `test_read_good_config` method checks that default and specified parameters are correctly parsed.
-- The `test_unspecified_config_raises_error` method verifies that missing required parameters result in an error.
-- The `test_pipeline_setup_correct` and `test_subset_pipeline_setup_correct` methods ensure that the pipeline stages are correctly determined based on the configuration.
+1. Sets up test data in the `setUp` method, including various configuration scenarios.
+2. Tests the parsing of a valid configuration file.
+3. Tests the handling of an unspecified configuration parameter.
+4. Tests the correct setup of the full pipeline.
+5. Tests the correct setup of a subset pipeline.
 
-## References
+### TestCollapseUMIs.setUp
+#### Description
+Initializes test data for the test cases, including different configuration scenarios.
 
-- **`setup_utilities.parse_config`**: Parses configuration strings into parameter dictionaries.
-- **`setup_utilities.create_pipeline`**: Creates a list of pipeline procedures based on entry and exit points.
-- **`cassiopeia_preprocess.STAGES`**: A dictionary mapping stage names to their corresponding functions.
+#### Internal Logic
+1. Creates a basic configuration dictionary and its string representation.
+2. Creates a subset configuration dictionary and its string representation.
+3. Creates a failure configuration dictionary and its string representation.
+
+### TestCollapseUMIs.test_read_good_config
+#### Description
+Tests the parsing of a valid configuration file.
+
+#### Internal Logic
+1. Parses the basic configuration string.
+2. Checks that default parameters are set correctly.
+3. Verifies that specified parameters are updated correctly.
+4. Ensures that output directories are set for various pipeline stages.
+
+### TestCollapseUMIs.test_unspecified_config_raises_error
+#### Description
+Tests that an error is raised when an unspecified configuration parameter is encountered.
+
+#### Internal Logic
+1. Attempts to parse the failure configuration string.
+2. Asserts that a `UnspecifiedConfigParameterError` is raised.
+
+### TestCollapseUMIs.test_pipeline_setup_correct
+#### Description
+Tests the correct setup of the full pipeline.
+
+#### Internal Logic
+1. Parses the basic configuration string.
+2. Creates the pipeline using the entry and exit points from the configuration.
+3. Compares the created pipeline stages with the expected stages.
+
+### TestCollapseUMIs.test_subset_pipeline_setup_correct
+#### Description
+Tests the correct setup of a subset pipeline.
+
+#### Internal Logic
+1. Parses the subset configuration string.
+2. Creates the pipeline using the entry and exit points from the configuration.
+3. Compares the created pipeline stages with the expected subset of stages.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `unittest` | Provides the testing framework for writing and running tests. |
-| `pandas` | Used for data manipulation and analysis, though not directly in this test file. |
-| `cassiopeia.preprocess.setup_utilities` | Contains utility functions for parsing configurations and setting up pipelines. |
+| unittest | Provides the testing framework |
+| pandas | Used for data manipulation (imported but not used in the test file) |
+| cassiopeia.preprocess.cassiopeia_preprocess | Contains the main pipeline logic |
+| cassiopeia.preprocess.constants | Contains constants used in the pipeline |
+| cassiopeia.preprocess.setup_utilities | Provides utility functions for setting up the pipeline |
 
 ## Error Handling
+The test cases check for proper error handling, specifically testing that a `UnspecifiedConfigParameterError` is raised when an unspecified configuration parameter is encountered.
 
-- The `test_unspecified_config_raises_error` method checks for `UnspecifiedConfigParameterError` to ensure that missing configuration parameters are properly handled.
-
-## Logging
-
-- The test file itself does not implement logging, but it tests configurations that may affect logging behavior in the main pipeline.
-
-## TODOs
-
-- There are no TODOs or notes left in the code.
+This test file ensures that the configuration parsing and pipeline setup functionality of the cassiopeia_preprocess pipeline works correctly under various scenarios, including full pipeline setup, subset pipeline setup, and handling of configuration errors.

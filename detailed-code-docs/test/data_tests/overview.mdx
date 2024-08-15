@@ -3,35 +3,68 @@ title: "Overview"
 ---
 
 ## High-level description
-
-The `test/data_tests` directory contains a suite of unit tests designed to validate the functionality of various components within the Cassiopeia library, specifically focusing on data structures and utilities related to phylogenetic trees. The tests ensure that the core functionalities, such as tree construction, manipulation, and analysis, are working as expected. The main components tested include the `CassiopeiaTree` class, utility functions for data manipulation, and the `Layers` class within the `CassiopeiaTree` data structure.
+This directory contains unit tests for the data module of the Cassiopeia project, which is likely a framework for phylogenetic analysis and lineage tracing. The tests cover various functionalities related to character matrices, tree topologies, bootstrapping, and utility functions used in phylogenetic analysis.
 
 ## What does it do?
+These tests ensure that the core data handling and manipulation functions of Cassiopeia work correctly. They verify:
 
-The tests in this directory are designed to verify that the Cassiopeia library's data handling and tree manipulation features work correctly. They simulate various scenarios and use cases to ensure that the library can accurately construct and manipulate phylogenetic trees, handle character matrices, and compute dissimilarity maps. The tests also validate utility functions for operations like bootstrapping character matrices, converting trees to Newick format, and calculating phylogenetic weight matrices. By running these tests, developers can ensure that changes to the codebase do not introduce regressions or errors in the core functionality.
+1. Character matrix operations: Creating, modifying, and analyzing matrices that represent genetic or cellular states.
+2. Tree topology handling: Converting trees to Newick format, reconstructing trees from character matrices, and manipulating tree structures.
+3. Bootstrapping: Sampling techniques for character matrices and allele tables to assess statistical confidence.
+4. Phylogenetic calculations: Computing least common ancestor characters, phylogenetic weight matrices, and inter-cluster distances.
+5. Layer operations: Adding and managing different layers of data in the phylogenetic analysis.
 
-## Entry points
-
-The directory contains multiple test files, each focusing on different aspects of the Cassiopeia library:
-
-- `cassiopeia_tree_test.py`: Tests the `CassiopeiaTree` class, focusing on tree construction, manipulation, and analysis.
-- `data_utilities_test.py`: Tests utility functions related to character matrices, allele tables, and phylogenetic trees.
-- `layers_test.py`: Tests the `Layers` class within the `CassiopeiaTree` data structure, focusing on the integrity and manipulation of character matrices.
+These tests help maintain the reliability and accuracy of the Cassiopeia framework, ensuring that researchers can trust the results of their lineage tracing and phylogenetic analyses.
 
 ## Key Files
 
-- **`cassiopeia_tree_test.py`**: Contains tests for the `CassiopeiaTree` class, ensuring it can handle tree construction from Newick strings, manage character matrices, and compute dissimilarity maps.
-- **`data_utilities_test.py`**: Validates utility functions for data manipulation, including bootstrapping character matrices, converting trees to Newick format, and computing phylogenetic weight matrices.
-- **`layers_test.py`**: Tests the `Layers` class, focusing on adding, modifying, and using layers to reconstruct phylogenetic trees.
+1. cassiopeia_tree_test.py
+   - Tests the CassiopeiaTree class, which is likely the core data structure for representing phylogenetic trees in the framework.
+   - Covers operations like bootstrapping character matrices and allele tables, converting trees to Newick format, and calculating phylogenetic weights.
+
+2. data_utilities_test.py
+   - Tests various utility functions in the data module, including character matrix operations, bootstrap sampling, and dissimilarity map computations.
+   - Ensures the correct functioning of helper functions that support the main phylogenetic analysis tasks.
+
+3. layers_test.py
+   - Tests the Layers class, which appears to handle multiple layers of character matrices or other data associated with phylogenetic trees.
+   - Verifies operations like adding new layers, reconstructing trees with different layers, and handling various types of character matrices.
 
 ## Dependencies
+The test files rely on several external libraries and modules:
 
-The test suite relies on several external libraries:
+- unittest: The standard Python testing framework.
+- networkx: Used for graph operations and tree topology manipulation.
+- numpy and pandas: For data manipulation and analysis.
+- ete3: A Python framework for phylogenetic tree manipulation.
+- cassiopeia: The main package being tested, including its various modules like data, mixins, and preprocess.
 
-- **`unittest`**: Provides the framework for writing and running tests.
-- **`networkx`**: Used for creating and manipulating graph structures, particularly for representing phylogenetic trees.
-- **`numpy`**: Supports numerical operations and array handling.
-- **`pandas`**: Used for handling character matrices and data frames.
-- **`cassiopeia`**: The main library being tested, providing classes and utilities for phylogenetic analysis.
+## Configuration
+The tests use sample data and configurations set up within each test class. For example:
 
-These dependencies are chosen for their robust support for scientific computing and data manipulation, which are essential for the tasks performed by the Cassiopeia library.
+```python
+def setUp(self):
+    self.character_matrix = pd.DataFrame({
+        "r1": ["0", "1", "0"],
+        "r2": ["1", "0", "1"]
+    }, index=["cell1", "cell2", "cell3"])
+
+    self.tree = nx.DiGraph()
+    self.tree.add_edges_from([("root", "cell1"), ("root", "cell2"), ("root", "cell3")])
+
+    self.ctree = CassiopeiaTree(character_matrix=self.character_matrix, tree=self.tree)
+```
+
+This setup creates a basic character matrix and tree topology used across multiple test cases in the `TestLayers` class.
+
+The tests cover a wide range of scenarios and edge cases, ensuring robust functionality of the Cassiopeia framework. They include checks for error handling, such as raising appropriate exceptions when invalid inputs are provided:
+
+```python
+def test_add_layer_with_incorrect_number_of_cells(self):
+    modified_cm = self.character_matrix.copy()
+    modified_cm.loc["cell4"] = ["0", "1"]
+    with self.assertRaises(ValueError):
+        self.ctree.add_layer(modified_cm, "test_layer")
+```
+
+Overall, these tests play a crucial role in maintaining the reliability and accuracy of the Cassiopeia framework for phylogenetic analysis and lineage tracing.

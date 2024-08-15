@@ -2,61 +2,164 @@
 title: "spatial_leaf_subsampler_test.py"
 ---
 
-## High-level description
+```diff
+--- a/test/simulator_tests/spatial_leaf_subsampler_test.py
++++ b/test/simulator_tests/spatial_leaf_subsampler_test.py
+@@ -22,10 +22,10 @@
+         )
+         tree = CassiopeiaTree(tree=balanced_tree)
+         self.tree = tree.copy()
+-        tree.set_attribute("node3", "spatial", (2,5,5))
+-        tree.set_attribute("node4", "spatial", (2.5,5,5))
+-        tree.set_attribute("node5", "spatial", (3,5,5))
+-        tree.set_attribute("node6", "spatial", (8,5,5))
++        tree.set_attribute("node3", "spatial", (2, 5, 5))
++        tree.set_attribute("node4", "spatial", (2.5, 5, 5))
++        tree.set_attribute("node5", "spatial", (3, 5, 5))
++        tree.set_attribute("node6", "spatial", (8, 5, 5))
+         #3D tree
+         self.tree_3d = tree.copy()
+         #2D tree
+@@ -34,14 +34,14 @@
+                 tree.get_attribute(node, "spatial")[:2])
+         self.tree_2d = tree
+         #3D regions
+-        self.bounding_box_3d = [(0,5),(0,10),(0,10)]
+-        self.space_3d = np.zeros((10,10,10))
+-        self.space_3d[0:5,:,:] = 1
++        self.bounding_box_3d = [(0, 5), (0, 10), (0, 10)]
++        self.space_3d = np.zeros((10, 10, 10))
++        self.space_3d[0:5, :, :] = 1
+         self.space_3d = self.space_3d.astype(bool)
+         #2D regions
+-        self.bounding_box_2d = [(0,5),(0,10)]
+-        self.space_2d = np.zeros((10,10))
+-        self.space_2d[0:5,:] = 1
++        self.bounding_box_2d = [(0, 5), (0, 10)]
++        self.space_2d = np.zeros((10, 10))
++        self.space_2d[0:5, :] = 1
+         self.space_2d = self.space_2d.astype(bool)
+ 
+     def test_bad_init_parameters(self):
+@@ -55,18 +55,18 @@
+             sampler = SpatialLeafSubsampler()
+         # both space and bounding_box provided
+         with self.assertRaises(LeafSubsamplerError):
+-            sampler = SpatialLeafSubsampler(space=self.space_2d, 
+-                bounding_box=self.bounding_box_2d)
++            sampler = SpatialLeafSubsampler(space=self.space_2d,
++                                            bounding_box=self.bounding_box_2d)
+         # negative number of leaves
+         with self.assertRaises(LeafSubsamplerError):
+-            sampler = SpatialLeafSubsampler(number_of_leaves=-1, 
+-                space=self.space_2d)
++            sampler = SpatialLeafSubsampler(number_of_leaves=-1,
++                                            space=self.space_2d)
+         # ratio &gt; 1
+         with self.assertRaises(LeafSubsamplerError):
+             sampler = SpatialLeafSubsampler(ratio=2, space=self.space_2d)
+         # merge cells without space
+         with self.assertRaises(LeafSubsamplerError):
+-            sampler = SpatialLeafSubsampler(bounding_box=self.bounding_box_3d,
+-                        merge_cells=True)
+-        
++            sampler = SpatialLeafSubsampler(
++                bounding_box=self.bounding_box_3d, merge_cells=True)
++
+     def test_bad_subsample_parameters(self):
+         # tree without spatial attributes
+         with self.assertRaises(LeafSubsamplerError):
+@@ -84,7 +84,7 @@
+         # leaf coordinates outside space
+         with self.assertRaises(LeafSubsamplerError):
+             tree = self.tree_2d.copy()
+-            tree.set_attribute("node3", "spatial", (100,10))
++            tree.set_attribute("node3", "spatial", (100, 10))
+             sampler = SpatialLeafSubsampler(space=self.space_2d)
+             sampler.subsample_leaves(tree)
+         # no leaves in region
+@@ -93,8 +93,8 @@
+             sampler.subsample_leaves(self.tree_2d)
+         # test number_of_leaves too large
+         with self.assertRaises(LeafSubsamplerError):
+-            sampler = SpatialLeafSubsampler(number_of_leaves=100, 
+-                space=self.space_3d)
++            sampler = SpatialLeafSubsampler(
++                number_of_leaves=100, space=self.space_3d)
+             sampler.subsample_leaves(self.tree_3d)
+ 
+     def test_bad_scale(self):
+@@ -105,8 +105,8 @@
+             dict([(i, "node" + str(i)) for i in balanced_tree.nodes]),
+         )
+         tree = CassiopeiaTree(tree=balanced_tree)
+-        tree.set_attribute("node1", "spatial", (.001,0))
+-        tree.set_attribute("node2", "spatial", (0,.001))
++        tree.set_attribute("node1", "spatial", (.001, 0))
++        tree.set_attribute("node2", "spatial", (0, .001))
+         sampler = SpatialLeafSubsampler(space=self.space_2d)
+         with self.assertWarns(LeafSubsamplerWarning):
+             res = sampler.subsample_leaves(tree)
+@@ -171,7 +171,7 @@
+         tree.set_attribute("node6", "spatial", (8,5,5))
+         sampler = SpatialLeafSubsampler(bounding_box=self.bounding_box_3d)
+         # test keep_singular_root_edge=True
+-        res = sampler.subsample_leaves(tree,keep_singular_root_edge=True)
++        res = sampler.subsample_leaves(tree, keep_singular_root_edge=True)
+         expected_edges = [
+             ("root", "node0"),
+             ("node0", "node1"),
+@@ -181,7 +181,7 @@
+         ]
+         self.assertEqual(set(res.edges), set(expected_edges))
+         # test keep_singular_root_edge=False
+-        res = sampler.subsample_leaves(tree,keep_singular_root_edge=False)
++        res = sampler.subsample_leaves(tree, keep_singular_root_edge=False)
+         expected_edges = [
+             ("root", "node1"),
+             ("root", "node5"),
+@@ -211,7 +211,7 @@
+ 
+     def test_merge_cells(self):
+         # no character matrix
+-        sampler = SpatialLeafSubsampler(space=self.space_3d,merge_cells=True)
++        sampler = SpatialLeafSubsampler(space=self.space_3d, merge_cells=True)
+         res = sampler.subsample_leaves(self.tree_3d)
+         expected_edges = [
+             ("node0", "node3-node4"),
+@@ -223,20 +223,20 @@
+         # with character matrix
+         tree = self.tree_3d.copy()
+         character_matrix = pd.DataFrame(
+-            data = np.array([[0,1,],[1,1],[1,1],[2,2]]),
+-            index = ["node3","node4","node5","node6"],
++            data=np.array([[0, 1, ], [1, 1], [1, 1], [2, 2]]),
++            index=["node3", "node4", "node5", "node6"],
+         )
+         tree.character_matrix = character_matrix
+         tree.set_character_states_at_leaves(character_matrix)
+         res = sampler.subsample_leaves(tree)
+-        self.assertEqual(res.get_attribute("node3-node4","character_states"),
+-                         [(0, 1), (1,)])
+-        self.assertEqual(res.get_attribute("node5","character_states"),
+-                         [(1),(1)])
++        self.assertEqual(res.get_attribute(
++            "node3-node4", "character_states"), [(0, 1), (1,)])
++        self.assertEqual(res.get_attribute(
++            "node5", "character_states"), [(1), (1)])
+         # without collapsing duplicates
+-        res = sampler.subsample_leaves(tree,collapse_duplicates=False)
+-        self.assertEqual(res.get_attribute("node3-node4","character_states"),
+-                            [(0, 1), (1, 1)])
+-        self.assertEqual(res.get_attribute("node5","character_states"),
+-                            [(1), (1)])
++        res = sampler.subsample_leaves(tree, collapse_duplicates=False)
++        self.assertEqual(res.get_attribute(
++            "node3-node4", "character_states"), [(0, 1), (1, 1)])
++        self.assertEqual(res.get_attribute(
++            "node5", "character_states"), [(1), (1)])
+ 
+ if __name__ == "__main__":
+     unittest.main()
 
-The target file `spatial_leaf_subsampler_test.py` is a unit test suite for the `SpatialLeafSubsampler` class from the `cassiopeia.simulator` module. This test suite is designed to verify the functionality of the `SpatialLeafSubsampler`, which is responsible for subsampling leaves from a `CassiopeiaTree` based on spatial attributes. The tests cover various scenarios, including initialization with invalid parameters, subsampling with different spatial configurations, and handling of edge cases like merging cells and maintaining tree structure.
-
-## Code Structure
-
-The main class in this file is `SpatialLeafSubsamplerTest`, which is a subclass of `unittest.TestCase`. This class contains several test methods that each test a specific aspect of the `SpatialLeafSubsampler` class. The tests are organized to check for invalid initialization parameters, invalid subsampling parameters, correct subsampling behavior in both 2D and 3D spaces, and specific features like merging cells and keeping singular root edges.
-
-## References
-
-- `CassiopeiaTree`: Used to create tree structures for testing.
-- `LeafSubsamplerError` and `LeafSubsamplerWarning`: Used to handle exceptions and warnings during testing.
-- `SpatialLeafSubsampler`: The class being tested.
-
-## Symbols
-
-### `SpatialLeafSubsamplerTest`
-#### Description
-This class contains unit tests for the `SpatialLeafSubsampler` class. It sets up test trees with spatial attributes and verifies the behavior of the subsampler under various conditions.
-
-#### Inputs
-- None directly, but uses trees and spatial configurations set up in the `setUp` method.
-
-#### Outputs
-- None directly, but asserts conditions to verify correct behavior.
-
-#### Internal Logic
-- **`setUp` Method**: Initializes test data, including balanced trees with spatial attributes in both 2D and 3D configurations. It also sets up bounding boxes and space masks for testing.
-- **`test_bad_init_parameters` Method**: Tests invalid initialization scenarios for `SpatialLeafSubsampler`, such as providing both `ratio` and `number_of_leaves`, or neither `space` nor `bounding_box`.
-- **`test_bad_subsample_parameters` Method**: Tests invalid subsampling scenarios, such as trees without spatial attributes or incompatible space dimensions.
-- **`test_bad_scale` Method**: Tests the handling of small-scale spatial attributes, expecting a warning.
-- **`test_subsample_3d_tree` Method**: Tests subsampling in a 3D tree using both bounding box and space mask.
-- **`test_subsample_2d_tree` Method**: Tests subsampling in a 2D tree using both bounding box and space mask.
-- **`test_keep_singular_root_edge` Method**: Tests the option to keep or collapse a singular root edge in the subsampled tree.
-- **`test_subsample_with_ratio` Method**: Tests subsampling using a specified ratio of leaves.
-- **`test_subsample_with_number` Method**: Tests subsampling using a specified number of leaves.
-- **`test_merge_cells` Method**: Tests the merging of cells within the same spatial pixel, both with and without a character matrix.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `networkx` | Used to create and manipulate graph structures for trees. |
-| `numpy` | Used for numerical operations and array manipulations. |
-| `pandas` | Used for handling data in DataFrame format. |
-
-## Error Handling
-
-The test suite uses `LeafSubsamplerError` to verify that the `SpatialLeafSubsampler` raises appropriate exceptions when initialized or used with invalid parameters. It also uses `LeafSubsamplerWarning` to check for warnings in specific scenarios, such as when spatial attributes are on a small scale.
-
-## Logging
-
-No explicit logging is implemented in this test suite. The focus is on using assertions to verify expected behavior and exceptions.
-
-## TODOs
-
-No TODOs are present in the code.
+```

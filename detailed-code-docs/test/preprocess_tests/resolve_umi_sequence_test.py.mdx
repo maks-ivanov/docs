@@ -2,54 +2,69 @@
 title: "resolve_umi_sequence_test.py"
 ---
 
-## High-level description
+Here's a detailed documentation of the target file `test/preprocess_tests/resolve_umi_sequence_test.py`:
 
-The target file `resolve_umi_sequence_test.py` contains unit tests for the UMI (Unique Molecular Identifier) resolution functionality in the `pipeline.py` module of the Cassiopeia preprocessing pipeline. The tests are designed to verify the correct behavior of the `resolve_umi_sequence` function, ensuring that UMIs are resolved and filtered correctly based on specified criteria such as minimum UMIs per cell and average reads per UMI.
+## High-level description
+This file contains unit tests for the UMI Resolution module in the Cassiopeia preprocessing pipeline. It tests the functionality of resolving UMI sequences and filtering cells based on UMI and read count thresholds.
 
 ## Code Structure
-
-The main class in this file is `TestResolveUMISequence`, which is a subclass of `unittest.TestCase`. It contains setup and teardown methods for preparing test data and cleaning up after tests, as well as two test methods: `test_resolve_umi` and `test_filter_by_reads`. These methods test different aspects of the UMI resolution process.
+The main class `TestResolveUMISequence` inherits from `unittest.TestCase` and contains several test methods. It uses a sample collapsed UMI table to test the `resolve_umi_sequence` function from the `pipeline` module.
 
 ## Symbols
 
 ### `TestResolveUMISequence`
 #### Description
-This class contains unit tests for the `resolve_umi_sequence` function in the `pipeline.py` module. It uses the `unittest` framework to define test cases that verify the correct resolution and filtering of UMIs.
-
-#### Inputs
-- None directly, but it uses a predefined DataFrame `collapsed_umi_table` as input for the tests.
-
-#### Outputs
-- None directly, but it asserts conditions on the output of the `resolve_umi_sequence` function.
+A test case class that contains methods to test the UMI resolution functionality.
 
 #### Internal Logic
-- **setUp**: Initializes a DataFrame `collapsed_umi_table` with test data representing UMIs, read counts, and sequences. It also creates a temporary directory for storing intermediate results.
-- **test_resolve_umi**: Calls `resolve_umi_sequence` with the test data and checks:
-  - That the correct sequence is selected for a specific UMI.
-  - That cells with insufficient UMIs are filtered out.
-  - That the total read counts for remaining cells match expected values.
-- **test_filter_by_reads**: Tests the filtering of cells based on average reads per UMI, ensuring that only cells meeting the criteria are retained.
-- **tearDown**: Cleans up by removing the temporary directory created during setup.
+1. Sets up a sample collapsed UMI table in the `setUp` method.
+2. Contains test methods to verify different aspects of UMI resolution.
 
-## References
+### `setUp`
+#### Description
+Initializes the test environment by creating a sample collapsed UMI table and setting up a temporary directory.
 
-- `pipeline.resolve_umi_sequence`: The function being tested, which is responsible for resolving UMIs and filtering them based on specified criteria.
+### `test_resolve_umi`
+#### Description
+Tests the basic functionality of the `resolve_umi_sequence` function.
+
+#### Internal Logic
+1. Calls `resolve_umi_sequence` with the sample data.
+2. Checks if the correct sequence was selected for cell1-UMIA.
+3. Verifies that cell2 was filtered out.
+4. Ensures cell3 retained both UMIs.
+5. Checks the expected read counts for each cell.
+
+### `test_filter_by_reads`
+#### Description
+Tests the filtering of cells based on the average number of reads per UMI.
+
+#### Internal Logic
+1. Calls `resolve_umi_sequence` with a higher `min_avg_reads_per_umi` threshold.
+2. Verifies that only the expected cells (cell3) remain after filtering.
+3. Checks that the expected removed cells (cell1, cell2) are not in the result.
+
+### `tearDown`
+#### Description
+Cleans up the temporary directory after each test.
 
 ## Dependencies
+- `unittest`: Python's built-in unit testing framework
+- `os`: For file path operations
+- `shutil`: For directory removal
+- `tempfile`: For creating temporary directories
+- `pandas`: For data manipulation
+- `cassiopeia.preprocess.pipeline`: The module being tested
 
-- `unittest`: Used for creating and running the test cases.
-- `pandas`: Used for creating and manipulating the DataFrame containing test data.
-- `tempfile` and `shutil`: Used for creating and cleaning up temporary directories.
-- `cassiopeia.preprocess.pipeline`: The module containing the `resolve_umi_sequence` function being tested.
+## Configuration
+The tests use a predefined collapsed UMI table and various parameters for the `resolve_umi_sequence` function.
 
 ## Error Handling
+The tests use assertions to verify the expected outcomes. If any assertion fails, the test will raise an `AssertionError`.
 
-The test cases use assertions to check the correctness of the `resolve_umi_sequence` function. If any assertion fails, it indicates a problem with the function's logic or behavior.
+## Notes
+- The tests use a small, predefined dataset to verify the functionality of the UMI resolution process.
+- The `plot` parameter is set to `False` in `test_resolve_umi` and `True` in `test_filter_by_reads`, demonstrating testing with and without plot generation.
+- The temporary directory is used to store any output files generated during the tests and is cleaned up after each test.
 
-## Logging
-
-No explicit logging is implemented in the test file, but the `pipeline.py` module may contain logging that could be triggered during the tests.
-
-## TODOs
-
-No TODOs are present in the code.
+This test file ensures that the UMI resolution functionality in the Cassiopeia preprocessing pipeline works as expected, particularly in handling different cell and UMI filtering scenarios.

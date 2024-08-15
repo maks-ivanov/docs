@@ -3,117 +3,112 @@ title: "parameter_estimators.py"
 ---
 
 ## High-level description
+This file provides functions for estimating parameters related to lineage tracing, specifically the mutation rate and missing data rates. These functions are used to infer the underlying biological processes from observed data in a CassiopeiaTree.
 
-The `parameter_estimators.py` file provides functions to estimate lineage tracing parameters, specifically mutation rates and missing data rates, from a given phylogenetic tree and its associated character matrix. These estimations are crucial for understanding the dynamics of lineage tracing experiments, where mutations and missing data can significantly impact the interpretation of evolutionary histories.
-
-## Code Structure
-
-The main symbols in the code are functions that operate on a `CassiopeiaTree` object. These functions are interconnected as they rely on the tree's character matrix and parameters to compute the desired estimates. The functions include `get_proportion_of_missing_data`, `get_proportion_of_mutation`, `estimate_mutation_rate`, and `estimate_missing_data_rates`. Each function performs specific calculations related to the estimation of mutation and missing data rates.
+## References
+This code references the `CassiopeiaTree` class from `cassiopeia.data.CassiopeiaTree` and the `ParameterEstimateError` and `ParameterEstimateWarning` exceptions from `cassiopeia.mixins`.
 
 ## Symbols
 
 ### `get_proportion_of_missing_data`
 #### Description
-Calculates the proportion of missing entries in the character matrix of a `CassiopeiaTree`. Missing entries are identified using a specific indicator.
+Calculates the proportion of missing entries in the character matrix of a CassiopeiaTree. The missing state is indicated by the `tree.missing_state_indicator` attribute.
 
 #### Inputs
-| Name  | Type              | Description                                                                 |
-|:------|:------------------|:----------------------------------------------------------------------------|
-| tree  | CassiopeiaTree    | The tree containing the character matrix.                                   |
-| layer | Optional[str]     | The specific layer of the character matrix to use, if applicable.           |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The CassiopeiaTree object containing the character matrix. |
+| layer | str, optional | The name of the layer in the `tree.layers` dictionary to use for the character matrix. If None, the default `character_matrix` is used. |
 
 #### Outputs
-| Name               | Type  | Description                                      |
-|:-------------------|:------|:-------------------------------------------------|
-| missing_proportion | float | The proportion of missing entries in the matrix. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| missing_proportion | float | The proportion of missing cell/character entries in the character matrix. |
 
 #### Internal Logic
-- Retrieves the character matrix from the specified layer or the default.
-- Counts the number of missing entries using the `missing_state_indicator`.
-- Computes the proportion of missing entries relative to the total number of entries.
+The function counts the number of entries in the character matrix that are equal to the `missing_state_indicator`. This count is then divided by the total number of entries in the matrix to calculate the proportion of missing data.
+
+#### Error Handling
+Raises a `ParameterEstimateError` if no character matrix is found in the tree.
 
 ### `get_proportion_of_mutation`
 #### Description
-Calculates the proportion of mutated entries in the character matrix, excluding missing entries.
+Calculates the proportion of mutated entries in the character matrix of a CassiopeiaTree, excluding missing entries.
 
 #### Inputs
-| Name  | Type              | Description                                                                 |
-|:------|:------------------|:----------------------------------------------------------------------------|
-| tree  | CassiopeiaTree    | The tree containing the character matrix.                                   |
-| layer | Optional[str]     | The specific layer of the character matrix to use, if applicable.           |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The CassiopeiaTree object containing the character matrix. |
+| layer | str, optional | The name of the layer in the `tree.layers` dictionary to use for the character matrix. If None, the default `character_matrix` is used. |
 
 #### Outputs
-| Name             | Type  | Description                                        |
-|:-----------------|:------|:---------------------------------------------------|
-| mutation_proportion | float | The proportion of mutated entries in the matrix. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mutation_proportion | float | The proportion of non-missing cell/character entries that are mutated. |
 
 #### Internal Logic
-- Retrieves the character matrix from the specified layer or the default.
-- Counts the number of non-zero, non-missing entries.
-- Computes the proportion of mutated entries relative to the total number of non-missing entries.
+The function first calculates the number of missing entries. Then, it counts the number of non-missing entries that are not equal to 0 (uncut state). This count is then divided by the total number of non-missing entries to calculate the proportion of mutated entries.
+
+#### Error Handling
+Raises a `ParameterEstimateError` if no character matrix is found in the tree.
 
 ### `estimate_mutation_rate`
 #### Description
-Estimates the mutation rate from a tree and its character matrix, considering either a continuous or per-generation model.
+Estimates the mutation rate from a CassiopeiaTree, considering either a continuous or per-generation model.
 
 #### Inputs
-| Name                        | Type              | Description                                                                 |
-|:----------------------------|:------------------|:----------------------------------------------------------------------------|
-| tree                        | CassiopeiaTree    | The tree containing the character matrix.                                   |
-| continuous                  | bool              | Whether to estimate a continuous mutation rate.                             |
-| assume_root_implicit_branch | bool              | Whether to assume an implicit branch from the root.                         |
-| layer                       | Optional[str]     | The specific layer of the character matrix to use, if applicable.           |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The CassiopeiaTree object containing the character matrix and tree topology. |
+| continuous | bool, optional | Whether to calculate a continuous mutation rate (accounting for branch lengths) or a discrete per-generation rate. Defaults to True. |
+| assume_root_implicit_branch | bool, optional | Whether to assume an implicit branch leading from the root if it doesn't exist. Defaults to True. |
+| layer | str, optional | The name of the layer in the `tree.layers` dictionary to use for the character matrix. If None, the default `character_matrix` is used. |
 
 #### Outputs
-| Name          | Type  | Description                        |
-|:--------------|:------|:-----------------------------------|
-| mutation_rate | float | The estimated mutation rate.       |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mutation_rate | float | The estimated mutation rate. |
 
 #### Internal Logic
-- Retrieves or calculates the proportion of mutated entries.
-- Depending on the `continuous` flag, uses different formulas to estimate the mutation rate.
-- Considers the average depth or time of the tree, adjusting for an implicit root branch if specified.
+The function first retrieves the proportion of mutated entries from the tree's parameters or calculates it using `get_proportion_of_mutation`. Then, it estimates the mutation rate based on the chosen model:
+
+* **Discrete (per-generation):** The rate is estimated using the formula: `mutation_rate = 1 - (1 - mutation_proportion) ^ (1 / mean_depth)`, where `mean_depth` is the average depth of the tree.
+* **Continuous:** The rate is estimated using the formula: `mutation_rate = -np.log(1 - mutation_proportion) / mean_time`, where `mean_time` is the average time of the tree.
+
+If `assume_root_implicit_branch` is True and the tree doesn't have a single leading edge from the root, an implicit branch is added to the calculation of `mean_depth` or `mean_time`.
+
+#### Error Handling
+Raises a `ParameterEstimateError` if the `mutation_proportion` parameter is not between 0 and 1.
 
 ### `estimate_missing_data_rates`
 #### Description
-Estimates both stochastic and heritable missing data rates from a tree, given one of the two rates.
+Estimates both the stochastic missing probability and the heritable missing rate from a CassiopeiaTree, given one of the two parameters.
 
 #### Inputs
-| Name                          | Type              | Description                                                                 |
-|:------------------------------|:------------------|:----------------------------------------------------------------------------|
-| tree                          | CassiopeiaTree    | The tree containing the character matrix.                                   |
-| continuous                    | bool              | Whether to estimate a continuous missing rate.                              |
-| assume_root_implicit_branch   | bool              | Whether to assume an implicit branch from the root.                         |
-| stochastic_missing_probability| Optional[float]   | The stochastic missing probability, if known.                               |
-| heritable_missing_rate        | Optional[float]   | The heritable missing rate, if known.                                       |
-| layer                         | Optional[str]     | The specific layer of the character matrix to use, if applicable.           |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | CassiopeiaTree | The CassiopeiaTree object containing the character matrix and tree topology. |
+| continuous | bool, optional | Whether to calculate a continuous missing rate (accounting for branch lengths) or a discrete per-generation rate. Defaults to True. |
+| assume_root_implicit_branch | bool, optional | Whether to assume an implicit branch leading from the root if it doesn't exist. Defaults to True. |
+| stochastic_missing_probability | float, optional | The stochastic missing probability. If provided, overrides the value on the tree. |
+| heritable_missing_rate | float, optional | The heritable missing rate. If provided, overrides the value on the tree. |
+| layer | str, optional | The name of the layer in the `tree.layers` dictionary to use for the character matrix. If None, the default `character_matrix` is used. |
 
 #### Outputs
-| Name                          | Type    | Description                                                                 |
-|:------------------------------|:--------|:----------------------------------------------------------------------------|
-| stochastic_missing_probability| float   | The estimated stochastic missing probability.                                |
-| heritable_missing_rate        | float   | The estimated heritable missing rate.                                        |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stochastic_missing_probability | float | The stochastic missing probability. |
+| heritable_missing_rate | float | The heritable missing rate. |
 
 #### Internal Logic
-- Retrieves or calculates the total proportion of missing data.
-- Depending on the provided or inferred rates, estimates the other rate using specific formulas.
-- Considers the average depth or time of the tree, adjusting for an implicit root branch if specified.
+The function first retrieves the total missing proportion from the tree's parameters or calculates it using `get_proportion_of_missing_data`. It then checks if either the stochastic missing probability or the heritable missing rate is provided as an argument or stored in the tree's parameters. If both or neither are provided, it raises a `ParameterEstimateError`.
 
-## References
+If only one of the parameters is provided, the function estimates the other parameter based on the chosen model (continuous or discrete) and the formula: `total_missing_proportion = heritable_proportion + stochastic_proportion - heritable_proportion * stochastic_proportion`.
 
-- `CassiopeiaTree`: The main data structure used for storing the tree and character matrix.
-- `ParameterEstimateError` and `ParameterEstimateWarning`: Custom exceptions and warnings used for error handling.
+The heritable proportion is calculated using either the average depth or average time of the tree, depending on the chosen model and whether to assume an implicit root branch.
 
-## Dependencies
-
-| Dependency | Purpose                                      |
-|:-----------|:---------------------------------------------|
-| numpy      | Used for numerical operations and calculations. |
-
-## Error Handling
-
-The code uses custom exceptions (`ParameterEstimateError`) to handle errors related to invalid parameters or missing data. Warnings (`ParameterEstimateWarning`) are used to notify about potential issues with estimated parameters.
-
-## TODOs
-
-No TODOs are present in the target file.
+#### Error Handling
+* Raises a `ParameterEstimateError` if:
+    * The `total_missing_proportion`, `stochastic_missing_probability`, or `heritable_missing_rate` have invalid values (e.g., outside the range of 0 to 1).
+    * Both or neither of `stochastic_missing_probability` and `heritable_missing_rate` are provided.
+* Raises a `ParameterEstimateWarning` if the estimated parameter is negative, indicating a potential issue with the provided parameter.

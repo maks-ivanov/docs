@@ -2,66 +2,64 @@
 title: "convert_fastqs_to_unmapped_bam_test.py"
 ---
 
-## High-level description
+Here's a detailed documentation of the target file `test/preprocess_tests/convert_fastqs_to_unmapped_bam_test.py`:
 
-The target file, `convert_fastqs_to_unmapped_bam_test.py`, is a unit test script designed to verify the functionality of converting FASTQ files to an unmapped BAM format using different sequencing chemistries. It leverages the `unittest` framework to define and execute tests that ensure the conversion process, implemented in the `pipeline.py` module, correctly handles various input formats and produces the expected BAM outputs.
+## High-level description
+This file contains unit tests for the `convert_fastqs_to_unmapped_bam` function in the `cassiopeia.preprocess.pipeline` module. The tests verify the correct conversion of FASTQ files to unmapped BAM files for different sequencing chemistries.
 
 ## Code Structure
-
-The main class in this file is `TestConvertFastqsToUnmappedBam`, which inherits from `unittest.TestCase`. This class contains several test methods, each corresponding to a different sequencing chemistry. The tests utilize the `convert_fastqs_to_unmapped_bam` function from the `pipeline` module to perform the conversion and then validate the results using assertions.
+The main class `TestConvertFastqsToUnmappedBam` contains several test methods, each testing a different sequencing chemistry. The tests use sample FASTQ files and verify the correct conversion to BAM format, including proper tag assignments.
 
 ## Symbols
 
-### `TestConvertFastqsToUnmappedBam`
+### TestConvertFastqsToUnmappedBam
 #### Description
-This class is a test suite for verifying the conversion of FASTQ files to unmapped BAM files using different sequencing chemistries. It sets up test data and defines test cases for each supported chemistry.
-
-#### Inputs
-- None directly, but it uses file paths to test FASTQ files set up in the `setUp` method.
-
-#### Outputs
-- None directly, but it asserts the correctness of the BAM file conversion.
+A unittest.TestCase subclass that contains test methods for the `convert_fastqs_to_unmapped_bam` function.
 
 #### Internal Logic
-- **setUp**: Initializes file paths for test FASTQ files for different sequencing chemistries.
-- **test_dropseq**: Tests the conversion for the "dropseq" chemistry using 10xv3 FASTQ files.
-- **test_10xv2**: Tests the conversion for the "10xv2" chemistry using 10xv3 FASTQ files.
-- **test_10xv3**: Tests the conversion for the "10xv3" chemistry using 10xv3 FASTQ files.
-- **test_indropsv3**: Tests the conversion for the "indropsv3" chemistry using indropsv3 FASTQ files.
-- **test_slideseq2**: Tests the conversion for the "slideseq2" chemistry using slideseq2 FASTQ files.
+- Sets up test FASTQ file paths in the `setUp` method
+- Implements test methods for different sequencing chemistries (dropseq, 10xv2, 10xv3, indropsv3, slideseq2)
+- Each test method:
+  1. Calls `convert_fastqs_to_unmapped_bam` with appropriate parameters
+  2. Reads the resulting BAM file
+  3. Verifies the correct number of alignments, query names, sequences, and qualities
+  4. Checks the correct assignment of BAM tags (UR, UY, CR, CY, RG)
 
-Each test method:
-1. Calls `convert_fastqs_to_unmapped_bam` with appropriate parameters.
-2. Opens the resulting BAM file using `pysam.AlignmentFile`.
-3. Fetches alignments and performs assertions to verify:
-   - The number of alignments.
-   - The query names of the alignments.
-   - The sequences and qualities match those in the input FASTQ files.
-   - The presence and correctness of specific BAM tags.
+### setUp
+#### Description
+Initializes the test environment by setting up file paths for test FASTQ files.
 
-## References
+### test_dropseq
+#### Description
+Tests the conversion of FASTQ files to BAM for the Drop-seq chemistry.
 
-- `pipeline.convert_fastqs_to_unmapped_bam`: The function being tested, which performs the conversion from FASTQ to BAM.
-- `pysam.AlignmentFile`: Used to read the BAM files and verify their contents.
-- `ngs.fastq.Fastq`: Used to read sequences and qualities from the FASTQ files for comparison.
+### test_10xv2
+#### Description
+Tests the conversion of FASTQ files to BAM for the 10x Genomics v2 chemistry.
+
+### test_10xv3
+#### Description
+Tests the conversion of FASTQ files to BAM for the 10x Genomics v3 chemistry.
+
+### test_indropsv3
+#### Description
+Tests the conversion of FASTQ files to BAM for the inDrops v3 chemistry.
+
+### test_slideseq2
+#### Description
+Tests the conversion of FASTQ files to BAM for the Slide-seq v2 chemistry.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `pysam` | Used for reading BAM files. |
-| `ngs_tools` | Used for reading FASTQ files. |
-| `cassiopeia.preprocess.pipeline` | Contains the function under test. |
+| os | File path operations |
+| unittest | Unit testing framework |
+| tempfile | Creating temporary directories |
+| pysam | Reading and manipulating BAM files |
+| ngs_tools | FASTQ file handling |
+| cassiopeia.preprocess.pipeline | Module containing the function being tested |
 
 ## Error Handling
+The tests use assertions to verify the correctness of the BAM conversion. If any assertion fails, the test will raise an AssertionError, indicating a problem with the conversion process.
 
-The test methods rely on assertions to handle errors. If an assertion fails, it indicates a discrepancy between the expected and actual results, which is reported by the `unittest` framework.
-
-## Logging
-
-No explicit logging is implemented in this test file. The `unittest` framework handles output related to test execution and results.
-
-## TODOs
-
-There are no TODOs or notes left in the code.
+This test file is crucial for ensuring the correct functionality of the FASTQ to BAM conversion process in the Cassiopeia preprocessing pipeline, covering various sequencing chemistries and verifying the proper assignment of BAM tags.

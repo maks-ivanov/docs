@@ -3,84 +3,58 @@ title: "rank_sequences.py"
 ---
 
 ## High-level description
+This script performs fitness inference on sequences in a multiple sequence alignment (MSA) to rank them based on their inferred fitness. It uses a phylogenetic approach, reconstructing the ancestral relationships between sequences and estimating the fitness of each sequence based on its position in the tree. 
 
-The `rank_sequences.py` script is designed to perform fitness inference on sequences within a multiple sequence alignment. It processes the alignment data, identifies an outgroup, and applies a prediction algorithm to rank sequences based on inferred fitness. The results, including reconstructed trees and sequence rankings, are output to a directory named with the current date and time.
+The script takes an alignment file in FASTA format and the name of an outgroup sequence as input. It then infers the phylogenetic tree, estimates fitness values for each sequence (including ancestral sequences), and outputs the tree, ancestral sequences, and sequence rankings to files.
 
 ## Code Structure
-
-The script is structured to first parse command-line arguments, then read and process sequence alignment data, and finally perform fitness inference and output the results. The main components include argument parsing, file handling, sequence alignment processing, prediction algorithm execution, and result output.
+The code first parses command-line arguments, then reads the input alignment and identifies the outgroup sequence. It then sets up a `sequence_ranking` object from the `sequence_ranking.py` module (see References) and uses it to perform the fitness inference. Finally, it outputs the results to files and optionally plots the tree.
 
 ## References
-
-- `sequence_ranking`: This module is used to perform the prediction and ranking of sequences.
-- `tree_utils`: This module is used for plotting the prediction tree if the plot option is enabled.
+This script references the following code symbols:
+- `sequence_ranking` (from `sequence_ranking.py`): This class handles the core logic of sequence ranking based on phylogenetic analysis.
 
 ## Symbols
-
 ### `ofunc`
 #### Description
-A utility function to open files, choosing between gzip and regular open based on the file extension.
+This function determines the appropriate file opening method based on the file extension. If the filename ends with '.gz', it assumes a gzipped file and uses `gzip.open`. Otherwise, it uses the standard `open` function.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
 | fname | str | The name of the file to open. |
-| mode | str | The mode in which to open the file (e.g., 'r' for read). |
+| mode | str | The mode in which to open the file (e.g., 'r' for reading, 'w' for writing). |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| file object | file-like object | A file object opened in the specified mode. |
+| file object | file | A file object representing the opened file. |
+
+### `main execution block`
+#### Description
+This block of code executes the main logic of the script. It reads the alignment file, identifies the outgroup sequence, sets up the sequence data, performs the fitness inference, and outputs the results.
 
 #### Internal Logic
-- Checks if the file name ends with `.gz` to determine if it should use `gzip.open`.
-- Otherwise, uses the standard `open` function.
-
-### `alignment`
-#### Description
-This function (or class) is assumed to process the sequence alignment and prepare it for the prediction algorithm. It is not defined in the target file but is crucial for setting up the sequence data.
-
-### `sequence_ranking`
-#### Description
-This function (or class) is responsible for performing the fitness inference and ranking the sequences. It is not defined in the target file but is central to the script's functionality.
+1. **Read alignment and outgroup:** Reads the input alignment file in FASTA format and identifies the outgroup sequence.
+2. **Set up sequence data:** Creates a `sequence_ranking` object from the `alignment` module, providing it with the alignment and outgroup information.
+3. **Perform fitness inference:** Uses the `sequence_ranking` object to perform the fitness inference, including tree reconstruction and fitness estimation.
+4. **Output results:** Writes the reconstructed tree, inferred ancestral sequences, and sequence rankings to files.
+5. **Optional plotting:** If the `--plot` flag is set, plots the tree with fitness information.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `argparse` | For parsing command-line arguments. |
-| `matplotlib` | For plotting trees if the plot option is enabled. |
-| `numpy` | Likely used for numerical operations within the prediction algorithm. |
-| `Bio` (from Biopython) | For handling sequence alignments and phylogenetic trees. |
+| argparse | Parsing command-line arguments. |
+| matplotlib | Plotting the phylogenetic tree (optional). |
+| Bio | Handling biological sequence data and phylogenetic trees. |
+| tree_utils | Utility functions for working with phylogenetic trees. |
+| sequence_ranking | Custom module containing the `sequence_ranking` class for fitness inference. |
 
-## Configuration
-
-| Option | Type | Default | Description |
-|:-------|:-----|:--------|:------------|
-| `--aln` | str | None | Name of the alignment file in fasta format. |
-| `--outgroup` | str | None | Name of the outgroup sequence in the alignment file. |
-| `--eps_branch` | float | 1e-5 | Minimal branch length for inference. |
-| `--tau` | float | 0.0625 | Time scale for local tree length estimation. |
-| `--collapse` | bool | True | Collapse internal branches with identical sequences. |
-| `--plot` | bool | False | Plot trees if set. |
+### Configuration
+This script uses command-line arguments for configuration. See the "parse the command line arguments" section for details on each argument.
 
 ## Error Handling
-
-- The script checks if the outgroup is present in the alignment file and exits with a message if it is not found.
+The script checks if the specified outgroup sequence is present in the alignment. If not, it prints an error message and exits.
 
 ## Logging
-
-- The script prints a message indicating the time scale `tau` being used, which is a part of the configuration for the prediction algorithm.
-
-## Side Effects
-
-- The script creates a directory named with the current date and time to store output files.
-- It writes several output files, including reconstructed trees and sequence rankings, to this directory.
-
-## Performance Considerations
-
-- The script processes potentially large sequence alignments and performs computationally intensive predictions, which may impact performance depending on the size of the input data.
-
-## TODOs
-
-- There are no explicit TODOs or notes left in the code.
+The script prints the time scale (`tau`) used for local tree length estimation.

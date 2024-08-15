@@ -3,53 +3,63 @@ title: "Overview"
 ---
 
 ## High-level description
-
-The `test/tools_tests` directory is a comprehensive suite of unit tests designed to validate the functionality of various modules within the `cassiopeia.tools` package. These tests cover a wide range of functionalities, including autocorrelation, branch length estimation, evolutionary coupling, fitness estimation, parameter estimation, small parsimony, topology analysis, and tree metrics. Each test file is focused on a specific aspect of phylogenetic analysis, ensuring that the corresponding module functions correctly under various conditions and scenarios.
+This directory contains unit tests for various tools and algorithms implemented in the Cassiopeia library, focusing on phylogenetic analysis and lineage tracing. The tests cover a wide range of functionalities, including autocorrelation, branch length estimation, coupling, fitness estimation, parameter estimation, small parsimony, topology analysis, and tree metrics.
 
 ## What does it do?
+The tests in this directory serve to validate and ensure the correctness of the following key functionalities:
 
-The test suite in this directory ensures the robustness and accuracy of the `cassiopeia.tools` package by verifying that each module performs as expected. Here's a breakdown of the workflows and processes implemented in the tests:
+1. Autocorrelation: Tests for spatial autocorrelation calculations using Moran's I statistic.
+2. Branch length estimation: Validates Bayesian and Maximum Likelihood Estimation (MLE) methods for estimating branch lengths in phylogenetic trees.
+3. Coupling: Verifies the calculation of evolutionary coupling between different cell types or states.
+4. Fitness estimation: Tests the Local Branch Index (LBI) method for estimating fitness in phylogenetic trees.
+5. Parameter estimation: Validates functions that estimate mutation rates and missing data probabilities in lineage tracing data.
+6. Small parsimony: Tests algorithms for inferring ancestral states and calculating parsimony scores on phylogenetic trees.
+7. Topology analysis: Verifies functions related to tree topology, including cophenetic correlation calculations.
+8. Tree metrics: Tests various tree-based metrics, including parsimony scores, likelihood calculations, and parameter estimations for lineage tracing models.
 
-- **Autocorrelation Tests**: Validate the computation of Moran's I, a measure of spatial autocorrelation, using phylogenetic trees and associated data. The tests check the function's behavior with different variables, custom weight matrices, and error scenarios.
-
-- **Branch Length Estimator Tests**: Verify the accuracy of branch length estimators using Bayesian and maximum likelihood approaches. These tests ensure that the models compute likelihoods, posterior distributions, and branch lengths accurately.
-
-- **Coupling Tests**: Test the computation of evolutionary coupling statistics between different cell types in a phylogenetic tree. The tests cover default settings, custom dissimilarity maps, and minimum proportion thresholds.
-
-- **Fitness Estimator Tests**: Assess the functionality of the `LBIJungle` class, which estimates node fitness using the Local Branching Index method. The tests ensure logical fitness estimates and enforce constraints like leaf naming conventions.
-
-- **Parameter Estimator Tests**: Validate the estimation of mutation rates and missing data rates in phylogenetic trees. The tests cover both discrete and continuous models, ensuring the correctness of parameter estimation functions.
-
-- **Small Parsimony Tests**: Focus on verifying the correctness of small parsimony algorithms, including the Fitch-Hartigan algorithm for reconstructing ancestral states and scoring parsimony.
-
-- **Topology Tests**: Ensure the correct functionality of topology-related functions, such as calculating combinatorial choices, coalescent probabilities, expansion probabilities, and cophenetic correlations.
-
-- **Tree Metrics Tests**: Validate functions related to tree metrics, such as parsimony and likelihood calculations, using predefined tree structures and character matrices.
+These tests ensure that the core algorithms and functions in Cassiopeia perform correctly under various scenarios, including edge cases and simulated data.
 
 ## Entry points
+The main entry points for the tests are the individual test files, each focusing on a specific aspect of the Cassiopeia toolkit:
 
-The directory contains multiple test files, each serving as an entry point for testing specific functionalities:
+1. `autocorrelation_test.py`: Tests for spatial autocorrelation calculations.
+2. `branch_length_estimator_tests/`: Directory containing tests for branch length estimation methods.
+3. `coupling_test.py`: Tests for evolutionary coupling calculations.
+4. `fitness_estimator_tests/`: Directory containing tests for fitness estimation methods.
+5. `parameter_estimators_test.py`: Tests for parameter estimation functions.
+6. `small_parsimony_test.py`: Tests for small parsimony algorithms.
+7. `topology_test.py`: Tests for topology-related functions.
+8. `tree_metrics_test.py`: Tests for various tree-based metrics and calculations.
 
-1. **`autocorrelation_test.py`**: Tests the `compute_morans_i` function for spatial autocorrelation.
-2. **`branch_length_estimator_tests`**: Contains tests for branch length estimators using Bayesian and MLE approaches.
-3. **`coupling_test.py`**: Tests evolutionary coupling estimators.
-4. **`fitness_estimator_tests`**: Tests the `LBIJungle` class for fitness estimation.
-5. **`parameter_estimators_test.py`**: Tests parameter estimation methods for mutation and missing data rates.
-6. **`small_parsimony_test.py`**: Tests small parsimony algorithms.
-7. **`topology_test.py`**: Tests topology-related functions.
-8. **`tree_metrics_test.py`**: Tests tree metrics functions.
+Each of these files contains a set of unit tests that can be run independently or as part of a larger test suite.
+
+## Key Files
+1. `autocorrelation_test.py`: Tests the `compute_morans_i` function for calculating Moran's I statistic.
+2. `branch_length_estimator_tests/`:
+   - `iid_exponential_bayesian_test.py`: Tests the `IIDExponentialBayesian` estimator.
+   - `iid_exponential_mle_test.py`: Tests the `IIDExponentialMLE` estimator.
+3. `coupling_test.py`: Tests the `compute_evolutionary_coupling` function.
+4. `fitness_estimator_tests/lbi_jungle_test.py`: Tests the Local Branch Index (LBI) fitness estimator.
+5. `parameter_estimators_test.py`: Tests functions for estimating mutation rates and missing data probabilities.
+6. `small_parsimony_test.py`: Tests Fitch-Hartigan algorithm and related parsimony functions.
+7. `topology_test.py`: Tests topology-related functions, including cophenetic correlation calculations.
+8. `tree_metrics_test.py`: Tests various tree-based metrics and likelihood calculations.
 
 ## Dependencies
+The tests rely on several external libraries and frameworks:
 
-The test suites rely on several external libraries to perform their functions:
+1. `unittest`: The standard Python unit testing framework.
+2. `parameterized`: Used for creating parameterized tests.
+3. `numpy`: Used for numerical operations and array manipulations.
+4. `scipy`: Used for various scientific computing tasks, including numerical integration.
+5. `networkx`: Used for working with graph structures, particularly in creating and manipulating tree topologies.
+6. `pandas`: Used for data manipulation and analysis.
+7. `cvxpy`: Used in optimization problems, particularly in the MLE branch length estimator.
 
-- **`unittest`**: Provides the framework for defining and running the tests.
-- **`networkx`**: Used for creating and manipulating tree structures as directed graphs.
-- **`numpy`**: Facilitates numerical computations and operations within the tests.
-- **`pandas`**: Used for data manipulation and storage, particularly for character matrices and metadata.
-- **`cassiopeia`**: The main library being tested, specifically its `tools` and `data` modules.
-- **`scipy`**: Offers integration and special functions necessary for numerical approximations (used in branch length estimator tests).
-- **`pytest`**: Utilized for marking slow tests, enhancing test management (used in branch length estimator tests).
-- **`parameterized`**: Allows test methods to be run with different inputs, ensuring comprehensive coverage of the estimators' behavior (used in branch length estimator tests).
+From the Cassiopeia library:
+- Various modules and classes, including `CassiopeiaTree`, `IIDExponentialBayesian`, `IIDExponentialMLE`, `LBIJungle`, and others.
 
-These dependencies are chosen for their robust support of numerical and graph-based operations, which are essential for the accurate testing of phylogenetic models.
+## Configuration
+The tests do not rely on external configuration files or environment variables. Test parameters and configurations are set within the test methods themselves to create various scenarios and validate the behavior of the functions under different conditions.
+
+In summary, this directory contains a comprehensive set of unit tests that ensure the correctness and reliability of the core algorithms and functions in the Cassiopeia library for phylogenetic analysis and lineage tracing.

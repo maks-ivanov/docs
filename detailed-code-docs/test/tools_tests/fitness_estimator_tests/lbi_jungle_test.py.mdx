@@ -2,91 +2,38 @@
 title: "lbi_jungle_test.py"
 ---
 
-## High-level description
+```diff
+--- a/test/tools_tests/fitness_estimator_tests/lbi_jungle_test.py
++++ b/test/tools_tests/fitness_estimator_tests/lbi_jungle_test.py
+@@ -108,5 +108,29 @@
+         with self.assertRaises(FitnessEstimatorError):
+             fitness_estimator.estimate_fitness(tree)
+ 
++    def test_raises_error_if_internal_node_name_startswith_underscore(self):
++        """
++        Internal node names cannot start with an underscore.
++
++        (This is due to the underlying Jungle implementation we wrap.)
++        """
++        tree = nx.DiGraph()
++        nodes = [
++            "root",
++            "_internal",
++            "leaf",
++        ]
++        tree.add_nodes_from(nodes)
++        tree.add_edges_from(
++            [
++                ("root", "_internal"),
++                ("_internal", "leaf"),
++            ]
++        )
++        tree = CassiopeiaTree(tree=tree)
++        fitness_estimator = LBIJungle()
++        with self.assertRaises(FitnessEstimatorError):
++            fitness_estimator.estimate_fitness(tree)
++
+ if __name__ == "__main__":
+     unittest.main()
 
-The target file `lbi_jungle_test.py` is a unit test module designed to test the functionality of the `LBIJungle` class from the `cassiopeia.tools` package. This class is responsible for estimating the fitness of nodes in a phylogenetic tree using the LBI (Local Branching Index) method. The tests ensure that the fitness estimates are logical and that certain constraints, such as leaf naming conventions, are enforced.
-
-## Code Structure
-
-The main symbols in the code are the `TestLBIJungle` class and its methods. The `TestLBIJungle` class is a subclass of `unittest.TestCase`, which provides a framework for writing and running tests. The methods within this class are individual test cases that verify specific aspects of the `LBIJungle` functionality.
-
-## References
-
-- `CassiopeiaTree`: A class from the `cassiopeia.data` module used to represent and manipulate phylogenetic trees.
-- `LBIJungle`: A class from the `cassiopeia.tools` module that estimates node fitness using the LBI method.
-- `FitnessEstimatorError`: An exception class from the `cassiopeia.tools` module used to signal errors in fitness estimation.
-
-## Symbols
-
-### `TestLBIJungle`
-#### Description
-The `TestLBIJungle` class contains unit tests for the `LBIJungle` fitness estimator. It verifies that the fitness estimates produced by `LBIJungle` are consistent with expected biological properties and that the estimator handles invalid input correctly.
-
-#### Methods
-
-##### `test_small_tree`
-###### Description
-Tests the `LBIJungle` estimator on a small, manually constructed tree. It checks that the fitness estimates for nodes make sense based on the tree's structure.
-
-###### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | N/A  | This method does not take any inputs. |
-
-###### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | N/A  | This method does not return any outputs. |
-
-###### Internal Logic
-1. Constructs a small directed graph using `networkx.DiGraph`.
-2. Adds nodes and edges to represent a simple tree structure.
-3. Converts the graph into a `CassiopeiaTree` object and sets node times.
-4. Instantiates an `LBIJungle` object and estimates fitness for the tree.
-5. Asserts that the fitness estimates follow expected patterns:
-   - Internal node 2 should have higher fitness than internal node 3 due to more branching.
-   - Leaves 1, 2, and 3 should have the same fitness, as should leaves 4 and 5.
-   - Leaves 1, 2, and 3 should have higher fitness than leaves 4 and 5.
-   - Leaves should have lower fitness than their parent nodes.
-
-##### `test_raises_error_if_leaf_name_startswith_underscore`
-###### Description
-Tests that the `LBIJungle` estimator raises an error if any leaf name starts with an underscore, which is a constraint of the underlying Jungle implementation.
-
-###### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | N/A  | This method does not take any inputs. |
-
-###### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | N/A  | This method does not return any outputs. |
-
-###### Internal Logic
-1. Constructs a simple tree with a root and a leaf whose name starts with an underscore.
-2. Converts the graph into a `CassiopeiaTree` object.
-3. Instantiates an `LBIJungle` object.
-4. Asserts that calling `estimate_fitness` raises a `FitnessEstimatorError`.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides a framework for writing and running tests. |
-| `networkx` | Used to create and manipulate the tree structure as a directed graph. |
-| `cassiopeia.data.CassiopeiaTree` | Represents the phylogenetic tree structure. |
-| `cassiopeia.tools.LBIJungle` | The class being tested for fitness estimation. |
-| `cassiopeia.tools.FitnessEstimatorError` | Exception handling for fitness estimation errors. |
-
-## Error Handling
-
-The test `test_raises_error_if_leaf_name_startswith_underscore` specifically checks for the `FitnessEstimatorError` to ensure that the `LBIJungle` class correctly handles invalid leaf names.
-
-## Logging
-
-No explicit logging is implemented in the test code. The `unittest` framework handles test results and outputs.
-
-## TODOs
-
-No TODOs are present in the code.
+```

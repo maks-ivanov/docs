@@ -3,45 +3,34 @@ title: "__init__.py"
 ---
 
 ## High-level description
-
-The target file `cassiopeia/tools/branch_length_estimator/__init__.py` serves as the top-level module for the branch length estimator tools within the Cassiopeia library. It imports two specific classes, `IIDExponentialMLE` and `IIDExponentialBayesian`, which are used for estimating branch lengths in phylogenetic trees under different statistical models. These classes are designed to handle the estimation of branch lengths assuming independent and identically distributed (IID) mutations with exponential waiting times, using either maximum likelihood estimation (MLE) or Bayesian inference methods.
+This file defines the top-level module for branch length estimation in the Cassiopeia library. It imports two specific estimators: `IIDExponentialMLE` and `IIDExponentialBayesian`.
 
 ## Code Structure
-
-The main symbols in this file are the imports of the `IIDExponentialMLE` and `IIDExponentialBayesian` classes. These classes are part of the branch length estimation tools and are likely used elsewhere in the Cassiopeia library to perform specific tasks related to phylogenetic analysis.
-
-## References
-
-The file references two classes from the same directory:
-- `IIDExponentialMLE`: A class for maximum likelihood estimation of branch lengths.
-- `IIDExponentialBayesian`: A class for Bayesian estimation of branch lengths.
+This module simply imports two classes from submodules, making them directly accessible through the `cassiopeia.tools.branch_length_estimator` namespace.
 
 ## Symbols
-
-### `IIDExponentialMLE`
+### Symbol Name: `IIDExponentialMLE`
 #### Description
-The `IIDExponentialMLE` class is used for estimating branch lengths in a phylogenetic tree using maximum likelihood estimation under a model of IID memoryless CRISPR/Cas9 mutations. It assumes that each site mutates independently and identically with an exponential waiting time.
+This class implements a Maximum Likelihood Estimator (MLE) for branch lengths in a phylogenetic tree, assuming that CRISPR/Cas9 mutations occur independently and identically at each site with an exponential waiting time. It uses convex optimization to find the branch lengths that maximize the likelihood of the observed character data.
 
-### `IIDExponentialBayesian`
+#### Inputs
+This class doesn't have any methods with explicit inputs documented in the code.
+
+#### Outputs
+This class doesn't have any methods with explicit outputs documented in the code.
+
+#### Internal Logic
+The class utilizes the `cvxpy` library to formulate and solve the optimization problem. It constructs constraints based on the tree topology, minimum branch length, and ultrametricity (if applicable). The objective function is the log-likelihood of the observed character data given the branch lengths and mutation rates.
+
+### Symbol Name: `IIDExponentialBayesian`
 #### Description
-The `IIDExponentialBayesian` class is used for estimating branch lengths using Bayesian inference under a model that assumes IID memoryless mutations and a subsampled Birth Process for the phylogeny. It uses the posterior mean branch lengths as estimates.
+This class implements a Bayesian approach to estimate branch lengths in a phylogenetic tree. It assumes a subsampled birth process for the phylogeny and independent, identically distributed exponential waiting times for mutations at each site. The estimator calculates the posterior mean branch lengths conditional on the observed tree topology and character data.
 
-## Dependencies
+#### Inputs
+This class doesn't have any methods with explicit inputs documented in the code.
 
-The target file does not directly list any external dependencies, but the related classes (`IIDExponentialMLE` and `IIDExponentialBayesian`) rely on several Python libraries such as `numpy`, `cvxpy`, and potentially others for mathematical computations and optimization tasks.
+#### Outputs
+This class doesn't have any methods with explicit outputs documented in the code.
 
-## Error Handling
-
-The target file itself does not implement any error handling, but the related classes handle various errors such as invalid input parameters and solver failures.
-
-## Logging
-
-There is no logging implemented in the target file itself. However, the related classes may include logging or verbosity options, particularly in the context of optimization and estimation processes.
-
-## API/Interface Reference
-
-The target file does not define an API or public interface directly. It serves as an entry point for importing the branch length estimation classes, which are then used elsewhere in the Cassiopeia library.
-
-## TODOs
-
-There are no TODOs or notes left in the target file.
+#### Internal Logic
+The class leverages a C++ implementation (`_PyInferPosteriorTimes`) to efficiently compute the posterior node times. It preprocesses the tree data, mapping nodes to integer IDs, and extracts relevant information like the number of mutated characters at each node. After running the C++ implementation, it retrieves the log-likelihood, log joint probabilities, posterior probabilities, and posterior mean times for each node.

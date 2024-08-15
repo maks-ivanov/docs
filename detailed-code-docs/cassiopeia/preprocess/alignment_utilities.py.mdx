@@ -3,107 +3,137 @@ title: "alignment_utilities.py"
 ---
 
 ## High-level description
-
-The `alignment_utilities.py` file provides utility functions for sequence alignment and parsing CIGAR strings, which are used to represent the alignment of sequences. The file includes functions for performing local and global sequence alignments using the Smith-Waterman and Needleman-Wunsch algorithms, respectively, and for parsing CIGAR strings to identify indels (insertions and deletions) at specific cut sites in a reference sequence.
+This file provides utility functions for handling sequence alignments, particularly for processing TargetSite sequencing data. It includes functions for performing local and global alignment, parsing CIGAR strings to identify indels, and extracting integration barcodes.
 
 ## Code Structure
-
-The main symbols in the code are the functions `align_local`, `align_global`, and `parse_cigar`. These functions are interconnected as they all deal with sequence alignment and parsing. The `align_local` and `align_global` functions perform sequence alignments and return CIGAR strings, which are then parsed by the `parse_cigar` function to extract indel information.
+The `parse_cigar` function utilizes the output of the `align_local` and `align_global` functions, specifically the CIGAR string, to identify indels. 
 
 ## Symbols
-
-### `align_local`
+### Symbol Name
+#### `align_local`
 #### Description
-Performs local alignment of a query sequence to a reference sequence using the Smith-Waterman algorithm. It returns a tuple containing the CIGAR string, start positions in the query and reference sequences, alignment score, and the query sequence.
+Performs local alignment of a query sequence (`seq`) to a reference sequence (`ref`) using the Smith-Waterman algorithm.
 
 #### Inputs
-| Name                | Type                      | Description                              |
-|:--------------------|:--------------------------|:-----------------------------------------|
-| ref                 | str                       | The reference sequence.                  |
-| seq                 | str                       | The query sequence.                      |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ref | str | The reference sequence. |
+| seq | str | The query sequence. |
 | substitution_matrix | Dict[str, Dict[str, int]] | Nested dictionary encoding the substitution matrix. |
-| gap_open_penalty    | int                       | Gap open penalty.                        |
-| gap_extend_penalty  | int                       | Gap extend penalty.                      |
+| gap_open_penalty | int | Gap open penalty. |
+| gap_extend_penalty | int | Gap extend penalty. |
 
 #### Outputs
-| Name        | Type   | Description                                                  |
-|:------------|:-------|:-------------------------------------------------------------|
-| output      | Tuple  | A tuple containing the CIGAR string, query sequence start position, reference sequence start position, alignment score, and query sequence. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cigar | str | The CIGAR string representing the alignment. |
+| query_start | int | Start position of the alignment in the query sequence. |
+| ref_start | int | Start position of the alignment in the reference sequence. |
+| score | float | Alignment score. |
+| seq | str | The input query sequence. |
 
 #### Internal Logic
-1. Initializes a `SmithWaterman` aligner with the provided substitution matrix and penalties.
-2. Aligns the query sequence to the reference sequence.
-3. Converts the alignment result to a CIGAR string and returns it along with other alignment details.
+1. Initializes a Smith-Waterman aligner using the provided substitution matrix and gap penalties.
+2. Performs local alignment using the `align` method of the aligner.
+3. Extracts the alignment results, including the aligned sequences, start positions, and alignment score.
+4. Converts the alignment results to a CIGAR string using the `ngs.sequence.alignment_to_cigar` function.
+5. Returns the CIGAR string, start positions, alignment score, and the input query sequence.
 
-### `align_global`
+### Symbol Name
+#### `align_global`
 #### Description
-Performs global alignment of a query sequence to a reference sequence using the Needleman-Wunsch algorithm. It returns a tuple similar to `align_local`.
+Performs global alignment of a query sequence (`seq`) to a reference sequence (`ref`) using the Needleman-Wunsch algorithm.
 
 #### Inputs
-| Name                | Type                      | Description                              |
-|:--------------------|:--------------------------|:-----------------------------------------|
-| ref                 | str                       | The reference sequence.                  |
-| seq                 | str                       | The query sequence.                      |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ref | str | The reference sequence. |
+| seq | str | The query sequence. |
 | substitution_matrix | Dict[str, Dict[str, int]] | Nested dictionary encoding the substitution matrix. |
-| gap_open_penalty    | int                       | Gap open penalty.                        |
-| gap_extend_penalty  | int                       | Gap extend penalty.                      |
+| gap_open_penalty | int | Gap open penalty. |
+| gap_extend_penalty | int | Gap extend penalty. |
 
 #### Outputs
-| Name        | Type   | Description                                                  |
-|:------------|:-------|:-------------------------------------------------------------|
-| output      | Tuple  | A tuple containing the CIGAR string, query sequence start position, reference sequence start position, alignment score, and query sequence. |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cigar | str | The CIGAR string representing the alignment. |
+| query_start | int | Start position of the alignment in the query sequence. |
+| ref_start | int | Start position of the alignment in the reference sequence. |
+| score | float | Alignment score. |
+| seq | str | The input query sequence. |
 
 #### Internal Logic
-1. Initializes a `NeedlemanWunsch` aligner with the provided substitution matrix and penalties.
-2. Aligns the query sequence to the reference sequence.
-3. Converts the alignment result to a CIGAR string and returns it along with other alignment details.
+1. Initializes a Needleman-Wunsch aligner using the provided substitution matrix and gap penalties.
+   - Note: The `no_end_gap_penalty` parameter is set to `True` because reads are expected to be shorter than the reference.
+2. Performs global alignment using the `align` method of the aligner.
+3. Extracts the alignment results, including the aligned sequences, start positions, and alignment score.
+4. Converts the alignment results to a CIGAR string using the `ngs.sequence.alignment_to_cigar` function.
+5. Returns the CIGAR string, start positions, alignment score, and the input query sequence.
 
-### `parse_cigar`
+### Symbol Name
+#### `parse_cigar`
 #### Description
-Parses a CIGAR string from a sequence alignment to identify indels at specified cut sites in the reference sequence. It returns the integration barcode and a list of indels observed at each cut site.
+Parses a CIGAR string to identify insertions and deletions (indels) relative to a reference sequence, focusing on regions around specified cutsites and a barcode interval.
 
 #### Inputs
-| Name            | Type          | Description                                                  |
-|:----------------|:--------------|:-------------------------------------------------------------|
-| cigar           | str           | CIGAR string from the alignment.                             |
-| seq             | str           | Query sequence.                                              |
-| ref             | str           | Reference sequence.                                          |
-| ref_start       | int           | Position that alignment starts in the reference string.      |
-| query_start     | int           | Position that alignment starts in the query string.          |
-| barcode_interval| Tuple[int, int]| Interval in reference sequence that stores the integration barcode. |
-| cutsites        | List[int]     | A list of cutsite locations in the reference.                |
-| cutsite_window  | int           | Number of nucleotides to the left and right of the cutsite to look for the beginning of an indel. |
-| context         | bool          | Include nucleotide sequence around indels.                   |
-| context_size    | int           | Number of bases to report for context.                       |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cigar | str | The CIGAR string to parse. |
+| seq | str | The query sequence. |
+| ref | str | The reference sequence. |
+| ref_start | int | Start position of the alignment in the reference sequence. |
+| query_start | int | Start position of the alignment in the query sequence. |
+| barcode_interval | Tuple[int, int] | Interval in the reference sequence containing the integration barcode. |
+| cutsites | List[int] | List of cutsite locations in the reference sequence. |
+| cutsite_window | int | Number of nucleotides to the left and right of each cutsite to consider for indels. Defaults to 0. |
+| context | bool | Whether to include nucleotide context around indels. Defaults to True. |
+| context_size | int | Number of bases to include as context on each side of an indel. Defaults to 5. |
 
 #### Outputs
-| Name        | Type          | Description                                                  |
-|:------------|:--------------|:-------------------------------------------------------------|
-| intBC       | str           | The integration barcode.                                     |
-| indels      | List[str]     | A list storing the indel observed at each cutsite.           |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| intBC | str | The extracted integration barcode. |
+| indels | List[str] | A list of strings, one per cutsite, describing the observed indels. |
 
 #### Internal Logic
-1. Initializes variables to track cutsite limits, indels, and the integration barcode.
-2. Iterates over the CIGAR string to parse each operation (match, insertion, deletion, etc.).
-3. Updates pointers for the reference and query sequences based on the CIGAR operations.
-4. Checks for matches, insertions, and deletions within the barcode interval and cutsite windows.
-5. Constructs indel strings with optional context and returns the integration barcode and indels list.
+1. **Initialization:**
+   - Creates lists to store indels (`indels`) and indels occurring outside cutsite windows (`uncut_indels`) for each cutsite.
+   - Initializes the integration barcode (`intBC`) to "NC" (not captured).
+   - Extracts the anchor sequence from the reference for later intBC extraction.
+   - Sets up pointers to track the current position in the reference (`ref_pointer`) and query (`query_pointer`) sequences.
+   - Initializes a variable `query_pad` to account for potential insertions or deletions at the beginning of the intBC.
 
-## Side Effects
-- The `parse_cigar` function raises an `UnknownCigarStringError` if an unknown CIGAR operation is encountered.
+2. **CIGAR Parsing:**
+   - Iterates through each chunk (operation and length) in the CIGAR string.
+   - **Match (M):**
+     - Updates `ref_pointer` and `query_pointer`.
+     - If the match overlaps with the `barcode_interval`, extracts the `intBC`.
+     - If the match overlaps with any `cutsite` window and no indel has been recorded for that cutsite, records "None" (no indel) with optional context.
+     - Handles partial deletions within the `barcode_interval`.
+   - **Insertion (I):**
+     - Increments `query_pointer`.
+     - If the insertion occurs within any `cutsite` window, records the insertion with its position and length, along with optional context.
+   - **Deletion (D):**
+     - Increments `ref_pointer`.
+     - If the deletion occurs within any `cutsite` window, records the deletion with its position and length, along with optional context.
+   - **Hard Clip (H):**
+     - Increments `query_pointer`.
+   - **Unknown Operation:**
+     - Raises an `UnknownCigarStringError`.
+
+3. **Integration Barcode (intBC) Handling:**
+   - If `intBC` is still "NC" or its length is less than expected, attempts to extract it based on the anchor sequence.
+
+4. **Indel Finalization:**
+   - Replaces empty indel strings in `indels` with corresponding entries from `uncut_indels`.
+
+5. **Return:**
+   - Returns the extracted `intBC` and the list of `indels`.
 
 ## References
-- The `UnknownCigarStringError` is defined in `cassiopeia/mixins/errors.py`.
-- The `align_sequences` function in `pipeline.py` uses `align_local` and `align_global` for sequence alignment.
-
-## Dependencies
-| Dependency     | Purpose                                                  |
-|:---------------|:---------------------------------------------------------|
-| `ngs_tools`    | Provides utilities for sequence alignment and CIGAR string conversion. |
-| `pyseq_align`  | Provides implementations of the Smith-Waterman and Needleman-Wunsch algorithms. |
+- This code references the `ngs_tools` library for sequence manipulation and alignment functions.
+- It also references the `pyseq_align` library for the Smith-Waterman and Needleman-Wunsch alignment algorithms.
+- The code utilizes the `UnknownCigarStringError` from the `cassiopeia.mixins` module.
 
 ## Error Handling
-- The `parse_cigar` function raises an `UnknownCigarStringError` for unrecognized CIGAR operations, ensuring that only valid operations are processed.
-
-## Logging
-- No explicit logging is implemented in this file.
+- The `parse_cigar` function raises an `UnknownCigarStringError` if it encounters an unsupported CIGAR operation.

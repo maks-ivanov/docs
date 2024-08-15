@@ -3,34 +3,64 @@ title: "Overview"
 ---
 
 ## High-level description
-
-The Cassiopeia project is a comprehensive software library designed for lineage tracing and phylogenetic analysis. It provides a suite of tools and modules to facilitate the reconstruction, analysis, and visualization of phylogenetic trees, which represent evolutionary relationships among species or genetic samples. The main components of the Cassiopeia library include:
-
-- **Preprocessing**: Handles the transformation of raw sequencing data into a format suitable for phylogenetic analysis.
-- **Solver**: Implements various algorithms for reconstructing phylogenetic trees from genetic data.
-- **Plotting**: Provides utilities for visualizing phylogenetic trees in both 2D and 3D formats.
-- **Data**: Manages phylogenetic tree structures and associated data, offering methods for tree manipulation and analysis.
-- **Critique**: Offers tools for comparing phylogenetic trees, focusing on evaluating their similarity and accuracy.
-- **Simulator**: Simulates phylogenetic trees and overlays data onto these trees for in silico experiments.
-- **Tools**: Provides additional utilities for calculating metrics, estimating parameters, and performing statistical computations related to evolutionary biology.
-- **Mixins**: Contains auxiliary functionalities such as error handling, logging, and utility functions.
+The `cassiopeia` directory contains a comprehensive suite of tools and modules for phylogenetic analysis, particularly focused on single-cell lineage tracing experiments. It provides functionality for data preprocessing, tree reconstruction, simulation, visualization, and various analytical tools for working with phylogenetic trees.
 
 ## What does it do?
+The Cassiopeia package offers a wide range of functionalities:
 
-The Cassiopeia library is designed to support researchers in the field of evolutionary biology by providing a comprehensive framework for phylogenetic analysis. Here's how it works:
+1. Data Preprocessing: Converts raw sequencing data to formats suitable for phylogenetic analysis, including filtering, error correction, and allele calling.
 
-1. **Data Preprocessing**: The library preprocesses raw sequencing data, handling tasks such as UMI collapsing, error correction, and sequence alignment. This ensures that the data is clean and ready for phylogenetic inference.
+2. Tree Reconstruction: Implements various algorithms for reconstructing phylogenetic trees from mutation data, including greedy, distance-based, spectral, and integer linear programming methods.
 
-2. **Tree Reconstruction**: Using various solvers, the library reconstructs phylogenetic trees from genetic data. These solvers employ different algorithms, such as distance-based methods, greedy algorithms, and integer linear programming, to infer evolutionary relationships.
+3. Simulation: Provides tools to generate synthetic phylogenetic trees and associated data, allowing researchers to test and validate analysis methods.
 
-3. **Tree Visualization**: The library offers tools for visualizing phylogenetic trees in both 2D and 3D formats. Users can plot trees locally using Matplotlib and Plotly or upload them to the iTOL platform for enhanced visualization.
+4. Visualization: Offers both local and cloud-based options for visualizing phylogenetic trees and associated data.
 
-4. **Tree Comparison**: The critique module provides metrics for comparing phylogenetic trees, such as the Robinson-Foulds distance and triplet correctness, helping researchers assess the similarity and accuracy of different tree hypotheses.
+5. Analysis Tools: Includes utilities for parameter estimation, fitness calculation, evolutionary coupling analysis, and various tree metrics.
 
-5. **Simulation**: The simulator module generates phylogenetic trees and overlays data onto them, allowing researchers to conduct in silico experiments and evaluate tree reconstruction methods.
+6. Tree Comparison: Implements methods for comparing phylogenetic trees, such as Robinson-Foulds distance and triplets correct accuracy.
 
-6. **Data Management**: The data module manages phylogenetic tree structures and associated data, offering methods for tree manipulation, ancestral character reconstruction, and dissimilarity computation.
+These functionalities enable researchers to perform end-to-end analysis of single-cell lineage tracing data, from raw sequencing results to detailed phylogenetic insights.
 
-7. **Statistical Analysis**: The tools module provides utilities for calculating phylogenetic metrics, estimating parameters, and performing small-parsimony analysis, enabling detailed exploration of evolutionary dynamics.
+## Entry points
+The main entry points for the Cassiopeia package are:
 
-Overall, the Cassiopeia library automates and streamlines the process of phylogenetic analysis, providing researchers with a powerful toolkit for studying evolutionary relationships and dynamics.
+1. `cassiopeia.preprocess`: For preprocessing raw sequencing data.
+2. `cassiopeia.solver`: For reconstructing phylogenetic trees from processed data.
+3. `cassiopeia.simulator`: For generating synthetic phylogenetic data.
+4. `cassiopeia.plotting`: For visualizing phylogenetic trees and associated data.
+5. `cassiopeia.tools`: For various analytical tools and utilities.
+6. `cassiopeia.critique`: For comparing and analyzing phylogenetic trees.
+
+The `__init__.py` file in the root directory serves as the main interface, importing and exposing key functionalities from these submodules.
+
+## Key Files
+1. `data/CassiopeiaTree.py`: Defines the core data structure for representing phylogenetic trees with associated mutation data.
+2. `solver/CassiopeiaSolver.py`: Provides the base class for tree reconstruction algorithms.
+3. `simulator/TreeSimulator.py`: Offers the base class for tree simulation models.
+4. `plotting/local.py` and `plotting/itol_utilities.py`: Implement local and cloud-based tree visualization.
+5. `tools/parameter_estimators.py`: Contains functions for estimating key parameters from tree data.
+6. `critique/compare.py`: Implements tree comparison algorithms.
+
+## Dependencies
+Cassiopeia relies on several external libraries:
+
+1. numpy and pandas: For data manipulation and numerical computations.
+2. networkx: For graph operations and tree manipulations.
+3. scipy: For various scientific computing tasks.
+4. ete3: For phylogenetic tree manipulation and visualization.
+5. matplotlib and plotly: For local plotting.
+6. pysam: For handling sequencing data formats.
+7. cvxpy and gurobipy: For optimization problems in some solvers.
+
+## Configuration
+Cassiopeia uses configuration files and function parameters for customization:
+
+1. Preprocessing pipeline: Configured using an INI-format file specifying parameters for each preprocessing step.
+2. Solvers: Customizable through parameters passed during initialization.
+3. Simulators: Configurable via parameters set during object creation.
+4. Visualization: Customizable through function parameters for both local and cloud-based plotting.
+
+Users can adjust these configurations to adapt Cassiopeia to their specific experimental setups and analysis requirements.
+
+In summary, Cassiopeia provides a comprehensive framework for analyzing single-cell lineage tracing data, offering tools for every step from raw data processing to advanced phylogenetic analysis and visualization.

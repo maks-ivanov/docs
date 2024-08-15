@@ -3,55 +3,77 @@ title: "Overview"
 ---
 
 ## High-level description
+This directory contains implementations of various algorithms and tools for analyzing evolutionary fitness and phylogenetic relationships in biological sequences. The main components are:
 
-The `FitnessInference` and `betatree` directories are part of a larger project focused on evolutionary biology, specifically in predicting evolutionary fitness and simulating genetic diversity through phylogenetic and coalescent models. The `FitnessInference` directory is dedicated to predicting evolutionary fitness from genealogical trees, while the `betatree` directory focuses on simulating beta coalescent trees and calculating their Site Frequency Spectrum (SFS). Together, these directories provide tools for fitness inference, sequence ranking, ancestral sequence reconstruction, and the simulation of genetic diversity.
+1. A fitness inference module based on the shape of genealogical trees.
+2. A beta coalescent tree simulator and Site Frequency Spectrum (SFS) calculator.
+
+These tools are designed to predict evolution, understand the shape of genealogical trees, and analyze genetic diversity in populations.
 
 ## What does it do?
+The code in this directory performs several key functions:
 
-The code in these directories is designed to analyze evolutionary data and simulate genetic processes:
+1. Infers fitness from genealogical tree shapes:
+   - Ranks sequences in multiple sequence alignments based on inferred fitness.
+   - Calculates fitness distributions for nodes in phylogenetic trees.
+   - Reconstructs ancestral sequences.
+   - Analyzes and visualizes phylogenetic trees.
 
-1. **Fitness Inference and Sequence Ranking**: The `FitnessInference` directory contains scripts that infer the fitness of nodes in a phylogenetic tree by calculating the posterior fitness distribution, mean fitness, and variance for each node. It ranks nodes and sequences based on fitness-related metrics, helping identify evolutionarily significant nodes or sequences. Additionally, it estimates the most likely sequences of ancestral nodes given a phylogenetic tree and sequence alignment.
+2. Simulates and analyzes beta coalescent trees:
+   - Generates genealogical trees representing ancestral relationships in a population sample.
+   - Calculates the Site Frequency Spectrum (SFS) to summarize genetic variation.
 
-2. **Data Analysis and Simulation**: The `FitnessInference` directory also includes tools for analyzing historical influenza data and simulating adapting populations, providing insights into evolutionary dynamics and fitness landscapes.
-
-3. **Beta Coalescent Tree Simulation**: The `betatree` directory simulates the ancestry of a sample of individuals using beta coalescent trees, which model how lineages merge over time. This simulation is controlled by a parameter called `alpha`, which influences the coalescent process.
-
-4. **Site Frequency Spectrum Calculation**: After generating the beta coalescent trees, the code calculates the Site Frequency Spectrum (SFS), summarizing the genetic variation within the sample. The SFS provides insights into the evolutionary history and demographic events that have shaped the genetic diversity of the population.
-
-5. **Visualization**: Both directories include functionality to visualize phylogenetic trees, coalescent trees, and the SFS, allowing users to see the results of the simulations and analyses.
+3. Provides tools for evolutionary analysis:
+   - Implements the Local Branching Index (LBI) for sequence ranking.
+   - Performs full fitness inference on sequences.
+   - Simulates adapting populations (in a toy data subdirectory).
 
 ## Entry points
+The main entry points for using this codebase are:
 
-The main entry points in the `FitnessInference` directory are the scripts `rank_sequences.py` and `infer_fitness.py`:
+1. `rank_sequences.py`: Ranks sequences in a multiple sequence alignment using the Local Branching Index (LBI).
+2. `infer_fitness.py`: Performs full fitness inference on sequences in a multiple sequence alignment.
 
-- **`rank_sequences.py`**: This script ranks sequences in a multiple sequence alignment using the local branching index (LBI). It takes an alignment file and an outgroup sequence as input and outputs a ranking of sequences, inferred ancestral sequences, and a reconstructed tree.
-
-- **`infer_fitness.py`**: This script performs full fitness inference on sequences within a multiple sequence alignment. It calculates the mean posterior and variance of the posterior for each sequence, providing a detailed analysis of fitness distribution.
-
-In the `betatree` directory, the main files are:
-
-- **`betatree.py`**: Contains the `betatree` class, responsible for simulating beta coalescent trees, including methods for initializing the tree, simulating coalescence events, and constructing the final tree structure.
-
-- **`sfs.py` and `sfs_py3.py`**: Define the `SFS` class, which extends the `betatree` class to include SFS calculation and data management. These files provide methods for generating multiple trees, calculating the SFS, and managing the SFS data.
+Both scripts take a multiple sequence alignment and an outgroup sequence as input, producing various output files including ranked sequences, reconstructed trees, and inferred ancestral sequences.
 
 ## Key Files
+1. FitnessInference directory:
+   - `prediction_src/`: Core implementation of fitness inference and sequence ranking algorithms.
+   - `rank_sequences.py`: Script for ranking sequences using the Local Branching Index.
+   - `infer_fitness.py`: Script for performing full fitness inference on sequences.
 
-- **`prediction_src`**: Contains core modules for fitness estimation, ancestral sequence reconstruction, and phylogenetic tree manipulation.
-
-- **`flu`**: Contains code specific to the analysis of historical influenza data.
-
-- **`toy_data`**: Includes code for simulating adapting populations using the FFPopSim library.
+2. betatree directory:
+   - `betatree.py`: Implements the `betatree` class for simulating beta coalescent trees.
+   - `sfs.py` and `sfs_py3.py`: Define the `SFS` class for calculating the Site Frequency Spectrum.
 
 ## Dependencies
+The codebase relies on several external libraries:
 
-The directories rely on several external libraries:
+1. Biopython: For handling biological sequences, alignments, and phylogenetic trees.
+2. NumPy: For numerical computations and array manipulations.
+3. SciPy: For various scientific computing tasks and special mathematical functions.
+4. Matplotlib: For visualization of phylogenetic trees, results, and SFS plots.
 
-- **`argparse`**: For parsing command-line arguments.
-- **`matplotlib`**: For plotting graphs and visualizing data.
-- **`numpy`**: For numerical operations and random number generation.
-- **`scipy`**: For special mathematical functions.
-- **`Bio` (BioPython)**: For handling sequence alignments and phylogenetic trees.
-- **`tree_utils`**: For plotting prediction trees.
-- **`sequence_ranking`**: For fitness prediction and ranking of sequences.
+Additionally, the code may use external tools like `fasttree` for phylogenetic tree construction.
 
-These dependencies are chosen for their ability to handle complex biological data and perform computationally intensive tasks efficiently.
+## Configuration
+The main scripts use command-line arguments for configuration. Key parameters include:
+
+- `--aln`: Path to the input alignment file.
+- `--outgroup`: Name of the outgroup sequence.
+- `--eps_branch`: Minimal branch length for inference.
+- `--tau`: Time scale for local tree length estimation (for LBI).
+- `--diffusion`: Fitness diffusion coefficient (for full inference).
+- `--gamma`: Scale factor for time scale.
+- `--omega`: Approximate sampling fraction divided by fitness standard deviation.
+- `--collapse`: Option to collapse internal branches with identical sequences.
+- `--plot`: Option to plot trees.
+
+For the beta coalescent simulator and SFS calculator, key parameters are passed as arguments to class constructors:
+
+- `sample_size`: The number of individuals in the sample.
+- `alpha`: The alpha parameter of the beta coalescent model.
+
+The `SFS` class allows for configuration of the SFS calculation and binning process through method parameters such as `ntrees`, `mode`, and `bins`.
+
+Users can adjust these parameters to customize the analysis for their specific needs in evolutionary studies and population genetics research.

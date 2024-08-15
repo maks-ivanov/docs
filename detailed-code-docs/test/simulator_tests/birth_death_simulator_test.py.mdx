@@ -2,82 +2,17 @@
 title: "birth_death_simulator_test.py"
 ---
 
-## High-level description
+```diff
+--- a/test/simulator_tests/birth_death_simulator_test.py
++++ b/test/simulator_tests/birth_death_simulator_test.py
+@@ -430,7 +430,7 @@
+ 
+         bd_sim = BirthDeathFitnessSimulator(
+             birth_wd, 1, num_extant=16, random_seed=54, initial_tree=initial_tree
+-        )
++        ) 
+         final_tree = bd_sim.simulate_tree()
+ 
+         self.assertEqual(16, len(final_tree.leaves))
 
-The `birth_death_simulator_test.py` file is a unit test suite designed to validate the functionality of the `BirthDeathFitnessSimulator` class from the `cassiopeia.simulator` module. This simulator models phylogenetic trees using a birth-death process with fitness, allowing for various configurations of birth, death, and mutation distributions. The test suite ensures that the simulator behaves correctly under different scenarios, including invalid inputs and specific stopping conditions.
-
-## Code Structure
-
-The main components of the code are the `extract_tree_statistics` function and the `BirthDeathSimulatorTest` class. The `extract_tree_statistics` function is a helper function used to gather statistics from a simulated tree, while the `BirthDeathSimulatorTest` class contains multiple test methods that validate different aspects of the `BirthDeathFitnessSimulator`.
-
-## References
-
-- `BirthDeathFitnessSimulator`: The class being tested, which is responsible for simulating phylogenetic trees using a birth-death process with fitness.
-- `CassiopeiaTree`: A data structure used to represent the tree topology and associated data.
-- `TreeSimulatorError`: An exception class used to handle errors specific to tree simulation.
-
-## Symbols
-
-### `extract_tree_statistics`
-#### Description
-This function extracts statistics from a `CassiopeiaTree` object, including the total lived time for each extant lineage, the number of extant lineages, and whether the tree has the expected node degrees.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| tree | CassiopeiaTree | The tree from which to extract statistics. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| times | List[float] | Total time lived for each leaf. |
-| num_leaves | int | Number of leaves in the tree. |
-| correct_degrees | bool | Whether the tree has only degree 0 or 2 nodes. |
-
-#### Internal Logic
-- Iterates over the nodes of the tree.
-- Collects the time lived for each leaf node.
-- Checks the out-degree of each node to ensure it is either 0 or 2, indicating proper tree structure.
-
-### `BirthDeathSimulatorTest`
-#### Description
-A test class that extends `unittest.TestCase` to validate the behavior of the `BirthDeathFitnessSimulator`. It contains multiple test methods to check for correct error handling and expected outcomes under various conditions.
-
-#### Test Methods
-- `test_bad_waiting_distributions`: Ensures errors are raised for invalid waiting time distributions.
-- `test_bad_stopping_conditions`: Ensures errors are raised for invalid stopping conditions.
-- `test_dead_at_start`: Tests scenarios where all lineages die at the first event.
-- `test_dead_before_end`: Tests scenarios where all lineages die before reaching the stopping condition.
-- `test_single_lineage`: Validates the simulator's behavior with a single lineage.
-- `test_constant_yule`: Tests a scenario without death and constant waiting times.
-- `test_nonconstant_yule`: Tests a scenario without death and variable waiting times.
-- `test_nonconstant_birth_death`: Tests variable birth and death waiting times, including pruning and collapsing.
-- `test_nonconstant_birth_death_no_unifurcation_collapsing`: Similar to the previous test but ensures unifurcations are not collapsed.
-- `test_nonconstant_birth_death_both_stopping_conditions`: Tests using both stopping conditions simultaneously.
-- `test_nonconstant_yule_with_predictable_fitness`: Tests birth and death with constant fitness.
-- `test_nonconstant_birth_death_with_variable_fitness`: Tests variable birth, death, and fitness, including pruning and collapsing.
-- `test_no_initial_birth_scale`: Tests initializing a simulation with a tree that lacks default initial birth scales.
-- `test_birth_scale`: Tests the consistency of birth scales across simulations.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the framework for writing and running tests. |
-| `networkx` | Used for handling graph structures, specifically for tree representations. |
-| `numpy` | Utilized for random number generation and numerical operations. |
-| `cassiopeia.data.CassiopeiaTree` | Represents the tree structure used in simulations. |
-| `cassiopeia.mixins.TreeSimulatorError` | Exception handling specific to tree simulation errors. |
-| `cassiopeia.simulator.BirthDeathFitnessSimulator` | The simulator class being tested. |
-
-## Error Handling
-
-The test suite uses `unittest`'s `assertRaises` method to ensure that the `BirthDeathFitnessSimulator` raises `TreeSimulatorError` when invalid inputs or conditions are encountered.
-
-## Logging
-
-No explicit logging is implemented in this test suite. The focus is on using assertions to validate expected outcomes and error conditions.
-
-## TODOs
-
-No TODOs are present in the code.
+```

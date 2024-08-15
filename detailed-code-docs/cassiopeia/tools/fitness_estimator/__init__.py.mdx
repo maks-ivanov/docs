@@ -3,83 +3,45 @@ title: "__init__.py"
 ---
 
 ## High-level description
-
-The `__init__.py` file in the `cassiopeia/tools/fitness_estimator` package serves as the top-level module for the fitness estimation functionality. It imports key classes and functions from the `_FitnessEstimator` and `_lbi_jungle` modules, making them accessible when the `fitness_estimator` package is imported. This setup facilitates the use of different fitness estimation algorithms, such as the `FitnessEstimator` abstract class and the `LBIJungle` implementation.
-
-## Code Structure
-
-The `__init__.py` file imports two main components from its submodules:
-- `FitnessEstimator` and `FitnessEstimatorError` from `_FitnessEstimator.py`.
-- `LBIJungle` from `_lbi_jungle.py`.
-
-These components are then made available at the package level, allowing users to directly access them when they import the `fitness_estimator` package.
+This file serves as the top-level entry point for the fitness estimator module in Cassiopeia. It exposes the main components, including the abstract `FitnessEstimator` class and the concrete `LBIJungle` implementation.
 
 ## References
-
-- `FitnessEstimator`: An abstract base class for implementing fitness estimation algorithms.
-- `FitnessEstimatorError`: A custom exception class for handling errors related to fitness estimation.
-- `LBIJungle`: A concrete implementation of the `FitnessEstimator` that uses the LBI method for fitness estimation.
+- `cassiopeia.tools.fitness_estimator._FitnessEstimator`: Defines the abstract `FitnessEstimator` class and the `FitnessEstimatorError` exception.
+- `cassiopeia.tools.fitness_estimator._lbi_jungle`: Implements the `LBIJungle` class, a concrete fitness estimator based on the LBI algorithm.
 
 ## Symbols
+### Symbol Name
+  `FitnessEstimator`
 
-### `FitnessEstimator`
 #### Description
-`FitnessEstimator` is an abstract base class that defines the interface for fitness estimation algorithms. It requires derived classes to implement the `estimate_fitness` method, which calculates and assigns fitness values to nodes in a `CassiopeiaTree`.
+  An abstract class defining the interface for fitness estimation algorithms in Cassiopeia. It mandates the implementation of the `estimate_fitness` method by its subclasses.
 
 #### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| tree | CassiopeiaTree | A tree structure with initialized topology and branch lengths. |
+  N/A (abstract class)
 
 #### Outputs
-None. The method modifies the input tree by setting the `fitness` attribute for each node.
+  N/A (abstract class)
 
-#### Internal Logic
-The `estimate_fitness` method is abstract and must be implemented by subclasses. It is intended to compute fitness values for nodes in a given tree and store these values as node attributes.
+### Symbol Name
+  `FitnessEstimatorError`
 
-### `FitnessEstimatorError`
 #### Description
-`FitnessEstimatorError` is a custom exception class used to handle errors specific to the fitness estimation process.
-
-### `LBIJungle`
-#### Description
-`LBIJungle` is a concrete implementation of the `FitnessEstimator` that uses the LBI (Local Branching Index) method, as implemented by the Jungle package, to estimate fitness values for nodes in a `CassiopeiaTree`.
+  An exception class specific to the `FitnessEstimator` class, used to signal errors during fitness estimation.
 
 #### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| random_seed | Optional[int] | A seed for random number generation to ensure reproducibility. |
+  N/A (exception class)
 
 #### Outputs
-None. The method modifies the input tree by setting the `fitness` attribute for each node.
+  N/A (exception class)
 
-#### Internal Logic
-- Converts the tree to a Newick string format.
-- Uses the Jungle package to annotate and infer fitness values.
-- Updates the tree with the computed fitness values, ensuring that leaf names do not start with an underscore.
+### Symbol Name
+  `LBIJungle`
 
-## Dependencies
+#### Description
+  A concrete implementation of the `FitnessEstimator` class that utilizes the LBI (lineage birth and immigration) algorithm for estimating fitness. It leverages the external `jungle` package for the core LBI calculations.
 
-| Dependency | Purpose |
-|:-----------|:--------|
-| `networkx` | Used for handling graph structures and converting them to Newick format. |
-| `jungle` | A package used for LBI fitness estimation. |
-| `numpy` | Used for setting random seeds and handling numerical operations. |
+#### Inputs
+  N/A (class instantiation)
 
-## Error Handling
-
-- `FitnessEstimatorError` is raised if the tree cannot be serialized to a networkx graph or if leaf names start with an underscore.
-- General exceptions are caught and raised with a message if the Newick string cannot be read by the Jungle package.
-
-## Side Effects
-
-- The `estimate_fitness` method in `LBIJungle` modifies the input `CassiopeiaTree` by setting the `fitness` attribute for each node.
-
-## Performance Considerations
-
-- The use of a random seed in `LBIJungle` ensures reproducibility, which can be important for performance testing and debugging.
-- The conversion of the tree to a Newick string and the subsequent operations by the Jungle package may have performance implications depending on the size of the tree.
-
-## TODOs
-
-None.
+#### Outputs
+  N/A (class instantiation)

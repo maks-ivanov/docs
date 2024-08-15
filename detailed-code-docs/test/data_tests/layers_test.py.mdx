@@ -2,74 +2,89 @@
 title: "layers_test.py"
 ---
 
-## High-level description
+Here's a detailed documentation of the provided code:
 
-The target file `layers_test.py` is a unit test suite designed to test the functionality of the `Layers` class within the `CassiopeiaTree` data structure. The tests focus on verifying the integrity and manipulation of character matrices, which represent different layers of mutation data for cells. The tests ensure that layers can be added, modified, and used to reconstruct phylogenetic trees accurately.
+## High-level description
+This file contains unit tests for the Layers class in the data module of the Cassiopeia project. It tests various functionalities related to character matrices, tree topologies, and layer operations in the context of phylogenetic analysis.
 
 ## Code Structure
-
-The main components of the code are:
-
-- **`find_triplet_structure` function**: A utility function to determine the relationship structure among three nodes in a tree.
-- **`TestLayers` class**: A subclass of `unittest.TestCase` that contains several test methods to validate the behavior of the `Layers` class in the `CassiopeiaTree` object.
-
-## References
-
-- **`CassiopeiaTree`**: A class from the `cassiopeia.data` module that represents a phylogenetic tree with associated character matrices.
-- **`VanillaGreedySolver`**: A solver from the `cassiopeia.solver` module used to reconstruct trees based on character matrices.
+The code defines a TestLayers class that inherits from unittest.TestCase. It contains several test methods that check different aspects of the Layers functionality, including basic character matrix operations, adding layers, reconstructing trees with layers, and handling different types of character matrices.
 
 ## Symbols
 
-### `find_triplet_structure`
+### TestLayers
 #### Description
-Determines the common ancestor structure among three nodes in a tree, returning a string that represents the most closely related pair.
-
-#### Inputs
-| Name    | Type       | Description                        |
-|:--------|:-----------|:-----------------------------------|
-| triplet | tuple      | A tuple of three node identifiers. |
-| T       | nx.DiGraph | A directed graph representing a tree. |
-
-#### Outputs
-| Name      | Type   | Description                                      |
-|:----------|:-------|:-------------------------------------------------|
-| structure | str    | A string indicating the closest pair among the nodes. |
+A test class that contains various unit tests for the Layers functionality in the Cassiopeia data module.
 
 #### Internal Logic
-- Computes the ancestors for each node in the triplet.
-- Determines the number of common ancestors between each pair of nodes.
-- Returns a string indicating the pair with the most common ancestors.
+The class sets up a basic character matrix and tree topology in the setUp method, which is used across multiple test cases. It then defines several test methods to check different aspects of the Layers functionality.
 
-### `TestLayers`
+### setUp
 #### Description
-A test suite for validating the functionality of the `Layers` class in the `CassiopeiaTree` object.
+Initializes the test environment with a basic character matrix and tree topology.
 
-#### Methods
+#### Internal Logic
+- Creates a character matrix using pandas DataFrame
+- Defines a tree topology using networkx DiGraph
+- Initializes a CassiopeiaTree object with the character matrix and topology
 
-- **`setUp`**: Initializes a base character matrix and tree topology for use in tests.
-- **`test_basic_character_matrix`**: Verifies that the character matrix in the tree matches the expected base matrix.
-- **`test_add_layer`**: Tests adding a new layer to the tree and verifies that modifications to this layer do not affect the base character matrix.
-- **`test_reconstruct_tree_with_layers`**: Tests the reconstruction of a tree using different layers and verifies the structure of the reconstructed tree.
-- **`test_add_layer_with_incorrect_number_of_cells`**: Ensures that adding a layer with an incorrect number of cells raises a `ValueError`.
-- **`test_add_layer_with_different_number_of_characters`**: Tests adding a layer with a different number of characters and verifies the correct setting of character states.
+### test_basic_character_matrix
+#### Description
+Tests if the basic character matrix is correctly initialized in the CassiopeiaTree object.
+
+#### Internal Logic
+- Retrieves the character matrix from the CassiopeiaTree object
+- Compares it with the expected character matrix using pandas testing utilities
+
+### test_add_layer
+#### Description
+Tests the functionality of adding a new layer to the CassiopeiaTree object.
+
+#### Internal Logic
+- Creates a modified character matrix
+- Adds it as a new layer to the CassiopeiaTree object
+- Verifies that the new layer is correctly added and can be accessed
+- Checks that modifying the new layer doesn't affect the base character matrix
+
+### test_reconstruct_tree_with_layers
+#### Description
+Tests the tree reconstruction process using different layers.
+
+#### Internal Logic
+- Reconstructs the tree using the base character matrix
+- Verifies the reconstructed tree structure
+- Adds a modified layer and reconstructs the tree again
+- Compares the new tree structure with the expected topology
+
+### test_add_layer_with_incorrect_number_of_cells
+#### Description
+Tests error handling when adding a layer with an incorrect number of cells.
+
+#### Internal Logic
+- Attempts to add a layer with an extra cell
+- Verifies that a ValueError is raised
+
+### test_add_layer_with_different_number_of_characters
+#### Description
+Tests adding a layer with a different number of characters than the base matrix.
+
+#### Internal Logic
+- Adds a layer with an extra character column
+- Verifies that the new layer is correctly added and can be accessed
+- Checks that the character states are updated correctly when using the new layer
 
 ## Dependencies
-
-| Dependency | Purpose                                      |
-|:-----------|:---------------------------------------------|
-| `unittest` | Provides the framework for writing and running tests. |
-| `networkx` | Used for creating and manipulating the tree topology. |
-| `pandas`   | Used for handling character matrices as DataFrames. |
-| `cassiopeia` | Provides the `CassiopeiaTree` and related utilities. |
+The code relies on several external libraries and modules:
+- unittest for test framework
+- ete3 for tree manipulation
+- networkx for graph operations
+- numpy and pandas for data manipulation
+- cassiopeia for the main functionality being tested
 
 ## Error Handling
+The code uses assertions and unittest methods to check for expected behavior and raise errors when unexpected results occur.
 
-- The test `test_add_layer_with_incorrect_number_of_cells` explicitly checks for a `ValueError` when attempting to add a layer with an incorrect number of cells.
+## Performance Considerations
+The tests involve tree reconstruction and manipulation, which can be computationally expensive for large trees. However, as these are unit tests, they use small sample data and are not intended for performance testing.
 
-## Logging
-
-No explicit logging is implemented in the test suite. The `unittest` framework handles test results and outputs.
-
-## TODOs
-
-No TODOs or notes are present in the code.
+This documentation provides a comprehensive overview of the test file, explaining its structure, main components, and the specific aspects of the Layers functionality being tested.

@@ -3,157 +3,47 @@ title: "ClonalSpatialDataSimulator.py"
 ---
 
 ## High-level description
-
-The `ClonalSpatialDataSimulator` class is a specialized simulator for generating spatial data with a clonal spatial autocorrelation constraint. It extends the `SpatialDataSimulator` class and is designed to simulate spatial coordinates for cells in a `CassiopeiaTree`, ensuring that subclones are spatially localized together. The simulator assigns spatial coordinates to cells such that subclones are more likely to be spatially autocorrelated, using techniques like Delaunay triangulation and nearest neighbors graph construction to enforce spatial constraints.
+The `ClonalSpatialDataSimulator` class simulates spatial data with a clonal spatial autocorrelation constraint, meaning that cells within the same subclone are more likely to be located near each other. It achieves this by first randomly sampling points in a defined space and then assigning these points to cells in a given `CassiopeiaTree` in a way that enforces spatial proximity within subclones.
 
 ## Code Structure
-
-The `ClonalSpatialDataSimulator` class is the main symbol in this file, inheriting from `SpatialDataSimulator`. It utilizes several static and class methods to perform its tasks, including graph construction and point sampling. The class interacts with the `CassiopeiaTree` class to overlay spatial data onto a tree structure, and it relies on external libraries like `networkx`, `numpy`, `pandas`, and `scipy` for its operations.
+The `ClonalSpatialDataSimulator` class inherits from the `SpatialDataSimulator` class. It primarily utilizes the `__init__`, `sample_points`, and `overlay_data` methods to simulate and assign spatial coordinates to cells in a tree. The `__triangulation_graph`, `__nearest_neighbors_graph`, `__points_to_graph`, and `__split_graph` methods are helper functions used within `overlay_data` to partition points based on the tree structure.
 
 ## References
-
-- `CassiopeiaTree`: Used to represent the tree structure onto which spatial data is overlaid.
-- `DataSimulatorError`: An exception class used for error handling within the simulator.
-- `try_import`: A utility function used to conditionally import modules.
+This class references the `CassiopeiaTree` class for tree manipulation and data storage. It also uses several external libraries like `networkx`, `numpy`, `scipy`, `cv2`, `poisson_disc`, and `sklearn.neighbors`.
 
 ## Symbols
 
 ### `ClonalSpatialDataSimulator`
 #### Description
-The `ClonalSpatialDataSimulator` class simulates spatial data with a clonal spatial autocorrelation constraint. It ensures that subclones in a `CassiopeiaTree` are spatially localized together by assigning spatial coordinates to cells based on their tree structure.
-
-#### Inputs
-| Name       | Type               | Description                                                                 |
-|:-----------|:-------------------|:----------------------------------------------------------------------------|
-| shape      | Optional[Tuple[int, ...]] | The shape of the space to place cells on, e.g., (100, 100) for a 2D surface. |
-| space      | Optional[np.ndarray] | A mask representing the space where cells may be placed.                     |
-| random_seed| Optional[int]      | A seed for reproducibility.                                                  |
-
-#### Outputs
-The class does not return outputs directly but modifies the `CassiopeiaTree` by overlaying spatial data.
-
-#### Internal Logic
-- **Initialization**: Validates the presence of required modules and ensures that either `shape` or `space` is provided. Initializes the spatial mask based on the provided shape or space.
-- **Graph Construction**: Uses Delaunay triangulation or nearest neighbors to construct graphs from points, ensuring spatial connectivity.
-- **Point Sampling**: Samples points within the defined space using Poisson-Disc sampling to ensure approximately equally-spaced points.
-- **Data Overlay**: Overlays spatial data onto a `CassiopeiaTree` by assigning sampled points to tree nodes, ensuring spatial autocorrelation of subclones.
-
-### `__triangulation_graph`
-#### Description
-Computes a fully-connected Delaunay triangulation graph from a set of points.
-
-#### Inputs
-| Name   | Type         | Description          |
-|:-------|:-------------|:---------------------|
-| points | np.ndarray   | Points to triangulate |
-
-#### Outputs
-| Name | Type     | Description          |
-|:-----|:---------|:---------------------|
-| G    | nx.Graph | Networkx graph       |
-
-#### Internal Logic
-- Constructs a Delaunay triangulation using `scipy.spatial.Delaunay`.
-- Adds paths to a Networkx graph and assigns edge weights based on Euclidean distances.
-
-### `__nearest_neighbors_graph`
-#### Description
-Computes the nearest neighbors graph from a set of points.
-
-#### Inputs
-| Name   | Type         | Description               |
-|:-------|:-------------|:--------------------------|
-| points | np.ndarray   | Point coordinates         |
-| k      | int          | Number of nearest neighbors |
-
-#### Outputs
-| Name | Type     | Description          |
-|:-----|:---------|:---------------------|
-| G    | nx.Graph | Networkx graph       |
-
-#### Internal Logic
-- Uses `sklearn.neighbors.kneighbors_graph` to compute distances and constructs a Networkx graph from the resulting sparse array.
-
-### `__points_to_graph`
-#### Description
-Constructs a connected graph from a set of points, using Delaunay triangulation or nearest neighbors based on the number of points.
-
-#### Inputs
-| Name   | Type         | Description          |
-|:-------|:-------------|:---------------------|
-| points | np.ndarray   | Points               |
-
-#### Outputs
-| Name | Type     | Description          |
-|:-----|:---------|:---------------------|
-| G    | nx.Graph | Networkx graph       |
-
-#### Internal Logic
-- Chooses between Delaunay triangulation and nearest neighbors based on the number of points, favoring Delaunay for larger sets due to performance.
-
-### `__split_graph`
-#### Description
-Generates a node partition of exact sizes from a graph.
-
-#### Inputs
-| Name   | Type     | Description                        |
-|:-------|:---------|:-----------------------------------|
-| G      | nx.Graph | Graph to partition                 |
-| sizes  | Tuple[int, ...] | Tuple of integers indicating the partition sizes |
-
-#### Outputs
-| Name | Type           | Description                        |
-|:-----|:---------------|:-----------------------------------|
-| partitions | Tuple[List[int], ...] | Node partition as a tuple of lists of integers |
-
-#### Internal Logic
-- Randomly selects seed nodes and assigns non-seed nodes to partitions based on minimum distances, ensuring exact partition sizes.
-
-### `sample_points`
-#### Description
-Samples a given number of points within the defined space using Poisson-Disc sampling.
+This class simulates spatial data with a clonal spatial autocorrelation constraint. It assigns spatial coordinates to cells in a `CassiopeiaTree` such that cells within the same subclone are more likely to be spatially clustered.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| n    | int  | Number of points to sample |
+| shape | Optional[Tuple[int, ...]] | Shape of the space to place cells on. Defaults to None. |
+| space | Optional[np.ndarray] | Numpy array mask representing the space where cells can be placed. Defaults to None. |
+| random_seed | Optional[int] | A seed for reproducibility. Defaults to None. |
 
 #### Outputs
-| Name   | Type       | Description                |
-|:-------|:-----------|:---------------------------|
-| points | np.ndarray | Sampled points within space |
+This class doesn't directly return any values. It modifies the input `CassiopeiaTree` object in-place.
 
 #### Internal Logic
-- Uses the Bridson algorithm for Poisson-Disc sampling, adjusting the radius iteratively to ensure the desired number of points are sampled.
+1. **Initialization (`__init__`)**: The constructor initializes the simulator with either a `shape` or a `space` parameter. If `shape` is provided, it generates a space (e.g., an ellipse in 2D) within a grid of that shape. If `space` is provided, it uses the given space directly.
+2. **Point Sampling (`sample_points`)**: This method samples points within the defined space using Poisson-Disc sampling, ensuring an approximately even distribution of points.
+3. **Data Overlay (`overlay_data`)**: This method assigns the sampled points to cells in the `CassiopeiaTree`. It starts by assigning all points to the root node. Then, it traverses the tree from root to leaves, splitting the points assigned to each parent node among its children. The splitting process considers spatial proximity, assigning each point to the spatially closest child node. This process ensures that cells within the same subclone are more likely to be located near each other.
 
-### `overlay_data`
-#### Description
-Overlays spatial data onto a `CassiopeiaTree` by assigning spatial coordinates to nodes.
-
-#### Inputs
-| Name          | Type            | Description                                      |
-|:--------------|:----------------|:-------------------------------------------------|
-| tree          | CassiopeiaTree  | The tree to overlay spatial data onto.           |
-| attribute_key | str             | The attribute name to save the coordinates as.   |
-
-#### Internal Logic
-- Samples point coordinates and assigns them to tree nodes, ensuring spatial autocorrelation of subclones by traversing the tree and splitting coordinates among child nodes.
+#### Side Effects
+The `overlay_data` method modifies the input `CassiopeiaTree` object in-place by adding spatial coordinates as node attributes and cell metadata.
 
 ## Dependencies
-
-| Dependency | Purpose                                      |
-|:-----------|:---------------------------------------------|
-| networkx   | Used for graph construction and manipulation.|
-| numpy      | Used for numerical operations and array handling.|
-| pandas     | Used for handling data frames and metadata.  |
-| scipy      | Used for spatial operations like Delaunay triangulation.|
-| cv2        | Used for creating spatial masks (optional).  |
-| poisson_disc | Used for Poisson-Disc sampling.            |
-| sklearn.neighbors | Used for nearest neighbors graph construction. |
+| Dependency | Purpose |
+|:-----------|:--------|
+| networkx | Graph manipulation and algorithms. |
+| numpy | Numerical operations and array manipulation. |
+| scipy | Scientific computing, including spatial algorithms. |
+| cv2 | Image processing (used for generating elliptical spaces). |
+| poisson_disc | Poisson-Disc sampling for generating evenly spaced points. |
+| sklearn.neighbors | Nearest neighbor search for spatial point assignment. |
 
 ## Error Handling
-
-- The class raises `DataSimulatorError` if required modules are not found or if both `shape` and `space` are not provided.
-
-## TODOs
-- None present in the target file.
+The class raises `DataSimulatorError` for various invalid input scenarios, such as providing both `shape` and `space` or if required dependencies are not installed.

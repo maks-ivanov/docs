@@ -3,86 +3,49 @@ title: "__init__.py"
 ---
 
 ## High-level description
-
-The `cassiopeia.critique` module is designed to provide tools for comparing phylogenetic trees. It specifically imports two functions, `robinson_foulds` and `triplets_correct`, from the `compare` submodule. These functions are used to evaluate the similarity between two trees by calculating the Robinson-Foulds distance and the triplets correct accuracy, respectively.
-
-## Code Structure
-
-The `cassiopeia.critique` module's `__init__.py` file serves as the top-level entry point for the critique module. It imports two key functions from the `compare` submodule:
-
-- `robinson_foulds`: A function to compute the Robinson-Foulds distance between two phylogenetic trees.
-- `triplets_correct`: A function to calculate the triplets correct accuracy between two phylogenetic trees.
-
-These functions are used to assess the similarity and accuracy of tree structures in phylogenetic analysis.
-
-## References
-
-The `__init__.py` file references the following functions from the `compare.py` file:
-
-- `robinson_foulds`
-- `triplets_correct`
+This file serves as the top-level module for the cassiopeia critique package. It imports and exposes two key functions, `robinson_foulds` and `triplets_correct`, from the `compare` module, which are used for comparing phylogenetic trees.
 
 ## Symbols
 
 ### `robinson_foulds`
 #### Description
-The `robinson_foulds` function calculates the Robinson-Foulds distance between two phylogenetic trees. This distance is a measure of dissimilarity between two trees, based on the number of splits (bipartitions) that differ between them.
+This function computes the Robinson-Foulds distance between two phylogenetic trees. It is imported from the `compare` module.
 
 #### Inputs
-| Name  | Type             | Description                                      |
-|:------|:-----------------|:-------------------------------------------------|
-| tree1 | CassiopeiaTree   | The first phylogenetic tree to compare.          |
-| tree2 | CassiopeiaTree   | The second phylogenetic tree to compare.         |
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree1 | CassiopeiaTree | The first tree to compare |
+| tree2 | CassiopeiaTree | The second tree to compare |
 
 #### Outputs
-| Name  | Type   | Description                                                                 |
-|:------|:-------|:----------------------------------------------------------------------------|
-| rf    | float  | The Robinson-Foulds distance between the two trees.                         |
-| rf_max| float  | The maximum possible Robinson-Foulds distance for normalization purposes.   |
-
-#### Internal Logic
-- The function creates deep copies of the input trees and collapses unifurcations.
-- It converts the trees to the Ete3 format and calculates the Robinson-Foulds distance using the `robinson_foulds` method from the Ete3 library.
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rf | float | The Robinson-Foulds distance between the two trees |
+| rf_max | float | The maximum possible Robinson-Foulds distance for normalization |
 
 ### `triplets_correct`
 #### Description
-The `triplets_correct` function calculates the triplets correct accuracy between two phylogenetic trees. It measures the proportion of triplets (sets of three leaves) that are consistent between the two trees.
+This function calculates the triplets correct accuracy between two phylogenetic trees. It samples triplets at different depths and compares their structure between the two trees.
 
 #### Inputs
-| Name                  | Type             | Description                                                                 |
-|:----------------------|:-----------------|:----------------------------------------------------------------------------|
-| tree1                 | CassiopeiaTree   | The first phylogenetic tree to compare.                                     |
-| tree2                 | CassiopeiaTree   | The second phylogenetic tree to compare.                                    |
-| number_of_trials      | int              | The number of triplets to sample at each depth.                             |
-| min_triplets_at_depth | int              | The minimum number of triplets needed at a depth for inclusion in the analysis.|
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree1 | CassiopeiaTree | The first tree to compare |
+| tree2 | CassiopeiaTree | The second tree to compare |
+| number_of_trials | int | Number of triplets to sample at each depth (default: 1000) |
+| min_triplets_at_depth | int | Minimum number of triplets needed at a depth for inclusion (default: 1) |
 
 #### Outputs
-| Name                          | Type            | Description                                                                 |
-|:------------------------------|:----------------|:----------------------------------------------------------------------------|
-| all_triplets_correct          | Dict[int, float]| Total triplets correct at each depth.                                       |
-| resolvable_triplets_correct   | Dict[int, float]| Triplets correct for resolvable triplets at each depth.                     |
-| unresolved_triplets_correct   | Dict[int, float]| Triplets correct for unresolvable triplets at each depth.                   |
-| proportion_unresolvable       | Dict[int, float]| Proportion of unresolvable triplets per depth.                              |
-
-#### Internal Logic
-- The function creates deep copies of the input trees and collapses unifurcations.
-- It annotates tree depths and samples triplets at each depth.
-- For each sampled triplet, it checks if the outgroup is consistent between the two trees and updates the triplet correctness metrics accordingly.
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| all_triplets_correct | Dict[int, float] | Total triplets correct at each depth |
+| resolvable_triplets_correct | Dict[int, float] | Triplets correct for resolvable triplets at each depth |
+| unresolved_triplets_correct | Dict[int, float] | Triplets correct for unresolvable triplets at each depth |
+| proportion_resolvable | Dict[int, float] | Proportion of unresolvable triplets per depth |
 
 ## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| cassiopeia.critique.compare | Source of the imported functions for tree comparison |
 
-| Dependency | Purpose                                                                 |
-|:-----------|:------------------------------------------------------------------------|
-| ete3       | Used for tree manipulation and calculating the Robinson-Foulds distance.|
-| networkx   | Utilized for graph-based operations on trees.                           |
-| numpy      | Provides numerical operations, such as calculating maximum depth.       |
-| collections| Used for creating default dictionaries to store triplet information.    |
-| copy       | Allows for deep copying of tree structures.                             |
-
-## Error Handling
-
-The functions assume that the input trees are valid `CassiopeiaTree` objects and do not explicitly handle errors related to invalid inputs or tree structures. The Ete3 library's `robinson_foulds` method may raise exceptions if the trees are not properly formatted.
-
-## Logging
-
-There is no explicit logging implemented in the provided code snippets.
+This file acts as an interface to the tree comparison functionality in the cassiopeia critique module, making it easier for users to access these functions without having to import from deeper within the package structure.

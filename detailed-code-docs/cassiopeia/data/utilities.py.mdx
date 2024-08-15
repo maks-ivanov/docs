@@ -2,225 +2,83 @@
 title: "utilities.py"
 ---
 
-## High-level description
+Here's a high-level description of the `utilities.py` file in the `cassiopeia/data` directory:
 
-The `cassiopeia/data/utilities.py` file provides a set of utility functions for handling and processing phylogenetic data within the Cassiopeia framework. These utilities include functions for manipulating character vectors, converting between different tree representations, computing dissimilarity maps, and generating bootstrap samples. The utilities are designed to support the analysis and reconstruction of phylogenetic trees from lineage tracing data.
+This file contains utility functions for working with Cassiopeia datasets, particularly for manipulating and analyzing character matrices, allele tables, and phylogenetic trees. It includes functions for bootstrapping, converting between different data formats, computing dissimilarity maps, and various other operations on tree structures and genetic data.
 
 ## Code Structure
 
-The main symbols in the code are functions that perform specific tasks related to phylogenetic data processing. These functions are independent of each other but collectively provide a comprehensive toolkit for handling phylogenetic data in the Cassiopeia framework.
+The file consists of standalone functions that can be grouped into several categories:
+
+1. Bootstrapping functions
+2. Data conversion functions
+3. Tree manipulation functions
+4. Dissimilarity and distance computation functions
+5. Utility functions for working with character states and indels
+
+These functions are used throughout the Cassiopeia package to support various data processing and analysis tasks.
 
 ## Symbols
 
-### `get_lca_characters`
-#### Description
-Builds the character vector of the least common ancestor (LCA) of a list of character vectors, following Camin-Sokal Parsimony. It imputes non-missing characters when possible and handles ambiguous states by assigning a single ancestral state if the intersection of states is non-zero and has length one.
-
-#### Inputs
-| Name                  | Type  | Description                                      |
-|:----------------------|:------|:-------------------------------------------------|
-| `vecs`                | List[Union[List[int], List[Tuple[int, ...]]]] | A list of character vectors to generate an LCA for. |
-| `missing_state_indicator` | int   | The character representing missing values.     |
-
-#### Outputs
-| Name    | Type  | Description                                      |
-|:--------|:------|:-------------------------------------------------|
-| `lca_vec` | List[int] | A list representing the character vector of the LCA. |
-
-#### Internal Logic
-- Iterates over each index of the character vectors.
-- Checks if all vectors have a missing value at the index and assigns the missing state if true.
-- Collects all non-missing states and determines the LCA state based on the intersection of these states.
-
-### `newick_to_networkx`
-#### Description
-Converts a Newick string representation of a tree into a NetworkX directed graph.
-
-#### Inputs
-| Name           | Type  | Description          |
-|:---------------|:------|:---------------------|
-| `newick_string` | str   | A Newick string.     |
-
-#### Outputs
-| Name | Type        | Description            |
-|:-----|:------------|:-----------------------|
-| `g`  | nx.DiGraph  | A NetworkX directed graph representing the tree. |
-
-### `ete3_to_networkx`
-#### Description
-Converts an ete3 Tree object into a NetworkX directed graph.
-
-#### Inputs
-| Name  | Type     | Description          |
-|:------|:---------|:---------------------|
-| `tree` | ete3.Tree | An ete3 Tree object. |
-
-#### Outputs
-| Name | Type        | Description            |
-|:-----|:------------|:-----------------------|
-| `g`  | nx.DiGraph  | A NetworkX directed graph representing the tree. |
-
-### `to_newick`
-#### Description
-Converts a NetworkX graph to a Newick string, optionally recording branch lengths.
-
-#### Inputs
-| Name                  | Type       | Description                                      |
-|:----------------------|:-----------|:-------------------------------------------------|
-| `tree`                | nx.DiGraph | A NetworkX tree.                                 |
-| `record_branch_lengths` | bool      | Whether to record branch lengths in the Newick string. |
-
-#### Outputs
-| Name          | Type  | Description                                      |
-|:--------------|:------|:-------------------------------------------------|
-| `newick_str`  | str   | A Newick string representing the tree topology.  |
-
-#### Internal Logic
-- Recursively constructs the Newick string by traversing the tree.
-- Appends branch lengths if `record_branch_lengths` is True.
-
-### `compute_dissimilarity_map`
-#### Description
-Computes the dissimilarity between all samples in a character matrix using a specified dissimilarity function.
-
-#### Inputs
-| Name                    | Type       | Description                                      |
-|:------------------------|:-----------|:-------------------------------------------------|
-| `cm`                    | np.array   | Character matrix.                                |
-| `C`                     | int        | Number of samples.                               |
-| `dissimilarity_function`| Callable   | Function to compute dissimilarity between two character states. |
-| `weights`               | Optional[Dict[int, Dict[int, float]]] | Weights for comparing states. |
-| `missing_state_indicator` | int      | State indicating missing data.                   |
-| `threads`               | int        | Number of threads for computation.               |
-
-#### Outputs
-| Name | Type      | Description                                      |
-|:-----|:----------|:-------------------------------------------------|
-| `dm` | np.array  | A dissimilarity mapping as a flattened array.    |
-
-#### Internal Logic
-- Attempts to optimize the dissimilarity function using Numba.
-- Uses multiprocessing to compute dissimilarities in parallel if multiple threads are specified.
-- Handles shared memory for character matrix when using multiprocessing.
+Here are some of the key functions in this file:
 
 ### `sample_bootstrap_character_matrices`
 #### Description
-Generates bootstrapped character matrices from a character matrix by sampling characters with replacement.
+Creates bootstrap samples of character matrices by sampling characters with replacement.
 
 #### Inputs
-| Name                  | Type       | Description                                      |
-|:----------------------|:-----------|:-------------------------------------------------|
-| `character_matrix`    | pd.DataFrame | Character matrix.                                |
-| `prior_probabilities` | Optional[Dict[int, Dict[int, float]]] | Probabilities of each (character, state) pair. |
-| `num_bootstraps`      | int        | Number of bootstrap samples to create.           |
-| `random_state`        | Optional[np.random.RandomState] | Random state for reproducibility. |
+- `character_matrix`: The original character matrix
+- `prior_probabilities`: Optional prior probabilities for characters
+- `num_bootstraps`: Number of bootstrap samples to create
+- `random_state`: Optional random state for reproducibility
 
 #### Outputs
-| Name | Type  | Description                                      |
-|:-----|:------|:-------------------------------------------------|
-| `bootstrap_samples` | List[Tuple[pd.DataFrame, Dict[int, Dict[int, float]]]] | List of bootstrap samples. |
+A list of tuples, each containing a bootstrapped character matrix and corresponding priors.
 
-### `sample_bootstrap_allele_tables`
+### `convert_alleletable_to_character_matrix`
 #### Description
-Generates bootstrap character matrices from an allele table, considering dependencies between cut-sites on the same intBC TargetSite.
+Converts an allele table to a character matrix format.
 
 #### Inputs
-| Name                  | Type       | Description                                      |
-|:----------------------|:-----------|:-------------------------------------------------|
-| `allele_table`        | pd.DataFrame | AlleleTable from the Cassiopeia preprocessing pipeline. |
-| `indel_priors`        | Optional[pd.DataFrame] | Dataframe mapping indel identities to prior probabilities. |
-| `num_bootstraps`      | int        | Number of bootstrap samples to create.           |
-| `random_state`        | Optional[np.random.RandomState] | Random state for reproducibility. |
-| `cut_sites`           | Optional[List[str]] | Columns in the AlleleTable to treat as cut sites. |
+- `alleletable`: The input allele table
+- Various optional parameters for filtering and processing
 
 #### Outputs
-| Name | Type  | Description                                      |
-|:-----|:------|:-------------------------------------------------|
-| `bootstrap_samples` | List[Tuple[pd.DataFrame, Dict[int, Dict[int, float]], Dict[int, Dict[int, str]], List[str]]] | List of bootstrap samples. |
-
-### `resolve_most_abundant`
-#### Description
-Resolves an ambiguous character by selecting the most abundant state, resolving ties randomly.
-
-#### Inputs
-| Name  | Type         | Description                                      |
-|:------|:-------------|:-------------------------------------------------|
-| `state` | Tuple[int, ...] | Ambiguous state as a tuple of integers.       |
-
-#### Outputs
-| Name | Type  | Description                                      |
-|:-----|:------|:-------------------------------------------------|
-| `resolved_state` | int   | Selected state as a single integer.   |
+A tuple containing the character matrix, prior probabilities, and a mapping of states to indels.
 
 ### `compute_phylogenetic_weight_matrix`
 #### Description
-Computes the phylogenetic weight matrix, optionally transforming distances to proximities using an inverse function.
+Computes a phylogenetic weight matrix based on the distances between leaves in a tree.
 
 #### Inputs
-| Name                  | Type       | Description                                      |
-|:----------------------|:-----------|:-------------------------------------------------|
-| `tree`                | CassiopeiaTree | CassiopeiaTree object.                           |
-| `inverse`             | bool       | Convert distances to proximities.                |
-| `inverse_fn`          | Callable[[Union[int, float]], float] | Inverse function (default = 1 / x). |
+- `tree`: A CassiopeiaTree object
+- `inverse`: Whether to compute inverse weights
+- `inverse_fn`: Function to use for inverse computation
 
 #### Outputs
-| Name | Type  | Description                                      |
-|:-----|:------|:-------------------------------------------------|
-| `W`  | pd.DataFrame | An NxN phylogenetic weight matrix.         |
+A pandas DataFrame representing the phylogenetic weight matrix.
 
 ### `net_relatedness_index`
 #### Description
-Computes the net relatedness index between two sets of indices using a dissimilarity map.
+Computes the net relatedness index between two groups of indices in a dissimilarity map.
 
 #### Inputs
-| Name            | Type       | Description                                      |
-|:----------------|:-----------|:-------------------------------------------------|
-| `dissimilarity_map` | np.array | Dissimilarity map between all samples.           |
-| `indices_1`     | np.array   | Indices corresponding to the first group.        |
-| `indices_2`     | np.array   | Indices corresponding to the second group.       |
+- `dissimilarity_map`: A numpy array of dissimilarities
+- `indices_1`: First group of indices
+- `indices_2`: Second group of indices
 
 #### Outputs
-| Name | Type  | Description                                      |
-|:-----|:------|:-------------------------------------------------|
-| `nri` | float | The Net Relatedness Index (NRI).                 |
-
-### `compute_inter_cluster_distances`
-#### Description
-Computes the mean distance between clusters in a categorical variable, using either a phylogenetic weight matrix or a provided dissimilarity map.
-
-#### Inputs
-| Name                  | Type       | Description                                      |
-|:----------------------|:-----------|:-------------------------------------------------|
-| `tree`                | CassiopeiaTree | CassiopeiaTree object.                           |
-| `meta_item`           | Optional[str] | Column in the cell meta data of the tree.        |
-| `meta_data`           | Optional[pd.DataFrame] | Meta data to use for this calculation.         |
-| `dissimilarity_map`   | Optional[pd.DataFrame] | Dissimilarity map to use for distances.        |
-| `distance_function`   | Callable   | Function to compute the distance between clusters. |
-| `**kwargs`            | dict       | Additional arguments for the distance function.  |
-
-#### Outputs
-| Name | Type  | Description                                      |
-|:-----|:------|:-------------------------------------------------|
-| `inter_cluster_distances` | pd.DataFrame | A K x K distance matrix.                    |
+The computed net relatedness index as a float.
 
 ## Dependencies
 
-| Dependency | Purpose |
-|:-----------|:--------|
-| `ete3`     | Used for tree manipulation and conversion between formats. |
-| `networkx` | Used for graph representation and manipulation of trees.   |
-| `numba`    | Used for optimizing performance of certain functions.      |
-| `numpy`    | Used for numerical operations and array manipulations.     |
-| `pandas`   | Used for handling data in tabular form.                    |
+The file relies on several external libraries, including:
+- numpy
+- pandas
+- networkx
+- scipy
+- ete3
 
-## Error Handling
+It also imports from other parts of the Cassiopeia package, particularly from the `mixins` and `preprocess` modules.
 
-The code uses assertions and warnings to handle errors and unexpected conditions. For example, it checks the length of character vectors and warns if Numba optimization fails.
-
-## Logging
-
-The code uses warnings to inform users about fallback mechanisms, such as when Numba optimization fails.
-
-## TODOs
-
-No TODOs are present in the code.
+This file is central to many data processing tasks in Cassiopeia, providing essential utilities for working with genetic data and phylogenetic trees.

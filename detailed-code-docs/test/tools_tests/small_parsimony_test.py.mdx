@@ -3,214 +3,201 @@ title: "small_parsimony_test.py"
 ---
 
 ## High-level description
-
-The `small_parsimony_test.py` file contains unit tests for the small parsimony algorithms implemented in the `cassiopeia.tools.small_parsimony` module. These tests focus on verifying the correctness of the Fitch-Hartigan algorithm for reconstructing ancestral states in phylogenetic trees, scoring parsimony, and counting state transitions using the FitchCount algorithm. The tests ensure that the algorithms handle different tree structures and metadata correctly.
+This file contains unit tests for the `small_parsimony.py` module in Cassiopeia. The tests cover functions related to small parsimony inference on phylogenetic trees, including Fitch-Hartigan reconstruction, parsimony scoring, and the FitchCount algorithm.
 
 ## Code Structure
+The code defines a single test class `TestSmallParsimony` that inherits from `unittest.TestCase`. This class contains multiple test methods, each testing a specific function or aspect of the `small_parsimony` module. The test methods use various assertions provided by the `unittest` framework to check for expected outcomes.
 
-The main class in this file is `TestSmallParsimony`, which inherits from `unittest.TestCase`. This class contains several test methods that validate the functionality of the small parsimony algorithms. The tests are organized to cover different aspects of the algorithms, such as bottom-up and top-down state reconstruction, parsimony scoring, and state transition counting.
+## References
+This test file references the following symbols from the `cassiopeia.tools.small_parsimony` module:
+- `fitch_hartigan_bottom_up`
+- `fitch_hartigan_top_down`
+- `fitch_hartigan`
+- `score_small_parsimony`
+- `fitch_count`
 
 ## Symbols
 
 ### `TestSmallParsimony`
 #### Description
-The `TestSmallParsimony` class is a test suite for the small parsimony algorithms. It sets up test cases with specific tree structures and metadata, and then runs various tests to ensure the algorithms work as expected.
+This class contains unit tests for functions in the `cassiopeia.tools.small_parsimony` module. It sets up two test trees, a binary tree and a general tree, with associated character data, to be used in the test cases.
 
 #### Inputs
-- None directly, but it uses predefined tree structures and metadata within the `setUp` method.
+None
 
 #### Outputs
-- None directly, but it uses assertions to validate the expected outcomes of the tests.
+None
 
 #### Internal Logic
-- The `setUp` method initializes two types of trees (`binary_tree` and `general_tree`) with associated metadata, which are used in the tests.
-- Each test method performs specific checks using assertions to validate the behavior of the algorithms.
-
-### `setUp`
-#### Description
-Initializes the test environment by creating two phylogenetic trees (`binary_tree` and `general_tree`) with associated metadata. These trees are used in the subsequent test methods.
-
-#### Inputs
-- None
-
-#### Outputs
-- None
-
-#### Internal Logic
-- Constructs two directed graphs using `networkx.DiGraph`.
-- Populates these graphs with edges to form specific tree structures.
-- Creates metadata for the leaves of the trees using `pandas.DataFrame`.
-- Initializes `CassiopeiaTree` objects with the constructed trees and metadata.
+The class defines several test methods, each testing a specific function or aspect of the `small_parsimony` module. Each test method sets up the necessary input data and calls the function being tested. Assertions are then used to verify that the function behaves as expected.
 
 ### `test_fitch_hartigan_bottom_up`
 #### Description
-Tests the `fitch_hartigan_bottom_up` function to ensure it correctly performs the bottom-up phase of the Fitch-Hartigan algorithm.
+Tests the `fitch_hartigan_bottom_up` function, which performs the bottom-up phase of the Fitch-Hartigan algorithm.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected sets of states for each node.
+None
 
 #### Internal Logic
-- Checks for exceptions when invalid metadata columns are used.
-- Verifies that the function correctly computes the sets of possible states for each node in the tree.
+- Checks for expected errors when invalid input is provided.
+- Runs the `fitch_hartigan_bottom_up` function on the binary tree.
+- Verifies that the correct ancestral state sets are assigned to each node.
+- Tests the function with different `add_key` parameters.
 
 ### `test_fitch_hartigan_top_down`
 #### Description
-Tests the `fitch_hartigan_top_down` function to ensure it correctly performs the top-down phase of the Fitch-Hartigan algorithm.
+Tests the `fitch_hartigan_top_down` function, which performs the top-down refinement step of the Fitch-Hartigan algorithm.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected labels for each node.
+None
 
 #### Internal Logic
-- Runs the bottom-up phase first, then the top-down phase.
-- Verifies that the function assigns the correct labels to each node based on the computed states.
+- Runs the `fitch_hartigan_bottom_up` function to initialize ancestral state sets.
+- Runs the `fitch_hartigan_top_down` function on the binary tree.
+- Verifies that the correct character states are assigned to each node.
+- Tests the function with different `label_key` parameters.
 
 ### `test_fitch_hartigan`
 #### Description
-Tests the complete `fitch_hartigan` function, which combines both bottom-up and top-down phases.
+Tests the `fitch_hartigan` function, which combines the bottom-up and top-down steps of the Fitch-Hartigan algorithm.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected labels for each node.
+None
 
 #### Internal Logic
-- Calls the `fitch_hartigan` function and checks that the labels assigned to each node match the expected values.
+- Runs the `fitch_hartigan` function on the binary tree.
+- Verifies that the correct character states are assigned to each node.
 
 ### `test_score_parsimony`
 #### Description
-Tests the `score_small_parsimony` function to ensure it correctly computes the parsimony score of a tree.
+Tests the `score_small_parsimony` function, which calculates the parsimony score of a tree.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the parsimony score.
+None
 
 #### Internal Logic
-- Checks for exceptions when invalid label keys are used.
-- Verifies that the function computes the correct parsimony score for the tree.
+- Checks for expected errors when invalid input is provided.
+- Runs the `score_small_parsimony` function with and without ancestral state inference.
+- Verifies that the calculated parsimony score is correct in both cases.
 
 ### `test_general_tree_fitch_bottom_up`
 #### Description
-Tests the `fitch_hartigan_bottom_up` function on a general tree structure.
+Tests the `fitch_hartigan_bottom_up` function on a general (non-binary) tree.
 
 #### Inputs
-- None directly, but uses `self.general_tree` and metadata.
+Uses the `self.general_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected sets of states for each node.
+None
 
 #### Internal Logic
-- Verifies that the function correctly computes the sets of possible states for each node in the general tree.
+- Runs the `fitch_hartigan_bottom_up` function on the general tree.
+- Verifies that the correct ancestral state sets are assigned to each node.
 
 ### `test_general_tree_fitch_hartigan`
 #### Description
-Tests the complete `fitch_hartigan` function on a general tree structure.
+Tests the `fitch_hartigan` function on a general (non-binary) tree.
 
 #### Inputs
-- None directly, but uses `self.general_tree` and metadata.
+Uses the `self.general_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected labels for each node.
+None
 
 #### Internal Logic
-- Calls the `fitch_hartigan` function and checks that the labels assigned to each node match the expected values.
+- Runs the `fitch_hartigan` function on the general tree.
+- Verifies that the correct character states are assigned to each node.
 
 ### `test_general_tree_parsimony`
 #### Description
-Tests the `score_small_parsimony` function on a general tree structure.
+Tests the `score_small_parsimony` function on a general (non-binary) tree.
 
 #### Inputs
-- None directly, but uses `self.general_tree` and metadata.
+Uses the `self.general_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the parsimony score.
+None
 
 #### Internal Logic
-- Verifies that the function computes the correct parsimony score for the general tree.
+- Runs the `score_small_parsimony` function on the general tree.
+- Verifies that the calculated parsimony score is correct.
 
 ### `test_fitch_count_basic_binary`
 #### Description
-Tests the `fitch_count` function to ensure it correctly counts state transitions in a binary tree.
+Tests the `fitch_count` function on a basic binary tree.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected transition matrix.
+None
 
 #### Internal Logic
-- Verifies that the function computes the correct transition matrix for the binary tree.
+- Runs the `fitch_count` function on the binary tree.
+- Verifies that the resulting count matrix has the correct dimensions and values.
+- Tests the function with and without pre-computed ancestral states.
 
 ### `test_fitch_count_basic_binary_custom_state_space`
 #### Description
 Tests the `fitch_count` function with a custom state space.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected transition matrix.
+None
 
 #### Internal Logic
-- Verifies that the function handles custom state spaces correctly and raises an error if the state space is insufficient.
+- Runs the `fitch_count` function with a specified state space.
+- Verifies that the resulting count matrix has the correct dimensions and values.
+- Checks for expected errors when an invalid state space is provided.
 
 ### `test_fitch_count_basic_binary_internal_node`
 #### Description
-Tests the `fitch_count` function with a specified internal node as the root.
+Tests the `fitch_count` function with a specified root node.
 
 #### Inputs
-- None directly, but uses `self.binary_tree` and metadata.
+Uses the `self.binary_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected transition matrix.
+None
 
 #### Internal Logic
-- Verifies that the function computes the correct transition matrix when an internal node is specified as the root.
+- Runs the `fitch_count` function with a specified root node.
+- Verifies that the resulting count matrix has the correct dimensions and values.
 
 ### `test_fitch_count_general_tree`
 #### Description
-Tests the `fitch_count` function on a general tree structure.
+Tests the `fitch_count` function on a general (non-binary) tree.
 
 #### Inputs
-- None directly, but uses `self.general_tree` and metadata.
+Uses the `self.general_tree` object as input.
 
 #### Outputs
-- None directly, but uses assertions to validate the expected transition matrix.
+None
 
 #### Internal Logic
-- Verifies that the function computes the correct transition matrix for the general tree.
-
-## References
-
-- `fitch_hartigan_bottom_up`: Function from `cassiopeia.tools.small_parsimony` used for bottom-up state reconstruction.
-- `fitch_hartigan_top_down`: Function from `cassiopeia.tools.small_parsimony` used for top-down state refinement.
-- `fitch_hartigan`: Function from `cassiopeia.tools.small_parsimony` that combines both bottom-up and top-down phases.
-- `score_small_parsimony`: Function from `cassiopeia.tools.small_parsimony` used to compute the parsimony score.
-- `fitch_count`: Function from `cassiopeia.tools.small_parsimony` used to count state transitions.
-- `CassiopeiaError`, `CassiopeiaTreeError`, `FitchCountError`: Exception classes from `cassiopeia.mixins.errors` used for error handling.
+- Runs the `fitch_count` function on the general tree.
+- Verifies that the resulting count matrix has the correct dimensions and values.
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `networkx` | Used to create and manipulate graph structures for trees. |
-| `numpy` | Used for numerical operations and random number generation. |
-| `pandas` | Used to handle metadata in DataFrame format. |
-| `cassiopeia` | Provides the core functionality for phylogenetic analysis. |
+- `unittest`
+- `networkx`
+- `numpy`
+- `pandas`
+- `cassiopeia`
 
 ## Error Handling
-
-The test methods use assertions to validate expected outcomes and raise exceptions when invalid inputs are provided. Specific exceptions like `CassiopeiaError`, `CassiopeiaTreeError`, and `FitchCountError` are used to handle errors related to metadata and state transitions.
-
-## Logging
-
-No explicit logging is implemented in this test file. The focus is on using assertions to validate the correctness of the algorithms.
+The test methods use assertions provided by the `unittest` framework to check for expected errors. For example, the `assertRaises` method is used to verify that a specific exception is raised when invalid input is provided to a function.

@@ -2,54 +2,76 @@
 title: "align_sequence_test.py"
 ---
 
-## High-level description
+Here's a detailed explanation of the `align_sequence_test.py` file:
 
-The `align_sequence_test.py` file is a unit test suite designed to validate the functionality of sequence alignment operations within the Cassiopeia pipeline. It uses the `unittest` framework to ensure that the sequence alignment process, specifically the `align_sequences` function from the `cassiopeia.pp` module, behaves as expected under various conditions. The tests cover different scenarios, including checking the structure of the alignment output, handling of large gap penalties, and verifying the correctness of default and global alignment methods.
+## High-level description
+This file contains unit tests for the sequence alignment functionality in the Cassiopeia preprocessing pipeline. It tests various aspects of the `align_sequences` function, including the structure of the output, the behavior with different alignment parameters, and the correctness of alignments for specific input sequences.
 
 ## Code Structure
-
-The main class in this file is `TestAlignSequence`, which inherits from `unittest.TestCase`. This class contains several test methods that each test a specific aspect of the sequence alignment functionality. The `setUp` method initializes the test data, which is used across multiple test cases.
+The main class `TestAlignSequence` inherits from `unittest.TestCase` and contains several test methods. Each method tests a different aspect of the sequence alignment functionality.
 
 ## Symbols
 
-### `TestAlignSequence`
+### TestAlignSequence
 #### Description
-The `TestAlignSequence` class is a test case class that contains methods to test the sequence alignment functionality. It uses the `unittest` framework to define and run tests.
-
-#### Inputs
-- None directly, but it uses a predefined DataFrame `self.queries` and a reference sequence `self.reference` set up in the `setUp` method.
-
-#### Outputs
-- None directly, but it asserts conditions on the output of the `align_sequences` function.
+This class contains all the unit tests for the sequence alignment functionality.
 
 #### Internal Logic
-- **setUp**: Initializes the test data, including a DataFrame `self.queries` with sequence data and a reference sequence `self.reference`.
-- **test_alignment_dataframe_structure**: Tests if the output DataFrame from `align_sequences` has the correct structure and expected columns.
-- **test_extremely_large_gap_open_penalty**: Tests if a large gap open penalty results in no gaps in the alignment.
-- **test_default_alignment_works**: Verifies that the default alignment settings produce expected CIGAR strings and alignment scores.
-- **test_global_alignment**: Checks if the global alignment method produces the expected results.
+1. Sets up test data in the `setUp` method.
+2. Defines several test methods, each focusing on a specific aspect of the alignment function.
 
-## References
+### setUp
+#### Description
+Initializes the test data used across all test methods.
 
-- `cassiopeia.pp.align_sequences`: This function is the main subject of the tests. It is expected to perform sequence alignment and return a DataFrame with alignment results.
+#### Internal Logic
+1. Creates a DataFrame `self.queries` with sample sequence data.
+2. Sets a reference sequence `self.reference`.
+
+### test_alignment_dataframe_structure
+#### Description
+Tests the structure of the output DataFrame from the `align_sequences` function.
+
+#### Internal Logic
+1. Calls `align_sequences` with test data.
+2. Checks if the output DataFrame has the correct number of rows and expected columns.
+3. Verifies that all cell barcodes from the input are present in the output.
+
+### test_extremely_large_gap_open_penalty
+#### Description
+Tests the alignment behavior when using an extremely large gap open penalty.
+
+#### Internal Logic
+1. Calls `align_sequences` with a very high gap open penalty (255).
+2. Checks that no gaps (insertions or deletions) are present in the resulting alignments.
+
+### test_default_alignment_works
+#### Description
+Tests the correctness of alignments using default parameters.
+
+#### Internal Logic
+1. Calls `align_sequences` with default parameters.
+2. Compares the resulting CIGAR strings and alignment scores with expected values for each input sequence.
+
+### test_global_alignment
+#### Description
+Tests the global alignment mode of the `align_sequences` function.
+
+#### Internal Logic
+1. Calls `align_sequences` with the `method` parameter set to "global".
+2. Compares the resulting CIGAR strings and alignment scores with expected values for global alignment.
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `numpy` | Used for numerical operations, though not directly in this file. |
-| `pandas` | Used to create and manipulate DataFrames for test data. |
-| `cassiopeia` | The main library being tested, specifically its preprocessing module. |
+The test file depends on the following modules:
+- `unittest`: For creating and running unit tests.
+- `numpy`: For numerical operations.
+- `pandas`: For handling DataFrames.
+- `cassiopeia`: The main package being tested.
 
 ## Error Handling
+The tests use assertions to check for expected outcomes. If any assertion fails, the test will raise an AssertionError.
 
-The test methods use assertions to handle errors. If an assertion fails, it indicates that the function under test did not behave as expected, and the test will report a failure.
+## Performance Considerations
+These tests are not specifically designed to test performance, but rather the correctness of the alignment function. However, the use of different parameters (like gap penalties and alignment methods) can affect the performance of the alignment algorithm.
 
-## Logging
-
-No explicit logging is implemented in this test file. The `unittest` framework handles test output and reporting.
-
-## TODOs
-
-No TODOs or notes are present in the code.
+In conclusion, this test file provides comprehensive coverage of the sequence alignment functionality in the Cassiopeia preprocessing pipeline, ensuring that the alignment function works correctly under various conditions and with different input parameters.

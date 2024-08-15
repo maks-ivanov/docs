@@ -3,61 +3,51 @@ title: "build.py"
 ---
 
 ## High-level description
-
-The `build.py` script is designed to automate the process of building Cython extensions for a Python project. It defines a build process that compiles Cython and C++ source files into Python extension modules, which are then integrated into the project. The script uses the `distutils` and `Cython` libraries to handle the compilation and linking of these extensions.
+This Python script, `build.py`, is responsible for building and compiling Cython extensions for the Cassiopeia project. It defines three extensions, compiles them using Cython, and copies the built extensions back to the project directory.
 
 ## Code Structure
-
-The main function in this script is `build()`, which orchestrates the entire build process. It defines a list of `Extension` objects, each representing a Cython extension module to be compiled. These extensions are then processed using the `cythonize` function, and the resulting compiled modules are managed by a `Distribution` object. The `build_ext` command is used to finalize and execute the build process, and the compiled extensions are copied back to the project directory.
+The script defines a `build()` function that handles the entire build process. It creates Extension objects, uses Cython to compile them, and then copies the compiled files to the appropriate locations. The main execution is controlled by the `if __name__ == "__main__":` block at the end.
 
 ## Symbols
 
-### `build`
+### build()
 #### Description
-The `build` function is responsible for setting up and executing the build process for Cython extensions. It defines the extensions to be built, compiles them using Cython, and then copies the resulting binaries back to the appropriate locations in the project directory.
-
-#### Inputs
-This function does not take any direct inputs from the user. It operates on predefined paths and settings within the script.
-
-#### Outputs
-This function does not return any values. Its primary output is the side effect of compiled extension modules being placed in the project directory.
+This function manages the entire process of building Cython extensions for the Cassiopeia project.
 
 #### Internal Logic
-1. **Define Extensions**: The function begins by defining a list of `Extension` objects. Each `Extension` specifies the module name, source files, and any additional compilation settings such as include directories and compiler flags.
-   
-2. **Cythonize Extensions**: The `cythonize` function is called with the list of extensions and compiler directives. This function compiles the Cython source files into C/C++ code and then compiles that code into binary extension modules.
+1. Define a list of `Extension` objects for the Cython modules to be compiled.
+2. Use `cythonize()` to compile the extensions.
+3. Create a `Distribution` object with the compiled extensions.
+4. Initialize and run a `build_ext` command to build the extensions.
+5. Copy the built extensions back to the project directory and set appropriate file permissions.
 
-3. **Setup Distribution**: A `Distribution` object is created with the compiled extensions. This object is used to manage the build process.
+### Extension objects
+#### Description
+Three `Extension` objects are defined, each representing a Cython module to be compiled:
 
-4. **Build Extensions**: The `build_ext` command is instantiated with the distribution object, finalized, and executed. This step compiles the extensions and places them in a build directory.
+1. `"cassiopeia.preprocess.collapse_cython"`
+2. `"cassiopeia.solver.ilp_solver_utilities"`
+3. `"cassiopeia.tools.branch_length_estimator._iid_exponential_bayesian"`
 
-5. **Copy Extensions**: The compiled extensions are copied from the build directory back to their respective locations in the project directory. The script adjusts file permissions to ensure the extensions are executable.
-
-## Side Effects
-
-- The script modifies the file system by creating compiled extension modules and placing them in the project directory.
-- It changes the file permissions of the compiled extensions to make them executable.
+Each extension specifies its source files and, where necessary, include directories and compile arguments.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `os` | Used for file path manipulations and changing file permissions. |
-| `shutil` | Used for copying files. |
-| `distutils.command.build_ext` | Provides the `build_ext` command for building extensions. |
-| `distutils.core` | Provides the `Distribution` and `Extension` classes for managing the build process. |
-| `numpy` | Provides include directories for compiling extensions that depend on NumPy. |
-| `Cython.Build` | Provides the `cythonize` function for compiling Cython source files. |
+| os | File and directory operations |
+| shutil | High-level file operations |
+| distutils.command.build_ext | Provides `build_ext` command for building extensions |
+| distutils.core | Provides `Distribution` and `Extension` classes |
+| numpy | Used for include directories in one of the extensions |
+| Cython.Build | Provides `cythonize` function for compiling Cython code |
 
 ## Performance Considerations
-
-- The script uses optimization flags (`-O3`) for C++ compilation, which can improve the performance of the resulting binaries.
-- The use of Cython and C++ allows for significant performance improvements over pure Python implementations, especially for computationally intensive tasks.
+The third extension, `"cassiopeia.tools.branch_length_estimator._iid_exponential_bayesian"`, includes C++ source files and uses aggressive optimization flags (`-O3`), indicating that this module is likely performance-critical.
 
 ## Error Handling
+This script does not implement explicit error handling. It relies on the default error handling provided by the libraries and functions it uses.
 
-The script does not explicitly handle errors. If an error occurs during the build process, such as a compilation error, it will likely result in an exception being raised, terminating the script. Users should ensure that all dependencies and source files are correctly configured to avoid such issues.
+## Side Effects
+The script modifies the file system by creating compiled extension files and copying them to the project directory. It also changes the file permissions of the copied extensions.
 
-## Logging
-
-The script does not implement any logging mechanisms. Users may consider adding logging for better traceability and debugging of the build process.
+This documentation provides a comprehensive overview of the `build.py` script, explaining its purpose, structure, and key components. It should help engineers and technical PMs understand how the Cython extensions for the Cassiopeia project are built and integrated.

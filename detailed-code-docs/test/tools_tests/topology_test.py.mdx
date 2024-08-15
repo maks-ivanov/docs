@@ -2,54 +2,53 @@
 title: "topology_test.py"
 ---
 
-## High-level description
+```diff
+--- a/test/tools_tests/topology_test.py
++++ b/test/tools_tests/topology_test.py
+@@ -229,33 +229,33 @@
+         # make sure weight matrix can be specified
+         W = pd.DataFrame.from_dict(
+             {
+-                "12": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+-                "13": [1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+-                "14": [2, 2, 0, 3, 4, 5, 6, 7, 8, 9, 10],
+-                "15": [3, 3, 3, 0, 4, 5, 6, 7, 8, 9, 10],
+-                "17": [4, 4, 4, 4, 0, 5, 6, 7, 8, 9, 10],
+-                "18": [5, 5, 5, 5, 5, 0, 6, 7, 8, 9, 10],
+-                "4": [6, 6, 6, 6, 6, 6, 0, 7, 8, 9, 10],
+-                "5": [7, 7, 7, 7, 7, 7, 7, 0, 8, 9, 10],
+-                "6": [8, 8, 8, 8, 8, 8, 8, 8, 0, 9, 10],
+-                "10": [9, 9, 9, 9, 9, 9, 9, 9, 9, 0, 10],
+-                "11": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 0],
++                "12": [0, 2, 4, 4, 4, 4, 4, 4, 6, 7, 7],
++                "13": [2, 0, 4, 4, 4, 4, 4, 4, 6, 7, 7],
++                "14": [4, 4, 0, 2, 4, 4, 4, 4, 6, 7, 7],
++                "15": [4, 4, 2, 0, 4, 4, 4, 4, 6, 7, 7],
++                "17": [4, 4, 4, 4, 0, 2, 4, 4, 6, 7, 7],
++                "18": [4, 4, 4, 4, 2, 0, 4, 4, 6, 7, 7],
++                "4": [4, 4, 4, 4, 4, 4, 0, 2, 4, 5, 5],
++                "5": [4, 4, 4, 4, 4, 4, 2, 0, 4, 5, 5],
++                "6": [6, 6, 6, 6, 6, 6, 4, 4, 0, 3, 3],
++                "10": [7, 7, 7, 7, 7, 7, 5, 5, 3, 0, 2],
++                "11": [7, 7, 7, 7, 7, 7, 5, 5, 3, 2, 0],
+             },
+             orient="index",
+             columns=[
+                 "12",
+                 "13",
+                 "14",
+-                "15",
++                "15", 
+                 "17",
+                 "18",
+                 "4",
+                 "5",
+                 "6",
+                 "10",
+-                "11",
++                "11", 
+             ],
+         )
+         obs_cophenetic_correlation = cas.tl.compute_cophenetic_correlation(
 
-The `topology_test.py` file is a test suite designed to validate the functionality of various topology-related functions within the `cassiopeia.tools.topology` module. It uses the `unittest` framework to ensure that the functions for calculating combinatorial choices, coalescent probabilities, expansion probabilities, and cophenetic correlations behave as expected. The tests are performed on a predefined tree structure and character matrix, simulating a phylogenetic tree.
-
-## Code Structure
-
-The main class in this file is `TestTopology`, which inherits from `unittest.TestCase`. This class contains several test methods that each focus on a specific function from the `cassiopeia.tools.topology` module. The `setUp` method initializes a tree and character matrix that are used across multiple tests.
-
-## References
-
-- `CassiopeiaError` and `CassiopeiaTreeError` from `cassiopeia.mixins.errors.py` are used for exception handling.
-- Functions from `cassiopeia.tools.topology.py` such as `nCk`, `simple_coalescent_probability`, `compute_expansion_pvalues`, and `compute_cophenetic_correlation` are the primary focus of the tests.
-
-## Symbols
-
-### `TestTopology`
-#### Description
-A test class that contains unit tests for the topology functions in the `cassiopeia.tools.topology` module.
-
-#### Methods
-
-- **`setUp`**: Initializes a directed graph representing a tree and a character matrix, which are used in the tests.
-- **`test_simple_choose_function`**: Tests the `nCk` function for calculating combinations and checks for error handling when `k &gt; n`.
-- **`test_simple_coalescent_probability`**: Validates the `simple_coalescent_probability` function and its error handling.
-- **`test_expansion_probability`**: Tests the `compute_expansion_pvalues` function with different clade sizes and checks the computed expansion probabilities.
-- **`test_expansion_probability_variable_depths`**: Similar to `test_expansion_probability`, but with a focus on variable depths.
-- **`test_expansion_probability_copy_tree`**: Tests the `compute_expansion_pvalues` function with the `copy` parameter set to `True`, ensuring the original tree remains unchanged.
-- **`test_cophenetic_correlation_perfect`**: Tests the `compute_cophenetic_correlation` function with a custom dissimilarity map to ensure perfect correlation.
-- **`test_cophenetic_correlation_default`**: Tests the default behavior of `compute_cophenetic_correlation` and compares it to an expected correlation value.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `networkx` | Used to create and manipulate the tree structure as a directed graph. |
-| `numpy` | Utilized for numerical operations. |
-| `pandas` | Used to handle the character matrix as a DataFrame. |
-| `cassiopeia` | The main library being tested, specifically its `tools` and `mixins` modules. |
-
-## Error Handling
-
-The test suite checks for specific exceptions, such as `CassiopeiaError` and `CassiopeiaTreeError`, to ensure that the functions handle erroneous inputs correctly.
-
-## Logging
-
-No explicit logging is implemented in this test suite. The `unittest` framework handles test results and outputs.
-
-## TODOs
-
-No TODOs or notes are present in the code.
+```

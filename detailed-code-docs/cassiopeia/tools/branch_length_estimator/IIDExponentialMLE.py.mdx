@@ -3,62 +3,67 @@ title: "IIDExponentialMLE.py"
 ---
 
 ## High-level description
-
-The `IIDExponentialMLE` class is a specialized branch length estimator that assumes CRISPR/Cas9 mutations occur independently and identically across sites, with an exponential waiting time. It uses maximum likelihood estimation (MLE) to determine mutation rates and branch lengths in a phylogenetic tree, leveraging convex optimization techniques to solve the problem efficiently.
+The `IIDExponentialMLE` class implements a Maximum Likelihood Estimator (MLE) for inferring branch lengths of a tree under the assumption of independent and identically distributed (IID) memoryless CRISPR/Cas9 mutations with an exponential waiting time. This estimator assumes a tree depth of 1 and utilizes convex optimization to find the mutation rate and branch lengths that maximize the likelihood of the observed character data.
 
 ## Code Structure
-
-The `IIDExponentialMLE` class inherits from the abstract `BranchLengthEstimator` class, which requires implementing the `estimate_branch_lengths` method. This class uses the `CassiopeiaTree` data structure to represent phylogenetic trees and relies on the `cvxpy` library for solving the optimization problem. The class also handles specific errors using the `IIDExponentialMLEError` exception.
+The `IIDExponentialMLE` class inherits from the abstract base class `BranchLengthEstimator` and implements the `estimate_branch_lengths` method. This method constructs and solves a convex optimization problem to estimate the branch lengths and mutation rate.
 
 ## References
-
-- `CassiopeiaTree`: Used to represent the phylogenetic tree and manage character states.
-- `IIDExponentialMLEError`: Custom error class for handling specific exceptions related to the MLE process.
-- `cvxpy`: A library for convex optimization, used to solve the exponential cone program.
+This code references the following key symbols:
+- `CassiopeiaTree`: Used to represent the tree structure and character data.
+- `IIDExponentialMLEError`: A custom exception class for errors specific to this estimator.
 
 ## Symbols
 
 ### `IIDExponentialMLE`
 #### Description
-The `IIDExponentialMLE` class estimates branch lengths and mutation rates for a phylogenetic tree under the assumption of independent and identically distributed (IID) exponential mutations. It uses convex optimization to solve the MLE problem, ensuring that branch lengths are non-negative and adhere to a minimum length constraint.
+This class implements the IID Exponential MLE algorithm for estimating branch lengths in a phylogenetic tree. It assumes that mutations occur independently and identically at each site with an exponential waiting time.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| `minimum_branch_length` | `float` | Minimum allowed branch length to prevent collapse to zero. Default is 0.01. |
-| `relative_mutation_rates` | `Optional[List[float]]` | Relative mutation rates for each character site. If `None`, all sites are assumed to evolve at the same rate. |
-| `verbose` | `bool` | If `True`, enables verbose output from the solver. Default is `False`. |
-| `solver` | `str` | The solver to use for optimization. Options are "SCS", "ECOS", or "MOSEK". Default is "SCS". |
+| minimum_branch_length | float | Minimum allowed branch length (default: 0.01) |
+| relative_mutation_rates | Optional[List[float]] | List of relative mutation rates for each character site (default: None, meaning all sites evolve at the same rate) |
+| verbose | bool | Whether to print verbose output during optimization (default: False) |
+| solver | str | Convex optimization solver to use (default: "SCS", options: "ECOS", "SCS", "MOSEK") |
 
 #### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| `mutation_rate` | `float` or `tuple` | Estimated mutation rate(s) for the tree. |
-| `log_likelihood` | `float` | Log-likelihood of the data under the estimated model. |
+This class doesn't directly return any outputs. Instead, it modifies the input `CassiopeiaTree` object in place, updating the branch lengths and storing the estimated mutation rate and log-likelihood as attributes.
 
 #### Internal Logic
-1. **Initialization**: Sets up the estimator with user-defined parameters, including minimum branch length, relative mutation rates, verbosity, and solver choice.
-2. **Data Validation**: Checks the character matrix for mutations and ensures the relative mutation rates are valid.
-3. **Optimization Setup**: Constructs the optimization problem using `cvxpy`, defining variables and constraints for branch lengths.
-4. **Log-Likelihood Calculation**: Computes the log-likelihood of the observed data given the current model parameters.
-5. **Problem Solving**: Solves the optimization problem using the specified solver, handling any solver errors.
-6. **Result Extraction**: Extracts the estimated mutation rates and log-likelihood, updating the tree with the calculated branch lengths.
+1. **Data Validation:** Checks for degenerate cases like no mutations or complete saturation in the character matrix.
+2. **Problem Setup:**
+    - Creates optimization variables for each node's time.
+    - Defines constraints:
+        - Root node has time 0.
+        - Minimum branch length constraint.
+        - Ultrametric constraint for all leaves (except the reference leaf).
+    - Formulates the log-likelihood function based on the IID exponential mutation model.
+3. **Optimization:**
+    - Defines the objective function as maximizing the log-likelihood.
+    - Constructs and solves the convex optimization problem using the specified solver.
+4. **Result Extraction:**
+    - Extracts the estimated mutation rate from the scaling factor of the reference leaf's time.
+    - Retrieves the log-likelihood value.
+5. **Tree Update:**
+    - Computes and sets the branch lengths based on the optimized node times.
+    - Updates the `CassiopeiaTree` object with the estimated branch lengths.
 
-## Side Effects
-- Modifies the `CassiopeiaTree` object by setting branch lengths and node times based on the estimated parameters.
+#### Side Effects
+- Modifies the input `CassiopeiaTree` object in place by updating its branch lengths.
+- Sets the `mutation_rate` and `log_likelihood` attributes of the `IIDExponentialMLE` object.
+
+#### Performance Considerations
+- The choice of solver can impact the performance of the optimization.
+- The `minimum_branch_length` parameter can influence the convergence and runtime of the solver.
+- Specifying `relative_mutation_rates` can increase the complexity of the optimization problem.
 
 ## Dependencies
 | Dependency | Purpose |
 |:-----------|:--------|
-| `cvxpy` | Used for formulating and solving the convex optimization problem. |
-| `numpy` | Utilized for numerical operations and handling arrays. |
+| cvxpy | Used for defining and solving the convex optimization problem. |
+| numpy | Used for numerical operations. |
 
 ## Error Handling
-- Raises `IIDExponentialMLEError` if the optimization solver fails.
-- Raises `ValueError` for invalid input data, such as a degenerate character matrix or incorrect relative mutation rates.
-
-## Logging
-- The class supports verbose output from the solver if the `verbose` parameter is set to `True`.
-
-## TODOs
-- No TODOs are present in the code.
+- Raises `ValueError` for invalid input parameters or degenerate character matrices.
+- Raises `IIDExponentialMLEError` if the solver fails or produces unexpected results.

@@ -3,63 +3,164 @@ title: "SpectralNeighborJoiningSolver.py"
 ---
 
 ## High-level description
-
-The `SpectralNeighborJoiningSolver` class is a specialized implementation of a distance-based phylogenetic tree reconstruction algorithm. It extends the `DistanceSolver` class and implements the Spectral Neighbor-Joining (SNJ) algorithm, which is designed to iteratively join subsets of leaves into a cherry based on the second singular value of a specific matrix. This approach is used to reconstruct latent tree models, as described in the paper by Jaffe et al. (2021).
+The `SpectralNeighborJoiningSolver` class in Cassiopeia implements a phylogenetic tree reconstruction algorithm based on the spectral neighbor-joining method. It iteratively joins pairs of nodes (or groups of nodes) based on the second singular value of a specific matrix derived from the pairwise similarities between nodes. This process continues until a complete tree is formed.
 
 ## Code Structure
+The `SpectralNeighborJoiningSolver` class inherits from the `DistanceSolver` class. It overrides the `find_cherry` and `update_dissimilarity_map` methods to implement the spectral neighbor-joining logic. The `_compute_svd2` method is a helper function used to calculate the second singular value of the relevant matrix.
 
-The `SpectralNeighborJoiningSolver` class is a subclass of `DistanceSolver`, inheriting its methods and attributes. It overrides specific methods to implement the SNJ algorithm, such as `find_cherry`, `get_dissimilarity_map`, and `update_dissimilarity_map`. The class relies on a similarity function to compute a similarity map, which is then used to generate a lambda matrix for the SNJ algorithm.
+## References
+This solver references the `dissimilarity_functions` module for calculating pairwise similarities between nodes and the `solver_utilities` module for helper functions like generating unique node names.
 
 ## Symbols
 
 ### `SpectralNeighborJoiningSolver`
 #### Description
-The `SpectralNeighborJoiningSolver` class implements the Spectral Neighbor-Joining algorithm for reconstructing phylogenetic trees. It uses a spectral method to iteratively join subsets of leaves into a cherry based on the second singular value of a matrix derived from the similarity map.
+This class implements the spectral neighbor-joining algorithm for phylogenetic tree reconstruction. It uses a spectral method to identify pairs of nodes to join based on their pairwise similarities.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| similarity_function | Callable | Function to compute the similarity map, defaulting to exponential negative hamming distance. |
-| add_root | bool | Whether to add an implicit root to the tree. |
-| prior_transformation | str | Function to transform priors into weights. |
+| similarity_function | Optional[Callable[[np.ndarray, np.ndarray, int, Dict[int, Dict[int, float]]], float]] | A function to compute the pairwise similarity between nodes. Defaults to `exponential_negative_hamming_distance`. |
+| add_root | bool | Whether to add an implicit root to the tree. Defaults to `False`. |
+| prior_transformation | str | The transformation to apply to priors when calculating weights. Defaults to `"negative_log"`. |
+
+#### Outputs
+The solver populates the `tree` attribute of the input `CassiopeiaTree` object with the reconstructed tree.
+
+#### Internal Logic
+The solver iteratively performs the following steps:
+1. **Calculate the dissimilarity map:** This map stores the pairwise dissimilarities between all nodes.
+2. **Find a cherry:** Using the `find_cherry` method, the solver identifies the pair of nodes with the smallest second singular value of their corresponding RA matrix (see `_compute_svd2` for details).
+3. **Update the dissimilarity map:** The `update_dissimilarity_map` method updates the dissimilarity map to reflect the newly joined cherry.
+4. **Repeat steps 2-3 until only two nodes remain.**
+5. **Root the tree:** If `add_root` is `True`, the solver adds an implicit root to the tree.
+
+### `get_dissimilarity_map`
+#### Description
+This method obtains or generates the initial dissimilarity map used by the solver. It calls the parent class's `get_dissimilarity_map` method and then constructs the initial lambda matrix, where each subset is a singleton leaf node.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cassiopeia_tree | CassiopeiaTree | The CassiopeiaTree object passed into `solve`. |
+| layer | Optional[str] | Layer storing the character matrix for solving. If None, the default character matrix is used. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| None | None | The class does not return values directly but modifies the state of the `CassiopeiaTree` object. |
+| lambda_matrix_df | pd.DataFrame | The initial lambda matrix, structured similarly to the `dissimilarity_map` in `DistanceSolver`. |
 
 #### Internal Logic
-- **Initialization**: Sets up the solver with a similarity function, root addition option, and prior transformation method.
-- **get_dissimilarity_map**: Computes the initial lambda matrix, which is a k x k matrix indexed by subsets of leaves. It calculates the second singular value of the RA matrix for each pair of subsets.
-- **find_cherry**: Identifies the pair of subsets with the smallest second singular value in the lambda matrix to join into a cherry.
-- **_compute_svd2**: Computes the second largest singular value for an RA matrix, which is used to update the lambda matrix.
-- **update_dissimilarity_map**: Updates the lambda matrix after joining a pair of subsets into a cherry.
-- **setup_root_finder**: Configures the rooting strategy for the SNJ solver, adding an implicit root if necessary.
-- **root_tree**: Converts the general graph to a directed graph with respect to a specified root.
+1. **Obtain the similarity map:** Calls the parent class's `get_dissimilarity_map` method to get the pairwise similarities between nodes.
+2. **Prepare for the lambda matrix:** Initializes the `_lambda_indices` attribute, which stores the subsets of nodes being considered. Initially, each subset is a singleton leaf node.
+3. **Generate the lambda matrix:** Iterates through all pairs of subsets and calculates the second singular value of their corresponding RA matrix using the `_compute_svd2` method.
+4. **Convert to DataFrame:** Converts the lambda matrix from a NumPy array to a Pandas DataFrame.
 
-## References
+### `find_cherry`
+#### Description
+This method finds the pair of nodes (or subsets of nodes) to join into a cherry based on the lambda matrix. The cherry is identified as the pair with the smallest second singular value in the lambda matrix.
 
-- `DistanceSolver`: The base class from which `SpectralNeighborJoiningSolver` inherits.
-- `CassiopeiaTree`: A data structure used to store the tree and character matrix.
-- `dissimilarity_functions.exponential_negative_hamming_distance`: The default similarity function used by the solver.
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dissimilarity_map | np.ndarray | The lambda matrix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (i, j) | Tuple[int, int] | A tuple of indices representing the rows in the lambda matrix corresponding to the nodes to be joined. |
+
+### `_compute_svd2`
+#### Description
+This method calculates the second largest singular value of the RA matrix for a given pair of subsets of nodes. The RA matrix is constructed based on the pairwise similarities between nodes in the subsets and their complements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pair | Tuple[int, int] | A tuple of indices representing the rows in the lambda matrix corresponding to the two subsets of nodes. |
+| lambda_indices | List[List[int]] | The list of subsets of nodes being considered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| svd2_val | float | The second largest singular value of the RA matrix for the given pair of subsets. |
+
+#### Internal Logic
+1. **Get the combined subset:** Combines the two subsets of nodes specified by the `pair` argument.
+2. **Get the complement:** Identifies the nodes that are not in the combined subset.
+3. **Reconstruct the RA matrix:** Constructs the RA matrix based on the pairwise similarities between nodes in the combined subset and its complement.
+4. **Calculate the second largest singular value:** Computes the singular value decomposition of the RA matrix and returns the second largest singular value.
+
+### `update_dissimilarity_map`
+#### Description
+This method updates the lambda matrix after a cherry is formed. It removes the rows and columns corresponding to the joined nodes and adds a new row and column for the newly formed cherry. The entries in the new row and column are calculated using the `_compute_svd2` method.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| similarity_map | pd.DataFrame | The lambda matrix to update. |
+| cherry | Tuple[str, str] | The names of the two nodes that were joined into a cherry. |
+| new_node | str | The name of the newly formed cherry node. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lambda_matrix_df | pd.DataFrame | The updated lambda matrix. |
+
+#### Internal Logic
+1. **Identify cherry nodes:** Finds the indices of the cherry nodes in the lambda matrix.
+2. **Modify names and indices:** Updates the node names and `_lambda_indices` attribute to reflect the newly formed cherry.
+3. **Extract the old lambda matrix:** Removes the rows and columns corresponding to the joined nodes from the lambda matrix.
+4. **Add new row and column:** Adds a new row and column to the lambda matrix for the newly formed cherry.
+5. **Compute new singular values:** Calculates the second singular values for the new row and column using the `_compute_svd2` method.
+6. **Regenerate lambda matrix:** Constructs a new DataFrame from the updated lambda matrix.
+
+### `setup_root_finder`
+#### Description
+This method defines the implicit rooting strategy for the solver. It adds an implicit root with all-zero character states to the character matrix and recomputes the dissimilarity map.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cassiopeia_tree | CassiopeiaTree | The CassiopeiaTree object passed into `solve`. |
+
+#### Internal Logic
+1. **Add implicit root:** Adds a new row to the character matrix representing the implicit root with all-zero character states.
+2. **Recompute dissimilarity map:** Computes the dissimilarity map using the updated character matrix.
+
+### `root_tree`
+#### Description
+This method roots the tree by adding an edge between the last two remaining nodes and converting the undirected graph to a directed graph with respect to the specified root sample.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tree | nx.Graph | The undirected tree topology. |
+| root_sample | str | The name of the sample to treat as the root. |
+| remaining_samples | List[str] | The names of the last two unjoined nodes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rooted_tree | nx.DiGraph | The rooted tree. |
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `networkx` | Used for graph operations and tree manipulations. |
-| `numpy` | Utilized for numerical operations and matrix manipulations. |
-| `pandas` | Used for handling data frames, particularly for the lambda matrix. |
-| `scipy` | Provides functions for singular value decomposition. |
+| networkx | Representing and manipulating the tree topology. |
+| numpy | Numerical operations and array manipulation. |
+| pandas | Data manipulation and representation of the dissimilarity map. |
+| scipy | Singular value decomposition calculation. |
+| ete3 | Tree manipulation and visualization (used in `_ccphylo_solve`). |
+| configparser | Reading configuration settings (used in `_setup_ccphylo`). |
+| subprocess | Running external commands (used in `_ccphylo_solve`). |
+| tempfile | Creating temporary files and directories (used in `_ccphylo_solve`). |
+
+### Configuration
+The `_ccphylo_solve` method uses the `ccphylo_path` setting from the `config.ini` file to locate the CCPhylo executable.
 
 ## Error Handling
-
-The class raises a `DistanceSolverError` if the dissimilarity function is not specified when required, or if rooting parameters are not correctly provided.
+The `DistanceSolverError` exception is raised for various error conditions, such as missing rooting parameters or invalid dissimilarity functions.
 
 ## Logging
-
-The class does not implement specific logging mechanisms.
-
-## TODOs
-
-No TODOs are present in the code.
+Currently, no logging mechanisms are implemented in this code.

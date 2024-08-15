@@ -3,124 +3,82 @@ title: "brownian_spatial_simulator_test.py"
 ---
 
 ## High-level description
-
-The `brownian_spatial_simulator_test.py` file contains unit tests for the `BrownianSpatialDataSimulator` class, which is part of the Cassiopeia library. This simulator is designed to overlay spatial data onto a phylogenetic tree using a Brownian motion model. The tests ensure that the simulator initializes correctly, handles errors appropriately, and accurately overlays spatial data onto trees with or without existing metadata.
+This file contains unit tests for the `BrownianSpatialDataSimulator` class, which is responsible for simulating spatial data in a Cassiopeia tree using Brownian motion. The tests cover the initialization of the simulator, overlaying data onto a basic tree, and handling trees with existing cell metadata.
 
 ## Code Structure
-
-The main class in this file is `TestBrownianSpatialDataSimulator`, which is a subclass of `unittest.TestCase`. This class contains several test methods that validate different aspects of the `BrownianSpatialDataSimulator` class. The tests are organized as follows:
-
-- `setUp`: Initializes the test environment by creating a sample tree and associated metadata.
-- `test_init`: Tests the initialization of the simulator, including error handling for invalid parameters.
-- `test_overlay_data`: Validates the overlay of spatial data onto a tree using the simulator.
-- `test_overlay_data_without_scale`: Tests the overlay of spatial data without scaling the unit area.
-- `test_overlay_data_with_existing_cell_meta`: Ensures that the simulator correctly overlays data onto a tree that already has cell metadata.
-
-## References
-
-- `BrownianSpatialDataSimulator`: The class being tested, which is responsible for simulating spatial data using Brownian motion.
-- `DataSimulatorError`: An exception class used to handle errors specific to data simulation.
+The code defines a `TestBrownianSpatialDataSimulator` class that inherits from `unittest.TestCase`. It contains several test methods that check different aspects of the `BrownianSpatialDataSimulator` functionality.
 
 ## Symbols
 
-### `TestBrownianSpatialDataSimulator`
+### TestBrownianSpatialDataSimulator
 #### Description
-This class contains unit tests for the `BrownianSpatialDataSimulator`. It uses the `unittest` framework to define and run tests that verify the simulator's functionality.
-
-#### Inputs
-- None directly, but it uses a sample tree and metadata set up in the `setUp` method.
-
-#### Outputs
-- None directly, but it asserts conditions to validate the simulator's behavior.
+A test class for the `BrownianSpatialDataSimulator`. It sets up a basic tree structure and tests various aspects of the simulator.
 
 #### Internal Logic
-- The `setUp` method initializes a directed graph representing a phylogenetic tree and sets up node times and metadata.
-- Each test method uses assertions to check the simulator's behavior, such as raising exceptions for invalid parameters or correctly overlaying spatial data.
+1. `setUp`: Initializes a basic tree structure and a tree with cell metadata for use in tests.
+2. `test_init`: Tests the initialization of the `BrownianSpatialDataSimulator` with various parameters.
+3. `test_overlay_data`: Tests the overlay_data method on a basic tree.
+4. `test_overlay_data_without_scale`: Tests the overlay_data method without scaling the coordinates.
+5. `test_overlay_data_with_existing_cell_meta`: Tests the overlay_data method on a tree with existing cell metadata.
 
-### `setUp`
+### setUp
 #### Description
-Initializes the test environment by creating a sample tree and associated metadata.
-
-#### Inputs
-- None
-
-#### Outputs
-- None
+Sets up the test environment by creating a basic tree structure and a tree with cell metadata.
 
 #### Internal Logic
-- Constructs a directed graph using `networkx` to represent a phylogenetic tree.
-- Sets node times and initializes metadata for the tree.
+1. Creates a directed graph representing the tree topology.
+2. Initializes a `CassiopeiaTree` with the topology.
+3. Sets node times for the tree.
+4. Creates a `DataFrame` for cell metadata.
+5. Initializes another `CassiopeiaTree` with the topology and cell metadata.
 
-### `test_init`
+### test_init
 #### Description
-Tests the initialization of the `BrownianSpatialDataSimulator`, including error handling for invalid parameters.
-
-#### Inputs
-- None
-
-#### Outputs
-- None
+Tests the initialization of the `BrownianSpatialDataSimulator` with various parameters.
 
 #### Internal Logic
-- Attempts to create a simulator with invalid parameters and checks that `DataSimulatorError` is raised.
-- Verifies that valid parameters result in a correctly initialized simulator.
+1. Checks that initializing with invalid dimensions raises a `DataSimulatorError`.
+2. Checks that initializing with a negative diffusion coefficient raises a `DataSimulatorError`.
+3. Verifies that a valid initialization sets the correct attributes.
 
-### `test_overlay_data`
+### test_overlay_data
 #### Description
-Validates the overlay of spatial data onto a tree using the simulator.
-
-#### Inputs
-- None
-
-#### Outputs
-- None
+Tests the `overlay_data` method of `BrownianSpatialDataSimulator` on a basic tree.
 
 #### Internal Logic
-- Uses the simulator to overlay spatial data onto the sample tree.
-- Compares the resulting spatial coordinates and cell metadata against expected values.
+1. Initializes a simulator with 2 dimensions and a diffusion coefficient of 1.
+2. Overlays data onto the basic tree.
+3. Checks that the spatial coordinates are set correctly for each node.
+4. Verifies that the cell metadata is updated with the correct spatial coordinates.
 
-### `test_overlay_data_without_scale`
+### test_overlay_data_without_scale
 #### Description
-Tests the overlay of spatial data without scaling the unit area.
-
-#### Inputs
-- None
-
-#### Outputs
-- None
+Tests the `overlay_data` method without scaling the coordinates to unit area.
 
 #### Internal Logic
-- Configures the simulator to not scale the unit area.
-- Verifies that the resulting spatial coordinates match expected values without scaling.
+1. Initializes a simulator with `scale_unit_area=False`.
+2. Overlays data onto the basic tree.
+3. Checks that the spatial coordinates are set correctly for each node.
+4. Verifies that the cell metadata is updated with the correct spatial coordinates.
 
-### `test_overlay_data_with_existing_cell_meta`
+### test_overlay_data_with_existing_cell_meta
 #### Description
-Ensures that the simulator correctly overlays data onto a tree that already has cell metadata.
-
-#### Inputs
-- None
-
-#### Outputs
-- None
+Tests the `overlay_data` method on a tree with existing cell metadata.
 
 #### Internal Logic
-- Uses the simulator to overlay spatial data onto a tree with existing metadata.
-- Checks that the resulting metadata includes both the original and new spatial data.
+1. Initializes a simulator with default parameters.
+2. Overlays data onto the tree with existing cell metadata.
+3. Checks that the spatial coordinates are set correctly for each node.
+4. Verifies that the cell metadata is updated with the correct spatial coordinates while preserving existing metadata.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `networkx` | Used to create and manipulate the directed graph representing the tree. |
-| `numpy` | Used for numerical operations and random number generation. |
-| `pandas` | Used to handle metadata in DataFrame format. |
-| `cassiopeia` | The library containing the `BrownianSpatialDataSimulator` and related classes. |
+| unittest | Provides the testing framework |
+| networkx | Used for creating and manipulating graph structures |
+| numpy | Used for numerical operations and testing |
+| pandas | Used for handling DataFrames and testing |
+| cassiopeia | The main package being tested |
 
 ## Error Handling
-
-The tests check for `DataSimulatorError` when invalid parameters are used to initialize the `BrownianSpatialDataSimulator`.
-
-## Logging
-
-No explicit logging is implemented in the test file. The `unittest` framework handles test output and reporting.
+The tests check for proper error handling in the `BrownianSpatialDataSimulator` initialization by asserting that `DataSimulatorError` is raised for invalid input parameters.

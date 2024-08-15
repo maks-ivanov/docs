@@ -3,78 +3,66 @@ title: "VanillaGreedySolver.py"
 ---
 
 ## High-level description
-
-The `VanillaGreedySolver` class is a specialized implementation of a greedy algorithm for phylogenetic tree reconstruction, specifically designed to handle character matrices with potential missing data. It extends the `GreedySolver` class and implements a top-down approach to partition samples based on the most frequent mutations, optimizing for parsimony. The solver includes mechanisms to handle ambiguous and missing data, allowing for flexible and robust tree inference.
+The `VanillaGreedySolver` class in `VanillaGreedySolver.py` implements a top-down greedy algorithm for reconstructing phylogenetic trees. It recursively splits a set of samples into mutually exclusive groups based on the presence or absence of the most frequently occurring mutation, optimizing for parsimony. The solver handles missing data using various imputation methods and allows for weighting character-state pairs based on provided priors.
 
 ## Code Structure
+The `VanillaGreedySolver` class inherits from the `GreedySolver` class. It primarily implements the `perform_split` method, which determines the optimal split based on mutation frequencies. The `solve` method, inherited from `GreedySolver`, orchestrates the tree building process by recursively calling `perform_split`. The `compute_mutation_frequencies` method calculates the frequencies of each character-state pair, considering ambiguous states. The `__add_duplicates_to_tree` method, also inherited, handles the reinsertion of duplicate samples into the tree after the main solving process.
 
-The `VanillaGreedySolver` class inherits from the `GreedySolver` class, which is a subclass of `CassiopeiaSolver`. The `VanillaGreedySolver` implements the `perform_split` method, which is crucial for partitioning samples during the tree reconstruction process. It also utilizes missing data imputation methods from the `missing_data_methods` module and utility functions from the `solver_utilities` module.
+## References
+- `GreedySolver`: The parent class defining the general structure of greedy solvers.
+- `missing_data_methods`: A module containing various missing data imputation methods.
+- `solver_utilities`: A module providing utility functions for tree solvers.
 
 ## Symbols
 
 ### `VanillaGreedySolver`
 #### Description
-The `VanillaGreedySolver` class implements a greedy algorithm for phylogenetic tree reconstruction. It recursively partitions a set of samples based on the most frequent mutation, handling missing and ambiguous data through specified imputation methods.
+This class implements the vanilla Cassiopeia-Greedy algorithm for phylogenetic tree reconstruction. It identifies the most frequent mutation and splits the sample set based on the presence or absence of that mutation.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| missing_data_classifier | Callable | A function or string specifying the method for handling missing data. Defaults to `assign_missing_average`. |
-| prior_transformation | str | A string specifying the transformation to apply to priors for weighting. Defaults to `"negative_log"`. |
+| missing_data_classifier | Callable | A function to handle missing data during character splits. Defaults to `missing_data_methods.assign_missing_average`. |
+| prior_transformation | str | The method for transforming priors into weights. Defaults to "negative_log". |
 
 #### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | None | The class does not return a value but modifies the state of a `CassiopeiaTree` object. |
+None
 
 #### Internal Logic
-- **Initialization**: Sets up the solver with a specified missing data classifier and prior transformation method.
-- **`perform_split` Method**: 
-  - Computes mutation frequencies for each character and state.
-  - Selects the best character-state pair to partition the samples, considering weights if provided.
-  - Handles missing data using the specified classifier, ensuring samples with missing values are appropriately partitioned.
-  - Returns two lists representing the left and right partitions of samples.
+The `perform_split` method calculates mutation frequencies and identifies the most frequent mutation. It then partitions the samples based on the presence or absence of this mutation, using the specified `missing_data_classifier` to handle missing data.
 
 ### `perform_split`
 #### Description
-Partitions a list of samples into two groups based on the most frequent character-state pair, using a specified method to handle missing data.
+This method partitions a set of samples based on the most frequent (character, state) pair in the character matrix.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| character_matrix | pd.DataFrame | The character matrix containing sample data. |
-| samples | List[int] | A list of sample indices to partition. |
-| weights | Optional[Dict[int, Dict[int, float]]] | Weights for each character-state pair, derived from priors. |
-| missing_state_indicator | int | Indicator for missing data in the character matrix. |
+| character_matrix | pd.DataFrame | The character matrix representing the mutation profiles of the samples. |
+| samples | List[int] | A list of sample indices to be partitioned. |
+| weights | Optional[Dict[int, Dict[int, float]]] | A dictionary of weights for each (character, state) pair, derived from priors. |
+| missing_state_indicator | int | The character representing missing data in the character matrix. Defaults to -1. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| Tuple[List[str], List[str]] | Tuple | Two lists representing the left and right partitions of samples. |
+| left_set | List[str] | The list of samples belonging to the left partition (possessing the most frequent mutation). |
+| right_set | List[str] | The list of samples belonging to the right partition (not possessing the most frequent mutation). |
 
 #### Internal Logic
-- Converts sample names to indices for efficient processing.
-- Computes mutation frequencies for each character and state.
-- Iterates over character-state pairs to find the best split, considering weights if available.
-- Partitions samples into left, right, and missing groups based on the chosen character-state pair.
-- Uses the missing data classifier to handle samples with missing data, ensuring they are placed in the appropriate partition.
+1. Calculate mutation frequencies using `compute_mutation_frequencies`.
+2. Identify the (character, state) pair with the highest frequency, considering weights if provided.
+3. Partition the samples into `left_set` and `right_set` based on the presence or absence of the chosen mutation.
+4. Use the `missing_data_classifier` to assign samples with missing data at the chosen character to either partition.
 
-## References
-
-- **`GreedySolver`**: The parent class that defines the structure for greedy solvers, including the abstract `perform_split` method.
-- **`missing_data_methods.assign_missing_average`**: The default method for handling missing data during sample partitioning.
-- **`solver_utilities.convert_sample_names_to_indices`**: Utility function to map sample names to indices for efficient processing.
-- **`solver_utilities.transform_priors`**: Utility function to transform priors into weights for character-state pairs.
+## Error Handling
+The code raises a `GreedySolverError` if the input character matrix contains ambiguous states and the solver is not configured to handle them (`self.allow_ambiguous` is False).
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `numpy` | Used for numerical operations and array manipulations. |
-| `pandas` | Utilized for handling character matrices as DataFrames. |
+- pandas
+- networkx
+- ete3
+- numpy
 
 ## TODOs
-
-- **Implement fuzzysolver**: A note in the class docstring indicates a future implementation of a "fuzzysolver" is planned.
-
-This documentation provides a comprehensive overview of the `VanillaGreedySolver` class, detailing its purpose, functionality, and integration with other components in the codebase.
+None specified in the code.

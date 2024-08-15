@@ -3,55 +3,36 @@ title: "TreeSimulator.py"
 ---
 
 ## High-level description
-
-The `TreeSimulator` class in the `TreeSimulator.py` file is an abstract base class designed for simulating phylogenetic trees. It provides a framework for creating various tree simulation models, which are used to generate in silico single-cell phylogenies. These simulations can be used to evaluate methods for reconstructing and analyzing phylogenetic trees. The class requires derived classes to implement the `simulate_tree` method, which returns a `CassiopeiaTree` object with at least its topology initialized.
-
-## Code Structure
-
-- **TreeSimulator**: This is the main abstract class in the file. It serves as a base class for all tree simulators and mandates the implementation of the `simulate_tree` method in derived classes.
-- **CassiopeiaTree**: This is a referenced class from the `cassiopeia.data` module, which represents the tree structure that the simulators will generate.
-- **TreeSimulatorError**: This is a custom exception class from the `cassiopeia.mixins` module, used for handling errors specific to tree simulation.
+The `TreeSimulator` class is an abstract base class for all tree simulators in Cassiopeia. It defines the basic interface for simulating single-cell phylogenies, requiring derived classes to implement a `simulate_tree` method that returns a `CassiopeiaTree` object representing the simulated phylogeny. This enables users to generate ground truth phylogenies for evaluating different reconstruction and analysis methods.
 
 ## References
-
-- **CassiopeiaTree**: The `simulate_tree` method is expected to return an instance of this class, which is defined in the `cassiopeia.data.CassiopeiaTree` module.
-- **TreeSimulatorError**: This is used for error handling and is defined in the `cassiopeia.mixins.errors` module.
+This class is referenced in other parts of the codebase, particularly in concrete simulator implementations like `BirthDeathFitnessSimulator`, `CompleteBinarySimulator`, and `SimpleFitSubcloneSimulator`. These classes inherit from `TreeSimulator` and provide specific simulation algorithms.
 
 ## Symbols
-
 ### `TreeSimulator`
 #### Description
-The `TreeSimulator` class is an abstract base class for simulating phylogenetic trees. It provides a structure for creating tree simulators that return a `CassiopeiaTree` with its topology initialized. The class is designed to be extended by specific tree simulation implementations.
+This is an abstract base class for all tree simulators. It defines the blueprint for simulating single-cell phylogenies.
 
 #### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| None | None | The class itself does not take inputs directly but serves as a base for other classes. |
+This class does not have an __init__ method and therefore does not take any inputs.
+
+#### Outputs
+This class does not directly return any outputs.
+
+#### Internal Logic
+The class uses the `abc` module to define the `simulate_tree` method as an abstract method, ensuring that all concrete subclasses must implement this method.
+
+### `simulate_tree`
+#### Description
+An abstract method that needs to be implemented by all derived classes. This method should simulate a `CassiopeiaTree` with at least its tree topology initialized.
+
+#### Inputs
+This method does not take any inputs.
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| simulate_tree | CassiopeiaTree | A method that must be implemented by subclasses to return a simulated tree. |
+|  | `CassiopeiaTree` | A `CassiopeiaTree` object representing the simulated phylogeny. The tree should have at least its topology initialized. |
 
 #### Internal Logic
-The `TreeSimulator` class uses Python's `abc` module to define an abstract method `simulate_tree`. This method must be implemented by any subclass, ensuring that all tree simulators provide a way to generate a `CassiopeiaTree`.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `abc` | Used to define the abstract base class and abstract methods. |
-| `cassiopeia.data.CassiopeiaTree` | Represents the tree structure that simulators will generate. |
-| `cassiopeia.mixins.TreeSimulatorError` | Custom exception for handling errors specific to tree simulation. |
-
-## Error Handling
-
-The `TreeSimulator` class itself does not implement error handling, but it references `TreeSimulatorError` for use in derived classes. This allows specific tree simulators to raise meaningful exceptions related to tree simulation errors.
-
-## Logging
-
-The `TreeSimulator` class does not implement any logging mechanisms. Logging, if needed, would be implemented in the derived classes that extend this abstract base class.
-
-## TODOs
-
-There are no TODOs or notes left in the code.
+This method is abstract and therefore does not have any internal logic defined in the base class. Concrete subclasses are responsible for implementing the specific simulation logic.

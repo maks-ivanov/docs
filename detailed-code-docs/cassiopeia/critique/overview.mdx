@@ -3,43 +3,66 @@ title: "Overview"
 ---
 
 ## High-level description
-
-The `cassiopeia.critique` directory is part of the Cassiopeia framework, which is designed for phylogenetic analysis. This specific module provides tools for comparing phylogenetic trees, focusing on evaluating their similarity and accuracy. The main components within this directory include functions for calculating the Robinson-Foulds distance and triplet correctness between two trees. These metrics help in assessing the topological differences and structural similarities of phylogenetic trees.
+The `cassiopeia/critique` directory contains modules for comparing and analyzing phylogenetic trees, particularly in the context of lineage tracing experiments. It provides implementations for calculating tree similarity metrics, such as the Robinson-Foulds distance and triplets correct accuracy, as well as utility functions for tree manipulation and analysis.
 
 ## What does it do?
+This directory provides tools for researchers and developers working with phylogenetic trees to:
 
-The `cassiopeia.critique` module implements processes to compare two phylogenetic trees, which are representations of evolutionary relationships among species or genes. The module provides two main functionalities:
+1. Compare two phylogenetic trees using different metrics:
+   - Robinson-Foulds distance: A standard metric for measuring the structural difference between two trees.
+   - Triplets correct accuracy: A more detailed comparison that examines the topology of sampled triplets (sets of three leaves) at different depths of the trees.
 
-1. **Robinson-Foulds Distance Calculation**: This is a measure of the dissimilarity between two phylogenetic trees. It counts the number of splits (bipartitions) that differ between the trees. A lower Robinson-Foulds distance indicates that the trees are more similar in their structure.
+2. Perform various tree analysis tasks:
+   - Annotate tree depths and calculate the number of triplets rooted at each node.
+   - Identify outgroups in triplets of leaves.
+   - Sample triplets from specific depths in a tree.
 
-2. **Triplet Correctness Calculation**: This metric evaluates the proportion of triplets (sets of three leaves) that have the same structure in both trees. It provides a more granular view of tree similarity by focusing on smaller substructures within the trees.
+3. Provide utility functions for combinatorial calculations and tree manipulations.
 
-These processes are crucial for researchers who need to compare different phylogenetic hypotheses or validate tree reconstruction methods.
+These tools are essential for validating and comparing reconstructed phylogenetic trees, which is crucial in lineage tracing experiments and other applications involving evolutionary tree analysis.
 
 ## Entry points
+The main entry point for this directory is the `__init__.py` file, which exposes two key functions:
 
-The main entry point for the `cassiopeia.critique` module is the `__init__.py` file. This file imports the key functions `robinson_foulds` and `triplets_correct` from the `compare.py` submodule, making them accessible for use in tree comparison tasks. The code is organized to facilitate easy access to these functions, which are the primary tools for evaluating tree similarity.
+1. `robinson_foulds`: Computes the Robinson-Foulds distance between two phylogenetic trees.
+2. `triplets_correct`: Calculates the triplets correct accuracy between two phylogenetic trees.
+
+These functions are imported from the `compare.py` module, which contains their implementations. The `critique_utilities.py` file provides supporting functions used by the main comparison algorithms.
+
+The typical workflow would involve:
+1. Importing the desired comparison function from `cassiopeia.critique`.
+2. Creating or loading two `CassiopeiaTree` objects to compare.
+3. Calling the comparison function with the two trees as arguments.
+4. Analyzing the results to determine the similarity or differences between the trees.
 
 ## Key Files
+1. `compare.py`: This file contains the main implementations of the tree comparison algorithms:
+   - `triplets_correct`: A detailed comparison function that samples triplets at different depths and compares their topology between two trees.
+   - `robinson_foulds`: A wrapper around the Ete3 library's implementation of the Robinson-Foulds distance calculation.
 
-- **`compare.py`**: This file contains the core functions for comparing phylogenetic trees. It includes the `robinson_foulds` function, which uses the `ete3` library to compute the Robinson-Foulds distance, and the `triplets_correct` function, which calculates the triplet correctness using utility functions from `critique_utilities.py`.
+2. `critique_utilities.py`: This file provides utility functions used in tree analysis and comparison:
+   - `nCr`: Calculates binomial coefficients.
+   - `annotate_tree_depths`: Annotates each node in a tree with its depth and the number of triplets rooted at that node.
+   - `get_outgroup`: Infers the outgroup of a given triplet of leaves in a tree.
+   - `sample_triplet_at_depth`: Samples a triplet of leaves from a tree with a specified most recent common ancestor depth.
 
-- **`critique_utilities.py`**: This file provides utility functions that support the main comparison functions. It includes methods for annotating tree nodes with depth information, sampling triplets at specific depths, and determining outgroups in triplets. These utilities are essential for the detailed analysis and manipulation of tree structures.
+These files work together to provide a comprehensive set of tools for tree comparison and analysis. The `compare.py` file relies on the utility functions in `critique_utilities.py` to perform its calculations efficiently.
 
 ## Dependencies
+The `critique` module relies on several external libraries and internal Cassiopeia components:
 
-The `cassiopeia.critique` module relies on several external libraries:
+1. External libraries:
+   - `collections`: Used for `defaultdict` data structure.
+   - `copy`: Used for deep copying trees.
+   - `ete3`: Used for Robinson-Foulds distance calculation.
+   - `networkx`: Likely used in the `CassiopeiaTree` implementation.
+   - `numpy`: Used for numerical operations.
+   - `typing`: Used for type hinting.
+   - `math`: Used for factorial calculations in combinatorial functions.
 
-- **`ete3`**: This library is used for tree manipulation and calculating the Robinson-Foulds distance. It provides robust tools for handling phylogenetic trees, making it a suitable choice for this module.
+2. Internal dependencies:
+   - `cassiopeia.data.CassiopeiaTree`: The main data structure representing phylogenetic trees.
 
-- **`networkx`**: Utilized for graph-based operations on trees, `networkx` offers a flexible framework for working with complex tree structures.
+These dependencies are chosen to provide efficient data structures (e.g., `defaultdict`), numerical operations (numpy), and specialized tree operations (ete3). The use of type hinting (typing) suggests a focus on code clarity and potential use of static type checking tools.
 
-- **`numpy`**: Provides numerical operations, such as calculating maximum values and performing array manipulations, which are necessary for efficient tree analysis.
-
-- **`scipy.special`**: Used for combinatorial calculations, particularly in the `nCr` function, which computes binomial coefficients.
-
-- **`collections`**: This module is used for creating default dictionaries to store triplet information, facilitating efficient data management.
-
-- **`copy`**: Allows for deep copying of tree structures, ensuring that modifications do not affect the original trees.
-
-These dependencies are chosen for their ability to handle the specific requirements of phylogenetic tree analysis, such as tree manipulation, numerical computations, and data management.
+In conclusion, the `cassiopeia/critique` directory provides a set of powerful tools for comparing and analyzing phylogenetic trees, with a focus on efficiency and accuracy. It leverages both standard Python libraries and specialized scientific computing packages to deliver robust tree comparison functionality, which is crucial for validating and interpreting results in lineage tracing experiments and other phylogenetic studies.

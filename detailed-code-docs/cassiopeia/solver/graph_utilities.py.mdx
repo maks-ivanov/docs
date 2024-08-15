@@ -3,131 +3,110 @@ title: "graph_utilities.py"
 ---
 
 ## High-level description
-
-The `graph_utilities.py` file provides utility functions for constructing and optimizing graphs used in graph-based solvers, specifically for phylogenetic tree reconstruction. It includes functions to build connectivity and similarity graphs from character matrices and to optimize graph partitions using max-cut and spectral methods.
+This code defines functions for constructing and manipulating graphs used in phylogenetic tree reconstruction. It includes functions for building connectivity graphs based on shared mutations, similarity graphs based on a given similarity function, and optimizing graph partitions using hill-climbing procedures.
 
 ## Code Structure
+The code consists of several functions that are used to construct and manipulate graphs for phylogenetic tree reconstruction. The `construct_connectivity_graph` and `construct_similarity_graph` functions are used to build different types of graphs, while `max_cut_improve_cut` and `spectral_improve_cut` are used to optimize partitions on these graphs. The `check_if_cut` function is a utility function used by the optimization functions.
 
-The main symbols in the code are interconnected as follows:
-- `construct_connectivity_graph` and `construct_similarity_graph` are responsible for building graphs based on character matrices and mutation data.
-- `max_cut_improve_cut` and `spectral_improve_cut` are optimization functions that refine graph partitions using hill-climbing techniques.
-- `check_if_cut` is a helper function used by the optimization functions to determine if two nodes are on opposite sides of a partition.
+## References
+This code references the `solver_utilities` module for converting sample names to indices.
 
 ## Symbols
 
 ### `check_if_cut`
 #### Description
-Determines if two nodes are on opposite sides of a given graph partition.
+This function checks if two nodes are on opposite sides of a graph partition.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| u | int | The first node. |
-| v | int | The second node. |
-| cut | List[int] | A list representing one side of a partition. |
+| u | int | The index of the first node. |
+| v | int | The index of the second node. |
+| cut | List[int] | A list of node indices representing one side of the partition. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| result | bool | True if nodes u and v are on opposite sides of the partition, False otherwise. |
+|  | bool | True if nodes u and v are on opposite sides of the partition, False otherwise. |
+
+#### Internal Logic
+The function simply checks if one node is in the `cut` list and the other is not.
 
 ### `construct_connectivity_graph`
 #### Description
-Generates a connectivity graph for a max-cut algorithm, representing a supertree over trees generated for each character.
+This function constructs a connectivity graph for a set of samples based on their observed mutations. The edge weights represent the tendency of two samples to be grouped together or separated based on their shared and differing mutations.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
 | character_matrix | pd.DataFrame | The character matrix of observed character states for all samples. |
-| mutation_frequencies | Dict[int, Dict[int, int]] | Frequencies of each character/state pair in the character matrix. |
-| missing_state_indicator | int | Indicator for missing values. |
-| samples | List[str] | List of sample names to build the graph over. |
-| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for edges in the graph. |
+| mutation_frequencies | Dict[int, Dict[int, int]] | A dictionary containing the frequencies of each character/state pair. |
+| missing_state_indicator | int | The character representing missing values. |
+| samples | List[str] | A list of sample names to include in the graph. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for character/state pairs. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| G_names | nx.Graph | A connectivity graph constructed over the sample set. |
+| G_names | nx.Graph | The constructed connectivity graph with sample names as nodes. |
 
 #### Internal Logic
-- Converts sample names to indices.
-- Iterates over pairs of samples to compute similarity scores based on shared and distant mutations.
-- Adds edges to the graph with weights reflecting these scores.
+The function iterates through all pairs of samples and calculates a score based on their shared and differing mutations. The score is positive if the samples share mutations and negative if they have different mutations. The absolute value of the score is higher for mutations that are less frequent in the dataset. The scores are then used as edge weights in the graph.
 
 ### `max_cut_improve_cut`
 #### Description
-Optimizes a graph partition for the max-cut criterion using a greedy hill-climbing procedure.
+This function implements a greedy hill-climbing procedure to optimize a partition for the max-cut criterion on a graph.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| G | nx.Graph | The graph to optimize. |
-| cut | List[str] | Initial partition of the graph. |
+| G | nx.Graph | The graph to optimize the partition on. |
+| cut | List[str] | A list of nodes representing one side of the initial partition. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| new_cut | List[str] | An optimized partition that is a local maximum for the max-cut criterion. |
+| new_cut | List[str] | A new partition that is a local maximum to the max-cut criterion. |
 
 #### Internal Logic
-- Calculates improvement potential for moving nodes across the partition.
-- Iteratively moves nodes to maximize the cut weight until no further improvements are possible.
+The function iteratively moves nodes between the two sides of the partition, choosing the move that maximizes the weight of edges across the cut. The procedure terminates when no further improvement can be made or a maximum number of iterations is reached.
 
 ### `construct_similarity_graph`
 #### Description
-Generates a similarity graph with nodes representing samples and edges weighted by similarity scores.
+This function constructs a similarity graph for a set of samples based on a given similarity function.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
 | character_matrix | pd.DataFrame | The character matrix of observed character states for all samples. |
-| missing_state_indicator | int | Indicator for missing values. |
-| samples | List[str] | List of sample names to build the graph over. |
-| similarity_function | Callable | Function to calculate similarity scores between samples. |
-| threshold | int | Minimum similarity threshold for including an edge. |
-| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for edges in the graph. |
+| missing_state_indicator | int | The character representing missing values. |
+| samples | List[str] | A list of sample names to include in the graph. |
+| similarity_function | Callable | A function that calculates a similarity score between two samples. |
+| threshold | int | A minimum similarity threshold to include an edge in the graph. |
+| weights | Optional[Dict[int, Dict[int, float]]] | Optional weights for character/state pairs. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| G_names | nx.Graph | A similarity graph constructed over the sample set. |
+| G_names | nx.Graph | The constructed similarity graph with sample names as nodes. |
 
 #### Internal Logic
-- Converts sample names to indices.
-- Computes similarity scores for pairs of samples using the provided function.
-- Adds edges to the graph if the similarity score exceeds the threshold.
+The function iterates through all pairs of samples and calculates their similarity using the provided `similarity_function`. If the similarity score is above the given `threshold`, an edge is added between the corresponding nodes in the graph with the weight equal to the similarity score.
 
 ### `spectral_improve_cut`
 #### Description
-Optimizes a graph partition for a modified normalized cut using a greedy hill-climbing procedure.
+This function implements a greedy hill-climbing procedure to optimize a partition for a modified normalized cut criterion on a graph.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| G | nx.Graph | The graph to optimize. |
-| cut | List[str] | Initial partition of the graph. |
+| G | nx.Graph | The graph to optimize the partition on. |
+| cut | List[str] | A list of nodes representing one side of the initial partition. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| new_cut | List[str] | An optimized partition that is a local minimum for the objective function. |
+| new_cut | List[str] | A new partition that is a local minimum to the objective function. |
 
 #### Internal Logic
-- Calculates improvement potential for moving nodes across the partition.
-- Iteratively moves nodes to minimize the normalized cut ratio until no further improvements are possible.
-
-## References
-
-- `solver_utilities.convert_sample_names_to_indices`: Used to map sample names to indices for efficient graph construction.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| networkx | Used for graph construction and manipulation. |
-| numpy | Used for numerical operations and calculations. |
-| pandas | Used for handling character matrices. |
-
-## TODOs
-
-- There are TODO comments suggesting potential optimization using `numba` for performance improvements in the `construct_connectivity_graph` and `construct_similarity_graph` functions.
+The function iteratively moves nodes between the two sides of the partition, choosing the move that minimizes the ratio of the weight of edges across the cut to the minimum of the sum of edge weights within each side of the cut. The procedure terminates when no further improvement can be made or a maximum number of iterations is reached.

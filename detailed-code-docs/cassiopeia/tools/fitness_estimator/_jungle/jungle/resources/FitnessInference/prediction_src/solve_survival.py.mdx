@@ -3,192 +3,57 @@ title: "solve_survival.py"
 ---
 
 ## High-level description
-
-The `solve_survival.py` file provides a class called `survival_gen_func` that is designed to solve for the generating function of a branching process, assuming diffusive changes in fitness over time. It uses numerical methods, including a custom fourth-order Runge-Kutta integration, to compute solutions for the generating function and lineage propagators, which are conditional on not having sampled other branches. This is part of a broader effort to predict evolutionary dynamics from genealogical tree shapes.
+This code implements a numerical solver for the generating function of a branching process, assuming diffusive changes in fitness over time. It provides solutions for the lineage propagator, considering the non-sampling constraint.
 
 ## Code Structure
-
-The main components of the code are:
-
-- **`integrate_rk4` function**: A custom implementation of the fourth-order Runge-Kutta method for numerical integration.
-- **`survival_gen_func` class**: Encapsulates the logic for solving the generating function and lineage propagators.
-  - **`__init__` method**: Initializes the class with a fitness grid.
-  - **`integrate_phi` method**: Solves the equation for the generating function over a specified time grid.
-  - **`dphi` method**: Computes the time derivative of the generating function.
-  - **`integrate_prop_odeint` method**: Uses SciPy's ODE integrator to compute the lineage propagator.
-  - **`integrate_prop` method**: Uses the custom RK4 integrator to compute the lineage propagator.
-  - **`dprop_backward` method**: Computes the time derivative of the propagator.
-
-## References
-
-- The code references a scientific paper by Richard A. Neher, Colin A Russell, and Boris I Shraiman, which discusses predicting evolution from genealogical tree shapes.
+The code defines a class `survival_gen_func` that encapsulates the logic for solving the generating function and lineage propagator. It uses numerical integration methods like `integrate_rk4` (a 4th order Runge-Kutta implementation) and `scipy.integrate.odeint`. The class stores precomputed solutions in the `phi_solutions` dictionary for efficiency.
 
 ## Symbols
 
-### `integrate_rk4`
-#### Description
-A custom implementation of the fourth-order Runge-Kutta method for numerical integration, used to solve ordinary differential equations (ODEs) with a fixed time step.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| df | function | The derivative function of the ODE. |
-| f0 | ndarray | Initial state of the system. |
-| T | array-like | Time points at which to solve the ODE. |
-| dt | float | Time step for integration. |
-| args | tuple | Additional arguments to pass to the derivative function. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| sol | ndarray | Solution of the ODE at specified time points. |
-
-#### Internal Logic
-- Initializes the solution array and sets the initial state.
-- Iteratively applies the Runge-Kutta method to update the state at each time step.
-- Ensures non-negativity by applying a cutoff to the solution.
-
 ### `survival_gen_func`
 #### Description
-A class that solves for the generating function of the copy number distribution of lineages in a traveling fitness wave, and calculates lineage propagators.
+This class provides methods to solve for the generating function of a branching process and the lineage propagator, considering non-branching.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| fitness_grid | array-like, optional | Discretization used for the solution of the ODEs. |
+| fitness_grid | numpy.ndarray, optional | Discretization grid for fitness values. If None, a default grid is used. |
 
 #### Outputs
-- None directly, but provides methods to compute and return solutions.
+The class itself does not return any output. Its methods return the computed solutions.
 
 #### Internal Logic
-- Initializes with a fitness grid and precomputes values for ODE evaluation.
-- Stores interpolation objects for numerical solutions.
+The class initializes with a fitness grid and precomputes values for numerical efficiency. It stores solutions in the `phi_solutions` dictionary. The main methods are:
+- `integrate_phi`: Solves the generating function equation for given parameters.
+- `dphi`: Computes the time derivative of the generating function.
+- `integrate_prop_odeint`: Integrates the lineage propagator using `scipy.integrate.odeint`.
+- `integrate_prop`: Integrates the lineage propagator using the custom `integrate_rk4` method.
+- `dprop_backward`: Computes the time derivative of the propagator.
 
-### `integrate_phi`
+### `integrate_rk4`
 #### Description
-Solves the equation for the generating function over a specified time grid.
+This function implements a 4th order Runge-Kutta integration scheme with a fixed time step.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| D | float | Dimensionless diffusion constant. |
-| eps | float | Initial condition for the generating function. |
-| T | array-like | Time grid for evaluation. |
-| save_sol | bool | Whether to save the solution for later use. |
-| dt | float, optional | Time step for integration. |
+| df | function | Function that returns the derivative of the system. |
+| f0 | numpy.ndarray | Initial conditions for the integration. |
+| T | numpy.ndarray | Time points at which to evaluate the solution. |
+| dt | float | Time step for the integration. |
+| args | tuple | Additional arguments to pass to the derivative function `df`. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| sol | ndarray | Solution of the generating function over time. |
+| sol | numpy.ndarray | Solution of the integration at the specified time points. |
 
-#### Internal Logic
-- Initializes the generating function with the given initial condition.
-- Uses the custom RK4 integrator to solve the ODE.
-- Optionally saves the solution for interpolation.
-
-### `dphi`
+### `non_negativity_cutoff`
 #### Description
-Computes the time derivative of the generating function.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| phi | ndarray | Current state of the generating function. |
-| t | float | Current time. |
-| D | float | Dimensionless diffusion constant. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| dp | ndarray | Time derivative of the generating function. |
-
-#### Internal Logic
-- Computes the derivative using finite differences and the fitness grid.
-
-### `integrate_prop_odeint`
-#### Description
-Uses SciPy's ODE integrator to compute the lineage propagator, accounting for non-branching.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| D | float | Dimensionless diffusion constant. |
-| eps | float | Initial condition for the generating function. |
-| x | float or array-like | Fitness at the "closer to the present" end of the branch. |
-| t1 | float | Time closer to the present. |
-| t2 | float or array-like | Times after which to evaluate the propagator. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| sol | ndarray | Solution of the lineage propagator over time. |
-
-#### Internal Logic
-- Initializes the propagator as a delta function.
-- Uses `odeint` to integrate the ODE backward in time.
-
-### `integrate_prop`
-#### Description
-Uses the custom RK4 integrator to compute the lineage propagator, accounting for non-branching.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| D | float | Dimensionless diffusion constant. |
-| eps | float | Initial condition for the generating function. |
-| x | float or array-like | Fitness at the "closer to the present" end of the branch. |
-| t1 | float | Time closer to the present. |
-| t2 | float or array-like | Times after which to evaluate the propagator. |
-| dt | float, optional | Time step for integration. |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| sol | ndarray | Solution of the lineage propagator over time. |
-
-#### Internal Logic
-- Initializes the propagator as a delta function.
-- Uses the custom RK4 integrator to solve the ODE.
-
-### `dprop_backward`
-#### Description
-Computes the time derivative of the propagator.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| prop | ndarray | Current state of the propagator. |
-| t | float | Current time. |
-| params | tuple | Parameters for the generating function (D, eps). |
-
-#### Outputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| dp | ndarray | Time derivative of the propagator. |
-
-#### Internal Logic
-- Evaluates the generating function at the current time.
-- Computes the derivative using finite differences and the fitness grid.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `numpy` | Used for numerical operations and array manipulations. |
-| `scipy.integrate.odeint` | Used for integrating ordinary differential equations. |
-| `scipy.interpolate.interp1d` | Used for creating interpolation objects. |
-| `matplotlib.pyplot` | Used for plotting results. |
-| `matplotlib.cm` | Used for colormap utilities in plotting. |
+A global variable defining the minimum allowed value for the solutions, used to avoid numerical issues with very small or negative values.
 
 ## Error Handling
+The code uses `np.maximum` to ensure non-negativity of the solutions, replacing values below `non_negativity_cutoff` with the cutoff value. It also includes checks for valid time ranges within the `dprop_backward` method and prints warning messages if necessary.
 
-- The code includes checks for the range of time values when evaluating the generating function, printing warnings if the time is outside the interpolation range.
-
-## Logging
-
-- The code uses print statements to log warnings about time values exceeding the interpolation range and missing parameters in `phi_solutions`.
-
-## TODOs
-
-- No explicit TODOs are present in the code.
+## Performance Considerations
+The code uses a custom `integrate_rk4` implementation instead of `scipy.integrate.odeint` for the lineage propagator integration, claiming better performance for systems with different convergence criteria. The `phi_solutions` dictionary stores precomputed generating function solutions to avoid redundant computations.

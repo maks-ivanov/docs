@@ -3,94 +3,87 @@ title: "constants.py"
 ---
 
 ## High-level description
-
-The `constants.py` file in the `cassiopeia/preprocess` module is designed to store various constants used throughout the ProcessingPipeline module. These constants include tags for BAM files, DNA substitution matrices, and default parameters for different stages of the preprocessing pipeline. The constants are used to standardize and simplify the configuration and execution of the pipeline processes.
+This file defines constants and default parameters used in the Cassiopeia preprocessing pipeline. These constants include BAM tag names, quality scores, a DNA substitution matrix, and default parameters for various pipeline stages.
 
 ## Code Structure
-
-The file defines several dictionaries that group related constants together. These dictionaries are used in other parts of the codebase to access specific constants needed for processing tasks. The main dictionaries include `BAM_CONSTANTS`, `SINGLE_CELL_BAM_TAGS`, `SPATIAL_BAM_TAGS`, `CHEMISTRY_BAM_TAGS`, `DNA_SUBSTITUTION_MATRIX`, and `DEFAULT_PIPELINE_PARAMETERS`.
+The code defines several dictionaries: `BAM_CONSTANTS`, `SINGLE_CELL_BAM_TAGS`, `SPATIAL_BAM_TAGS`, `CHEMISTRY_BAM_TAGS`, `DNA_SUBSTITUTION_MATRIX`, and `DEFAULT_PIPELINE_PARAMETERS`. The first four dictionaries define BAM tag names for different sequencing chemistries. `DNA_SUBSTITUTION_MATRIX` defines a substitution matrix for DNA alignment. `DEFAULT_PIPELINE_PARAMETERS` defines default parameters for each stage of the preprocessing pipeline.
 
 ## Symbols
 
-### `BAM_CONSTANTS`
-#### Description
-This dictionary contains constants related to BAM file tags and quality thresholds. These constants are used to tag and process BAM files in the pipeline.
+### Symbol Name: `BAM_CONSTANTS`
+#### Description:
+This dictionary stores constants related to BAM file tags used in the preprocessing pipeline.
 
-#### Contents
-- `RAW_CELL_BC_TAG`: Tag for raw cell barcodes.
-- `RAW_CELL_BC_QUALITY_TAG`: Tag for raw cell barcode quality.
-- `CELL_BC_TAG`: Tag for corrected cell barcodes.
-- `UMI_TAG`: Tag for Unique Molecular Identifiers (UMIs).
-- `UMI_QUALITY_TAG`: Tag for UMI quality.
-- `NUM_READS_TAG`: Tag for the number of reads.
-- `CLUSTER_ID_TAG`: Tag for cluster IDs.
-- `N_Q`: Quality value indicating no consensus.
-- `HIGH_Q`: High-quality threshold.
-- `LOW_Q`: Low-quality threshold.
+#### Inputs:
+N/A - This is a constant dictionary.
 
-### `SINGLE_CELL_BAM_TAGS`
-#### Description
-This dictionary maps UMI and cell barcode tags for single-cell BAM files. It uses constants from `BAM_CONSTANTS`.
+#### Outputs:
+N/A - This is a constant dictionary.
 
-#### Contents
-- `umi`: Tuple of UMI tag and UMI quality tag.
-- `cell_barcode`: Tuple of raw cell barcode tag and quality tag.
+#### Internal Logic:
+The dictionary maps descriptive names to their corresponding BAM tag strings. For example, `RAW_CELL_BC_TAG` maps to `"CR"`, which represents the tag for the raw cell barcode sequence.
 
-### `SPATIAL_BAM_TAGS`
-#### Description
-Similar to `SINGLE_CELL_BAM_TAGS`, but for spatial BAM files, mapping UMI and spot barcode tags.
+### Symbol Name: `SINGLE_CELL_BAM_TAGS`
+#### Description:
+This dictionary defines BAM tag names for single-cell sequencing chemistries.
 
-#### Contents
-- `umi`: Tuple of UMI tag and UMI quality tag.
-- `spot_barcode`: Tuple of raw cell barcode tag and quality tag.
+#### Inputs:
+N/A - This is a constant dictionary.
 
-### `CHEMISTRY_BAM_TAGS`
-#### Description
-This dictionary maps different sequencing chemistries to their respective BAM tag configurations.
+#### Outputs:
+N/A - This is a constant dictionary.
 
-#### Contents
-- `dropseq`, `10xv2`, `10xv3`, `indropsv3`: Use `SINGLE_CELL_BAM_TAGS`.
-- `slideseq2`: Uses `SPATIAL_BAM_TAGS`.
+#### Internal Logic:
+The dictionary maps data types (`umi`, `cell_barcode`) to tuples of BAM tag names. Each tuple contains two tags: one for the sequence and one for the quality scores.
 
-### `DNA_SUBSTITUTION_MATRIX`
-#### Description
-A matrix defining substitution scores for DNA bases, used in sequence alignment processes.
+### Symbol Name: `SPATIAL_BAM_TAGS`
+#### Description:
+This dictionary defines BAM tag names for spatial sequencing chemistries.
 
-#### Contents
-- Scores for matches and mismatches between bases A, T, C, G, Z, and N.
+#### Inputs:
+N/A - This is a constant dictionary.
 
-### `DEFAULT_PIPELINE_PARAMETERS`
-#### Description
-This dictionary contains default parameters for various stages of the preprocessing pipeline. These parameters guide the behavior of the pipeline functions.
+#### Outputs:
+N/A - This is a constant dictionary.
 
-#### Contents
-- `general`: General pipeline settings like entry and exit points.
-- `convert`, `filter_bam`, `error_correct_cellbcs_to_whitelist`, `collapse`, `resolve`, `align`, `call_alleles`, `error_correct_intbcs_to_whitelist`, `error_correct_umis`, `filter_molecule_table`, `call_lineages`: Specific parameters for each stage of the pipeline.
+#### Internal Logic:
+Similar to `SINGLE_CELL_BAM_TAGS`, this dictionary maps data types (`umi`, `spot_barcode`) to tuples of BAM tag names.
 
-## References
+### Symbol Name: `CHEMISTRY_BAM_TAGS`
+#### Description:
+This dictionary maps specific sequencing chemistries to their corresponding BAM tag dictionaries.
 
-- The constants defined in this file are referenced in other parts of the codebase, such as `UMI_utils.py` and `pipeline.py`, where they are used to configure and execute various preprocessing tasks.
+#### Inputs:
+N/A - This is a constant dictionary.
 
-## Dependencies
+#### Outputs:
+N/A - This is a constant dictionary.
 
-No external libraries are directly imported in this file, but the constants are used by other modules that do have dependencies.
+#### Internal Logic:
+The dictionary maps chemistry names (e.g., 'dropseq', '10xv2') to either `SINGLE_CELL_BAM_TAGS` or `SPATIAL_BAM_TAGS` based on the chemistry type.
 
-## Configuration
+### Symbol Name: `DNA_SUBSTITUTION_MATRIX`
+#### Description:
+This dictionary defines a substitution matrix for DNA sequence alignment.
 
-The `DEFAULT_PIPELINE_PARAMETERS` dictionary provides a set of default configuration options for the pipeline stages. These options can be overridden by user-provided configurations.
+#### Inputs:
+N/A - This is a constant dictionary.
 
-## Error Handling
+#### Outputs:
+N/A - This is a constant dictionary.
 
-This file does not implement error handling directly, but the constants defined here are used in functions that may include error handling logic.
+#### Internal Logic:
+The dictionary represents a matrix where keys are nucleotides (A, T, C, G, Z, N) and values are dictionaries mapping each nucleotide to a score. This matrix is used to score alignments between DNA sequences.
 
-## Logging
+### Symbol Name: `DEFAULT_PIPELINE_PARAMETERS`
+#### Description:
+This dictionary stores default parameters for each stage of the Cassiopeia preprocessing pipeline.
 
-This file does not implement logging directly, but the constants defined here are used in functions that may include logging logic.
+#### Inputs:
+N/A - This is a constant dictionary.
 
-## API/Interface Reference
+#### Outputs:
+N/A - This is a constant dictionary.
 
-This file does not define an API or public interface directly, but the constants are used in functions that may be part of a larger API.
-
-## TODOs
-
-There are no TODOs or notes left in the code.
+#### Internal Logic:
+The dictionary maps stage names (e.g., 'general', 'convert', 'filter_bam') to dictionaries containing parameter names and their default values. These parameters control the behavior of each stage in the pipeline.

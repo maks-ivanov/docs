@@ -3,43 +3,33 @@ title: "Overview"
 ---
 
 ## High-level description
-
-The `cassiopeia/tools/fitness_estimator/_jungle/jungle/resources/betatree/src` directory is part of a larger project aimed at simulating beta coalescent trees and calculating their Site Frequency Spectrum (SFS), which are crucial in the field of population genetics. The directory contains classes and functions that facilitate the generation of these trees, the calculation of the SFS, and the visualization of the results. The code leverages mathematical libraries for calculations and uses the BioPython library for tree representation and visualization.
+This directory contains the implementation of a beta coalescent tree simulator and a Site Frequency Spectrum (SFS) calculator. The code is designed to model and analyze the evolutionary relationships and genetic diversity in populations using coalescent theory and beta coalescent processes. The main functionality is implemented in the `src` subdirectory, while the `resources` directory appears to be empty or contains placeholder files.
 
 ## What does it do?
-
-The code in this directory simulates the ancestry of a sample of individuals using beta coalescent trees. These trees model how lineages of individuals merge over time, which is a key concept in understanding genetic diversity and evolution. The process is controlled by a parameter called `alpha`, which determines the type of coalescent process being simulated.
-
-Once the trees are generated, the code calculates the Site Frequency Spectrum (SFS), which is a summary of the genetic variation within the sample. The SFS provides insights into the evolutionary history and demographic events that have shaped the genetic diversity of the population.
-
-Additionally, the code includes functionality to visualize these trees and the SFS, allowing users to see the results of the simulations. It also provides methods to save and load the SFS data, facilitating the management and analysis of large datasets.
-
-## Entry points
-
-The main files in this directory are:
-
-- **`betatree.py`**: This file contains the `betatree` class, which is responsible for simulating the beta coalescent trees. It includes methods for initializing the tree, simulating coalescence events, and constructing the final tree structure.
-
-- **`sfs.py` and `sfs_py3.py`**: These files define the `SFS` class, which inherits from the `betatree` class. The `SFS` class is responsible for generating multiple trees, calculating the SFS, and providing methods to bin, save, and load the SFS data. Both files offer similar functionality, with `sfs_py3.py` likely being an updated version for Python 3 compatibility.
-
-The code is organized such that the `betatree` class provides the foundational tree simulation capabilities, while the `SFS` class extends this functionality to include SFS calculation and data management.
+The code in this directory simulates the evolutionary history of genetic sequences under different coalescent models, particularly the beta coalescent model. It generates genealogical trees that represent the ancestral relationships between individuals in a population sample. Using these trees, it calculates the Site Frequency Spectrum (SFS), which is a summary statistic of genetic variation in the population. The SFS represents the distribution of allele frequencies in the sample, providing insights into the population's genetic diversity and evolutionary history.
 
 ## Key Files
+1. `betatree.py`: This file contains the `betatree` class, which is responsible for simulating beta coalescent trees. It implements methods for tree initialization, coalescence events, and tree structure manipulation.
 
-- **`betatree.py`**: Contains the `betatree` class, which simulates beta coalescent trees. It handles the entire process of tree generation, from initializing the tree to simulating coalescence events and constructing the final tree structure.
-
-- **`sfs.py` and `sfs_py3.py`**: Both files define the `SFS` class, which extends the `betatree` class to include SFS calculation. They provide methods for generating multiple trees, calculating the SFS, binning the data, and saving/loading the SFS. These files also include a `logit` function for logistic transformation, which is used in the binning process.
+2. `sfs.py` and `sfs_py3.py`: These files define the `SFS` class, which extends the functionality of `betatree` to calculate the Site Frequency Spectrum. The `SFS` class generates multiple trees, accumulates allele frequency information, and computes the SFS. It also provides methods for binning the SFS and saving/loading SFS data.
 
 ## Dependencies
+The code relies on several external libraries:
+- NumPy: Used for numerical computations and array operations.
+- SciPy: Specifically, `scipy.special` is used for special mathematical functions like the gamma function.
+- BioPython: The `Bio.Phylo` module is used for working with phylogenetic trees.
+- Matplotlib: Used for plotting the SFS (in example usage).
 
-The directory relies on several external libraries:
+## Configuration
+The code does not use explicit configuration files. Instead, key parameters are passed as arguments to the class constructors:
+- `sample_size`: The number of individuals in the sample.
+- `alpha`: The alpha parameter of the beta coalescent model (default is 2, which corresponds to the Kingman coalescent).
 
-- **`numpy`**: Used for numerical operations and random number generation, which are essential for simulating the coalescent process and calculating the SFS.
+These parameters can be adjusted when initializing the `betatree` or `SFS` objects to simulate different evolutionary scenarios.
 
-- **`scipy`**: Provides special mathematical functions, such as gamma calculations, which are used in the simulation of coalescent events.
+The `SFS` class also allows for configuration of the SFS calculation and binning process through method parameters:
+- `ntrees`: The number of trees to generate for SFS calculation.
+- `mode`: The binning mode for the SFS (linear, log, or logit).
+- `bins`: The number of bins or custom bin edges for SFS binning.
 
-- **`Bio` (BioPython)**: Used for representing and visualizing phylogenetic trees, allowing for a clear depiction of the simulated coalescent trees.
-
-- **`matplotlib`**: Utilized for plotting and visualizing the SFS data, providing a graphical representation of the results.
-
-These dependencies were chosen for their robust mathematical capabilities and their ability to handle biological data and visualizations effectively.
+These configurations allow users to fine-tune the SFS calculation and analysis based on their specific research needs.

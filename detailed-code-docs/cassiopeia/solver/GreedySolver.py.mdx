@@ -3,127 +3,102 @@ title: "GreedySolver.py"
 ---
 
 ## High-level description
-
-The `GreedySolver` class in the `GreedySolver.py` file is an abstract class that extends the `CassiopeiaSolver` class. It provides a framework for implementing top-down phylogenetic inference algorithms that build a tree by recursively partitioning a set of samples based on a specified split criterion. The class defines the structure for such algorithms and requires subclasses to implement the `perform_split` method, which determines how the sample set is partitioned.
+The `GreedySolver` class in Cassiopeia is an abstract base class for implementing top-down greedy algorithms for phylogenetic tree reconstruction. It provides a framework for recursively splitting a set of samples based on a split criterion, building the tree from the root down to the leaves. Subclasses of `GreedySolver` implement the specific logic for performing the split.
 
 ## Code Structure
-
-The `GreedySolver` class inherits from the `CassiopeiaSolver` class, which is an abstract base class for all phylogenetic inference algorithms in the Cassiopeia framework. The `GreedySolver` class itself is abstract and is intended to be subclassed by specific implementations of greedy solvers. It provides a `solve` method that implements the general procedure for building a phylogenetic tree using a top-down approach, but leaves the specific partitioning logic to be defined by subclasses through the `perform_split` method.
+The `GreedySolver` class defines the overall structure of a greedy solver, including methods for performing splits, computing mutation frequencies, and adding duplicate samples to the tree. The `perform_split` method is an abstract method that must be implemented by subclasses to define the specific split criterion.
 
 ## References
-
-- `CassiopeiaSolver`: The base class from which `GreedySolver` inherits.
-- `CassiopeiaTree`: A data structure used to store the character matrix and other relevant data for phylogenetic inference.
-- `solver_utilities`: A module providing utility functions for solver operations, such as generating unique node names.
-- `GreedySolverError`: A custom exception class used to handle errors specific to the `GreedySolver`.
+- `CassiopeiaSolver`: The `GreedySolver` class inherits from the `CassiopeiaSolver` abstract base class.
+- `solver_utilities`: The `GreedySolver` class uses utility functions from the `solver_utilities` module, such as `node_name_generator` and `transform_priors`.
+- `missing_data_methods`: The `GreedySolver` class uses functions from the `missing_data_methods` module to handle missing data during character splits.
+- `find_duplicate_groups`: The `GreedySolver` class uses the `find_duplicate_groups` function from the `cassiopeia.mixins` module to identify duplicate samples.
 
 ## Symbols
 
 ### `GreedySolver`
 #### Description
-The `GreedySolver` class is an abstract class that provides a framework for implementing greedy phylogenetic inference algorithms. It defines the general structure and procedure for building a tree by recursively partitioning a set of samples. Subclasses must implement the `perform_split` method to specify the partitioning logic.
+This class represents a greedy solver for phylogenetic tree reconstruction. It provides a framework for recursively splitting a set of samples based on a split criterion, building the tree from the root down to the leaves.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| prior_transformation | str | A string specifying the transformation to apply to priors when converting them into weights. |
+| prior_transformation | str | Function to use when transforming priors into weights. Defaults to "negative_log". |
 
 #### Outputs
-None directly, as this is an abstract class.
+None
 
 #### Internal Logic
-- The constructor initializes the `prior_transformation` attribute and sets `allow_ambiguous` to `False`.
-- The `solve` method implements the top-down greedy solving procedure, which involves recursively splitting a set of samples to build a tree. It uses a helper function `_solve` to perform the recursive partitioning and tree construction.
-- The `perform_split` method is abstract and must be implemented by subclasses to define the specific logic for partitioning the sample set.
+The `solve` method implements the main logic of the greedy solver. It first transforms the priors into weights using the specified `prior_transformation`. Then, it recursively splits the set of samples using the `perform_split` method, creating an ancestral node for each split and placing the resulting partitions as daughter clades. This process continues until each partition contains only a single sample. If a split cannot be performed, a polytomy is created. Finally, the solver adds duplicate samples to the tree and collapses mutationless edges if specified.
 
 ### `perform_split`
 #### Description
-An abstract method that must be implemented by subclasses to perform a partition of the samples based on a specific criterion.
+This abstract method defines the logic for partitioning a set of samples. It must be implemented by subclasses of `GreedySolver`.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| character_matrix | pd.DataFrame | The character matrix containing the data for the samples. |
-| samples | List[int] | A list of sample indices to partition. |
-| weights | Optional[Dict[int, Dict[int, float]]] | A dictionary of weights for each character/state pair, typically derived from priors. |
-| missing_state_indicator | int | An integer representing missing data in the character matrix. |
+| character_matrix | pd.DataFrame | Character matrix |
+| samples | List[int] | A list of samples to partition |
+| weights | Optional[Dict[int, Dict[int, float]]] | Weighting of each (character, state) pair. Typically a transformation of the priors. |
+| missing_state_indicator | int | Character representing missing data. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| partition | Tuple[List[Union[int, str]], List[Union[int, str]]] | A tuple containing two lists representing the left and right partition groups. |
-
-### `solve`
-#### Description
-Implements the top-down greedy solving procedure to build a phylogenetic tree by recursively partitioning a set of samples.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| cassiopeia_tree | CassiopeiaTree | A tree structure storing the character matrix and priors for reconstruction. |
-| layer | Optional[str] | The layer storing the character matrix for solving. If `None`, the default character matrix is used. |
-| collapse_mutationless_edges | bool | Indicates if the final reconstructed tree should collapse mutationless edges. |
-| logfile | str | The file location to log output. |
-
-#### Outputs
-None directly, but the method populates the input `CassiopeiaTree` with the reconstructed tree.
-
-#### Internal Logic
-- The method extracts the character matrix from the `CassiopeiaTree` and checks for ambiguous states.
-- It uses a helper function `_solve` to recursively partition the samples and build the tree.
-- The method handles duplicate samples and optionally collapses mutationless edges in the final tree.
+| left_partition | List[Union[int, str]] | The left partition group |
+| right_partition | List[Union[int, str]] | The right partition group |
 
 ### `compute_mutation_frequencies`
 #### Description
-Computes the frequencies of character/state mutations in a subset of the character matrix.
+This method computes the frequencies of each character/state pair in a given set of samples.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| samples | List[str] | The set of relevant samples for calculating frequencies. |
-| unique_character_matrix | pd.DataFrame | The character matrix from which to calculate frequencies. |
-| missing_state_indicator | int | The character representing missing values. |
+| samples | List[str] | The set of samples to consider |
+| unique_character_matrix | pd.DataFrame | The character matrix |
+| missing_state_indicator | int | Character representing missing data. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| freq_dict | Dict[int, Dict[int, int]] | A dictionary containing frequency information for each character/state pair. |
+| freq_dict | Dict[int, Dict[int, int]] | A dictionary mapping each character to a dictionary of state/sample frequency pairs |
 
 #### Internal Logic
-- The method subsets the character matrix to include only the specified samples.
-- It calculates the frequency of each state for each character, including handling ambiguous states.
+The method iterates over each character in the character matrix and counts the occurrences of each state for the given samples. It stores the frequencies in a dictionary, where the keys are characters and the values are dictionaries mapping states to their frequencies.
 
 ### `__add_duplicates_to_tree`
 #### Description
-Adds duplicate samples to the tree as sister nodes to the corresponding cells that share the same mutations.
+This private method adds duplicate samples to the tree.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | nx.DiGraph | The tree to have duplicates added to. |
-| character_matrix | pd.DataFrame | The character matrix. |
-| node_name_generator | Generator[str, None, None] | A generator for creating unique node names. |
+| tree | nx.DiGraph | The tree to add duplicates to |
+| character_matrix | pd.DataFrame | Character matrix |
+| node_name_generator | Generator[str, None, None] | Generator for creating unique node names |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | nx.DiGraph | The tree with duplicates added. |
+| tree | nx.DiGraph | The tree with duplicates added |
 
 #### Internal Logic
-- The method finds duplicate groups in the character matrix.
-- It relabels nodes in the tree and adds edges for duplicate samples.
+The method identifies duplicate samples using the `find_duplicate_groups` function. For each group of duplicates, it creates a new internal node and connects it to the original sample and all its duplicates.
+
+## Side Effects
+The `solve` method modifies the input `CassiopeiaTree` object by populating its tree attribute.
 
 ## Dependencies
+- `networkx`: Used for representing and manipulating the tree.
+- `numpy`: Used for numerical operations.
+- `pandas`: Used for representing the character matrix.
 
+```
 | Dependency | Purpose |
 |:-----------|:--------|
-| networkx | Used for graph operations and tree representation. |
-| numpy | Used for numerical operations and array manipulations. |
-| pandas | Used for handling data in DataFrame format. |
-
-## Error Handling
-
-The `GreedySolver` class raises a `GreedySolverError` if ambiguous states are detected in the character matrix and the solver does not allow ambiguous states.
-
-## TODOs
-None present in the code.
+| networkx | Representing and manipulating the tree |
+| numpy | Numerical operations |
+| pandas | Representing the character matrix |
+```

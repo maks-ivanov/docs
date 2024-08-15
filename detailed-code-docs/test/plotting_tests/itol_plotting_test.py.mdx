@@ -3,136 +3,109 @@ title: "itol_plotting_test.py"
 ---
 
 ## High-level description
-
-The `itol_plotting_test.py` file is a unit testing module designed to test the functionality of the `itol_utilities` module within the `cassiopeia.plotting` package. This module primarily focuses on testing the generation of various files used for visualizing phylogenetic trees with the iTOL (Interactive Tree of Life) platform. The tests cover the creation of gradient files, color bar files, and allele heatmaps, as well as the integration of these components into a pipeline for uploading and exporting trees to iTOL.
+This file contains unit tests for the iTOL plotting utilities in the `cassiopeia.plotting.itol_utilities` module. It tests various functions related to generating files for iTOL visualization, including gradient files, colorbar files, and allele heatmaps. The tests also cover the integrated pipeline for uploading and exporting trees to iTOL.
 
 ## Code Structure
-
-The main class in this file is `TestITOLPlotting`, which is a subclass of `unittest.TestCase`. This class contains several test methods that validate different functionalities of the `itol_utilities` module. The tests are organized to check the creation of gradient files, color bar files, allele heatmaps, and the integration of these components into a complete pipeline for tree visualization.
-
-## References
-
-The test file references the `itol_utilities` module from the `cassiopeia.plotting` package, which contains the functions being tested. It also uses the `CassiopeiaTree` class from the `cassiopeia.data` module to create and manipulate phylogenetic trees.
+The code is structured as a single test class `TestITOLPlotting` that inherits from `unittest.TestCase`. It contains several test methods, each testing a specific functionality of the iTOL plotting utilities. The class uses a `setUp` method to initialize common test data and a `tearDown` method to clean up temporary files.
 
 ## Symbols
 
-### `TestITOLPlotting`
+### TestITOLPlotting
 #### Description
-This class is a test suite for the `itol_utilities` module, using the `unittest` framework. It sets up a testing environment, executes various tests on the utility functions, and cleans up after the tests are run.
-
-#### Inputs
-- None directly, but it uses class-level setup to initialize test data.
-
-#### Outputs
-- None directly, but it asserts conditions to validate the correctness of the utility functions.
+A test class that contains unit tests for iTOL plotting utilities.
 
 #### Internal Logic
-- **setUp**: Initializes a temporary directory, random state, indel frequency dictionary, allele table, and a `CassiopeiaTree` instance for use in tests.
-- **tearDown**: Cleans up by removing the temporary directory created during setup.
+1. Sets up test data in `setUp` method, including a temporary directory, random state, indel priors, allele table, and a test tree.
+2. Implements various test methods to check different functionalities.
+3. Cleans up temporary files in `tearDown` method.
 
-### `test_generate_gradient_file`
+### test_generate_gradient_file
 #### Description
-Tests the creation of a gradient file from numerical data in the `CassiopeiaTree` cell metadata.
+Tests the creation of a gradient file for iTOL visualization.
 
-#### Inputs
-- None directly, uses initialized `CassiopeiaTree` and temporary directory.
+#### Internal Logic
+1. Calls `itol_utilities.create_gradient_from_df` with test data.
+2. Verifies that the file is created and its content matches the expected output.
 
-#### Outputs
-- Asserts that the gradient file is created and its content matches the expected format.
-
-### `test_generate_colorbar_file`
+### test_generate_colorbar_file
 #### Description
-Tests the creation of a color bar file from categorical data in the `CassiopeiaTree` cell metadata.
+Tests the creation of a colorbar file for iTOL visualization without a legend.
 
-#### Inputs
-- None directly, uses initialized `CassiopeiaTree` and temporary directory.
+#### Internal Logic
+1. Defines a color map for test data.
+2. Calls `itol_utilities.create_colorbar` with test data and color map.
+3. Verifies that the file is created and its content matches the expected output.
 
-#### Outputs
-- Asserts that the color bar file is created and its content matches the expected format.
-
-### `test_generate_colorbar_file_with_legend`
+### test_generate_colorbar_file_with_legend
 #### Description
-Tests the creation of a color bar file with an included legend.
+Tests the creation of a colorbar file for iTOL visualization with a legend.
 
-#### Inputs
-- None directly, uses initialized `CassiopeiaTree` and temporary directory.
+#### Internal Logic
+Similar to `test_generate_colorbar_file`, but sets `create_legend=True` and verifies the legend content in the output file.
 
-#### Outputs
-- Asserts that the color bar file with a legend is created and its content matches the expected format.
-
-### `test_create_allele_heatmap_specified_colors`
+### test_create_allele_heatmap_specified_colors
 #### Description
-Tests the creation of allele heatmap files using specified colors for indels.
+Tests the creation of an allele heatmap with specified colors.
 
-#### Inputs
-- None directly, uses initialized `allele_table`, `CassiopeiaTree`, and temporary directory.
+#### Internal Logic
+1. Defines indel colors.
+2. Calls `itol_utilities.create_indel_heatmap` with test data and specified colors.
+3. Verifies that the correct number of files are created and that they exist.
 
-#### Outputs
-- Asserts that the correct number of allele heatmap files are created and exist.
-
-### `test_create_allele_heatmap_specified_priors`
+### test_create_allele_heatmap_specified_priors
 #### Description
-Tests the creation of allele heatmap files using specified indel priors.
+Tests the creation of an allele heatmap with specified indel priors.
 
-#### Inputs
-- None directly, uses initialized `allele_table`, `CassiopeiaTree`, and temporary directory.
+#### Internal Logic
+Similar to `test_create_allele_heatmap_specified_colors`, but uses indel priors instead of specified colors.
 
-#### Outputs
-- Asserts that the correct number of allele heatmap files are created and exist.
-
-### `test_create_allele_heatmap_no_priors_or_colormap`
+### test_create_allele_heatmap_no_priors_or_colormap
 #### Description
-Tests the creation of allele heatmap files without specified priors or colormap.
+Tests the creation of an allele heatmap without specifying priors or a color map.
 
-#### Inputs
-- None directly, uses initialized `allele_table`, `CassiopeiaTree`, and temporary directory.
+#### Internal Logic
+Calls `itol_utilities.create_indel_heatmap` with only the basic required parameters and verifies the output files.
 
-#### Outputs
-- Asserts that the correct number of allele heatmap files are created and exist.
-
-### `test_integrated_pipeline_simple_tree`
+### test_integrated_pipeline_simple_tree
 #### Description
 Tests the integrated pipeline for uploading and exporting a simple tree to iTOL.
 
-#### Inputs
-- None directly, uses initialized `CassiopeiaTree` and temporary directory.
+#### Internal Logic
+1. Calls `cas.pl.upload_and_export_itol` with a simple tree.
+2. Verifies that the exported file exists.
 
-#### Outputs
-- Asserts that the exported tree file exists.
-
-### `test_integrated_pipeline_tree_with_allele_heatmap`
+### test_integrated_pipeline_tree_with_allele_heatmap
 #### Description
 Tests the integrated pipeline for uploading and exporting a tree with an allele heatmap to iTOL.
 
-#### Inputs
-- None directly, uses initialized `CassiopeiaTree`, `allele_table`, and temporary directory.
+#### Internal Logic
+Similar to `test_integrated_pipeline_simple_tree`, but includes an allele table in the parameters.
 
-#### Outputs
-- Asserts that the exported tree file exists.
-
-### `test_integrated_pipeline_tree_with_meta_data`
+### test_integrated_pipeline_tree_with_meta_data
 #### Description
 Tests the integrated pipeline for uploading and exporting a tree with metadata to iTOL.
 
-#### Inputs
-- None directly, uses initialized `CassiopeiaTree` and temporary directory.
-
-#### Outputs
-- Asserts that the exported tree file exists.
+#### Internal Logic
+Similar to `test_integrated_pipeline_simple_tree`, but includes metadata parameters.
 
 ## Dependencies
+- unittest
+- os
+- shutil
+- tempfile
+- networkx
+- numpy
+- pandas
+- cassiopeia
 
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `os`, `shutil`, `tempfile` | Used for file and directory operations. |
-| `networkx`, `numpy`, `pandas` | Used for data manipulation and graph operations. |
-| `cassiopeia` | Provides the `CassiopeiaTree` class and plotting utilities. |
+## Configuration
+The tests use a configuration file `~/.itolconfig` for iTOL credentials. Some tests are skipped if this file doesn't exist.
 
 ## Error Handling
+The tests use `unittest` assertions to check for expected outcomes and file existence.
 
-The tests use assertions to validate the correctness of the utility functions. If an assertion fails, it indicates a discrepancy between the expected and actual outcomes, which helps identify issues in the code.
+## Performance Considerations
+The tests create and delete temporary files and directories, which may impact performance on slower file systems.
 
 ## TODOs
-
-The module notes that it currently does not test the actual uploading/exporting of trees due to difficulties in mock authentication with iTOL. This is a potential area for future improvement.
+None explicitly mentioned in the code.

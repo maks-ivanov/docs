@@ -3,71 +3,70 @@ title: "infer_fitness.py"
 ---
 
 ## High-level description
-
-The script `infer_fitness.py` is designed to perform fitness inference on sequences within a multiple sequence alignment. It processes an alignment file, identifies an outgroup sequence, and uses a prediction algorithm to rank sequences based on inferred fitness. The results, including reconstructed trees and sequence rankings, are output to a directory named with the current date and time.
+This script performs fitness inference on a given sequence alignment to predict evolutionary relationships and rank sequences based on their inferred fitness. It uses a phylogenetic approach, considering an outgroup sequence to root the tree and inferring ancestral states.
 
 ## Code Structure
-
-The script is structured to first parse command-line arguments, then read and process the alignment file to identify sequences and the specified outgroup. It sets up the sequence data and runs a prediction algorithm to infer fitness. Finally, it outputs the results, including writing trees and sequence rankings to files, and optionally plots the prediction tree.
+The code first parses command-line arguments, reads and processes the input alignment, and identifies the outgroup sequence. Then, it instantiates a `sequence_ranking` object from the imported module and uses it to perform the fitness inference. Finally, it outputs the inferred tree, ancestral sequences, and sequence rankings.
 
 ## References
-
-- `sequence_ranking`: This is a function or class from the `sequence_ranking` module, which is used to perform the fitness prediction and ranking of sequences.
-- `tree_utils.plot_prediction_tree`: A utility function used to plot the prediction tree if the `--plot` option is enabled.
+This script references the following code symbols:
+- `alignment` (from `sequence_ranking` module)
+- `sequence_ranking` (from `sequence_ranking` module)
+- `tree_utils` (imported module)
 
 ## Symbols
-
 ### `ofunc`
 #### Description
-A utility function to open files, choosing between gzip and regular open based on the file extension.
+This function determines the appropriate file opening method based on the file extension. It uses `gzip.open` for '.gz' files and the built-in `open` function otherwise.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
 | fname | str | The name of the file to open. |
-| mode | str | The mode in which to open the file (e.g., 'r' for read). |
+| mode | str | The mode in which to open the file (e.g., 'r' for reading, 'w' for writing). |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| file object | file-like object | A file object opened in the specified mode. |
+| file object | file | A file object representing the opened file. |
+
+### main execution block
+#### Description
+This block of code executes the main functionality of the script. It reads the alignment file, identifies the outgroup sequence, performs fitness inference, and writes the results to files.
 
 #### Internal Logic
-- Checks if the file name ends with `.gz` to determine if it should use `gzip.open`.
-- Otherwise, uses the standard `open` function.
+1. **Read alignment and outgroup:**
+    - Reads the alignment file in FASTA format.
+    - Identifies the outgroup sequence based on the provided `--outgroup` argument.
+2. **Set up sequence data and perform prediction:**
+    - Creates an `alignment` object from the input alignment and outgroup.
+    - Instantiates a `sequence_ranking` object with specified parameters.
+    - Predicts the best node using the `predict()` method of the `sequence_ranking` object.
+3. **Output results:**
+    - Creates a directory for output files based on the current date and time.
+    - Writes the reconstructed tree in Newick format to `reconstructed_tree.nwk`.
+    - Writes inferred ancestral sequences to `ancestral_sequences.fasta`.
+    - Writes sequence rankings for terminal and non-terminal nodes to separate files.
+    - Optionally plots the marked-up tree if the `--plot` flag is set.
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `argparse` | For parsing command-line arguments. |
-| `matplotlib` | For plotting graphs and setting up plot parameters. |
-| `numpy` | For numerical operations, such as calculating square roots. |
-| `Bio` (from Biopython) | For handling sequence alignments and phylogenetic trees. |
-| `tree_utils` | For plotting prediction trees. |
-| `sequence_ranking` | For performing the fitness prediction and ranking. |
+| argparse | Parsing command-line arguments. |
+| matplotlib | Plotting the marked-up tree (optional). |
+| Bio | Handling sequence alignments and phylogenetic trees. |
+| numpy | Numerical operations. |
+| tree_utils | Utility functions for tree manipulation and visualization. |
+| sequence_ranking | Module containing classes and functions for sequence ranking and fitness inference. |
 
-## Configuration
-
-| Option | Type | Default | Description |
-|:-------|:-----|:--------|:------------|
-| `--aln` | str | None | Name of the alignment file in fasta format. |
-| `--outgroup` | str | None | Name of the outgroup sequence in the alignment file. |
-| `--eps_branch` | float | 1e-5 | Minimal branch length for inference. |
-| `--diffusion` | float | 0.5 | Fitness diffusion coefficient. |
-| `--gamma` | float | 1.0 | Scale factor for time scale. |
-| `--omega` | float | 0.1 | Approximate sampling fraction divided by the fitness standard deviation. |
-| `--collapse` | bool | False | Collapse internal branches with identical sequences. |
-| `--plot` | bool | False | Plot trees if set. |
+### Configuration
+This script uses command-line arguments for configuration. See the "parse the command line arguments" section for details on available options and their descriptions.
 
 ## Error Handling
-
-- The script checks if the outgroup is present in the alignment file. If not, it prints an error message and exits.
+The script includes a basic check for the presence of the outgroup sequence in the alignment. If not found, it prints an error message and exits.
 
 ## Logging
-
-- The script does not implement any logging mechanisms. It uses print statements for error messages.
+This script does not implement specific logging mechanisms.
 
 ## TODOs
-
-- There are no explicit TODOs or notes left in the code.
+This script does not contain any TODOs or notes.

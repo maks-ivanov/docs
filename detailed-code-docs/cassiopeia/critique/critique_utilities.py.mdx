@@ -3,119 +3,80 @@ title: "critique_utilities.py"
 ---
 
 ## High-level description
-
-The `critique_utilities.py` file provides utility functions for analyzing and manipulating phylogenetic trees, specifically within the context of the Cassiopeia framework. The utilities include functions for computing combinatorial values, annotating tree nodes with depth and triplet information, identifying outgroups in triplets, and sampling triplets at specific tree depths.
+This file, `critique_utilities.py`, provides utility functions for the `critique` module in the Cassiopeia library. These functions are primarily used for analyzing and comparing phylogenetic trees, particularly in the context of lineage tracing experiments. They include functions for calculating combinatorial terms, annotating tree depths, identifying outgroups in triplets, and sampling triplets from a tree.
 
 ## Code Structure
-
-The main symbols in the code are functions that operate on instances of the `CassiopeiaTree` class. These functions are designed to perform specific tasks related to tree analysis and manipulation, such as calculating combinatorial values, annotating tree nodes, determining outgroups, and sampling triplets.
-
-## References
-
-- `CassiopeiaTree`: This class is used extensively in the utility functions to represent and manipulate phylogenetic trees. It provides methods for traversing the tree, accessing node attributes, and performing various tree operations.
+The code consists of several independent functions that operate on `CassiopeiaTree` objects. These functions are used for tasks such as annotating tree depths, sampling triplets, and identifying outgroups.
 
 ## Symbols
-
 ### `nCr`
 #### Description
-Computes the binomial coefficient, commonly known as "n choose r", which represents the number of ways to choose `r` elements from a set of `n` elements without regard to the order of selection.
+This function calculates the binomial coefficient, which represents the number of ways to choose `r` items from a set of `n` items without replacement.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| n | int | Total number of elements. |
-| r | int | Number of elements to choose. |
+| n | int | The total number of items. |
+| r | int | The number of items to choose. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| result | float | The computed binomial coefficient. |
+| nCr | float | The binomial coefficient, representing the number of combinations. |
 
 #### Internal Logic
-- Checks if `r` is greater than `n` or if either `n` or `r` is negative, returning 0 in such cases.
-- Uses the factorial function to compute the binomial coefficient as `f(n) // f(r) // f(n - r)`.
+The function first checks for invalid input values (r &gt; n or n &lt; 0 or r &lt; 0) and returns 0 if any are found. Otherwise, it calculates the factorial of n, r, and (n-r) using the `math.factorial` function and returns their quotient as the binomial coefficient.
 
 ### `annotate_tree_depths`
 #### Description
-Annotates each node in a `CassiopeiaTree` with its depth from the root and the number of triplets rooted at that node. This function modifies the tree in place.
+This function annotates each node in a `CassiopeiaTree` with its depth from the root and the number of triplets rooted at that node.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | CassiopeiaTree | The tree to annotate. |
+| tree | CassiopeiaTree | The input tree to annotate. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| depth_to_nodes | dict | A dictionary mapping each depth to a list of nodes at that depth. |
+| depth_to_nodes | defaultdict(list) | A dictionary mapping each depth to a list of nodes at that depth. |
 
 #### Internal Logic
-- Traverses the tree in a depth-first manner.
-- Sets the "depth" attribute for each node based on its distance from the root.
-- Calculates the number of triplets rooted at each node by considering the number of leaves in its subtrees.
+The function performs a depth-first traversal of the tree. For each node, it calculates its depth based on its parent's depth and stores it as a node attribute named "depth". It also calculates the number of triplets rooted at that node by subtracting the number of triplets rooted at its children from the total number of triplets possible with the leaves under the current node. This information is stored as a node attribute named "number_of_triplets".
 
 ### `get_outgroup`
 #### Description
-Determines the outgroup of a triplet of leaves in a `CassiopeiaTree` by comparing the depths of their latest common ancestors (LCAs).
+This function infers the outgroup of a given triplet of leaves in a `CassiopeiaTree`.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | CassiopeiaTree | The tree containing the triplet. |
-| triplet | Tuple[str, str, str] | A tuple of three leaf names. |
+| tree | CassiopeiaTree | The input tree. |
+| triplet | Tuple[str, str, str] | A tuple containing the names of the three leaves forming the triplet. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| outgroup | str | The name of the outgroup leaf. |
+| out_group | str | The name of the outgroup leaf, or "None" if the triplet is unresolved. |
 
 #### Internal Logic
-- Retrieves the ancestors of each leaf in the triplet.
-- Computes the number of shared ancestors for each pair of leaves.
-- Identifies the outgroup as the leaf not part of the pair with the deepest LCA.
+The function determines the outgroup by finding the pair of leaves within the triplet that share the most recent common ancestor (MRCA). The leaf that is not part of this pair is considered the outgroup. The MRCA is inferred based on the number of shared ancestors between each pair of leaves.
 
 ### `sample_triplet_at_depth`
 #### Description
-Samples a triplet of leaves from a `CassiopeiaTree` such that the depth of their latest common ancestor (LCA) is at a specified depth.
+This function samples a triplet of leaves from a `CassiopeiaTree` such that the most recent common ancestor (MRCA) of the triplet is at a specified depth.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| tree | CassiopeiaTree | The tree from which to sample. |
-| depth | int | The depth at which to sample the triplet. |
-| depth_to_nodes | Optional[Dict[int, List[str]]] | Precomputed mapping of depths to nodes for efficiency. |
+| tree | CassiopeiaTree | The input tree. |
+| depth | int | The desired depth for the MRCA of the sampled triplet. |
+| depth_to_nodes | Optional[Dict[int, List[str]]] | An optional dictionary mapping depths to lists of nodes at that depth. Providing this dictionary can speed up the function. |
 
 #### Outputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| triplet | Tuple[List[int], str] | A tuple containing the triplet of leaves and the name of the outgroup. |
+| (triplet, out_group) | Tuple[Tuple[str, str, str], str] | A tuple containing the sampled triplet (as a tuple of leaf names) and the name of the outgroup leaf. |
 
 #### Internal Logic
-- Selects candidate nodes at the specified depth.
-- Samples a node with probability proportional to the number of triplets it can form.
-- Determines possible combinations of daughter clades to form a triplet.
-- Samples a triplet from these combinations, ensuring the LCA is at the specified depth.
-
-## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `ete3` | Used for tree manipulation and representation. |
-| `numpy` | Utilized for numerical operations, particularly in sampling. |
-| `scipy.special` | Provides special mathematical functions, such as combinatorial calculations. |
-
-## Error Handling
-
-The code includes basic error handling for invalid inputs in the `nCr` function, returning 0 for cases where the binomial coefficient is undefined (e.g., when `r &gt; n`).
-
-## Side Effects
-
-- The `annotate_tree_depths` function modifies the input `CassiopeiaTree` by adding attributes to its nodes.
-
-## Performance Considerations
-
-- The `sample_triplet_at_depth` function can be optimized by providing a precomputed `depth_to_nodes` dictionary, which reduces the need to filter nodes repeatedly.
-
-## TODOs
-
-None present in the target file.
+The function first identifies the nodes at the specified depth. It then samples a node from these candidates with probability proportional to the number of triplets rooted at each node. Once a node is chosen, the function samples three of its descendant clades, ensuring that at least two clades are distinct. Finally, it randomly selects one leaf from each of the chosen clades to form the triplet and identifies the outgroup based on the chosen clades.

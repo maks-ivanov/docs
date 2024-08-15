@@ -3,113 +3,81 @@ title: "call_lineage_groups_test.py"
 ---
 
 ## High-level description
-
-The target file `call_lineage_groups_test.py` is a unit test suite designed to validate the functionality of the `call_lineage_groups` function from the `cassiopeia.preprocess.pipeline` module. This test suite uses the `unittest` framework to ensure that the lineage grouping logic correctly processes input data frames, assigns lineage groups, and filters data according to specified criteria.
+This file contains unit tests for the `call_lineage_groups` function in the Cassiopeia preprocessing pipeline. The tests verify the functionality of lineage group assignment, including basic grouping, doublet handling, reassignment, and filtering.
 
 ## Code Structure
-
-The main class in this file is `TestCallLineageGroup`, which inherits from `unittest.TestCase`. This class contains several test methods that each test different aspects of the `call_lineage_groups` function. The test methods use various pre-defined data frames to simulate different scenarios and validate the expected outcomes.
+The main class `TestCallLineageGroup` contains several test methods, each testing different aspects of the `call_lineage_groups` function. The `setUp` method initializes test data for various scenarios.
 
 ## Symbols
 
-### `TestCallLineageGroup`
+### TestCallLineageGroup
 #### Description
-This class is a test suite for the `call_lineage_groups` function. It sets up test data and contains multiple test methods to verify the function's behavior under different conditions.
-
-#### Inputs
-- None directly, but uses pre-defined data frames within the class.
-
-#### Outputs
-- None directly, but asserts expected conditions on the output of the `call_lineage_groups` function.
+A unittest.TestCase subclass containing tests for the `call_lineage_groups` function.
 
 #### Internal Logic
-- **`setUp` Method**: Initializes several data frames (`basic_grouping`, `reassign`, `filter_and_reassign`, `doublet`) that are used in the test cases. These data frames simulate different input scenarios for the lineage grouping function.
-- **Test Methods**: Each test method calls `call_lineage_groups` with specific parameters and asserts that the output matches expected conditions. The tests cover:
-  - Correct format of the output data frame.
-  - Basic grouping logic.
-  - Handling of doublets.
-  - Reassignment logic.
-  - Filtering and reassignment logic.
-  - Conversion of filtered lineage groups to allele tables.
+1. Sets up test data in `setUp` method
+2. Defines multiple test methods to check different aspects of lineage group assignment
 
-### `test_format`
+### setUp
 #### Description
-Tests if the output data frame from `call_lineage_groups` contains the expected columns.
+Initializes test data for various scenarios, including basic grouping, reassignment, filtering, and doublet handling.
 
-#### Inputs
-- Uses the `self.doublet` data frame.
+#### Internal Logic
+1. Creates multiple pandas DataFrames with test data
+2. Sets up different scenarios for lineage group assignment testing
 
-#### Outputs
-- Asserts that the output data frame contains specific columns.
-
-### `test_basic_grouping`
+### test_format
 #### Description
-Tests the basic grouping logic of `call_lineage_groups`.
+Tests if the output of `call_lineage_groups` has the expected columns.
 
-#### Inputs
-- Uses the `self.basic_grouping` data frame.
+#### Internal Logic
+1. Calls `call_lineage_groups` with test data
+2. Checks if the output DataFrame contains all expected columns
 
-#### Outputs
-- Asserts that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
-
-### `test_doublet`
+### test_basic_grouping
 #### Description
-Tests the handling of doublets in `call_lineage_groups`.
+Tests basic lineage group assignment functionality.
 
-#### Inputs
-- Uses the `self.doublet` data frame.
+#### Internal Logic
+1. Calls `call_lineage_groups` with basic test data
+2. Verifies if the assigned lineage groups and UMI counts match expected values
 
-#### Outputs
-- Asserts that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
-
-### `test_reassign`
+### test_doublet
 #### Description
-Tests the reassignment logic of `call_lineage_groups`.
+Tests lineage group assignment with potential doublets.
 
-#### Inputs
-- Uses the `self.reassign` data frame.
+#### Internal Logic
+1. Calls `call_lineage_groups` with doublet test data
+2. Checks if doublets are correctly identified and assigned
 
-#### Outputs
-- Asserts that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
-
-### `test_filter_reassign`
+### test_reassign
 #### Description
-Tests the filtering and reassignment logic of `call_lineage_groups`.
+Tests reassignment of cells to lineage groups.
 
-#### Inputs
-- Uses the `self.filter_and_reassign` data frame.
+#### Internal Logic
+1. Calls `call_lineage_groups` with reassignment test data
+2. Verifies if cells are correctly reassigned to appropriate lineage groups
 
-#### Outputs
-- Asserts that certain intBCs are not present and that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
-
-### `test_filter_lineage_group_to_allele_table_single_lineage`
+### test_filter_reassign
 #### Description
-Tests the conversion of filtered lineage groups to allele tables.
+Tests filtering and reassignment of lineage groups.
 
-#### Inputs
-- Uses the `self.basic_grouping` data frame.
+#### Internal Logic
+1. Calls `call_lineage_groups` with filter and reassign test data
+2. Checks if filtering and reassignment are performed correctly
 
-#### Outputs
-- Asserts that the output data frame contains a "lineageGrp" column and that the lineage group and UMI counts are as expected for specific cellBC and intBC pairs.
+### test_filter_lineage_group_to_allele_table_single_lineage
+#### Description
+Tests the conversion of filtered lineage groups to an allele table for a single lineage.
 
-## References
-
-- `pipeline.call_lineage_groups`: The main function being tested, which is responsible for assigning lineage groups to cells based on UMI and intBC data.
-- `lineage_utils.filtered_lineage_group_to_allele_table`: A utility function used in one of the tests to convert lineage groups to allele tables.
+#### Internal Logic
+1. Calls `filtered_lineage_group_to_allele_table` with test data
+2. Verifies if the resulting allele table is correct for a single lineage
 
 ## Dependencies
+- unittest
+- numpy
+- pandas
+- cassiopeia (specifically the pipeline and lineage_utils modules)
 
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `pandas` | Used for creating and manipulating data frames. |
-| `cassiopeia.preprocess.pipeline` | Contains the `call_lineage_groups` function being tested. |
-| `cassiopeia.preprocess.lineage_utils` | Provides utility functions for lineage group processing. |
-
-## Error Handling
-
-The test suite uses assertions to handle errors. If an assertion fails, it indicates that the function did not behave as expected for the given test case.
-
-## Logging
-
-No explicit logging is implemented in the test suite. The `unittest` framework provides output for test results, including any assertion failures.
+The test file relies on the `cassiopeia` package, particularly the `pipeline` and `lineage_utils` modules, to perform lineage group assignments and related operations.

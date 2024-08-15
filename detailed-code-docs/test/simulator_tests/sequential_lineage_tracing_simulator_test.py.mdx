@@ -2,81 +2,64 @@
 title: "sequential_lineage_tracing_simulator_test.py"
 ---
 
-## High-level description
+Here's a comprehensive documentation for the target file `test/simulator_tests/sequential_lineage_tracing_simulator_test.py`:
 
-The target file `sequential_lineage_tracing_simulator_test.py` is a unit test suite designed to test the functionality of the `SequentialLineageTracingDataSimulator` class from the `cassiopeia.simulator` module. This test suite uses the `unittest` framework to verify that the simulator correctly initializes, handles errors, and overlays lineage tracing data onto a tree structure. It also checks the simulator's behavior with different configurations, including scenarios with missing data.
+## High-level description
+This file contains unit tests for the Sequential-based lineage tracing data simulator in the Cassiopeia package. It tests the functionality of the `SequentialLineageTracingDataSimulator` class, including its initialization, error handling, and data overlay capabilities.
 
 ## Code Structure
-
-The main class in this file is `TestSequentialLineageTracingDataSimulator`, which inherits from `unittest.TestCase`. This class contains several test methods that validate different aspects of the `SequentialLineageTracingDataSimulator`. The tests are organized into setup, basic functionality, error handling, and specific simulation scenarios.
+The main class `TestSequentialLineageTracingDataSimulator` inherits from `unittest.TestCase` and contains several test methods. It sets up a basic tree structure and simulator instances in the `setUp` method, which are then used across different test cases.
 
 ## Symbols
 
-### `TestSequentialLineageTracingDataSimulator`
+### TestSequentialLineageTracingDataSimulator
 #### Description
-This class is a test suite for the `SequentialLineageTracingDataSimulator`. It contains methods to set up test data, verify the simulator's basic setup, handle setup errors, and test the simulator's data overlay functionality.
+A test class that contains unit tests for the `SequentialLineageTracingDataSimulator` class.
 
-#### Methods
+#### Internal Logic
+1. Sets up a basic tree structure and simulator instances in `setUp`.
+2. Tests basic setup, error handling, and data overlay functionality of the simulator.
 
-- **`setUp`**
-  - **Description**: Initializes the test environment by creating a tree topology and two instances of `SequentialLineageTracingDataSimulator` with different configurations.
-  - **Inputs**: None
-  - **Outputs**: None
-  - **Internal Logic**: Constructs a directed graph representing a tree, sets node times, and initializes simulator instances with specific parameters.
+### setUp
+#### Description
+Initializes the test environment by creating a basic tree structure and two simulator instances.
 
-- **`test_basic_setup`**
-  - **Description**: Tests the basic setup of the `SequentialLineageTracingDataSimulator` to ensure it initializes with the correct parameters.
-  - **Inputs**: None
-  - **Outputs**: None
-  - **Internal Logic**: Asserts that the simulator's parameters match expected values.
+#### Internal Logic
+1. Creates a directed graph representing a tree topology.
+2. Converts the graph to a `CassiopeiaTree` and sets node times.
+3. Initializes two `SequentialLineageTracingDataSimulator` instances with different parameters.
 
-- **`test_setup_errors`**
-  - **Description**: Tests the simulator's error handling by providing invalid parameters and ensuring that `DataSimulatorError` is raised.
-  - **Inputs**: None
-  - **Outputs**: None
-  - **Internal Logic**: Uses `assertRaises` to check for errors when invalid parameters are passed to the simulator.
+### test_basic_setup
+#### Description
+Tests the basic setup of the simulator, including the number of characters, silencing rates, and other parameters.
 
-- **`test_simulator_basic`**
-  - **Description**: Tests the simulator's ability to overlay data onto a tree and verifies the resulting character matrix.
-  - **Inputs**: None
-  - **Outputs**: None
-  - **Internal Logic**: Overlays data on a tree, checks the shape of the character matrix, and compares it to an expected matrix.
+### test_setup_errors
+#### Description
+Tests various error conditions during simulator initialization, such as invalid input parameters.
 
-- **`test_simulator_with_missing`**
-  - **Description**: Tests the simulator's behavior when there is missing data, ensuring the character matrix reflects this correctly.
-  - **Inputs**: None
-  - **Outputs**: None
-  - **Internal Logic**: Similar to `test_simulator_basic`, but with a simulator configured to introduce missing data.
+### test_simulator_basic
+#### Description
+Tests the basic functionality of the simulator by overlaying data on the tree and checking the resulting character matrix.
 
-- **`test_branch_multiple_edits`**
-  - **Description**: Tests the simulator's handling of multiple edits on a branch, ensuring the character matrix is as expected.
-  - **Inputs**: None
-  - **Outputs**: None
-  - **Internal Logic**: Sets up a simple tree, overlays data, and checks the resulting character matrix against an expected matrix.
+### test_simulator_with_missing
+#### Description
+Tests the simulator's behavior when dealing with missing data (heritable and stochastic silencing).
 
-## References
-
-- **`SequentialLineageTracingDataSimulator`**: The class being tested, which is part of the `cassiopeia.simulator` module.
-- **`DataSimulatorError`**: An error class used to handle invalid configurations in the simulator.
+### test_branch_multiple_edits
+#### Description
+Tests the simulator's ability to handle multiple edits along a branch.
 
 ## Dependencies
-
-| Dependency | Purpose |
-|:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `networkx` | Used to create and manipulate the tree topology as a directed graph. |
-| `numpy` | Utilized for numerical operations. |
-| `pandas` | Used for handling data in DataFrame format, particularly for character matrices. |
-| `cassiopeia` | The main library being tested, specifically its simulator module. |
+- unittest
+- networkx
+- numpy
+- pandas
+- cassiopeia
 
 ## Error Handling
+The test cases check for various error conditions by using `self.assertRaises` to ensure that the simulator raises appropriate exceptions for invalid inputs.
 
-The test suite uses `unittest`'s `assertRaises` method to verify that the `SequentialLineageTracingDataSimulator` raises `DataSimulatorError` when initialized with invalid parameters. This ensures that the simulator's error handling is robust and correctly implemented.
+## Performance Considerations
+The tests don't explicitly address performance, but they do check the correctness of the simulator's output for different scenarios, which indirectly ensures efficient operation.
 
-## Logging
-
-There is no explicit logging implemented in this test suite. The focus is on using assertions to validate expected outcomes.
-
-## TODOs
-
-There are no TODOs or notes left in the code.
+This documentation provides a comprehensive overview of the test file, its structure, and the various test cases it contains for the `SequentialLineageTracingDataSimulator` class in the Cassiopeia package.

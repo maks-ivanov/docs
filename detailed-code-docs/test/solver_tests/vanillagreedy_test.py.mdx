@@ -3,82 +3,142 @@ title: "vanillagreedy_test.py"
 ---
 
 ## High-level description
-
-The `vanillagreedy_test.py` file is a unit test suite for the `VanillaGreedySolver` class, which is part of the Cassiopeia library. This test suite uses the `unittest` framework to verify the functionality of the `VanillaGreedySolver`, particularly its ability to compute mutation frequencies, handle missing data, and solve phylogenetic trees using a greedy algorithm. The tests cover various scenarios, including handling duplicate data, ambiguous data, and missing data, as well as testing the solver's behavior with different configurations and priors.
+This file contains unit tests for the VanillaGreedySolver class, which is part of the Cassiopeia package for phylogenetic tree reconstruction. The tests cover various aspects of the solver, including frequency dictionary computation, missing data handling, ambiguous state handling, and tree reconstruction with different input scenarios.
 
 ## Code Structure
-
-The main components of the code are:
-
-- **`find_triplet_structure` function**: A utility function to determine the structure of a triplet in a tree.
-- **`VanillaGreedySolverTest` class**: A subclass of `unittest.TestCase` that contains multiple test methods to validate different aspects of the `VanillaGreedySolver`.
-
-## References
-
-- **`VanillaGreedySolver`**: The class being tested, which is responsible for solving phylogenetic trees using a greedy algorithm.
-- **`missing_data_methods`**: A module that provides methods for handling missing data, referenced in the tests.
-- **`solver_utilities`**: A module that provides utility functions for the solver, referenced in the tests.
+The main class `VanillaGreedySolverTest` inherits from `unittest.TestCase` and contains multiple test methods. Each test method focuses on a specific aspect of the VanillaGreedySolver's functionality, such as frequency dictionary computation, missing data handling, and tree reconstruction. The tests use sample character matrices and expected tree structures to verify the solver's behavior.
 
 ## Symbols
 
-### `find_triplet_structure`
+### VanillaGreedySolverTest
 #### Description
-Determines the structure of a triplet (three nodes) in a given tree by comparing the number of common ancestors between pairs of nodes.
-
-#### Inputs
-| Name   | Type         | Description                        |
-|:-------|:-------------|:-----------------------------------|
-| triplet| list         | A list of three nodes (a, b, c).   |
-| T      | nx.DiGraph   | A directed graph representing a tree.|
-
-#### Outputs
-| Name      | Type   | Description                                      |
-|:----------|:-------|:-------------------------------------------------|
-| structure | str    | The structure of the triplet, either "ab", "ac", "bc", or "-". |
+A test class that contains unit tests for the VanillaGreedySolver class.
 
 #### Internal Logic
-- Computes the ancestors for each node in the triplet.
-- Determines the number of common ancestors between each pair of nodes.
-- Returns the pair with the most common ancestors as the structure.
+The class contains multiple test methods, each focusing on a specific aspect of the VanillaGreedySolver's functionality:
+1. Frequency dictionary computation
+2. Missing data handling
+3. Ambiguous state handling
+4. Tree reconstruction with various input scenarios
 
-### `VanillaGreedySolverTest`
+### find_triplet_structure
 #### Description
-A test suite for the `VanillaGreedySolver` class, containing various test cases to validate its functionality.
+A helper function that determines the structure of a triplet in a given tree.
 
-#### Test Methods
-- **`test_basic_freq_dict`**: Tests the computation of mutation frequencies with a basic character matrix.
-- **`test_duplicate_freq_dict`**: Tests the handling of duplicate rows in the character matrix.
-- **`test_ambiguous_freq_dict`**: Tests the handling of ambiguous states in the character matrix.
-- **`test_ambiguous_duplicate_freq_dict`**: Tests the handling of ambiguous and duplicate states.
-- **`test_average_missing_data`**: Tests the assignment of missing data using the average method.
-- **`test_average_missing_data_priors`**: Tests the assignment of missing data with priors.
-- **`test_all_duplicates_base_case`**: Tests the solver with a character matrix where all rows are duplicates.
-- **`test_case_1`**: Tests a specific case with a given character matrix.
-- **`test_case_2`**: Tests another specific case with a different character matrix.
-- **`test_weighted_case_trivial`**: Tests the solver with trivial weights.
-- **`test_priors_case`**: Tests the solver with specific priors.
-- **`test_ambiguous_no_missing`**: Tests the solver with ambiguous states but no missing data.
-- **`test_ambiguous_with_missing`**: Tests the solver with ambiguous states and missing data.
-- **`test_ambiguous_with_missing_and_duplicates`**: Tests the solver with ambiguous states, missing data, and duplicates.
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| triplet | tuple | A tuple containing three node names |
+| T | networkx.DiGraph | The tree to analyze |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| structure | str | The structure of the triplet ("-", "ab", "ac", or "bc") |
+
+#### Internal Logic
+1. Find ancestors for each node in the triplet
+2. Calculate the number of common ancestors for each pair of nodes
+3. Determine the structure based on the number of common ancestors
+
+### test_basic_freq_dict
+#### Description
+Tests the computation of mutation frequencies for a basic character matrix.
+
+#### Internal Logic
+1. Create a sample character matrix
+2. Initialize a VanillaGreedySolver
+3. Compute mutation frequencies
+4. Assert the correctness of the frequency dictionary
+
+### test_duplicate_freq_dict
+#### Description
+Tests the computation of mutation frequencies for a character matrix with duplicate rows.
+
+#### Internal Logic
+Similar to test_basic_freq_dict, but with a character matrix containing duplicate rows.
+
+### test_ambiguous_freq_dict
+#### Description
+Tests the computation of mutation frequencies for a character matrix with ambiguous states.
+
+#### Internal Logic
+Similar to test_basic_freq_dict, but with a character matrix containing ambiguous states (tuples).
+
+### test_ambiguous_duplicate_freq_dict
+#### Description
+Tests the computation of mutation frequencies for a character matrix with ambiguous states and duplicate rows.
+
+#### Internal Logic
+Similar to test_ambiguous_freq_dict, but with duplicate rows.
+
+### test_average_missing_data
+#### Description
+Tests the average missing data imputation method.
+
+#### Internal Logic
+1. Create a sample character matrix with missing data
+2. Apply the average missing data imputation method
+3. Assert the correctness of the resulting partitions
+
+### test_average_missing_data_priors
+#### Description
+Tests the average missing data imputation method with priors.
+
+#### Internal Logic
+Similar to test_average_missing_data, but includes priors for weighting.
+
+### test_all_duplicates_base_case
+#### Description
+Tests the solver's behavior when all samples are identical.
+
+#### Internal Logic
+1. Create a character matrix with identical rows
+2. Solve the tree
+3. Verify the resulting tree structure
+
+### test_case_1, test_case_2
+#### Description
+Tests the solver's behavior with more complex character matrices.
+
+#### Internal Logic
+1. Create a complex character matrix
+2. Solve the tree
+3. Verify the resulting tree structure using triplet comparisons
+
+### test_weighted_case_trivial
+#### Description
+Tests the solver's behavior with a weighted case (using priors).
+
+#### Internal Logic
+Similar to test_case_2, but includes priors for weighting.
+
+### test_priors_case
+#### Description
+Tests the solver's behavior with more complex priors.
+
+#### Internal Logic
+Similar to test_weighted_case_trivial, but with more complex priors.
+
+### test_ambiguous_no_missing, test_ambiguous_with_missing, test_ambiguous_with_missing_and_duplicates
+#### Description
+Tests the solver's behavior with ambiguous states, missing data, and duplicates.
+
+#### Internal Logic
+1. Create character matrices with ambiguous states, missing data, and/or duplicates
+2. Solve the tree
+3. Verify the resulting tree structure using triplet comparisons
 
 ## Dependencies
-
 | Dependency | Purpose |
 |:-----------|:--------|
-| `unittest` | Provides the testing framework. |
-| `itertools` | Used for generating combinations of triplets. |
-| `networkx` | Used for graph operations and tree representation. |
-| `pandas` | Used for handling character matrices. |
-| `cassiopeia` | The main library being tested, specifically the `VanillaGreedySolver` and related utilities. |
+| unittest | Provides the testing framework |
+| itertools | Used for generating combinations |
+| networkx | Used for tree representation and analysis |
+| pandas | Used for character matrix representation |
+| cassiopeia | The main package being tested |
 
 ## Error Handling
+The test cases use assertions to verify the correctness of the solver's output. If any assertion fails, the test case will raise an AssertionError.
 
-The test suite does not explicitly handle errors but relies on assertions to validate expected outcomes. If an assertion fails, it indicates a potential issue in the `VanillaGreedySolver` implementation.
-
-## Logging
-
-No explicit logging is implemented in the test suite. The `unittest` framework provides output for test results, including any failures or errors.
-
-## TODOs
-
-- There is a TODO in the `VanillaGreedySolver` class to implement a "fuzzysolver," which is not directly related to the test suite but indicates future work in the solver's implementation.
+Your response should not exceed 3000 words or 4000 tokens. Focus on providing clear, concise information that can be directly inferred from the code. Include optional sections only when they provide significant value for understanding the code.

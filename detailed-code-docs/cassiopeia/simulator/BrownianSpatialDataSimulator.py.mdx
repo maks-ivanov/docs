@@ -3,59 +3,57 @@ title: "BrownianSpatialDataSimulator.py"
 ---
 
 ## High-level description
-
-The `BrownianSpatialDataSimulator` class is a specialized simulator that extends the `SpatialDataSimulator` class to simulate spatial coordinates for cells in a `CassiopeiaTree` using a Brownian motion process. This involves traversing the tree from the root to the leaves and assigning spatial coordinates to each cell based on a diffusion model, which is influenced by a diffusion coefficient and the time since the last cell division.
+The `BrownianSpatialDataSimulator` class simulates spatial data for a lineage tree using a Brownian motion process. This simulator assigns spatial coordinates to each cell in a `CassiopeiaTree`, mimicking the movement of cells in a spatial context.
 
 ## Code Structure
-
-The `BrownianSpatialDataSimulator` class inherits from the `SpatialDataSimulator` class, which in turn is a subclass of `DataSimulator`. The main functionality of the `BrownianSpatialDataSimulator` is implemented in its `overlay_data` method, which overlays spatial data onto a `CassiopeiaTree` by simulating Brownian motion. The class also includes an initializer to set up simulation parameters such as the number of dimensions, diffusion coefficient, and whether to scale the spatial coordinates to a unit area.
+The `BrownianSpatialDataSimulator` class inherits from the `SpatialDataSimulator` class. It primarily implements the `overlay_data` method, which is responsible for assigning spatial coordinates to the nodes of a `CassiopeiaTree` based on a Brownian motion model.
 
 ## References
-
-- `CassiopeiaTree`: Used to represent the tree structure on which spatial data is overlaid.
-- `DataSimulatorError`: An exception class used to handle errors specific to data simulation.
-- `SpatialDataSimulator`: The abstract base class that `BrownianSpatialDataSimulator` extends.
+- `cassiopeia.data.CassiopeiaTree`: The class representing the lineage tree.
+- `cassiopeia.simulator.SpatialDataSimulator`: The parent class for spatial data simulators.
 
 ## Symbols
 
 ### `BrownianSpatialDataSimulator`
 #### Description
-The `BrownianSpatialDataSimulator` class simulates spatial data for a `CassiopeiaTree` using a Brownian motion model. It calculates spatial coordinates for each cell by traversing the tree and applying a diffusion process, which is parameterized by the number of dimensions, diffusion coefficient, and other optional settings.
+This class simulates spatial data for a lineage tree using a Brownian motion process. It takes the dimensionality of the space, a diffusion coefficient, and optional scaling and random seed parameters as input.
 
 #### Inputs
 | Name | Type | Description |
 |:-----|:-----|:------------|
-| dim | int | Number of spatial dimensions for the simulation. |
-| diffusion_coefficient | float | Coefficient that determines the variance of the Brownian motion. |
+| dim | int | The number of spatial dimensions. |
+| diffusion_coefficient | float | The diffusion coefficient for the Brownian motion process. |
 | scale_unit_area | bool | Whether to scale the spatial coordinates to a unit area. Defaults to `True`. |
-| random_seed | Optional[int] | Seed for random number generation to ensure reproducibility. |
+| random_seed | Optional[int] | A random seed for reproducibility. Defaults to `None`. |
 
 #### Outputs
-The class does not return outputs directly but modifies the `CassiopeiaTree` by setting spatial attributes.
+This class does not directly return any output. It modifies the input `CassiopeiaTree` object in-place.
 
 #### Internal Logic
-- **Initialization**: Validates input parameters and initializes instance variables.
-- **overlay_data**: 
-  - Sets the random seed if provided.
-  - Initializes the root node at the origin.
-  - Traverses the tree using depth-first traversal to calculate new spatial coordinates for each child node based on the parent's coordinates and a normally distributed random vector.
-  - Optionally scales the coordinates to fit within a unit area.
-  - Updates the `CassiopeiaTree` with the calculated spatial coordinates, both as node attributes and in the `cell_meta` DataFrame.
+1. **Initialization:** The constructor initializes the simulator with the specified parameters and performs validation checks.
+2. **`overlay_data` Method:**
+    - Traverses the tree from root to leaves.
+    - Assigns the root cell to the origin (0, 0, ...) in the spatial space.
+    - For each edge (parent-child relationship) in the tree:
+        - Calculates the branch length (time since last cell division).
+        - Samples a random displacement vector from a normal distribution with mean 0 and variance proportional to the branch length and diffusion coefficient.
+        - Adds the displacement vector to the parent's coordinates to obtain the child's coordinates.
+    - Optionally scales the spatial coordinates to a unit area.
+    - Sets the spatial coordinates as a node attribute and in the `cell_meta` DataFrame of the `CassiopeiaTree`.
 
 ## Side Effects
-- Modifies the `CassiopeiaTree` by setting spatial attributes for each node and updating the `cell_meta` DataFrame with the new spatial coordinates.
+- Modifies the input `CassiopeiaTree` object in-place by adding spatial coordinates to the nodes and cell metadata.
 
 ## Dependencies
-| Dependency | Purpose |
-|:-----------|:--------|
-| numpy | Used for numerical operations and random number generation. |
-| pandas | Used for handling the `cell_meta` DataFrame in the `CassiopeiaTree`. |
+- `numpy`: Used for numerical operations and random number generation.
+- `pandas`: Used for handling the `cell_meta` DataFrame.
+
+### Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| scale_unit_area | bool | True | Whether to scale the spatial coordinates to a unit area. |
 
 ## Error Handling
-- Raises `DataSimulatorError` if the number of dimensions is less than or equal to zero or if the diffusion coefficient is negative.
-
-## Logging
-No explicit logging is implemented in the code.
-
-## TODOs
-No TODOs are present in the code.
+Raises `DataSimulatorError` if:
+- `dim` is less than or equal to zero.
+- `diffusion_coefficient` is negative.

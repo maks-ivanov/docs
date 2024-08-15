@@ -2,153 +2,17 @@
 title: "CassiopeiaTree.py"
 ---
 
-## High-level description
-The `CassiopeiaTree` class represents a phylogenetic tree structure used in Cassiopeia for lineage tracing analysis. It stores a tree topology, a character matrix representing mutation observations for each cell, and metadata associated with cells and characters. The class provides methods for manipulating the tree, reconstructing ancestral characters, computing dissimilarities, and managing layers of character matrices.
+```diff
+--- a/cassiopeia/data/CassiopeiaTree.py
++++ b/cassiopeia/data/CassiopeiaTree.py
+@@ -1480,7 +1480,7 @@
+             dissimilarity_function,
+             weights,
+             self.missing_state_indicator,
+-            threads=threads,
++            n_jobs=threads,
+         )
+ 
+         dissimilarity_map = scipy.spatial.distance.squareform(dissimilarity_map)
 
-## Code Structure
-The `CassiopeiaTree` class is the central data structure in Cassiopeia. It holds the tree topology, character matrix, metadata, and other relevant information. The class provides methods for manipulating the tree, reconstructing ancestral characters, computing dissimilarities, and managing layers of character matrices. The `Layers` class is used to store multiple versions of character matrices, allowing for flexibility in data management.
-
-## References
-The `CassiopeiaTree` class references the `utilities` module for various helper functions related to tree manipulation, dissimilarity computation, and data conversion. It also references the `solver_utilities` module for functions related to prior transformation and dissimilarity map computation.
-
-## Symbols
-
-### `CassiopeiaTree`
-#### Description
-This class represents a phylogenetic tree structure used in Cassiopeia for lineage tracing analysis. It stores a tree topology, a character matrix representing mutation observations for each cell, and metadata associated with cells and characters. The class provides methods for manipulating the tree, reconstructing ancestral characters, computing dissimilarities, and managing layers of character matrices.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| character_matrix | Optional[pd.DataFrame] | The character matrix for the lineage. |
-| missing_state_indicator | int | An indicator for missing states in the character matrix. |
-| cell_meta | Optional[pd.DataFrame] | Per-cell meta data |
-| character_meta | Optional[pd.DataFrame] | Per-character meta data |
-| priors | Optional[Dict[int, Dict[int, float]]] | A dictionary storing the probability of each character mutating to a particular state. |
-| tree | Optional[Union[str, ete3.Tree, nx.DiGraph]] | A tree for the lineage. |
-| dissimilarity_map | Optional[pd.DataFrame] | An NxN dataframe storing the pairwise dissimilarities between samples. |
-| parameters | Optional[Dict[str, Any]] | A dictionary of parameters for the tree. |
-| root_sample_name | Optional[str] | The name of the sample to treat as the root. |
-
-#### Outputs
-The class does not have a formal output, but it stores and manipulates the tree structure and associated data.
-
-#### Internal Logic
-The class initializes its attributes based on the provided inputs. It uses the `populate_tree` method to populate the tree topology and character states at leaves. It also provides methods for reconstructing ancestral characters, computing dissimilarities, and managing layers of character matrices.
-
-### `populate_tree`
-#### Description
-This method populates a tree object in CassiopeiaTree. It accepts a tree topology and introduces the topology into the object. In doing so, this function will also append character states to the leaves of the tree topology, if possible, and instantiate edge lengths by default to be length 1. Node times will be instantiated as well, corresponding to their tree depth.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| tree | Union[str, ete3.Tree, nx.DiGraph] | A tree topology specified as a networkx DiGraph, a newick string, or an ete3 Tree. |
-| layer | Optional[str] | Layer to use for character matrix. If this is None, then the current `character_matrix` variable will be used. |
-
-#### Outputs
-The method does not have a formal output, but it modifies the tree structure in place.
-
-#### Internal Logic
-The method converts the input tree topology to a networkx DiGraph. It then sets character states at the leaves of the tree using the provided character matrix or layer. Finally, it instantiates branch lengths and node times.
-
-### `set_character_states_at_leaves`
-#### Description
-This method populates character states at leaves. Assigns character states to the leaves of the tree. This function must have a character state assignment to all leaves of the tree. If no argument is passed, the default :attr:`character_matrix` is used to set character states at the leaves.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| character_matrix | Optional[Union[pd.DataFrame, Dict]] | A separate character matrix to use for setting character states at the leaves. This character matrix is not stored in the object afterwards. If this is None, uses the default character matrix stored in :attr:`character_matrix` |
-| layer | Optional[str] | Layer to use for resetting character information at leaves. If this is None, uses the default character matrix stored in :attr:`character_matrix`. |
-
-#### Outputs
-The method does not have a formal output, but it modifies the character states at leaves in place.
-
-#### Internal Logic
-The method checks that the character matrix index matches the set of leaves. It then assigns character states to the leaves of the tree using the provided character matrix or layer.
-
-### `set_all_character_states`
-#### Description
-This method populates character states across the tree. Assigns character states to all of the nodes in the tree. The mapping must have an entry for every node in the tree.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| character_state_mapping | Dict[str, List[int]] | A mapping containing character state assignments for every node |
-| add_layer | Optional[str] | Layer to which to add the new character matrix. If this is None, then the specified character matrix will be set to the default matrix in this object. |
-
-#### Outputs
-The method does not have a formal output, but it modifies the character states of all nodes in place.
-
-#### Internal Logic
-The method checks that the mapping accounts for all the nodes in the tree. It then assigns character states to all nodes using the provided mapping. If `add_layer` is specified, the new character matrix is added to the specified layer. Otherwise, it is set as the default character matrix.
-
-### `freeze_character_matrix`
-#### Description
-This method freezes character matrix in specified layer. Adds a new layer the CassiopeiaTree object corresponding to the current version of the character matrix.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| add_layer | str | Layer to create. |
-
-#### Outputs
-The method does not have a formal output, but it adds a new layer to the `layers` attribute.
-
-#### Internal Logic
-The method checks if a character matrix exists and if the specified layer already exists. If the layer does not exist, it creates a new layer with a copy of the current character matrix.
-
-### `reconstruct_ancestral_characters`
-#### Description
-This method reconstructs ancestral character states. Reconstructs ancestral states (i.e., those character states in the internal nodes) using the Camin-Sokal parsimony criterion (i.e., irreversibility). Operates on the tree in place.
-
-#### Inputs
-The method does not have any inputs.
-
-#### Outputs
-The method does not have a formal output, but it modifies the character states of internal nodes in place.
-
-#### Internal Logic
-The method traverses the tree in depth-first postorder. For each internal node, it retrieves the character states of its children and reconstructs the ancestral state using the `get_lca_characters` function from the `utilities` module.
-
-### `compute_dissimilarity_map`
-#### Description
-This method computes a dissimilarity map. Given the dissimilarity function passed in, the pairwise dissimilarities will be computed over the samples in the character matrix. Populates the dissimilarity_map attribute in the object.
-
-#### Inputs
-| Name | Type | Description |
-|:-----|:-----|:------------|
-| dissimilarity_function | Optional[Callable[[np.array, np.array, int, Dict[int, Dict[int, float]]], float]] | A function that will take in two character vectors and priors and produce a dissimilarity. |
-| prior_transformation | str | A function defining a transformation on the priors in forming weights. |
-| layer | Optional[str] | Character matrix layer to use. If not specified, use the default :attr:`character_matrix`. |
-| threads | int | Number of threads to use for dissimilarity map computation. |
-
-#### Outputs
-The method does not have a formal output, but it populates the `dissimilarity_map` attribute.
-
-#### Internal Logic
-The method checks if a character matrix exists. It then computes the pairwise dissimilarities between samples using the provided dissimilarity function and priors. The resulting dissimilarity map is stored in the `dissimilarity_map` attribute.
-
-## Side Effects
-The `CassiopeiaTree` class modifies its internal state when methods like `populate_tree`, `set_character_states_at_leaves`, `set_all_character_states`, `freeze_character_matrix`, and `reconstruct_ancestral_characters` are called. These methods update the tree topology, character states, and layers of character matrices.
-
-## Dependencies
-The `CassiopeiaTree` class depends on the following external libraries:
-| Dependency | Purpose |
-|:-----------|:--------|
-| ete3 | Tree manipulation and visualization |
-| networkx | Graph manipulation |
-| numpy | Numerical operations |
-| pandas | Data manipulation |
-| scipy | Scientific computing |
-
-## Error Handling
-The `CassiopeiaTree` class raises `CassiopeiaTreeError` exceptions when encountering invalid inputs or tree states. For example, it raises an error if the character matrix index does not match the set of leaves or if the tree has not been initialized.
-
-## TODOs
-- Add check upon initialization that input tree is valid tree.
-- Add experimental meta data as arguments.
-- Add utility methods to compute the colless index and the cophenetic correlation wrt to some cell meta item
-- Add bulk set_states method.
-- Add boolean to `get_tree_topology` which will include all attributes (e.g., node times)
+```
