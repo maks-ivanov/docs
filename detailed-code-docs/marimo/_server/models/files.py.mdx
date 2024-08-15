@@ -1,0 +1,181 @@
+---
+title: "files.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/models/files.py`, defines a set of data models using Python's `dataclasses` module. These models are used to represent requests and responses related to file operations in a server environment. The file includes models for listing files, retrieving file details, opening files, creating, deleting, moving, and updating files, as well as their corresponding responses.
+
+## Code Structure
+
+The main symbols in the code are data classes that represent different types of file-related requests and responses. These data classes are interconnected in that they often reference each other, particularly in the response classes that include instances of `FileInfo`.
+
+## Symbols
+
+### `FileInfo`
+#### Description
+Represents metadata about a file or directory, including its ID, path, name, and whether it is a directory or a Marimo-specific file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | str | Unique identifier for the file or directory. |
+| path | str | The file system path to the file or directory. |
+| name | str | The name of the file or directory. |
+| is_directory | bool | Indicates if the path is a directory. |
+| is_marimo_file | bool | Indicates if the file is specific to Marimo. |
+| last_modified | Optional[float] | Timestamp of the last modification. |
+| children | List["FileInfo"] | List of child files if it is a directory. |
+
+### `FileListRequest`
+#### Description
+Represents a request to list files in a directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | Optional[str] | The directory path to list files from. If None, the root directory is used. |
+
+### `FileDetailsRequest`
+#### Description
+Represents a request to get details of a specific file or directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The path of the file or directory. |
+
+### `FileOpenRequest`
+#### Description
+Represents a request to open a file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The path of the file to open. |
+
+### `FileTreeRequest`
+#### Description
+Represents a request to get a file tree starting from a root directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The root directory path for the tree. |
+
+### `FileCreateRequest`
+#### Description
+Represents a request to create a new file or directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The path where to create the file or directory. |
+| type | Literal["file", "directory"] | Specifies whether to create a file or directory. |
+| name | str | The name of the file or directory. |
+| contents | Optional[str] | The contents of the file, base64-encoded. |
+
+### `FileDeleteRequest`
+#### Description
+Represents a request to delete a file or directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The path of the file or directory to delete. |
+
+### `FileMoveRequest`
+#### Description
+Represents a request to move or rename a file or directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The current path of the file or directory. |
+| new_path | str | The new path or name for the file or directory. |
+
+### `FileUpdateRequest`
+#### Description
+Represents a request to update the contents of a file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | str | The current path of the file. |
+| contents | str | The new contents of the file. |
+
+### `FileListResponse`
+#### Description
+Represents a response containing a list of files and the root directory.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| files | List[FileInfo] | List of files in the directory. |
+| root | str | The root directory path. |
+
+### `FileDetailsResponse`
+#### Description
+Represents a response containing details of a specific file or directory.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | FileInfo | Metadata about the file or directory. |
+| contents | Optional[str] | The contents of the file, if applicable. |
+| mime_type | Optional[str] | The MIME type of the file. |
+
+### `FileCreateResponse`
+#### Description
+Represents a response to a file or directory creation request, extending `BaseResponse`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | Optional[str] | Additional information, e.g., error message. |
+| info | Optional[FileInfo] | Metadata about the created file or directory. |
+
+### `FileDeleteResponse`
+#### Description
+Represents a response to a file or directory deletion request, extending `BaseResponse`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | Optional[str] | Additional information, e.g., error message. |
+
+### `FileUpdateResponse`
+#### Description
+Represents a response to a file update request, extending `BaseResponse`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | Optional[str] | Additional information, e.g., error message. |
+| info | Optional[FileInfo] | Metadata about the updated file. |
+
+### `FileMoveResponse`
+#### Description
+Represents a response to a file move or rename request, extending `BaseResponse`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| message | Optional[str] | Additional information, e.g., error message. |
+| info | Optional[FileInfo] | Metadata about the moved or renamed file. |
+
+## References
+
+- `BaseResponse`: A base class for response models, providing a `success` attribute.
+- `FileInfo`: Used extensively across request and response models to represent file metadata.
+
+## Dependencies
+
+The file imports several modules and classes:
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used to define data classes for requests and responses. |
+| `typing` | Provides type hints for the data classes. |
+| `BaseResponse` | A base class for response models, imported from `marimo._server.models.models`. |
+
+This file is a crucial part of the file management system in the Marimo server, providing structured data models for handling file operations.

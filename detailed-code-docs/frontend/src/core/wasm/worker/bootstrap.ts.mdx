@@ -1,0 +1,93 @@
+---
+title: "bootstrap.ts"
+---
+
+## High-level description
+
+The `bootstrap.ts` file is responsible for setting up and managing a WebAssembly (Wasm) environment using Pyodide, a Python distribution for the browser. It defines a `DefaultWasmController` class that handles the loading of Pyodide, installation of necessary Python packages, and the initialization of a Python session. This setup is crucial for running Python code within a web application, allowing for synchronous communication between JavaScript and Python.
+
+## Code Structure
+
+- **`DefaultWasmController`**: The main class that implements the `WasmController` interface. It manages the lifecycle of the Pyodide environment, including loading Pyodide, installing packages, and starting a Python session.
+- **`loadPyodide`**: A global function used to load the Pyodide environment and specified packages.
+- **`WasmFileSystem`**: A utility for managing the file system within the Pyodide environment, used by the `DefaultWasmController`.
+
+## References
+
+- **`WasmFileSystem`**: Used for file system operations within the Pyodide environment.
+- **`Logger`**: Utilized for logging messages and errors.
+- **`invariant`**: A utility function for asserting conditions.
+- **`getMarimoWheel`**: A function to get the appropriate Marimo package version.
+- **`t` (Tracer)**: Used for performance tracing.
+
+## Symbols
+
+### `DefaultWasmController`
+#### Description
+The `DefaultWasmController` class is responsible for initializing and managing the Pyodide environment within a WebAssembly context. It provides methods to load Pyodide, install necessary packages, mount a filesystem, and start a Python session.
+
+#### Inputs
+- **`bootstrap`**: 
+  | Name          | Type   | Description                        |
+  |:--------------|:-------|:-----------------------------------|
+  | `version`     | string | The version of the Marimo package. |
+  | `pyodideVersion` | string | The version of Pyodide to load.  |
+
+- **`mountFilesystem`**: 
+  | Name     | Type   | Description                        |
+  |:---------|:-------|:-----------------------------------|
+  | `code`   | string | The code to be mounted.            |
+  | `filename` | string | The filename to be used, if any. |
+
+- **`startSession`**: 
+  | Name            | Type   | Description                                      |
+  |:----------------|:-------|:-------------------------------------------------|
+  | `queryParameters` | Record&lt;string, string | string[]&gt; | Query parameters for the session. |
+  | `code`          | string | The initial code to execute.                     |
+  | `filename`      | string | The filename associated with the session.        |
+  | `onMessage`     | function | Callback for handling messages.                |
+  | `userConfig`    | UserConfig | User configuration settings.                 |
+
+#### Outputs
+- **`bootstrap`**: 
+  | Name      | Type              | Description                        |
+  |:----------|:------------------|:-----------------------------------|
+  | `pyodide` | PyodideInterface  | The loaded Pyodide interface.      |
+
+- **`mountFilesystem`**: 
+  | Name      | Type              | Description                        |
+  |:----------|:------------------|:-----------------------------------|
+  | `result`  | object            | Contains the code and filename.    |
+
+- **`startSession`**: 
+  | Name      | Type              | Description                        |
+  |:----------|:------------------|:-----------------------------------|
+  | `bridge`  | SerializedBridge  | The bridge for session communication. |
+
+#### Internal Logic
+- **`bootstrap`**: Loads Pyodide and installs either development or production Marimo packages based on the version string.
+- **`loadPyoideAndPackages`**: Loads Pyodide with specified packages and sets the `pyodide` property.
+- **`installDevMarimoAndDeps`**: Installs development versions of Marimo and its dependencies.
+- **`installMarimoAndDeps`**: Installs production versions of Marimo and its dependencies.
+- **`mountFilesystem`**: Sets up the filesystem in the Pyodide environment and initializes notebook code.
+- **`startSession`**: Initializes a Python session, sets up communication callbacks, and loads necessary packages.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pyodide`  | Provides a Python environment in the browser.|
+| `WasmFileSystem` | Manages the file system within Pyodide.|
+| `Logger`   | Logs messages and errors.                    |
+| `invariant`| Asserts conditions within the code.          |
+| `t` (Tracer) | Used for performance tracing.              |
+
+## Error Handling
+- The `invariant` function is used to ensure that the `pyodide` property is loaded before accessing it.
+- Errors during the loading of Pyodide or package installation are not explicitly caught within the methods, implying that they will propagate to the caller.
+
+## Logging
+- The `Logger` utility is used to log messages and errors, providing insights into the operation of the `DefaultWasmController`.
+
+## TODOs
+- No TODOs or notes are present in the code.

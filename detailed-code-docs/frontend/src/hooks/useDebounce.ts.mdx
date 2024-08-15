@@ -1,0 +1,104 @@
+---
+title: "useDebounce.ts"
+---
+
+## High-level description
+
+The `useDebounce.ts` file provides custom React hooks for debouncing values and callbacks. These hooks are useful for optimizing performance by limiting the rate at which a function is executed or a value is updated, especially in response to user input or other frequent events. The file includes three main hooks: `useDebounce`, `useDebounceControlledState`, and `useDebouncedCallback`.
+
+## Code Structure
+
+The file defines three main hooks:
+
+1. `useDebounce`: A hook that returns a debounced version of a given value.
+2. `useDebounceControlledState`: A hook that manages a state value and provides a debounced version of it, with additional control options.
+3. `useDebouncedCallback`: A hook that returns a debounced version of a callback function.
+
+These hooks are interconnected in that `useDebounceControlledState` uses `useDebounce` to manage its debounced state value, and `useDebouncedCallback` uses the `debounce` function from `lodash-es`.
+
+## Symbols
+
+### `useDebounce`
+#### Description
+This hook returns a debounced version of a given value. It delays the update of the value until after a specified delay period has passed since the last time the value was changed.
+
+#### Inputs
+| Name  | Type | Description |
+|:------|:-----|:------------|
+| value | T    | The value to be debounced. |
+| delay | number | The delay in milliseconds for debouncing the value. |
+
+#### Outputs
+| Name           | Type | Description |
+|:---------------|:-----|:------------|
+| debouncedValue | T    | The debounced value. |
+
+#### Internal Logic
+- Uses `useState` to store the debounced value.
+- Uses `useEffect` to set a timeout that updates the debounced value after the specified delay.
+- Cleans up the timeout on component unmount or when the inputs change.
+
+### `useDebounceControlledState`
+#### Description
+This hook manages a state value and provides a debounced version of it. It also allows for a callback to be executed when the state changes, with the option to disable the debouncing.
+
+#### Inputs
+| Name       | Type   | Description |
+|:-----------|:-------|:------------|
+| opts       | object | An object containing initial value, onChange callback, delay, and disabled flag. |
+
+#### Outputs
+| Name           | Type   | Description |
+|:---------------|:-------|:------------|
+| value          | T      | The current state value. |
+| debouncedValue | T      | The debounced state value. |
+| onChange       | function | Function to update the state value. |
+
+#### Internal Logic
+- Initializes state with `useState`.
+- Uses `useDebounce` to get a debounced version of the internal state value.
+- Uses `useEffect` to update the internal state when the initial value changes.
+- Executes the `onChange` callback with the debounced value unless disabled.
+
+### `useDebouncedCallback`
+#### Description
+This hook returns a debounced version of a callback function, which is useful for limiting the rate at which the callback is executed.
+
+#### Inputs
+| Name     | Type   | Description |
+|:---------|:-------|:------------|
+| callback | T      | The callback function to be debounced. |
+| delay    | number | The delay in milliseconds for debouncing the callback. |
+
+#### Outputs
+| Name           | Type | Description |
+|:---------------|:-----|:------------|
+| debouncedCallback | T  | The debounced callback function. |
+
+#### Internal Logic
+- Uses `useEvent` to create a stable reference to the callback.
+- Uses `useMemo` to return a debounced version of the callback using `lodash-es`'s `debounce` function.
+
+## References
+
+- `lodash-es`: Used for the `debounce` function in `useDebouncedCallback`.
+- `react-use-event-hook`: Used to create stable event handlers in `useDebounceControlledState` and `useDebouncedCallback`.
+
+## Dependencies
+
+| Dependency  | Purpose                                      |
+|:------------|:---------------------------------------------|
+| lodash-es   | Provides the `debounce` function.            |
+| react-use-event-hook | Provides stable event handler hooks. |
+
+## Error Handling
+
+The hooks do not implement specific error handling mechanisms beyond basic React hook usage patterns.
+
+## Logging
+
+There are no logging mechanisms implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,142 @@
+---
+title: "formatting.py"
+---
+
+## High-level description
+
+The `formatting.py` module in the Marimo library defines a protocol for implementing objects that can be displayed using Marimo's media viewer. It provides mechanisms to register custom formatters for different data types, allowing them to be converted into a (mime, data) tuple for display purposes. The module also includes functions to retrieve and apply these formatters to objects, ensuring that the appropriate representation is used when displaying data.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `formatter` and `opinionated_formatter` are decorators used to register custom formatters for specific types.
+- `get_formatter` is a function that retrieves the appropriate formatter for a given object, considering both registered formatters and the object's own methods.
+- `try_format` attempts to format an object using the available formatters and handles exceptions gracefully.
+- `as_html` converts a value to an HTML representation, leveraging the registered formatters.
+- `Plain` is a class used to wrap objects to indicate they should be displayed without opinionated formatting.
+
+## Symbols
+
+### `formatter`
+#### Description
+Registers a custom formatter function for a specific type. This decorator adds the formatter to the `FORMATTERS` dictionary, associating it with the given type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | Type[Any] | The type for which the formatter is being registered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Callable[[Formatter[T]], Formatter[T]] | A decorator function that registers the formatter. |
+
+### `opinionated_formatter`
+#### Description
+Similar to `formatter`, but registers an opinionated formatter function for a specific type. These formatters are stored in the `OPINIONATED_FORMATTERS` dictionary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | Type[Any] | The type for which the opinionated formatter is being registered. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Callable[[Formatter[T]], Formatter[T]] | A decorator function that registers the opinionated formatter. |
+
+### `get_formatter`
+#### Description
+Retrieves a formatter function for a given object. It checks registered formatters, opinionated formatters, and the object's own methods to find the most suitable formatter.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | T | The object for which a formatter is needed. |
+| include_opinionated | bool | Whether to include opinionated formatters in the search. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[Formatter[T]] | The formatter function if found, otherwise None. |
+
+#### Internal Logic
+- Checks if the context is initialized and registers formatters if necessary.
+- Looks for a formatter in `OPINIONATED_FORMATTERS` if `include_opinionated` is True.
+- Searches `FORMATTERS` for a matching type.
+- Checks if the object has a `_mime_` or `_repr_html_` method and uses it if available.
+
+### `try_format`
+#### Description
+Attempts to format an object using the available formatters. It returns a `FormattedOutput` object containing the mime type, data, and any traceback if an exception occurs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | Any | The object to format. |
+| include_opinionated | bool | Whether to include opinionated formatters in the search. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | FormattedOutput | The formatted output, including mime type, data, and any traceback. |
+
+#### Internal Logic
+- Uses `get_formatter` to find a suitable formatter.
+- Tries to format the object and catches exceptions to provide a traceback.
+- Falls back to converting the object to a string if no formatter is found.
+
+### `as_html`
+#### Description
+Converts a value to an HTML representation that can be embedded into markdown. It uses the registered formatters to determine the appropriate HTML output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | object | The value to convert to HTML. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Html | An `Html` object representing the value. |
+
+#### Internal Logic
+- Checks if the value is already an `Html` object.
+- Uses `get_formatter` to find a formatter and applies it to the value.
+- Handles different mime types to generate the appropriate HTML.
+
+### `Plain`
+#### Description
+A wrapper class indicating that an object should be displayed without any opinionated formatting. It is used to bypass opinionated formatters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| child | Any | The object to wrap. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `inspect` | Used to inspect objects and their methods. |
+| `json` | Used for JSON operations, particularly in formatting. |
+| `traceback` | Used to capture and format exception tracebacks. |
+| `types` | Provides utility functions for type checking. |
+| `dataclasses` | Used to define the `FormattedOutput` class. |
+| `html` | Used to escape HTML content. |
+| `typing` | Provides type annotations and utilities. |
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._messaging.mimetypes` | Defines known mime types. |
+| `marimo._output.hypertext` | Provides the `Html` class for HTML representation. |
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for rich documentation. |
+| `marimo._output.utils` | Provides utility functions like `flatten_string`. |
+| `marimo._plugins.stateless.json_output` | Provides JSON output formatting. |
+| `marimo._plugins.stateless.plain_text` | Provides plain text formatting. |
+
+## Error Handling
+
+The `try_format` function includes error handling to catch exceptions during formatting. It captures the traceback and includes it in the `FormattedOutput` object, allowing for robust error reporting.
+
+## Logging
+
+The module uses a logger from `marimo._loggers` to log messages, particularly for debugging and error reporting.

@@ -1,0 +1,59 @@
+---
+title: "test_marimo_pdb.py"
+---
+
+## High-level description
+
+The target file `test_marimo_pdb.py` contains a test function that verifies the integration of a custom debugger, `MarimoPdb`, within a runtime environment managed by the `Kernel` class. The test ensures that the `pdb` module is correctly patched to use `MarimoPdb` and that the standard input and output streams are properly redirected to the debugger's streams.
+
+## Code Structure
+
+The main symbols in the code are the `test_pdb_patched` function, the `Kernel` class, and the `MarimoPdb` class. The `test_pdb_patched` function uses an instance of `Kernel` to execute a command that imports the `pdb` module, and it checks if the `pdb` module is patched to use `MarimoPdb`. The `Kernel` class is responsible for managing the execution environment, while `MarimoPdb` is a custom debugger class that extends the functionality of the standard `pdb.Pdb`.
+
+## References
+
+- `MarimoPdb`: A custom debugger class imported from `marimo._runtime.marimo_pdb`.
+- `Kernel`: A class imported from `marimo._runtime.runtime` that manages the execution environment.
+- `ExecReqProvider`: A utility class from `tests.conftest` used to create execution requests for testing.
+
+## Symbols
+
+### `test_pdb_patched`
+#### Description
+The `test_pdb_patched` function is an asynchronous test that verifies the integration of the `MarimoPdb` debugger within the `Kernel` execution environment. It checks that the `pdb` module is patched to use `MarimoPdb` and that the debugger's input and output streams are correctly set.
+
+#### Inputs
+| Name            | Type            | Description                                      |
+|:----------------|:----------------|:-------------------------------------------------|
+| execution_kernel| `Kernel`        | An instance of the `Kernel` class used for execution. |
+| exec_req        | `ExecReqProvider` | A provider for creating execution requests.      |
+
+#### Outputs
+This function does not return any outputs. It uses assertions to validate the expected behavior.
+
+#### Internal Logic
+1. The function retrieves the `Kernel` instance (`k`) from the `execution_kernel` input.
+2. It uses the `Kernel` instance to run a command that imports the `pdb` module.
+3. It retrieves the `pdb` module from the `Kernel`'s global namespace.
+4. It asserts that the `Pdb` class in the `pdb` module is replaced with `MarimoPdb`.
+5. It checks that the debugger's standard output and input streams are the same as the `Kernel`'s standard output and input streams.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.marimo_pdb` | Provides the `MarimoPdb` class, a custom debugger. |
+| `marimo._runtime.runtime` | Provides the `Kernel` class, which manages the execution environment. |
+| `tests.conftest` | Provides the `ExecReqProvider` class for creating execution requests. |
+
+## Error Handling
+
+The test function uses assertions to handle errors. If any of the assertions fail, the test will raise an `AssertionError`, indicating that the expected behavior was not met.
+
+## Logging
+
+There is no explicit logging in the target file. However, the `Kernel` and `MarimoPdb` classes may have their own logging mechanisms as part of their implementation.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

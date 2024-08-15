@@ -1,0 +1,199 @@
+---
+title: "charts.py"
+---
+
+## High-level description
+
+The `charts.py` file in the Marimo project is responsible for generating chart visualizations using the Altair library. It defines a set of builder classes, each tailored to handle different data types (e.g., number, string, date, boolean, integer, unknown). These builders create Altair chart specifications and corresponding Python code for rendering charts based on the data type of a column in a dataset.
+
+## Code Structure
+
+The main components of the code are the `ChartBuilder` abstract class and its various concrete implementations (`NumberChartBuilder`, `StringChartBuilder`, `DateChartBuilder`, `BooleanChartBuilder`, `IntegerChartBuilder`, `UnknownChartBuilder`). Each builder class provides methods to generate Altair chart specifications and Python code for rendering charts. The `WrapperChartBuilder` class is used to wrap these builders, adding functionality to escape special characters in column names. The `get_chart_builder` function selects the appropriate builder based on the data type.
+
+## References
+
+- `DataType` from `marimo._data.models`: Used to determine the type of data column and select the appropriate chart builder.
+- `altair`: An external library used for creating chart visualizations.
+
+## Symbols
+
+### `ChartBuilder`
+#### Description
+An abstract base class that defines the interface for creating Altair charts. It requires subclasses to implement methods for generating Altair chart objects and corresponding Python code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `ChartParams`
+#### Description
+A data class that holds parameters for chart creation, specifically the table name and column name.
+
+### `NumberChartBuilder`
+#### Description
+Generates bar charts for numerical data columns using Altair. It bins the data and counts occurrences.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `StringChartBuilder`
+#### Description
+Creates bar charts for string data columns. It can limit the chart to the top 10 items based on frequency.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+#### Internal Logic
+- If `should_limit_to_10_items` is true, it ranks items by count and filters to the top 10.
+
+### `DateChartBuilder`
+#### Description
+Generates line charts for date data columns, plotting counts over time.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `BooleanChartBuilder`
+#### Description
+Creates bar charts for boolean data columns, counting occurrences of true and false values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `IntegerChartBuilder`
+#### Description
+Similar to `NumberChartBuilder`, it generates bar charts for integer data columns with binning.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `UnknownChartBuilder`
+#### Description
+Handles unknown data types by generating nominal bar charts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Any | The dataset to be visualized. |
+| column | str | The column name to be used in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `WrapperChartBuilder`
+#### Description
+Wraps another `ChartBuilder` to escape special characters in column names before chart generation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| delegate | ChartBuilder | The chart builder to wrap. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| altair | Any | An Altair chart object. |
+| altair_code | str | Python code for generating the Altair chart. |
+
+### `get_chart_builder`
+#### Description
+Selects and returns the appropriate `ChartBuilder` based on the data type of the column.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| column_type | DataType | The data type of the column. |
+| should_limit_to_10_items | bool | Whether to limit string charts to the top 10 items. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| builder | ChartBuilder | The selected chart builder. |
+
+### `_escape_special_path_characters`
+#### Description
+Escapes special characters in column names that are paths, ensuring compatibility with Altair.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| column | str or int | The column name to escape. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| escaped_column | str | The escaped column name. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| altair | Used for creating chart visualizations. |
+
+## Error Handling
+
+The code raises `NotImplementedError` for abstract methods in `ChartBuilder` that must be implemented by subclasses. It also handles potential errors in chart generation, such as `MaxRowsError` when the dataset exceeds Altair's row limit.
+
+## Logging
+
+The related file `preview_column.py` uses logging to capture warnings when chart generation fails, but this is not directly implemented in `charts.py`.
+
+## TODOs
+
+No TODOs are present in the code.

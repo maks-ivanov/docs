@@ -1,0 +1,53 @@
+---
+title: "deprecated.py"
+---
+
+## High-level description
+The code in `marimo/_utils/deprecated.py` defines a decorator function named `deprecated` that is used to mark other functions as deprecated. When a deprecated function is called, a deprecation warning is emitted, informing the user that the function is outdated and suggesting an alternative or reason for deprecation.
+
+## Code Structure
+The main symbol in this code is the `deprecated` function, which is a decorator. It takes a reason for deprecation as an argument and returns a decorator function. This decorator function, when applied to another function, wraps it in a way that emits a deprecation warning whenever the wrapped function is called.
+
+## Symbols
+
+### `deprecated`
+#### Description
+The `deprecated` function is a decorator factory that creates a decorator to mark functions as deprecated. It emits a `DeprecationWarning` with a specified reason when the decorated function is called.
+
+#### Inputs
+| Name   | Type     | Description                          |
+|:-------|:---------|:-------------------------------------|
+| reason | `str`    | The reason for deprecation, which is included in the warning message. |
+
+#### Outputs
+| Name     | Type       | Description                                      |
+|:---------|:-----------|:-------------------------------------------------|
+| decorator| `Callable` | A decorator that can be applied to functions to mark them as deprecated. |
+
+#### Internal Logic
+1. **Decorator Definition**: The `deprecated` function defines an inner function `decorator` that takes a function `func` as an argument.
+2. **Wrapper Function**: Inside `decorator`, another function `wrapper` is defined, which wraps the original function `func`.
+3. **Warning Emission**: The `wrapper` function uses the `warnings.warn` method to emit a `DeprecationWarning` with the provided reason. The `stacklevel=2` argument ensures that the warning points to the line where the deprecated function was called.
+4. **Function Call**: After emitting the warning, the `wrapper` function calls the original function `func` with any provided arguments and keyword arguments, returning its result.
+
+## References
+The `deprecated` decorator is used in other parts of the codebase, such as in the `marimo/_plugins/stateless/tabs.py` file, where it marks the `tabs` function as deprecated.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `functools` | Used to preserve the metadata of the original function when wrapping it with the decorator. |
+| `warnings`  | Used to emit deprecation warnings. |
+| `typing`    | Provides type annotations for better code clarity and type checking. |
+
+## Error Handling
+The code uses the `warnings` module to handle deprecation warnings. This is a standard way to inform users of deprecated features without interrupting the program flow.
+
+## Logging
+The code does not implement any logging mechanisms beyond the use of warnings for deprecation.
+
+## Side Effects
+The primary side effect of using the `deprecated` decorator is the emission of a `DeprecationWarning` when a deprecated function is called. This does not affect the function's behavior but serves as a notification to the user.
+
+## Performance Considerations
+The use of decorators introduces a slight overhead due to the additional function call layer. However, this overhead is minimal and generally acceptable given the benefits of notifying users about deprecated functionality.

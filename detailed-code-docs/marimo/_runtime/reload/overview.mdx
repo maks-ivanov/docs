@@ -1,0 +1,47 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_runtime/reload` directory is part of the `marimo` project, specifically within its `_runtime` package. This directory is focused on managing the dynamic reloading of Python modules during runtime, which is particularly useful in interactive and development environments. The main components within this directory include the `autoreload.py` and `module_watcher.py` modules, which provide functionality for automatically reloading modules and monitoring changes in module dependencies, respectively. The `__init__.py` file serves as an initializer for the `reload` module, indicating that the directory is a Python package.
+
+## What does it do?
+
+The `marimo/_runtime/reload` directory implements a system that allows Python modules to be automatically reloaded when changes are detected. This is especially useful in environments like Jupyter notebooks or other interactive development settings where code is frequently modified and executed. The system ensures that any changes made to the code are immediately reflected without the need to restart the entire application.
+
+- **Automatic Reloading**: The `autoreload.py` module extends the standard Python `reload` function to not only reload modules but also update existing instances of classes and functions with their new definitions. This means that when a module is changed, the new code is automatically applied to the running application, ensuring that the latest version of the code is always in use.
+
+- **Module Monitoring**: The `module_watcher.py` module provides functionality to monitor changes in Python modules used within a dataflow graph. It detects when modules have been modified and triggers actions such as marking cells as stale or re-running them. This is particularly useful in notebook-like environments where code execution is interactive and changes need to be reflected immediately.
+
+## Entry points
+
+The main files in the `marimo/_runtime/reload` directory are:
+
+- **`__init__.py`**: This file is essentially empty and serves as an initializer for the `reload` module, indicating that the directory is a Python package.
+
+- **`autoreload.py`**: This file contains the core functionality for automatically reloading Python modules. It includes classes and functions that manage the reloading process and update existing objects with new code definitions.
+
+- **`module_watcher.py`**: This file provides the functionality to monitor module changes and manage their impact on a dataflow graph. It includes a class and functions that work together to detect module modifications and trigger appropriate actions.
+
+## Key Files
+
+- **`autoreload.py`**: Contains the `ModuleReloader` and `ModuleDependencyFinder` classes, as well as the `superreload` function, which together manage the reloading of modules and their dependencies. It also includes helper functions for updating specific types of objects, such as functions, classes, and properties.
+
+- **`module_watcher.py`**: Features the `ModuleWatcher` class and several functions that monitor module changes and manage their impact on a dataflow graph. It determines module dependencies, checks for modifications, and handles the re-execution of stale cells.
+
+## Dependencies
+
+The directory uses several external libraries and modules:
+
+- **`gc`**: Used in `autoreload.py` to find and update instances of classes.
+- **`modulefinder`**: Utilized in `autoreload.py` to find module dependencies.
+- **`importlib.reload`**: Used in `autoreload.py` to reload modules.
+- **`weakref`**: Employed in `autoreload.py` to hold weak references to old objects for updating.
+- **`itertools`**: Used in `module_watcher.py` for chaining module dependencies.
+- **`pathlib`**: Utilized in `module_watcher.py` for handling file paths.
+- **`sys`**: Accessed in `module_watcher.py` to interact with system modules.
+- **`threading`**: Used in `module_watcher.py` to manage threading for the module watcher.
+- **`time`**: Employed in `module_watcher.py` for sleeping between checks.
+
+These dependencies are chosen to facilitate module reloading, dependency management, and efficient monitoring of module changes.

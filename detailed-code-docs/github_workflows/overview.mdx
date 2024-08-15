@@ -3,24 +3,25 @@ title: "Overview"
 ---
 
 ## High-level description
-This directory houses GitHub Actions workflows for a software project, likely related to search and analytics. These workflows automate tasks like building and pushing Docker images, running tests, linting code, and generating documentation. They are triggered by events like pull requests and pushes to the main branch, ensuring code quality and automating deployment processes.
+
+The `.github/workflows` directory contains a collection of GitHub Actions workflow configuration files. These files automate various processes related to the development, testing, and release of a project. The workflows are designed to handle tasks such as checking Contributor License Agreement (CLA) compliance, publishing development and production releases, posting updates to Discord, running Playwright tests, and testing both frontend and backend components across different environments.
 
 ## What does it do?
-This directory contains files that define automated processes for building, testing, and deploying different parts of a software application. Imagine these files as recipes that tell a robot how to perform specific tasks whenever a developer makes changes to the code. For example, one recipe might instruct the robot to build a Docker image of the search functionality and upload it to a repository whenever a developer submits changes to the search code. Another recipe might tell the robot to run automated tests on the entire codebase to ensure everything is working correctly. These automated processes help to ensure the quality and reliability of the software.
 
-## Entry points
-This directory contains multiple YAML files, each defining a separate GitHub Actions workflow. Developers should start with the workflow file that corresponds to the specific component or task they are interested in. For example, the `push-frontends.yml` file defines the workflow for building and pushing Docker images for the frontend components.
+The workflows in this directory automate several key processes:
 
-## Key Files
-| File Name | Description |
-|---|---|
-| `analytics-tests.yml` | This workflow defines the automated build, test, and linting processes for the "analytics" feature of the project. It is triggered on pull requests that modify files in specific directories and runs two parallel jobs: one for building and testing the code, and another for linting the code using ESLint. |
-| `chat-tests.yml` | This workflow defines the build and linting processes for the "chat" feature, triggered on pull requests modifying specific directories. It runs two parallel jobs: "build-test" builds the code, and "eslint" performs linting checks using ESLint and annotates the results on the pull request. |
-| `dashboard-tests.yml` | This workflow defines the automated build and linting processes for the "dashboard" frontend component. It is triggered on pull requests that modify specific files and runs two parallel jobs: "build-test" builds the dashboard frontend, and "eslint" runs linting checks on the dashboard code using ESLint and annotates the results on the pull request. |
-| `push-clickhouse.yml` | This workflow automates the building and pushing of a Docker image for ClickHouse whenever changes are pushed to the `analytics/clickhouse/` directory in the `main` branch. It uses a specific runner environment and leverages various GitHub Actions to check out the code, set up Docker Buildx, log in to Docker Hub, generate image tags, and build and push the image. |
-| `push-clustering-script.yml` | This workflow automates the building and pushing of a Docker image for a ClickHouse clustering script. It is triggered by pushes to the `main` branch and specifically targets changes within the `docker/clustering-script/` directory. The workflow utilizes Docker Buildx for building the image and pushes it to Docker Hub using provided credentials. |
-| `push-collapse-query-script.yml` | This workflow automates the building and pushing of a Docker image for a ClickHouse search query collapsing script. It is triggered by pushes to the `main` branch and specifically targets changes within the `docker/collapse-query-script/**` path. The workflow utilizes Docker Buildx for building the image and pushes it to Docker Hub using provided credentials. |
-| `push-frontends.yml` | This workflow automates the building and pushing of Docker images for various frontend components of an application. It is triggered by pushes to the `main` branch and changes within specific directories. The workflow utilizes Docker Buildx for building the images and pushes them to Docker Hub using provided credentials. |
-| `push-server.yml` | This workflow defines a series of jobs to build and push Docker images for various components of the Trieve application to Docker Hub. It is triggered by pushes to the `main` branch and changes within the `server/` directory. The workflow utilizes Docker Buildx for building the images and pushes them to Docker Hub using provided credentials. |
-| `rust-tests.yml` | This workflow defines a series of jobs to run the Rust test suite, perform code formatting checks, run static analysis, and generate and lint OpenAPI documentation. It is triggered on pull requests and pushes to the repository. The workflow utilizes caching for faster build times and runs on a specific runner environment. |
-| `search-tests.yml` | This workflow defines the automated build and linting processes for the "search" feature of the project. It is triggered on pull requests that modify files in specific directories and runs two parallel jobs: one for building and testing the code, and another for linting the code using ESLint and annotating the results on the pull request. |
+1. **CLA Compliance**: The `cla.yml` workflow ensures that contributors have signed the Contributor License Agreement before their contributions can be merged. It is triggered by pull request and issue comment events.
+
+2. **Development Release**: The `dev-release.yml` workflow automates the process of publishing a development release to Test PyPI and npm. It is triggered by pushes to the `main` branch and involves building the project, patching version numbers, and uploading artifacts.
+
+3. **Discord Notifications**: The `discord-release.yml` workflow posts a message to a Discord channel whenever a new release is published on GitHub. It uses a Discord webhook to send the message.
+
+4. **Playwright Testing**: The `playwright.yml` workflow runs Playwright tests on the project. It is triggered by pushes to the `main` branch and pull requests, and it includes steps for setting up the environment, running tests, and uploading results.
+
+5. **Production Release**: The `release.yml` workflow automates the release process for the project. It is triggered by a push event with a tag matching a semantic versioning pattern and includes steps for building the project and publishing artifacts to PyPI and npm.
+
+6. **General Testing**: The `test.yaml` workflow handles testing and building processes for the project. It includes jobs for linting, testing, and building the frontend, testing the Python application across multiple environments, and checking for typos.
+
+7. **CLI Testing**: The `test_cli.yaml` workflow tests the command-line interface of the project. It builds a Python wheel, tests the CLI across different operating systems, and runs example and smoke tests.
+
+These workflows ensure that the project is consistently tested, built, and released, while also providing notifications and compliance checks to maintain quality and legal standards.

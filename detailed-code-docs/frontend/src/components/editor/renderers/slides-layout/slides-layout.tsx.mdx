@@ -1,0 +1,81 @@
+---
+title: "slides-layout.tsx"
+---
+
+## High-level description
+
+The `SlidesLayoutRenderer` component in the `slides-layout.tsx` file is responsible for rendering a series of slides based on cell data in a React application. It utilizes a lazy-loaded `SlidesComponent` to display each cell's output as a slide, adapting its layout based on the application's mode (read or edit). The component ensures that only cells with non-empty outputs are rendered as slides.
+
+## Code Structure
+
+- **SlidesLayoutRenderer**: The main component that orchestrates the rendering of slides.
+- **Slide**: A memoized sub-component that renders individual cell outputs using the `OutputArea` component.
+- **LazySlidesComponent**: A lazily loaded component that wraps the slides for efficient loading.
+
+## References
+
+- **OutputArea**: A component from `Output.tsx` that handles the rendering of cell outputs.
+- **SlidesComponent**: A component from `slides-component.tsx` that provides the slide functionality using the Swiper library.
+- **ICellRendererProps**: An interface from `types.ts` that defines the properties passed to cell renderer components.
+
+## Symbols
+
+### `SlidesLayoutRenderer`
+#### Description
+The `SlidesLayoutRenderer` is a React functional component that renders a series of slides based on the provided cell data. It uses the `SlidesComponent` to display each cell's output as a slide and adapts its layout based on the application's mode (read or edit).
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cells | Array&lt;CellRuntimeState & CellData&gt; | An array of cell data to be rendered as slides. |
+| mode | AppMode | The current mode of the application, which affects the layout. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| slides | JSX.Element | A JSX element containing the rendered slides. |
+
+#### Internal Logic
+- Determines if the application is in "read" mode.
+- Maps over the `cells` array to create individual `Slide` components for each cell with non-empty output.
+- Wraps the slides in a `LazySlidesComponent` for efficient loading.
+- Adjusts the container's padding based on the mode.
+
+### `Slide`
+#### Description
+The `Slide` component is a memoized React component that renders the output of a single cell using the `OutputArea` component.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | OutputMessage | The output message of the cell. |
+| cellId | CellId | The unique identifier of the cell. |
+| status | RuntimeState | The current status of the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| slideContent | JSX.Element | A JSX element containing the rendered output of the cell. |
+
+#### Internal Logic
+- Checks if the cell is in a "running" or "queued" state to determine if the output is stale.
+- Uses the `OutputArea` component to render the cell's output, passing relevant props like `stale` and `cellId`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React | Used for creating React components and hooks. |
+| Swiper | Used in `SlidesComponent` for slide functionality. |
+
+## Error Handling
+
+The `SlidesLayoutRenderer` and `Slide` components do not implement specific error handling mechanisms. Errors in rendering are likely managed by React's error boundaries or higher-level components.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the `slides-layout.tsx` file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

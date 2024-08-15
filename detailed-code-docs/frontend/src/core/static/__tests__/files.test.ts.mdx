@@ -1,0 +1,86 @@
+---
+title: "files.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for two functions, `patchFetch` and `patchVegaLoader`, which are designed to handle virtual files in a JavaScript environment. These tests ensure that the functions correctly intercept and handle requests for virtual files, returning appropriate content, and fall back to original methods for non-virtual files.
+
+## Code Structure
+
+The main symbols in the code are the test cases for `patchFetch` and `patchVegaLoader`. These tests are organized using the `describe` and `it` functions from the `vitest` testing framework. The tests are structured to verify the behavior of the functions when dealing with both virtual and non-virtual files. The `beforeAll` and `afterAll` hooks are used to set up and tear down a mock HTTP server that serves as a test environment for fetching remote content.
+
+## References
+
+- `patchFetch` and `patchVegaLoader` are imported from `../files`.
+- `createLoader` is imported from `@/plugins/impl/vega/vega-loader`.
+- `DataURLString` is imported from `@/utils/json/base64`.
+
+## Symbols
+
+### `server`
+#### Description
+A mock HTTP server used to serve virtual files for testing purposes.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+The server listens on a specified host and port, serving a predefined text file when accessed at a specific URL. It returns a 404 error for any other requests.
+
+### `patchFetch`
+#### Description
+Tests the `patchFetch` function to ensure it correctly handles virtual file requests and falls back to the original fetch for non-virtual files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtualFiles | Object | A mapping of virtual file paths to their base64-encoded content. |
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Overrides the global `fetch` function to return a blob response for virtual files.
+- Verifies that the response is a `Response` object and that the content matches the expected text.
+- Ensures that the original `fetch` function is called for non-virtual files.
+
+### `patchVegaLoader`
+#### Description
+Tests the `patchVegaLoader` function to ensure it correctly handles virtual file requests and falls back to the original HTTP method for non-virtual files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| loader | Object | An object with an `http` method for loading files. |
+| virtualFiles | Object | A mapping of virtual file paths to their base64-encoded content. |
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Overrides the `http` method of a loader to return file content for virtual files.
+- Verifies that the content matches the expected JSON string.
+- Ensures that the original `http` method is called for non-virtual files and data URIs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Provides the testing framework for writing and running tests. |
+| `node:http` | Used to create a mock HTTP server for testing. |
+
+## Error Handling
+
+The tests do not explicitly handle errors beyond ensuring that the functions fall back to original methods when necessary. The `patchVegaLoader` function in the related code handles errors by checking if a URL is a data URL and returning the data directly if so.
+
+## Logging
+
+No logging mechanisms are implemented in the test code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

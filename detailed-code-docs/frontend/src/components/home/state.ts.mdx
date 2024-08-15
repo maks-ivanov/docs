@@ -1,0 +1,84 @@
+---
+title: "state.ts"
+---
+
+## High-level description
+
+The target file, `state.ts`, is part of a React frontend application and is responsible for managing the state related to running notebooks and user interface preferences on the home page. It defines a context for managing running notebooks and uses Jotai atoms to persist user preferences such as whether to include markdown files and the state of expanded folders in the user interface.
+
+## Code Structure
+
+- **RunningNotebooksContext**: A React context that provides a way to manage and access the state of running notebooks across the application.
+- **includeMarkdownAtom** and **expandedFoldersAtom**: Jotai atoms used to persist user preferences in local storage, specifically for including markdown files and managing the state of expanded folders.
+
+## Symbols
+
+### `RunningNotebooksContext`
+#### Description
+A React context that holds the state of running notebooks, a function to update this state, and the root directory path. It is used to share this state across different components in the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runningNotebooks | RunningNotebooksMap | A map of running notebooks. |
+| setRunningNotebooks | function | A function to update the running notebooks state. |
+| root | string | The root directory path. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Context value | object | Provides the running notebooks state, update function, and root path to consumers. |
+
+### `includeMarkdownAtom`
+#### Description
+A Jotai atom that persists a boolean value indicating whether markdown files should be included in the workspace view. It uses local storage to maintain its state across sessions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | string | The key used in local storage. |
+| initialValue | boolean | The initial value for the atom. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Atom | boolean | The current state of the include markdown preference. |
+
+### `expandedFoldersAtom`
+#### Description
+A Jotai atom that persists the state of expanded folders in the user interface. It stores a record of folder paths and their expanded state in local storage.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | string | The key used in local storage. |
+| initialValue | Record&lt;string, boolean&gt; | The initial state of expanded folders. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Atom | Record&lt;string, boolean&gt; | The current state of expanded folders. |
+
+## References
+
+- **MarimoFile**: A type imported from `@/core/network/types` that represents a file in the Marimo application.
+- **Functions.NOOP**: A no-operation function imported from `@/utils/functions`, used as a default for `setRunningNotebooks`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React | Used for creating the context and managing component state. |
+| Jotai | Provides atoms for state management with local storage persistence. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic exception raising. The use of `Functions.NOOP` as a default function ensures that calling `setRunningNotebooks` without a proper implementation does not result in errors.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

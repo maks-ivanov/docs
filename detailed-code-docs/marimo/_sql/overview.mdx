@@ -1,0 +1,89 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_sql/sql.py` file provides functionality to execute SQL queries using the DuckDB engine. It allows the execution of SQL queries on dataframes available in the global namespace and displays the results in a user interface. The file also includes logic to handle default result limits and checks for the presence of necessary dependencies.
+
+## Code Structure
+
+The main symbols in the code are the `sql` function and the helper functions `get_default_result_limit` and `_query_includes_limit`. The `sql` function is the primary interface for executing SQL queries, while `get_default_result_limit` retrieves a default limit for query results from the environment, and `_query_includes_limit` checks if a SQL query includes a `LIMIT` clause.
+
+## References
+
+- `DependencyManager`: Used to check and require the presence of the DuckDB, Pandas, and Polars libraries.
+- `table`: A UI component from the `marimo._plugins.ui._impl` module used to display query results.
+- `output`: A module from `marimo._runtime` used to replace the current output with the query result table.
+
+## Symbols
+
+### `get_default_result_limit`
+#### Description
+Retrieves the default result limit for SQL queries from the environment variable `MARIMO_SQL_DEFAULT_LIMIT`.
+
+#### Inputs
+None
+
+#### Outputs
+| Name  | Type          | Description                        |
+|:------|:--------------|:-----------------------------------|
+| limit | Optional[int] | The default result limit if set, otherwise `None`. |
+
+### `sql`
+#### Description
+Executes a SQL query using DuckDB, leveraging dataframes in the global namespace, and displays the result in a UI table. It handles default result limits and checks for necessary dependencies.
+
+#### Inputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| query | str  | The SQL query to execute. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df   | Any  | The result of the SQL query as a dataframe. |
+
+#### Internal Logic
+1. **Dependency Check**: Ensures DuckDB is available using `DependencyManager`.
+2. **Query Execution**: Executes the SQL query using DuckDB.
+3. **Limit Handling**: Checks if the query includes a `LIMIT` clause. If not, applies a default limit if specified.
+4. **Dataframe Conversion**: Converts the result to a Pandas or Polars dataframe, depending on available dependencies.
+5. **UI Display**: Displays the result in a UI table with pagination and selection features.
+6. **Output Replacement**: Replaces the current output with the table component.
+
+### `_query_includes_limit`
+#### Description
+Determines if a SQL query includes a `LIMIT` clause.
+
+#### Inputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| query | str  | The SQL query to check. |
+
+#### Outputs
+| Name       | Type | Description                              |
+|:-----------|:-----|:-----------------------------------------|
+| has_limit  | bool | `True` if the query includes a `LIMIT`, otherwise `False`. |
+
+#### Internal Logic
+1. **Statement Extraction**: Uses DuckDB to extract SQL statements from the query.
+2. **Limit Check**: Checks if the last statement is a `SELECT` statement and contains a `LIMIT` clause.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `os`       | To access environment variables.             |
+| `duckdb`   | To execute SQL queries.                      |
+| `DependencyManager` | To manage and check for required dependencies. |
+| `table`    | To display query results in a UI component.  |
+| `output`   | To replace the current output with the query result table. |
+
+## Error Handling
+
+- The `sql` function raises a `ModuleNotFoundError` if neither Pandas nor Polars is available, indicating that one of these libraries is required to execute SQL queries.
+
+## Logging
+
+The code does not explicitly implement logging, but it uses the `output.replace` function to manage UI output, which may involve logging or display mechanisms in the broader application context.

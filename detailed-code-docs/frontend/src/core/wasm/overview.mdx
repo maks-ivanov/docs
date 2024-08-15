@@ -1,0 +1,39 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `frontend/src/core/wasm` directory is a crucial part of a web application that integrates Python execution capabilities directly in the browser using WebAssembly (Wasm) and Pyodide. This setup allows the application to run Python code, manage files, and handle asynchronous operations efficiently. The directory includes components for managing the Pyodide environment, handling URL manipulations, generating shareable links, and facilitating communication between the main application thread and web workers. Key components include the `PyodideLoader` for initializing the Pyodide environment, `PyodideBridge` for managing Pyodide sessions, and various utilities for file storage and URL management.
+
+## What does it do?
+
+The code in this directory enables a web application to execute Python code within the browser by setting up a Pyodide environment. It manages the lifecycle of this environment, including loading necessary Python packages and handling file operations. The system supports asynchronous communication between the main application and web workers, allowing for efficient execution of Python code and management of virtual file systems. Additionally, it provides utilities for URL manipulation, shareable link generation, and file storage, enhancing the application's ability to maintain state and share configurations.
+
+## Entry points
+
+The main files in the directory include:
+
+- **`PyodideLoader.tsx`**: A React component that ensures the Pyodide environment is loaded before rendering child components. It checks for WebAssembly support and manages the loading state of Pyodide.
+- **`bridge.ts`**: Defines the `PyodideBridge` and `PyodideWebsocket` classes for managing Pyodide sessions and providing a WebSocket-like interface for message handling.
+- **`router.ts`**: Contains the `URLPyodideRouter` class for managing URL parameters and hash values related to filenames and code snippets.
+- **`rpc.ts`**: Sets up a Remote Procedure Call (RPC) mechanism between the main application and web workers using the `rpc-anywhere` library.
+- **`share.ts`**: Provides a utility function to generate shareable URLs for code snippets by compressing the code and appending it to a base URL.
+- **`store.ts`**: Defines various mechanisms for storing and retrieving file contents, including local storage, URL parameters, and remote fetching.
+- **`utils.ts`**: Contains a utility function to check if the current environment supports WebAssembly, specifically for Pyodide.
+
+## Key Files
+
+- **`__tests__`**: Contains unit tests for components related to URL manipulation, shareable link generation, and file storage management, ensuring these components behave as expected.
+- **`worker`**: Manages the WebAssembly environment using Pyodide, handling the execution of Python code, file system operations, and communication between web workers and the main application thread.
+
+## Dependencies
+
+- **`React`**: Used for creating the `PyodideLoader` component.
+- **`rpc-anywhere`**: Facilitates RPC communication between web workers and the main application thread.
+- **`lz-string`**: Used for compressing code snippets for URL storage.
+- **`pyodide`**: Provides a Python environment in the browser.
+- **`vitest`**: A testing framework used for unit tests.
+- **`jotai`**: Manages application state.
+
+These dependencies are essential for setting up the Pyodide environment, handling asynchronous operations, and managing application state and testing.

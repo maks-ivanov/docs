@@ -1,0 +1,74 @@
+---
+title: "tmpdir.py"
+---
+
+## High-level description
+
+The target file, `marimo/_utils/tmpdir.py`, provides utility functions for handling temporary directories and file path conversions, specifically tailored for Windows platforms. It includes a mechanism to convert file paths to their long pathname format on Windows and a function to generate a temporary directory path that is unique to the current process.
+
+## Code Structure
+
+The main symbols in the code are two functions: `_convert_to_long_pathname` and `get_tmpdir`. The `_convert_to_long_pathname` function is conditionally redefined for Windows platforms to handle long pathnames using Windows-specific APIs. The `get_tmpdir` function utilizes `_convert_to_long_pathname` to ensure the temporary directory path is correctly formatted.
+
+## Symbols
+
+### `_convert_to_long_pathname`
+#### Description
+This function is designed to convert a given filename to its long pathname format. On non-Windows platforms, it simply returns the filename as is. On Windows, it attempts to use the Windows API to convert the filename to its long pathname format.
+
+#### Inputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| filename | str  | The file path to convert. |
+
+#### Outputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| filename | str  | The converted long pathname. |
+
+#### Internal Logic
+- On Windows, it uses the `ctypes` library to call the `GetLongPathNameW` function from the Windows API, which converts a short path to a long path.
+- It creates a buffer to store the long path and checks if the conversion is successful.
+
+### `get_tmpdir`
+#### Description
+This function generates a path to a temporary directory that is unique to the current process. It ensures the path is correctly formatted for the operating system.
+
+#### Outputs
+| Name   | Type | Description                      |
+|:-------|:-----|:---------------------------------|
+| tmpdir | str  | The path to the temporary directory. |
+
+#### Internal Logic
+- It calls `tempfile.gettempdir()` to get the system's temporary directory.
+- It appends a unique identifier based on the current process ID to ensure the directory is unique.
+- It uses `_convert_to_long_pathname` to ensure the path is correctly formatted, especially on Windows.
+
+## References
+
+- The `get_tmpdir` function is referenced in the related file `marimo/_ast/compiler.py`, where it is used to generate temporary filenames for Python scripts.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `os`       | To interact with the operating system, such as joining paths. |
+| `sys`      | To check the platform type.                  |
+| `tempfile` | To get the system's temporary directory.     |
+| `ctypes`   | (Windows only) To interact with Windows API for path conversion. |
+
+## Error Handling
+
+- The code includes a try-except block around the Windows-specific path conversion logic to handle any exceptions that might occur during the import or execution of the Windows API calls. If an exception occurs, the conversion function defaults to a no-op.
+
+## Side Effects
+
+- The `_win_convert_to_long_pathname` function is tested immediately after its definition to ensure it works correctly, which could potentially raise an exception if there are issues with the Windows API call.
+
+## Performance Considerations
+
+- The use of `ctypes` and Windows API calls can introduce overhead on Windows platforms, but this is necessary for correct path handling. The impact is minimized by only performing these operations when necessary.
+
+## TODOs
+
+- There are no explicit TODOs in the code, but the comment about testing the Windows-specific function suggests a focus on ensuring reliability in path conversion.

@@ -1,0 +1,212 @@
+---
+title: "cell.py"
+---
+
+## High-level description
+The `marimo/_ast/cell.py` file defines the core data structures and logic for representing and managing executable notebook cells in a marimo application. It handles cell configuration, runtime state, import management, and provides methods for interacting with cells during execution.
+
+## Code Structure
+The code defines several dataclasses representing cell configuration (`CellConfig`), runtime state (`RuntimeState`), run result status (`RunResultStatus`), import workspace (`ImportWorkspace`), and the core cell implementation (`CellImpl`). The `Cell` class acts as a user-facing interface to the `CellImpl`, providing methods like `run` for execution.
+
+## References
+This code references symbols from `marimo._ast.visitor`, `marimo._data.sql_visitor`, `marimo._messaging.types`, and `marimo._output.hypertext`.
+
+## Symbols
+
+### `CellConfig`
+#### Description
+This dataclass represents the configuration of a cell, including whether it's disabled or its code should be hidden. It provides methods for creating a `CellConfig` from a dictionary, converting it to a dictionary, and updating the configuration in-place.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| disabled | bool | Whether the cell is disabled (default: False) |
+| hide_code | bool | Whether the cell's code should be hidden (default: False) |
+
+#### Outputs
+None
+
+#### Internal Logic
+The `from_dict` method creates a `CellConfig` instance from a dictionary, filtering out keys that are not valid configuration options. The `asdict` method converts the `CellConfig` instance to a dictionary. The `configure` method updates the configuration in-place, merging the provided update with the existing configuration.
+
+### `RuntimeStateType`
+#### Description
+A type alias representing the possible states in a cell's runtime state machine: "idle", "queued", "running", and "disabled-transitively".
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `RuntimeState`
+#### Description
+This dataclass holds the current runtime state of a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | Optional[RuntimeStateType] | The current runtime state of the cell (default: None) |
+
+#### Outputs
+None
+
+### `RunResultStatusType`
+#### Description
+A type alias representing the possible statuses for a cell's attempted execution: "success", "exception", "cancelled", "interrupted", "marimo-error", and "disabled".
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `RunResultStatus`
+#### Description
+This dataclass holds the status of a cell's attempted execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | Optional[RunResultStatusType] | The status of the cell's attempted execution (default: None) |
+
+#### Outputs
+None
+
+### `ImportWorkspace`
+#### Description
+This dataclass represents a workspace for runtimes to manage a cell's imports. It tracks whether the cell is an import block and stores the definitions of imported symbols.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| is_import_block | bool | Whether the cell is an import block (default: False) |
+| imported_defs | set[Name] | The definitions of imported symbols (default: empty set) |
+
+#### Outputs
+None
+
+### `_is_coroutine`
+#### Description
+This function checks if a given code object represents a coroutine function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | Optional[CodeType] | The code object to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| is_coroutine | bool | True if the code object represents a coroutine function, False otherwise |
+
+#### Internal Logic
+The function checks if the `CO_COROUTINE` flag is set in the code object's flags.
+
+### `CellStaleState`
+#### Description
+This dataclass holds the staleness state of a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | bool | Whether the cell is stale (default: False) |
+
+#### Outputs
+None
+
+### `CellOutput`
+#### Description
+This dataclass holds the output of a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Any | The output of the cell (default: None) |
+
+#### Outputs
+None
+
+### `ParsedSQLStatements`
+#### Description
+This dataclass holds the parsed SQL statements of a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parsed | Optional[list[str]] | The parsed SQL statements of the cell (default: None) |
+
+#### Outputs
+None
+
+### `CellImpl`
+#### Description
+This dataclass represents the internal implementation of a cell. It holds the cell's code, AST, definitions, references, import workspace, runtime state, staleness state, output, and parsed SQL statements. It provides methods for configuring the cell, setting its runtime state, staleness state, and output, and retrieving its output and SQL statements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | int | Hash of the cell's code |
+| code | str | The cell's code |
+| mod | ast.Module | The cell's AST |
+| defs | set[Name] | The cell's definitions |
+| refs | set[Name] | The cell's references |
+| variable_data | dict[Name, list[VariableData]] | Metadata about the cell's definitions |
+| deleted_refs | set[Name] | The cell's deleted references |
+| body | Optional[CodeType] | The compiled code object for the cell's body |
+| last_expr | Optional[CodeType] | The compiled code object for the cell's last expression |
+| cell_id | CellId_t | The cell's unique ID |
+
+#### Outputs
+None
+
+#### Internal Logic
+The `configure` method updates the cell's configuration. The `runtime_state`, `run_result_status`, `sqls`, `stale`, `disabled_transitively`, `imports`, `imported_namespaces`, `namespace_to_variable`, `is_coroutine`, `set_runtime_state`, `set_run_result_status`, `set_stale`, `set_output`, and `output` properties provide access to the cell's internal state.
+
+### `Cell`
+#### Description
+This class represents a user-facing executable notebook cell. It holds a reference to the internal `CellImpl` and provides methods for interacting with it, such as `run` for execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _name | str | The cell's name |
+| _cell | CellImpl | The internal cell implementation |
+| _app | InternalApp | The app to which this cell belongs |
+
+#### Outputs
+None
+
+#### Internal Logic
+The `name`, `refs`, `defs`, `_is_coroutine`, `_help`, `_register_app`, and `run` methods provide access to the cell's functionality and allow users to execute the cell and retrieve its output and definitions.
+
+### `SourcePosition`
+#### Description
+This dataclass represents the source position of a cell in the original code file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The filename of the source file |
+| lineno | int | The line number of the cell |
+| col_offset | int | The column offset of the cell |
+
+#### Outputs
+None
+
+### `is_ws`
+#### Description
+This function checks if a given character is a whitespace character.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| char | str | The character to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| is_whitespace | bool | True if the character is a whitespace character, False otherwise |
+
+#### Internal Logic
+The function checks if the character is a space, newline, or tab.

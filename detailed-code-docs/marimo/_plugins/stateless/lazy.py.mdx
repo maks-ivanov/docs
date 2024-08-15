@@ -1,0 +1,73 @@
+---
+title: "lazy.py"
+---
+
+## High-level description
+
+The `lazy.py` file defines a `lazy` class, which is a UI component designed to defer the rendering of a component until it becomes visible. This is particularly useful for optimizing the loading of expensive components, such as those resulting from database queries or complex computations, by only rendering them when necessary. The class supports both synchronous and asynchronous functions for generating the content to be lazily loaded.
+
+## Code Structure
+
+The main symbol in this file is the `lazy` class, which inherits from `UIElement`. The `lazy` class uses the `LoadResponse` data class to encapsulate the HTML content that is generated when the component is loaded. The `lazy` class also utilizes the `Function` class from the `marimo._runtime.functions` module to define a function that handles the loading of the component.
+
+## Symbols
+
+### `LoadResponse`
+#### Description
+`LoadResponse` is a simple data class used to encapsulate the HTML content that is generated when a lazy component is loaded.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | str | The HTML content to be returned when the component is loaded. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+### `lazy`
+#### Description
+The `lazy` class is a UI component that defers the rendering of its content until it becomes visible. It can accept either an object or a function (synchronous or asynchronous) that returns the object to be rendered. This class is useful for optimizing the loading of expensive components by only rendering them when necessary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| element | Union[Callable[[], object], object, Callable[[], Coroutine[None, None, object]]] | The content or function to be lazily loaded. |
+| show_loading_indicator | bool | Whether to show a loading indicator while the content is being loaded. Default is `False`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- The constructor initializes the `lazy` component with the provided element and loading indicator option.
+- It calls the superclass `UIElement` constructor with specific arguments, including a function that handles the loading of the component.
+- The `load` method is defined as an asynchronous function that checks if the element is callable. If it is, it calls the element and awaits the result if it is a coroutine. The result is then converted to HTML using the `as_html` function and returned as a `LoadResponse`.
+
+## References
+
+- `UIElement`: The `lazy` class inherits from `UIElement`, which provides the base functionality for UI components.
+- `Function`: Used to define the `load` function that handles the loading of the component.
+- `as_html`: A function used to convert the loaded content into HTML format.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for handling asynchronous operations. |
+| `dataclasses` | Provides the `dataclass` decorator for creating data classes. |
+| `typing` | Used for type hinting and defining complex types. |
+
+## Error Handling
+
+The `load` method checks if the element is callable and handles both synchronous and asynchronous functions. If the element is not callable, it directly converts the element to HTML.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## API/Interface Reference
+
+The `lazy` class does not expose an API but provides a public interface through its constructor and the `load` method. The constructor accepts an element and a loading indicator option, while the `load` method is used internally to handle the loading of the component.

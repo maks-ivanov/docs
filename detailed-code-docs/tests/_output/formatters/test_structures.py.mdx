@@ -1,0 +1,68 @@
+---
+title: "test_structures.py"
+---
+
+## High-level description
+
+The target file `tests/_output/formatters/test_structures.py` contains an asynchronous test function designed to verify the integration of the `matplotlib` and `numpy` libraries with the `marimo` framework. Specifically, it tests the registration and functionality of formatters for `matplotlib` objects within a `Kernel` execution environment. The test checks if the formatter correctly processes `matplotlib` plot lines and returns an expected output format.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `test_matplotlib_special_case`: This is the primary test function that orchestrates the test by checking dependencies, registering formatters, executing code in a kernel, and validating the output.
+- `DependencyManager`: Used to check if the required dependencies (`matplotlib` and `numpy`) are available.
+- `Kernel`: Represents the execution environment where the test code is run.
+- `ExecReqProvider`: Provides execution requests for the kernel to run specific code snippets.
+- `register_formatters`: Registers the necessary formatters for handling specific output types in the `marimo` framework.
+
+## References
+
+- `DependencyManager`: From `marimo._dependencies.dependencies`, used to check for the presence of `matplotlib` and `numpy`.
+- `Kernel`: From `marimo._runtime.runtime`, used to execute the test code.
+- `register_formatters`: From `marimo._output.formatters.formatters`, used to register formatters for third-party libraries.
+- `get_formatter`: From `marimo._output.formatting`, used to retrieve the formatter for the `matplotlib` lines.
+
+## Symbols
+
+### `test_matplotlib_special_case`
+#### Description
+This function tests the special case handling of `matplotlib` objects within the `marimo` framework. It ensures that when `matplotlib` and `numpy` are available, the appropriate formatters are registered and can process `matplotlib` plot lines correctly.
+
+#### Inputs
+| Name             | Type          | Description                                      |
+|:-----------------|:--------------|:-------------------------------------------------|
+| executing_kernel | `Kernel`      | The kernel instance used to execute the test code. |
+| exec_req         | `ExecReqProvider` | Provides execution requests for the kernel.         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function does not return a value but asserts conditions. |
+
+#### Internal Logic
+1. **Dependency Check**: The function first checks if both `matplotlib` and `numpy` are installed using the `DependencyManager`.
+2. **Formatter Registration**: If the dependencies are present, it imports and calls `register_formatters` to ensure that the formatters for these libraries are registered.
+3. **Code Execution**: It then executes a code snippet in the `Kernel` that:
+   - Imports `numpy` and `matplotlib`.
+   - Generates random data and plots it using `matplotlib`.
+   - Retrieves a formatter for the plot lines using `get_formatter`.
+4. **Assertions**: The function asserts that:
+   - A formatter is successfully retrieved.
+   - The formatter processes the plot lines and the output starts with the string "image", indicating that the plot is being correctly formatted as an image.
+
+## Side Effects
+- The function modifies the global state of the `Kernel` by executing code that defines variables (`formatter` and `lines`) in the kernel's global namespace.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._dependencies.dependencies` | To check for the presence of required libraries. |
+| `marimo._runtime.runtime` | To provide the `Kernel` execution environment. |
+| `marimo._output.formatters.formatters` | To register formatters for handling specific output types. |
+| `marimo._output.formatting` | To retrieve formatters for specific objects. |
+
+## Error Handling
+The function does not explicitly handle errors but relies on assertions to validate the expected behavior. If the assertions fail, it indicates a problem with the formatter registration or execution process.
+
+## Logging
+The function does not implement any logging mechanisms.

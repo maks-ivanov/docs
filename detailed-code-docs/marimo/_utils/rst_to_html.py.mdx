@@ -1,0 +1,57 @@
+---
+title: "rst_to_html.py"
+---
+
+## High-level description
+
+The target file `marimo/_utils/rst_to_html.py` contains a utility function `convert_rst_to_html` that converts reStructuredText (RST) content into HTML format. This conversion is achieved using the `docutils` library, which processes the RST content and generates the corresponding HTML output while suppressing any warnings or errors during the conversion process.
+
+## Code Structure
+
+The main symbol in this file is the function `convert_rst_to_html`, which utilizes the `publish_parts` function from the `docutils.core` module to perform the conversion from RST to HTML. The function is designed to handle any potential errors silently by redirecting the standard error output to a dummy stream.
+
+## Symbols
+
+### `convert_rst_to_html`
+#### Description
+The `convert_rst_to_html` function is responsible for converting a string of reStructuredText (RST) content into HTML format. It uses the `docutils` library to parse the RST content and generate HTML, while suppressing any warnings or errors that might occur during the conversion process.
+
+#### Inputs
+| Name        | Type   | Description                  |
+|:------------|:-------|:-----------------------------|
+| rst_content | `str`  | The RST content to be converted into HTML. |
+
+#### Outputs
+| Name  | Type  | Description                  |
+|:------|:------|:-----------------------------|
+| output | `str` | The HTML representation of the input RST content. |
+
+#### Internal Logic
+- The function uses `contextlib.redirect_stderr` to redirect any error messages to a `StringIO` object, effectively silencing them.
+- It calls `publish_parts` from the `docutils.core` module, specifying the `writer_name` as "html" to convert the RST content to HTML.
+- The `settings_overrides` parameter is used to customize the conversion settings, such as disabling file insertion and setting a high report level to suppress warnings.
+- The function returns the `html_body` part of the conversion result, which contains the HTML content.
+
+## References
+
+The `convert_rst_to_html` function is referenced in the related file `marimo/_runtime/complete.py`, where it is used to convert docstrings from RST to HTML format for display purposes.
+
+## Dependencies
+
+| Dependency     | Purpose                                                                 |
+|:---------------|:------------------------------------------------------------------------|
+| `contextlib`   | Used to redirect standard error output to suppress error messages.      |
+| `io`           | Provides the `StringIO` class for capturing error messages.             |
+| `docutils.core`| Provides the `publish_parts` function for converting RST to HTML.       |
+
+## Error Handling
+
+The function handles errors by redirecting the standard error output to a `StringIO` object, effectively silencing any warnings or errors that occur during the conversion process. This ensures that the function does not raise exceptions due to conversion issues.
+
+## Logging
+
+There is no explicit logging implemented in this code. However, the related file `marimo/_runtime/complete.py` uses logging to debug issues related to the conversion process.
+
+## Tests
+
+The related file `tests/_utils/test_rst_to_html.py` contains tests for the `convert_rst_to_html` function, verifying its behavior with different types of RST content, including basic text, empty input, and code blocks. These tests ensure that the function correctly converts RST to HTML and handles various input scenarios.

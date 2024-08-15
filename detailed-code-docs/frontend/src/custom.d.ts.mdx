@@ -1,0 +1,84 @@
+---
+title: "custom.d.ts"
+---
+
+## High-level description
+The `custom.d.ts` file is a TypeScript declaration file that extends and customizes TypeScript's type definitions for specific use cases in a frontend project. It provides custom module declarations for SVG files, enhances type definitions for JSON parsing and the `Body` interface, and improves type inference for the `Array.filter` method when used with `BooleanConstructor`.
+
+## Code Structure
+The file contains several TypeScript interface and module declarations that extend existing types and modules. These declarations are designed to provide stricter type checking and better type inference in specific scenarios.
+
+## Symbols
+
+### Module Declaration for SVG
+#### Description
+This module declaration allows TypeScript to understand how to handle imports of SVG files. It declares that any import of an SVG file will be treated as a string or undefined.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+#### Outputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| content | string | The content of the SVG file. |
+
+### `Body` Interface
+#### Description
+The `Body` interface is extended to provide a generic `json` method that returns a promise resolving to a type `T`. This allows for more precise type inference when parsing JSON responses.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| T    | Type | The type to which the JSON is parsed. |
+
+#### Outputs
+| Name | Type      | Description                        |
+|:-----|:----------|:-----------------------------------|
+| -    | Promise&lt;T&gt;| A promise that resolves to type `T`.|
+
+### `JSON` Interface
+#### Description
+The `JSON` interface is extended to provide a stricter type for the `parse` method, which returns `unknown` instead of `any`. This encourages safer handling of parsed JSON data by requiring explicit type assertions.
+
+#### Inputs
+| Name    | Type   | Description |
+|:--------|:-------|:------------|
+| text    | string | The JSON string to parse. |
+| reviver | function | Optional function to transform the parsed value. |
+
+#### Outputs
+| Name | Type    | Description                  |
+|:-----|:--------|:-----------------------------|
+| -    | unknown | The parsed JSON object.      |
+
+### `Array&lt;T&gt;` Interface
+#### Description
+The `Array&lt;T&gt;` interface is extended to improve type inference for the `filter` method when used with `BooleanConstructor`. This ensures that the resulting array contains only non-nullable items.
+
+#### Inputs
+| Name       | Type              | Description |
+|:-----------|:------------------|:------------|
+| predicate  | BooleanConstructor| The predicate function. |
+
+#### Outputs
+| Name | Type                | Description                        |
+|:-----|:--------------------|:-----------------------------------|
+| -    | Array&lt;NonNullable&lt;T&gt;&gt;| An array of non-nullable items.    |
+
+## Side Effects
+- The module declaration for SVG files affects how TypeScript handles imports of SVG files across the project.
+- The extensions to the `Body`, `JSON`, and `Array` interfaces provide stricter type checking and inference, which can lead to compile-time errors if the code does not adhere to the new type constraints.
+
+## Dependencies
+No external libraries or modules are directly used in this file. It relies on TypeScript's type system and standard library.
+
+## Error Handling
+The file does not implement any error handling mechanisms, as it is a type declaration file. However, the stricter type definitions can help prevent runtime errors by catching type mismatches at compile time.
+
+## Logging
+There are no logging mechanisms implemented in this file.
+
+## TODOs
+There are no TODOs or notes left in the code.

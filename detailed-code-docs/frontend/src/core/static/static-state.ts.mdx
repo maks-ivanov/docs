@@ -1,0 +1,91 @@
+---
+title: "static-state.ts"
+---
+
+## High-level description
+
+The target file, `static-state.ts`, is part of a frontend application and is responsible for managing the static state of a notebook within the application. It provides utility functions to parse and access static notebook data stored in the global `window` object, specifically under the `__MARIMO_STATIC__` property. This file is crucial for determining if the notebook is static and for retrieving its state and associated virtual files.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `parseStaticState`, `isStaticNotebook`, and `getStaticVirtualFiles` functions all interact with the `window.__MARIMO_STATIC__` object to retrieve different parts of the static notebook state.
+- The `invariant` function is used to ensure that the `window.__MARIMO_STATIC__` object is defined before attempting to access its properties.
+
+## Symbols
+
+### `parseStaticState`
+#### Description
+This function retrieves the static notebook state from the global `window` object. It ensures that the notebook is indeed static by checking the presence of the `__MARIMO_STATIC__` property.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `notebookState` | `StaticNotebookState` | The state of the static notebook. |
+
+#### Internal Logic
+- The function uses the `invariant` utility to assert that `window.__MARIMO_STATIC__` is defined.
+- It then returns the `notebookState` property from `window.__MARIMO_STATIC__`.
+
+### `isStaticNotebook`
+#### Description
+This function checks if the current notebook is static by verifying the presence of the `__MARIMO_STATIC__` property on the global `window` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `isStatic` | `boolean` | Returns `true` if the notebook is static, otherwise `false`. |
+
+#### Internal Logic
+- The function checks if `window.__MARIMO_STATIC__` is not `undefined` and returns the result.
+
+### `getStaticVirtualFiles`
+#### Description
+This function retrieves the virtual files associated with a static notebook from the global `window` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `files` | `StaticVirtualFiles` | The virtual files of the static notebook. |
+
+#### Internal Logic
+- Similar to `parseStaticState`, it uses the `invariant` utility to ensure `window.__MARIMO_STATIC__` is defined.
+- It then returns the `files` property from `window.__MARIMO_STATIC__`.
+
+## References
+
+- The `invariant` function from `@/utils/invariant` is used to assert conditions before accessing properties on the `window` object.
+- The `MarimoStaticState`, `StaticNotebookState`, and `StaticVirtualFiles` types from `./types` are used to define the structure of the static state and files.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/utils/invariant` | Used to assert that certain conditions are met before proceeding with operations. |
+
+## Error Handling
+
+The code uses the `invariant` function to handle errors by throwing an exception if the expected static state is not present on the `window` object. This ensures that the functions do not proceed with undefined or incorrect data, which could lead to runtime errors.
+
+## Side Effects
+
+- The functions in this file access the global `window` object, specifically the `__MARIMO_STATIC__` property, which is expected to be set elsewhere in the application.
+
+## Logging
+
+There is no explicit logging in this file. However, the use of `invariant` for error handling indirectly provides a mechanism for identifying issues when the expected static state is not present.

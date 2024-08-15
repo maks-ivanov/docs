@@ -1,0 +1,58 @@
+---
+title: "win32_interrupt_handler.py"
+---
+
+## High-level description
+
+The `win32_interrupt_handler.py` file defines a class `Win32InterruptHandler` that extends the `threading.Thread` class. Its primary purpose is to handle interrupt signals on Windows platforms by monitoring a queue for interrupt requests and triggering the main thread's interrupt mechanism when necessary.
+
+## Code Structure
+
+The main symbol in this file is the `Win32InterruptHandler` class, which is a subclass of `threading.Thread`. It interacts with a queue to receive interrupt signals and uses the `signal` and `_thread` modules to handle these signals appropriately.
+
+## Symbols
+
+### `Win32InterruptHandler`
+#### Description
+The `Win32InterruptHandler` class is designed to handle interrupt signals in a Windows environment. It runs as a daemon thread that continuously monitors a queue for interrupt signals. When an interrupt signal is detected, it checks if the current signal handler for `SIGINT` is callable and then calls `interrupt_main()` to interrupt the main thread.
+
+#### Inputs
+| Name            | Type          | Description                                  |
+|:----------------|:--------------|:---------------------------------------------|
+| interrupt_queue | `Queue[bool]` | A queue that receives interrupt signals.     |
+
+#### Outputs
+This class does not produce direct outputs but affects the program flow by interrupting the main thread when an interrupt signal is detected.
+
+#### Internal Logic
+- The `__init__` method initializes the thread as a daemon and assigns the provided interrupt queue to an instance variable.
+- The `run` method enters an infinite loop where it:
+  - Waits for an item from the `interrupt_queue`.
+  - Drains the queue of any additional items to ensure only one interrupt is processed at a time.
+  - Checks if the current signal handler for `SIGINT` is callable.
+  - Calls `interrupt_main()` to raise a `KeyboardInterrupt` in the main thread.
+
+## References
+
+- The `Win32InterruptHandler` class is referenced in the `marimo/_runtime/runtime.py` file, where it is used to handle interrupts in a kernel process running in edit mode on Windows platforms.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `queue`    | Used to handle the queue operations for interrupt signals.              |
+| `signal`   | Used to check the current signal handler for `SIGINT`.                  |
+| `threading`| Provides the `Thread` class which `Win32InterruptHandler` extends.      |
+| `_thread`  | Provides the `interrupt_main` function to interrupt the main thread.    |
+
+## Error Handling
+
+The code handles the `queue.Empty` exception to manage cases where the queue is empty when attempting to drain it. This ensures that the loop continues running without interruption.
+
+## Side Effects
+
+The primary side effect of this class is that it can interrupt the main thread by raising a `KeyboardInterrupt` when an interrupt signal is detected in the queue.
+
+## Performance Considerations
+
+The class runs as a daemon thread, which means it will not prevent the program from exiting. The use of `get_nowait()` ensures that the queue is drained quickly without blocking, which is efficient for handling multiple rapid interrupt signals.

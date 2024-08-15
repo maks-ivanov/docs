@@ -1,0 +1,68 @@
+---
+title: "reload_test_utils.py"
+---
+
+## High-level description
+
+The target file `reload_test_utils.py` provides utility functions for testing module reloading in Python. It includes functions to generate random module names and to update Python files with a delay to ensure that the file's timestamp is different from its compiled version, which is crucial for testing the autoreload functionality.
+
+## Code Structure
+
+The file contains two main functions: `random_modname` and `update_file`. These functions are used in conjunction with test cases to facilitate the testing of module reloading by generating unique module names and ensuring proper file timestamp management.
+
+## Symbols
+
+### `random_modname`
+#### Description
+Generates a random module name consisting of 20 characters selected from a predefined set of lowercase letters. This is useful for creating unique module names during testing to avoid conflicts in the Python module namespace.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| modname | str | A randomly generated module name consisting of 20 characters. |
+
+#### Internal Logic
+- Uses the `random.sample` function to select 20 unique characters from the string "abcdefghijklmopqrstuvwxyz".
+- Joins the selected characters into a single string and returns it.
+
+### `update_file`
+#### Description
+Writes the provided code to a specified file path after a delay, ensuring that the file's timestamp is different from its compiled version. This is important for testing scenarios where Python's autoreload mechanism is involved, as it relies on file timestamps to detect changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | pathlib.Path | The file path where the code should be written. |
+| code | str | The code to be written to the file. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function first sleeps for 1.5 seconds to ensure a timestamp difference between the `.py` and `.pyc` files.
+- It then writes the provided code to the specified file path using `path.write_text`, with the code being dedented for proper formatting.
+
+## References
+
+- The `update_file` function is used in various test cases in the related files, such as `test_autoreload.py` and `test_module_watcher.py`, to simulate changes in Python modules and test the autoreload functionality.
+
+## Dependencies
+
+The code uses the following standard Python libraries:
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pathlib` | Provides an object-oriented interface for filesystem paths. |
+| `random` | Used to generate random samples for creating module names. |
+| `textwrap` | Used to dedent the code before writing it to a file. |
+| `time` | Used to introduce a delay to ensure timestamp differences. |
+
+## Error Handling
+
+The code does not include explicit error handling mechanisms. It assumes that the provided file path is valid and writable, and that the code string is properly formatted.
+
+## Logging
+
+The code does not implement any logging mechanisms.

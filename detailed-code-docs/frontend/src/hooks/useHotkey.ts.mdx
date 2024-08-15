@@ -1,0 +1,94 @@
+---
+title: "useHotkey.ts"
+---
+
+## High-level description
+
+The `useHotkey.ts` file provides custom React hooks for registering and handling keyboard shortcuts (hotkeys) in a web application. It allows developers to define hotkey actions and associate them with specific callback functions, which are executed when the corresponding keyboard shortcuts are pressed. The hooks can be used to register hotkeys globally or on specific HTML elements.
+
+## Code Structure
+
+The main symbols in the code are the `useHotkey`, `useHotkeysOnElement`, and `useKeydownOnElement` functions. These functions utilize other hooks and utilities such as `useEventListener`, `useEvent`, `useSetRegisteredAction`, and `parseShortcut` to manage hotkey registration and event handling. The `useHotkey` function is used for global hotkey registration, while `useHotkeysOnElement` and `useKeydownOnElement` are used for element-specific hotkey registration.
+
+## Symbols
+
+### `useHotkey`
+#### Description
+Registers a global hotkey listener for a specified shortcut and executes a callback function when the shortcut is pressed.
+
+#### Inputs
+| Name     | Type          | Description                                                                 |
+|:---------|:--------------|:----------------------------------------------------------------------------|
+| shortcut | `HotkeyAction`| The action associated with the hotkey.                                      |
+| callback | `HotkeyHandler`| The function to execute when the hotkey is pressed.                        |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the current hotkey configuration using `useAtomValue(hotkeysAtom)`.
+- Checks if the callback is a no-operation function using `Functions.NOOP`.
+- Memoizes the callback using `useEvent`.
+- Defines a listener function that checks if the pressed key matches the registered hotkey using `parseShortcut`.
+- If the hotkey is matched, the callback is executed, and default event actions are prevented unless the callback returns `false`.
+- Registers the listener for the "keydown" event on the document using `useEventListener`.
+- Registers and unregisters the action in the hotkey registry using `useSetRegisteredAction`.
+
+### `useHotkeysOnElement`
+#### Description
+Registers hotkey listeners on a specified HTML element for multiple shortcuts, executing corresponding callback functions when the shortcuts are pressed.
+
+#### Inputs
+| Name     | Type                                      | Description                                                                 |
+|:---------|:------------------------------------------|:----------------------------------------------------------------------------|
+| element  | `HTMLElement \| null`                     | The HTML element on which to register the hotkey listeners.                 |
+| handlers | `Record&lt;T, HotkeyHandler&gt;`                | A record of hotkey actions and their corresponding callback functions.      |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the current hotkey configuration using `useAtomValue(hotkeysAtom)`.
+- Registers a "keydown" event listener on the specified element using `useEventListener`.
+- Iterates over the provided handlers, checking if the pressed key matches any registered hotkey using `parseShortcut`.
+- Executes the corresponding callback function if a match is found, preventing default event actions unless the callback returns `false`.
+
+### `useKeydownOnElement`
+#### Description
+Registers keydown listeners on a specified HTML element for multiple keys, executing corresponding callback functions when the keys are pressed.
+
+#### Inputs
+| Name     | Type                                      | Description                                                                 |
+|:---------|:------------------------------------------|:----------------------------------------------------------------------------|
+| element  | `HTMLElement \| null`                     | The HTML element on which to register the keydown listeners.                |
+| handlers | `Record&lt;string, HotkeyHandler&gt;`           | A record of keys and their corresponding callback functions.                |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers a "keydown" event listener on the specified element using `useEventListener`.
+- Iterates over the provided handlers, checking if the pressed key matches any registered key using `parseShortcut`.
+- Executes the corresponding callback function if a match is found, preventing default event actions unless the callback returns `false`.
+
+## References
+
+- `parseShortcut`: A utility function used to parse and match keyboard shortcuts.
+- `useEventListener`: A custom hook used to register event listeners on DOM elements.
+- `useEvent`: A custom hook used to memoize event handlers.
+- `useSetRegisteredAction`: A hook used to register and unregister hotkey actions in a global registry.
+- `hotkeysAtom`: An atom from the Jotai library used to manage the state of hotkey configurations.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `jotai`    | Used for state management, particularly for managing hotkey configurations. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception prevention through type checks and conditional logic. It assumes that the provided inputs are valid and that the environment supports the necessary browser APIs.
+
+## Logging
+
+The code uses the `Logger` utility to log debug information when a hotkey is satisfied, which can be useful for debugging purposes.

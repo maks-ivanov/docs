@@ -1,0 +1,66 @@
+---
+title: "useRestartKernel.tsx"
+---
+
+## High-level description
+
+The `useRestartKernel` function in the target file is a custom React hook designed to facilitate the process of restarting a Python kernel within a web application. It leverages a modal dialog to confirm the user's intent to restart the kernel, warning them about potential data loss. Upon confirmation, it updates the connection state, sends a restart request, and reloads the page to reflect the changes.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `useRestartKernel`: The primary function that orchestrates the kernel restart process.
+- `useImperativeModal`: A hook used to display a confirmation modal to the user.
+- `connectionAtom`: A Jotai atom used to manage the WebSocket connection state.
+- `sendRestart`: A function that sends a request to restart the kernel.
+- `WebSocketState`: An enumeration that defines possible states of the WebSocket connection.
+
+## References
+
+- `useImperativeModal` from `frontend/src/components/modal/ImperativeModal.tsx`: Used to open a confirmation modal.
+- `connectionAtom` from `frontend/src/core/network/connection.ts`: Used to update the WebSocket connection state.
+- `sendRestart` from `frontend/src/core/network/requests.ts`: Used to send a restart request to the server.
+- `WebSocketState` from `frontend/src/core/websocket/types.ts`: Used to set the connection state to `CLOSING`.
+
+## Symbols
+
+### `useRestartKernel`
+#### Description
+The `useRestartKernel` function is a custom React hook that provides a mechanism to restart the Python kernel. It prompts the user with a confirmation dialog, and upon confirmation, it updates the WebSocket connection state, sends a restart request, and reloads the page.
+
+#### Inputs
+None directly, but it uses hooks and functions that manage state and perform network requests.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| restartKernel | function | A function that, when called, initiates the kernel restart process. |
+
+#### Internal Logic
+1. **Modal Confirmation**: Uses `useImperativeModal` to open a confirmation dialog with a destructive action variant.
+2. **Connection State Update**: Sets the WebSocket connection state to `CLOSING` using `setConnection`.
+3. **Restart Request**: Calls `sendRestart` to send a restart request to the server.
+4. **Page Reload**: Reloads the page using `window.location.reload()` to apply the changes.
+
+## Side Effects
+- Modifies the WebSocket connection state by setting it to `CLOSING`.
+- Sends a network request to restart the kernel.
+- Reloads the browser window, which can result in loss of unsaved data.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management, specifically for managing the WebSocket connection state. |
+
+## Error Handling
+The code does not explicitly handle errors within the `useRestartKernel` function. Any errors during the `sendRestart` request or the page reload would need to be managed elsewhere in the application.
+
+## Logging
+There is no logging implemented in this code. Any logging would need to be added to handle errors or track the restart process.
+
+## API/Interface Reference
+The `useRestartKernel` function does not expose an API but provides a function that can be used within React components to restart the kernel.
+
+## TODOs
+There are no TODOs or notes left in the code.

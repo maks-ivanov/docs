@@ -1,0 +1,219 @@
+---
+title: "test_ws.py"
+---
+
+## High-level description
+
+The target file `tests/_server/api/endpoints/test_ws.py` contains a suite of tests for WebSocket endpoints in a server application. These tests are designed to verify the behavior of WebSocket connections, including connection establishment, message handling, session management, and error handling. The tests simulate various scenarios such as connecting with and without session IDs, handling multiple connections, and testing kiosk mode functionality.
+
+## Code Structure
+
+The main symbols in the code are functions that represent individual test cases. These functions use the `pytest` framework to assert expected behaviors of the WebSocket endpoints. The tests interact with a `TestClient` to simulate WebSocket connections and HTTP requests.
+
+## References
+
+- `KernelCapabilities` and `KernelReady` from `marimo._messaging.ops` are used to create and parse responses.
+- `WebSocketCodes` from `marimo._server.api.endpoints.ws` is used for handling WebSocket disconnection codes.
+- `SessionMode` and `SessionManager` from `marimo._server.model` and `marimo._server.sessions` are used for session management.
+- `parse_raw` from `marimo._utils.parse_dataclass` is used to parse raw data into dataclass instances.
+- `get_session_manager` and `token_header` from `tests._server.conftest` and `tests._server.mocks` are used to set up test environments and headers.
+
+## Symbols
+
+### `create_response`
+#### Description
+Creates a default response dictionary for WebSocket messages, which can be partially updated with additional data.
+
+#### Inputs
+| Name             | Type            | Description                        |
+|:-----------------|:----------------|:-----------------------------------|
+| partial_response | `dict[str, Any]`| Partial data to update the response|
+
+#### Outputs
+| Name     | Type            | Description                |
+|:---------|:----------------|:---------------------------|
+| response | `dict[str, Any]`| The complete response data |
+
+### `assert_kernel_ready_response`
+#### Description
+Asserts that the raw data received from a WebSocket message matches the expected `KernelReady` response.
+
+#### Inputs
+| Name     | Type            | Description                        |
+|:---------|:----------------|:-----------------------------------|
+| raw_data | `dict[str, Any]`| Raw data from the WebSocket message|
+| response | `Optional[dict[str, Any]]` | Expected response data |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the raw data and expected response into `KernelReady` dataclass instances.
+- Compares each field of the parsed data to ensure they match.
+
+### `assert_parse_ready_response`
+#### Description
+Asserts that the raw data can be parsed into a `KernelReady` dataclass instance.
+
+#### Inputs
+| Name     | Type            | Description                        |
+|:---------|:----------------|:-----------------------------------|
+| raw_data | `dict[str, Any]`| Raw data from the WebSocket message|
+
+#### Outputs
+None
+
+### `test_ws`
+#### Description
+Tests a successful WebSocket connection with a valid session ID and verifies the initial message.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_without_session`
+#### Description
+Tests the behavior when attempting to connect to a WebSocket without a session ID, expecting a disconnection.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_disconnect_and_reconnect`
+#### Description
+Tests the ability to disconnect and reconnect to a WebSocket using the same session ID.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_disconnect_then_reconnect_then_refresh`
+#### Description
+Tests the sequence of disconnecting, reconnecting, and then refreshing with a new session ID.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_fails_on_multiple_connections_with_other_sessions`
+#### Description
+Tests that multiple WebSocket connections with different session IDs are not allowed.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_fails_on_multiple_connections_with_same_file`
+#### Description
+Tests that multiple WebSocket connections with the same file but different session IDs are not allowed.
+
+#### Inputs
+| Name             | Type          | Description          |
+|:-----------------|:--------------|:---------------------|
+| client           | `TestClient`  | The test client used |
+| temp_marimo_file | `str`         | Temporary file used  |
+
+#### Outputs
+None
+
+### `test_file_watcher_calls_reload`
+#### Description
+Tests that the file watcher triggers a reload operation when a file is modified.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_query_params`
+#### Description
+Tests that query parameters are correctly set and retrieved in a session.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_connect_kiosk_without_session`
+#### Description
+Tests that connecting in kiosk mode without a session results in a disconnection.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_connect_kiosk_with_session`
+#### Description
+Tests connecting in kiosk mode with an existing session.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+### `test_cannot_connect_kiosk_with_run_session`
+#### Description
+Tests that connecting in kiosk mode is not allowed when the session is in run mode.
+
+#### Inputs
+| Name   | Type          | Description          |
+|:-------|:--------------|:---------------------|
+| client | `TestClient`  | The test client used |
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pytest`   | Used for writing and executing test cases.   |
+| `starlette.websockets` | Provides WebSocket functionality.|
+| `marimo._messaging.ops` | Provides message operations and capabilities. |
+| `marimo._server.api.endpoints.ws` | Provides WebSocket codes. |
+| `marimo._server.model` | Provides session modes. |
+| `marimo._server.sessions` | Manages sessions. |
+| `marimo._utils.parse_dataclass` | Parses raw data into dataclass instances. |
+| `tests._server.conftest` | Provides test setup utilities. |
+| `tests._server.mocks` | Provides mock utilities for testing. |
+
+## Error Handling
+
+The tests handle WebSocket disconnections using `pytest.raises` to assert expected disconnection codes and reasons.
+
+## Logging
+
+No explicit logging is implemented in the test file, but the underlying server components may log relevant information during test execution.

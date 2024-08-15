@@ -1,0 +1,137 @@
+---
+title: "_progress.py"
+---
+
+## High-level description
+
+The target file, `marimo/_plugins/stateless/status/_progress.py`, defines classes and functions for creating and managing progress indicators in a user interface. It provides two main types of progress indicators: a progress bar and a spinner, both of which can be used to visually represent the progress of tasks in applications, particularly in notebooks or web apps. The file also includes utility functions and classes to handle the display and update of these indicators.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+
+- `_Progress`: A base class that provides the core functionality for progress indicators, including updating progress, calculating rates and estimated time of arrival (ETA), and rendering the progress indicator as HTML.
+- `ProgressBar`: A subclass of `_Progress` that represents a progress bar, allowing for incremental updates.
+- `Spinner`: Another subclass of `_Progress` that represents a loading spinner, primarily used to indicate ongoing processes without a known total.
+- `spinner`: A context manager class that facilitates the use of the `Spinner` class within a context, automatically handling its lifecycle.
+- `progress_bar`: A class that provides an iterable interface for a progress bar, allowing it to be used in loops to automatically update progress.
+
+## References
+
+- `Html`: A class from `marimo._output.hypertext` that `_Progress` inherits from, used to render HTML content.
+- `output`: A module from `marimo._runtime.output._output` that provides functions to manage UI output, such as `flush` and `remove`.
+- `debounce`: A decorator from `marimo._utils.debounce` used to limit the frequency of updates to the UI.
+
+## Symbols
+
+### `_remove_none_values`
+#### Description
+A utility function that removes key-value pairs from a dictionary where the value is `None`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| d | dict[S, T] | A dictionary from which `None` values should be removed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | dict[S, T] | A dictionary with `None` values removed. |
+
+### `_Progress`
+#### Description
+A base class for creating progress indicators, providing methods to update progress, calculate rates and ETA, and render the indicator as HTML.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | Optional[str] | The title of the progress indicator. |
+| subtitle | Optional[str] | The subtitle of the progress indicator. |
+| total | Optional[int] | The total number of steps for the progress. |
+| show_rate | bool | Whether to show the rate of progress. |
+| show_eta | bool | Whether to show the estimated time of arrival. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes with attributes for title, subtitle, total, current progress, and flags for showing rate and ETA.
+- Uses `time.time()` to track the start time for rate calculations.
+- Provides methods to update progress, clear the indicator, and close it, ensuring proper lifecycle management.
+
+### `ProgressBar`
+#### Description
+A subclass of `_Progress` that represents a progress bar, allowing for incremental updates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | str | The title of the progress bar. |
+| subtitle | str | The subtitle of the progress bar. |
+| total | int | The total number of steps for the progress bar. |
+| show_rate | bool | Whether to show the rate of progress. |
+| show_eta | bool | Whether to show the estimated time of arrival. |
+
+#### Outputs
+None
+
+### `Spinner`
+#### Description
+A subclass of `_Progress` that represents a loading spinner, used to indicate ongoing processes without a known total.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | str | The title of the spinner. |
+| subtitle | str | The subtitle of the spinner. |
+
+#### Outputs
+None
+
+### `spinner`
+#### Description
+A context manager class that facilitates the use of the `Spinner` class within a context, automatically handling its lifecycle.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | Optional[str] | The title of the spinner. |
+| subtitle | Optional[str] | The subtitle of the spinner. |
+| remove_on_exit | bool | Whether to remove the spinner from output on exit. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spinner | Spinner | The spinner instance used within the context. |
+
+### `progress_bar`
+#### Description
+A class that provides an iterable interface for a progress bar, allowing it to be used in loops to automatically update progress.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| collection | Optional[Collection[S | int]] | The collection to iterate over. |
+| title | Optional[str] | The title of the progress bar. |
+| subtitle | Optional[str] | The subtitle of the progress bar. |
+| completion_title | Optional[str] | The title to show upon completion. |
+| completion_subtitle | Optional[str] | The subtitle to show upon completion. |
+| total | Optional[int] | The total number of items to iterate over. |
+| show_rate | bool | Whether to show the rate of progress. |
+| show_eta | bool | Whether to show the estimated time of arrival. |
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.output._output` | Manages UI output operations like flushing and removing elements. |
+| `marimo._messaging.mimetypes` | Provides known MIME types for rendering. |
+| `marimo._output.hypertext` | Provides the `Html` class for rendering HTML content. |
+| `marimo._plugins.core.web_component` | Provides functions to build stateless plugins. |
+| `marimo._utils.debounce` | Provides a decorator to limit the frequency of function calls. |
+
+## TODOs
+- Add a `done()` method to the `Spinner` class to transition the spinner into a checkmark upon completion.

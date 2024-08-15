@@ -1,0 +1,96 @@
+---
+title: "terminal.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/endpoints/terminal.py`, implements a WebSocket endpoint that facilitates a terminal session over a WebSocket connection. It allows users to interact with a terminal shell through a web interface by reading from and writing to a pseudo-terminal (PTY). The code handles the WebSocket connection lifecycle, including accepting connections, reading from and writing to the PTY, and managing the termination of the session.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `websocket_endpoint` function is the main entry point for WebSocket connections. It sets up the PTY and manages the lifecycle of the WebSocket connection.
+- The `_read_from_pty` and `_write_to_pty` functions are responsible for reading from and writing to the PTY, respectively. They are executed as asynchronous tasks within the `websocket_endpoint`.
+- The `router` object is an instance of `APIRouter`, which is used to define the WebSocket route.
+
+## Symbols
+
+### `websocket_endpoint`
+#### Description
+This function handles WebSocket connections to the `/ws` endpoint. It sets up a PTY, forks a child process to run a shell, and manages the communication between the WebSocket and the PTY.
+
+#### Inputs
+| Name      | Type      | Description                  |
+|:----------|:----------|:-----------------------------|
+| websocket | WebSocket | The WebSocket connection object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Initializes `AppState` using the WebSocket to check the session mode.
+2. Accepts the WebSocket connection if the session mode is `EDIT`.
+3. Forks a child process using `pty.fork()` to run a shell.
+4. Creates asynchronous tasks for reading from and writing to the PTY.
+5. Waits for either the read or write task to complete, then cancels the other.
+6. Closes the WebSocket connection and terminates the child process.
+
+### `_read_from_pty`
+#### Description
+Reads data from the PTY and sends it to the WebSocket client.
+
+#### Inputs
+| Name      | Type      | Description                  |
+|:----------|:----------|:-----------------------------|
+| master    | int       | The file descriptor for the PTY master. |
+| websocket | WebSocket | The WebSocket connection object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Opens the PTY master file descriptor for reading.
+2. Continuously reads data from the PTY and sends it to the WebSocket.
+3. Handles exceptions such as `asyncio.CancelledError` and `WebSocketDisconnect`.
+
+### `_write_to_pty`
+#### Description
+Receives data from the WebSocket client and writes it to the PTY.
+
+#### Inputs
+| Name      | Type      | Description                  |
+|:----------|:----------|:-----------------------------|
+| master    | int       | The file descriptor for the PTY master. |
+| websocket | WebSocket | The WebSocket connection object. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Opens the PTY master file descriptor for writing.
+2. Continuously receives data from the WebSocket and writes it to the PTY.
+3. Checks for the "exit" command to terminate the session.
+4. Handles exceptions such as `asyncio.CancelledError` and `WebSocketDisconnect`.
+
+## Side Effects
+- The code interacts with the operating system to fork processes and manage PTY file descriptors.
+- It sends and receives data over a WebSocket connection.
+- It logs various events and errors using the `LOGGER`.
+
+## References
+- `AppState` from `marimo._server.api.deps` is used to manage application state and session mode.
+- `SessionMode` from `marimo._server.model` is used to determine if the session is in `EDIT` mode.
+- `APIRouter` from `marimo._server.router` is used to define the WebSocket route.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio`  | Used for asynchronous programming and task management. |
+| `os`       | Used for interacting with the operating system, such as managing file descriptors. |
+| `select`   | Used for monitoring file descriptors for I/O readiness. |
+| `signal`   | Used for sending signals to processes. |
+| `subprocess` | Used to run shell commands in the child process. |
+| `starlette.websockets` | Provides WebSocket support for the application. |
+
+## TODOs
+- The code contains a TODO comment suggesting that `loop.add_reader` might be a better approach for reading from the PTY, but it currently causes a delay when the terminal is closed.

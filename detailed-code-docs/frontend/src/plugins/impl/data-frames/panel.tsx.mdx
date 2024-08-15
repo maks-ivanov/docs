@@ -1,0 +1,104 @@
+---
+title: "panel.tsx"
+---
+
+## High-level description
+
+The `panel.tsx` file defines a React component called `TransformPanel` that provides a user interface for managing data transformations on a set of columns. It allows users to add, remove, and configure various transformations, such as filtering, sorting, and renaming columns, using a form-based interface. The component leverages the `react-hook-form` library for form management and validation, and it uses the `zod` library for schema validation.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `TransformPanel` is the primary React component that manages the state and rendering of the transformation interface.
+- `Sidebar` is a sub-component used within `TransformPanel` to display and manage the list of transformations.
+- `AddTransformDropdown` is another sub-component that provides a dropdown menu for adding new transformations.
+- The component uses contexts (`ColumnInfoContext` and `ColumnFetchValuesContext`) to provide column information and fetch column values, respectively.
+- The `useForm` and `useFieldArray` hooks from `react-hook-form` are used to manage form state and arrays of form fields.
+
+## References
+
+- `TransformationsSchema` and `TransformTypeSchema` from `./schema` are used for form validation and defining the structure of transformations.
+- `getDefaults` and `getUnionLiteral` from `./forms/form-utils` are utility functions used to handle default values and union types in schemas.
+- `getUpdatedColumnTypes` from `./utils/getUpdatedColumnTypes` is used to compute the effective column types after applying transformations.
+- `Strings` from `@/utils/strings` is used for string manipulation, specifically for formatting transformation types.
+
+## Symbols
+
+### `TransformPanel`
+#### Description
+The `TransformPanel` component provides a user interface for managing a list of data transformations on a set of columns. It allows users to add, remove, and configure transformations using a form-based interface.
+
+#### Inputs
+| Name           | Type          | Description                                                                 |
+|:---------------|:--------------|:----------------------------------------------------------------------------|
+| `columns`      | `ColumnDataTypes` | A map of column IDs to their data types.                                   |
+| `initialValue` | `Transformations` | The initial set of transformations to display in the panel.                |
+| `onChange`     | `(value: Transformations) =&gt; void` | Callback function to handle valid transformation changes. |
+| `onInvalidChange` | `(value: Transformations) =&gt; void` | Callback function to handle invalid transformation changes. |
+| `getColumnValues` | `(req: { column: string }) =&gt; Promise&lt;{ values: unknown[]; too_many_values: boolean; }&gt;` | Function to fetch values for a specific column. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `TransformPanel` | `React.FC&lt;Props&gt;` | A React functional component that renders the transformation panel. |
+
+#### Internal Logic
+- Initializes a form using `useForm` with validation provided by `zodResolver` and `TransformationsSchema`.
+- Uses `useFieldArray` to manage the array of transformations.
+- Watches form changes and triggers `onChange` or `onInvalidChange` callbacks based on form validation.
+- Computes effective column types using `getUpdatedColumnTypes` based on the selected transformation.
+- Renders a sidebar for managing transformations and a main area for configuring the selected transformation.
+
+### `Sidebar`
+#### Description
+The `Sidebar` component displays a list of transformations and provides controls for selecting, deleting, and adding transformations.
+
+#### Inputs
+| Name     | Type            | Description                                      |
+|:---------|:----------------|:-------------------------------------------------|
+| `items`  | `TransformType[]` | The list of transformations to display.          |
+| `selected` | `number | undefined` | The index of the currently selected transformation. |
+| `onSelect` | `(index: number) =&gt; void` | Callback to handle selection of a transformation. |
+| `onDelete` | `(index: number) =&gt; void` | Callback to handle deletion of a transformation. |
+| `onAdd` | `(transform: z.ZodType) =&gt; void` | Callback to handle adding a new transformation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `Sidebar` | `React.FC&lt;SidebarProps&gt;` | A React functional component that renders the sidebar. |
+
+### `AddTransformDropdown`
+#### Description
+The `AddTransformDropdown` component provides a dropdown menu for adding new transformations to the list.
+
+#### Inputs
+| Name     | Type            | Description                                      |
+|:---------|:----------------|:-------------------------------------------------|
+| `onAdd`  | `(transform: z.ZodType) =&gt; void` | Callback to handle adding a new transformation. |
+| `children` | `React.ReactNode` | The child elements to render inside the dropdown trigger. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `AddTransformDropdown` | `React.FC&lt;PropsWithChildren&lt;{ onAdd: (transform: z.ZodType) =&gt; void }&gt;&gt;` | A React functional component that renders the dropdown menu. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-hook-form` | Used for form management and validation. |
+| `zod` | Used for schema validation. |
+| `lucide-react` | Provides icon components used in the UI. |
+| `@hookform/resolvers/zod` | Integrates `zod` with `react-hook-form` for validation. |
+
+## Error Handling
+
+The component uses `react-hook-form`'s validation mechanism to handle errors. Invalid form submissions trigger the `onInvalidChange` callback, allowing the parent component to handle invalid transformations.
+
+## Logging
+
+No explicit logging is implemented in this component.
+
+## TODOs
+
+No TODOs are present in the code.

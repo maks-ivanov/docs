@@ -1,0 +1,52 @@
+---
+title: "seaborn_formatters.py"
+---
+
+## High-level description
+
+The `SeabornFormatter` class in the `seaborn_formatters.py` file is designed to integrate the Seaborn visualization library with the Marimo framework. It extends the `FormatterFactory` class to register custom formatters for Seaborn's grid objects, enabling them to be displayed using Marimo's media viewer. The formatters convert Seaborn grid objects into MIME types that Marimo can render.
+
+## Code Structure
+
+- `SeabornFormatter` is a subclass of `FormatterFactory`.
+- It uses the `formatting.formatter` decorator to register formatters for specific Seaborn grid types.
+- The `_show_ax_or_subplots` function is a utility function used by the registered formatters to convert Seaborn grid objects into MIME types.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to define the MIME types that the formatters return.
+- `FormatterFactory` from `marimo._output.formatters.formatter_factory` is the base class that `SeabornFormatter` extends.
+- `formatting.formatter` from `marimo._output.formatting` is used to register the formatters.
+
+## Symbols
+
+### `SeabornFormatter`
+#### Description
+The `SeabornFormatter` class is responsible for registering formatters for Seaborn's grid objects, such as `FacetGrid`, `PairGrid`, and `JointGrid`. These formatters enable the conversion of Seaborn visualizations into a format that can be displayed by Marimo's media viewer.
+
+#### Inputs
+- None directly, but it operates on Seaborn grid objects when they are passed to the registered formatters.
+
+#### Outputs
+- None directly, but the registered formatters return a tuple of `KnownMimeType` and a string representation of the grid object.
+
+#### Internal Logic
+- The `package_name` method returns the string "seaborn", indicating the third-party package this formatter is associated with.
+- The `register` method imports Seaborn and uses the `formatting.formatter` decorator to register formatters for `FacetGrid`, `PairGrid`, and `JointGrid`.
+- The `_show_ax_or_subplots` function checks if the grid object has a `figure`, `ax`, or `axes` attribute and calls the `_mime_` method on it to get the MIME type and data. If none of these attributes are present, it defaults to returning a plain text representation of the grid.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `seaborn` | Used for creating visualizations that the formatter will handle. |
+| `marimo._output.formatting` | Provides the `formatter` decorator for registering formatters. |
+| `marimo._output.mime` | Provides the `MIME` protocol for converting objects to MIME types. |
+
+## Error Handling
+
+- The code uses `type: ignore` comments to suppress import errors related to Seaborn, which may not be installed in all environments.
+
+## TODOs
+
+- There is a comment indicating a need for a single source of truth for supported MIME types, suggesting potential future refactoring or documentation updates.

@@ -1,0 +1,129 @@
+---
+title: "autoreload.py"
+---
+
+## High-level description
+
+The `autoreload.py` module is designed to facilitate the automatic reloading of Python modules during runtime. It extends the functionality of the standard `reload` function by not only reloading modules but also updating instances of classes and functions with their new definitions. This module is particularly useful in development environments where code changes need to be reflected immediately without restarting the application.
+
+## Code Structure
+
+The main components of the code are the `ModuleReloader` and `ModuleDependencyFinder` classes, which work together to manage the reloading of modules and their dependencies. The `superreload` function is a key utility that enhances the standard `reload` function by updating existing objects with new code. The module also includes several helper functions for updating specific types of objects, such as functions, classes, and properties.
+
+## Symbols
+
+### `ModuleMTime`
+#### Description
+A data class that stores the name and modification time of a module file.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+### `modules_imported_by_cell`
+#### Description
+Determines which modules are imported by a given cell, based on the cell's import data and the current system modules.
+
+#### Inputs
+| Name        | Type                  | Description                        |
+|:------------|:----------------------|:-----------------------------------|
+| cell        | `CellImpl`            | The cell whose imports are being analyzed. |
+| sys_modules | `dict[str, ModuleType]` | The current system modules.        |
+
+#### Outputs
+| Name    | Type        | Description                        |
+|:--------|:------------|:-----------------------------------|
+| modules | `set[str]`  | A set of module names imported by the cell. |
+
+### `ModuleDependencyFinder`
+#### Description
+Finds and caches the dependencies of a module, using `modulefinder.ModuleFinder`. It can also evict modules from its cache.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Uses `modulefinder.ModuleFinder` to analyze module dependencies.
+- Caches results to avoid redundant computations.
+- Handles exceptions like `SyntaxError` and general exceptions to manage failed module analyses.
+
+### `ModuleReloader`
+#### Description
+A thread-safe class that manages the reloading of modules. It tracks module modification times and reloads modules when they change.
+
+#### Inputs
+- None
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Uses a lock to ensure thread safety.
+- Tracks failed reload attempts and module modification times.
+- Uses `superreload` to reload modules and update existing objects.
+
+### `superreload`
+#### Description
+An enhanced version of the `reload` function that updates existing objects in a module with new code definitions.
+
+#### Inputs
+| Name        | Type                        | Description                        |
+|:------------|:----------------------------|:-----------------------------------|
+| module      | `ModuleType`                | The module to be reloaded.         |
+| old_objects | `OldObjectsMapping | None` | Mapping of old objects to update.  |
+
+#### Outputs
+| Name    | Type        | Description                        |
+|:--------|:------------|:-----------------------------------|
+| module  | `ModuleType`| The reloaded module.               |
+
+#### Internal Logic
+- Collects old objects from the module.
+- Clears the module's namespace before reloading.
+- Updates functions, classes, and properties with new definitions.
+
+### `update_function`, `update_instances`, `update_class`, `update_property`
+#### Description
+Helper functions to update specific types of objects (functions, instances, classes, properties) with new code definitions.
+
+#### Inputs
+- `old`: The old object to be updated.
+- `new`: The new object providing updated code.
+
+#### Outputs
+- None
+
+#### Internal Logic
+- Each function checks for specific attributes and updates them from the new object to the old one.
+
+## References
+
+- `CellImpl` from `marimo._ast.cell` is used to determine the modules imported by a cell.
+- `write_traceback` from `marimo._messaging.tracebacks` is used to log errors during module reloading.
+- `marimo_logger` from `marimo._loggers` is used for logging debug information.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `gc`       | Used to find and update instances of classes. |
+| `modulefinder` | Used to find module dependencies. |
+| `importlib.reload` | Used to reload modules. |
+| `weakref`  | Used to hold weak references to old objects for updating. |
+
+## Error Handling
+
+- Catches `SyntaxError` and general exceptions during dependency finding and module reloading to prevent crashes and manage failed reload attempts.
+
+## Logging
+
+- Uses a logger (`LOGGER`) to log debug information, such as when modules are reloaded or when errors occur during reloading.
+
+## TODOs
+
+- There is a TODO comment suggesting the possibility of always evicting modules from the cache after reloading, indicating a potential area for improvement or further consideration.

@@ -1,0 +1,69 @@
+---
+title: "DeferredRequestRegistry.ts"
+---
+
+## High-level description
+
+The `DeferredRequestRegistry` class in the `DeferredRequestRegistry.ts` file is designed to manage deferred requests in a client-server architecture. It facilitates sending requests via HTTP and awaiting responses through a WebSocket connection. The class uses a unique identifier for each request to track and resolve or reject promises based on the server's response.
+
+## Code Structure
+
+- **`RequestId`**: A type alias for a uniquely typed string used to identify requests.
+- **`DeferredRequestRegistry`**: A generic class that manages a collection of deferred requests, allowing for asynchronous request handling and response resolution.
+
+## References
+
+- **`Deferred`**: A utility class used to create and manage promises, allowing for manual resolution or rejection.
+- **`generateUUID`**: A utility function that generates a unique identifier, used to create `RequestId`.
+- **`TypedString`**: A utility type that provides compile-time type safety for strings.
+
+## Symbols
+
+### `RequestId`
+#### Description
+`RequestId` is a type alias for a `TypedString` with the type `"RequestId"`. It is used to uniquely identify requests within the `DeferredRequestRegistry`.
+
+### `DeferredRequestRegistry`
+#### Description
+The `DeferredRequestRegistry` class manages deferred requests by storing them in a map with unique identifiers. It provides methods to send requests, and resolve or reject them based on responses received from a server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| operation | string | A string representing the operation associated with the requests. |
+| makeRequest | function | A function that sends the request, taking a `RequestId` and request data as parameters. |
+| opts | object | Optional settings, including a function to resolve existing requests with an empty response. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| promise | Promise&lt;RES&gt; | A promise that resolves or rejects based on the server's response. |
+
+#### Internal Logic
+- **Constructor**: Initializes the registry with an operation name, a request-making function, and optional settings.
+- **`request` Method**: 
+  - Clears existing requests if `resolveExistingRequests` is provided.
+  - Generates a new `RequestId` and creates a `Deferred` object.
+  - Sends the request using `makeRequest` and handles any errors by rejecting the promise.
+- **`resolve` Method**: Resolves the promise associated with a given `RequestId` and removes it from the registry.
+- **`reject` Method**: Rejects the promise associated with a given `RequestId` and removes it from the registry.
+
+## Side Effects
+- Modifies the internal state of the `requests` map by adding, resolving, or rejecting entries.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Deferred` | Manages the promise lifecycle for requests. |
+| `generateUUID` | Generates unique identifiers for requests. |
+| `TypedString` | Provides type safety for request identifiers. |
+
+## Error Handling
+- Errors during the request process are caught and used to reject the associated promise, ensuring that the caller is informed of the failure.
+
+## Logging
+- The code does not implement any logging mechanisms.
+
+## TODOs
+- There are no TODOs or notes left in the code.

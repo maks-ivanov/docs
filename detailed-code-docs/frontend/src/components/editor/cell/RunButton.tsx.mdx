@@ -1,0 +1,91 @@
+---
+title: "RunButton.tsx"
+---
+
+## High-level description
+
+The `RunButton.tsx` file defines a React component called `RunButton` that is used in a code editor interface to manage the execution of code cells. The component provides a button with different states and functionalities, such as running a cell, interrupting a running cell, or indicating that a cell cannot be run due to certain conditions. It uses various icons and tooltips to convey the current state and available actions to the user.
+
+## Code Structure
+
+The main symbol in this file is the `RunButton` component, which is a functional React component. It uses several utility functions and components such as `computeColor`, `useShouldShowInterrupt`, `Button`, `Tooltip`, and icons from `lucide-react`. The `RunButton` component is responsible for rendering the button with appropriate styles and behavior based on the cell's runtime state and configuration.
+
+## References
+
+- `useShouldShowInterrupt`: A custom hook used to determine if the interrupt button should be shown.
+- `sendInterrupt`: A function to send an interrupt request to stop a running cell.
+- `Button`: A UI component for rendering buttons.
+- `Tooltip`: A UI component for displaying tooltips.
+- `renderShortcut`: A utility function to render keyboard shortcuts.
+- `cn`: A utility function for class name merging.
+
+## Symbols
+
+### `computeColor`
+#### Description
+Determines the color of the button based on the application's state, whether the cell needs to be run, if it is loading, or if it is inactive.
+
+#### Inputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| appClosed | boolean | Indicates if the application is closed.          |
+| needsRun  | boolean | Indicates if the cell needs to be run.           |
+| loading   | boolean | Indicates if the cell is currently loading.      |
+| inactive  | boolean | Indicates if the cell is inactive.               |
+
+#### Outputs
+| Name  | Type   | Description                        |
+|:------|:-------|:-----------------------------------|
+| color | string | The computed color for the button. |
+
+#### Internal Logic
+- Returns "disabled" if the app is closed.
+- Returns "yellow" if the cell needs to be run and is not loading.
+- Returns "disabled" if the cell is loading or inactive.
+- Returns "hint-green" otherwise.
+
+### `RunButton`
+#### Description
+A React component that renders a button for running or interrupting a code cell, with different states and tooltips based on the cell's runtime status and configuration.
+
+#### Inputs
+| Name      | Type         | Description                                      |
+|:----------|:-------------|:-------------------------------------------------|
+| edited    | boolean      | Indicates if the cell has been edited.           |
+| status    | RuntimeState | The current runtime state of the cell.           |
+| needsRun  | boolean      | Indicates if the cell needs to be run.           |
+| appClosed | boolean      | Indicates if the application is closed.          |
+| config    | CellConfig   | Configuration of the cell.                       |
+| onClick   | function     | Optional click handler for the button.           |
+
+#### Outputs
+| Name  | Type      | Description                  |
+|:------|:----------|:-----------------------------|
+| JSX.Element | React Element | The rendered button component. |
+
+#### Internal Logic
+- Determines the button's color using `computeColor`.
+- Uses `useShouldShowInterrupt` to decide if the interrupt button should be shown.
+- Renders different icons and tooltips based on the cell's status and configuration.
+- Handles button clicks to either run or interrupt the cell.
+
+## Dependencies
+
+| Dependency     | Purpose                                      |
+|:---------------|:---------------------------------------------|
+| `lucide-react` | Provides icons for the button.               |
+| `@/components/editor/inputs/Inputs` | Provides the `Button` component. |
+| `@/core/network/requests` | Provides the `sendInterrupt` function. |
+| `@/utils/cn`   | Utility for merging class names.             |
+
+## Error Handling
+
+The component does not explicitly handle errors but relies on the `sendInterrupt` function, which is part of the network requests module, to manage any network-related errors.
+
+## Logging
+
+No logging mechanisms are implemented in this file.
+
+## TODOs
+
+No TODOs are present in the code.

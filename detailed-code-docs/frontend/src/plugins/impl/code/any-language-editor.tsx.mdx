@@ -1,0 +1,67 @@
+---
+title: "any-language-editor.tsx"
+---
+
+## High-level description
+
+The `any-language-editor.tsx` file defines a React component named `AnyLanguageCodeMirror`, which is a code editor capable of supporting multiple programming languages. It utilizes the `@uiw/react-codemirror` library to provide a CodeMirror-based editor and dynamically loads language support extensions based on the specified language. If the specified language is not supported, it displays an error banner to inform the user.
+
+## Code Structure
+
+The main symbol in this file is the `AnyLanguageCodeMirror` React component. It interacts with the `@uiw/react-codemirror` library to render the code editor and uses the `@uiw/codemirror-extensions-langs` package to load language-specific extensions. The component also uses the `Logger` utility for logging warnings and the `ErrorBanner` component to display error messages when a language is not supported.
+
+## References
+
+- `@uiw/react-codemirror`: Provides the base CodeMirror editor component.
+- `@uiw/codemirror-extensions-langs`: Supplies language-specific extensions for CodeMirror.
+- `Logger`: A utility for logging messages to the console.
+- `ErrorBanner`: A component for displaying error messages to the user.
+
+## Symbols
+
+### `AnyLanguageCodeMirror`
+#### Description
+The `AnyLanguageCodeMirror` component is a React functional component that renders a CodeMirror editor with support for various programming languages. It checks if the specified language is supported and loads the corresponding language extension. If the language is not supported, it logs a warning and displays an error banner.
+
+#### Inputs
+| Name       | Type                  | Description                                      |
+|:-----------|:----------------------|:-------------------------------------------------|
+| language   | string                | The programming language to be supported by the editor. |
+| extensions | Extension[] (optional)| Additional CodeMirror extensions to be applied.  |
+| props      | ReactCodeMirrorProps  | Additional properties passed to the CodeMirror component. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | The rendered CodeMirror editor component with optional error banner. |
+
+#### Internal Logic
+1. **Language Support Check**: The component checks if the specified language is supported by verifying its presence in the `langs` object.
+2. **Logging**: If the language is not supported, a warning is logged using the `Logger`.
+3. **Extensions Preparation**: The `useMemo` hook is used to prepare the list of extensions, including the language-specific extension and any additional extensions provided.
+4. **Rendering**: The component conditionally renders an `ErrorBanner` if the language is not supported, followed by the `ReactCodeMirror` component with the prepared extensions.
+
+## Side Effects
+- Logs a warning message if the specified language is not supported.
+- Displays an error banner when the language is unsupported.
+
+## Dependencies
+
+| Dependency                          | Purpose                                                  |
+|:------------------------------------|:---------------------------------------------------------|
+| `@uiw/react-codemirror`             | Provides the CodeMirror editor component.                |
+| `@uiw/codemirror-extensions-langs`  | Supplies language-specific extensions for CodeMirror.    |
+| `Logger`                            | Used for logging warnings and errors.                    |
+| `ErrorBanner`                       | Displays error messages when a language is unsupported.  |
+
+## Error Handling
+
+The component handles unsupported languages by logging a warning and displaying an error banner to inform the user. The error banner lists the supported languages.
+
+## Logging
+
+The `Logger` utility is used to log warnings when a specified language is not found in the supported languages list. This helps in debugging and tracking unsupported language requests.
+
+## TODOs
+
+There are no TODOs or additional notes left in the code.

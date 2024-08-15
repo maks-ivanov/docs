@@ -1,0 +1,62 @@
+---
+title: "EmotionCacheProvider.tsx"
+---
+
+## High-level description
+
+The `EmotionCacheProvider.tsx` file defines a custom React component, `EmotionCacheProvider`, which is used to create and provide an Emotion cache that can work within shadow DOMs. This is particularly useful for styling components that are encapsulated within shadow roots, ensuring that styles are correctly applied even when using libraries like Material-UI (MUI) that depend on Emotion for styling.
+
+## Code Structure
+
+The main symbol in this file is the `EmotionCacheProvider` component. It utilizes the `createCache` function from the `@emotion/cache` library to create a cache for Emotion styles. This cache is then provided to its children components using the `CacheProvider` from `@emotion/react`. The component takes a `container` prop, which is expected to be a `ShadowRoot` or `null`, and uses this to determine where to inject the style elements.
+
+## Symbols
+
+### `EmotionCacheProvider`
+#### Description
+The `EmotionCacheProvider` is a React functional component that provides a custom Emotion cache to its children. This cache is specifically designed to work within shadow DOMs, which are used to encapsulate styles and markup in web components. The component ensures that styles are correctly applied by creating a style element within the shadow root if one does not already exist.
+
+#### Inputs
+| Name     | Type                        | Description                                      |
+|:---------|:----------------------------|:-------------------------------------------------|
+| container | ShadowRoot \| null          | The shadow root where styles should be injected. |
+| children | React.ReactNode             | The child components that will use the cache.    |
+
+#### Outputs
+| Name     | Type            | Description                                      |
+|:---------|:----------------|:-------------------------------------------------|
+| output   | JSX.Element     | A React element that provides the Emotion cache. |
+
+#### Internal Logic
+- The component uses the `useMemo` hook to create a cache only when the `container` changes.
+- If the `container` is `null`, it creates a default cache with a key of "mo" and the `prepend` option set to `true`.
+- If the `container` is a `ShadowRoot`, it checks for an existing `style` element. If none exists, it creates one and appends it to the container.
+- The cache is created with the `style` element as the container, ensuring that styles are scoped to the shadow DOM.
+- The `CacheProvider` component from `@emotion/react` is used to provide this cache to the children components.
+
+## References
+
+- The `EmotionCacheProvider` is used in other parts of the codebase, such as in the `BadPlugin.tsx` and `JsonOutputPlugin.tsx` files, to ensure that styles are correctly applied within shadow DOMs.
+
+## Dependencies
+
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `@emotion/cache` | Used to create a custom cache for Emotion styles.                        |
+| `@emotion/react` | Provides the `CacheProvider` component to supply the custom cache.      |
+
+## Error Handling
+
+The component does not explicitly handle errors. It assumes that the `container` is either a valid `ShadowRoot` or `null`. If the `container` is not a valid DOM element, it may lead to runtime errors when attempting to append the `style` element.
+
+## Logging
+
+There are no logging mechanisms implemented in this code.
+
+## Side Effects
+
+- The component may modify the DOM by appending a `style` element to the provided `ShadowRoot` if one does not already exist. This is necessary to ensure that styles are scoped correctly within the shadow DOM.
+
+## Performance Considerations
+
+- The use of `useMemo` ensures that the cache is only recreated when the `container` changes, which can help optimize performance by avoiding unnecessary cache creation.

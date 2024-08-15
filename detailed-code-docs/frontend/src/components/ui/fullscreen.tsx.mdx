@@ -1,0 +1,74 @@
+---
+title: "fullscreen.tsx"
+---
+
+## High-level description
+
+The `fullscreen.tsx` file provides functionality to manage and utilize full-screen mode in a React application. It includes a custom hook to track the current full-screen element and a higher-order component (HOC) to wrap components, allowing them to use the full-screen element as their container when in full-screen mode.
+
+## Code Structure
+
+The file contains two main symbols: `useFullScreenElement` and `withFullScreenAsRoot`. The `useFullScreenElement` is a custom hook that tracks the current full-screen element, while `withFullScreenAsRoot` is a higher-order component that wraps a given component to use the full-screen element as its container if available.
+
+## Symbols
+
+### `useFullScreenElement`
+#### Description
+The `useFullScreenElement` function is a custom React hook that provides the current full-screen element. It updates the state whenever the full-screen mode changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This hook does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fullScreenElement | `Element \| null` | The current full-screen element or `null` if not in full-screen mode. |
+
+#### Internal Logic
+- Initializes the state with the current `document.fullscreenElement`.
+- Uses the `useEventListener` hook to listen for the `fullscreenchange` event on the document.
+- Updates the state with the new `document.fullscreenElement` whenever the event is triggered.
+
+### `withFullScreenAsRoot`
+#### Description
+The `withFullScreenAsRoot` function is a higher-order component that wraps a given component, allowing it to use the full-screen element as its container if the application is in full-screen mode.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Component | `React.ComponentType&lt;PortalProps&gt;` | The component to be wrapped by the HOC. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Comp | `React.ComponentType&lt;T&gt;` | The wrapped component that uses the full-screen element as its container if available. |
+
+#### Internal Logic
+- Uses the `useFullScreenElement` hook to get the current full-screen element.
+- If a full-screen element is present, it renders the wrapped component with the full-screen element as the container.
+- If no full-screen element is present, it renders the wrapped component normally.
+
+## References
+
+- `useEventListener`: This hook is imported from `@/hooks/useEventListener` and is used to listen for the `fullscreenchange` event on the document.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@radix-ui/react-popover` | Provides type definitions for `PortalProps`. |
+| `react` | Used for React components and hooks like `useState`. |
+
+## Error Handling
+
+The code does not explicitly handle errors, but it ensures that the event listener is only added if the target is valid.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The code does not expose any API endpoints or interfaces. It provides a hook and a higher-order component for internal use within a React application.

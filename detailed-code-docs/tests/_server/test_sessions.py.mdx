@@ -1,0 +1,108 @@
+---
+title: "test_sessions.py"
+---
+
+## High-level description
+
+The target file `tests/_server/test_sessions.py` contains unit tests for the session management components of a server application. These tests focus on verifying the behavior of the `QueueManager`, `KernelManager`, and `Session` classes, which are responsible for managing communication queues, kernel processes, and client sessions, respectively. The tests ensure that these components function correctly in various scenarios, such as starting and stopping kernels, handling session connections, and managing consumer interactions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `QueueManager`: Manages different types of queues for communication between the server and the kernel.
+- `KernelManager`: Manages the lifecycle of a kernel, including starting, interrupting, and closing it.
+- `Session`: Represents a client session, managing its kernel and consumer connections.
+- `save_and_restore_main`: A decorator function used to restore the main module after running tests, ensuring that the kernel's modifications do not affect subsequent tests.
+
+## Symbols
+
+### `save_and_restore_main`
+#### Description
+A decorator function that saves the current state of the `__main__` module and restores it after the decorated function is executed. This is useful for tests that involve kernel operations, which may alter the `__main__` module.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| f | Callable | The function to be decorated. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| wrapper | Callable | The wrapped function with state-saving logic. |
+
+#### Internal Logic
+- Saves the current `__main__` module.
+- Executes the decorated function.
+- Restores the `__main__` module to its original state.
+
+### `test_queue_manager`
+#### Description
+Tests the `QueueManager` class to ensure it correctly initializes queues based on the `use_multiprocessing` flag.
+
+#### Outputs
+- Asserts that the `QueueManager` initializes the correct types of queues (multiprocessing or threading).
+
+### `test_kernel_manager`
+#### Description
+Tests the `KernelManager` class to verify that it can start and stop a kernel correctly.
+
+#### Outputs
+- Asserts that the kernel starts and stops as expected, and that the associated queues are empty after shutdown.
+
+### `test_kernel_manager_interrupt`
+#### Description
+Tests the ability of the `KernelManager` to interrupt a running kernel process.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tmp_path | Path | A temporary path for file operations during the test. |
+
+#### Outputs
+- Asserts that the kernel can be interrupted and that file operations reflect the expected state.
+
+#### Internal Logic
+- Starts a kernel and writes to a file.
+- Interrupts the kernel and checks that the file content remains unchanged after the interrupt.
+
+### `test_session`
+#### Description
+Tests the `Session` class to ensure it manages session lifecycle and consumer interactions correctly.
+
+#### Outputs
+- Asserts that the session starts and stops correctly, and that consumer callbacks are invoked as expected.
+
+### `test_session_disconnect_reconnect`
+#### Description
+Tests the `Session` class's ability to handle consumer disconnection and reconnection.
+
+#### Outputs
+- Asserts that the session can disconnect a consumer and reconnect a new one, maintaining the correct state.
+
+### `test_session_with_kiosk_consumers`
+#### Description
+Tests the `Session` class with multiple consumers, including kiosk consumers.
+
+#### Outputs
+- Asserts that the session manages multiple consumers correctly, including starting and stopping them.
+
+## References
+
+- `QueueManager`, `KernelManager`, and `Session` classes from `marimo._server.sessions`.
+- `AppMetadata`, `CreationRequest`, `ExecutionRequest`, and `SetUIElementValueRequest` from `marimo._runtime.requests`.
+- `ConnectionState` and `SessionMode` from `marimo._server.model`.
+- `UserConfigManager` from `marimo._config.manager`.
+- `AppFileManager` from `marimo._server.file_manager`.
+- `initialize_asyncio` from `marimo._server.utils`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest.mock` | Used for creating mock objects in tests. |
+| `queue` | Provides queue implementations for inter-thread communication. |
+| `multiprocessing.queues` | Provides queue implementations for inter-process communication. |
+
+## TODOs
+
+- The code contains a TODO comment suggesting the automation of the `save_and_restore_main` decorator for every test in the test suite. This indicates a potential improvement for test consistency and reliability.

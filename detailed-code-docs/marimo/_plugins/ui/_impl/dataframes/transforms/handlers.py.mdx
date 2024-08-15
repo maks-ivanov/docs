@@ -1,0 +1,77 @@
+---
+title: "handlers.py"
+---
+
+## High-level description
+
+The target file, `handlers.py`, defines two classes, `PandasTransformHandler` and `PolarsTransformHandler`, which implement data transformation operations on Pandas and Polars DataFrames, respectively. These classes provide static methods to handle various transformations such as column conversion, renaming, sorting, filtering, grouping, aggregation, column selection, row shuffling, and row sampling. The transformations are defined by specific types imported from the `types` module, and the handlers ensure that these transformations are applied correctly to the DataFrames.
+
+## Code Structure
+
+The main symbols in the code are the two classes, `PandasTransformHandler` and `PolarsTransformHandler`, which both inherit from the `TransformHandler` abstract base class. Each class implements a set of static methods corresponding to different transformation types, such as `handle_column_conversion`, `handle_rename_column`, etc. These methods take a DataFrame and a transformation object as inputs and return a transformed DataFrame. The `assert_never` function is used to ensure that all possible transformation types and operations are handled, raising an error if an unexpected type is encountered.
+
+## References
+
+- `TransformHandler`: An abstract base class from the `types` module that defines the interface for transformation handlers.
+- `assert_never`: A utility function used to ensure exhaustive handling of transformation types and operations.
+- Various transformation types such as `ColumnConversionTransform`, `RenameColumnTransform`, etc., are imported from the `types` module and used as inputs to the handler methods.
+
+## Symbols
+
+### `PandasTransformHandler`
+#### Description
+Handles transformations on Pandas DataFrames by implementing methods for each transformation type defined in the `types` module.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | `pd.DataFrame` | The Pandas DataFrame to be transformed. |
+| transform | `Transform` | The transformation object specifying the operation to be applied. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `pd.DataFrame` | The transformed Pandas DataFrame. |
+
+#### Internal Logic
+- Each method in `PandasTransformHandler` corresponds to a specific transformation type and applies the transformation to the DataFrame using Pandas operations.
+- For example, `handle_column_conversion` changes the data type of a specified column, while `handle_filter_rows` applies filtering based on specified conditions.
+
+### `PolarsTransformHandler`
+#### Description
+Handles transformations on Polars DataFrames by implementing methods for each transformation type defined in the `types` module.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | `pl.DataFrame` | The Polars DataFrame to be transformed. |
+| transform | `Transform` | The transformation object specifying the operation to be applied. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `pl.DataFrame` | The transformed Polars DataFrame. |
+
+#### Internal Logic
+- Each method in `PolarsTransformHandler` corresponds to a specific transformation type and applies the transformation to the DataFrame using Polars operations.
+- For example, `handle_column_conversion` changes the data type of a specified column using Polars' casting functionality, while `handle_filter_rows` builds a filter expression to apply row filtering.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pandas` | Used for handling transformations on Pandas DataFrames. |
+| `polars` | Used for handling transformations on Polars DataFrames. |
+| `numpy` | Utilized in the `_coerce_value` function to coerce values to specific data types. |
+
+## Error Handling
+
+The `assert_never` function is used to ensure that all possible transformation types and operations are handled. If an unexpected type or operation is encountered, an `AssertionError` is raised, indicating an unhandled value.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

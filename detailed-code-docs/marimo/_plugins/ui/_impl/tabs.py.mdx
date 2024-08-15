@@ -1,0 +1,85 @@
+---
+title: "tabs.py"
+---
+
+## High-level description
+
+The `tabs` class in the `marimo/_plugins/ui/_impl/tabs.py` file is a UI component that allows for the creation of tabbed interfaces in applications. It provides functionality to display content in a tabbed view, control which tab is selected, and optionally load tab content lazily. This class is part of the Marimo UI framework, which is designed to facilitate the creation of interactive and dynamic user interfaces.
+
+## Code Structure
+
+The `tabs` class inherits from the `UIElement` class, which is a generic class for UI components that have a value and can interact with the frontend. The `tabs` class uses several utility functions and classes from the Marimo framework, such as `as_html`, `md`, and `lazy_ui`, to render content and manage lazy loading.
+
+## Symbols
+
+### `tabs`
+#### Description
+The `tabs` class is a UI component that displays content in a tabbed interface. It allows users to switch between different views by selecting tabs. The class supports lazy loading of tab content, which can improve performance by deferring the loading of content until it is needed.
+
+#### Inputs
+| Name     | Type               | Description                                                                 |
+|:---------|:-------------------|:----------------------------------------------------------------------------|
+| `tabs`   | `dict[str, object]`| A dictionary mapping tab names to their content. Strings are interpreted as markdown. |
+| `value`  | `Optional[str]`    | The name of the tab to open initially. Defaults to the first tab if not specified. |
+| `lazy`   | `bool`             | A flag indicating whether to lazily load the tab content. Defaults to `False`. |
+| `label`  | `str`              | An optional label for the tabs component. Defaults to an empty string. |
+| `on_change` | `Optional[Callable[[str], None]]` | An optional callback function that is called when the selected tab changes. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| `self` | `tabs` | An instance of the `tabs` class.   |
+
+#### Internal Logic
+1. **Render Content**: The `render_content` function is defined to convert tab content into HTML. If `lazy` is `True`, it wraps the content in a `lazy_ui` component. If the content is a string, it is converted to markdown using the `md` function. Otherwise, it is converted to HTML using the `as_html` function.
+2. **Tab Items**: The content for each tab is rendered and concatenated into a single HTML string, with each tab wrapped in a `&lt;div&gt;` element.
+3. **Tab Keys and Labels**: The keys (names) of the tabs are stored in `_tab_keys`, and their labels are converted to markdown.
+4. **Initial Tab Selection**: The index of the initially selected tab is determined based on the `value` parameter. If `value` is not specified or not found, the first tab is selected by default.
+5. **Initialization**: The `UIElement` superclass is initialized with the component name, initial value, label, arguments, and slotted HTML content.
+
+### `_convert_value`
+#### Description
+This method converts a string value representing the selected tab index into the corresponding tab name.
+
+#### Inputs
+| Name  | Type   | Description                        |
+|:------|:-------|:-----------------------------------|
+| `value` | `str` | The index of the selected tab as a string. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| `tab_name` | `str` | The name of the selected tab.   |
+
+#### Internal Logic
+- If the `value` is empty, it returns the name of the first tab.
+- Otherwise, it converts the `value` to an integer index and returns the corresponding tab name from `_tab_keys`.
+
+## References
+
+- **`UIElement`**: The `tabs` class extends the `UIElement` class, which provides the base functionality for UI components with values.
+- **`as_html`**: Used to convert objects to HTML for rendering.
+- **`md`**: Used to convert markdown strings to HTML.
+- **`lazy_ui`**: Used to wrap content for lazy loading.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._output.formatting` | Provides the `as_html` function for HTML conversion. |
+| `marimo._output.md` | Provides the `md` function for markdown conversion. |
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for documentation. |
+| `marimo._plugins.stateless.lazy` | Provides the `lazy` function for lazy loading. |
+| `marimo._plugins.ui._core.ui_element` | Provides the `UIElement` class, which is the base class for `tabs`. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checking and validation in the `UIElement` class. It assumes that the inputs are valid and that the necessary dependencies are available.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

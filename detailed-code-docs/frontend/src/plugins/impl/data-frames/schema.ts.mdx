@@ -1,0 +1,176 @@
+---
+title: "schema.ts"
+---
+
+## High-level description
+
+The target file, `schema.ts`, defines a set of schemas using the `zod` library to validate and describe transformations that can be applied to data frames. These transformations include operations like column conversion, renaming, sorting, filtering, grouping, and more. The schemas ensure that the transformations are well-formed and provide metadata for UI components to render appropriate forms for user input.
+
+## Code Structure
+
+The main symbols in the code are various transformation schemas, each representing a specific type of data frame operation. These schemas are interconnected through the `TransformTypeSchema`, which is a union of all individual transformation schemas. The `TransformationsSchema` encapsulates an array of these transformation types, allowing for a sequence of operations to be defined and validated.
+
+## Symbols
+
+### `column_id`
+#### Description
+Defines a schema for a column identifier, which can be either a string or a number. It includes validation to ensure the identifier is not empty and transforms the value to a `ColumnId` type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| v | string or number | The column identifier to be validated and transformed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | ColumnId | The validated and transformed column identifier. |
+
+### `column_id_array`
+#### Description
+Defines a schema for an array of column identifiers, ensuring that at least one column is specified. It uses the `column_id` schema for individual elements.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Array&lt;ColumnId&gt; | An array of validated column identifiers. |
+
+### `ColumnConversionTransformSchema`
+#### Description
+Defines a schema for a column conversion transformation, specifying the column to convert, the target data type, and error handling strategy.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "column_conversion". |
+| column_id | ColumnId | The identifier of the column to convert. |
+| data_type | string | The target data type for conversion. |
+| errors | string | Strategy for handling conversion errors, either "ignore" or "raise". |
+
+### `RenameColumnTransformSchema`
+#### Description
+Defines a schema for renaming a column, specifying the current and new column identifiers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "rename_column". |
+| column_id | ColumnId | The current identifier of the column. |
+| new_column_id | ColumnId | The new identifier for the column. |
+
+### `SortColumnTransformSchema`
+#### Description
+Defines a schema for sorting a column, specifying the column to sort, the sort order, and the position of N/A values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "sort_column". |
+| column_id | ColumnId | The identifier of the column to sort. |
+| ascending | boolean | Whether to sort in ascending order. |
+| na_position | string | Position of N/A values, either "first" or "last". |
+
+### `ConditionSchema`
+#### Description
+Defines a schema for a condition used in filtering rows, specifying the column, operator, and value for the condition.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| column_id | ColumnId | The identifier of the column to apply the condition. |
+| operator | OperatorType | The operator to use in the condition. |
+| value | any | The value to compare against. |
+
+### `FilterRowsTransformSchema`
+#### Description
+Defines a schema for filtering rows based on conditions, specifying the operation type and conditions to apply.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "filter_rows". |
+| operation | string | The operation type, either "keep_rows" or "remove_rows". |
+| where | Array&lt;ConditionType&gt; | The conditions to apply for filtering. |
+
+### `GroupByTransformSchema`
+#### Description
+Defines a schema for grouping data by specified columns and applying an aggregation function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "group_by". |
+| column_ids | Array&lt;ColumnId&gt; | The identifiers of columns to group by. |
+| aggregation | string | The aggregation function to apply. |
+| drop_na | boolean | Whether to drop N/A values. |
+
+### `AggregateTransformSchema`
+#### Description
+Defines a schema for aggregating data across specified columns using multiple aggregation functions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "aggregate". |
+| column_ids | Array&lt;ColumnId&gt; | The identifiers of columns to aggregate. |
+| aggregations | Array&lt;string&gt; | The aggregation functions to apply. |
+
+### `SelectColumnsTransformSchema`
+#### Description
+Defines a schema for selecting specific columns from the data frame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "select_columns". |
+| column_ids | Array&lt;ColumnId&gt; | The identifiers of columns to select. |
+
+### `SampleRowsTransformSchema`
+#### Description
+Defines a schema for sampling rows from the data frame, specifying the number of rows, seed for randomness, and whether to sample with replacement.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "sample_rows". |
+| n | number | The number of rows to sample. |
+| seed | number | The seed for random sampling. |
+| replace | boolean | Whether to sample with replacement. |
+
+### `ShuffleRowsTransformSchema`
+#### Description
+Defines a schema for shuffling rows in the data frame, specifying a seed for randomness.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | string | The type of transformation, fixed as "shuffle_rows". |
+| seed | number | The seed for random shuffling. |
+
+### `TransformTypeSchema`
+#### Description
+A union schema that encompasses all individual transformation schemas, allowing for validation of any transformation type.
+
+### `TransformationsSchema`
+#### Description
+Defines a schema for a sequence of transformations, encapsulating an array of `TransformTypeSchema`.
+
+## References
+
+- `AGGREGATION_FNS`, `ColumnId`, `NUMPY_DTYPES` from `types.ts` are used to define valid values for certain fields in the schemas.
+- `FieldOptions` and `randomNumber` from `forms/options.ts` are used for field descriptions and default values.
+- `ALL_OPERATORS`, `OperatorType`, and `isConditionValueValid` from `utils/operators.ts` are used in the `ConditionSchema` and `FilterRowsTransformSchema`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for schema validation and transformation. |
+
+## Error Handling
+
+The schemas use `zod` to enforce validation rules, providing descriptive error messages when validation fails. This ensures that any transformation applied to a data frame is well-formed and adheres to the expected structure.
+
+## Logging
+
+No explicit logging is implemented in this file.

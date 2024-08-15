@@ -1,0 +1,64 @@
+---
+title: "test_execution.py"
+---
+
+## High-level description
+
+The target file `tests/_server/api/endpoints/test_execution.py` contains a suite of test cases for various API endpoints related to kernel operations in a server application. These tests are designed to verify the functionality of endpoints that handle UI element value setting, instantiation, function calls, session interruptions, session restarts, cell execution, and scratchpad execution. The tests are organized into two classes, `TestExecutionRoutes_EditMode` and `TestExecutionRoutes_RunMode`, which test the endpoints under different session modes.
+
+## Code Structure
+
+The code is structured into two main classes, `TestExecutionRoutes_EditMode` and `TestExecutionRoutes_RunMode`, each containing several static methods that represent individual test cases. These methods use the `TestClient` from the `starlette` library to simulate HTTP requests to the server's API endpoints. The tests are decorated with session management decorators (`with_session` and `with_read_session`) to ensure that the appropriate session context is established before executing the tests.
+
+## References
+
+- `get_session_manager`: A function from `tests/_server/conftest.py` used to retrieve the session manager from the client.
+- `token_header`, `with_session`, `with_read_session`: Decorators and utility functions from `tests/_server/mocks.py` used for session management and authentication in the tests.
+
+## Symbols
+
+### `TestExecutionRoutes_EditMode`
+#### Description
+This class contains test cases for API endpoints when the session is in edit mode. It tests the ability to set UI element values, instantiate objects, make function calls, interrupt sessions, restart sessions, run cells, and execute scratchpad code.
+
+#### Methods
+
+- **`test_set_ui_element_value`**: Tests the `/api/kernel/set_ui_element_value` endpoint to ensure UI element values can be set successfully.
+- **`test_instantiate`**: Tests the `/api/kernel/instantiate` endpoint to verify object instantiation.
+- **`test_function_call`**: Tests the `/api/kernel/function_call` endpoint to ensure function calls are executed correctly.
+- **`test_interrupt`**: Tests the `/api/kernel/interrupt` endpoint to verify session interruption functionality.
+- **`test_restart_session`**: Tests the `/api/kernel/restart_session` endpoint to ensure sessions can be restarted.
+- **`test_run_cell`**: Tests the `/api/kernel/run` endpoint to verify cell execution.
+- **`test_run_scratchpad`**: Tests the `/api/kernel/scratchpad/run` endpoint to ensure scratchpad code execution.
+
+### `TestExecutionRoutes_RunMode`
+#### Description
+This class contains test cases for API endpoints when the session is in run mode. It tests similar functionalities as `TestExecutionRoutes_EditMode` but expects different outcomes due to the session mode restrictions.
+
+#### Methods
+
+- **`test_set_ui_element_value`**: Similar to the edit mode, tests the ability to set UI element values.
+- **`test_instantiate`**: Verifies object instantiation in run mode.
+- **`test_function_call`**: Ensures function calls are executed correctly in run mode.
+- **`test_interrupt`**: Tests session interruption, expecting a 401 status due to mode restrictions.
+- **`test_restart_session`**: Tests session restart, expecting a 401 status due to mode restrictions.
+- **`test_run_cell`**: Verifies cell execution, expecting a 401 status due to mode restrictions.
+- **`test_run_scratchpad`**: Ensures scratchpad code execution, expecting a 401 status due to mode restrictions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.testclient.TestClient` | Used to simulate HTTP requests to the server's API endpoints. |
+
+## Error Handling
+
+The tests assert the expected HTTP status codes and response content types. In `TestExecutionRoutes_RunMode`, certain tests expect a 401 status code, indicating unauthorized access due to session mode restrictions.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the code. The tests rely on assertions to validate the expected outcomes.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

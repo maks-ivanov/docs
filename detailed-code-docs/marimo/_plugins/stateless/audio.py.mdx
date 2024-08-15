@@ -1,0 +1,61 @@
+---
+title: "audio.py"
+---
+
+## High-level description
+
+The `audio` function in the `marimo/_plugins/stateless/audio.py` file is designed to render audio files as HTML audio players. It accepts various types of input for audio sources, including URLs, file paths, byte streams, and file-like objects, and returns an `Html` object that represents an audio player with controls.
+
+## Code Structure
+
+The main function in this file is `audio`, which interacts with several other components in the Marimo library to achieve its functionality. It uses the `mo_data.audio` function to handle audio data and the `Html` class to generate HTML output. The function also utilizes the `io_to_data_url` utility to convert audio data into a format suitable for embedding in HTML.
+
+## Symbols
+
+### `audio`
+#### Description
+The `audio` function is responsible for converting an audio source into an HTML audio player. It supports various input types, such as URLs, file paths, byte arrays, and file-like objects, and returns an `Html` object that can be rendered in a web page or application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| src  | Union[str, io.BytesIO] | The source of the audio file, which can be a URL, file path, byte stream, or file-like object. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Html | An `Html` object representing an audio player with controls. |
+
+#### Internal Logic
+1. **Determine Source Type**: The function first checks the type of the `src` input to determine how to process it.
+2. **File-like Objects**: If `src` is a file-like object, it reads the data, converts it to a URL using `mo_data.audio`, and then resets the file pointer.
+3. **Bytes**: If `src` is a byte array, it directly converts it to a URL using `mo_data.audio`.
+4. **File Path**: If `src` is a string and a valid file path, it reads the file, converts the data to a URL, and uses the file extension to determine the audio format.
+5. **URL or Other Strings**: If `src` is a URL or any other string, it uses `io_to_data_url` to convert it into a data URL with a fallback MIME type of "audio/wav".
+6. **HTML Generation**: Finally, it creates an `Html` object using the `h.audio` method from the `_HTMLBuilder` class, embedding the resolved source URL and enabling audio controls.
+
+## References
+
+- **`mo_data.audio`**: This function is used to convert audio data into a virtual file and obtain a URL for embedding.
+- **`Html`**: The `Html` class is used to wrap the generated HTML string for rendering.
+- **`io_to_data_url`**: A utility function that converts file-like objects or byte data into data URLs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used to check if a string is a valid file path and to handle file operations. |
+| `io` | Provides support for file-like objects and byte streams. |
+| `marimo._output.data.data` | Contains the `audio` function for handling audio data. |
+| `marimo._output.builder` | Provides the `_HTMLBuilder` class for generating HTML elements. |
+| `marimo._output.hypertext` | Contains the `Html` class for wrapping HTML content. |
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for documentation purposes. |
+| `marimo._plugins.core.media` | Contains the `io_to_data_url` function for converting data to URLs. |
+
+## Error Handling
+
+The function does not explicitly handle errors beyond basic type checking. It assumes that the input is valid and that the necessary file operations will succeed. If an unsupported data type is provided, it defaults to using `io_to_data_url` with a fallback MIME type.
+
+## Logging
+
+There is no logging implemented in this function. Any issues or errors would need to be caught and handled by the calling code or higher-level application logic.

@@ -1,0 +1,106 @@
+---
+title: "form.tsx"
+---
+
+## High-level description
+
+The target file, `form.tsx`, is a React component that dynamically renders forms based on Zod schemas. It leverages the `react-hook-form` library to manage form state and validation. The component supports various input types, including strings, numbers, booleans, dates, and arrays, and it can handle complex form structures like nested objects and unions. It also integrates with context providers to fetch and display column-related data dynamically.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ZodForm` is the main component that initializes the form using a Zod schema and a `UseFormReturn` object.
+- `renderZodSchema` is a recursive function that renders form fields based on the Zod schema type.
+- Various form field components like `StringFormField`, `ColumnFormField`, and `MultiSelectFormField` are used to render specific input types.
+- Contexts such as `ColumnInfoContext` and `ColumnFetchValuesContext` provide additional data for rendering specific fields.
+
+## Symbols
+
+### `ZodForm`
+#### Description
+`ZodForm` is a React component that renders a form based on a given Zod schema. It uses the `FormProvider` from `react-hook-form` to manage form state and validation.
+
+#### Inputs
+| Name   | Type            | Description                  |
+|:-------|:----------------|:-----------------------------|
+| schema | `z.ZodType`     | The Zod schema for the form. |
+| form   | `UseFormReturn` | The form state and methods.  |
+| path   | `Path&lt;T&gt;`       | The base path for the form fields. |
+
+#### Outputs
+- Renders a form based on the provided schema.
+
+### `renderZodSchema`
+#### Description
+`renderZodSchema` is a function that recursively renders form fields based on the Zod schema type. It supports various schema types, including objects, strings, numbers, booleans, dates, arrays, and unions.
+
+#### Inputs
+| Name   | Type            | Description                  |
+|:-------|:----------------|:-----------------------------|
+| schema | `z.ZodType&lt;S&gt;`  | The Zod schema for the form. |
+| form   | `UseFormReturn` | The form state and methods.  |
+| path   | `Path&lt;T&gt;`       | The base path for the form fields. |
+
+#### Outputs
+- Returns JSX elements representing the form fields.
+
+#### Internal Logic
+- The function checks the type of the schema and renders the appropriate form field component.
+- It handles special cases like `ZodDefault`, `ZodObject`, `ZodArray`, and `ZodUnion` by recursively calling itself or rendering specific components.
+
+### `FormArray`
+#### Description
+`FormArray` is a component that renders a form field for an array type. It uses `useFieldArray` from `react-hook-form` to manage the array state.
+
+#### Inputs
+| Name     | Type            | Description                  |
+|:---------|:----------------|:-----------------------------|
+| schema   | `z.ZodType`     | The schema for the array items. |
+| form     | `UseFormReturn` | The form state and methods.  |
+| path     | `Path&lt;any&gt;`     | The path for the array field. |
+| minLength| `number`        | The minimum length of the array. |
+
+#### Outputs
+- Renders a form field for an array, allowing items to be added or removed.
+
+### `ColumnFormField`
+#### Description
+`ColumnFormField` is a component that renders a form field for selecting a column ID. It uses a `Select` component to display available columns.
+
+#### Inputs
+| Name   | Type            | Description                  |
+|:-------|:----------------|:-----------------------------|
+| schema | `z.ZodSchema`   | The schema for the column ID. |
+| form   | `UseFormReturn` | The form state and methods.  |
+| path   | `Path&lt;any&gt;`     | The path for the column field. |
+| onChange | `(value: ColumnId) =&gt; void` | Callback for when the value changes. |
+
+#### Outputs
+- Renders a select input for choosing a column ID.
+
+## References
+
+- `react-hook-form`: Used for form state management and validation.
+- `zod`: Used for schema validation and type inference.
+- Contexts like `ColumnInfoContext` and `ColumnFetchValuesContext` provide additional data for rendering specific fields.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-hook-form` | Manages form state and validation. |
+| `zod` | Provides schema validation and type inference. |
+| `lucide-react` | Provides icons for UI components. |
+
+## Error Handling
+
+- The code uses `react-hook-form` for validation, which automatically handles errors based on the Zod schema.
+- Custom error messages are displayed using `FormMessage` and `FormMessageTooltip`.
+
+## Logging
+
+- No explicit logging is implemented in this code.
+
+## TODOs
+
+- No TODOs or notes are present in the code.

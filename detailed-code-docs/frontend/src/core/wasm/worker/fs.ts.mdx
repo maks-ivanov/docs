@@ -1,0 +1,117 @@
+---
+title: "fs.ts"
+---
+
+## High-level description
+
+The `fs.ts` file defines a `WasmFileSystem` object that provides a set of functions to manage a virtual file system within a WebAssembly (Wasm) environment using Pyodide. This file system is used to handle operations such as creating directories, mounting the file system, reading and writing files, and synchronizing the in-memory file system with a persistent storage like IndexedDB.
+
+## Code Structure
+
+The main symbol in this file is the `WasmFileSystem` object, which contains several methods for interacting with the file system. These methods rely on the `getFS` function to access the file system interface provided by Pyodide. The `syncFileSystem` function is a utility function used by some of the methods in `WasmFileSystem` to synchronize the file system state.
+
+## Symbols
+
+### `WasmFileSystem`
+#### Description
+The `WasmFileSystem` object provides methods to manage a virtual file system in a WebAssembly environment using Pyodide. It includes functionalities for creating directories, mounting the file system, reading and writing files, and synchronizing the file system with persistent storage.
+
+#### Methods
+
+- **`createHomeDir`**
+  - **Description**: Creates a home directory in the file system and changes the current working directory to it.
+  - **Inputs**:
+    | Name   | Type             | Description                  |
+    |:-------|:-----------------|:-----------------------------|
+    | pyodide | PyodideInterface | The Pyodide interface object |
+  - **Outputs**: None
+
+- **`mountFS`**
+  - **Description**: Mounts the file system using IndexedDB as the backend storage.
+  - **Inputs**:
+    | Name   | Type             | Description                  |
+    |:-------|:-----------------|:-----------------------------|
+    | pyodide | PyodideInterface | The Pyodide interface object |
+  - **Outputs**: None
+
+- **`populateFilesToMemory`**
+  - **Description**: Synchronizes the file system by populating files from persistent storage to memory.
+  - **Inputs**:
+    | Name   | Type             | Description                  |
+    |:-------|:-----------------|:-----------------------------|
+    | pyodide | PyodideInterface | The Pyodide interface object |
+  - **Outputs**: None
+
+- **`persistFilesToRemote`**
+  - **Description**: Synchronizes the file system by persisting files from memory to remote storage.
+  - **Inputs**:
+    | Name   | Type             | Description                  |
+    |:-------|:-----------------|:-----------------------------|
+    | pyodide | PyodideInterface | The Pyodide interface object |
+  - **Outputs**: None
+
+- **`readNotebook`**
+  - **Description**: Reads the content of the notebook file from the file system.
+  - **Inputs**:
+    | Name   | Type             | Description                  |
+    |:-------|:-----------------|:-----------------------------|
+    | pyodide | PyodideInterface | The Pyodide interface object |
+  - **Outputs**:
+    | Name | Type   | Description                  |
+    |:-----|:-------|:-----------------------------|
+    | fileContent | string | The content of the notebook file |
+
+- **`initNotebookCode`**
+  - **Description**: Initializes the notebook code by writing it to a file, unless the file already exists.
+  - **Inputs**:
+    | Name     | Type             | Description                  |
+    |:---------|:-----------------|:-----------------------------|
+    | opts     | object           | Options for initialization   |
+    | - pyodide | PyodideInterface | The Pyodide interface object |
+    | - code    | string           | The code to write            |
+    | - filename | string or null  | The filename to use          |
+  - **Outputs**:
+    | Name | Type   | Description                  |
+    |:-----|:-------|:-----------------------------|
+    | result | object | Contains the code and filename used |
+
+### `syncFileSystem`
+#### Description
+Synchronizes the file system state between memory and persistent storage. It uses the `syncfs` method of the file system interface to perform the synchronization.
+
+#### Inputs
+| Name     | Type             | Description                  |
+|:---------|:-----------------|:-----------------------------|
+| pyodide  | PyodideInterface | The Pyodide interface object |
+| populate | boolean          | Whether to populate from storage to memory or vice versa |
+
+#### Outputs
+| Name | Type   | Description                  |
+|:-----|:-------|:-----------------------------|
+| -    | Promise&lt;void&gt; | Resolves when synchronization is complete |
+
+#### Internal Logic
+- Calls the `syncfs` method on the file system interface with the `populate` flag.
+- Resolves the promise if synchronization is successful, otherwise rejects with an error.
+
+## References
+
+- **`getFS`**: This function is used to obtain the file system interface from the Pyodide environment. It is crucial for all file system operations in `WasmFileSystem`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pyodide`  | Provides the interface for interacting with the WebAssembly environment and file system. |
+
+## Error Handling
+
+- The `createHomeDir` and `initNotebookCode` methods handle errors related to file system operations, such as directory creation and file reading, by catching exceptions and proceeding with default behavior.
+
+## Logging
+
+- There is no explicit logging in this file, but related files like `controller.ts` and `bootstrap.ts` use a `Logger` utility for error logging.
+
+## TODOs
+
+- No TODOs are present in the code.

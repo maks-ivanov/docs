@@ -1,0 +1,60 @@
+---
+title: "Deferred.ts"
+---
+
+## High-level description
+
+The `Deferred` class in the target file `frontend/src/utils/Deferred.ts` is a utility that facilitates the creation and management of promises that can be resolved or rejected externally. This class is particularly useful in asynchronous programming where the resolution or rejection of a promise needs to be controlled from outside the promise's executor function. It is used in various parts of the codebase to handle asynchronous operations that require deferred execution.
+
+## Code Structure
+
+The `Deferred` class is a standalone utility that encapsulates a promise and provides methods to resolve or reject it. It is used by other classes and functions in the codebase to manage asynchronous operations, as seen in the related files.
+
+## Symbols
+
+### `Deferred&lt;T&gt;`
+#### Description
+The `Deferred` class is a generic utility that provides a mechanism to create a promise that can be resolved or rejected externally. It is useful for scenarios where the completion of an asynchronous operation is not immediately known and needs to be controlled from outside the promise's executor function.
+
+#### Inputs
+- **Type Parameter `T`**: The type of the value that the promise will resolve with.
+
+#### Outputs
+- **`promise`**: A `Promise&lt;T&gt;` that can be resolved or rejected using the `resolve` and `reject` methods.
+
+#### Internal Logic
+- The constructor initializes a new `Promise` and assigns the `resolve` and `reject` methods to the instance, allowing external control over the promise's state.
+- The `status` property tracks the current state of the promise, which can be "pending", "resolved", or "rejected".
+
+## References
+
+The `Deferred` class is referenced in several related files, indicating its use in managing asynchronous operations across the codebase. For example:
+- In `frontend/src/core/islands/bridge.ts`, it is used to manage the initialization state of the `IslandsPyodideBridge`.
+- In `frontend/src/core/network/DeferredRequestRegistry.ts`, it is used to manage deferred requests in a registry pattern.
+
+## Dependencies
+
+The `Deferred` class does not have any external dependencies. It relies solely on native JavaScript promises.
+
+## Error Handling
+
+The `Deferred` class does not implement specific error handling mechanisms beyond the basic promise rejection. Errors can be passed to the `reject` method, which will propagate them as promise rejections.
+
+## Usage Example
+
+Here is a simple example of how the `Deferred` class might be used:
+
+```typescript
+const deferred = new Deferred&lt;number&gt;();
+
+// Simulate an asynchronous operation
+setTimeout(() =&gt; {
+  deferred.resolve(42); // Resolve the promise with a value
+}, 1000);
+
+deferred.promise.then((value) =&gt; {
+  console.log(value); // Outputs: 42
+});
+```
+
+In this example, a `Deferred` object is created, and its promise is resolved after a timeout, demonstrating how the class can be used to manage asynchronous operations.

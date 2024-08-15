@@ -1,0 +1,120 @@
+---
+title: "conftest.py"
+---
+
+## High-level description
+
+The target file `tests/_server/conftest.py` is a configuration file for pytest, which sets up fixtures for testing a Starlette application. It provides fixtures for initializing the application, creating test clients with specific configurations, and managing user configurations and session states during tests. The file is crucial for setting up the test environment and ensuring that tests run with the necessary context and dependencies.
+
+## Code Structure
+
+The main symbols in the code are pytest fixtures and utility functions. The fixtures are used to set up and tear down the test environment, while the utility functions provide access to specific components of the application state, such as session managers and user configuration managers.
+
+## Symbols
+
+### `init`
+#### Description
+This fixture initializes the asyncio event loop policy for the test session. It ensures that the correct event loop is used, particularly on Windows, where the default loop may not support all required features.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | bool | Always returns `True` to indicate successful initialization. |
+
+### `client_with_lifespans`
+#### Description
+This fixture provides a `TestClient` for the Starlette application, which includes lifespan events. It is used to test the application with its full lifecycle, including startup and shutdown events.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | Generator[TestClient, None, None] | A generator yielding a `TestClient` instance. |
+
+### `user_config_manager`
+#### Description
+This fixture provides a `UserConfigManager` instance with a temporary configuration path. It is used to manage user configurations during tests without affecting the actual configuration files.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| user_config_manager | UserConfigManager | An instance of `UserConfigManager` with a temporary configuration path. |
+
+### `client`
+#### Description
+This fixture provides a `TestClient` for the Starlette application, configured with a mock session manager and user configuration manager. It is used to test the application with specific session and configuration states.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| user_config_manager | UserConfigManager | The user configuration manager to use for the test client. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | Iterator[TestClient] | An iterator yielding a `TestClient` instance. |
+
+#### Internal Logic
+- Sets up a mock session manager and user configuration manager in the application state.
+- Configures a mock Uvicorn server to prevent actual server startup.
+- Yields a `TestClient` instance for use in tests.
+- Restores the original state after the test.
+
+### `get_session_manager`
+#### Description
+This function retrieves the `SessionManager` from the application state of a given `TestClient`. It is used to access session management functionality during tests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | TestClient | The test client from which to retrieve the session manager. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| session_manager | SessionManager | The session manager from the application state. |
+
+### `get_user_config_manager`
+#### Description
+This function retrieves the `UserConfigManager` from the application state of a given `TestClient`. It is used to access user configuration management functionality during tests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | TestClient | The test client from which to retrieve the user config manager. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| user_config_manager | UserConfigManager | The user config manager from the application state. |
+
+## References
+
+- `create_starlette_app`: Used to create the Starlette application instance.
+- `initialize_asyncio`: Used to initialize the asyncio event loop policy.
+- `get_mock_session_manager`: Provides a mock session manager for testing.
+- `UserConfigManager`: Manages user configurations, used in the `user_config_manager` fixture.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for defining fixtures and running tests. |
+| `uvicorn` | Used to mock the server during tests. |
+| `starlette.testclient` | Provides the `TestClient` for testing the Starlette application. |
+
+## Error Handling
+
+The code does not explicitly handle errors, as it primarily sets up test fixtures. Any errors during fixture setup would typically result in test failures, which are handled by the pytest framework.
+
+## Logging
+
+The code does not implement logging, as it focuses on setting up the test environment. Any necessary logging would be part of the application being tested or the pytest framework.

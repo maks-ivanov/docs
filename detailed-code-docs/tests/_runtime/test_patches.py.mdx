@@ -1,0 +1,97 @@
+---
+title: "test_patches.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_patches.py` contains a set of asynchronous test cases for verifying the functionality of the `micropip` module within a specific runtime environment. These tests are designed to ensure that `micropip` behaves correctly, particularly in environments where it is not natively supported, such as non-WASM (WebAssembly) environments. The tests utilize a mock kernel to simulate the execution of code snippets and capture any warnings or errors that are expected to be produced.
+
+## Code Structure
+
+The main class in this file is `TestMicropip`, which contains several static asynchronous methods. Each method is a test case that checks a specific aspect of the `micropip` module's functionality. The tests are executed within a simulated kernel environment provided by the `Kernel` class from the `marimo._runtime.runtime` module. The `ExecReqProvider` from `tests.conftest` is used to generate execution requests for the kernel.
+
+## Symbols
+
+### `TestMicropip`
+#### Description
+The `TestMicropip` class contains static methods that test the availability and functionality of the `micropip` module in a simulated kernel environment. The tests are designed to verify that appropriate warnings are issued when `micropip` is used outside of a WASM environment.
+
+#### Methods
+
+- **`_assert_micropip_warning_printed`**
+  - **Description**: Asserts that a specific warning message about `micropip` availability is present in the provided message.
+  - **Inputs**:
+    | Name    | Type   | Description                                      |
+    |:--------|:-------|:-------------------------------------------------|
+    | message | str    | The message to check for the presence of a warning. |
+  - **Outputs**: None
+
+- **`test_micropip_available`**
+  - **Description**: Tests if `micropip` can be imported and is available in the kernel's global namespace.
+  - **Inputs**:
+    | Name           | Type             | Description                        |
+    |:---------------|:-----------------|:-----------------------------------|
+    | executing_kernel | Kernel          | The kernel instance to run the test. |
+    | exec_req       | ExecReqProvider  | Provides execution requests.       |
+  - **Outputs**: None
+
+- **`test_micropip_install`**
+  - **Description**: Tests the `micropip.install` function and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+- **`test_micropip_list`**
+  - **Description**: Tests the `micropip.list` function and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+- **`test_micropip_freeze`**
+  - **Description**: Tests the `micropip.freeze` function and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+- **`test_micropip_add_mock_package`**
+  - **Description**: Tests adding a mock package using `micropip` and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+- **`test_micropip_list_mock_packages`**
+  - **Description**: Tests listing mock packages using `micropip` and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+- **`test_micropip_uninstall`**
+  - **Description**: Tests the `micropip.uninstall` function and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+- **`test_micropip_set_index_urls`**
+  - **Description**: Tests setting index URLs in `micropip` and checks for warnings when not in a WASM environment.
+  - **Inputs**: Same as `test_micropip_available`.
+  - **Outputs**: None
+
+## References
+
+- **`Kernel`**: The `Kernel` class from `marimo._runtime.runtime` is used to simulate the execution environment for the tests.
+- **`ExecReqProvider`**: This utility from `tests.conftest` is used to create execution requests for the kernel.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.capture` | Provides utilities to capture standard error output. |
+| `marimo._runtime.runtime` | Contains the `Kernel` class used to simulate the execution environment. |
+| `marimo._utils.platform` | Provides the `is_pyodide` function to check if the environment is Pyodide. |
+| `tests.conftest` | Provides the `ExecReqProvider` for generating execution requests. |
+
+## Error Handling
+
+The tests handle errors by capturing standard error output using the `capture_stderr` context manager. This allows the tests to verify that the expected warnings are printed when `micropip` is used in unsupported environments.
+
+## Side Effects
+
+The tests modify the state of the simulated kernel environment by executing code snippets. They also capture and assert the presence of specific warning messages in the standard error output.
+
+## Performance Considerations
+
+The tests are asynchronous and make use of the `await` keyword to run kernel operations, which can help in managing I/O-bound operations efficiently. However, the performance is primarily dependent on the underlying kernel implementation and the execution environment.

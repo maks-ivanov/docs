@@ -1,0 +1,126 @@
+---
+title: "test_manager.py"
+---
+
+## High-level description
+
+The target file `tests/_config/test_manager.py` contains unit tests for the `UserConfigManager` class, which is part of the configuration management system in the Marimo application. These tests ensure that the configuration manager can correctly save and retrieve user configurations, handle secrets securely, and merge configurations with default settings.
+
+## Code Structure
+
+The main class in this file is `TestUserConfigManager`, which is a subclass of `unittest.TestCase`. This class contains several test methods that use the `unittest.mock.patch` decorator to mock dependencies and test the behavior of the `UserConfigManager` class.
+
+## Symbols
+
+### `TestUserConfigManager`
+#### Description
+This class contains unit tests for the `UserConfigManager` class. It tests the functionality of saving configurations, handling secrets, and retrieving configurations.
+
+#### Methods
+
+##### `test_save_config`
+###### Description
+Tests the `save_config` method of `UserConfigManager` to ensure it correctly saves the configuration and merges it with the default configuration.
+
+###### Inputs
+| Name     | Type | Description                        |
+|:---------|:-----|:-----------------------------------|
+| mock_load | Any  | Mock for the `load_config` function |
+| mock_dump | Any  | Mock for the `tomlkit.dump` function |
+
+###### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| result | MarimoConfig | The saved configuration |
+
+###### Internal Logic
+1. Mocks the `load_config` function to return a default configuration.
+2. Creates an instance of `UserConfigManager`.
+3. Calls `save_config` with a mock configuration.
+4. Asserts that `load_config` was called once.
+5. Asserts that the result of `save_config` matches the manager's configuration.
+6. Verifies that the `tomlkit.dump` function was called with the correct configuration.
+
+##### `test_can_save_secrets`
+###### Description
+Tests that the `save_config` method can save configurations containing secrets without overwriting them.
+
+###### Inputs
+| Name     | Type | Description                        |
+|:---------|:-----|:-----------------------------------|
+| mock_load | Any  | Mock for the `load_config` function |
+| mock_dump | Any  | Mock for the `tomlkit.dump` function |
+
+###### Outputs
+None
+
+###### Internal Logic
+1. Mocks the `load_config` function to return a default configuration.
+2. Creates an instance of `UserConfigManager`.
+3. Calls `save_config` with a configuration containing a secret.
+4. Asserts that the secret is saved correctly.
+5. Calls `save_config` again with a placeholder for the secret.
+6. Asserts that the original secret is not overwritten.
+
+##### `test_can_read_secrets`
+###### Description
+Tests that the `get_config` method can retrieve configurations with secrets masked or unmasked.
+
+###### Inputs
+| Name     | Type | Description                        |
+|:---------|:-----|:-----------------------------------|
+| mock_load | Any  | Mock for the `load_config` function |
+
+###### Outputs
+None
+
+###### Internal Logic
+1. Mocks the `load_config` function to return a configuration with a secret.
+2. Creates an instance of `UserConfigManager`.
+3. Asserts that the secret is masked when `get_config` is called with the default argument.
+4. Asserts that the secret is unmasked when `get_config` is called with `hide_secrets=False`.
+
+##### `test_get_config`
+###### Description
+Tests the `get_config` method to ensure it retrieves the current configuration correctly.
+
+###### Inputs
+| Name     | Type | Description                        |
+|:---------|:-----|:-----------------------------------|
+| mock_load | Any  | Mock for the `load_config` function |
+
+###### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| result | MarimoConfig | The retrieved configuration |
+
+###### Internal Logic
+1. Mocks the `load_config` function to return a default configuration.
+2. Creates an instance of `UserConfigManager`.
+3. Calls `get_config` and stores the result.
+4. Asserts that `load_config` was called once.
+5. Asserts that the result matches the manager's configuration.
+
+## References
+
+- `merge_default_config`: Used to merge user configurations with default settings.
+- `MarimoConfig`: Represents the configuration structure for the Marimo application.
+- `UserConfigManager`: The class under test, responsible for managing user configurations.
+- `load_config`: A function that loads the current configuration, mocked in tests.
+- `tomlkit.dump`: A function used to serialize configurations to a file, mocked in tests.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `unittest.mock` | Used to mock dependencies and isolate tests. |
+| `tomlkit` | Used for serializing configurations, mocked in tests. |
+
+## Error Handling
+
+The tests use assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the `UserConfigManager`.
+
+## Logging
+
+The `UserConfigManager` class uses a logger to debug messages when saving configurations, but this is not directly tested in the target file.

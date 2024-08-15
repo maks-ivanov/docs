@@ -1,0 +1,84 @@
+---
+title: "icon.py"
+---
+
+## High-level description
+
+The `icon.py` file in the Marimo library provides a function to render icons using the Iconify library. The `icon` function generates HTML for icons, allowing customization of size, color, orientation, and additional styles. This function is designed to be used in various UI elements like buttons and tabs, enhancing the visual presentation of applications built with Marimo.
+
+## Code Structure
+
+The main function in this file is `icon`, which utilizes helper functions and classes from other parts of the Marimo library to construct and return an HTML representation of an icon. The `_space_to_string` function is a utility used within `icon` to format size values.
+
+## Symbols
+
+### `icon`
+#### Description
+The `icon` function generates an HTML representation of an icon using the Iconify library. It allows customization of the icon's size, color, orientation (flip and rotate), and additional CSS styles. The function returns an `Html` object that can be embedded in other HTML or markdown content.
+
+#### Inputs
+| Name     | Type                                                                 | Description                                                                 |
+|:---------|:---------------------------------------------------------------------|:----------------------------------------------------------------------------|
+| icon_name| `str`                                                                | The name of the icon to display, formatted as `icon-set:icon-name`.         |
+| size     | `Optional[int]`                                                      | The size of the icon in pixels.                                             |
+| color    | `Optional[str]`                                                      | The color of the icon.                                                      |
+| inline   | `bool`                                                               | Whether to display the icon inline or as a block element.                   |
+| flip     | `Optional[Literal["horizontal", "vertical", "horizontal,vertical"]]` | Whether to flip the icon horizontally, vertically, or both.                 |
+| rotate   | `Optional[Literal["90deg", "180deg", "270deg"]]`                     | Whether to rotate the icon 90, 180, or 270 degrees.                         |
+| style    | `Optional[dict[str, Union[str, int, float, None]]]`                  | A dictionary of CSS styles to apply to the icon.                            |
+
+#### Outputs
+| Name | Type  | Description    |
+|:-----|:------|:---------------|
+| Html | `Html`| An `Html` object representing the icon. |
+
+#### Internal Logic
+1. Initializes the `style` dictionary if not provided.
+2. Adds the `color` to the `style` dictionary if specified.
+3. Constructs an HTML component using the `h.component` method from the `_HTMLBuilder` class, setting attributes like `icon`, `width`, `height`, `inline`, `flip`, `rotate`, and `style`.
+4. Returns an `Html` object containing the constructed HTML.
+
+### `_space_to_string`
+#### Description
+The `_space_to_string` function converts a size value into a string with a "px" suffix, which is used for CSS styling.
+
+#### Inputs
+| Name | Type                          | Description                        |
+|:-----|:------------------------------|:-----------------------------------|
+| value| `Union[str, int, float, None]`| The size value to convert.         |
+
+#### Outputs
+| Name | Type           | Description                        |
+|:-----|:---------------|:-----------------------------------|
+| str  | `Optional[str]`| The size value as a string with "px" suffix, or `None`. |
+
+#### Internal Logic
+1. Returns `None` if the input value is `None`.
+2. Returns the value directly if it is a string.
+3. Converts the value to a string with a "px" suffix if it is an integer or float.
+
+## References
+
+- The `icon` function uses the `Html` class from `marimo._output.hypertext` to wrap the generated HTML.
+- The `h.component` method from the `_HTMLBuilder` class in `marimo._output.builder` is used to construct the HTML component.
+- The `create_style` function from `marimo._output.utils` is used to convert the style dictionary into a CSS string.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `marimo._output.builder` | Provides the `_HTMLBuilder` class for constructing HTML components. |
+| `marimo._output.hypertext` | Provides the `Html` class for wrapping HTML content.               |
+| `marimo._output.utils` | Provides utility functions like `create_style` for CSS styling.        |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checks and defaults. It assumes valid input for icon names and style attributes.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

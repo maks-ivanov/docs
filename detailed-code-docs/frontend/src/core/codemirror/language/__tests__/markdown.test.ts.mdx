@@ -1,0 +1,97 @@
+---
+title: "markdown.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `MarkdownLanguageAdapter` class, which is part of a system that processes and transforms Markdown content embedded within Python code strings. The tests verify the functionality of methods that extract Markdown content from Python strings, transform it back into a wrapped format, and check if a given string is supported for Markdown processing.
+
+## Code Structure
+
+The main symbol in the code is the `MarkdownLanguageAdapter` class, which is tested using the `vitest` testing framework. The tests are organized into three main sections: `transformIn`, `transformOut`, and `isSupported`, each corresponding to a method in the `MarkdownLanguageAdapter` class. These methods are responsible for transforming Python code strings to and from Markdown format and checking if a string is supported for Markdown processing.
+
+## Symbols
+
+### `MarkdownLanguageAdapter`
+#### Description
+The `MarkdownLanguageAdapter` class is designed to handle the transformation of Markdown content embedded within Python code strings. It provides methods to extract Markdown content from such strings, wrap Markdown content back into a Python string format, and determine if a given string is supported for Markdown processing.
+
+#### Methods
+
+##### `transformIn`
+###### Description
+Extracts the inner Markdown content from a Python string that uses the `mo.md` function to denote Markdown content. It also calculates the offset of the Markdown content within the original string.
+
+###### Inputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| pythonCode | string | A Python string potentially containing Markdown. |
+
+###### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| innerCode | string | The extracted Markdown content.                  |
+| offset    | number | The position of the Markdown content in the input string. |
+
+###### Internal Logic
+- Trims the input string.
+- Checks if the string matches any of the predefined patterns for Markdown content.
+- If a match is found, extracts the inner Markdown content, unescapes it, and calculates its offset.
+- If no match is found, returns the original string with an offset of 0.
+
+##### `transformOut`
+###### Description
+Wraps a given Markdown string into a Python string format using the `mo.md` function, ensuring proper escaping and formatting.
+
+###### Inputs
+| Name | Type   | Description                  |
+|:-----|:-------|:-----------------------------|
+| code | string | The Markdown content to wrap.|
+
+###### Outputs
+| Name        | Type   | Description                                      |
+|:------------|:-------|:-------------------------------------------------|
+| wrappedCode | string | The Python string with Markdown content wrapped. |
+| offset      | number | The position of the Markdown content in the wrapped string. |
+
+###### Internal Logic
+- Uses the last quote prefix from `transformIn` to determine the wrapping style.
+- Escapes triple quotes in the Markdown content.
+- Wraps the content in a triple-quoted string format, adjusting for single or multi-line content.
+
+##### `isSupported`
+###### Description
+Determines if a given Python string is in a format that supports Markdown processing.
+
+###### Inputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| pythonCode | string | A Python string to check for Markdown support.   |
+
+###### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| boolean | boolean | True if the string is supported for Markdown processing, false otherwise. |
+
+###### Internal Logic
+- Trims the input string and checks for specific patterns that denote Markdown content.
+- Uses regular expressions to determine if the string matches supported Markdown formats.
+
+## References
+
+- The `MarkdownLanguageAdapter` class is defined in the related file `frontend/src/core/codemirror/language/markdown.ts`.
+- The `transformIn`, `transformOut`, and `isSupported` methods are directly tested in this file.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `vitest`   | Used for writing and running the unit tests. |
+
+## Error Handling
+
+The tests in this file do not explicitly handle errors; they rely on the `vitest` framework to catch and report any assertion failures or exceptions that occur during test execution.
+
+## Logging
+
+There is no logging implemented in this test file. The focus is on verifying the correctness of the `MarkdownLanguageAdapter` methods through assertions.

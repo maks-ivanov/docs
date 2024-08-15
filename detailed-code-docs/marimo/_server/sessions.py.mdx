@@ -1,0 +1,138 @@
+---
+title: "sessions.py"
+---
+
+## High-level description
+
+The `sessions.py` module is responsible for managing client sessions in a server environment. Each session is associated with a unique client and encapsulates a Python kernel and a WebSocket connection. The module supports different modes of operation, such as run mode and edit mode, and handles session lifecycle events like creation, connection, disconnection, and closure.
+
+## Code Structure
+
+The main components of the module are classes that manage different aspects of a session:
+
+- `QueueManager`: Manages various queues used for communication between the server and the Python kernel.
+- `KernelManager`: Manages the lifecycle of the Python kernel associated with a session.
+- `Room`: Manages a collection of session consumers, allowing for message broadcasting.
+- `Session`: Represents a client session, managing its kernel, WebSocket connection, and state.
+- `SessionManager`: Manages multiple sessions, providing a mapping from session IDs to session instances and handling common session state.
+
+## Symbols
+
+### `QueueManager`
+#### Description
+Manages queues for a session, facilitating communication between the server and the Python kernel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| use_multiprocessing | bool | Determines whether to use multiprocessing queues. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes different types of queues based on whether multiprocessing is used.
+- Provides a method to close all queues, ensuring proper cleanup.
+
+### `KernelManager`
+#### Description
+Manages the lifecycle of the Python kernel associated with a session, including starting, checking status, interrupting, and closing the kernel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queue_manager | QueueManager | Manages the queues for the session. |
+| mode | SessionMode | The mode of the session (e.g., EDIT or RUN). |
+| configs | dict | Configuration for each cell in the session. |
+| app_metadata | AppMetadata | Metadata about the app being run. |
+| user_config_manager | UserConfigManager | Manages user configuration settings. |
+| virtual_files_supported | bool | Indicates if virtual files are supported. |
+| redirect_console_to_browser | bool | Determines if console output should be redirected to the browser. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Starts the kernel using either a process or a thread based on the session mode.
+- Provides methods to check if the kernel is alive, interrupt it, and close it.
+
+### `Room`
+#### Description
+Manages a collection of session consumers, allowing for message broadcasting to all consumers in the room.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Allows adding and removing consumers, designating one as the main consumer.
+- Provides methods to broadcast messages to all consumers and close the room.
+
+### `Session`
+#### Description
+Represents a client session, managing its kernel, WebSocket connection, and state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| initialization_id | str | A unique identifier for the session initialization. |
+| session_consumer | SessionConsumer | The consumer associated with the session. |
+| queue_manager | QueueManager | Manages the queues for the session. |
+| kernel_manager | KernelManager | Manages the kernel for the session. |
+| app_file_manager | AppFileManager | Manages the app files for the session. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes the session, starting the kernel and setting up message distribution.
+- Manages the connection state, allowing for consumer connection, disconnection, and session closure.
+- Handles control requests, completion requests, and input from the client.
+
+### `SessionManager`
+#### Description
+Manages multiple sessions, providing a mapping from session IDs to session instances and handling common session state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_router | AppFileRouter | Routes files to their respective managers. |
+| mode | SessionMode | The mode of the session (e.g., EDIT or RUN). |
+| development_mode | bool | Indicates if the server is in development mode. |
+| quiet | bool | Determines if the server should suppress output. |
+| include_code | bool | Indicates if code should be included in the session. |
+| lsp_server | LspServer | Manages the Language Server Protocol server. |
+| user_config_manager | UserConfigManager | Manages user configuration settings. |
+| cli_args | SerializedCLIArgs | Command-line arguments for the session. |
+| auth_token | Optional[AuthToken] | Authentication token for the session. |
+| redirect_console_to_browser | bool | Determines if console output should be redirected to the browser. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates, retrieves, and manages sessions, handling session lifecycle events.
+- Provides methods to start the LSP server, close sessions, and manage session state.
+
+## Dependencies
+
+The module relies on several external components and modules:
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for asynchronous operations and task management. |
+| `multiprocessing` | Provides support for multiprocessing queues and processes. |
+| `os`, `sys`, `signal` | Used for system-level operations and signal handling. |
+| `threading` | Used for managing threads in the session. |
+| `uuid` | Generates unique identifiers for sessions. |
+| `marimo` modules | Various internal modules for logging, messaging, runtime, and server management. |
+
+## Error Handling
+
+The module includes error handling for session management, such as handling invalid session states and managing kernel interruptions.
+
+## Logging
+
+The module uses the `marimo_logger` for logging session events and errors, providing insights into session lifecycle and operations.

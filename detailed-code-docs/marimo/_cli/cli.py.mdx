@@ -1,0 +1,209 @@
+---
+title: "cli.py"
+---
+
+## High-level description
+
+The `marimo/_cli/cli.py` file defines a command-line interface (CLI) for the Marimo application using the `click` library. It provides various commands to interact with Marimo notebooks, such as creating, editing, running, and exporting notebooks, as well as managing configurations and tutorials. The CLI also includes options for setting logging levels, running in development mode, and handling authentication tokens.
+
+## Code Structure
+
+The main symbols in the code are functions that define CLI commands using the `click` library. These functions are organized under a main command group and several subcommands, each responsible for a specific functionality related to Marimo notebooks. The CLI commands interact with other parts of the Marimo codebase, such as file validation, server management, and configuration handling.
+
+## References
+
+- `marimo._cli.cli_validators`: Used for validating CLI options.
+- `marimo._ast.codegen`: Used for generating and recovering Marimo applications.
+- `marimo._cli.config.commands`, `marimo._cli.convert.commands`, `marimo._cli.development.commands`, `marimo._cli.export.commands`: Imported as subcommands for the CLI.
+- `marimo._server.file_router.AppFileRouter`: Used for managing file routing.
+- `marimo._server.model.SessionMode`: Used to define session modes.
+- `marimo._server.start.start`: Used to start the Marimo server.
+- `marimo._server.tokens.AuthToken`: Used for handling authentication tokens.
+- `marimo._tutorials`: Used for managing tutorials.
+
+## Symbols
+
+### `helpful_usage_error`
+#### Description
+Overrides the default usage error message in `click` to provide a more helpful error message with color formatting.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| self | Any | The exception instance. |
+| file | Any | The file stream to write the error message to. |
+
+#### Outputs
+None
+
+### `_key_value_bullets`
+#### Description
+Formats a list of key-value pairs into a bullet-pointed string for display in help messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| items | list[tuple[str, str]] | A list of key-value pairs to format. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str | str | A formatted string with bullet points. |
+
+### `_resolve_token`
+#### Description
+Resolves the authentication token based on the provided token flag and password.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| token | bool | Flag indicating whether to use a token. |
+| token_password | Optional[str] | The password for the token, if any. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| AuthToken | Optional[AuthToken] | The resolved authentication token. |
+
+### `main`
+#### Description
+Defines the main command group for the Marimo CLI, setting up global options like logging level, quiet mode, and development mode.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| log_level | str | The logging level to use. |
+| quiet | bool | Flag to suppress standard output. |
+| development_mode | bool | Flag to enable development mode. |
+
+#### Outputs
+None
+
+### `edit`
+#### Description
+Defines the `edit` command for the CLI, allowing users to create or edit Marimo notebooks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | Optional[int] | Port to attach to. |
+| host | str | Host to attach to. |
+| proxy | Optional[str] | Address of reverse proxy. |
+| headless | bool | Flag to prevent launching a browser. |
+| token | bool | Flag to use a token for authentication. |
+| token_password | Optional[str] | Password for the token. |
+| base_url | str | Base URL for the server. |
+| allow_origins | Optional[tuple[str, ...]] | Allowed origins for CORS. |
+| skip_update_check | bool | Flag to skip update checks. |
+| name | Optional[str] | Name of the notebook. |
+| args | tuple[str, ...] | Additional arguments. |
+
+#### Outputs
+None
+
+### `new`
+#### Description
+Defines the `new` command for the CLI, allowing users to create a new Marimo notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | Optional[int] | Port to attach to. |
+| host | str | Host to attach to. |
+| proxy | Optional[str] | Address of reverse proxy. |
+| headless | bool | Flag to prevent launching a browser. |
+| token | bool | Flag to use a token for authentication. |
+| token_password | Optional[str] | Password for the token. |
+| base_url | str | Base URL for the server. |
+
+#### Outputs
+None
+
+### `run`
+#### Description
+Defines the `run` command for the CLI, allowing users to run a Marimo notebook as a read-only app.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | Optional[int] | Port to attach to. |
+| host | str | Host to attach to. |
+| proxy | Optional[str] | Address of reverse proxy. |
+| headless | bool | Flag to prevent launching a browser. |
+| token | bool | Flag to use a token for authentication. |
+| token_password | Optional[str] | Password for the token. |
+| include_code | bool | Flag to include notebook code in the app. |
+| watch | bool | Flag to watch the file for changes. |
+| base_url | str | Base URL for the server. |
+| allow_origins | tuple[str, ...] | Allowed origins for CORS. |
+| redirect_console_to_browser | bool | Flag to redirect console logs to the browser. |
+| name | str | Name of the notebook. |
+| args | tuple[str, ...] | Additional arguments. |
+
+#### Outputs
+None
+
+### `recover`
+#### Description
+Defines the `recover` command for the CLI, allowing users to recover a Marimo notebook from a JSON file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | Name of the JSON file. |
+
+#### Outputs
+None
+
+### `tutorial`
+#### Description
+Defines the `tutorial` command for the CLI, allowing users to open a Marimo tutorial.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | Optional[int] | Port to attach to. |
+| host | str | Host to attach to. |
+| proxy | Optional[str] | Address of reverse proxy. |
+| headless | bool | Flag to prevent launching a browser. |
+| token | bool | Flag to use a token for authentication. |
+| token_password | Optional[str] | Password for the token. |
+| name | Tutorial | Name of the tutorial. |
+
+#### Outputs
+None
+
+### `env`
+#### Description
+Defines the `env` command for the CLI, printing out environment information for debugging purposes.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `click` | Used for creating the command-line interface. |
+| `marimo._cli.cli_validators` | Used for validating CLI options. |
+| `marimo._ast.codegen` | Used for generating and recovering Marimo applications. |
+| `marimo._server.file_router.AppFileRouter` | Used for managing file routing. |
+| `marimo._server.model.SessionMode` | Used to define session modes. |
+| `marimo._server.start.start` | Used to start the Marimo server. |
+| `marimo._server.tokens.AuthToken` | Used for handling authentication tokens. |
+| `marimo._tutorials` | Used for managing tutorials. |
+
+## Error Handling
+
+The CLI uses `click.UsageError` to handle invalid input and provide user-friendly error messages. Additionally, the `helpful_usage_error` function customizes the error message display.
+
+## Logging
+
+The CLI uses the `marimo._loggers` module to set the logging level based on the user's input, allowing for different levels of verbosity in the output.
+
+## TODOs
+
+None

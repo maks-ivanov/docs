@@ -1,0 +1,135 @@
+---
+title: "table.py"
+---
+
+## High-level description
+
+The target file, `table.py`, defines a `table` class that is a UI component for displaying tabular data in various formats, such as lists of dictionaries, single-column lists, and dataframes from Pandas or Polars. It provides functionalities for data manipulation, including sorting, filtering, and downloading data in CSV or JSON formats. The class also supports pagination, row selection, and column summaries, making it a versatile tool for handling and displaying tabular data in a user interface.
+
+## Code Structure
+
+The main symbol in the code is the `table` class, which inherits from `UIElement`. This class is responsible for managing the data and its presentation in a tabular format. It interacts with several helper classes and functions, such as `TableManager`, `get_table_manager`, and `Function`, to handle data operations and UI interactions.
+
+## Symbols
+
+### `DownloadAsArgs`
+#### Description
+A data class that specifies the format for downloading table data, either as "csv" or "json".
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| format | Literal["csv", "json"] | The format in which to download the data. |
+
+#### Outputs
+N/A
+
+### `ColumnSummary`
+#### Description
+A data class that provides a summary of a column in the table, including null counts, min/max values, unique counts, and boolean counts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| column | str | The name of the column. |
+| nulls | Optional[int] | The number of null values in the column. |
+| min | Optional[NonNestedLiteral] | The minimum value in the column. |
+| max | Optional[NonNestedLiteral] | The maximum value in the column. |
+| unique | Optional[int] | The number of unique values in the column. |
+| true | Optional[NonNestedLiteral] | The count of true values if the column is boolean. |
+| false | Optional[NonNestedLiteral] | The count of false values if the column is boolean. |
+
+#### Outputs
+N/A
+
+### `ColumnSummaries`
+#### Description
+A data class that holds a list of `ColumnSummary` objects, representing summaries for multiple columns.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| summaries | List[ColumnSummary] | A list of column summaries. |
+
+#### Outputs
+N/A
+
+### `SearchTableArgs`
+#### Description
+A data class that encapsulates arguments for searching and sorting the table, including query strings, sort parameters, and filters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| query | Optional[str] | A search query string. |
+| sort | Optional[SortArgs] | Sorting parameters. |
+| filters | Optional[List[Condition]] | A list of conditions for filtering rows. |
+
+#### Outputs
+N/A
+
+### `SortArgs`
+#### Description
+A data class that specifies sorting parameters for the table, including the column to sort by and the sort order.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| by | ColumnName | The name of the column to sort by. |
+| descending | bool | Whether to sort in descending order. |
+
+#### Outputs
+N/A
+
+### `table`
+#### Description
+The `table` class is a UI component for displaying and interacting with tabular data. It supports various data formats, pagination, row selection, and data manipulation features like sorting and filtering.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Union[ListOrTuple, Dict, DataFrame] | The data to be displayed in the table. |
+| pagination | Optional[bool] | Whether to enable pagination. |
+| selection | Optional[Literal["single", "multi"]] | Row selection mode. |
+| page_size | int | Number of rows per page. |
+| show_column_summaries | bool | Whether to show column summaries. |
+| format_mapping | Optional[Dict[str, Union[str, Callable]]] | Mapping for formatting columns. |
+| label | str | A label for the table. |
+| on_change | Optional[Callable] | Callback for when the table's value changes. |
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Initializes with data and configuration options.
+- Uses `TableManager` to manage data operations like sorting and filtering.
+- Provides methods for downloading data, getting column summaries, and searching the table.
+- Handles pagination and row selection logic.
+
+## Side Effects
+- Modifies the internal state of the table, such as the filtered and selected data managers.
+- Raises a `ValueError` if the number of columns exceeds a predefined limit.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._loggers` | For logging purposes. |
+| `marimo._data.models` | For data models like `NonNestedLiteral`. |
+| `marimo._output.mime` | For handling MIME types. |
+| `marimo._plugins.core.web_component` | For JSON type definitions. |
+| `marimo._plugins.ui._core.ui_element` | Base class for UI elements. |
+| `marimo._plugins.ui._impl.dataframes.transforms.apply` | For handling data transformations. |
+| `marimo._plugins.ui._impl.tables.table_manager` | For managing table data. |
+| `marimo._plugins.ui._impl.tables.utils` | For utility functions related to tables. |
+| `marimo._runtime.functions` | For handling functions associated with the table. |
+
+## Error Handling
+- Raises `ValueError` if the number of columns exceeds the maximum allowed limit.
+- Raises `ValueError` in `download_as` if the format is not "csv" or "json".
+
+## Logging
+- Uses the `marimo_logger` for logging warnings and errors.
+
+## TODOs
+- No explicit TODOs are present in the code.

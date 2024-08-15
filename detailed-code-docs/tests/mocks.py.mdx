@@ -1,0 +1,60 @@
+---
+title: "mocks.py"
+---
+
+## High-level description
+
+The `tests/mocks.py` file provides a utility function, `snapshotter`, which is used to create and manage snapshots for testing purposes. This function is designed to facilitate the creation of test snapshots by comparing the current output with a stored snapshot. If the snapshot does not exist, it is created; if it exists and differs from the current output, the snapshot is updated, and the test fails.
+
+## Code Structure
+
+The main symbol in this file is the `snapshotter` function, which returns a `snapshot` function. This `snapshot` function is responsible for handling the creation, comparison, and updating of snapshot files. The `snapshotter` function utilizes the `maybe_make_dirs` function from the `marimo._utils.paths` module to ensure that the necessary directories exist for storing snapshots.
+
+## References
+
+- `maybe_make_dirs`: This function from the `marimo._utils.paths` module is used to create directories if they do not exist, ensuring that the snapshot files can be stored in the correct location.
+
+## Symbols
+
+### `snapshotter`
+#### Description
+The `snapshotter` function is a utility that returns a callable `snapshot` function. This function is used to create and compare snapshots of test results. If a snapshot does not exist, it is created. If it exists and the current result differs, the snapshot is updated, and the test fails.
+
+#### Inputs
+| Name         | Type   | Description                                      |
+|:-------------|:-------|:-------------------------------------------------|
+| current_file | str    | The path to the current file, used to determine the directory for storing snapshots. |
+
+#### Outputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| snapshot | Callable | A function that takes a filename and result string, managing the snapshot creation and comparison. |
+
+#### Internal Logic
+1. **File Path Construction**: The `snapshot` function constructs the file path for the snapshot by joining the directory of the `current_file` with a "snapshots" subdirectory and the provided `filename`.
+2. **Directory Creation**: It uses `maybe_make_dirs` to ensure the directory for the snapshot exists.
+3. **Normalization**: The `normalize` function is used to standardize line endings in the result and expected snapshot content.
+4. **Snapshot Creation/Comparison**:
+   - If the snapshot file does not exist, it writes the current result to the file.
+   - If the snapshot file exists, it reads the expected content and compares it to the current result.
+   - For JSON files, it parses and compares the JSON objects.
+   - For text files, it uses `difflib.unified_diff` to generate a diff if there are differences.
+5. **Assertions**: The function asserts that both the result and expected content are not empty and that they match. If they do not match, it updates the snapshot and prints a message.
+
+## Side Effects
+- The function writes to the filesystem, creating or updating snapshot files as necessary.
+
+## Dependencies
+
+| Dependency                | Purpose                                      |
+|:--------------------------|:---------------------------------------------|
+| `os`                      | Used for file path manipulations and checking file existence. |
+| `difflib`                 | Used to generate unified diffs for text comparison. |
+| `json`                    | Used for parsing and comparing JSON content. |
+| `marimo._utils.paths`     | Provides the `maybe_make_dirs` function to ensure directories exist. |
+
+## Error Handling
+- The function uses assertions to ensure that the result and expected content are not empty and that they match. If they do not match, it updates the snapshot and prints a message indicating the update.
+
+## Logging
+- The function prints messages to the console when a snapshot is updated, providing feedback during test execution.

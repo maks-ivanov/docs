@@ -1,0 +1,187 @@
+---
+title: "lifespans.py"
+---
+
+## High-level description
+
+The `lifespans.py` file in the Marimo server API module defines a set of asynchronous context managers that manage various aspects of the server's lifecycle. These context managers are used to handle tasks such as logging, opening a browser, managing signals, and more, during the startup and shutdown phases of a Starlette application. The file also includes a `Lifespans` class that aggregates multiple lifespan context managers into a single callable entity.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+
+- **Lifespans Class**: This class aggregates multiple lifespan context managers and provides a unified interface to manage them.
+- **Lifespan Context Managers**: These are individual functions that manage specific aspects of the application's lifecycle, such as `lsp`, `watcher`, `open_browser`, `logging`, `signal_handler`, and `etc`.
+- **Helper Functions**: The `_startup_url` function is used to construct the URL for the application based on the app state.
+
+## Symbols
+
+### `Lifespans`
+#### Description
+The `Lifespans` class is designed to manage a collection of asynchronous context managers that handle different aspects of the application's lifecycle. It provides a unified interface to execute these context managers in sequence.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lifespans | LifespanList | A sequence of callable context managers that take a Starlette app as input. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AbstractAsyncContextManager[None] | An asynchronous context manager that manages the execution of the provided lifespans. |
+
+#### Internal Logic
+- The `__call__` method returns the `_manager` method, which is an asynchronous context manager.
+- The `_manager` method uses an `AsyncExitStack` to enter each lifespan context manager in sequence, ensuring proper setup and teardown.
+
+### `lsp`
+#### Description
+The `lsp` context manager initializes the Language Server Protocol (LSP) server if certain conditions are met, such as when the session mode is not `RUN` and GitHub Copilot is enabled.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AsyncIterator[None] | An asynchronous iterator that yields control back to the caller. |
+
+#### Internal Logic
+- Retrieves the application state and user configuration.
+- Checks if the session mode is not `RUN` and if GitHub Copilot is enabled.
+- Starts the LSP server if the conditions are met.
+
+### `watcher`
+#### Description
+The `watcher` context manager starts a file watcher if the application's state indicates that file watching is enabled.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AsyncIterator[None] | An asynchronous iterator that yields control back to the caller. |
+
+#### Internal Logic
+- Retrieves the application state.
+- Starts the file watcher if the `watch` attribute in the state is `True`.
+
+### `open_browser`
+#### Description
+The `open_browser` context manager opens a web browser to the application's URL if the application is not running in headless mode.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AsyncIterator[None] | An asynchronous iterator that yields control back to the caller. |
+
+#### Internal Logic
+- Retrieves the application state and user configuration.
+- Constructs the startup URL.
+- Uses `asyncio.get_running_loop().call_later` to open the URL in a browser after a short delay.
+
+### `logging`
+#### Description
+The `logging` context manager handles logging of startup and shutdown messages for the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AsyncIterator[None] | An asynchronous iterator that yields control back to the caller. |
+
+#### Internal Logic
+- Retrieves the application state and session manager.
+- Logs a startup message if the session manager is not in quiet mode.
+- Logs a shutdown message after yielding control.
+
+### `signal_handler`
+#### Description
+The `signal_handler` context manager sets up an interrupt handler to gracefully shut down the application when a termination signal is received.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AsyncIterator[None] | An asynchronous iterator that yields control back to the caller. |
+
+#### Internal Logic
+- Retrieves the application state and session manager.
+- Defines a `shutdown` function to close the session manager and the server.
+- Registers the `InterruptHandler` with the shutdown function.
+
+### `etc`
+#### Description
+The `etc` context manager performs miscellaneous setup tasks, such as initializing MIME types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The Starlette application instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | AsyncIterator[None] | An asynchronous iterator that yields control back to the caller. |
+
+#### Internal Logic
+- Calls `initialize_mimetypes` to set up MIME types.
+
+### `_startup_url`
+#### Description
+The `_startup_url` function constructs the URL for the application based on the app state, including host, port, and base URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | AppStateBase | The base state of the application. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The constructed URL for the application. |
+
+#### Internal Logic
+- Retrieves host and port from the state.
+- Constructs the URL based on the port number, adjusting for standard HTTP and HTTPS ports.
+- Appends an access token to the URL if it exists.
+
+## References
+
+- `AppState` and `AppStateBase` from `marimo._server.api.deps` are used to retrieve application state information.
+- `SessionManager` from `marimo._server.sessions` is used to manage session-related tasks.
+- `AuthToken` from `marimo._server.tokens` is used to handle authentication tokens.
+- `InterruptHandler` from `marimo._server.api.interrupt` is used for handling application interrupts.
+- `open_url_in_browser` from `marimo._server.api.utils` is used to open URLs in a web browser.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for asynchronous operations and managing event loops. |
+| `contextlib` | Provides utilities for working with context managers. |
+| `socket` | Used for network-related operations, such as retrieving host information. |
+| `sys` | Used to check Python version information. |
+| `starlette.applications.Starlette` | The web framework used for building the application. |
+
+## Logging
+
+The code uses the `LOGGER` object from `marimo._loggers` to log debug messages during the setup and teardown of various context managers.

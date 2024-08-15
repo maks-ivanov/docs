@@ -1,0 +1,87 @@
+---
+title: "FileBrowserPlugin.tsx"
+---
+
+## High-level description
+
+The `FileBrowserPlugin.tsx` file defines a React component for a file browser plugin within a frontend application. This plugin allows users to navigate directories, view files, and select files or directories based on specified criteria. It supports features like filtering by file type, selecting multiple files, and restricting navigation to a specific directory path.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `FileBrowserPlugin` is the main export and is created using the `createPlugin` function. It defines the data schema and functions for the plugin.
+- `FileBrowser` is a React component that implements the UI and logic for the file browser, utilizing the data and functions defined in `FileBrowserPlugin`.
+- `FileInfo` and `Data` are TypeScript interfaces that define the structure of file information and plugin data, respectively.
+- The `list_directory` function is a plugin function that retrieves directory contents and is used within the `FileBrowser` component.
+
+## Symbols
+
+### `FileBrowserPlugin`
+#### Description
+`FileBrowserPlugin` is a plugin created using the `createPlugin` function. It defines the data schema and functions for a file browser component, and renders the `FileBrowser` component with the provided data and functions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| S | `FileInfo[]` | The state type representing an array of file information. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `IPlugin&lt;S, Data, PluginFunctions&gt;` | The configured plugin with data schema, functions, and renderer. |
+
+### `FileBrowser`
+#### Description
+`FileBrowser` is a React component that provides a user interface for browsing files and directories. It allows users to navigate directories, view files, and select files or directories based on specified criteria.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | `FileInfo[]` | Array of selected files. |
+| setValue | `(value: FileInfo[]) =&gt; void` | Function to update the selected files. |
+| initialPath | `string` | The initial directory path to display. |
+| selectionMode | `string` | Mode for selecting files or directories. |
+| multiple | `boolean` | Whether multiple selections are allowed. |
+| label | `string \| null` | Label for the file browser. |
+| restrictNavigation | `boolean` | Whether navigation is restricted to the initial path. |
+| list_directory | `(req: { path: string }) =&gt; Promise&lt;{ files: FileInfo[] }&gt;` | Function to list directory contents. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element \| null` | The rendered file browser component or null if loading. |
+
+#### Internal Logic
+- Initializes state variables for the current path, select-all label, and path updating status.
+- Uses `useAsyncData` to fetch directory contents asynchronously.
+- Handles errors by logging and displaying a toast notification.
+- Provides functions to navigate directories, select/deselect files, and update the path.
+- Renders a table of files and directories with selection checkboxes and navigation options.
+
+## Side Effects
+- Displays toast notifications for errors and access restrictions.
+- Logs errors using the `Logger` utility.
+
+## References
+- `createPlugin` from `../core/builder` is used to define the plugin.
+- `useAsyncData` from `@/hooks/useAsyncData` is used for asynchronous data fetching.
+- `rpc` from `../core/rpc` is used to define the `list_directory` function.
+- `toast` from `@/components/ui/use-toast` is used for displaying notifications.
+- `Logger` from `@/utils/Logger` is used for logging errors.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation schemas. |
+| `react` | Provides React components and hooks. |
+| `lucide-react` | Provides icons for file types and navigation. |
+
+## Error Handling
+- Errors during directory listing are caught and logged using `Logger.error`.
+- A toast notification is displayed with the error message and a "danger" variant.
+
+## Logging
+- Errors are logged using the `Logger` utility, which wraps around `console.error`.
+
+## TODOs
+- No TODOs or notes are present in the code.

@@ -1,0 +1,85 @@
+---
+title: "_loggers.py"
+---
+
+## High-level description
+
+The `marimo/_loggers.py` file is responsible for managing logging within the Marimo application. It provides functionality to set the global logging level and to retrieve loggers with a consistent configuration, including a custom log formatter. This ensures that all log messages across the application are formatted and filtered according to the specified logging level.
+
+## Code Structure
+
+The file defines a few global variables and functions that work together to manage logging:
+
+- `_LOG_LEVEL`: A global variable that holds the current logging level.
+- `_LOG_FORMATTER`: An instance of `LogFormatter` used to format log messages.
+- `_LOGGERS`: A dictionary that caches initialized loggers to avoid redundant creation.
+
+## Symbols
+
+### `set_level`
+#### Description
+Sets the global logging level for all loggers managed by this module. It updates the `_LOG_LEVEL` variable and adjusts the level of all cached loggers.
+
+#### Inputs
+| Name  | Type         | Description                        |
+|:------|:-------------|:-----------------------------------|
+| level | `str | int`  | The desired logging level, either as a string (e.g., "DEBUG") or an integer (e.g., `logging.DEBUG`). |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Converts string levels to uppercase and maps them to the corresponding logging level.
+- Raises a `ValueError` if an unrecognized level is provided.
+- Updates `_LOG_LEVEL` and sets the level for each logger in `_LOGGERS`.
+
+### `get_logger`
+#### Description
+Retrieves a logger with the specified name, creating and configuring it if it does not already exist in the cache.
+
+#### Inputs
+| Name | Type     | Description                              |
+|:-----|:---------|:-----------------------------------------|
+| name | `str`    | The name of the logger to retrieve.       |
+| level | `Optional[int]` | The logging level to set for this logger, if different from the global level. |
+
+#### Outputs
+| Name   | Type            | Description                        |
+|:-------|:----------------|:-----------------------------------|
+| logger | `logging.Logger` | The configured logger instance.    |
+
+#### Internal Logic
+- Checks if a logger with the given name exists in `_LOGGERS`.
+- If not, creates a new logger, sets its level, and adds a `StreamHandler` with the custom formatter.
+- Caches the logger in `_LOGGERS` and returns it.
+
+### `marimo_logger`
+#### Description
+Provides a convenient way to get a logger specifically for the "marimo" namespace.
+
+#### Outputs
+| Name   | Type            | Description                        |
+|:-------|:----------------|:-----------------------------------|
+| logger | `logging.Logger` | The logger for the "marimo" namespace. |
+
+#### Internal Logic
+- Calls `get_logger` with the name "marimo" to retrieve or create the logger.
+
+## References
+
+- `LogFormatter`: A custom formatter used to format log messages, imported from `marimo._utils.log_formatter`.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `logging`  | Provides the standard logging functionality. |
+| `LogFormatter` | Customizes the format of log messages.   |
+
+## Error Handling
+
+- The `set_level` function raises a `ValueError` if an unrecognized logging level is provided.
+
+## Logging
+
+- The module itself does not perform logging but configures loggers to use a consistent format and level across the application.

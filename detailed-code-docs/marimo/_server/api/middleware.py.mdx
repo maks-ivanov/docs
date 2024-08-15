@@ -1,0 +1,83 @@
+---
+title: "middleware.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/middleware.py`, defines middleware components for a web application built using the Starlette framework. It includes an authentication backend (`AuthBackend`) that manages user authentication based on session modes and a middleware (`SkewProtectionMiddleware`) that protects against request skew by validating a server token for certain HTTP requests.
+
+## Code Structure
+
+The file contains two main classes: `AuthBackend` and `SkewProtectionMiddleware`. The `AuthBackend` class extends Starlette's `AuthenticationBackend` to provide custom authentication logic based on session modes. The `SkewProtectionMiddleware` class is a middleware that checks for a valid server token in HTTP requests to prevent unauthorized access.
+
+## References
+
+- `validate_auth`: A function from `marimo/_server/api/auth.py` used to validate authentication credentials.
+- `AppStateBase`: A class from `marimo/_server/api/deps.py` that provides access to the application's state, including session management.
+- `SessionMode`: An enumeration from `marimo/_server/model.py` that defines different session modes (`RUN` and `EDIT`).
+
+## Symbols
+
+### `AuthBackend`
+#### Description
+The `AuthBackend` class is responsible for handling authentication in the application. It determines whether a user should be authenticated based on the session mode and validates authentication credentials using the `validate_auth` function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| conn | HTTPConnection | The HTTP connection object representing the current request. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[tuple[AuthCredentials, BaseUser]] | A tuple containing authentication credentials and a user object if authentication is successful, otherwise `None`. |
+
+#### Internal Logic
+- Initializes with a flag `should_authenticate` to determine if authentication is required.
+- Retrieves the session mode from the application state.
+- If authentication is required, it validates the authentication credentials using `validate_auth`.
+- Depending on the session mode (`RUN` or `EDIT`), it returns appropriate access credentials (`read` or `read, edit`).
+
+### `SkewProtectionMiddleware`
+#### Description
+The `SkewProtectionMiddleware` class is a middleware that ensures requests are protected against skew by validating a server token. It only applies this validation to specific types of HTTP requests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| scope | Scope | The ASGI scope dictionary for the request. |
+| receive | Receive | The ASGI receive callable. |
+| send | Send | The ASGI send callable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | None | The middleware does not return a value but modifies the request flow based on validation. |
+
+#### Internal Logic
+- Checks if the request type is HTTP; if not, it passes the request to the next middleware.
+- Skips validation for non-POST requests, form submissions, and WebSocket connections.
+- Retrieves the expected server token from the application state and compares it with the token in the request headers.
+- If the tokens do not match, it returns a 401 Unauthorized response; otherwise, it allows the request to proceed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| starlette.authentication | Provides base classes for implementing authentication backends. |
+| starlette.requests | Used for handling HTTP requests. |
+| starlette.responses | Used for generating HTTP responses. |
+| starlette.status | Provides HTTP status codes. |
+
+## Error Handling
+
+- The `AuthBackend` raises a `ValueError` if an invalid session mode is encountered.
+- The `SkewProtectionMiddleware` returns a 401 Unauthorized response if the server token validation fails.
+
+## Logging
+
+No explicit logging is implemented in the target file, but related files like `auth.py` use logging for debugging purposes.
+
+## TODOs
+
+No TODOs are present in the target file.

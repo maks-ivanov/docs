@@ -1,0 +1,87 @@
+---
+title: "test_dataframe.py"
+---
+
+## High-level description
+
+The target file `test_dataframe.py` is a test suite for validating the functionality of the `dataframe` class from the `marimo` library. It uses the `pytest` framework to test the behavior of dataframes, specifically focusing on the integration with Pandas and Polars dataframes. The tests ensure that the `dataframe` class correctly handles column retrieval and value extraction, and raises appropriate exceptions when columns are not found.
+
+## Code Structure
+
+The main class in this file is `TestDataframes`, which contains two static methods: `test_dataframe` and `test_dataframe_numeric_columns`. These methods are decorated with `pytest.mark.parametrize` to test different dataframe inputs. The tests are only executed if the necessary dependencies (`pandas`, `numpy`, and `polars`) are installed.
+
+## References
+
+- `DependencyManager`: Used to check if the required dependencies (`pandas`, `numpy`, `polars`) are installed.
+- `ui.dataframe`: The class being tested, which is responsible for handling dataframes in the `marimo` UI plugin.
+- `GetColumnValuesArgs`, `GetColumnValuesResponse`, `ColumnNotFound`: Classes and exceptions used in the tests to interact with the `dataframe` class.
+
+## Symbols
+
+### `TestDataframes`
+#### Description
+A test class for validating the functionality of the `dataframe` class from the `marimo` library. It contains tests for checking the correct handling of dataframes, including column retrieval and value extraction.
+
+#### Inputs
+- `df`: A dataframe object, either from Pandas or Polars, used as input for the tests.
+
+#### Outputs
+- None directly, but the tests assert conditions on the `dataframe` class behavior.
+
+#### Internal Logic
+- The class uses `pytest.mark.parametrize` to run tests with different dataframe inputs.
+- It checks if the `dataframe` class correctly initializes with the given dataframe and verifies the column types and values.
+- It tests the `get_column_values` method to ensure it returns the correct values for specified columns and raises `ColumnNotFound` for non-existent columns.
+
+### `test_dataframe`
+#### Description
+Tests the `dataframe` class with dataframes having string column names.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | Any | A Pandas or Polars dataframe with string column names |
+
+#### Outputs
+- None directly, but asserts conditions on the `dataframe` class behavior.
+
+#### Internal Logic
+- Initializes a `dataframe` object with the given dataframe.
+- Asserts that the `value` attribute of the `dataframe` object matches the input dataframe.
+- Verifies the column types and values using the `_component_args` attribute.
+- Tests the `get_column_values` method for existing and non-existing columns.
+
+### `test_dataframe_numeric_columns`
+#### Description
+Tests the `dataframe` class with dataframes having numeric column names.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | Any | A Pandas dataframe with numeric column names |
+
+#### Outputs
+- None directly, but asserts conditions on the `dataframe` class behavior.
+
+#### Internal Logic
+- Similar to `test_dataframe`, but focuses on dataframes with numeric column names.
+- Verifies that the `dataframe` class handles numeric column names correctly and raises `ColumnNotFound` for non-existent columns.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing the test cases. |
+| `unittest.mock.Mock` | Used to mock the Pandas and Polars modules if they are not installed. |
+
+## Error Handling
+
+- The tests use `pytest.raises` to check that the `ColumnNotFound` exception is raised when attempting to access a non-existent column.
+
+## Logging
+
+- No explicit logging is implemented in the test file.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

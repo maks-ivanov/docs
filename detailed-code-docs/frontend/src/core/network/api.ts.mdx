@@ -1,0 +1,78 @@
+---
+title: "api.ts"
+---
+
+## High-level description
+
+The `api.ts` file provides a utility for making HTTP requests with additional headers for XSRF token and session ID, specifically tailored for the Marimo application. It defines a structured API interface for making `POST` and `GET` requests, ensuring that requests are properly authenticated and logged in case of errors.
+
+## Code Structure
+
+The main symbols in the code are the `API` object and the `marimoClient`. The `API` object provides methods for making HTTP requests (`post` and `get`) with additional headers, while `marimoClient` is an instance of a client created using the `createMarimoClient` function, which is configured to use the same headers as the `API` object.
+
+## References
+
+- `getMarimoServerToken` from `marimo-tag.ts` is used to retrieve the server token.
+- `getSessionId` from `session.ts` is used to retrieve the session ID.
+- `Logger` from `Logger.ts` is used for logging errors.
+- `once` from `once.ts` is used to ensure that the server token is fetched only once.
+
+## Symbols
+
+### `API`
+#### Description
+The `API` object provides methods for making HTTP `POST` and `GET` requests with additional headers for XSRF token and session ID. It also includes utility methods for handling responses and errors.
+
+#### Inputs
+- `post` method:
+  | Name  | Type   | Description                        |
+  |:------|:-------|:-----------------------------------|
+  | url   | string | The endpoint URL for the request.  |
+  | body  | REQ    | The request payload.               |
+  | opts  | object | Optional headers and base URL.     |
+
+- `get` method:
+  | Name  | Type   | Description                        |
+  |:------|:-------|:-----------------------------------|
+  | url   | string | The endpoint URL for the request.  |
+  | opts  | object | Optional headers and base URL.     |
+
+#### Outputs
+- `post` method:
+  | Name  | Type   | Description                        |
+  |:------|:-------|:-----------------------------------|
+  | RESP  | Promise | The response from the server.     |
+
+- `get` method:
+  | Name  | Type   | Description                        |
+  |:------|:-------|:-----------------------------------|
+  | RESP  | Promise | The response from the server.     |
+
+#### Internal Logic
+- The `post` method constructs the full URL using the base URL and endpoint, sets the request method to `POST`, and includes headers for content type and authentication. It processes the response to handle JSON and non-JSON responses and logs errors using the `Logger`.
+- The `get` method follows a similar pattern but sets the request method to `GET` and does not include a request body.
+- The `headers` method returns an object containing the session ID and server token, ensuring these are included in every request.
+
+### `marimoClient`
+#### Description
+`marimoClient` is an instance of a client created using the `createMarimoClient` function. It is configured to automatically include the same headers as the `API` object in every request.
+
+## Dependencies
+
+| Dependency          | Purpose                                                                 |
+|:--------------------|:------------------------------------------------------------------------|
+| `@marimo-team/marimo-api` | Used to create the `marimoClient` for making API requests.         |
+| `Logger`            | Used for logging errors during API requests.                            |
+| `once`              | Ensures that the server token is fetched only once.                     |
+
+## Error Handling
+
+The `API` object includes error handling in its `post` and `get` methods. If a response is not successful (`response.ok` is false), it throws an error with the response status text and logs the error using the `Logger`.
+
+## Logging
+
+The `Logger` is used to log errors that occur during API requests, providing a consistent way to track issues in the network layer.
+
+## TODOs
+
+No TODOs are present in the code.

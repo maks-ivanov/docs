@@ -1,0 +1,197 @@
+---
+title: "test_dataclass_to_openapi.py"
+---
+
+## High-level description
+
+The target file `tests/_utils/test_dataclass_to_openapi.py` contains unit tests for converting Python dataclasses and other type constructs into OpenAPI specifications using the `PythonTypeToOpenAPI` class. The tests verify that the conversion process correctly handles various Python types, including nested dataclasses, recursive structures, named unions, and class variables, and that it respects configuration options like camel case naming.
+
+## Code Structure
+
+The main symbols in the code are the dataclasses `Address`, `Person`, `Node`, `Theme`, and `Dog`, as well as the union type `Colors`. These are used as inputs to the `PythonTypeToOpenAPI` class's `convert` method, which is tested in several test functions. Each test function checks the conversion of a specific type or feature into an OpenAPI schema.
+
+## References
+
+- `PythonTypeToOpenAPI`: This class is imported from `marimo._utils.dataclass_to_openapi` and is the primary utility being tested. It is responsible for converting Python types to OpenAPI schemas.
+
+## Symbols
+
+### `Address`
+#### Description
+A dataclass representing an address with fields for street, city, zip code, and kind (home or work).
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| street  | str    | The street address.          |
+| city    | str    | The city of the address.     |
+| zip_code| Optional[int] | The zip code, which can be null. |
+| kind    | Literal["home", "work"] | The type of address. |
+
+#### Outputs
+N/A
+
+### `Person`
+#### Description
+A dataclass representing a person with fields for name, age, address, tags, and metadata.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| name    | str    | The person's name.           |
+| age     | int    | The person's age.            |
+| address | Address| The person's address.        |
+| tags    | List[str] | A list of tags associated with the person. |
+| metadata| Any    | Additional metadata.         |
+
+#### Outputs
+N/A
+
+### `Node`
+#### Description
+A recursive dataclass representing a node in a binary tree with fields for value, left, and right nodes.
+
+#### Inputs
+| Name  | Type         | Description                  |
+|:------|:-------------|:-----------------------------|
+| value | int          | The value of the node.       |
+| left  | Optional[Node] | The left child node, which can be null. |
+| right | Optional[Node] | The right child node, which can be null. |
+
+#### Outputs
+N/A
+
+### `Colors`
+#### Description
+A union type representing a set of color literals: red, green, and blue.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `Theme`
+#### Description
+A dataclass representing a theme with fields for primary and secondary colors, which are of type `Colors`.
+
+#### Inputs
+| Name           | Type          | Description                  |
+|:---------------|:--------------|:-----------------------------|
+| primary_color  | Colors        | The primary color of the theme. |
+| secondary_color| Optional[Colors] | The secondary color, which can be null. |
+
+#### Outputs
+N/A
+
+### `Dog`
+#### Description
+A dataclass with a class variable `name` set to "dog".
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+## Test Functions
+
+### `test_dataclass_to_openapi`
+#### Description
+Tests the conversion of the `Person` dataclass to an OpenAPI schema without camel case naming.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Instantiates `PythonTypeToOpenAPI` with `camel_case=False`.
+- Converts the `Person` dataclass and asserts the resulting OpenAPI schema matches the expected structure.
+
+### `test_dataclass_to_openapi_with_camelcase`
+#### Description
+Tests the conversion of the `Address` dataclass to an OpenAPI schema with camel case naming.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Instantiates `PythonTypeToOpenAPI` with `camel_case=True`.
+- Converts the `Address` dataclass and asserts the resulting OpenAPI schema matches the expected structure.
+
+### `test_recursive_dataclass_to_openapi`
+#### Description
+Tests the conversion of the recursive `Node` dataclass to an OpenAPI schema.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Instantiates `PythonTypeToOpenAPI` with `camel_case=False`.
+- Converts the `Node` dataclass and asserts the resulting OpenAPI schema matches the expected structure.
+
+### `test_named_union`
+#### Description
+Tests the conversion of the `Colors` union type to an OpenAPI schema.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Instantiates `PythonTypeToOpenAPI` with `camel_case=False`.
+- Converts the `Colors` union and asserts the resulting OpenAPI schema matches the expected structure.
+
+### `test_nested_named_union`
+#### Description
+Tests the conversion of the `Theme` dataclass, which includes a nested named union, to an OpenAPI schema.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Instantiates `PythonTypeToOpenAPI` with `camel_case=False` and a name override for `Colors`.
+- Converts the `Theme` dataclass and asserts the resulting OpenAPI schema matches the expected structure.
+
+### `test_class_var`
+#### Description
+Tests the conversion of the `Dog` dataclass, which includes a class variable, to an OpenAPI schema.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Instantiates `PythonTypeToOpenAPI` with `camel_case=False`.
+- Converts the `Dog` dataclass and asserts the resulting OpenAPI schema matches the expected structure.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used to define dataclass structures. |
+| `typing` | Provides type hints and constructs like `Optional`, `Literal`, and `Union`. |
+| `marimo._utils.dataclass_to_openapi` | Provides the `PythonTypeToOpenAPI` class for converting Python types to OpenAPI schemas. |
+
+## Error Handling
+
+The test functions use assertions to verify that the output of the `convert` method matches the expected OpenAPI schema. If the conversion does not produce the expected result, an assertion error will be raised, indicating a failure in the conversion logic.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on using assertions to validate the correctness of the conversion process.

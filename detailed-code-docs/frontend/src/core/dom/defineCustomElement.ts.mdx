@@ -1,0 +1,60 @@
+---
+title: "defineCustomElement.ts"
+---
+
+## High-level description
+
+The `defineCustomElement` function in the target file is a utility function designed to safely register custom web components in the browser. It ensures that the custom element is only defined if the browser supports custom elements and if the element has not already been defined. This function also logs warnings if custom elements are not supported or if an element is already defined, which is particularly useful in production environments.
+
+## Code Structure
+
+The main symbol in the code is the `defineCustomElement` function. It interacts with the `Logger` utility to log warnings and uses the `window.customElements` API to define custom elements. The function is used in various parts of the codebase to register custom elements, ensuring that they are only defined once and that the environment supports them.
+
+## Symbols
+
+### `defineCustomElement`
+#### Description
+The `defineCustomElement` function is a wrapper around the `customElements.define()` method. It adds safety checks to ensure that custom elements are only defined if the browser supports them and if they have not already been defined. This helps prevent errors and redundant definitions in the application.
+
+#### Inputs
+| Name  | Type                     | Description                                      |
+|:------|:-------------------------|:-------------------------------------------------|
+| name  | `string`                 | The name of the custom element to be defined.    |
+| clazz | `CustomElementConstructor` | The class constructor for the custom element.    |
+
+#### Outputs
+This function does not return any output.
+
+#### Internal Logic
+1. **Check for Support**: The function first checks if the `window.customElements` API is available. If not, it logs a warning using the `Logger` utility and exits.
+2. **Check for Existing Definition**: It then checks if the custom element with the given name is already defined. If it is, and the environment is production, it logs a warning and exits.
+3. **Define Custom Element**: If the checks pass, it uses `window.customElements.define()` to register the custom element with the provided name and class constructor.
+
+## References
+
+- **Logger**: The `Logger` utility is used to log warnings when custom elements are not supported or when an element is already defined. This utility is defined in `frontend/src/utils/Logger.ts`.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `Logger`   | Used for logging warnings and errors related to custom element definition. |
+
+## Error Handling
+
+The function handles errors by logging warnings when:
+- The browser does not support custom elements.
+- An attempt is made to redefine an already defined custom element in a production environment.
+
+## Logging
+
+The function uses the `Logger` utility to log warnings. This is particularly useful for debugging and monitoring in production environments, as it provides insights into potential issues with custom element definitions.
+
+## Side Effects
+
+- **Logging**: The function logs warnings to the console if certain conditions are met (e.g., custom elements not supported, element already defined).
+- **Global State Modification**: It modifies the global `customElements` registry by defining new custom elements.
+
+## Performance Considerations
+
+The function performs checks before defining a custom element, which can prevent unnecessary operations and potential errors. This is particularly important in production environments where performance and stability are critical.

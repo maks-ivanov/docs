@@ -1,0 +1,123 @@
+---
+title: "vertical-layout.tsx"
+---
+
+## High-level description
+
+The `vertical-layout.tsx` file defines a React component for rendering a vertical layout of cells in a notebook-like application. It provides functionality to display code and outputs for each cell, manage visibility settings based on application mode, and offer options to download the notebook as HTML or PNG. The component is designed to handle different modes such as read, edit, and kiosk, and it integrates with various utilities and components to manage cell rendering and interactions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `VerticalLayoutRenderer`: The main React component that renders the vertical layout of cells.
+- `VerticalCell`: A memoized component responsible for rendering individual cells within the vertical layout.
+- `ActionButtons`: A component that provides UI controls for toggling code visibility and downloading the notebook.
+- `VerticalLayoutPlugin`: An object that defines the plugin for the vertical layout, including its type, name, and component.
+
+## Symbols
+
+### `VerticalLayoutRenderer`
+#### Description
+The `VerticalLayoutRenderer` is a React functional component that renders a vertical layout of cells. It manages the visibility of code based on application mode and user preferences, and it includes action buttons for additional functionalities like downloading the notebook.
+
+#### Inputs
+| Name     | Type                  | Description                        |
+|:---------|:----------------------|:-----------------------------------|
+| cells    | Array&lt;CellRuntimeState & CellData&gt; | The cells to render in the layout. |
+| appConfig| AppConfig             | Configuration settings for the app.|
+| mode     | AppMode               | The current mode of the application.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | The rendered vertical layout of cells. |
+
+#### Internal Logic
+- Uses `useDelayVisibility` to manage the initial visibility of cells.
+- Determines whether to show code based on URL parameters and application mode.
+- Maps over the `cells` array to render each cell using the `VerticalCell` component.
+- Conditionally renders `ActionButtons` and `FloatingOutline` based on the mode.
+
+### `VerticalCell`
+#### Description
+`VerticalCell` is a memoized component that renders an individual cell, displaying its output and optionally its code. It adapts its rendering based on the cell's status and the application's mode.
+
+#### Inputs
+| Name              | Type                  | Description |
+|:------------------|:----------------------|:------------|
+| output            | OutputMessage         | The output of the cell. |
+| consoleOutputs    | Array&lt;WithResponse&lt;OutputMessage&gt;&gt; | Console outputs of the cell. |
+| cellId            | CellId                | Unique identifier for the cell. |
+| status            | RuntimeState          | Current status of the cell. |
+| stopped           | boolean               | Whether the cell execution was stopped. |
+| errored           | boolean               | Whether the cell encountered an error. |
+| config            | CellConfig            | Configuration for the cell. |
+| interrupted       | boolean               | Whether the cell execution was interrupted. |
+| staleInputs       | boolean               | Whether the cell has stale inputs. |
+| runStartTimestamp | Seconds               | Timestamp when the cell started running. |
+| code              | string                | The code content of the cell. |
+| showCode          | boolean               | Whether to show the code of the cell. |
+| mode              | AppMode               | The current mode of the application. |
+| name              | string                | The name of the cell. |
+| kiosk             | boolean               | Whether the application is in kiosk mode. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | The rendered cell component. |
+
+#### Internal Logic
+- Uses `useRef` to manage a reference to the cell's DOM element.
+- Determines if the cell's output is stale using `outputIsStale`.
+- Renders the cell's output and code conditionally based on the mode and `showCode` flag.
+- Handles different rendering paths for read mode and kiosk mode.
+
+### `ActionButtons`
+#### Description
+`ActionButtons` is a React component that provides UI controls for toggling the visibility of code and downloading the notebook as HTML or PNG.
+
+#### Inputs
+| Name           | Type     | Description |
+|:---------------|:---------|:------------|
+| canShowCode    | boolean  | Whether the code can be shown. |
+| showCode       | boolean  | Current state of code visibility. |
+| onToggleShowCode | () =&gt; void | Callback to toggle code visibility. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | The rendered action buttons. |
+
+#### Internal Logic
+- Provides buttons for toggling code visibility and downloading the notebook.
+- Uses `downloadHTMLAsImage` and `downloadAsHTML` for download functionalities.
+
+## References
+
+- `OutputArea` from `Output.tsx`: Used to render the output of each cell.
+- `ReadonlyPythonCode` from `readonly-python-code.tsx`: Used to render the code of each cell in a read-only format.
+- `ConsoleOutput` from `ConsoleOutput.tsx`: Used to render console outputs for each cell.
+- `VerticalLayoutWrapper` from `vertical-layout-wrapper.tsx`: Wraps the vertical layout for styling and configuration.
+- `useDelayVisibility` from `useDelayVisibility.ts`: Manages the initial visibility delay for cells.
+- `outputIsStale` from `cell.ts`: Determines if a cell's output is stale.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React`    | Core library for building the UI components. |
+| `zod`      | Used for validating layout data. |
+| `jotai`    | State management library used for managing application state. |
+| `lucide-react` | Provides icon components used in the UI. |
+
+## Error Handling
+
+- The component checks for the presence of the `App` element before attempting downloads, ensuring that operations are only performed when the element is available.
+
+## Logging
+
+- The code does not implement specific logging mechanisms.
+
+## TODOs
+
+- There are no explicit TODOs in the code.

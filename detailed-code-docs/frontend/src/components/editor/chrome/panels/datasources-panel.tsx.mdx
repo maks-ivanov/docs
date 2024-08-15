@@ -1,0 +1,145 @@
+---
+title: "datasources-panel.tsx"
+---
+
+## High-level description
+
+The `datasources-panel.tsx` file defines a React component called `DataSourcesPanel` that is responsible for displaying and managing a list of data tables and their columns within a user interface. It provides functionalities for searching, expanding, and interacting with these data sources, allowing users to add tables or columns to a notebook and preview column data.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `DataSourcesPanel`: The main React component that renders the data sources panel.
+- `TableList`: A sub-component used within `DataSourcesPanel` to render the list of tables and their columns.
+- `DatasetTableItem` and `DatasetColumnItem`: Sub-components used to render individual table and column items, respectively.
+- `DatasetColumnPreview`: A sub-component used to render a preview of a column's data.
+- `sortedTablesAtom`: A Jotai atom used to manage the sorted state of tables.
+
+## References
+
+- `useDatasets` and `useDatasetsActions`: Hooks from the datasets state management module.
+- `useCellActions`: Hook from the cells state management module.
+- `useLastFocusedCellId`: Hook to get the last focused cell ID.
+- `previewDatasetColumn`: Function to request a preview of a dataset column.
+- `maybeAddAltairImport` and `maybeAddMarimoImport`: Functions to add necessary imports for Altair and Marimo libraries.
+
+## Symbols
+
+### `DataSourcesPanel`
+#### Description
+The `DataSourcesPanel` component is responsible for displaying a list of data tables and their columns. It allows users to search for tables, expand tables to view columns, and add tables or columns to a notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The component does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered UI of the data sources panel. |
+
+#### Internal Logic
+- Initializes state for search input.
+- Retrieves necessary data and actions using hooks.
+- Handles adding columns and tables to the notebook with appropriate imports.
+- Renders an empty state if no tables are available.
+- Uses the `TableList` component to render the list of tables and columns.
+
+### `TableList`
+#### Description
+The `TableList` component renders a list of tables and their columns, allowing for interaction such as expanding tables and columns, and adding them to a notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tables | DataTable[] | List of data tables to display. |
+| isSearching | boolean | Indicates if a search is active. |
+| columnPreviews | ColumnPreviewMap | Map of column previews. |
+| onAddColumnChart | function | Callback to add a column chart. |
+| onAddTable | function | Callback to add a table. |
+| onExpandTable | function | Callback to expand a table. |
+| onExpandColumn | function | Callback to expand a column. |
+| isTableExpanded | function | Function to check if a table is expanded. |
+| isColumnExpanded | function | Function to check if a column is expanded. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered list of tables and columns. |
+
+#### Internal Logic
+- Groups tables by their source and sorts them.
+- Renders each table and its columns using `DatasetTableItem` and `DatasetColumnItem`.
+- Handles the logic for expanding tables and columns.
+
+### `DatasetTableItem`
+#### Description
+Renders an individual table item, providing options to expand the table and add it to a notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| table | DataTable | The data table to render. |
+| onExpand | function | Callback to expand the table. |
+| onAddTable | function | Callback to add the table. |
+| isExpanded | boolean | Indicates if the table is expanded. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered table item. |
+
+### `DatasetColumnItem`
+#### Description
+Renders an individual column item, providing options to expand the column and copy its name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| table | DataTable | The data table containing the column. |
+| column | DataTableColumn | The data column to render. |
+| onExpandColumn | function | Callback to expand the column. |
+| isExpanded | boolean | Indicates if the column is expanded. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered column item. |
+
+### `DatasetColumnPreview`
+#### Description
+Renders a preview of a column's data, including summary statistics and a chart if available.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| table | DataTable | The data table containing the column. |
+| column | DataTableColumn | The data column to preview. |
+| onAddColumnChart | function | Callback to add a column chart. |
+| preview | DataColumnPreview | The preview data for the column. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered column preview. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating React components. |
+| `lucide-react` | Provides icons used in the UI. |
+| `jotai` | State management library used for managing application state. |
+| `lodash-es` | Utility library used for sorting and other operations. |
+
+## Error Handling
+
+- The `ErrorBoundary` component is used to catch and display errors that occur within the `DatasetColumnPreview` component.
+
+## Logging
+
+- The `logNever` function is used to log unexpected cases in the `handleAddTable` function.
+
+## TODOs
+- No TODOs are present in the code.

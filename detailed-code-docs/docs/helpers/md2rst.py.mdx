@@ -1,0 +1,64 @@
+---
+title: "md2rst.py"
+---
+
+## High-level description
+
+The `md2rst.py` file contains a function `md2rst` that converts markdown-formatted docstrings into reStructuredText (RST) format using the `pypandoc` library. This conversion is particularly useful in documentation generation processes, such as those using Sphinx, where RST is the preferred format.
+
+## Code Structure
+
+The main symbol in this file is the `md2rst` function, which is designed to be used as a hook in a Sphinx documentation setup. It is connected to the Sphinx event `autodoc-process-docstring` to automatically convert markdown docstrings to RST during the documentation build process.
+
+## References
+
+- The `md2rst` function is referenced in the `docs/conf.py` file, where it is connected to the Sphinx `autodoc-process-docstring` event.
+
+## Symbols
+
+### `md2rst`
+#### Description
+The `md2rst` function converts markdown-formatted docstrings into reStructuredText (RST) format. This is achieved using the `pypandoc` library, which leverages Pandoc to perform the conversion. The function is intended to be used as a Sphinx hook to preprocess docstrings during the documentation generation process.
+
+#### Inputs
+| Name    | Type   | Description                                      |
+|:--------|:-------|:-------------------------------------------------|
+| app     | Any    | The Sphinx application object (unused in function). |
+| what    | Any    | The type of the object which the docstring belongs to (unused in function). |
+| name    | Any    | The fully qualified name of the object (unused in function). |
+| obj     | Any    | The object itself (unused in function).          |
+| options | Any    | The options given to the directive (unused in function). |
+| lines   | List[str] | The lines of the docstring to be converted.       |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function modifies the `lines` list in place. |
+
+#### Internal Logic
+1. The function begins by discarding the unused input parameters (`app`, `what`, `name`, `obj`, `options`) using the `del` statement.
+2. It concatenates the list of lines into a single markdown string using `"\n".join(lines)`.
+3. The markdown string is then converted to RST using `pypandoc.convert_text`, specifying the source format as "md" and the target format as "rst".
+4. The original `lines` list is cleared and then populated with the converted RST lines by splitting the converted string using `splitlines()`.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `pypandoc` | Used to convert markdown text to reStructuredText using Pandoc. |
+
+## Error Handling
+
+The function does not include explicit error handling. Any errors during the conversion process would likely be raised by the `pypandoc.convert_text` function, which should be handled by the caller or the Sphinx framework.
+
+## Logging
+
+The function does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The `md2rst` function is designed to be used as a Sphinx hook and does not expose a public API beyond its function signature. It is connected to the `autodoc-process-docstring` event in the Sphinx setup, as seen in the `docs/conf.py` file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

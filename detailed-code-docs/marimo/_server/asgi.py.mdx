@@ -1,0 +1,80 @@
+---
+title: "asgi.py"
+---
+
+## High-level description
+
+The `asgi.py` file in the `marimo/_server` directory is responsible for creating and configuring an ASGI (Asynchronous Server Gateway Interface) application that can serve multiple Marimo notebook applications. It provides a builder pattern to configure and mount multiple applications on different paths, allowing for integration with ASGI-compatible servers like Uvicorn and frameworks like FastAPI.
+
+## Code Structure
+
+The main components of the code are the `ASGIAppBuilder` abstract class and the `create_asgi_app` function. The `ASGIAppBuilder` class defines the interface for building ASGI applications, while the `create_asgi_app` function implements this interface, providing a concrete builder that can configure and build ASGI applications.
+
+## Symbols
+
+### `ASGIAppBuilder`
+#### Description
+`ASGIAppBuilder` is an abstract base class that defines the interface for building ASGI applications. It requires implementing methods to add applications and build the final ASGI application.
+
+#### Inputs
+- None directly, but subclasses must implement methods that take specific inputs.
+
+#### Outputs
+- None directly, but subclasses must implement methods that return specific outputs.
+
+### `create_asgi_app`
+#### Description
+The `create_asgi_app` function is a factory function that returns an instance of a concrete `ASGIAppBuilder`. This builder can be used to configure and build an ASGI application that serves multiple Marimo notebook applications.
+
+#### Inputs
+| Name          | Type    | Description                                                                 |
+|:--------------|:--------|:----------------------------------------------------------------------------|
+| `quiet`       | `bool`  | If `True`, suppresses standard output.                                      |
+| `include_code`| `bool`  | If `True`, includes notebook code in the application.                       |
+| `token`       | `Optional[str]` | An optional authentication token for the application. If not provided, an empty token is used. |
+
+#### Outputs
+| Name   | Type            | Description                                      |
+|:-------|:----------------|:-------------------------------------------------|
+| output | `ASGIAppBuilder`| A builder object to create multiple ASGI apps.   |
+
+#### Internal Logic
+1. **Imports and Initialization**: The function imports necessary modules and initializes a `Starlette` base application.
+2. **Authentication Token**: It sets up an authentication token, defaulting to an empty token if none is provided.
+3. **Builder Class**: Defines a `Builder` class that implements the `ASGIAppBuilder` interface. This class manages the configuration of multiple applications.
+4. **Application Configuration**: The `Builder` class allows adding applications with specific paths and roots, and builds the final ASGI application by mounting these applications on the base app.
+5. **Return**: The function returns an instance of the `Builder` class.
+
+## References
+
+- `Starlette`: Used for creating the base ASGI application.
+- `AuthToken`: Used for handling authentication tokens.
+- `SessionManager`, `AppFileRouter`, `create_starlette_app`: Used within the builder to manage sessions and create individual applications.
+
+## Dependencies
+
+| Dependency                  | Purpose                                                                 |
+|:----------------------------|:------------------------------------------------------------------------|
+| `starlette.applications`    | To create the base ASGI application.                                    |
+| `starlette.responses`       | To handle HTTP responses, such as redirects.                            |
+| `marimo._server.api.lifespans` | To manage application lifespans.                                      |
+| `marimo._config.manager`    | To manage user configurations.                                          |
+| `marimo._server.file_router`| To route files to applications.                                         |
+| `marimo._server.main`       | To create individual Starlette applications.                            |
+| `marimo._server.model`      | To define session modes.                                                |
+| `marimo._server.sessions`   | To manage application sessions.                                         |
+| `marimo._server.tokens`     | To handle authentication tokens.                                        |
+| `marimo._server.utils`      | To initialize asyncio.                                                  |
+| `marimo._utils.marimo_path` | To handle file paths.                                                   |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the provided paths and configurations are valid.
+
+## Logging
+
+The code does not implement logging directly, but it uses components like `SessionManager` and `AuthToken` that may have their own logging mechanisms.
+
+## TODOs
+
+No TODOs or notes are present in the code.

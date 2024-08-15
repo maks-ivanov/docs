@@ -1,0 +1,35 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_output/md_extensions` directory is part of the Marimo project and is designed to extend the functionality of Markdown processing. It contains custom extensions that modify how Markdown content is converted to HTML, specifically focusing on handling external links. The directory includes an `__init__.py` file, which designates it as a Python package, and an `external_links.py` file, which implements the logic for processing external links in Markdown documents.
+
+## What does it do?
+
+The primary functionality of this directory is to enhance the Markdown-to-HTML conversion process by ensuring that external links in the Markdown content are handled securely and conveniently. When Markdown content is converted to HTML, any links that point to external websites are modified to open in a new browser tab and are secured against certain vulnerabilities. This is achieved by adding specific attributes to the HTML anchor tags (`&lt;a&gt;`). The `target="_blank"` attribute ensures that the link opens in a new tab, while the `rel="noopener"` attribute prevents potential security issues related to the `window.opener` object.
+
+## Entry points
+
+The main file in this directory is `external_links.py`, which contains the logic for the Markdown extension. This file is organized into two main classes:
+
+1. **`ExternalLinksTreeProcessor`**: This class is responsible for iterating over the HTML elements generated from the Markdown content and modifying any external links by adding the necessary attributes.
+
+2. **`ExternalLinksExtension`**: This class registers the `ExternalLinksTreeProcessor` with the Markdown library, ensuring that it is applied during the Markdown processing pipeline.
+
+## Key Files
+
+- **`__init__.py`**: This file is essentially empty, serving only to indicate that the `md_extensions` directory is a Python package. It does not contain any functional code.
+
+- **`external_links.py`**: This file contains the core logic for the Markdown extension that processes external links. It defines the `ExternalLinksTreeProcessor` and `ExternalLinksExtension` classes, which are used to modify external links in the HTML output of Markdown content.
+
+## Dependencies
+
+The `external_links.py` file relies on several external libraries:
+
+- **`urllib.parse`**: Used to parse URLs and determine if they are external links.
+- **`xml.etree.ElementTree`**: Utilized for manipulating the HTML elements generated from Markdown content.
+- **`markdown`**: Provides the base classes and functionality for creating and registering Markdown extensions.
+
+These dependencies are chosen to facilitate the parsing and manipulation of URLs and HTML elements, as well as to integrate seamlessly with the Markdown processing pipeline.

@@ -1,0 +1,107 @@
+---
+title: "test_web_component.py"
+---
+
+## High-level description
+
+The target file `test_web_component.py` contains unit tests for the `web_component` module of the Marimo library. These tests focus on ensuring that HTML components are correctly built and parsed, particularly with respect to escaping and handling special characters in attributes. The tests verify that initial values and arguments are properly encoded and decoded, and that markdown labels are correctly compiled.
+
+## Code Structure
+
+The main symbols in the code are the test functions, which are designed to validate the behavior of functions from the `web_component` module. These functions include `build_ui_plugin` and `parse_initial_value`, which are responsible for constructing HTML components and parsing initial values from them, respectively. The tests use regular expressions to verify the correctness of the HTML output.
+
+## Symbols
+
+### `test_args_escaped`
+#### Description
+This test verifies that arguments passed to the `build_ui_plugin` function are correctly JSON-encoded and HTML-escaped in the resulting HTML string.
+
+#### Inputs
+| Name          | Type   | Description                        |
+|:--------------|:-------|:-----------------------------------|
+| initial_value | str    | The initial value to be encoded.   |
+| args          | dict   | Arguments to be encoded in HTML.   |
+
+#### Outputs
+None (assertions are used to validate behavior).
+
+#### Internal Logic
+- Calls `build_ui_plugin` with a tag name, initial value, and arguments.
+- Uses regular expressions to extract and verify the encoded values in the HTML string.
+
+### `test_initial_value_parse`
+#### Description
+This test ensures that the `parse_initial_value` function correctly extracts and unescapes the initial value from the HTML string.
+
+#### Inputs
+| Name          | Type   | Description                        |
+|:--------------|:-------|:-----------------------------------|
+| initial_value | str    | The initial value to be parsed.    |
+
+#### Outputs
+None (assertions are used to validate behavior).
+
+#### Internal Logic
+- Calls `build_ui_plugin` to generate an HTML string.
+- Uses `parse_initial_value` to extract the initial value and compares it to the expected unescaped value.
+
+### `test_label_md_compiled`
+#### Description
+This test checks that markdown labels are correctly compiled into HTML with the appropriate class names, particularly for LaTeX content.
+
+#### Inputs
+| Name          | Type   | Description                        |
+|:--------------|:-------|:-----------------------------------|
+| initial_value | str    | The initial value for the component. |
+| label         | str    | The markdown label to be compiled. |
+
+#### Outputs
+None (assertions are used to validate behavior).
+
+#### Internal Logic
+- Calls `build_ui_plugin` with a markdown label.
+- Uses regular expressions to verify that the compiled HTML contains the expected class name for LaTeX content.
+
+### `test_embed_dollar_sign_in_md`
+#### Description
+This test ensures that dollar signs in markdown are not incorrectly parsed as LaTeX delimiters.
+
+#### Inputs
+| Name     | Type   | Description                        |
+|:---------|:-------|:-----------------------------------|
+| markdown | str    | The markdown text to be processed. |
+
+#### Outputs
+None (assertions are used to validate behavior).
+
+#### Internal Logic
+- Converts markdown to HTML using the `md` function.
+- Asserts that the resulting HTML does not contain the LaTeX class name, indicating that dollar signs were not misinterpreted.
+
+## References
+
+- `build_ui_plugin`: Constructs HTML for a UI component.
+- `parse_initial_value`: Extracts and parses the initial value from HTML.
+- `as_html`: Converts objects to HTML for embedding in markdown.
+- `md`: Converts markdown text to HTML.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `re`       | Used for regular expression operations.      |
+| `marimo._output.formatting` | Provides HTML conversion functions. |
+| `marimo._output.md`         | Provides markdown to HTML conversion. |
+| `marimo._plugins.core.web_component` | Provides functions for building and parsing web components. |
+
+## Error Handling
+
+The tests use assertions to handle errors. If an assertion fails, it indicates that the function under test did not behave as expected.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on using assertions to validate behavior.
+
+## TODOs
+
+No TODOs or notes are present in the code.

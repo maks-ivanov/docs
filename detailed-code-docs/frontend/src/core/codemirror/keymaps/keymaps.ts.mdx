@@ -1,0 +1,79 @@
+---
+title: "keymaps.ts"
+---
+
+## High-level description
+
+The `keymaps.ts` file is responsible for configuring keymaps for a CodeMirror editor instance, allowing users to switch between different keymap presets such as "default" and "vim". It provides a function to bundle these keymaps based on user configuration and includes logic for handling specific key events, such as double key presses.
+
+## Code Structure
+
+- `KEYMAP_PRESETS` is a constant array that defines the available keymap presets.
+- The `keymapBundle` function is the main function that configures the keymaps based on the provided configuration.
+- The `doubleCharacterListener` function is a utility function used within `keymapBundle` to handle double keypress events.
+
+## Symbols
+
+### `KEYMAP_PRESETS`
+#### Description
+A constant array that defines the available keymap presets, which are "default" and "vim".
+
+### `keymapBundle`
+#### Description
+This function configures and returns an array of CodeMirror extensions based on the provided keymap configuration. It supports different keymap presets, such as "default" and "vim", and includes custom key handling logic.
+
+#### Inputs
+| Name      | Type          | Description                                      |
+|:----------|:--------------|:-------------------------------------------------|
+| config    | KeymapConfig  | Configuration object specifying the keymap preset. |
+| callbacks | object        | An object containing callback functions for specific actions like focus and delete. |
+
+#### Outputs
+| Name      | Type        | Description                                      |
+|:----------|:------------|:-------------------------------------------------|
+| extensions | Extension[] | An array of CodeMirror extensions configured according to the specified keymap preset. |
+
+#### Internal Logic
+- The function uses a switch statement to determine the keymap preset specified in the `config`.
+- For the "default" preset, it returns the default keymap and a custom keymap for handling the "Escape" key.
+- For the "vim" preset, it includes additional logic for handling vim-specific keybindings and integrates with the `vimKeymapExtension`.
+- If an unknown preset is provided, it logs a warning using `logNever`.
+
+### `doubleCharacterListener`
+#### Description
+A utility function that listens for a double keypress of a specified character and executes a callback if a predicate condition is met.
+
+#### Inputs
+| Name             | Type                              | Description                                      |
+|:-----------------|:----------------------------------|:-------------------------------------------------|
+| character        | string                            | The character to listen for double keypresses.   |
+| predicate        | (view: EditorView) =&gt; boolean     | A function that returns true if the double keypress should trigger the callback. |
+| onDoubleCharacter | (view: EditorView) =&gt; boolean    | A callback function to execute on a double keypress. |
+
+#### Outputs
+| Name      | Type        | Description                                      |
+|:----------|:------------|:-------------------------------------------------|
+| extension | Extension   | A CodeMirror extension that listens for the specified double keypress. |
+
+#### Internal Logic
+- The function maintains state for the last key pressed and the time it was pressed.
+- It checks if the current keypress matches the specified character and if the predicate returns true.
+- If the same character is pressed twice within 500 milliseconds, it executes the `onDoubleCharacter` callback.
+
+## References
+
+- `logNever` from `@/utils/assertNever`: Used to log unexpected keymap presets.
+- `vimKeymapExtension` from `./vim`: Used to extend the vim keymap with additional functionality.
+
+## Dependencies
+
+| Dependency             | Purpose                                                  |
+|:-----------------------|:---------------------------------------------------------|
+| `@codemirror/commands` | Provides the default keymap for CodeMirror.              |
+| `@codemirror/state`    | Used for defining CodeMirror extensions and state management. |
+| `@codemirror/view`     | Provides the `keymap` function to define keybindings.    |
+| `@replit/codemirror-vim` | Provides vim mode support for CodeMirror.              |
+
+## Error Handling
+
+- The `logNever` function is used to log unexpected keymap presets, ensuring that any unhandled cases are noted without causing runtime errors.

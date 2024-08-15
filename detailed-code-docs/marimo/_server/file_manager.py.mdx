@@ -1,0 +1,65 @@
+---
+title: "file_manager.py"
+---
+
+## High-level description
+
+The `AppFileManager` class in the `file_manager.py` file is responsible for managing the file operations related to a Marimo application. It provides functionalities to load, save, rename, and read application files, ensuring that the application state is correctly persisted and managed across different operations. The class also handles the configuration and layout of the application, integrating with other components of the Marimo framework.
+
+## Code Structure
+
+The main symbol in this file is the `AppFileManager` class, which interacts with various components such as `InternalApp`, `CellConfig`, and `_AppConfig` to manage the application's file operations. It uses utility functions and classes from other modules like `canonicalize_filename`, `HTTPException`, and `HTTPStatus` to handle file paths and HTTP-related exceptions.
+
+## References
+
+- `InternalApp`: Used to represent the internal state of the application.
+- `CellConfig`: Represents the configuration of individual cells within the application.
+- `_AppConfig`: Represents the configuration of the application as a whole.
+- `canonicalize_filename`: Utility function to standardize file names.
+- `HTTPException` and `HTTPStatus`: Used for handling HTTP-related errors.
+
+## Symbols
+
+### `AppFileManager`
+#### Description
+The `AppFileManager` class manages the file operations for a Marimo application. It handles loading, saving, renaming, and reading application files, ensuring that the application's state is correctly managed and persisted. It also manages the application's configuration and layout.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | Optional[str] | The name of the file to manage. |
+| default_width | WidthType \| None | The default width configuration for the application. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | InternalApp | The internal representation of the application. |
+
+#### Internal Logic
+- **Initialization**: Initializes the file manager with a given filename and default width, loading the application from the specified path.
+- **File Operations**: Provides methods to reload, save, rename, and read files, ensuring that the application's state is correctly managed.
+- **Configuration Management**: Manages the application's configuration and layout, allowing for updates and persistence of these settings.
+
+## Side Effects
+- Modifies the file system by creating, renaming, or saving files.
+- Raises HTTP exceptions for invalid operations, such as attempting to rename a file to an existing filename.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file path operations and checking file existence. |
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._ast.codegen` | Used for generating file contents. |
+| `marimo._server.api.status` | Provides HTTP status codes and exceptions. |
+| `marimo._server.models.models` | Defines request models for saving notebooks. |
+| `marimo._server.utils` | Provides utility functions like `canonicalize_filename`. |
+
+## Error Handling
+- Uses `HTTPException` to handle errors related to file operations, such as file already existing or invalid file paths.
+- Provides detailed error messages to help diagnose issues during file operations.
+
+## Logging
+- Utilizes the `LOGGER` from `marimo._loggers` to log debug information, particularly during file save operations.
+
+## TODOs
+- There is a TODO comment indicating that the markdown export functionality is a proof of concept and may need restructuring.

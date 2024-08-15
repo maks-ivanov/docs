@@ -1,0 +1,63 @@
+---
+title: "altair_formatters.py"
+---
+
+## High-level description
+
+The `altair_formatters.py` file defines a formatter for Altair charts within the Marimo framework. It extends the `FormatterFactory` to register a custom formatter for Altair charts, allowing them to be displayed as HTML iframes in a Marimo environment. This integration ensures that Altair charts can be rendered efficiently and with support for larger datasets by setting specific data transformation options.
+
+## Code Structure
+
+- `AltairFormatter` is a class that extends `FormatterFactory`.
+- The `AltairFormatter` class contains a static method `package_name` and an instance method `register`.
+- The `register` method imports necessary modules, registers custom data transformers, and defines a formatter function `_show_chart` for Altair charts.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to specify the MIME type of the output.
+- `h` from `marimo._output.builder` is used to create HTML elements.
+- `FormatterFactory` from `marimo._output.formatters.formatter_factory` is the base class for `AltairFormatter`.
+- `flatten_string` from `marimo._output.utils` is used to process HTML strings.
+- `register_transformers` from `marimo._plugins.ui._impl.charts.altair_transformer` is used to register custom data transformers for Altair.
+
+## Symbols
+
+### `AltairFormatter`
+#### Description
+The `AltairFormatter` class is responsible for integrating Altair chart rendering into the Marimo framework. It registers a formatter that converts Altair charts into HTML iframes, allowing them to be displayed in a web-based environment.
+
+#### Inputs
+- None directly, but it operates on Altair chart objects when the formatter is invoked.
+
+#### Outputs
+- None directly, but it returns a tuple containing a MIME type and an HTML string when the formatter is invoked.
+
+#### Internal Logic
+- **`package_name` Method**: Returns the string "altair", indicating the package this formatter is associated with.
+- **`register` Method**: 
+  - Imports the Altair library and other necessary modules.
+  - Calls `register_transformers` to set up custom data transformers for Altair.
+  - Defines a formatter function `_show_chart` using the `formatting.formatter` decorator. This function:
+    - Checks and sets the `max_rows` option for Altair data transformers.
+    - Converts the Altair chart to an HTML string using `chart.to_html()`.
+    - Wraps the HTML in an iframe using the `h.iframe` method, with specific attributes like `srcdoc` and `onload`.
+    - Returns a tuple with the MIME type "text/html" and the iframe HTML string.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `altair` | Used for creating and rendering charts. |
+| `marimo._output.builder` | Provides HTML building utilities. |
+| `marimo._output.formatters.formatter_factory` | Base class for creating formatters. |
+| `marimo._output.utils` | Utility functions for string manipulation. |
+| `marimo._plugins.ui._impl.charts.altair_transformer` | Provides custom data transformers for Altair. |
+
+## Error Handling
+The code does not explicitly handle errors within the `AltairFormatter` class. However, it assumes that the necessary modules and functions are available and correctly implemented.
+
+## Logging
+No logging mechanisms are implemented in this code.
+
+## TODOs
+No TODOs or notes are present in the code.

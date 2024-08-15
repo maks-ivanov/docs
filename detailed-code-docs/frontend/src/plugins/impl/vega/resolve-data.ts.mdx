@@ -1,0 +1,62 @@
+---
+title: "resolve-data.ts"
+---
+
+## High-level description
+
+The `resolve-data.ts` file contains a function `resolveVegaSpecData` that processes a Vega-Lite specification to resolve any data URLs within the specification. It fetches the data from these URLs and replaces the URL references with the actual data, allowing the Vega-Lite visualization to be rendered with the resolved data.
+
+## Code Structure
+
+The main symbol in this file is the `resolveVegaSpecData` function. It utilizes helper functions and types imported from other modules, such as `asURL` from `url.ts` for URL parsing and `vegaLoadData` from `loader.ts` for data fetching. The function also uses several types from `types.ts` to handle different Vega-Lite specification structures.
+
+## References
+
+- `asURL` from `url.ts`: Used to convert a string path to a URL object.
+- `vegaLoadData` from `loader.ts`: Used to fetch and parse data from a URL.
+- Various types from `types.ts`: Used to define the structure of Vega-Lite specifications.
+
+## Symbols
+
+### `resolveVegaSpecData`
+#### Description
+The `resolveVegaSpecData` function takes a Vega-Lite specification and resolves any data URLs within it. It fetches the data from these URLs and updates the specification to include the fetched data directly, replacing the URL references.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteSpec` | A Vega-Lite specification that may contain data URLs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| resolvedSpec | `Promise&lt;VegaLiteSpec&gt;` | A promise that resolves to a Vega-Lite specification with data URLs resolved to actual data. |
+
+#### Internal Logic
+1. **Initial Check**: If the input `spec` is falsy, it returns the spec immediately.
+2. **Dataset Initialization**: Initializes a `datasets` object to store resolved data.
+3. **Traversal Function**: Defines an asynchronous `traverse` function to recursively process the specification:
+   - Checks for `layer`, `hconcat`, and `vconcat` properties to handle nested specifications.
+   - If a `data` property with a `url` is found, it attempts to parse the URL using `asURL`.
+   - Fetches the data using `vegaLoadData` and stores it in the `datasets` object.
+   - Updates the `data` property to reference the resolved data by name.
+4. **Final Assembly**: Calls `traverse` on the input `spec` and returns the modified specification, including the `datasets` if any data was resolved.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asURL` | Converts a string path to a URL object. |
+| `vegaLoadData` | Fetches and parses data from a URL. |
+
+## Error Handling
+
+- The function uses a `try-catch` block when parsing URLs with `asURL`. If the URL is invalid, it catches the error and returns the original spec without modification.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

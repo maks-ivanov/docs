@@ -1,0 +1,54 @@
+---
+title: "url.ts"
+---
+
+## High-level description
+
+The `url.ts` file provides a utility function, `asURL`, which resolves a given path to a complete URL. This function is particularly useful for converting relative paths into absolute URLs based on the current document's base URI, ensuring consistent URL handling across the application.
+
+## Code Structure
+
+The main symbol in this file is the `asURL` function. It is a standalone utility function that leverages the `URL` constructor to resolve paths into URLs using the `document.baseURI` as the base.
+
+## Symbols
+
+### `asURL`
+#### Description
+The `asURL` function is designed to convert a given path into a URL object. It uses the `document.baseURI` as the base URL to resolve relative paths, ensuring that all paths are correctly interpreted as absolute URLs within the context of the current document.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | string | The path to be resolved into a URL. This can be a relative path, an absolute path, or a full URL. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | URL | A URL object representing the resolved URL of the input path. |
+
+#### Internal Logic
+The function constructs a new `URL` object using the provided `path` and `document.baseURI`. The `URL` constructor automatically resolves the path relative to the base URI, handling both relative and absolute paths appropriately.
+
+## References
+
+The `asURL` function is referenced in several other parts of the codebase, indicating its utility in resolving URLs:
+- **`add-cell-with-ai.tsx`**: Used to construct API endpoints for AI completion.
+- **`ai-completion-editor.tsx`**: Utilized for setting up API calls for AI completion.
+- **`home-page.tsx`**: Employed to generate URLs for navigating to different notebook files.
+- **`fix-relative-url.ts`** and **`resolve-data.ts`**: Used to ensure URLs in VegaLite specifications are absolute.
+
+## Dependencies
+
+The `asURL` function relies on the `document.baseURI` property, which is a standard part of the web API, to determine the base URL for resolving relative paths.
+
+## Error Handling
+
+The function does not explicitly handle errors, as the `URL` constructor will throw an error if the path cannot be resolved into a valid URL. This behavior is typically sufficient for most use cases, as invalid paths should be caught during development or testing.
+
+## Logging
+
+There is no logging implemented in this function, as it is a straightforward utility function with no complex logic or state changes that would require logging.
+
+## Testing
+
+The related test file `url.test.ts` provides comprehensive tests for the `asURL` function, ensuring it correctly resolves various types of paths (relative, absolute, and full URLs) under different `document.baseURI` settings. This testing ensures the function behaves as expected in different scenarios.

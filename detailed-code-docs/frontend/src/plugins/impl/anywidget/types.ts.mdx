@@ -1,0 +1,108 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file `types.ts` defines TypeScript types and interfaces for a widget system, specifically for a library called "anywidget". These types are used to manage widget models, handle events, and define the structure for widget initialization and rendering. The file is a modified version of a type definition from an external library, with unnecessary dependencies removed.
+
+## Code Structure
+
+The main symbols in the code are interconnected through the concept of a widget model (`AnyModel`) and its lifecycle, which includes initialization (`Initialize`) and rendering (`Render`). The `AnyWidget` type can either be a widget definition or a function returning a widget definition, which includes optional `initialize` and `render` functions. The `RenderProps` and `InitializeProps` interfaces provide the necessary context for these functions, including the model and experimental features.
+
+## Symbols
+
+### `Awaitable&lt;T&gt;`
+#### Description
+A utility type that represents a value that can either be of type `T` or a `Promise` that resolves to `T`.
+
+### `EventHandler`
+#### Description
+A type alias for a function that can take any number of arguments of any type and returns void.
+
+### `ObjectHash`
+#### Description
+A type alias for an object with string keys and values of any type.
+
+### `ChangeEventHandler&lt;Payload&gt;`
+#### Description
+A type alias for a function that handles change events, taking an unknown parameter and a payload of a specified type.
+
+### `LiteralUnion&lt;T, U = string&gt;`
+#### Description
+A utility type that allows a value to be either of type `T` or a union of `U` and an object.
+
+### `AnyModel&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+An interface representing a model for a widget, providing methods to get and set properties, manage event listeners, and communicate with the widget.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | `K` | The key of the property to get or set. |
+| value | `T[K]` | The value to set for the specified key. |
+| eventName | `string` | The name of the event to listen for or remove. |
+| callback | `EventHandler` | The function to call when the event occurs. |
+| content | `any` | The content to send to the widget. |
+| callbacks | `any` | Optional callbacks to execute after sending content. |
+| buffers | `ArrayBuffer[] \| ArrayBufferView[]` | Optional buffers to send with the content. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | `void` | No output, methods perform actions. |
+
+#### Internal Logic
+- The `get` and `set` methods manage the properties of the model.
+- The `on` and `off` methods manage event listeners.
+- The `send` method communicates with the widget, optionally using buffers.
+- The `save_changes` method triggers a change event.
+
+### `Experimental`
+#### Description
+An interface providing experimental features, such as invoking functions with optional message and buffer parameters.
+
+### `RenderProps&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+An interface providing the properties required for rendering a widget, including the model, HTML element, and experimental features.
+
+### `Render&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+A type representing a function that renders a widget, returning an `Awaitable` of either void or a cleanup function.
+
+### `InitializeProps&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+An interface providing the properties required for initializing a widget, including the model and experimental features.
+
+### `Initialize&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+A type representing a function that initializes a widget, returning an `Awaitable` of either void or a cleanup function.
+
+### `WidgetDef&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+An interface representing a widget definition, which can include optional `initialize` and `render` functions.
+
+### `AnyWidget&lt;T extends ObjectHash = ObjectHash&gt;`
+#### Description
+A type representing either a widget definition or a function that returns a widget definition.
+
+## References
+
+- The `AnyModel` interface is implemented in the related file `AnyWidgetPlugin.tsx` as the `Model` class, which provides concrete logic for managing widget state and events.
+- The `Experimental` interface is referenced in the `runAnyWidgetModule` function in `AnyWidgetPlugin.tsx`, where it is used to provide experimental features to widgets.
+
+## Dependencies
+
+No external libraries or modules are directly used in this file, but it is based on a type definition from the `@anywidget/types` package, which was modified to remove dependencies on jQuery and Backbone.
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic TypeScript type safety. However, the related file `AnyWidgetPlugin.tsx` includes error handling for loading modules and invoking experimental features.
+
+## Logging
+
+No logging mechanisms are implemented in this file. However, the related file `AnyWidgetPlugin.tsx` uses a `Logger` utility to warn about unsupported features.
+
+## TODOs
+
+No TODOs or notes are present in the code.

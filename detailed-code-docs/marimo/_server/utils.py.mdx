@@ -1,0 +1,136 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The `marimo/_server/utils.py` file provides utility functions and configurations for the Marimo server. These utilities include functions for printing with indentation, handling file paths, finding free network ports, initializing mimetypes, configuring asyncio for different platforms, and managing file descriptor limits. Additionally, it provides a custom `asyncio_run` function that includes platform-specific initialization.
+
+## Code Structure
+
+The main symbols in the code are utility functions that serve different purposes. They are not directly interconnected but are used to support various server functionalities. The functions include `print_tabbed`, `canonicalize_filename`, `find_free_port`, `initialize_mimetypes`, `initialize_asyncio`, `initialize_fd_limit`, and `asyncio_run`.
+
+## References
+
+- `MarimoPath`: Used to validate and manipulate file paths.
+- `_loggers.marimo_logger`: Used for logging within the utility functions.
+
+## Symbols
+
+### `print_tabbed`
+#### Description
+Prints a string with a specified number of tab spaces for indentation.
+
+#### Inputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| string | str  | The string to be printed.    |
+| n_tabs | int  | Number of tab spaces to add. |
+
+#### Outputs
+None
+
+### `canonicalize_filename`
+#### Description
+Ensures that a given filename is a valid Python or Markdown file path. If not, it appends a `.py` extension and expands the user directory.
+
+#### Inputs
+| Name     | Type | Description                  |
+|:---------|:-----|:-----------------------------|
+| filename | str  | The filename to canonicalize.|
+
+#### Outputs
+| Name     | Type | Description                  |
+|:---------|:-----|:-----------------------------|
+| filename | str  | The canonicalized filename.  |
+
+### `find_free_port`
+#### Description
+Finds a free network port starting from a given port number, attempting a specified number of times.
+
+#### Inputs
+| Name     | Type | Description                  |
+|:---------|:-----|:-----------------------------|
+| port     | int  | The starting port number.    |
+| attempts | int  | Number of attempts to find a free port. |
+
+#### Outputs
+| Name | Type | Description                  |
+|:-----|:-----|:-----------------------------|
+| port | int  | A free port number.          |
+
+#### Internal Logic
+Uses a socket to check if a port is in use. If it is, it recursively tries the next port until a free one is found or attempts run out.
+
+### `initialize_mimetypes`
+#### Description
+Adds custom mimetype definitions to handle certain file types correctly, particularly on Windows.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `initialize_asyncio`
+#### Description
+Configures the asyncio event loop policy to be compatible with the Marimo server, especially on Windows.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `initialize_fd_limit`
+#### Description
+Raises the limit on open file descriptors to a specified value, which is not applicable on Windows.
+
+#### Inputs
+| Name  | Type | Description                  |
+|:------|:-----|:-----------------------------|
+| limit | int  | The desired file descriptor limit. |
+
+#### Outputs
+None
+
+### `asyncio_run`
+#### Description
+Runs an asyncio coroutine with platform-specific initialization, ensuring compatibility with Marimo's session management.
+
+#### Inputs
+| Name | Type     | Description                  |
+|:-----|:---------|:-----------------------------|
+| coro | Coroutine | The coroutine to run.       |
+| kwargs | dict   | Additional arguments for `asyncio.run()`. |
+
+#### Outputs
+| Name | Type | Description                  |
+|:-----|:-----|:-----------------------------|
+| result | T   | The result of the coroutine execution. |
+
+#### Internal Logic
+Initializes asyncio for the platform and then runs the coroutine using `asyncio.run`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio`  | Used for asynchronous programming and event loop management. |
+| `os`       | Used for file path manipulations and environment interactions. |
+| `sys`      | Used to check the platform for specific configurations. |
+| `socket`   | Used to check network port availability. |
+| `mimetypes`| Used to manage file type associations. |
+
+## Logging
+
+The file uses the `LOGGER` from `_loggers.marimo_logger` to log debug information, particularly when finding free ports.
+
+## Error Handling
+
+- `find_free_port` raises a `RuntimeError` if it cannot find a free port after the specified number of attempts.
+- `initialize_fd_limit` handles `ImportError` to account for platform-specific limitations (e.g., Windows).
+
+## TODOs
+
+None

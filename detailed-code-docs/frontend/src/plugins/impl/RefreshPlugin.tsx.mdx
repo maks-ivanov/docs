@@ -1,0 +1,76 @@
+---
+title: "RefreshPlugin.tsx"
+---
+
+## High-level description
+
+The `RefreshPlugin.tsx` file defines a React component plugin called `RefreshPlugin` that provides a user interface for setting a refresh interval. This plugin allows users to select a refresh interval from a dropdown menu, which can be specified in seconds or as a human-readable string (e.g., "1m" for one minute). The component uses a button to trigger a refresh action, which updates the state and visually indicates the refresh with a spinning icon.
+
+## Code Structure
+
+The main symbols in the code are the `RefreshPlugin` class and the `RefreshComponent` functional component. The `RefreshPlugin` class implements the `IPlugin` interface, defining the plugin's tag name, data validation schema, and render method. The `RefreshComponent` is responsible for the actual UI and logic, handling state changes, user interactions, and periodic refresh actions.
+
+## Symbols
+
+### `RefreshPlugin`
+#### Description
+The `RefreshPlugin` class implements the `IPlugin` interface, providing a plugin that allows users to set a refresh interval. It validates the input data using a Zod schema and renders the `RefreshComponent`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;Value, Data&gt;` | The properties passed to the plugin, including state, data, and functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered React component. |
+
+### `RefreshComponent`
+#### Description
+The `RefreshComponent` is a React functional component that provides the UI for selecting a refresh interval and triggering refresh actions. It manages the internal state for the selected interval and handles user interactions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| setValue | `Setter&lt;Value&gt;` | Function to update the plugin's state. |
+| data | `Data` | The data object containing options, default interval, and label. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered UI component. |
+
+#### Internal Logic
+- **State Management**: Uses `useState` to manage the selected interval and a boolean for the spinning icon.
+- **Effect Hooks**: 
+  - `useEffect` to reset the selected interval when the `defaultInterval` changes.
+  - `useEffect` to set up a periodic refresh using `setInterval` based on the selected interval.
+- **Event Handling**: 
+  - Uses `useEvent` to define the `refresh` function, which updates the state and triggers a visual spin effect.
+  - Handles changes in the dropdown selection to update the interval.
+
+## Side Effects
+- The component sets up a periodic refresh using `setInterval`, which is cleared when the component unmounts or the interval changes.
+- Updates the plugin's state with a new value each time the refresh action is triggered.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation. |
+| `timestring` | Converts human-readable time strings to seconds. |
+| `lucide-react` | Provides the `RefreshCwIcon` for the refresh button. |
+| `clsx` and `tailwind-merge` | Used for managing CSS class names. |
+
+## Error Handling
+The Zod schema for the `RefreshPlugin` includes custom error messages for invalid time strings and intervals below the minimum threshold.
+
+## Logging
+No explicit logging is implemented in this code.
+
+## API/Interface Reference
+The `RefreshPlugin` does not expose an API but is part of a larger plugin system where it can be registered and used within a UI framework.
+
+## TODOs
+No TODOs are present in the code.

@@ -1,0 +1,84 @@
+---
+title: "language-toggle.tsx"
+---
+
+## High-level description
+
+The `language-toggle.tsx` file defines a React component that provides a user interface for toggling between different programming languages (Python, Markdown, and SQL) within a code editor. It uses language adapters to determine if a code snippet can be represented in a different language and provides buttons for switching the language of the code editor view.
+
+## Code Structure
+
+The main components in this file are `LanguageToggles` and `LanguageToggle`. `LanguageToggles` is a container component that manages the state and logic for determining which languages are available for toggling based on the current code. It uses `LanguageToggle` to render individual toggle buttons for each language. The `LanguageToggle` component handles the rendering of a button and the logic for switching the language when the button is clicked.
+
+## Symbols
+
+### `LanguageToggles`
+#### Description
+`LanguageToggles` is a React functional component that renders a set of language toggle buttons based on the current code and language adapter. It determines which languages are available for toggling and renders a button for each supported language.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editorView | EditorView \| null | The current editor view instance. |
+| code | string | The current code in the editor. |
+| currentLanguageAdapter | LanguageAdapter["type"] \| undefined | The type of the current language adapter. |
+| onAfterToggle | () =&gt; void | Callback function to be called after a language toggle. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses `useMemo` to determine if the current code can be represented in Markdown or SQL using their respective language adapters.
+- Renders a `LanguageToggle` component for each language (SQL, Markdown, Python) with appropriate props, including whether the language can be switched to and the icon to display.
+
+### `LanguageToggle`
+#### Description
+`LanguageToggle` is a React functional component that renders a button for toggling the language of the code editor. It checks if the language can be switched to and if it is different from the current language before rendering the button.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| className | string \| undefined | Optional CSS class for styling. |
+| editorView | EditorView \| null | The current editor view instance. |
+| canSwitchToLanguage | boolean | Indicates if the language can be switched to. |
+| currentLanguageAdapter | LanguageAdapter["type"] \| undefined | The type of the current language adapter. |
+| toType | LanguageAdapter["type"] | The target language type to switch to. |
+| displayName | string | The display name of the target language. |
+| icon | React.ReactNode | The icon to display on the button. |
+| onAfterToggle | () =&gt; void | Callback function to be called after a language toggle. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Returns `null` if the language cannot be switched to or if it is already the current language.
+- Renders a `Button` wrapped in a `Tooltip` with the provided icon and display name.
+- On button click, it switches the language using `switchLanguage` and calls `onAfterToggle`.
+
+## References
+
+- `switchLanguage` from `@/core/codemirror/language/extension`: Used to switch the language of the editor view.
+- `MarkdownLanguageAdapter` and `SQLLanguageAdapter` from their respective modules: Used to check if the current code can be represented in Markdown or SQL.
+- `Functions.NOOP` from `@/utils/functions`: Used as a no-operation function for the Python toggle button.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides the `EditorView` type for the editor instance. |
+| `React` | Used for creating React components. |
+| `lucide-react` | Provides the `DatabaseIcon` used for the SQL toggle button. |
+| `@/components/ui/button` | Provides the `Button` component used for rendering toggle buttons. |
+| `@/components/ui/tooltip` | Provides the `Tooltip` component for displaying tooltips. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks for null or undefined values, such as ensuring the `editorView` is not null before attempting to switch languages.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

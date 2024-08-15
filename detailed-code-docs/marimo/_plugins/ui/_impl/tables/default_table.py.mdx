@@ -1,0 +1,73 @@
+---
+title: "default_table.py"
+---
+
+## High-level description
+
+The `DefaultTableManager` class in the `default_table.py` file is a part of a table management system that handles data in various formats, such as lists, tuples, and dictionaries. It provides functionalities for data manipulation, including formatting, searching, sorting, and selecting specific rows or columns. The class also supports exporting data to CSV and JSON formats, leveraging external libraries like pandas, polars, and pyarrow if available.
+
+## Code Structure
+
+The `DefaultTableManager` class extends the `TableManager` abstract class, implementing its abstract methods to manage data in a JSON-compatible format. It interacts with other components like `DependencyManager` to check for available libraries and uses formatting functions from the `format` module. The class can convert data into different formats using factory classes like `PandasTableManagerFactory`, `PolarsTableManagerFactory`, and `PyArrowTableManagerFactory`.
+
+## References
+
+- `DependencyManager`: Used to check the availability of external libraries like pandas, polars, and pyarrow.
+- `FormatMapping`, `format_column`, `format_row`: Used for applying formatting to data.
+- `PandasTableManagerFactory`, `PolarsTableManagerFactory`, `PyArrowTableManagerFactory`: Used to create table managers for specific data formats.
+- `ColumnSummary`: Represents a summary of a column in a data table.
+
+## Symbols
+
+### `DefaultTableManager`
+#### Description
+The `DefaultTableManager` class manages tabular data in a JSON-compatible format, providing methods for data manipulation, including formatting, searching, sorting, and selection. It supports exporting data to CSV and JSON formats and can leverage external libraries for enhanced functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `JsonTableData` | The data to be managed, which can be a sequence or dictionary of JSON-compatible types. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | The class does not have a direct output but provides methods to manipulate and export data. |
+
+#### Internal Logic
+- **Initialization**: Stores the input data for further manipulation.
+- **supports_download**: Checks if any of the external libraries (pandas, polars, pyarrow) are available for data export.
+- **apply_formatting**: Applies a given format mapping to the data, either by formatting columns or rows based on the data structure.
+- **supports_filters**: Returns `False`, indicating that filtering is not supported by default.
+- **to_data**: Converts the data to a JSON-compatible format, applying formatting if provided.
+- **to_csv**: Converts the data to CSV format using an appropriate table manager.
+- **to_json**: Converts the data to JSON format using an appropriate table manager.
+- **select_rows**: Selects specific rows from the data based on provided indices.
+- **select_columns**: Selects specific columns from the data based on provided column names.
+- **limit**: Limits the data to a specified number of rows.
+- **search**: Searches the data for a given query string, returning rows that match the query.
+- **get_row_headers**: Returns an empty list, as row headers are not supported by default.
+- **_as_table_manager**: Converts the data into a format managed by an external library, if available.
+- **get_summary**: Returns a basic column summary.
+- **get_num_rows**: Returns the number of rows in the data.
+- **get_num_columns**: Returns the number of columns in the data.
+- **get_column_names**: Returns the names of the columns in the data.
+- **get_unique_column_values**: Returns unique values from a specified column.
+- **sort_values**: Sorts the data based on a specified column and order.
+- **is_type**: Checks if the input value is a supported data type (list, tuple, or dict).
+- **_normalize_data**: Converts data into a list of dictionaries (row-major format) for consistent processing.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pandas` | Used for data manipulation and export if available. |
+| `polars` | Used for data manipulation and export if available. |
+| `pyarrow` | Used for data manipulation and export if available. |
+
+## Error Handling
+
+- **limit**: Raises a `ValueError` if the specified limit is negative.
+- **_normalize_data**: Raises a `ValueError` if the data is not a list, tuple, or dictionary of lists, or if the data contains unsupported types.
+
+## TODOs
+- None present in the target file.

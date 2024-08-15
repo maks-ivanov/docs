@@ -1,0 +1,282 @@
+---
+title: "input.py"
+---
+
+## High-level description
+
+The target file, `input.py`, is part of the Marimo UI plugin implementation. It defines a variety of interactive UI elements such as number pickers, sliders, checkboxes, radio buttons, text inputs, and more. These elements are designed to be used in web applications to capture user input and provide interactive features. Each UI element is implemented as a class that extends a base class `UIElement`, providing specific functionality and attributes for different types of input components.
+
+## Code Structure
+
+The main symbols in the code are classes that represent different UI elements. Each class inherits from the `UIElement` base class, which provides common functionality for handling UI interactions. The classes are designed to encapsulate the logic for specific types of input components, such as number pickers, sliders, checkboxes, etc. Each class has methods for initialization, value conversion, and interaction handling.
+
+## Symbols
+
+### `number`
+#### Description
+The `number` class represents a number picker UI element that allows users to select a number within a specified range. It provides attributes for the start, stop, and step values of the range, as well as an optional callback for when the value changes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| start | float | The minimum value of the interval. |
+| stop | float | The maximum value of the interval. |
+| step | Optional[float] | The number increment. |
+| value | Optional[float] | Default value. |
+| debounce | bool | Whether to debounce value updates from the frontend. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[Optional[Numeric]], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Optional[Numeric] | The current value of the number picker. |
+
+#### Internal Logic
+- Validates the bounds and default value.
+- Initializes the UI element with the specified attributes.
+- Provides a static method `from_series` to create a number picker from a dataframe series.
+
+### `slider`
+#### Description
+The `slider` class represents a numeric slider UI element that allows users to select a value over an interval. It supports both continuous and discrete steps and can be oriented horizontally or vertically.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| start | Optional[Numeric] | The minimum value of the interval. |
+| stop | Optional[Numeric] | The maximum value of the interval. |
+| step | Optional[Numeric] | The slider increment. |
+| value | Optional[Numeric] | Default value. |
+| debounce | bool | Whether to debounce the slider. |
+| orientation | Literal["horizontal", "vertical"] | The orientation of the slider. |
+| show_value | bool | Whether to display the current value of the slider. |
+| steps | Optional[Sequence[Numeric]] | List of steps to customize the slider. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[Optional[Numeric]], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Numeric | The current numeric value of the slider. |
+
+#### Internal Logic
+- Validates the input arguments and ensures mutual exclusivity between `steps` and `start`, `stop`, `step`.
+- Initializes the slider with the specified attributes and handles both continuous and discrete steps.
+- Provides a static method `from_series` to create a slider from a dataframe series.
+
+### `range_slider`
+#### Description
+The `range_slider` class is similar to the `slider` class but allows users to select a range of values over an interval. It supports both continuous and discrete steps.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| start | Optional[Numeric] | The minimum value of the interval. |
+| stop | Optional[Numeric] | The maximum value of the interval. |
+| step | Optional[Numeric] | The slider increment. |
+| value | Optional[Sequence[Numeric]] | Default range value. |
+| debounce | bool | Whether to debounce the slider. |
+| orientation | Literal["horizontal", "vertical"] | The orientation of the slider. |
+| show_value | bool | Whether to display the current value of the slider. |
+| steps | Optional[Sequence[Numeric]] | List of steps to customize the slider. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[Sequence[Numeric]], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | List[Numeric] | The current range value of the slider. |
+
+#### Internal Logic
+- Validates the input arguments and ensures mutual exclusivity between `steps` and `start`, `stop`, `step`.
+- Initializes the range slider with the specified attributes and handles both continuous and discrete steps.
+- Provides a static method `from_series` to create a range slider from a dataframe series.
+
+### `checkbox`
+#### Description
+The `checkbox` class represents a boolean checkbox UI element. It allows users to toggle between `True` and `False`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | bool | Default value, True or False. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[bool], None]] | Callback for value changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | bool | A boolean, `True` if checked. |
+
+### `radio`
+#### Description
+The `radio` class represents a radio group UI element. It allows users to select one option from a set of options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| options | Sequence[str] or dict[str, Any] | Sequence of text options, or dict mapping option name to option value. |
+| value | Optional[str] | Default option name. |
+| inline | bool | Whether to display options inline. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[Any], None]] | Callback for value changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Any | The value of the selected radio option. |
+
+#### Internal Logic
+- Validates the options to ensure no duplicates.
+- Initializes the radio group with the specified options and attributes.
+- Provides a static method `from_series` to create a radio group from a dataframe series.
+
+### `text`
+#### Description
+The `text` class represents a text input UI element. It allows users to enter and edit text.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | Default value of text box. |
+| placeholder | str | Placeholder text to display when the text area is empty. |
+| kind | Literal["text", "password", "email", "url"] | Input kind, defaults to `"text"`. |
+| max_length | Optional[int] | Maximum length of input. |
+| disabled | bool | Whether the input is disabled. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[str], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | A string of the input's contents. |
+
+### `text_area`
+#### Description
+The `text_area` class represents a larger text input area than `text`. It allows users to enter and edit multi-line text.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | Initial value of the text area. |
+| placeholder | str | Placeholder text to display when the text area is empty. |
+| max_length | Optional[int] | Maximum length of input. |
+| disabled | bool | Whether the input is disabled. |
+| rows | Optional[int] | Number of rows of text to display. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[str], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | A string of the text area contents. |
+
+### `code_editor`
+#### Description
+The `code_editor` class represents a code editor UI element. It allows users to enter and edit code with syntax highlighting.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | Initial value of the code editor. |
+| language | str | Language of the code editor, defaults to `"python"`. |
+| placeholder | str | Placeholder text to display when the code editor is empty. |
+| theme | Optional[Literal["light", "dark"]] | Theme of the code editor. |
+| disabled | bool | Whether the input is disabled. |
+| min_height | Optional[int] | Minimum height of the code editor in pixels. |
+| max_height | Optional[int] | Maximum height of the code editor in pixels. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[str], None]] | Callback for value changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | A string of the code editor contents. |
+
+### `dropdown`
+#### Description
+The `dropdown` class represents a dropdown menu UI element. It allows users to select one option from a list.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| options | Sequence[str] or dict[str, Any] | Sequence of text options, or dict mapping option name to option value. |
+| value | Optional[str] | Default option name. |
+| allow_select_none | Optional[bool] | Whether to include a special option for a `None` value. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[Any], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Any | The selected value, or `None` if no selection. |
+
+#### Internal Logic
+- Validates the number of options and ensures no reserved option names are used.
+- Initializes the dropdown with the specified options and attributes.
+- Provides a static method `from_series` to create a dropdown from a dataframe series.
+
+### `multiselect`
+#### Description
+The `multiselect` class represents a multiselect input UI element. It allows users to select multiple options from a list.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| options | Sequence[str] or dict[str, Any] | Sequence of text options, or dict mapping option name to option value. |
+| value | Optional[Sequence[str]] | A list of initially selected options. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[List[object]], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+| max_selections | Optional[int] | Maximum number of items that can be selected. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | List[object] | The selected values, or `None` if no selection. |
+
+#### Internal Logic
+- Validates the number of options and ensures no reserved option names are used.
+- Initializes the multiselect with the specified options and attributes.
+- Provides a static method `from_series` to create a multiselect from a dataframe series.
+
+### `button`
+#### Description
+The `button` class represents a button UI element with an optional callback and value. It can be used to trigger actions when clicked.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| on_click | Optional[Callable[[Any], Any]] | A callable called on click that takes the current value of the button and returns a new value. |
+| value | Optional[Any] | An initial value for the button. |
+| kind | Literal["neutral", "success", "warn", "danger"] | The kind of button. |
+| disabled | bool | Whether the button is disabled. |
+| tooltip | Optional[str] | A tooltip to display for the button. |
+| label | str | Text label for the element. |
+| on_change | Optional[Callable[[Any], None]] | Callback for value changes. |
+| full_width | bool | Whether the input should take up the full width of its container. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Any | The value of the button. |
+
+#### Internal Logic
+- Initializes the button with the specified attributes and handles click events.
+- Provides a default callback that does nothing if no `on_click` is provided.
+
+### `file`
+#### Description
+The `file` class represents a file upload UI element. It allows users to upload files through a button or drag-and-drop area.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filetypes | Optional[Sequence[str]] | The file types accepted.

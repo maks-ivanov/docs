@@ -1,0 +1,67 @@
+---
+title: "changes.ts"
+---
+
+## High-level description
+The code in the target file provides utility functions to determine changes between two states of a dependency graph. Specifically, it identifies nodes and edges that have been added or removed when transitioning from a previous state to a new state. This is useful for efficiently updating visual representations of graphs in applications using the `reactflow` library.
+
+## Code Structure
+The code consists of two main functions: `getNodeChanges` and `getEdgeChanges`. Both functions take two arrays as inputs, representing the previous and next states of nodes or edges, and return an array of changes that describe which nodes or edges have been added or removed.
+
+## Symbols
+
+### `getNodeChanges`
+#### Description
+This function compares two arrays of nodes, `prevNodes` and `nextNodes`, and returns an array of changes indicating which nodes have been added or removed.
+
+#### Inputs
+| Name      | Type   | Description                          |
+|:----------|:-------|:-------------------------------------|
+| prevNodes | Node[] | The array of nodes in the previous state. |
+| nextNodes | Node[] | The array of nodes in the next state.     |
+
+#### Outputs
+| Name    | Type                                      | Description                                      |
+|:--------|:------------------------------------------|:-------------------------------------------------|
+| changes | Array&lt;NodeAddChange \| NodeRemoveChange&gt; | An array of changes indicating added or removed nodes. |
+
+#### Internal Logic
+1. Create sets of node IDs for both `prevNodes` and `nextNodes`.
+2. Iterate over `prevNodes` to identify nodes that are not present in `nextNodes` and mark them for removal.
+3. Iterate over `nextNodes` to identify nodes that are not present in `prevNodes` and mark them for addition.
+4. Return the list of changes.
+
+### `getEdgeChanges`
+#### Description
+This function compares two arrays of edges, `prevEdges` and `nextEdges`, and returns an array of changes indicating which edges have been added or removed.
+
+#### Inputs
+| Name      | Type   | Description                          |
+|:----------|:-------|:-------------------------------------|
+| prevEdges | Edge[] | The array of edges in the previous state. |
+| nextEdges | Edge[] | The array of edges in the next state.     |
+
+#### Outputs
+| Name    | Type                                      | Description                                      |
+|:--------|:------------------------------------------|:-------------------------------------------------|
+| changes | Array&lt;EdgeAddChange \| EdgeRemoveChange&gt; | An array of changes indicating added or removed edges. |
+
+#### Internal Logic
+1. Create sets of edge IDs for both `prevEdges` and `nextEdges`.
+2. Iterate over `prevEdges` to identify edges that are not present in `nextEdges` and mark them for removal.
+3. Iterate over `nextEdges` to identify edges that are not present in `prevEdges` and mark them for addition.
+4. Return the list of changes.
+
+## References
+- The code references types from the `reactflow` library, specifically `Node`, `NodeAddChange`, `NodeRemoveChange`, `Edge`, `EdgeAddChange`, and `EdgeRemoveChange`. These types are used to define the structure of nodes and edges, as well as the changes that can occur to them.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `reactflow` | Provides types for nodes and edges, as well as their change representations, which are used to determine and describe changes in the graph. |
+
+## Error Handling
+The code does not include explicit error handling mechanisms. It assumes that the input arrays are well-formed and contain valid `Node` and `Edge` objects with unique IDs.
+
+## Performance Considerations
+The functions use sets to efficiently check for the presence of node and edge IDs, which provides average time complexity of O(1) for these operations. This makes the functions efficient for large graphs, as they avoid nested loops and instead rely on set operations to determine changes.

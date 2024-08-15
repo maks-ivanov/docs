@@ -1,0 +1,59 @@
+---
+title: "useSplitCell.tsx"
+---
+
+## High-level description
+
+The `useSplitCell.tsx` file defines a custom hook, `useSplitCellCallback`, which provides functionality to split a cell in a code editor and manage undo actions for this operation. It leverages a toast notification to inform users of the split action and offers an undo button to revert the split if needed.
+
+## Code Structure
+
+The main symbol in this file is the `useSplitCellCallback` function. It interacts with several other components and hooks, such as `UndoButton`, `toast`, `getCellEditorView`, and `useCellActions`, to perform its operations. The `useCellActions` hook provides the `splitCell` and `undoSplitCell` actions, which are crucial for the cell splitting and undo functionality.
+
+## References
+
+- `UndoButton`: A component used to trigger the undo action for the cell split.
+- `toast`: A utility for displaying notifications to the user.
+- `getCellEditorView`: A function to retrieve the editor view of a specific cell.
+- `useCellActions`: A hook that provides actions related to cell operations, such as splitting and undoing a split.
+
+## Symbols
+
+### `useSplitCellCallback`
+#### Description
+The `useSplitCellCallback` function is a custom hook that returns a callback function to handle the splitting of a cell in a code editor. It performs an optimistic update by splitting the cell immediately and then displays a toast notification with an undo option. If the user clicks the undo button, the cell split is reverted.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | object | An object containing the `cellId` of the cell to be split. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | function | A callback function that performs the cell split and manages the undo operation. |
+
+#### Internal Logic
+1. **Retrieve Cell Editor View**: The function first retrieves the editor view of the specified cell using `getCellEditorView`.
+2. **Save Snapshot**: It saves the current state of the cell's code as a snapshot for potential undo operations.
+3. **Optimistic Update**: The `splitCell` action is called to split the cell immediately.
+4. **Display Toast**: A toast notification is displayed to inform the user of the split, with an `UndoButton` included.
+5. **Undo Operation**: If the user clicks the undo button, the `undoSplitCell` action is called with the saved snapshot to revert the split, and the toast is dismissed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-use-event-hook` | Provides the `useEvent` hook for creating stable event handlers. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `useSplitCellCallback` function. It assumes that the operations (such as retrieving the cell editor view and performing cell actions) will succeed. Any errors would likely need to be handled at a higher level in the application.
+
+## Logging
+
+The code does not implement any logging mechanisms. It relies on the toast notifications to communicate actions to the user.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

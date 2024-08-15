@@ -1,0 +1,68 @@
+---
+title: "cell_output.py"
+---
+
+## High-level description
+The `cell_output.py` file defines the structure and behavior of a cell's visual output in the Marimo application. It includes a class for specifying the channel of a cell's output and a data class for representing the output itself, including its channel, mimetype, data, and timestamp. The file also provides static methods for creating standard output, error, and input cell outputs.
+
+## Code Structure
+The main components of the code are the `CellChannel` enumeration and the `CellOutput` data class. The `CellChannel` enum defines the possible channels for a cell's output, such as standard output, error, and input. The `CellOutput` class uses this enum to specify the channel of the output, along with other attributes like mimetype and data. The class also includes static methods for creating specific types of cell outputs.
+
+## References
+- `Error`: Used in the `CellOutput` class to represent error data.
+- `KnownMimeType`: Used in the `CellOutput` class to specify the mimetype of the output.
+
+## Symbols
+
+### `CellChannel`
+#### Description
+`CellChannel` is an enumeration that defines the different channels through which a cell's output can be communicated. These channels include standard output, standard error, standard input, and others specific to the Marimo application.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | str | The string representation of the channel. |
+
+#### Internal Logic
+The enum members are defined with string values representing each channel. The `__repr__` method returns the string value of the channel.
+
+### `CellOutput`
+#### Description
+`CellOutput` is a data class that encapsulates the output of a cell, including its channel, mimetype, data, and timestamp. It provides methods to convert the output to a dictionary and to create specific types of outputs like standard output, error, and input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| channel | CellChannel | The channel through which the output is communicated. |
+| mimetype | KnownMimeType | The MIME type of the output data. |
+| data | Union[str, Sequence[Error], Dict[str, Any]] | The actual output data, which can be a string, a sequence of errors, or a dictionary. |
+| timestamp | float | The time at which the output was created. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| asdict | dict[str, Any] | A dictionary representation of the cell output. |
+
+#### Internal Logic
+- The `asdict` method uses the `asdict` function from the `dataclasses` module to convert the `CellOutput` instance into a dictionary.
+- The static methods `stdout`, `stderr`, and `stdin` create `CellOutput` instances with predefined channels and mimetypes for standard output, error, and input, respectively.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `time` | Used to generate timestamps for cell outputs. |
+| `dataclasses` | Provides the `dataclass` decorator and `asdict` function for creating and managing data classes. |
+| `enum` | Used to define the `CellChannel` enumeration. |
+| `typing` | Provides type hints for function signatures and class attributes. |
+
+## Error Handling
+The code does not explicitly handle errors within the `CellOutput` class or its methods. However, it uses the `Error` type from the `marimo._messaging.errors` module to represent error data in cell outputs.
+
+## Logging
+The code does not implement any logging mechanisms.
+
+## TODOs
+None

@@ -1,0 +1,98 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The code in `build_and_serve.py` is designed to serve two main purposes: it sets up an HTTP server with CORS (Cross-Origin Resource Sharing) support and monitors a specified directory for changes to Python files, triggering a build process when changes are detected. The HTTP server runs in a separate thread, allowing the file monitoring to occur concurrently.
+
+## Code Structure
+
+- `CORSHTTPRequestHandler`: A subclass of `http.server.SimpleHTTPRequestHandler` that adds CORS headers to HTTP responses.
+- `WheelBuilderHandler`: A subclass of `PatternMatchingEventHandler` from the `watchdog` library, which listens for changes in Python files and triggers a build process.
+- `serve`: A function that starts an HTTP server using `CORSHTTPRequestHandler`.
+- The main execution block sets up the HTTP server in a separate thread and uses a `watchdog` observer to monitor a directory for file changes.
+
+## Symbols
+
+### `CORSHTTPRequestHandler`
+#### Description
+This class extends `http.server.SimpleHTTPRequestHandler` to include CORS headers in HTTP responses, allowing cross-origin requests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This class does not take direct inputs but handles HTTP requests. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | Outputs HTTP responses with CORS headers. |
+
+#### Internal Logic
+- Overrides `end_headers` to add CORS headers before calling the superclass method.
+- Implements `do_OPTIONS` to handle HTTP OPTIONS requests, responding with a 200 status code.
+
+### `WheelBuilderHandler`
+#### Description
+This class is a file system event handler that watches for changes in Python files and triggers a build process when changes are detected.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| event | Event | File system event indicating a change. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | Outputs console logs indicating the build process. |
+
+#### Internal Logic
+- Monitors for any file system event on Python files (`*.py`).
+- On detecting a change, it runs a subprocess to build a Python wheel using `python3 -m build`.
+
+### `serve`
+#### Description
+This function starts an HTTP server on port 8000 using the `CORSHTTPRequestHandler`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | Outputs console logs indicating server status. |
+
+#### Internal Logic
+- Uses `socketserver.TCPServer` to bind to port 8000 and handle requests with `CORSHTTPRequestHandler`.
+- Runs the server indefinitely until interrupted by a keyboard signal.
+
+## Side Effects
+
+- The HTTP server runs in a separate thread, allowing the main thread to continue executing.
+- The file monitoring and build process can modify the file system by creating or updating build artifacts.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `http.server` | Provides the base class for the HTTP server. |
+| `socketserver` | Used to create the TCP server. |
+| `subprocess` | Executes the build command in a separate process. |
+| `threading` | Allows the HTTP server to run in a separate thread. |
+| `watchdog` | Monitors file system changes. |
+
+## Error Handling
+
+- The server and observer are designed to stop gracefully on a `KeyboardInterrupt`.
+- No explicit error handling is implemented for subprocess execution or file system events.
+
+## Logging
+
+- The code uses `print` statements to log server status, file changes, and build process outcomes.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,130 @@
+---
+title: "test_visitor.py"
+---
+
+## High-level description
+
+The target file `tests/_ast/test_visitor.py` contains a suite of unit tests designed to validate the functionality of the `ScopedVisitor` class from the `marimo._ast.visitor` module. These tests focus on verifying the correct identification and categorization of variable definitions, references, and imports within Python code snippets. The tests cover various scenarios, including simple assignments, attribute access, comprehensions, function definitions, and SQL query handling.
+
+## Code Structure
+
+The main symbol in this file is the `ScopedVisitor` class, which is tested extensively through various test functions. Each test function creates an instance of `ScopedVisitor`, parses a Python code snippet into an abstract syntax tree (AST), and then uses the visitor to traverse the AST. The tests assert the expected sets of defined variables (`defs`), referenced variables (`refs`), and variable data (`variable_data`) after the traversal.
+
+## References
+
+- `ScopedVisitor`: The primary class being tested, responsible for traversing AST nodes and collecting information about variable definitions and references.
+- `VariableData` and `ImportData`: Data classes used to store metadata about variables and imports, respectively.
+- `normalize_sql_f_string`: A function used to normalize SQL f-strings, referenced in the context of SQL query handling.
+- `DependencyManager`: Used to check for the presence of the `duckdb` dependency, which is required for some SQL-related tests.
+
+## Symbols
+
+### `test_assign_simple`
+#### Description
+Tests the handling of a simple assignment statement.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expr | str | A simple assignment expression, e.g., `"x = 0"` |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the expression into an AST.
+- Visits the AST using `ScopedVisitor`.
+- Asserts that `x` is defined, with no references or additional variable data.
+
+### `test_multiple_assign`
+#### Description
+Tests the handling of multiple assignments in a single statement.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expr | str | A multiple assignment expression, e.g., `"x = y = 0"` |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the expression into an AST.
+- Visits the AST using `ScopedVisitor`.
+- Asserts that both `x` and `y` are defined, with no references or additional variable data.
+
+### `test_assign_attr`
+#### Description
+Tests the handling of attribute assignments.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expr | str | An attribute assignment expression, e.g., `"x.a = 0"` |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the expression into an AST.
+- Visits the AST using `ScopedVisitor`.
+- Asserts that no new definitions are made, but `x` is referenced.
+
+### `test_read_attr`
+#### Description
+Tests the handling of attribute access.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expr | str | An attribute access expression, e.g., `"x.a"` |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the expression into an AST.
+- Visits the AST using `ScopedVisitor`.
+- Asserts that no new definitions are made, but `x` is referenced.
+
+### `test_sql_statement`
+#### Description
+Tests the handling of SQL statements within the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | A SQL statement within a Python expression, e.g., `"df = mo.sql('select * from cars')"` |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the code into an AST.
+- Visits the AST using `ScopedVisitor`.
+- Asserts that `df` is defined and `cars` and `mo` are referenced.
+
+## Side Effects
+
+- The tests may raise exceptions if the assertions fail, indicating that the `ScopedVisitor` is not functioning as expected.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for running the test suite. |
+| `ast` | Used for parsing Python code into an abstract syntax tree. |
+| `marimo._ast.visitor` | Contains the `ScopedVisitor` class and related data classes. |
+| `marimo._dependencies.dependencies` | Used to check for the presence of the `duckdb` dependency. |
+
+## Error Handling
+
+- The tests use assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the `ScopedVisitor`.
+
+## Logging
+
+- No explicit logging is implemented in the test file. However, the `ScopedVisitor` class in the related file uses a logger to handle unexpected errors during SQL parsing.
+
+## TODOs
+
+- There is a TODO comment in the `test_function_with_defaults` test, questioning whether certain references should be considered required. This indicates an area for further investigation or clarification.

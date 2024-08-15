@@ -1,0 +1,81 @@
+---
+title: "LazyPlugin.tsx"
+---
+
+## High-level description
+
+The `LazyPlugin.tsx` file defines a React component called `LazyPlugin` that is designed to load content lazily when it becomes visible in the viewport. It uses an intersection observer to detect when the component is visible and then fetches the necessary data asynchronously. The plugin supports showing a loading indicator while the data is being fetched and handles errors by displaying an error banner.
+
+## Code Structure
+
+- **LazyPlugin**: A plugin created using a builder pattern that defines data schema, functions, and a renderer.
+- **LazyComponent**: A React component that implements the lazy loading logic using an intersection observer and asynchronous data fetching.
+
+## References
+
+- **useAsyncData**: A custom hook used for asynchronous data fetching.
+- **renderHTML**: A utility function to render HTML content safely.
+- **ErrorBanner**: A component to display error messages.
+- **createPlugin**: A function to create plugins with specific data and functions.
+- **rpc**: A utility for defining input and output schemas for plugin functions.
+
+## Symbols
+
+### `LazyPlugin`
+#### Description
+`LazyPlugin` is a plugin that lazily loads HTML content when it becomes visible in the viewport. It is created using a builder pattern that specifies data schema, functions, and a renderer.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| LazyPlugin | Plugin | A plugin configured with data schema, functions, and a renderer. |
+
+### `LazyComponent`
+#### Description
+`LazyComponent` is a React component that implements the lazy loading logic. It uses an intersection observer to detect visibility and fetches data asynchronously when the component becomes visible.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| load | Function | A function to load HTML content. |
+| showLoadingIndicator | boolean | Flag to show a loading indicator. |
+| value | boolean | Indicates whether the content has been loaded. |
+| setValue | Function | Function to update the `value` state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX | The rendered component. |
+
+#### Internal Logic
+- Uses `useIntersectionObserver` to detect when the component is visible.
+- Calls `setValue(true)` when the component becomes visible to trigger data loading.
+- Uses `useAsyncData` to fetch data asynchronously.
+- Displays a loading indicator if `showLoadingIndicator` is true and data is not yet loaded.
+- Renders the fetched HTML content using `renderHTML`.
+- Displays an `ErrorBanner` if an error occurs during data fetching.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation and schema definition. |
+| `@uidotdev/usehooks` | Provides the `useIntersectionObserver` hook. |
+| `lucide-react` | Provides the `Loader2Icon` for the loading indicator. |
+
+## Error Handling
+
+- Errors during data fetching are caught and displayed using the `ErrorBanner` component.
+
+## Logging
+
+- Errors are logged using the `Logger` utility in the `ErrorBanner` component.
+
+## TODOs
+
+- The code contains a comment suggesting a potential performance improvement by caching loaded content on the backend to avoid redundant requests.

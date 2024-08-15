@@ -1,0 +1,90 @@
+---
+title: "status.tsx"
+---
+
+## High-level description
+
+The `status.tsx` file defines a React component, `StatusOverlay`, which visually represents the connection status of a WebSocket and whether a process is running. It uses icons and tooltips to indicate different states, such as when the application is disconnected or when a process is actively running, providing a user-friendly interface for status updates.
+
+## Code Structure
+
+- `StatusOverlay`: The main React component that determines which status icon to display based on the WebSocket state and running status.
+- `DisconnectedIcon`, `RunningIcon`, `NoiseBackground`: Helper components used by `StatusOverlay` to render specific UI elements based on the application's state.
+
+## References
+
+- `WebSocketState`: An enumeration imported from `@/core/websocket/types` that defines possible states of a WebSocket connection.
+- `notebookScrollToRunning`: A function imported from `@/core/cells/actions` that scrolls to the first running cell in a notebook.
+- `Tooltip`: A UI component from `@/components/ui/tooltip` used to display additional information when hovering over icons.
+
+## Symbols
+
+### `StatusOverlay`
+#### Description
+The `StatusOverlay` component displays different UI elements based on the WebSocket connection state and whether a process is running. It uses conditional rendering to show appropriate icons and backgrounds.
+
+#### Inputs
+| Name      | Type            | Description                                      |
+|:----------|:----------------|:-------------------------------------------------|
+| `state`   | `WebSocketState`| The current state of the WebSocket connection.   |
+| `isRunning` | `boolean`     | Indicates if a process is currently running.     |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | `React.FC` | Returns JSX elements based on the state and isRunning inputs. |
+
+#### Internal Logic
+- If the WebSocket state is `OPEN` and `isRunning` is `true`, it renders the `RunningIcon`.
+- If the WebSocket state is `CLOSED`, it renders both `NoiseBackground` and `DisconnectedIcon`.
+
+### `DisconnectedIcon`
+#### Description
+Renders an icon with a tooltip indicating that the application is disconnected.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | `React.FC` | Returns a div containing the `UnlinkIcon` with a tooltip. |
+
+### `RunningIcon`
+#### Description
+Renders an icon with a tooltip that, when clicked, triggers a scroll to the running cell in a notebook.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | `React.FC` | Returns a div containing the `HourglassIcon` with a tooltip. |
+
+#### Internal Logic
+- The `onClick` event is bound to the `notebookScrollToRunning` function, which scrolls to the first running cell.
+
+### `NoiseBackground`
+#### Description
+Renders a visual background effect when the application is disconnected.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | `React.FC` | Returns div elements for noise and gradient effects. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lucide-react` | Provides the `UnlinkIcon` and `HourglassIcon` used in the UI. |
+| `@/components/ui/tooltip` | Provides the `Tooltip` component for displaying tooltips. |
+| `@/core/cells/actions` | Provides the `notebookScrollToRunning` function for scrolling to running cells. |
+| `@/core/websocket/types` | Provides the `WebSocketState` enumeration for WebSocket state management. |
+
+## Error Handling
+
+The code does not explicitly handle errors, as it primarily focuses on rendering UI components based on state inputs.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

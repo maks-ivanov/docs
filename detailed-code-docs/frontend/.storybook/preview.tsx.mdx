@@ -1,0 +1,79 @@
+---
+title: "preview.tsx"
+---
+
+## High-level description
+
+The `preview.tsx` file is a configuration file for Storybook, a tool used for developing UI components in isolation for React applications. This file sets up global parameters, decorators, and themes for the Storybook environment, allowing developers to preview components with different themes and configurations. It imports necessary styles and components, and defines a decorator to apply a theme to the Storybook preview.
+
+## Code Structure
+
+- **Imports**: The file imports various CSS files for styling, React for component rendering, and several utility and UI components from the project's source files.
+- **Decorator (`withTheme`)**: A function that wraps Storybook stories with additional UI elements and applies a theme to the document body.
+- **Preview Configuration (`preview`)**: An object that defines global parameters, themes, and decorators for Storybook.
+
+## References
+
+- **`cn` function**: A utility function for merging class names, imported from `../src/utils/cn`.
+- **`TooltipProvider`**: A component for managing tooltips, imported from `../src/components/ui/tooltip`.
+- **`Toaster`**: A component for displaying toast notifications, imported from `../src/components/ui/toaster`.
+- **`TailwindIndicator`**: A component for displaying a responsive design indicator, imported from `../src/components/debug/indicator`.
+
+## Symbols
+
+### `withTheme`
+#### Description
+The `withTheme` decorator applies a theme to the Storybook preview by adding and removing CSS classes on the document body. It also wraps the story with additional UI components like tooltips, toasters, and a Tailwind CSS indicator.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| `Story` | React Component | The story component to be rendered. |
+| `context` | Object | The context object containing global parameters, including the theme. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | The wrapped story component with additional UI elements. |
+
+#### Internal Logic
+- Retrieves the theme from the context's global parameters.
+- Uses a `useEffect` hook to add the theme class to the document body when the component mounts and removes it when it unmounts.
+- Wraps the story component with `TooltipProvider`, `Toaster`, and `TailwindIndicator`.
+
+### `preview`
+#### Description
+The `preview` object configures Storybook's global settings, including action handlers, control matchers, and global types like themes. It also registers the `withTheme` decorator.
+
+#### Inputs
+None directly, but it uses global configuration settings.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `preview` | Object | The configuration object for Storybook. |
+
+#### Internal Logic
+- Defines `parameters` for actions and controls, specifying regex patterns for matching event handlers and control types.
+- Sets up `globalTypes` for themes, providing options for light and dark themes with a toolbar for selection.
+- Registers the `withTheme` decorator to apply the theme and additional UI components to all stories.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@storybook/react` | Provides types and utilities for Storybook configuration. |
+| `tailwindcss/tailwind.css` | Provides Tailwind CSS styles for the application. |
+| `React` | Used for rendering components and managing state/effects. |
+
+## Error Handling
+
+The code does not explicitly handle errors, as it primarily deals with configuration and UI decoration. Any errors would likely arise from incorrect configuration or missing imports.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

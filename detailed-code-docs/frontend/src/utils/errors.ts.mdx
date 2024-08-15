@@ -1,0 +1,101 @@
+---
+title: "errors.ts"
+---
+
+## High-level description
+
+The `frontend/src/utils/errors.ts` file provides utility functions for handling and formatting error messages in a user-friendly manner. It defines a schema for error details and includes functions to parse and format error messages, ensuring that errors are presented in a consistent and readable format.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `DetailsSchema` is a schema used to validate the structure of error details.
+- `prettyError` is a function that formats an error into a human-readable string, utilizing `DetailsSchema` to extract specific details if available.
+- `maybeExtractDetails` and `safeJSONParse` are helper functions used by `prettyError` to handle error message parsing and JSON parsing safely.
+
+## Symbols
+
+### `DetailsSchema`
+#### Description
+`DetailsSchema` is a Zod schema that defines the expected structure of error details, specifically requiring a `detail` field of type string.
+
+#### Inputs
+- None directly, but it is used to validate objects.
+
+#### Outputs
+- None directly, but it provides validation results when used.
+
+### `prettyError`
+#### Description
+The `prettyError` function takes an unknown error object and returns a formatted string representation of the error. It attempts to extract detailed information if the error conforms to a specific structure.
+
+#### Inputs
+| Name  | Type    | Description          |
+|:------|:--------|:---------------------|
+| error | unknown | The error to format. |
+
+#### Outputs
+| Name   | Type   | Description                      |
+|:-------|:-------|:---------------------------------|
+| string | string | A human-readable error message.  |
+
+#### Internal Logic
+1. Checks if the error is falsy and returns "Unknown error" if so.
+2. If the error is an instance of `Error`, it attempts to parse the `cause` property using `DetailsSchema`.
+3. If parsing is successful, it returns the `detail` from the parsed data.
+4. If parsing fails, it calls `maybeExtractDetails` with the error message.
+5. If the error is not an instance of `Error`, it attempts to stringify the error using `JSON.stringify`.
+6. If stringification fails, it returns the string representation of the error.
+
+### `maybeExtractDetails`
+#### Description
+`maybeExtractDetails` attempts to parse a string message as JSON and extract detailed error information if available.
+
+#### Inputs
+| Name    | Type   | Description               |
+|:--------|:-------|:--------------------------|
+| message | string | The error message to parse.|
+
+#### Outputs
+| Name   | Type   | Description                      |
+|:-------|:-------|:---------------------------------|
+| string | string | A detailed error message or the original message if parsing fails. |
+
+#### Internal Logic
+1. Calls `safeJSONParse` to attempt parsing the message as JSON.
+2. If parsing is successful, it validates the parsed object against `DetailsSchema`.
+3. If validation is successful, it returns the `detail` field.
+4. If parsing or validation fails, it returns the original message.
+
+### `safeJSONParse`
+#### Description
+`safeJSONParse` safely attempts to parse a JSON string, returning the original string if parsing fails.
+
+#### Inputs
+| Name    | Type   | Description               |
+|:--------|:-------|:--------------------------|
+| message | string | The JSON string to parse. |
+
+#### Outputs
+| Name   | Type   | Description                      |
+|:-------|:-------|:---------------------------------|
+| unknown | unknown | The parsed object or the original string if parsing fails. |
+
+#### Internal Logic
+1. Tries to parse the input string using `JSON.parse`.
+2. Returns the parsed object if successful.
+3. Catches any errors during parsing and returns the original string.
+
+## References
+
+- The `prettyError` function is used in various parts of the codebase, as seen in the related files, to format error messages for display in UI components like toasts.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod`      | Used for schema validation of error details. |
+
+## Error Handling
+
+The code implements error handling by using `try-catch` blocks in `safeJSONParse` and `prettyError` to manage potential exceptions during JSON parsing and stringification. It ensures that even if parsing fails, a meaningful string representation of the error is returned.

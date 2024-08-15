@@ -1,0 +1,75 @@
+---
+title: "bridge.ts"
+---
+
+## High-level description
+
+The `bridge.ts` file defines the `PyodideBridge` and `PyodideWebsocket` classes, which facilitate communication between the frontend and a WebAssembly (WASM) environment using Pyodide. The `PyodideBridge` class manages the lifecycle of a Pyodide session, including starting, running, and saving notebooks, while the `PyodideWebsocket` class provides a WebSocket-like interface for message handling within the Pyodide environment.
+
+## Code Structure
+
+- **PyodideBridge**: Implements methods for managing Pyodide sessions, handling requests related to notebook operations, and interacting with the Pyodide worker.
+- **PyodideWebsocket**: Provides a WebSocket-like interface for handling messages in the Pyodide environment, using the `PyodideBridge` for message consumption.
+
+## References
+
+- **Logger**: Used for logging errors and warnings.
+- **Deferred**: Utilized for managing asynchronous initialization of the Pyodide environment.
+- **PyodideRouter**: Manages URL parameters related to the Pyodide session.
+- **API**: Used for making HTTP requests to save user configurations.
+- **toast**: Used for displaying error messages to the user.
+- **store**: Jotai store for managing application state.
+- **notebookIsRunningAtom**: Atom used to check if the notebook is currently running.
+
+## Symbols
+
+### `PyodideBridge`
+#### Description
+The `PyodideBridge` class manages the interaction with the Pyodide environment, handling session initialization, execution of code, and various notebook operations. It uses web workers to offload tasks and communicates with them via RPC.
+
+#### Inputs
+- **EditRequests**: Interface for handling edit-related requests.
+- **RunRequests**: Interface for handling run-related requests.
+
+#### Outputs
+- **Various Promises**: The methods return promises that resolve when the respective operations are completed.
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the Pyodide environment if WASM is supported, creating workers and setting up RPC communication.
+- **Session Management**: Methods like `startSession`, `sendRun`, and `sendSave` manage the lifecycle of a Pyodide session, including starting, running, and saving notebooks.
+- **Message Handling**: The class listens for messages from the Pyodide worker and handles them appropriately, such as resolving initialization promises or displaying error toasts.
+
+### `PyodideWebsocket`
+#### Description
+The `PyodideWebsocket` class provides a WebSocket-like interface for handling messages in the Pyodide environment. It uses the `PyodideBridge` to consume messages and manage subscriptions for open, close, message, and error events.
+
+#### Inputs
+- **bridge**: An instance of `PyodideBridge` used to consume messages.
+
+#### Outputs
+- **WebSocket Events**: The class manages subscriptions for WebSocket events like open, close, message, and error.
+
+#### Internal Logic
+- **Event Management**: The class maintains sets of subscriptions for different WebSocket events and triggers them as messages are consumed from the `PyodideBridge`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/utils/Logger` | For logging errors and warnings. |
+| `@/utils/Deferred` | For managing asynchronous initialization. |
+| `@/components/ui/use-toast` | For displaying error messages. |
+| `jotai` | For managing application state. |
+
+## Error Handling
+
+- **Initialization Errors**: Errors during the initialization of the Pyodide environment are logged and displayed to the user via a toast notification.
+- **RPC Errors**: Errors in RPC communication are logged, and the initialization promise is rejected.
+
+## Logging
+
+- **Logger**: The `Logger` utility is used extensively for logging debug information, warnings, and errors throughout the `PyodideBridge` and `PyodideWebsocket` classes.
+
+## TODOs
+
+- The code does not contain explicit TODOs, but there are several `throwNotImplemented` calls indicating areas where functionality is expected to be implemented in the future.

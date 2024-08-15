@@ -1,0 +1,116 @@
+---
+title: "_mpl.py"
+---
+
+## High-level description
+
+The target file, `marimo/_plugins/stateless/mpl/_mpl.py`, provides functionality for rendering interactive matplotlib plots within a web application using the WebAgg backend. It sets up a server using Starlette to handle HTTP and WebSocket requests, allowing users to interact with matplotlib figures through a web interface. The file includes mechanisms to manage figure instances and handle their lifecycle within a runtime context.
+
+## Code Structure
+
+- **FigureManagers**: Manages a collection of figure managers, allowing for adding, retrieving, and removing figures.
+- **create_application**: Sets up a Starlette application with routes for serving HTML, JavaScript, CSS, and handling WebSocket connections.
+- **get_or_create_application**: Ensures a single instance of the Starlette application is created and running.
+- **interactive**: Provides an interface to render a matplotlib figure interactively within a web page.
+
+## References
+
+- **Starlette**: Used for creating the web application and handling HTTP and WebSocket requests.
+- **matplotlib.backends.backend_webagg**: Provides the WebAgg backend for rendering matplotlib figures in a web environment.
+- **marimo._output.builder**: Utilized for building HTML content.
+- **marimo._runtime.context**: Provides context management for the runtime environment.
+- **marimo._server.utils**: Used for utility functions like finding a free port.
+- **marimo._utils.signals**: Manages signal handling for the server process.
+
+## Symbols
+
+### `FigureManagers`
+#### Description
+Manages a collection of figure managers, allowing for adding, retrieving, and removing figures by their unique identifiers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| manager | Any | A figure manager object to be added or removed. |
+| figure_id | str | The unique identifier for a figure manager. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| manager | Any | The retrieved figure manager object. |
+
+#### Internal Logic
+- Uses a dictionary to store figure managers keyed by their unique identifiers.
+- Provides methods to add, get, and remove figure managers.
+
+### `create_application`
+#### Description
+Creates a Starlette application configured with routes for serving interactive matplotlib figures.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| host | str | The hostname for the server. |
+| port | int | The port number for the server. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The configured Starlette application. |
+
+#### Internal Logic
+- Defines routes for serving the main page, JavaScript, CSS, and handling WebSocket connections.
+- Uses `FigureManagerWebAgg` to manage figure rendering and interactions.
+
+### `get_or_create_application`
+#### Description
+Ensures a single instance of the Starlette application is created and running, starting a server thread if necessary.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | Starlette | The running Starlette application instance. |
+
+#### Internal Logic
+- Checks if the application instance already exists; if not, creates and starts it.
+- Uses `uvicorn` to run the server in a separate thread.
+
+### `interactive`
+#### Description
+Renders a matplotlib figure using an interactive viewer, allowing for user interactions like panning and zooming.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| figure | Figure or Axes | A matplotlib figure or axes object to render interactively. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | Html | An HTML object representing the interactive figure. |
+
+#### Internal Logic
+- Converts an `Axes` object to a `Figure` if necessary.
+- Retrieves the current runtime context and ensures it is a `KernelRuntimeContext`.
+- Creates a figure manager and registers it with the `FigureManagers` instance.
+- Generates HTML content for embedding the interactive figure in a web page.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `matplotlib` | Used for creating and managing figures. |
+| `starlette` | Provides the web framework for handling HTTP and WebSocket requests. |
+| `uvicorn` | Runs the ASGI server for the application. |
+
+## Error Handling
+
+- Raises a `RuntimeError` if a requested figure is not found in `FigureManagers`.
+
+## Logging
+
+- The code does not explicitly implement logging, but it uses `uvicorn` which logs server activity.
+
+## TODOs
+
+- There is a TODO comment suggesting the server should be proxied through the Marimo server to aid deployment.

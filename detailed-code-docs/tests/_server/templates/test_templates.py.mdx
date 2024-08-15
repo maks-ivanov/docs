@@ -1,0 +1,88 @@
+---
+title: "test_templates.py"
+---
+
+## High-level description
+
+The target file `test_templates.py` contains unit tests for verifying the functionality of HTML template rendering functions in the `marimo` server framework. These tests ensure that the HTML templates for different pages (notebook, home, and static notebook) are correctly populated with dynamic data such as configuration settings, server tokens, and other relevant information.
+
+## Code Structure
+
+The file is structured into three main test classes, each corresponding to a different HTML template function from the `marimo._server.templates` module. Each class sets up the necessary environment and data for the tests and contains methods to test specific scenarios for the template rendering.
+
+## Symbols
+
+### `TestNotebookPageTemplate`
+#### Description
+This class tests the `notebook_page_template` function to ensure it correctly renders the HTML for a notebook page with various configurations and modes.
+
+#### Inputs
+- `self.html`: The base HTML content read from a file.
+- `self.base_url`: The base URL for the application.
+- `self.user_config`: User configuration settings.
+- `self.server_token`: A token for server-client communication.
+- `self.app_config`: Application-specific configuration.
+- `self.filename`: The name of the notebook file.
+- `self.mode`: The session mode (e.g., RUN or EDIT).
+
+#### Outputs
+- None directly; uses assertions to validate the output of `notebook_page_template`.
+
+#### Internal Logic
+- The `setUp` method initializes the test environment by reading the base HTML and setting up necessary configurations.
+- The `test_notebook_page_template` method checks if the rendered HTML contains expected elements like base URL, server token, filename, and mode.
+- The `test_notebook_page_template_no_filename` method tests the scenario where no filename is provided.
+- The `test_notebook_page_template_edit_mode` method verifies the template rendering in EDIT mode.
+
+### `TestHomePageTemplate`
+#### Description
+This class tests the `home_page_template` function to ensure it correctly renders the HTML for the home page with the provided configurations.
+
+#### Inputs
+- Similar to `TestNotebookPageTemplate`, but without `app_config`, `filename`, and `mode`.
+
+#### Outputs
+- None directly; uses assertions to validate the output of `home_page_template`.
+
+#### Internal Logic
+- The `setUp` method initializes the test environment similarly to `TestNotebookPageTemplate`.
+- The `test_home_page_template` method checks if the rendered HTML contains expected elements like base URL, server token, and user configuration.
+
+### `TestStaticNotebookTemplate`
+#### Description
+This class tests the `static_notebook_template` function to ensure it correctly renders the HTML for a static notebook page with various configurations and data.
+
+#### Inputs
+- Similar to `TestNotebookPageTemplate`, with additional inputs for cell data and files.
+
+#### Outputs
+- None directly; uses assertions and snapshots to validate the output of `static_notebook_template`.
+
+#### Internal Logic
+- The `setUp` method initializes the test environment with additional data for cells and files.
+- The `test_static_notebook_template` method checks the rendered HTML against a snapshot to ensure consistency.
+- The `test_static_notebook_template_no_filename` and `test_static_notebook_template_no_code` methods test scenarios with missing filename and code, respectively.
+
+## References
+
+- `templates.notebook_page_template`: Function to render notebook page HTML.
+- `templates.home_page_template`: Function to render home page HTML.
+- `templates.static_notebook_template`: Function to render static notebook page HTML.
+- `normalize_index_html`: Utility function to normalize HTML for snapshot comparison.
+- `snapshotter`: Utility function to manage snapshot creation and comparison.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `unittest` | Provides the testing framework. |
+| `os` | Used for file path manipulations. |
+| `json` | Used for JSON serialization. |
+
+## Side Effects
+
+- The tests read from and write to snapshot files to verify the correctness of the HTML templates.
+
+## Logging
+
+- The `snapshotter` utility prints messages when snapshots are updated, aiding in debugging and test maintenance.

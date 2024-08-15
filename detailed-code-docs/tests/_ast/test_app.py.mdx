@@ -1,0 +1,94 @@
+---
+title: "test_app.py"
+---
+
+## High-level description
+
+The `tests/_ast/test_app.py` file contains a suite of unit tests for the `App` class and its related functionalities within the Marimo framework. These tests are designed to verify the behavior of the `App` class, particularly focusing on the execution of cells, handling of errors such as cycles and multiple definitions, and the configuration of the app and its cells. The tests also cover scenarios involving asynchronous execution, UI element interactions, and embedding of apps.
+
+## Code Structure
+
+The main symbol in this file is the `TestApp` class, which contains multiple static methods, each representing a test case. These methods test various aspects of the `App` class, such as running cells, handling errors, and managing configurations. The file also includes standalone test functions for specific configurations and command-line interface (CLI) arguments.
+
+## Symbols
+
+### `TestApp`
+#### Description
+The `TestApp` class is a collection of static methods that serve as unit tests for the `App` class. Each method tests a specific functionality or behavior of the `App` class, such as running cells, detecting cycles, handling multiple definitions, and managing configurations.
+
+#### Inputs
+No direct inputs; each test method sets up its own context and inputs.
+
+#### Outputs
+No direct outputs; assertions are used to validate the expected behavior.
+
+#### Internal Logic
+- **`test_run`**: Tests the basic execution of cells within an `App` instance, verifying the order of execution and the correctness of outputs and definitions.
+- **`test_cycle`**: Verifies that a `CycleError` is raised when there is a cyclic dependency between cells.
+- **`test_cycle_missing_args_rets`**: Similar to `test_cycle`, but with missing arguments and return values, ensuring a `CycleError` is still raised.
+- **`test_multiple_definitions`**: Ensures that a `MultipleDefinitionError` is raised when two cells define the same variable.
+- **`test_multiple_definitions_missing_args_rets`**: Tests the handling of multiple definitions with missing arguments and return values.
+- **`test_delete_nonlocal_missing_args_rets`**: Checks that a `DeleteNonlocalError` is raised when a non-local variable is deleted.
+- **`test_unparsable_cell`**: Verifies that an `UnparsableError` is raised for cells that cannot be parsed.
+- **`test_init_not_rewritten_as_local`**: Tests that class initializations are not rewritten as local variables.
+- **`test_ref_local_var_from_nested_scope`**: Ensures that local variables can be referenced from nested scopes.
+- **`test_resolve_var_not_local_from_nested_scope`**: Tests variable resolution when a variable is not local to a nested scope.
+- **`test_resolve_make_local_with_global_keywd`**: Verifies behavior when using the `global` keyword to make a variable local.
+- **`test_locals_dont_leak`**: Ensures that local variables do not leak between cells.
+- **`test_dunder_dunder_not_local`**: Tests that double underscore variables are not treated as local.
+- **`test_dunder_rewritten_as_local`**: Verifies that double underscore variables are rewritten as local.
+- **`test_app_width_config`**: Checks that the app's width configuration can be set to "full".
+- **`test_app_width_default`**: Ensures the default width configuration is "compact".
+- **`test_app_config_extra_args_ignored`**: Verifies that extra configuration arguments are ignored.
+- **`test_cell_config`**: Tests the configuration of individual cells, such as disabling and hiding code.
+- **`test_conditional_definition`**: Ensures that variables defined conditionally are handled correctly.
+- **`test_empty_iteration_conditional_definition`**: Verifies behavior when iterating over an empty sequence.
+- **`test_run_pickle`**: Tests the ability to pickle and unpickle functions within cells.
+- **`test_run_async`**: Verifies the execution of asynchronous cells.
+- **`test_marimo_mpl_backend_not_used`**: Ensures that the Marimo matplotlib backend is not used if matplotlib is available.
+- **`test_app_run_matplotlib_figures_closed`**: Checks that matplotlib figures are closed after running.
+
+### `test_app_config`
+#### Description
+Tests the creation and configuration of an `_AppConfig` instance from a dictionary, ensuring that only recognized keys are set.
+
+### `test_app_config_extra_args_ignored`
+#### Description
+Similar to `test_app_config`, but specifically tests that extra, unrecognized configuration arguments are ignored.
+
+### `test_cli_args`
+#### Description
+Tests the handling of command-line arguments by running a script with Marimo and verifying the output.
+
+### `TestAppComposition`
+#### Description
+Contains asynchronous tests for embedding apps and handling multiple UI elements, ensuring that embedded apps function correctly and UI interactions trigger appropriate updates.
+
+## References
+
+- `App`, `_AppConfig`, `InternalApp` from `marimo._ast.app`
+- Error classes (`CycleError`, `DeleteNonlocalError`, `MultipleDefinitionError`, `UnparsableError`) from `marimo._ast.errors`
+- `DependencyManager` from `marimo._dependencies.dependencies`
+- `as_html` from `marimo._output.formatting`
+- `vstack` from `marimo._plugins.stateless.flex`
+- `SetUIElementValueRequest` from `marimo._runtime.requests`
+- `Kernel` from `marimo._runtime.runtime`
+- `ExecReqProvider` from `tests.conftest`
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for running the test cases. |
+
+## Error Handling
+
+The tests expect specific exceptions to be raised in certain scenarios, such as `CycleError`, `MultipleDefinitionError`, `DeleteNonlocalError`, and `UnparsableError`. These are verified using `pytest.raises`.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on assertions to validate expected behavior.
+
+## TODOs
+
+No TODOs are present in the code.

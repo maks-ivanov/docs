@@ -1,0 +1,69 @@
+---
+title: "dataflow.py"
+---
+
+## High-level description
+
+The `dataflow.py` file defines a `DirectedGraph` class that models a dataflow graph for managing dependencies between computational cells in a notebook-like environment. It provides methods for registering, deleting, and managing the state of cells, including handling cycles, stale states, and enabling/disabling cells. Additionally, the file includes a `Runner` class for executing cells in the graph, handling both synchronous and asynchronous execution.
+
+## Code Structure
+
+The main symbols in the code are the `DirectedGraph` and `Runner` classes. The `DirectedGraph` class manages the structure and state of the graph, including nodes (cells), edges (dependencies), and cycles. The `Runner` class provides utilities for executing cells within the graph, managing execution order, and handling asynchronous execution.
+
+## Symbols
+
+### DirectedGraph
+#### Description
+The `DirectedGraph` class represents a directed graph where nodes are computational cells, and edges represent dependencies between these cells. It manages the registration, deletion, and state of cells, including handling cycles and stale states.
+
+#### Inputs
+- `cell_id`: Identifier for the cell.
+- `cell`: The cell implementation object.
+
+#### Outputs
+- Various methods return sets of cell IDs or boolean values indicating the state of the graph or specific cells.
+
+#### Internal Logic
+- **Registration**: Adds a cell to the graph, updating dependencies and checking for cycles.
+- **Deletion**: Removes a cell and its dependencies, updating the graph structure.
+- **State Management**: Handles enabling/disabling cells, marking cells as stale, and checking for cycles.
+
+### Runner
+#### Description
+The `Runner` class provides utilities for executing individual cells in the graph. It supports both synchronous and asynchronous execution and manages the execution order based on dependencies.
+
+#### Inputs
+- `graph`: The `DirectedGraph` instance.
+- `cell_id`: Identifier for the cell to be executed.
+- `kwargs`: Optional keyword arguments for substituting cell references.
+
+#### Outputs
+- Returns the output of the executed cell and a dictionary of its defined variables.
+
+#### Internal Logic
+- **Execution**: Executes a cell and its dependencies, handling both synchronous and asynchronous execution paths.
+- **Substitution**: Allows substitution of cell references with provided values.
+- **Error Handling**: Manages errors during execution, including handling coroutine functions.
+
+## Side Effects
+
+- The `DirectedGraph` class modifies the global state of the graph by adding or removing cells and updating their states.
+- The `Runner` class may modify the execution state of cells and update global variables based on cell execution.
+
+## Dependencies
+
+- The code relies on several modules from the `marimo` package, including `_loggers`, `_ast.cell`, `_ast.compiler`, `_ast.visitor`, `_runtime.executor`, and `_utils.variables`.
+- It uses Python's standard libraries such as `threading`, `dataclasses`, and `typing`.
+
+## Error Handling
+
+- The `DirectedGraph` class includes assertions to ensure cells are not registered multiple times.
+- The `Runner` class raises `ValueError` if a cell is not found or if unexpected arguments are provided.
+
+## Logging
+
+- The code uses a logger (`LOGGER`) from the `_loggers` module to log debug information about the graph's state and execution processes.
+
+## TODOs
+
+- There is a TODO comment suggesting the addition of methods to disable and enable cells, handling state transitions on cells.

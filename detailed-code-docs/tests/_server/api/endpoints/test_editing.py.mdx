@@ -1,0 +1,140 @@
+---
+title: "test_editing.py"
+---
+
+## High-level description
+
+The target file `test_editing.py` contains a suite of unit tests for various API endpoints related to code editing functionalities in a server application. These tests are designed to verify the correct behavior of endpoints such as code autocomplete, cell deletion, code formatting, package installation, cell configuration, and standard input handling. Each test uses a mock session to simulate interactions with the server and checks for successful responses and expected outcomes.
+
+## Code Structure
+
+The main symbols in the code are the test functions, each of which is decorated with `@with_session(SESSION_ID)`. This decorator is responsible for setting up a session context for each test. The `HEADERS` dictionary is used to provide necessary authentication and session information for the API requests. The `TestClient` from the `starlette.testclient` module is used to simulate HTTP requests to the server.
+
+## Symbols
+
+### `test_code_autocomplete`
+#### Description
+Tests the `/api/kernel/code_autocomplete` endpoint to ensure it returns a successful response when provided with a document for code completion.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| client | TestClient | The test client to send requests.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a POST request to the `/api/kernel/code_autocomplete` endpoint with a JSON payload containing a document and cell ID.
+- Asserts that the response status code is 200.
+- Asserts that the response content type is `application/json`.
+- Checks that the response JSON contains the key "success".
+
+### `test_delete_cell`
+#### Description
+Tests the `/api/kernel/delete` endpoint to ensure it successfully deletes a specified cell.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| client | TestClient | The test client to send requests.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a POST request to the `/api/kernel/delete` endpoint with a JSON payload containing a cell ID.
+- Asserts that the response status code is 200.
+- Asserts that the response content type is `application/json`.
+- Checks that the response JSON contains the key "success".
+
+### `test_format_cell`
+#### Description
+Tests the `/api/kernel/format` endpoint to ensure it formats code within a cell correctly.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| client | TestClient | The test client to send requests.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a POST request to the `/api/kernel/format` endpoint with a JSON payload containing code and line length.
+- Asserts that the response status code is 200.
+- Asserts that the response content type is `application/json`.
+- Checks that the formatted code in the response matches the expected format.
+
+### `test_install_missing_packages`
+#### Description
+Tests the `/api/kernel/install_missing_packages` endpoint to ensure it handles package installation requests.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| client | TestClient | The test client to send requests.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a POST request to the `/api/kernel/install_missing_packages` endpoint with a JSON payload specifying a package manager.
+- Asserts that the response status code is 200.
+- Asserts that the response content type is `application/json`.
+- Checks that the response JSON contains the key "success".
+
+### `test_set_cell_config`
+#### Description
+Tests the `/api/kernel/set_cell_config` endpoint to ensure it correctly sets configuration for a cell.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| client | TestClient | The test client to send requests.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a POST request to the `/api/kernel/set_cell_config` endpoint with a JSON payload containing cell configurations.
+- Asserts that the response status code is 200.
+- Asserts that the response content type is `application/json`.
+- Checks that the response JSON contains the key "success".
+
+### `test_stdin`
+#### Description
+Tests the `/api/kernel/stdin` endpoint to ensure it processes standard input correctly.
+
+#### Inputs
+| Name   | Type       | Description                        |
+|:-------|:-----------|:-----------------------------------|
+| client | TestClient | The test client to send requests.  |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends a POST request to the `/api/kernel/stdin` endpoint with a JSON payload containing text input.
+- Asserts that the response status code is 200.
+- Asserts that the response content type is `application/json`.
+- Checks that the response JSON contains the key "success".
+
+## References
+
+- `with_session`: A decorator from `tests/_server/mocks.py` that manages session setup and teardown for each test.
+- `token_header`: A function from `tests/_server/mocks.py` that generates authentication headers for requests.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `starlette.testclient` | Used to simulate HTTP requests to the server. |
+
+## Error Handling
+
+The tests use assertions to handle errors. If an assertion fails, it indicates that the test did not pass, and the error message provides information about the failure.
+
+## Logging
+
+No explicit logging is implemented in the test code. The focus is on assertions to verify expected outcomes.

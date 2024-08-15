@@ -1,0 +1,124 @@
+---
+title: "input.tsx"
+---
+
+## High-level description
+
+The target file `input.tsx` defines several React components for input fields with various functionalities, including standard input, debounced input, number input, and search input. These components are designed to be flexible and customizable, allowing for the inclusion of icons, adornments, and debounced state management to optimize performance and user experience.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `Input`: A base component for rendering input fields with optional icons and end adornments.
+- `DebouncedInput`: Extends `Input` to include debouncing functionality for text input.
+- `DebouncedNumberInput`: Similar to `DebouncedInput`, but specifically for number inputs, utilizing the `NumberField` component.
+- `SearchInput`: A specialized input component for search functionality, with optional clearable input and search icon.
+
+## Symbols
+
+### `Input`
+#### Description
+The `Input` component is a customizable input field that can include an icon and an end adornment. It handles different input types and applies specific styles based on the presence of these elements.
+
+#### Inputs
+| Name         | Type   | Description                          |
+|:-------------|:-------|:-------------------------------------|
+| `className`  | string | Additional CSS classes for styling.  |
+| `type`       | string | The type of input (e.g., text, hidden). |
+| `endAdornment` | ReactNode | Element to display at the end of the input. |
+| `props`      | InputProps | Additional input properties.     |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | The rendered input component. |
+
+#### Internal Logic
+- If the input type is "hidden", it returns a hidden input element.
+- Otherwise, it renders a div containing the input field, optionally with an icon and end adornment.
+- Uses the `cn` utility for conditional class names and `Events.stopPropagation` to prevent event bubbling.
+
+### `DebouncedInput`
+#### Description
+The `DebouncedInput` component extends the `Input` component to include debouncing functionality, which delays the input change event to optimize performance.
+
+#### Inputs
+| Name          | Type   | Description                          |
+|:--------------|:-------|:-------------------------------------|
+| `className`   | string | Additional CSS classes for styling.  |
+| `onValueChange` | function | Callback for when the debounced value changes. |
+| `props`       | InputProps | Additional input properties.     |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | The rendered debounced input component. |
+
+#### Internal Logic
+- Utilizes `useDebounceControlledState` to manage the debounced state of the input value.
+- Passes the debounced value and change handler to the `Input` component.
+
+### `DebouncedNumberInput`
+#### Description
+The `DebouncedNumberInput` component is similar to `DebouncedInput` but specifically handles number inputs using the `NumberField` component.
+
+#### Inputs
+| Name          | Type   | Description                          |
+|:--------------|:-------|:-------------------------------------|
+| `className`   | string | Additional CSS classes for styling.  |
+| `onValueChange` | function | Callback for when the debounced number value changes. |
+| `props`       | NumberFieldProps | Additional number field properties. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | The rendered debounced number input component. |
+
+#### Internal Logic
+- Uses `useDebounceControlledState` to manage the debounced state of the number value.
+- Renders a `NumberField` component with the debounced value and change handler.
+
+### `SearchInput`
+#### Description
+The `SearchInput` component is a specialized input field for search functionality, featuring an optional search icon and a clearable input field.
+
+#### Inputs
+| Name          | Type   | Description                          |
+|:--------------|:-------|:-------------------------------------|
+| `className`   | string | Additional CSS classes for styling.  |
+| `rootClassName` | string | CSS classes for the root element.  |
+| `icon`        | ReactNode | Custom icon for the search input. |
+| `clearable`   | boolean | Whether the input can be cleared.   |
+| `props`       | InputProps | Additional input properties.     |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | The rendered search input component. |
+
+#### Internal Logic
+- Generates a unique ID for the input field.
+- Renders a search icon unless explicitly set to null.
+- Provides a clear button to reset the input value if `clearable` is true and the input has a value.
+
+## References
+
+- `useDebounceControlledState`: A hook used to manage debounced state for the `DebouncedInput` and `DebouncedNumberInput` components.
+- `NumberField`: A component used by `DebouncedNumberInput` to handle number-specific input logic.
+- `Events`: Utility functions for handling event propagation and key events.
+
+## Dependencies
+
+| Dependency   | Purpose                                      |
+|:-------------|:---------------------------------------------|
+| `React`      | Core library for building UI components.     |
+| `lucide-react` | Provides icons used in the input components. |
+| `cn`         | Utility for conditionally joining class names. |
+
+## Error Handling
+
+The components use `Events.stopPropagation` to prevent event bubbling, which can help avoid unintended side effects in parent components.
+
+## Performance Considerations
+
+The `DebouncedInput` and `DebouncedNumberInput` components use debouncing to delay the execution of the input change event, reducing the frequency of updates and improving performance in scenarios with rapid input changes.

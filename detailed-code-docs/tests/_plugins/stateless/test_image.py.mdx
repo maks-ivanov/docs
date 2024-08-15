@@ -1,0 +1,147 @@
+---
+title: "test_image.py"
+---
+
+## High-level description
+
+The target file `tests/_plugins/stateless/test_image.py` contains a series of asynchronous test functions designed to validate the functionality of the `image` function from the `marimo` library. These tests cover various input types for the `image` function, such as URLs, byte streams, and local files, ensuring that the function behaves correctly under different scenarios. The tests also check the integration with the `Kernel` and `ExecReqProvider` components to simulate execution contexts.
+
+## Code Structure
+
+The main symbols in the code are the asynchronous test functions, which are structured to test different aspects of the `image` function. These functions utilize the `Kernel` and `ExecReqProvider` from the `tests.conftest` module to simulate execution environments and manage execution requests. The `DependencyManager` is used to check for optional dependencies like `numpy` and `pillow`, which are necessary for some tests.
+
+## Symbols
+
+### `test_image`
+#### Description
+Tests the `image` function with a URL input to ensure it returns the correct HTML image tag.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls the `image` function with a URL.
+- Asserts that the returned HTML contains the correct `img` tag with the specified source.
+
+### `test_image_bytes_io`
+#### Description
+Tests the `image` function with a `BytesIO` input to ensure it processes byte streams correctly.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| k       | Kernel        | The kernel instance to run the test. |
+| exec_req| ExecReqProvider | Provides execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses the `Kernel` to run a script that creates a `BytesIO` object and passes it to the `image` function.
+- Asserts that a virtual file is registered with a `.png` extension.
+
+### `test_image_bytes`
+#### Description
+Similar to `test_image_bytes_io`, it tests the `image` function with a `BytesIO` input.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| k       | Kernel        | The kernel instance to run the test. |
+| exec_req| ExecReqProvider | Provides execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Runs a script using the `Kernel` that creates a `BytesIO` object and passes it to the `image` function.
+- Checks that a virtual file is registered with a `.png` extension.
+
+### `test_image_str`
+#### Description
+Tests the `image` function with a string URL input to ensure it does not register a virtual file.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| k       | Kernel        | The kernel instance to run the test. |
+| exec_req| ExecReqProvider | Provides execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Runs a script using the `Kernel` that passes a URL string to the `image` function.
+- Asserts that no virtual files are registered.
+
+### `test_image_array`
+#### Description
+Tests the `image` function with an array input, requiring `numpy` and `pillow` dependencies.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| k       | Kernel        | The kernel instance to run the test. |
+| exec_req| ExecReqProvider | Provides execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks for `numpy` and `pillow` dependencies.
+- Runs a script using the `Kernel` that creates an array and passes it to the `image` function.
+- Asserts that a virtual file is registered with a `.png` extension.
+
+### `test_image_numpy`
+#### Description
+Tests the `image` function with a `numpy` array input, requiring `numpy` and `pillow` dependencies.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| k       | Kernel        | The kernel instance to run the test. |
+| exec_req| ExecReqProvider | Provides execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks for `numpy` and `pillow` dependencies.
+- Runs a script using the `Kernel` that creates a `numpy` array and passes it to the `image` function.
+- Asserts that a virtual file is registered with a `.png` extension.
+
+### `test_image_local_file`
+#### Description
+Tests the `image` function with a local file input, ensuring it registers the file in the virtual path registry.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| k       | Kernel        | The kernel instance to run the test. |
+| exec_req| ExecReqProvider | Provides execution requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Opens the current file and passes it to the `image` function using the `Kernel`.
+- Asserts that the file is registered in the virtual path registry.
+
+## Side Effects
+
+- The tests modify the virtual file registry by registering files during execution.
+- They also depend on the presence of certain dependencies (`numpy`, `pillow`) for some tests to run.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for marking tests and handling test execution. |
+| `marimo`   | The library being tested, specifically its `image` function. |
+
+## TODOs
+
+- There is a TODO comment indicating a need to debug the `test_image_local_file` on Windows, as it is currently skipped on Windows CI due to failures.

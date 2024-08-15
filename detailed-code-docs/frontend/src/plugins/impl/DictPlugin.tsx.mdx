@@ -1,0 +1,74 @@
+---
+title: "DictPlugin.tsx"
+---
+
+## High-level description
+
+The `DictPlugin` in the target file is a React component designed to manage a dictionary-like state where each key corresponds to a UI element's identifier. It listens for custom input events from child elements and updates the dictionary state based on these events. This plugin is part of a larger system that uses custom events to synchronize UI components' states.
+
+## Code Structure
+
+- **DictPlugin**: Implements the `IPlugin` interface, providing a `render` method that returns a `Dict` component.
+- **Dict**: A functional component that uses the `useEffect` hook to listen for custom input events and update the state accordingly.
+
+## References
+
+- **MarimoValueInputEvent**: A custom event type used to listen for input changes from child elements.
+- **getUIElementObjectId**: A utility function to retrieve the object ID of a UI element, used to map events to dictionary keys.
+
+## Symbols
+
+### `DictPlugin`
+#### Description
+The `DictPlugin` class implements the `IPlugin` interface, providing a mechanism to render a dictionary-like structure in the UI. It validates the data structure using `zod` and renders the `Dict` component with the necessary props.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;T, Data&gt;` | The properties required to render the plugin, including state, data, and children. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered `Dict` component. |
+
+### `Dict`
+#### Description
+The `Dict` component is a React functional component that listens for `MarimoValueInputEvent` events. It updates the dictionary state when a child element triggers an input event.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| elementIds | `Record&lt;string, string&gt;` | A mapping from element IDs to dictionary keys. |
+| setValue | `Setter&lt;T&gt;` | A function to update the dictionary state. |
+| children | `React.ReactNode` | The child elements that may trigger input events. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `React.ReactNode` | The children elements, potentially wrapped with event listeners. |
+
+#### Internal Logic
+- Uses `useEffect` to set up an event listener for `MarimoValueInputEvent`.
+- When an event is detected, it checks if the event's target element is valid and retrieves its object ID.
+- If the object ID maps to a key in `elementIds`, it updates the dictionary state with the new value from the event.
+
+## Side Effects
+- Registers and unregisters event listeners on the document for `MarimoValueInputEvent`.
+- Updates the state of the dictionary based on input events from child elements.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation. |
+| `useEffect` | React hook for managing side effects in functional components. |
+
+## Error Handling
+- The code checks if the target element of an event is valid and if its object ID is present in the `elementIds` mapping. If not, it ignores the event.
+
+## Logging
+No explicit logging is implemented in the target file.
+
+## TODOs
+No TODOs are present in the target file.

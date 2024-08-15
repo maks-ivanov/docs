@@ -1,0 +1,111 @@
+---
+title: "outline.test.ts"
+---
+
+## High-level description
+
+The target file `outline.test.ts` contains unit tests for functions related to parsing and manipulating document outlines, specifically HTML outlines. These tests ensure that the functions can correctly parse HTML content into structured outlines, merge multiple outlines, determine if an outline can be collapsed, and find ranges within outlines that can be collapsed. The tests are written using the `vitest` testing framework.
+
+## Code Structure
+
+The main symbols in the code are the test cases that validate the functionality of the functions imported from the `outline` module. These functions include `parseOutline`, `mergeOutlines`, `canCollapseOutline`, and `findCollapseRange`. The tests are organized using `describe` and `it` blocks to group related tests and specify individual test cases.
+
+## References
+
+- `parseOutline`: This function is imported from the `outline` module and is responsible for parsing HTML content into an outline structure.
+- `mergeOutlines`: This function merges multiple outline objects into a single outline.
+- `canCollapseOutline`: This function checks if an outline can be collapsed based on its structure.
+- `findCollapseRange`: This function determines the range of outlines that can be collapsed starting from a given index.
+
+## Symbols
+
+### `parseOutline`
+#### Description
+Tests the `parseOutline` function to ensure it correctly parses HTML content into an outline structure or returns `null` for non-HTML content or invalid inputs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | OutputMessage | An object containing HTML data and metadata for parsing. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outline | Outline or null | The parsed outline structure or `null` if parsing fails. |
+
+#### Internal Logic
+- Parses HTML content using a DOM parser.
+- Extracts headings (`h1`, `h2`, `h3`) and constructs an outline with their names, levels, and identifiers.
+- Returns `null` for non-HTML content or if parsing fails.
+
+### `mergeOutlines`
+#### Description
+Tests the `mergeOutlines` function to ensure it correctly combines multiple outlines into a single outline.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outlines | Array&lt;Outline or null&gt; | An array of outline objects to be merged. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mergedOutline | Outline | The combined outline structure. |
+
+#### Internal Logic
+- Filters out `null` outlines.
+- Flattens the list of items from all outlines into a single list.
+
+### `canCollapseOutline`
+#### Description
+Tests the `canCollapseOutline` function to ensure it correctly determines if an outline can be collapsed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outline | Outline or null | The outline to check for collapsibility. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| canCollapse | boolean | `true` if the outline can be collapsed, otherwise `false`. |
+
+#### Internal Logic
+- Checks if the outline contains any items with a level of 1, 2, or 3.
+
+### `findCollapseRange`
+#### Description
+Tests the `findCollapseRange` function to ensure it correctly identifies the range of outlines that can be collapsed starting from a given index.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| startIndex | number | The starting index for finding the collapse range. |
+| outlines | Array&lt;Outline or null&gt; | An array of outlines to search within. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| range | [number, number] or null | The start and end indices of the collapse range, or `null` if no valid range is found. |
+
+#### Internal Logic
+- Determines the highest header level at the start index.
+- Searches for the next outline with an equal or higher header level to define the collapse range.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for writing and running unit tests. |
+
+## Error Handling
+
+- The `parseOutline` function logs an error using a `Logger` if parsing fails, ensuring that failures are recorded for debugging.
+
+## Logging
+
+- The `parseOutline` function uses a `Logger` to log errors when parsing fails.
+
+## TODOs
+
+No TODOs or notes are present in the code.

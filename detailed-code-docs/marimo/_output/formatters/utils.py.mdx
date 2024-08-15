@@ -1,0 +1,55 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The target file `marimo/_output/formatters/utils.py` contains a utility function `src_or_src_doc` that determines the appropriate HTML attribute (`src` or `srcdoc`) for embedding content in an iframe. This decision is based on whether virtual files are supported in the current runtime context. The function is designed to handle scenarios where resizing the iframe to fit its content is necessary, which is not possible with the `src` attribute alone.
+
+## Code Structure
+
+The main symbol in this file is the function `src_or_src_doc`. It interacts with the runtime context to determine if virtual files are supported and uses the `mo_data.html` function to generate a URL for the HTML content if they are. If not, it escapes the HTML content and returns it as a `srcdoc` attribute.
+
+## References
+
+- `get_context`: This function is used to retrieve the current runtime context, which is crucial for determining if virtual files are supported.
+- `ContextNotInitializedError`: This exception is caught to handle cases where the context is not initialized.
+- `mo_data.html`: This function is used to convert HTML content into a virtual file URL when virtual files are supported.
+
+## Symbols
+
+### `src_or_src_doc`
+#### Description
+The `src_or_src_doc` function determines whether to use the `src` or `srcdoc` attribute for an iframe based on the support for virtual files in the current runtime context. It returns a dictionary with the appropriate attribute and its value.
+
+#### Inputs
+| Name         | Type   | Description                      |
+|:-------------|:-------|:---------------------------------|
+| html_content | str    | The HTML content to be embedded. |
+
+#### Outputs
+| Name   | Type          | Description                                                                 |
+|:-------|:--------------|:----------------------------------------------------------------------------|
+| output | Dict[str, str]| A dictionary with either `src` or `srcdoc` as the key and the corresponding value. |
+
+#### Internal Logic
+1. The function attempts to retrieve the current runtime context using `get_context()`.
+2. If the context is not initialized, it catches the `ContextNotInitializedError` and returns the HTML content as a `srcdoc` attribute after escaping it.
+3. If the context is initialized and supports virtual files, it uses `mo_data.html` to convert the HTML content into a virtual file and returns its URL as a `src` attribute.
+4. If virtual files are not supported, it returns the HTML content as a `srcdoc` attribute after escaping it.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `html`     | Used for escaping HTML content to ensure it is safe for embedding.      |
+| `mo_data`  | Provides functionality to convert HTML content into a virtual file URL. |
+| `get_context` | Retrieves the current runtime context to check for virtual file support. |
+
+## Error Handling
+
+- The function handles the `ContextNotInitializedError` to provide a fallback mechanism when the runtime context is not available, ensuring that the function can still return a valid `srcdoc` attribute.
+
+## Related Code Snippets
+
+The related files demonstrate the usage of `src_or_src_doc` in different formatters like `BokehFormatter` and `LeafmapFormatter`. These formatters use the utility function to embed HTML content in iframes, ensuring that the content is displayed correctly regardless of the environment's support for virtual files. The test file `tests/_output/formatters/test_formatter_utils.py` provides unit tests for the `src_or_src_doc` function, verifying its behavior in different scenarios.

@@ -1,0 +1,65 @@
+---
+title: "parse-from-template.ts"
+---
+
+## High-level description
+
+The target file defines a utility for parsing Plotly hover templates to extract key-value pairs from Plotly data points. It provides a function to create a parser that can interpret hover templates and extract data based on specified patterns. This utility is particularly useful for dynamically interpreting Plotly chart data based on user-defined templates.
+
+## Code Structure
+
+The main symbol in the code is the `createParser` function, which returns an object implementing the `PlotlyTemplateParser` interface. This interface defines two methods: `update` and `parse`. The `createParser` function uses a regular expression to extract key-selector pairs from a hover template, which are then used by the `parse` method to extract corresponding values from Plotly data.
+
+## Symbols
+
+### `PlotlyTemplateParser`
+#### Description
+An interface that defines the structure for a parser capable of interpreting Plotly hover templates. It includes methods for updating the parser with a new template and parsing data to extract key-value pairs.
+
+#### Methods
+- `update(newTemplate: string): PlotlyTemplateParser`: Updates the parser with a new hover template if it differs from the current one.
+- `parse(data: Plotly.PlotDatum): Record&lt;string, string&gt;`: Parses a Plotly data point to extract key-value pairs based on the hover template.
+
+### `createParser`
+#### Description
+Creates a parser for a given Plotly hover template. The parser can extract key-value pairs from Plotly data points by interpreting the template's key-selector patterns.
+
+#### Inputs
+| Name          | Type   | Description                          |
+|:--------------|:-------|:-------------------------------------|
+| hovertemplate | string | The hover template to be parsed.     |
+
+#### Outputs
+| Name   | Type                | Description                                      |
+|:-------|:--------------------|:-------------------------------------------------|
+| parser | PlotlyTemplateParser | An object implementing the `PlotlyTemplateParser` interface. |
+
+#### Internal Logic
+1. **Regular Expression Matching**: Uses a regular expression to find all occurrences of the pattern `key=%{selector}` in the hover template.
+2. **Key-Selector Mapping**: Stores the extracted key-selector pairs in an object.
+3. **Parser Methods**:
+   - `update`: Checks if the new template is different from the current one and returns a new parser if needed.
+   - `parse`: Uses the `lodash-es` `get` function to extract values from the data based on the stored selectors.
+
+## References
+
+- The `get` function from `lodash-es` is used to safely access nested properties in the data object.
+- The `PlotlyTemplateParser` interface is referenced in the `PlotlyPlugin.tsx` file, where it is used to parse data points in the `extractPoints` function.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| lodash-es  | Provides utility functions for object manipulation, specifically `get` for accessing nested properties. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the hover template and data are well-formed and that the selectors will correctly map to properties in the data object. If a selector does not match any property, the `get` function will return `undefined`.
+
+## Logging
+
+There is no logging implemented in this code. However, logging could be beneficial for debugging purposes, especially when parsing complex templates or handling unexpected data structures.
+
+## Testing
+
+The related test file `parse-from-template.test.ts` provides comprehensive tests for the `createParser` function, ensuring it correctly parses hover templates and handles various edge cases, such as missing keys and nested data structures.

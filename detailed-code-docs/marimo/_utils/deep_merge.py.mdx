@@ -1,0 +1,73 @@
+---
+title: "deep_merge.py"
+---
+
+## High-level description
+
+The target file `marimo/_utils/deep_merge.py` provides functionality to deeply merge two dictionaries. It contains two main functions: `_merge_key`, which handles the merging of individual keys, and `deep_merge`, which orchestrates the merging process for entire dictionaries. This utility is useful for combining configurations or data structures where nested dictionaries need to be merged recursively.
+
+## Code Structure
+
+The code consists of two main functions:
+
+1. **`_merge_key`**: A helper function that merges a specific key from two dictionaries.
+2. **`deep_merge`**: The main function that performs a deep merge of two dictionaries by iterating over their keys and using `_merge_key` to handle each key.
+
+## Symbols
+
+### `_merge_key`
+#### Description
+The `_merge_key` function is a helper function designed to merge a specific key from two dictionaries. It ensures that if a key exists in both dictionaries and both values are dictionaries, it recursively merges them. Otherwise, it prioritizes the value from the update dictionary.
+
+#### Inputs
+| Name     | Type          | Description                                      |
+|:---------|:--------------|:-------------------------------------------------|
+| original | `dict[Any, Any]` | The original dictionary to be merged.            |
+| update   | `dict[Any, Any]` | The dictionary containing updates.              |
+| key      | `str`         | The specific key to merge from the dictionaries. |
+
+#### Outputs
+| Name  | Type | Description                                      |
+|:------|:-----|:-------------------------------------------------|
+| value | `Any`| The merged value for the specified key.          |
+
+#### Internal Logic
+- If the key is not present in the update dictionary, it returns the value from the original dictionary.
+- If the key is not present in the original dictionary, it returns the value from the update dictionary.
+- If the values for the key in both dictionaries are themselves dictionaries, it recursively calls `deep_merge` to merge them.
+- If the values are not both dictionaries, it returns the value from the update dictionary.
+
+### `deep_merge`
+#### Description
+The `deep_merge` function performs a deep merge of two dictionaries. It combines the keys from both dictionaries and uses `_merge_key` to determine the value for each key in the resulting dictionary.
+
+#### Inputs
+| Name     | Type          | Description                                      |
+|:---------|:--------------|:-------------------------------------------------|
+| original | `dict[Any, Any]` | The original dictionary to be merged.            |
+| update   | `dict[Any, Any]` | The dictionary containing updates.              |
+
+#### Outputs
+| Name      | Type          | Description                                      |
+|:----------|:--------------|:-------------------------------------------------|
+| merged_dict | `dict[Any, Any]` | The resulting dictionary after deep merging.   |
+
+#### Internal Logic
+- It creates a set of all keys present in either the original or update dictionaries.
+- For each key, it calls `_merge_key` to determine the appropriate value and constructs a new dictionary with these merged values.
+
+## References
+
+- The `deep_merge` function is used in other parts of the codebase, such as in `marimo/_ast/cell.py` and `marimo/_config/config.py`, to merge configurations or data structures.
+
+## Dependencies
+
+The code uses the `typing` module for type annotations, specifically `Any` and `dict`.
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the inputs are valid dictionaries and that the keys are strings. If the inputs do not meet these expectations, it may raise exceptions during execution.
+
+## Logging
+
+There is no logging implemented in this code.

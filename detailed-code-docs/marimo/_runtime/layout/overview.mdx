@@ -1,0 +1,87 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file, `layout.py`, is part of the Marimo project and is responsible for managing layout configurations for applications. It provides functionality to save and read layout configurations to and from disk, using JSON format. This allows for the organization and persistence of layout settings for different applications within a specified directory structure.
+
+## Code Structure
+
+The main symbols in the code are the `LayoutConfig` data class and two functions: `save_layout_config` and `read_layout_config`. The `LayoutConfig` class is used to represent the layout configuration, while the functions handle the saving and reading of these configurations to and from disk.
+
+## Symbols
+
+### `LayoutConfig`
+#### Description
+`LayoutConfig` is a data class that represents the configuration of a layout. It contains two fields: `type`, which specifies the type of layout, and `data`, which holds the layout data in a dictionary format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | str | The type of layout. |
+| data | dict[str, Any] | The data associated with the layout. |
+
+#### Outputs
+N/A
+
+### `save_layout_config`
+#### Description
+This function saves a given `LayoutConfig` to disk as a JSON file. The file is stored in a directory structure that allows multiple layouts for the same application and multiple applications in the same directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| directory | str | The base directory where the layout should be saved. |
+| app_name | str | The name of the application for which the layout is being saved. |
+| config | LayoutConfig | The layout configuration to be saved. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filepath | str | The relative path to the saved layout file. |
+
+#### Internal Logic
+1. The function removes the `.py` extension from the `app_name`.
+2. Constructs a relative file path using the `app_name` and `config.type`.
+3. Joins the base directory with the relative path to form the full file path.
+4. Ensures the directory exists, creating it if necessary.
+5. Writes the `LayoutConfig` data to a JSON file at the specified path.
+
+### `read_layout_config`
+#### Description
+This function reads a layout configuration from a JSON file on disk and returns it as a `LayoutConfig` object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| directory | str | The base directory where the layout file is located. |
+| filename | str | The name of the layout file to be read. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | Optional[LayoutConfig] | The layout configuration read from the file, or `None` if the file does not exist or is not a JSON file. |
+
+#### Internal Logic
+1. Constructs the full file path by joining the directory and filename.
+2. Checks if the file exists and is a JSON file, logging warnings if not.
+3. Reads the JSON data from the file and constructs a `LayoutConfig` object from it.
+
+## References
+
+- The `LOGGER` is obtained from the `marimo._loggers` module, which provides logging functionality.
+- The `LayoutConfig` class is used in other parts of the codebase, such as in the `marimo/_server/file_manager.py` file, where it is used to manage layout configurations for applications.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `json` | Used for serializing and deserializing layout configurations to and from JSON format. |
+| `os` | Used for file path manipulations and directory operations. |
+| `dataclasses` | Provides the `@dataclass` decorator for the `LayoutConfig` class. |
+| `typing` | Used for type annotations, including `Any` and `Optional`. |
+
+## Logging
+
+The code uses a logger obtained from the `marimo._loggers` module to log warnings when a layout file does not exist or is not a JSON file. This helps in debugging and monitoring the application's behavior related to layout file operations.

@@ -1,0 +1,111 @@
+---
+title: "ui_element.py"
+---
+
+## High-level description
+
+The `ui_element.py` file defines the `UIElement` class, which is an abstract base class for creating interactive HTML elements with values that can be synchronized between the frontend and backend. The class is designed to handle the conversion of values between the frontend and backend, manage the lifecycle of UI elements, and facilitate interaction through events and callbacks.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `UIElement` is the primary class that represents an interactive HTML element. It inherits from `Html` and uses a metaclass `abc.ABCMeta` to enforce the implementation of the `_convert_value` method in subclasses.
+- `Lens` and `InitializationArgs` are data classes used within `UIElement` to manage the state and initialization parameters of UI elements.
+- `MarimoConvertValueException` is a custom exception used to handle conversion errors.
+- The `UIElement` class interacts with other components like `Function`, `RuntimeContext`, and `Html` to manage its behavior and lifecycle.
+
+## References
+
+- `Html`: A base class for rendering HTML content, which `UIElement` extends.
+- `Function`: Used for registering functions that can be called in response to UI events.
+- `RuntimeContext`: Provides context for the execution environment, including managing IDs and registries for UI elements.
+
+## Symbols
+
+### `Lens`
+#### Description
+Tracks how a view of a higher-order element relates to its source, storing the parent ID and key.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parent_id | str | ID of the parent UI element. |
+| key | str | Key at which the parent stores the view. |
+
+#### Outputs
+N/A
+
+### `InitializationArgs`
+#### Description
+Holds initialization parameters for a `UIElement`, including component name, initial value, label, and other configuration options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| component_name | str | Tag name of the custom element. |
+| initial_value | S | Initial value of the element in the frontend. |
+| label | Optional[str] | Label of the element. |
+| on_change | Optional[Callable[[T], None]] | Callback for value changes. |
+| args | dict[str, JSONType] | Additional arguments for the element. |
+| slotted_html | str | HTML to slot in the custom element. |
+| functions | tuple[Function[Any, Any], ...] | Functions to register with the graph. |
+
+#### Outputs
+N/A
+
+### `MarimoConvertValueException`
+#### Description
+Custom exception for handling value conversion errors in `UIElement`.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `UIElement`
+#### Description
+An abstract base class for creating interactive HTML elements with values. It manages the synchronization of values between the frontend and backend, handles lifecycle events, and supports interaction through callbacks.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| component_name | str | Tag name of the custom element. |
+| initial_value | S | Initial value of the element in the frontend. |
+| label | Optional[str] | Label of the element. |
+| on_change | Optional[Callable[[T], None]] | Callback for value changes. |
+| args | dict[str, JSONType] | Additional arguments for the element. |
+| slotted_html | str | HTML to slot in the custom element. |
+| functions | tuple[Function[Any, Any], ...] | Functions to register with the graph. |
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Initializes the UI element with provided parameters and registers it with the runtime context.
+- Manages a unique ID for synchronization and a random ID for re-rendering.
+- Implements the `_convert_value` method to convert frontend values to backend values.
+- Provides methods for creating forms, sending messages, and updating values.
+
+## Side Effects
+- Registers UI elements with the runtime context and manages their lifecycle.
+- Sends messages to the frontend and updates the backend state based on frontend interactions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `abc` | Provides the abstract base class functionality. |
+| `dataclasses` | Used for defining data classes like `Lens` and `InitializationArgs`. |
+| `uuid` | Generates unique IDs for UI elements. |
+| `weakref` | Manages weak references to UI elements for garbage collection. |
+
+## Error Handling
+- Uses `MarimoConvertValueException` to handle errors during value conversion.
+- Raises `TypeError` for invalid initialization parameters.
+
+## Logging
+- Utilizes a logger (`LOGGER`) to log messages related to UI element operations.
+
+## TODOs
+- There are TODO comments in the code suggesting improvements, such as validating tag names and parameterizing `UIElement` with an optional string ID.

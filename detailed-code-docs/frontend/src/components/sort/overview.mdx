@@ -1,0 +1,57 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `SortableCellsProvider.tsx` file defines a React component that facilitates drag-and-drop sorting of cells within a notebook interface. It leverages the `@dnd-kit` library to provide a context for draggable and sortable elements, specifically tailored to handle vertical sorting of notebook cells. The component integrates with the notebook's state management to update the order of cells when a drag-and-drop operation is completed.
+
+## Code Structure
+
+The main component in this file is `SortableCellsProviderInternal`, which is wrapped by `React.memo` to create the exported `SortableCellsProvider`. This component uses several hooks and utilities from the `@dnd-kit` library to manage drag-and-drop interactions. It also interacts with the notebook state through hooks like `useNotebook` and `useCellActions` to retrieve cell IDs and perform actions like reordering cells.
+
+## References
+
+- `useNotebook` and `useCellActions` from `../../core/cells/cells`: These hooks are used to access the notebook's state and dispatch actions to modify it.
+- `CellId` from `@/core/cells/ids`: This type is used to ensure that cell identifiers are correctly typed.
+
+## Symbols
+
+### `SortableCellsProviderInternal`
+#### Description
+`SortableCellsProviderInternal` is a React component that sets up a drag-and-drop context for sorting notebook cells. It uses the `@dnd-kit` library to handle drag-and-drop interactions and updates the notebook's state when the order of cells changes.
+
+#### Inputs
+| Name     | Type              | Description                        |
+|:---------|:------------------|:-----------------------------------|
+| children | `React.ReactNode` | The child components to be rendered within the sortable context. |
+| disabled | `boolean`         | Optional flag to disable sorting functionality. |
+
+#### Outputs
+This component does not return any outputs but renders its children within a drag-and-drop context.
+
+#### Internal Logic
+- **Sensors Setup**: Initializes sensors for pointer and keyboard interactions using `useSensors` and `useSensor` from `@dnd-kit/core`.
+- **Drag End Handling**: Defines a `handleDragEnd` function using `useEvent` to handle the completion of a drag-and-drop operation. It checks if the dragged item was moved to a new position and calls `dropCellOver` to update the cell order in the notebook state.
+- **Rendering**: Renders a `DndContext` and `SortableContext` from `@dnd-kit` to provide the necessary context for drag-and-drop operations. The `SortableContext` is configured with the list of cell IDs and a vertical sorting strategy.
+
+## Dependencies
+
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `@dnd-kit/core`  | Provides the core drag-and-drop context and utilities.                  |
+| `@dnd-kit/sortable` | Offers sortable-specific utilities and strategies for drag-and-drop. |
+| `../../core/cells/cells` | Provides hooks for accessing and manipulating the notebook's cell state. |
+| `../../hooks/useEvent` | Custom hook for creating stable event handlers.                   |
+
+## Error Handling
+
+The component does not explicitly handle errors but relies on the stability of the `@dnd-kit` library and the hooks used for state management.
+
+## Logging
+
+There is no explicit logging implemented in this component.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

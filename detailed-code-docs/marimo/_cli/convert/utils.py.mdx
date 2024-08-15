@@ -1,0 +1,97 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+
+The target file, `marimo/_cli/convert/utils.py`, provides utility functions for handling file conversions and content transformations within the Marimo framework. It includes functions to load external files, convert markdown content to a Marimo-specific format, and generate file contents from source code strings. These utilities are essential for converting and managing different file types, such as GitHub-hosted files or local markdown files, into a format suitable for Marimo applications.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `load_external_file`: Utilizes `is_github_src` and `get_github_src_url` from `marimo._cli.file_path` to determine if a file is hosted on GitHub and fetches its content accordingly.
+- `markdown_to_marimo`: Uses `codegen.indent_text` from `marimo._ast.codegen` to format markdown content into a Marimo-specific format.
+- `generate_from_sources`: Calls `codegen.generate_filecontents` to create a complete file content from a list of source strings, using configurations from `_AppConfig` and `CellConfig`.
+
+## References
+
+- `is_github_src` and `get_github_src_url` from `marimo._cli.file_path` are used to handle GitHub URLs.
+- `codegen.indent_text` and `codegen.generate_filecontents` from `marimo._ast.codegen` are used for formatting and generating file contents.
+- `_AppConfig` from `marimo._ast.app` and `CellConfig` from `marimo._ast.cell` are used for configuration management.
+
+## Symbols
+
+### `load_external_file`
+#### Description
+Loads the content of a file from either a local path or a GitHub URL. If the file is hosted on GitHub, it fetches the content using the GitHub raw URL; otherwise, it reads the file from the local filesystem.
+
+#### Inputs
+| Name      | Type   | Description                        |
+|:----------|:-------|:-----------------------------------|
+| file_path | str    | The path or URL of the file.       |
+| ext       | str    | The file extension to validate.    |
+
+#### Outputs
+| Name     | Type | Description            |
+|:---------|:-----|:-----------------------|
+| notebook | str  | The content of the file|
+
+#### Internal Logic
+- Checks if the file path is a GitHub source using `is_github_src`.
+- If true, constructs the raw GitHub URL using `get_github_src_url` and fetches the content.
+- If false, reads the file content from the local filesystem.
+
+### `markdown_to_marimo`
+#### Description
+Converts a markdown string into a Marimo-specific format by escaping triple quotes and wrapping the content in a Marimo markdown function call.
+
+#### Inputs
+| Name   | Type | Description            |
+|:-------|:-----|:-----------------------|
+| source | str  | The markdown content.  |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | str  | The Marimo-formatted markdown.     |
+
+#### Internal Logic
+- Replaces triple quotes in the source with escaped versions.
+- Wraps the content in a Marimo markdown function call using `codegen.indent_text` for formatting.
+
+### `generate_from_sources`
+#### Description
+Generates the complete content of a Marimo file from a list of source strings, using optional application configuration.
+
+#### Inputs
+| Name    | Type               | Description                          |
+|:--------|:-------------------|:-------------------------------------|
+| sources | list[str]          | List of source code strings.         |
+| config  | Optional[_AppConfig] | Optional application configuration. |
+
+#### Outputs
+| Name     | Type | Description                  |
+|:---------|:-----|:-----------------------------|
+| output   | str  | The generated file content.  |
+
+#### Internal Logic
+- Calls `codegen.generate_filecontents` with the provided sources, default names, and cell configurations.
+- Uses the optional `_AppConfig` for additional configuration.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `urllib.request` | To fetch content from URLs, specifically GitHub. |
+| `marimo._ast.codegen` | Provides functions for code generation and formatting. |
+| `marimo._ast.app` | Provides application configuration classes. |
+| `marimo._ast.cell` | Provides cell configuration classes. |
+| `marimo._cli.file_path` | Provides utilities for handling file paths and URLs. |
+
+## Error Handling
+
+The code does not explicitly handle errors such as network issues when fetching content from URLs or file read errors. It assumes that the inputs are valid and accessible.
+
+## Logging
+
+The code does not implement any logging mechanisms.

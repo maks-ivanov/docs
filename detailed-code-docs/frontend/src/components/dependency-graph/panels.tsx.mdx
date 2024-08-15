@@ -1,0 +1,83 @@
+---
+title: "panels.tsx"
+---
+
+## High-level description
+
+The target file, `panels.tsx`, is a React component module that provides UI components for interacting with a dependency graph. It includes a toolbar for changing the graph layout and settings, as well as a panel for displaying details about selected nodes or edges in the graph. The components are designed to work with the `reactflow` library to visualize and interact with graph data.
+
+## Code Structure
+
+The main components in this file are `GraphToolbar` and `GraphSelectionPanel`. `GraphToolbar` is responsible for providing UI controls to change the graph's layout and settings, while `GraphSelectionPanel` displays detailed information about the selected graph elements, such as nodes and edges. These components use various UI elements like buttons, checkboxes, and popovers to facilitate user interaction.
+
+## Symbols
+
+### `GraphToolbar`
+#### Description
+`GraphToolbar` is a React functional component that provides a toolbar interface for changing the layout view of a graph and adjusting graph settings. It uses memoization to optimize rendering performance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | GraphLayoutView | The current layout view of the graph. |
+| onChange | (view: GraphLayoutView) =&gt; void | Callback function to change the graph layout view. |
+| settings | GraphSettings | Current settings of the graph. |
+| onSettingsChange | (settings: GraphSettings) =&gt; void | Callback function to update graph settings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | React.FC&lt;Props&gt; | A React functional component. |
+
+#### Internal Logic
+- The component uses a `Popover` to display a settings menu, which includes a checkbox to toggle the visibility of pure markdown elements.
+- It provides buttons to switch between different graph layout views: Mini Map, Vertical Tree, and Horizontal Tree.
+- The `handleSettingChange` function is used to update the graph settings when the user interacts with the settings menu.
+
+### `GraphSelectionPanel`
+#### Description
+`GraphSelectionPanel` is a React functional component that displays detailed information about the currently selected node or edge in the graph. It uses memoization to optimize rendering performance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| selection | GraphSelection | The currently selected graph element (node or edge). |
+| edges | Edge[] | List of edges in the graph. |
+| variables | Variables | A record of variables used in the graph. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | React.FC | A React functional component. |
+
+#### Internal Logic
+- The component checks the type of the selection (node or edge) and renders appropriate details.
+- For nodes, it lists variables used and declared by the node, providing links to highlight these variables in the cell editor.
+- For edges, it displays variables that are transferred from the source node to the target node.
+- The `highlightInCell` function is used to focus on a specific variable within the cell editor.
+
+## References
+
+- `GraphLayoutView`, `GraphSelection`, and `GraphSettings` types are imported from `./types`.
+- `CellLink` and `CellLinkList` components are used to create links to cells.
+- `getCellEditorView` and `goToVariableDefinition` are used to interact with the cell editor.
+- UI components like `Button`, `Popover`, `Checkbox`, and `Label` are used for building the interface.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `reactflow` | Used for rendering and managing the graph layout and interactions. |
+| `lucide-react` | Provides icon components used in the UI. |
+
+## Error Handling
+
+The code does not explicitly handle errors but relies on the React component lifecycle and prop validation to manage potential issues.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

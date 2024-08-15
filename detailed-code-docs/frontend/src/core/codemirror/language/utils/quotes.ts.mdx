@@ -1,0 +1,88 @@
+---
+title: "quotes.ts"
+---
+
+## High-level description
+
+The target file, `quotes.ts`, provides utility functions for handling string prefixes in a code editor environment, specifically for managing quote prefixes like `f`, `r`, `fr`, and `rf` in strings. It includes functions to split these prefixes from a string and to upgrade the prefix based on the presence of substitutions within the string.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `QUOTE_PREFIX_KINDS` is a constant array that defines the possible prefixes for strings.
+- `QuotePrefixKind` is a type that represents any of the possible values from `QUOTE_PREFIX_KINDS`.
+- `splitQuotePrefix` is a function that removes the prefix from a given string and returns the prefix and the rest of the string.
+- `upgradePrefixKind` is a function that determines if a string's prefix should be upgraded based on the presence of substitutions in the string.
+
+## Symbols
+
+### `QUOTE_PREFIX_KINDS`
+#### Description
+A constant array that lists all possible prefix kinds for strings, which include `""`, `"f"`, `"r"`, `"fr"`, and `"rf"`.
+
+### `QuotePrefixKind`
+#### Description
+A TypeScript type that represents any of the possible values from `QUOTE_PREFIX_KINDS`.
+
+### `splitQuotePrefix`
+#### Description
+This function removes the prefix from a given string and returns a tuple containing the prefix and the rest of the string.
+
+#### Inputs
+| Name  | Type   | Description                  |
+|:------|:-------|:-----------------------------|
+| quote | string | The string from which to remove the prefix. |
+
+#### Outputs
+| Name  | Type                  | Description                        |
+|:------|:----------------------|:-----------------------------------|
+| result| [QuotePrefixKind, string] | A tuple containing the prefix and the remaining string. |
+
+#### Internal Logic
+- The function sorts the `QUOTE_PREFIX_KINDS` by length in descending order to ensure the longest prefix is checked first.
+- It iterates over the sorted prefixes and checks if the input string starts with any of them.
+- If a match is found, it returns the prefix and the remainder of the string.
+- If no prefix is found, it returns an empty string as the prefix and the original string.
+
+### `upgradePrefixKind`
+#### Description
+This function upgrades the prefix of a string based on whether the string contains substitutions (i.e., curly braces `{}`).
+
+#### Inputs
+| Name | Type            | Description                          |
+|:-----|:----------------|:-------------------------------------|
+| kind | QuotePrefixKind | The current prefix of the string.    |
+| code | string          | The string to check for substitutions. |
+
+#### Outputs
+| Name  | Type            | Description                          |
+|:------|:----------------|:-------------------------------------|
+| result| QuotePrefixKind | The upgraded prefix kind.            |
+
+#### Internal Logic
+- The function checks if the string contains both `{` and `}` to determine if there are substitutions.
+- If no substitutions are found, it returns the original prefix.
+- If substitutions are present, it upgrades the prefix to an `f-string` if necessary.
+- The function uses a switch statement to handle different prefix cases and defaults to logging an unexpected prefix using `logNever`.
+
+## References
+
+- The `logNever` function from `assertNever.ts` is used to log unexpected prefix kinds in the `upgradePrefixKind` function.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `logNever` | Logs unexpected objects for exhaustiveness checks. |
+
+## Error Handling
+
+The code uses the `logNever` function to handle unexpected prefix kinds in the `upgradePrefixKind` function, ensuring that any unexpected cases are logged for debugging purposes.
+
+## Side Effects
+
+- The `upgradePrefixKind` function logs unexpected prefix kinds using `logNever`, which may produce console output.
+
+## Performance Considerations
+
+- The `splitQuotePrefix` function sorts the prefix kinds by length, which is a minor computational overhead but ensures correct prefix extraction. This is not expected to be a performance bottleneck given the small number of prefix kinds.

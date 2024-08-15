@@ -1,0 +1,58 @@
+---
+title: "params.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `getDirectionOfBar` function, which is part of a Vega-Lite plugin. This function determines the orientation (horizontal or vertical) of a bar chart based on the encoding specifications provided in a `VegaLiteUnitSpec`. The tests ensure that the function behaves correctly under various conditions, such as when certain encoding types or aggregates are present.
+
+## Code Structure
+
+The main symbol in the code is the `getDirectionOfBar` function, which is tested using the `vitest` testing framework. The tests are organized using `describe` and `it` blocks to group related test cases and specify individual test scenarios, respectively. The `VegaLiteUnitSpec` type is used to define the structure of the specification object passed to the function.
+
+## References
+
+- `getDirectionOfBar`: The function being tested, which is imported from the `params.ts` file.
+- `VegaLiteUnitSpec`: A type imported from the `types.ts` file, representing the structure of the specification object used in the tests.
+
+## Symbols
+
+### `getDirectionOfBar`
+#### Description
+The `getDirectionOfBar` function determines the orientation of a bar chart (either "horizontal" or "vertical") based on the encoding specifications provided in a `VegaLiteUnitSpec`. It checks the types and aggregates of the x and y encodings to decide the direction.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | VegaLiteUnitSpec | The specification object containing encoding details for the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| direction | "horizontal" \| "vertical" \| undefined | The determined direction of the bar chart, or undefined if it cannot be determined. |
+
+#### Internal Logic
+The function first checks if the `spec` is valid and contains a `mark`. It then examines the `x` and `y` encodings:
+- If the `x` encoding type is "nominal", it returns "vertical".
+- If the `y` encoding type is "nominal", it returns "horizontal".
+- If the `x` encoding has an "aggregate", it returns "horizontal".
+- If the `y` encoding has an "aggregate", it returns "vertical".
+- If none of these conditions are met, it returns undefined.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for writing and running unit tests. |
+
+## Error Handling
+
+The function handles cases where the `spec` is not provided or does not contain the necessary properties by returning `undefined`.
+
+## Logging
+
+No logging mechanisms are implemented in the code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,67 @@
+---
+title: "cell_lifecycle_registry.py"
+---
+
+## High-level description
+
+The `CellLifecycleRegistry` class in the `cell_lifecycle_registry.py` file is responsible for managing the lifecycle of cells in a runtime environment. It maintains a registry of lifecycle items associated with each cell, allowing for the creation and disposal of resources or states tied to a cell's execution. The class provides methods to add lifecycle items to the registry and to dispose of them when a cell's lifecycle ends.
+
+## Code Structure
+
+- `CellLifecycleRegistry` is the main class in this file, which uses a dictionary to map cell IDs to sets of `CellLifecycleItem` instances.
+- The `add` method is used to register a new lifecycle item for the currently executing cell.
+- The `dispose` method is used to clean up lifecycle items associated with a specific cell ID.
+
+## References
+
+- `CellId_t`: A type alias for cell identifiers, defined in `marimo/_ast/cell.py`.
+- `CellLifecycleItem`: An abstract base class for lifecycle items, defined in `marimo/_runtime/cell_lifecycle_item.py`.
+- `get_context`: A function from `marimo._runtime.context` that retrieves the current runtime context.
+
+## Symbols
+
+### `CellLifecycleRegistry`
+#### Description
+The `CellLifecycleRegistry` class manages the lifecycle of cells by maintaining a registry of lifecycle items. It allows adding new lifecycle items and disposing of them when a cell's lifecycle ends.
+
+#### Inputs
+- `item`: `CellLifecycleItem` - A lifecycle item to be added to the registry.
+
+#### Outputs
+- None
+
+#### Internal Logic
+- **Registry Initialization**: The registry is initialized as a dictionary mapping cell IDs to sets of `CellLifecycleItem` instances.
+- **Add Method**: 
+  - Retrieves the current context to get the cell ID.
+  - If a cell is running, it adds the lifecycle item to the registry and calls its `create` method.
+- **Dispose Method**:
+  - Retrieves the current context and iterates over lifecycle items associated with a given cell ID.
+  - Calls the `dispose` method on each item, removing it from the registry if disposal is successful.
+  - If disposal is unsuccessful, the item is retained for retry in the next lifecycle.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used for defining the `CellLifecycleRegistry` as a dataclass. |
+| `marimo._ast.cell.CellId_t` | Provides the type for cell identifiers. |
+| `marimo._runtime.cell_lifecycle_item.CellLifecycleItem` | Represents the lifecycle items managed by the registry. |
+| `marimo._runtime.context.get_context` | Retrieves the current runtime context to access the cell ID. |
+
+## Error Handling
+
+- The `add` and `dispose` methods handle the case where no cell is currently running by checking if `cell_id` is `None` and returning early.
+
+## Side Effects
+
+- The `add` method calls the `create` method on the `CellLifecycleItem`, which may have side effects such as initializing resources.
+- The `dispose` method calls the `dispose` method on the `CellLifecycleItem`, which may have side effects such as releasing resources.
+
+## Performance Considerations
+
+- The use of a dictionary to map cell IDs to lifecycle items allows for efficient lookup and management of lifecycle items associated with each cell.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,96 @@
+---
+title: "maps.ts"
+---
+
+## High-level description
+
+The `maps.ts` file provides utility functions for working with JavaScript `Map` objects. It includes functions to create a map from an iterable with key extraction and duplicate detection, filter a map based on a predicate, and transform the values of a map using a mapping function. These utilities are designed to simplify common operations on maps while providing additional functionality like logging duplicate keys.
+
+## Code Structure
+
+The main symbols in the code are organized as methods within the `Maps` object. Each method operates on or returns a `Map` object, providing specific functionalities such as key extraction, filtering, and value mapping. The `Logger` is used for logging purposes, particularly for tracing duplicate keys.
+
+## References
+
+- `Logger`: Used for logging duplicate keys when creating a map with the `keyBy` function.
+
+## Symbols
+
+### `Maps.keyBy`
+#### Description
+Creates a `Map` from an iterable collection of items, using a provided function to extract keys. It detects and logs duplicate keys.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| items | `Iterable&lt;V&gt;` | The collection of items to be transformed into a map. |
+| key | `(item: NoInfer&lt;V&gt;) =&gt; K` | A function that extracts a key from each item. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| map | `Map&lt;K, V&gt;` | A map where each key is derived from an item in the iterable, and each value is the item itself. |
+
+#### Internal Logic
+- Initializes a new `Map` and a `Set` for duplicate keys.
+- Iterates over each item, extracts the key using the provided function, and checks for duplicates.
+- Logs any duplicate keys using the `Logger`.
+- Returns the constructed map.
+
+### `Maps.filterMap`
+#### Description
+Filters a `Map` based on a predicate function, returning a new map with only the entries that satisfy the predicate.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| map | `Map&lt;K, V&gt;` | The map to be filtered. |
+| predicate | `(value: V, key: K) =&gt; boolean` | A function that determines whether a map entry should be included in the result. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `Map&lt;K, V&gt;` | A new map containing only the entries that satisfy the predicate. |
+
+#### Internal Logic
+- Iterates over each entry in the map.
+- Applies the predicate to each entry and includes it in the result if the predicate returns `true`.
+- Returns the filtered map.
+
+### `Maps.mapValues`
+#### Description
+Transforms the values of a `Map` using a provided mapping function, returning a new map with the same keys but transformed values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| map | `Map&lt;K, V&gt;` | The map whose values are to be transformed. |
+| mapper | `(value: V, key: K) =&gt; V2` | A function that transforms each value. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `Map&lt;K, V2&gt;` | A new map with the same keys but transformed values. |
+
+#### Internal Logic
+- Iterates over each entry in the map.
+- Applies the mapping function to each value and stores the result in a new map.
+- Returns the map with transformed values.
+
+## Side Effects
+
+- `Maps.keyBy` logs duplicate keys using the `Logger`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger` | Used for logging duplicate keys in the `keyBy` function. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic operations. It assumes that the provided functions (`key`, `predicate`, `mapper`) are well-behaved and do not throw exceptions.
+
+## Logging
+
+The `Maps.keyBy` function uses the `Logger` to trace duplicate keys, providing insight into potential issues with key uniqueness in the input data.

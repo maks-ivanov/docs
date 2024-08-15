@@ -1,0 +1,79 @@
+---
+title: "batch.py"
+---
+
+## High-level description
+
+The target file, `marimo/_plugins/ui/_impl/batch.py`, defines a batch UI component for the Marimo framework. This component allows for the grouping of multiple UI elements into a single batch, which can be represented by custom HTML or markdown. The batch component facilitates the management and interaction of multiple UI elements as a cohesive unit, enabling developers to create complex UI structures with ease.
+
+## Code Structure
+
+The code is structured around two main classes: `_batch_base` and `batch`. The `_batch_base` class serves as a foundational class that extends the `UIElement` class, providing core functionalities for managing a collection of UI elements. The `batch` class extends `_batch_base` and adds additional features, such as the ability to convert an HTML object with templated text into a UI element. The `batch` class is decorated with `mddoc` to provide rich documentation.
+
+## Symbols
+
+### `_batch_base`
+#### Description
+The `_batch_base` class is a foundational class for creating a batch of named UI elements represented by HTML text. It extends the `UIElement` class and provides methods to manage and interact with a collection of UI elements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | `Html` | An HTML object representing the UI elements. |
+| elements | `dict[str, UIElement[JSONType, object]]` | A dictionary mapping labels to UI elements. |
+| label | `str` | An optional label for the batch. |
+| on_change | `Optional[Callable[[Dict[str, object]], None]]` | An optional callback function triggered when the batch's value changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- Initializes the batch with a component name, initial values, and optional label and callback.
+- Registers each UI element in the batch as a view.
+- Provides methods to access elements, iterate over them, and convert values from the frontend.
+
+### `batch`
+#### Description
+The `batch` class extends `_batch_base` and provides additional functionality to convert an HTML object with templated text into a UI element. It allows for the creation of a batch by calling the `batch()` method on `Html` objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | `Html` | An HTML object with templated text. |
+| elements | `dict[str, UIElement[Any, Any]]` | A dictionary of UI elements to be included in the batch. |
+| on_change | `Optional[Callable[[Dict[str, object]], None]]` | An optional callback function triggered when the batch's value changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- Clones the provided UI elements to ensure independence from the originals.
+- Formats the HTML text with the cloned elements.
+- Initializes the batch with the formatted HTML and cloned elements.
+
+## References
+
+- `UIElement`: The base class for UI elements, providing core functionalities for managing UI components.
+- `Html`: A class used to represent HTML text, which can be used as an output in the Marimo framework.
+- `mddoc`: A decorator used to add rich documentation to classes and methods.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._output.hypertext.Html` | Used to represent and manipulate HTML text. |
+| `marimo._output.rich_help.mddoc` | Provides rich documentation capabilities. |
+| `marimo._plugins.core.web_component.JSONType` | Defines the JSON types used in UI elements. |
+| `marimo._plugins.ui._core.ui_element.UIElement` | The base class for UI elements, providing core functionalities. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. However, it ensures type safety and validation during initialization, such as checking the types of inputs and ensuring that reserved arguments are not used.
+
+## Logging
+
+The code does not implement any logging mechanisms.

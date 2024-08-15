@@ -1,0 +1,53 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_runtime/app` directory is part of the Marimo application framework, which is designed to manage and execute computational cells within an application. This directory contains key components that facilitate the execution of these cells in different contexts, such as kernel and script environments. The main components within this directory include:
+
+- **`common.py`**: Defines type aliases and structures for representing the output of cell executions.
+- **`kernel_runner.py`**: Implements the `AppKernelRunner` class, which manages the execution of cells within a kernel context.
+- **`script_runner.py`**: Implements the `AppScriptRunner` class, which manages the execution of cells in a script context.
+
+## What does it do?
+
+The Marimo framework is designed to execute computational cells, which are fundamental units of computation. These cells can be executed in different contexts, such as within a kernel or a script, depending on the requirements of the application. The framework provides a standardized way to handle the outputs and definitions resulting from cell executions, ensuring consistency and efficiency.
+
+- **Cell Execution**: The framework executes cells, which are blocks of code, and captures their outputs and any definitions they create. This is done using the `AppKernelRunner` and `AppScriptRunner` classes, which manage the execution in kernel and script contexts, respectively.
+
+- **Output Management**: The results of cell executions are encapsulated in a standardized format using type aliases defined in `common.py`. This includes both the outputs of the cells and any global definitions they create.
+
+- **Context Management**: The framework sets up and tears down execution contexts as needed. For example, the `AppScriptRunner` manages the script execution context, ensuring that it is properly initialized and cleaned up after execution.
+
+- **Asynchronous Execution**: The framework can execute cells asynchronously if needed, allowing for more efficient handling of tasks that can run concurrently.
+
+## Entry points
+
+The main files in this directory are `common.py`, `kernel_runner.py`, and `script_runner.py`. Each file serves a specific purpose:
+
+- **`common.py`**: Provides type definitions that are used across the framework to standardize the representation of cell execution results.
+
+- **`kernel_runner.py`**: Contains the `AppKernelRunner` class, which is responsible for executing cells within a kernel context. This class interacts with the kernel to run code, manage outputs, and handle requests related to UI elements and function calls.
+
+- **`script_runner.py`**: Contains the `AppScriptRunner` class, which executes cells in a script context. It determines whether to run cells synchronously or asynchronously and manages the setup and teardown of the script execution context.
+
+## Key Files
+
+- **`common.py`**: Defines type aliases like `OutputsType`, `DefsType`, and `RunOutput`, which are used to encapsulate the outputs and definitions from cell executions.
+
+- **`kernel_runner.py`**: Implements the `AppKernelRunner` class, which manages the execution of cells in a kernel context, handling caching of outputs and interaction with the kernel.
+
+- **`script_runner.py`**: Implements the `AppScriptRunner` class, which manages the execution of cells in a script context, handling both synchronous and asynchronous execution.
+
+## Dependencies
+
+The directory relies on several external libraries and internal modules:
+
+- **`typing`**: Used for type annotations, providing clarity and structure to the code.
+- **`asyncio`**: Utilized for handling asynchronous tasks, allowing the framework to execute cells concurrently when needed.
+- **Internal Marimo Modules**: The directory imports various internal modules from the Marimo framework, such as `marimo._ast.cell`, `marimo._config.config`, `marimo._runtime.context.types`, `marimo._runtime.executor`, and `marimo._runtime.patches`. These modules provide essential functionality for managing cells, configurations, execution contexts, and more.
+
+## Configuration
+
+The directory does not explicitly mention configuration files or environment variables, but it interacts with the broader Marimo framework, which may include configuration settings. The `AppKernelRunner` and `AppScriptRunner` classes likely rely on configurations related to the execution context and application-specific settings.

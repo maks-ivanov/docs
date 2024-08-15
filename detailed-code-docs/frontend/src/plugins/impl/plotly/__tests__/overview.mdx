@@ -1,0 +1,112 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file contains unit tests for the `createParser` function, which is designed to parse Plotly hover templates. These tests ensure that the parser correctly interprets templates to extract key-value pairs from Plotly data objects, handling various scenarios such as unchanged templates, missing data keys, and nested data structures.
+
+## Code Structure
+
+The main symbol in the target file is the `describe` block, which contains multiple `it` test cases. Each test case verifies a specific behavior of the `createParser` function from the related file `parse-from-template.ts`. The `createParser` function returns an object implementing the `PlotlyTemplateParser` interface, which includes `update` and `parse` methods.
+
+## Symbols
+
+### `describe("createParser", () =&gt; { ... })`
+#### Description
+This block groups together a series of test cases that validate the functionality of the `createParser` function. It uses the `vitest` testing framework to define and execute these tests.
+
+### `it("does not create a new parser when the template is the same", () =&gt; { ... })`
+#### Description
+Tests that the `createParser` function does not create a new parser instance if the hover template remains unchanged.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| template | string | The hover template string used to create the parser. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parser1 | PlotlyTemplateParser | The initial parser created with the template. |
+| parser2 | PlotlyTemplateParser | The parser after attempting to update with the same template. |
+| parser3 | PlotlyTemplateParser | The parser after updating with a different template. |
+
+### `it("should correctly parse data using the extracted key-selector pairs", () =&gt; { ... })`
+#### Description
+Verifies that the parser correctly extracts and maps data from a Plotly data object using key-selector pairs defined in the hover template.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hovertemplate | string | The hover template string containing key-selector pairs. |
+| data | Plotly.PlotDatum | The data object to be parsed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Record&lt;string, string&gt; | The parsed key-value pairs extracted from the data. |
+
+### `it("should handle hover templates with no key-selector pairs", () =&gt; { ... })`
+#### Description
+Tests the parser's behavior when the hover template contains no key-selector pairs, expecting an empty result.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hovertemplate | string | A hover template string without key-selector pairs. |
+| data | Plotly.PlotDatum | An empty data object. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Record&lt;string, string&gt; | An empty object, as no key-value pairs are extracted. |
+
+### `it("should handle data with missing keys", () =&gt; { ... })`
+#### Description
+Ensures the parser can handle cases where the data object is missing keys referenced in the hover template, resulting in `undefined` values for those keys.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hovertemplate | string | A hover template string with key-selector pairs. |
+| data | Plotly.PlotDatum | A data object missing some keys referenced in the template. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Record&lt;string, string&gt; | The parsed key-value pairs, with `undefined` for missing keys. |
+
+### `it("should handle data with nested keys", () =&gt; { ... })`
+#### Description
+Tests the parser's ability to handle nested keys within the data object, ensuring correct extraction of values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hovertemplate | string | A hover template string with nested key-selector pairs. |
+| data | Plotly.PlotDatum | A data object with nested structures. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Record&lt;string, string&gt; | The parsed key-value pairs from the nested data. |
+
+## References
+
+- `createParser`: The function being tested, which is defined in the related file `parse-from-template.ts`.
+- `PlotlyTemplateParser`: An interface implemented by the object returned from `createParser`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for defining and running the test cases. |
+
+## Error Handling
+
+The tests implicitly check for error handling by verifying the parser's behavior with missing keys and empty templates, ensuring it returns `undefined` or empty objects as appropriate.
+
+## Logging
+
+No explicit logging is implemented in the test cases. The `vitest` framework handles test result reporting.

@@ -1,0 +1,203 @@
+---
+title: "test_os_file_system.py"
+---
+
+## High-level description
+
+The target file `test_os_file_system.py` contains a suite of unit tests for the `OSFileSystem` class, which is part of a file management system. These tests verify the functionality of file and directory operations such as creation, deletion, moving, updating, and listing, as well as handling special cases like duplicate names and broken symlinks. The tests use the `pytest` framework and temporary directories to ensure isolation and cleanup after each test.
+
+## Code Structure
+
+The main symbols in the code are the test functions, which are organized to test different functionalities of the `OSFileSystem` class. The `pytest` fixtures `test_dir` and `fs` are used to set up a temporary directory and an instance of `OSFileSystem` for each test. The test functions then use these fixtures to perform various file system operations and assert expected outcomes.
+
+## References
+
+- `OSFileSystem`: The class being tested, which provides methods for file and directory operations.
+- `FileDetailsResponse`: A data model used to represent detailed information about a file, including its contents and MIME type.
+- `natural_sort`: A function used to sort file names in a human-friendly order.
+
+## Symbols
+
+### `test_dir`
+#### Description
+A `pytest` fixture that creates a temporary directory for use in tests, ensuring that each test has a clean environment and that the directory is removed after the test completes.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The path to the temporary directory. |
+
+### `fs`
+#### Description
+A `pytest` fixture that provides an instance of the `OSFileSystem` class for use in tests.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fs | OSFileSystem | An instance of the `OSFileSystem` class. |
+
+### `test_create_file`
+#### Description
+Tests the creation of a file within a directory using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory in which to create the file. |
+| fs | OSFileSystem | The file system instance used to create the file. |
+
+### `test_create_file_with_duplicate_name`
+#### Description
+Tests the behavior of the `OSFileSystem` when attempting to create a file with a duplicate name, expecting it to create a new file with a different name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory in which to create the file. |
+| fs | OSFileSystem | The file system instance used to create the file. |
+
+### `test_create_directory`
+#### Description
+Tests the creation of a directory within a directory using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory in which to create the new directory. |
+| fs | OSFileSystem | The file system instance used to create the directory. |
+
+### `test_create_with_empty_name`
+#### Description
+Tests that creating a file or directory with an empty name raises a `ValueError`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory in which to attempt creation. |
+| fs | OSFileSystem | The file system instance used to attempt creation. |
+
+### `test_create_with_disallowed_name`
+#### Description
+Tests that creating a file or directory with a disallowed name (e.g., ".") raises a `ValueError`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory in which to attempt creation. |
+| fs | OSFileSystem | The file system instance used to attempt creation. |
+
+### `test_list_files`
+#### Description
+Tests listing files and directories within a directory using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory to list files from. |
+| fs | OSFileSystem | The file system instance used to list files. |
+
+### `test_list_files_with_broken_directory_symlink`
+#### Description
+Tests that a broken symlink is not included in the list of files.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory to list files from. |
+| fs | OSFileSystem | The file system instance used to list files. |
+
+### `test_get_details`
+#### Description
+Tests retrieving detailed information about a file, including its contents and MIME type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to get file details. |
+
+### `test_get_details_marimo_file`
+#### Description
+Tests retrieving details of a file to check if it is identified as a Marimo file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to get file details. |
+| encoding | str | The encoding used for the file content. |
+
+### `test_open_file`
+#### Description
+Tests opening a file and reading its contents using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to open the file. |
+
+### `test_delete_file`
+#### Description
+Tests deleting a file using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to delete the file. |
+
+### `test_move_file`
+#### Description
+Tests moving a file from one location to another using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to move the file. |
+
+### `test_move_with_disallowed_name`
+#### Description
+Tests that moving a file to a disallowed name (e.g., ".") raises a `ValueError`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to move the file. |
+
+### `test_update_file`
+#### Description
+Tests updating the contents of a file using the `OSFileSystem` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| test_dir | str | The directory containing the file. |
+| fs | OSFileSystem | The file system instance used to update the file. |
+
+### `test_natural_sort_key`
+#### Description
+Tests the `natural_sort` function to ensure it sorts filenames in a human-friendly order.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filenames | list | A list of filenames to sort. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing the test cases. |
+| `os` | Provides functions for interacting with the operating system, such as file and directory operations. |
+| `tempfile` | Used to create temporary directories for testing. |
+
+## Error Handling
+
+The tests expect certain operations to raise `ValueError` when invalid inputs are provided, such as creating or moving files with disallowed names. This is verified using `pytest.raises`.
+
+## Logging
+
+No explicit logging is implemented in the test file. The focus is on assertions to verify expected behavior.

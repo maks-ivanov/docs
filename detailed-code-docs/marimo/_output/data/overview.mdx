@@ -1,0 +1,159 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file, `marimo/_output/data/data.py`, provides a set of utility functions to create `VirtualFile` objects from various types of data, such as PDFs, images, audio, CSV, JSON, JavaScript, and HTML. These functions facilitate the conversion of raw data into a virtual file format that can be managed within the Marimo framework, allowing for consistent handling and lifecycle management of file-like data.
+
+## Code Structure
+
+The main symbols in the code are functions that create `VirtualFile` objects from different data types. Each function is responsible for handling a specific type of data (e.g., PDF, image, audio) and utilizes the `VirtualFileLifecycleItem` class to manage the lifecycle of the virtual file. The `any_data` function is a more generic utility that can handle various data types and is used by some of the other functions to create virtual files.
+
+## References
+
+- `VirtualFile`: A class from `marimo._runtime.virtual_file` that represents a virtual file.
+- `VirtualFileLifecycleItem`: A class from `marimo._runtime.virtual_file` used to manage the lifecycle of virtual files.
+- `is_data_empty`: A function from `marimo._plugins.core.media` used to check if the provided data is empty.
+- `EMPTY_VIRTUAL_FILE`: A constant from `marimo._runtime.virtual_file` representing an empty virtual file.
+
+## Symbols
+
+### `pdf`
+#### Description
+Creates a `VirtualFile` from PDF data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | bytes | PDF data in bytes |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the PDF data |
+
+### `image`
+#### Description
+Creates a `VirtualFile` from image data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | bytes | Image data in bytes |
+| ext | str | File extension for the image (default is "png") |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the image data |
+
+### `audio`
+#### Description
+Creates a `VirtualFile` from audio data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | bytes | Audio data in bytes |
+| ext | str | File extension for the audio (default is "wav") |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the audio data |
+
+### `csv`
+#### Description
+Creates a `VirtualFile` for CSV data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Union[str, bytes, io.BytesIO] | CSV data in bytes, or string representing a data URL, external URL, or a Pandas DataFrame |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the CSV data |
+
+### `json`
+#### Description
+Creates a `VirtualFile` for JSON data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Union[str, bytes, io.BytesIO] | JSON data in bytes, or string representing a data URL, external URL, or a Pandas DataFrame |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the JSON data |
+
+### `js`
+#### Description
+Creates a `VirtualFile` for JavaScript data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | str | JavaScript data as a string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the JavaScript data |
+
+### `html`
+#### Description
+Creates a `VirtualFile` for HTML data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | str | HTML data as a string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the HTML data |
+
+### `any_data`
+#### Description
+Creates a `VirtualFile` from any data type, handling strings, bytes, and file-like objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Union[str, bytes, io.BytesIO] | Data in bytes, or string representing a data URL or external URL |
+| ext | str | File extension |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | A `VirtualFile` object representing the data |
+
+#### Internal Logic
+- Checks if the data is `None` or empty using `is_data_empty`.
+- Handles base64 encoded data URLs by decoding them.
+- Handles external URLs by creating a `VirtualFile` from the URL.
+- Converts bytes and strings to a `VirtualFile` using `VirtualFileLifecycleItem`.
+- Raises a `ValueError` for unsupported data types.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| base64 | Used for encoding and decoding base64 data |
+| io | Provides file-like object support |
+| marimo._plugins.core.media | Provides utility functions like `is_data_empty` |
+| marimo._runtime.virtual_file | Provides `VirtualFile` and `VirtualFileLifecycleItem` classes |
+
+## Error Handling
+
+- The `any_data` function raises a `ValueError` if the data type is unsupported.
+
+## TODOs
+
+- None present in the target file.

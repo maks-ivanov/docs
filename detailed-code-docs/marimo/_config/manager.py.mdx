@@ -1,0 +1,61 @@
+---
+title: "manager.py"
+---
+
+## High-level description
+
+The `manager.py` file in the Marimo project is responsible for managing user configuration settings. It provides functionality to load, save, and retrieve user configurations, including handling sensitive information like secrets. The configurations are stored in a TOML file, and the class ensures that the configurations are merged with default settings and that secrets are masked when necessary.
+
+## Code Structure
+
+The main class in this file is `UserConfigManager`, which interacts with several utility functions and classes from other modules to manage configuration settings. It uses functions like `load_config`, `merge_config`, `merge_default_config`, `mask_secrets`, and `remove_secret_placeholders` to handle the configuration data.
+
+## Symbols
+
+### `UserConfigManager`
+#### Description
+The `UserConfigManager` class is responsible for managing user configuration settings for the Marimo application. It loads configurations from a file, allows saving new configurations, and provides access to the current configuration with options to hide sensitive information.
+
+#### Inputs
+| Name        | Type    | Description                                      |
+|:------------|:--------|:-------------------------------------------------|
+| config_path | str     | Optional path to the configuration file.         |
+
+#### Outputs
+| Name   | Type         | Description                                      |
+|:-------|:-------------|:-------------------------------------------------|
+| config | MarimoConfig | The current configuration settings.              |
+
+#### Internal Logic
+- **Initialization (`__init__`)**: Loads the configuration from a file using `load_config`. If a `config_path` is provided, it uses that path; otherwise, it uses a default path.
+- **`save_config`**: Saves the provided configuration to a file. It removes secret placeholders, merges the new configuration with the current one, and writes the result to a file using `tomlkit`.
+- **`get_config`**: Returns the current configuration. If `hide_secrets` is `True`, it masks secrets using `mask_secrets`.
+- **`get_config_path`**: Returns the path to the configuration file, using a default path if none is specified.
+- **`_default_config_path`**: Constructs a default path for the configuration file based on the user's home directory.
+
+## References
+
+- **`load_config`**: Loads the configuration from a file.
+- **`merge_config`**: Merges two configuration dictionaries.
+- **`merge_default_config`**: Merges a configuration with the default configuration.
+- **`mask_secrets`**: Masks sensitive information in the configuration.
+- **`remove_secret_placeholders`**: Removes placeholders for secrets in the configuration.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `os`       | Used for file path operations.               |
+| `tomlkit`  | Used for reading and writing TOML files.     |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `UserConfigManager` class, but it relies on the underlying functions like `load_config` to manage errors related to file operations.
+
+## Logging
+
+The `LOGGER` from the `_loggers` module is used to log debug information, such as when configurations are saved.
+
+## TODOs
+
+No TODOs are present in the code.

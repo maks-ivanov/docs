@@ -1,0 +1,70 @@
+---
+title: "datasources.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/endpoints/datasources.py`, defines an API endpoint for previewing a column in a dataset. It uses the Starlette framework to handle HTTP POST requests to the `/preview_column` endpoint, requiring authentication with "edit" permissions. The endpoint processes incoming requests, validates them, and interacts with the application state to handle the request, ultimately returning a success response.
+
+## Code Structure
+
+The main components in the code are interconnected as follows:
+- The `APIRouter` is used to define the `/preview_column` endpoint.
+- The `preview_column` function is the main handler for this endpoint, utilizing the `AppState` class to manage application state and session information.
+- The `parse_request` utility function is used to parse the incoming request body into a `PreviewDatasetColumnRequest` object.
+- The `SuccessResponse` class is used to format the response returned by the endpoint.
+
+## Symbols
+
+### `router`
+#### Description
+The `router` is an instance of `APIRouter` used to define and manage API routes related to data sources.
+
+### `preview_column`
+#### Description
+The `preview_column` function is an asynchronous endpoint handler for the `/preview_column` route. It processes requests to preview a column in a dataset, ensuring the request is authenticated and properly formatted.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| request | Request | The HTTP request object from Starlette. |
+
+#### Outputs
+| Name          | Type          | Description                        |
+|:--------------|:--------------|:-----------------------------------|
+| SuccessResponse | BaseResponse | A response indicating successful processing of the request. |
+
+#### Internal Logic
+1. **Authentication**: The `@requires("edit")` decorator ensures that the request is authenticated with "edit" permissions.
+2. **Request Parsing**: The request body is parsed into a `PreviewDatasetColumnRequest` object using the `parse_request` function.
+3. **Session Management**: The `AppState` class is used to access the current session and manage application state.
+4. **Request Handling**: The parsed request is added to the session's control requests.
+5. **Response**: A `SuccessResponse` is returned to indicate successful handling of the request.
+
+## References
+
+- **`PreviewDatasetColumnRequest`**: This is a data class defined in `marimo/_runtime/requests.py` that represents the structure of the request body for the `/preview_column` endpoint.
+- **`AppState`**: Defined in `marimo/_server/api/deps.py`, this class manages the application state and session information.
+- **`parse_request`**: A utility function from `marimo/_server/api/utils.py` used to parse the request body into a specified data class.
+- **`SuccessResponse`**: A data class from `marimo/_server/models/models.py` used to format successful responses.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.authentication.requires` | Used to enforce authentication requirements for the endpoint. |
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._runtime.requests.PreviewDatasetColumnRequest` | Defines the structure of the request body. |
+| `marimo._server.api.deps.AppState` | Manages application state and session information. |
+| `marimo._server.api.utils.parse_request` | Parses the request body into a data class. |
+| `marimo._server.models.models.BaseResponse` | Base class for response objects. |
+| `marimo._server.models.models.SuccessResponse` | Represents a successful response. |
+| `marimo._server.router.APIRouter` | Manages API routes. |
+
+## Error Handling
+
+The code raises a `ValueError` if the session ID is missing or invalid, as handled by the `require_current_session` method in the `AppState` class. This ensures that only valid sessions can process requests.
+
+## Logging
+
+The code uses a logger (`LOGGER`) from `marimo._loggers` to log warnings when an invalid session ID is encountered. This helps in debugging and monitoring the application's behavior.

@@ -1,0 +1,110 @@
+---
+title: "cells.spec.ts"
+---
+
+## High-level description
+
+The target file `cells.spec.ts` is an end-to-end (E2E) test script using Playwright to automate testing of a web application that involves interactive cells, likely in a notebook-like interface. The tests verify the functionality of adding, moving, and deleting cells, as well as ensuring that the number of cell re-renders remains within expected limits. Additionally, it tests the ability to export the content as HTML.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `test` and `expect` functions from Playwright are used to define and assert test cases.
+- Helper functions such as `getAppUrl`, `resetFile`, `exportAsHTMLAndTakeScreenshot`, `pressShortcut`, and `maybeRestartKernel` are imported from other modules to facilitate specific actions within the tests.
+- The tests are organized into `beforeEach`, `afterEach`, and individual test cases to ensure proper setup, teardown, and execution of test scenarios.
+
+## References
+
+- `getAppUrl` and `resetFile` are imported from `playwright.config.ts` to manage application URLs and reset test files.
+- `exportAsHTMLAndTakeScreenshot`, `pressShortcut`, and `maybeRestartKernel` are imported from `helper.ts` to perform specific actions like exporting content and handling keyboard shortcuts.
+
+## Symbols
+
+### `test.beforeEach`
+#### Description
+Sets up the test environment by navigating to the application URL and optionally reloading the page and restarting the kernel if the test is being retried.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+| info | Object | Contains information about the test execution, such as retry status. |
+
+#### Outputs
+None
+
+### `test.afterEach`
+#### Description
+Resets the test file to its original state after each test to ensure a clean environment for subsequent tests.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `test("keeps re-renders from growing")`
+#### Description
+Tests that the number of cell re-renders does not exceed a specified limit, which is an indicator of performance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Waits for the page to reach a network idle state.
+- Retrieves the cell render count from the page's dataset.
+- Asserts that the render count is defined and does not exceed 6.
+
+### `test("page renders 2 cells")`
+#### Description
+Tests the functionality of adding, moving, and deleting cells within the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Verifies the visibility of initial cells.
+- Tests the appearance and functionality of 'add cell' buttons.
+- Adds new cells, types content, and runs them.
+- Moves cells up and down and verifies the order.
+- Deletes newly added cells to revert to the original state.
+
+### `test("download as HTML")`
+#### Description
+Tests the functionality of exporting the notebook content as an HTML file and taking a screenshot.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | The Playwright page object representing the browser page. |
+
+#### Outputs
+None
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the testing framework and utilities for writing E2E tests. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic assertions provided by Playwright. If an assertion fails, the test will automatically be marked as failed.
+
+## Logging
+
+The code does not implement any logging mechanisms. Playwright's built-in reporting and error messages are used for test feedback.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

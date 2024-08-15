@@ -1,0 +1,111 @@
+---
+title: "health.py"
+---
+
+## High-level description
+
+The `health.py` file in the Marimo server API defines several endpoints related to the health and status of the application. It provides endpoints for checking the application's health, retrieving its version, getting detailed status information, and monitoring resource usage such as memory and CPU. These endpoints are designed to facilitate monitoring and management of the application, especially in deployment scenarios.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `APIRouter` is used to define and manage the routes for the health-related endpoints.
+- The `health_check`, `status`, `version`, and `usage` functions are the main handlers for the respective endpoints.
+- The `AppState` class is used to access the application's state and session information.
+- Utility functions like `get_node_version` and `get_required_modules_list` are used to gather additional information about the application's environment.
+
+## Symbols
+
+### `health_check`
+#### Description
+The `health_check` function is an asynchronous endpoint handler that returns a simple JSON response indicating the application is healthy.
+
+#### Inputs
+| Name   | Type   | Description      |
+|:-------|:-------|:-----------------|
+| request | Request | The incoming HTTP request object. |
+
+#### Outputs
+| Name   | Type         | Description                      |
+|:-------|:-------------|:---------------------------------|
+| response | JSONResponse | A JSON response with a status of "healthy". |
+
+### `status`
+#### Description
+The `status` function is an asynchronous endpoint handler that provides detailed status information about the application, including session details, version, and module requirements.
+
+#### Inputs
+| Name   | Type   | Description      |
+|:-------|:-------|:-----------------|
+| request | Request | The incoming HTTP request object. |
+
+#### Outputs
+| Name   | Type         | Description                      |
+|:-------|:-------------|:---------------------------------|
+| response | JSONResponse | A JSON response with detailed status information. |
+
+#### Internal Logic
+- Retrieves the application state using `AppState`.
+- Collects filenames from active sessions.
+- Gathers application mode, session count, version, required modules, node version, and LSP server status.
+- Constructs and returns a JSON response with the collected data.
+
+### `version`
+#### Description
+The `version` function is an asynchronous endpoint handler that returns the current version of the application as plain text.
+
+#### Inputs
+| Name   | Type   | Description      |
+|:-------|:-------|:-----------------|
+| request | Request | The incoming HTTP request object. |
+
+#### Outputs
+| Name   | Type             | Description                      |
+|:-------|:-----------------|:---------------------------------|
+| response | PlainTextResponse | A plain text response with the application version. |
+
+### `usage`
+#### Description
+The `usage` function is an asynchronous endpoint handler that provides information about the current memory and CPU usage of the application.
+
+#### Inputs
+| Name   | Type   | Description      |
+|:-------|:-------|:-----------------|
+| request | Request | The incoming HTTP request object. |
+
+#### Outputs
+| Name   | Type         | Description                      |
+|:-------|:-------------|:---------------------------------|
+| response | JSONResponse | A JSON response with memory and CPU usage details. |
+
+#### Internal Logic
+- Uses the `psutil` library to gather system memory and CPU usage.
+- Calculates memory usage for the server process and its children.
+- Optionally calculates memory usage for the kernel process if available.
+- Constructs and returns a JSON response with the collected data.
+
+## References
+
+- `AppState`: Used to access the application's state and session information.
+- `get_node_version` and `get_required_modules_list`: Utility functions for gathering environment information.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette` | Used for building the web server and handling HTTP requests. |
+| `psutil` | Used for retrieving system and process resource usage information. |
+
+## API/Interface Reference
+
+| Endpoint      | Method | Request | Response | Description |
+|:--------------|:-------|:--------|:---------|:------------|
+| `/health`     | GET    | None    | JSON     | Returns a simple health status. |
+| `/healthz`    | GET    | None    | JSON     | Returns a simple health status (alternative endpoint). |
+| `/api/status` | GET    | None    | JSON     | Returns detailed status information about the application. |
+| `/api/version`| GET    | None    | PlainText| Returns the current version of the application. |
+| `/api/usage`  | GET    | None    | JSON     | Returns current memory and CPU usage of the application. |
+
+## Logging
+
+The module uses a logger (`LOGGER`) from the `marimo._loggers` module to log information, although specific logging statements are not present in the provided code.

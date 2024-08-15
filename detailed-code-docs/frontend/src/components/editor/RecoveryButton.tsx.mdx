@@ -1,0 +1,83 @@
+---
+title: "RecoveryButton.tsx"
+---
+
+## High-level description
+
+The `RecoveryButton.tsx` file defines a React component that provides a user interface for saving unsaved changes in an application. It includes a button that, when clicked, opens a modal dialog prompting the user to download a JSON file containing the unsaved changes. The component also integrates a keyboard shortcut to trigger the save action.
+
+## Code Structure
+
+The main symbols in the code are the `RecoveryButton` component and the `RecoveryModal` component. The `RecoveryButton` component is responsible for rendering the button and handling the logic to open the `RecoveryModal`. The `RecoveryModal` component is responsible for rendering the modal dialog and handling the download of the unsaved changes as a JSON file.
+
+## References
+
+- `useImperativeModal`: A hook used to open and close modal dialogs.
+- `useHotkey`: A hook used to register a keyboard shortcut for the save action.
+- `downloadBlob`: A utility function used to download a Blob object as a file.
+
+## Symbols
+
+### `RecoveryModal`
+#### Description
+The `RecoveryModal` component renders a modal dialog that prompts the user to download a JSON file containing unsaved changes. It provides instructions on how to recover the changes using a terminal command.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| proposedName | string | The proposed name for the JSON file. |
+| getCellsAsJSON | () =&gt; string | A function that returns the unsaved changes as a JSON string. |
+| closeModal | () =&gt; void | A function to close the modal dialog. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered modal dialog. |
+
+#### Internal Logic
+- The `downloadRecoveryFile` function creates a Blob from the JSON string and uses `downloadBlob` to download it as a file.
+- The form submission triggers the download and closes the modal.
+- The `Escape` key press also closes the modal.
+
+### `RecoveryButton`
+#### Description
+The `RecoveryButton` component renders a button that, when clicked, opens the `RecoveryModal` if there are unsaved changes. It also registers a keyboard shortcut to trigger the save action.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | string \| null | The current filename, used to propose a name for the recovery file. |
+| needsSave | boolean | Indicates whether there are unsaved changes. |
+| getCellsAsJSON | () =&gt; string | A function that returns the unsaved changes as a JSON string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered button with tooltip and icon. |
+
+#### Internal Logic
+- Determines the proposed name for the recovery file based on the current filename.
+- Uses `useImperativeModal` to manage the modal dialog.
+- Registers a global keyboard shortcut using `useHotkey` to open the recovery modal.
+- Renders a button with a tooltip that displays the keyboard shortcut.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lucide-react` | Provides the `SaveIcon` used in the button. |
+| `@/components/ui/button` | Provides the `Button` component used in the modal and button rendering. |
+| `@/components/ui/tooltip` | Provides the `Tooltip` component for displaying tooltips. |
+| `@/utils/download` | Provides the `downloadBlob` function for downloading files. |
+
+## Error Handling
+
+The `downloadBlob` function in the `RecoveryModal` component handles potential errors by ensuring the Blob is correctly created and downloaded. However, there is no explicit error handling in the `RecoveryButton` component itself.
+
+## Logging
+
+There is no explicit logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

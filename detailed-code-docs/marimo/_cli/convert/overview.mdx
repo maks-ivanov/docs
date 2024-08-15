@@ -1,0 +1,45 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_cli/convert` directory is part of the Marimo CLI tool, designed to facilitate the conversion of Jupyter notebooks and Markdown files into a format compatible with Marimo notebooks. This conversion process involves stripping outputs from Jupyter notebooks and processing Markdown cells with specific code blocks. The directory is organized into several modules, each responsible for different aspects of the conversion process:
+
+- `commands.py`: Implements the command-line interface (CLI) command for file conversion using the `click` library.
+- `ipynb.py`: Handles the conversion of Jupyter notebooks (`.ipynb`) into Marimo format, resolving issues like multiple definitions in code cells.
+- `markdown.py`: Converts Markdown documents into Marimo format, extracting code blocks and handling YAML front matter for metadata.
+- `utils.py`: Provides utility functions for loading files, converting markdown content, and generating file contents from source code strings.
+
+## What does it do?
+
+The `marimo/_cli/convert` directory provides a command-line tool that allows users to convert Jupyter notebooks and Markdown files into a format that can be used within the Marimo framework. Here's how it works:
+
+1. **File Identification**: The tool identifies the type of file (Jupyter notebook or Markdown) based on its extension.
+2. **Content Loading**: It loads the content of the file, which can be from a local path or a GitHub URL.
+3. **Conversion Process**:
+   - For Jupyter notebooks, it processes the notebook's cells, handling both code and markdown cells, and resolves issues such as multiple definitions within the code cells.
+   - For Markdown files, it parses the content, extracts code blocks, and transforms them into Marimo's internal representation. It also sanitizes the Markdown to prevent code injection and handles YAML front matter for metadata extraction.
+4. **Output Generation**: The converted content is outputted in a format compatible with Marimo notebooks, ready for further use or processing.
+
+## Entry points
+
+The main entry point for this directory is the `commands.py` file, which defines the `convert` function as a CLI command using the `click` library. This function orchestrates the conversion process by determining the file type and invoking the appropriate conversion functions from `ipynb.py` and `markdown.py`.
+
+## Key Files
+
+- **`ipynb.py`**: Contains functions like `convert_from_ipynb` and `convert_from_ipynb_file` for converting Jupyter notebook content. It also includes `fixup_multiple_definitions` to resolve code cell issues.
+- **`markdown.py`**: Provides classes and functions for parsing and converting Markdown content, such as `MarimoParser`, `SanitizeParser`, and `convert_from_md`.
+- **`utils.py`**: Offers utility functions like `load_external_file` for loading file content and `markdown_to_marimo` for converting markdown to Marimo format.
+
+## Dependencies
+
+The directory relies on several external libraries and frameworks:
+
+- **`click`**: Used for creating the command-line interface in `commands.py`.
+- **`markdown`**: Utilized in `markdown.py` for parsing and processing Markdown content.
+- **`pymdownx.superfences`**: Provides extended functionality for handling code fences in Markdown.
+- **`urllib.request`**: Used in `utils.py` to fetch content from URLs, specifically GitHub.
+- **`ast` and `json`**: Used in `ipynb.py` for parsing and transforming Python code and JSON content of Jupyter notebooks.
+
+These dependencies were chosen to facilitate the parsing, processing, and conversion of different file types into a format compatible with the Marimo framework.

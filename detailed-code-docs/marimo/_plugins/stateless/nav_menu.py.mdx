@@ -1,0 +1,111 @@
+---
+title: "nav_menu.py"
+---
+
+## High-level description
+
+The `nav_menu.py` file defines a stateless navigation menu component for the Marimo framework. This component is designed to create navigation menus with hyperlinks, which can be used in multi-page applications. The file includes functionality to validate and build the menu structure, ensuring that the menu items are correctly formatted and linked.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `nav_menu` function is the primary interface for creating a navigation menu. It utilizes the `_build_and_validate_menu` function to process and validate the input menu structure.
+- The `NavMenu`, `NavMenuItemLink`, and `NavMenuItemGroup` classes are data structures used to represent the menu and its items.
+- The `Html` class from the `marimo._output.hypertext` module is used to render the final HTML output of the navigation menu.
+
+## Symbols
+
+### `nav_menu`
+#### Description
+The `nav_menu` function creates a navigation menu component that can be used in web applications. It takes a dictionary representing the menu structure and returns an `Html` object that renders the menu.
+
+#### Inputs
+| Name        | Type   | Description                                                                 |
+|:------------|:-------|:----------------------------------------------------------------------------|
+| `menu`      | `dict` | A dictionary mapping URLs or labels to menu items, which can be strings or nested dictionaries. |
+| `orientation` | `Literal["horizontal", "vertical"]` | The orientation of the menu, defaulting to "horizontal". |
+
+#### Outputs
+| Name | Type | Description          |
+|:-----|:-----|:---------------------|
+| `output` | `Html` | An `Html` object representing the navigation menu. |
+
+#### Internal Logic
+1. Calls `_build_and_validate_menu` to process and validate the input menu.
+2. Uses `build_stateless_plugin` to create the HTML representation of the menu.
+3. Returns an `Html` object containing the menu.
+
+### `NavMenu`
+#### Description
+A data class representing a navigation menu, containing a list of menu items which can be links or groups.
+
+#### Inputs
+- None directly; used internally by `_build_and_validate_menu`.
+
+#### Outputs
+- None directly; used internally by `_build_and_validate_menu`.
+
+### `NavMenuItemLink`
+#### Description
+A data class representing a single link in the navigation menu, with optional description.
+
+#### Inputs
+- None directly; used internally by `_build_and_validate_menu`.
+
+#### Outputs
+- None directly; used internally by `_build_and_validate_menu`.
+
+### `NavMenuItemGroup`
+#### Description
+A data class representing a group of links in the navigation menu, used for submenus.
+
+#### Inputs
+- None directly; used internally by `_build_and_validate_menu`.
+
+#### Outputs
+- None directly; used internally by `_build_and_validate_menu`.
+
+### `_build_and_validate_menu`
+#### Description
+Processes and validates the input menu dictionary, converting it into a `NavMenu` object with structured items.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `menu` | `dict` | A dictionary representing the menu structure. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `output` | `NavMenu` | A `NavMenu` object containing validated menu items. |
+
+#### Internal Logic
+1. Iterates over the input menu dictionary.
+2. Validates each menu item's URL using `validate_href`.
+3. Constructs `NavMenuItemLink` or `NavMenuItemGroup` objects based on the item type.
+4. Raises `ValueError` for invalid menu items or URLs.
+
+## References
+
+- `Html` from `marimo._output.hypertext`: Used to create the HTML output for the navigation menu.
+- `md` from `marimo._output.md`: Used to convert markdown strings to HTML text.
+- `build_stateless_plugin` from `marimo._plugins.core.web_component`: Used to build the HTML for the stateless navigation menu component.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used for defining simple data structures like `NavMenu`, `NavMenuItemLink`, and `NavMenuItemGroup`. |
+| `typing` | Provides type hints and type checking for function inputs and outputs. |
+
+## Error Handling
+
+- The `_build_and_validate_menu` function raises `ValueError` for invalid URLs or menu items, ensuring that the input menu structure is correctly formatted.
+
+## Logging
+
+- The code does not implement any logging mechanisms.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

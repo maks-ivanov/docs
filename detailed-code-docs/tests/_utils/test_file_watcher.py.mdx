@@ -1,0 +1,63 @@
+---
+title: "test_file_watcher.py"
+---
+
+## High-level description
+
+The target file `tests/_utils/test_file_watcher.py` contains a test for the `PollingFileWatcher` class, which is part of a file-watching utility. This test verifies that the `PollingFileWatcher` correctly detects changes to a file and triggers a callback function when the file is modified.
+
+## Code Structure
+
+The test is structured around the `PollingFileWatcher` class, which is responsible for monitoring a file for changes. The test creates a temporary file, sets up a callback to be called when the file changes, and uses the `PollingFileWatcher` to monitor the file. The test then modifies the file and checks that the callback is called, indicating that the file change was detected.
+
+## References
+
+- `PollingFileWatcher`: This class is imported from `marimo._utils.file_watcher` and is the main subject of the test.
+- `NamedTemporaryFile`: Used to create a temporary file for testing purposes.
+
+## Symbols
+
+### `test_polling_file_watcher`
+#### Description
+This is an asynchronous test function that verifies the functionality of the `PollingFileWatcher` class. It ensures that the watcher detects file modifications and calls the specified callback function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not return any outputs. |
+
+#### Internal Logic
+1. **Setup**: A temporary file is created using `NamedTemporaryFile`, and its path is stored.
+2. **Callback Definition**: A list `callback_calls` is initialized to track callback invocations. A callback function `test_callback` is defined to append the file path to this list when called.
+3. **Polling Interval Adjustment**: The polling interval of `PollingFileWatcher` is set to 0.1 seconds for the test.
+4. **Watcher Initialization**: An event loop is obtained, and a `PollingFileWatcher` instance is created with the temporary file path and the callback function. The watcher is started.
+5. **File Modification**: The test waits for 0.2 seconds, modifies the file, and waits another 0.2 seconds to allow the watcher to detect the change.
+6. **Cleanup**: The watcher is stopped, and the temporary file is deleted.
+7. **Assertions**: The test asserts that the callback was called exactly once and that the path passed to the callback matches the temporary file path.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for asynchronous operations and event loop management. |
+| `os` | Used for file operations, such as removing the temporary file. |
+| `pathlib.Path` | Used to handle file paths. |
+| `tempfile.NamedTemporaryFile` | Used to create a temporary file for testing. |
+| `marimo._utils.file_watcher.PollingFileWatcher` | The class being tested for file change detection. |
+
+## Error Handling
+
+The test does not explicitly handle errors, but it relies on assertions to ensure that the expected behavior occurs. If the assertions fail, the test will raise an `AssertionError`.
+
+## Logging
+
+The test itself does not implement logging, but the `PollingFileWatcher` class in the related file `marimo/_utils/file_watcher.py` uses logging to report file changes and warnings.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

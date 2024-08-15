@@ -1,0 +1,330 @@
+---
+title: "pokemon.py"
+---
+
+## High-level description
+
+The code in the target file is a Python script that uses the `marimo` library to create an interactive web application for visualizing Pokémon statistics. The application allows users to compare Pokémon by their primary type, view distributions of various attributes, and drill down into individual Pokémon statistics. It leverages data visualization libraries like `matplotlib` and `seaborn` to generate plots and tables for user interaction.
+
+## Code Structure
+
+The code is structured around the `marimo` library's `App` class, which is used to define a series of interactive cells. Each cell is a function decorated with `@app.cell`, and these cells collectively define the application's behavior and user interface. The application is built using a combination of markdown for text display, UI components like buttons and dropdowns for user interaction, and plotting functions for data visualization.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of the `marimo.App` class, which serves as the main application object. It is used to define the interactive cells that make up the application.
+
+### `__generated_with`
+#### Description
+A string variable indicating the version of the tool or library used to generate the code, set to "0.1.21".
+
+### `@app.cell` Decorator
+#### Description
+The `@app.cell` decorator is used to define a function as a cell in the `marimo` application. Each cell represents a discrete unit of functionality or UI component in the application.
+
+### `__(mo)`
+#### Description
+This cell displays the main title of the application using markdown.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | Used to render markdown content. |
+
+#### Outputs
+None
+
+### `__(clear_selection, mo, pokemon_types)`
+#### Description
+This cell displays instructions for the user to select Pokémon types for comparison.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clear_selection | UI component | Button to clear selections. |
+| mo | marimo object | Used to render markdown content. |
+| pokemon_types | list | List of Pokémon types available for selection. |
+
+#### Outputs
+None
+
+### `__(pokemon)`
+#### Description
+This cell calculates the count of Pokémon by their primary type and returns sorted type names.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pokemon | DataFrame | Pokémon data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| types | Series | Count of Pokémon by primary type. |
+| types_name | list | Sorted list of type names. |
+
+### `__(mo)`
+#### Description
+This cell creates a button for clearing selections.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | Used to create UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clear_selection | UI component | Button to clear selections. |
+
+### `__(clear_selection, mo, types_name)`
+#### Description
+This cell creates a multiselect UI component for selecting Pokémon types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| clear_selection | UI component | Button to clear selections. |
+| mo | marimo object | Used to create UI components. |
+| types_name | list | List of type names for selection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+
+### `__(mo)`
+#### Description
+This cell creates a dropdown UI component for selecting Pokémon attributes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | Used to create UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| attribute | UI component | Dropdown for selecting attributes. |
+
+### `__(mo, pokemon_types)`
+#### Description
+This cell displays the selected Pokémon types in markdown format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | Used to render markdown content. |
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+
+#### Outputs
+None
+
+### `__(mo, pokemon_types)`
+#### Description
+This cell provides instructions for comparing distributions or drilling down into specific Pokémon statistics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | Used to render markdown content. |
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+
+#### Outputs
+None
+
+### `__(pokemon, pokemon_types)`
+#### Description
+This cell filters Pokémon data based on selected types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pokemon | DataFrame | Pokémon data. |
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filtered_pokemons | dict | Filtered Pokémon data by type. |
+| get_filtered_pokemon | function | Function to filter Pokémon by type. |
+| pokemon_type | str | Current Pokémon type being processed. |
+
+### `__(distribution_plot, drilldown, mo, pokemon_types)`
+#### Description
+This cell creates tabs for comparing distributions and drilling down into Pokémon statistics.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| distribution_plot | UI component | Plot for distribution comparison. |
+| drilldown | UI component | Drilldown plot for individual Pokémon. |
+| mo | marimo object | Used to create UI components. |
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+
+#### Outputs
+None
+
+### `__(attribute, colors, filtered_pokemons, mo, plt, pokemon_types, sns)`
+#### Description
+This cell generates a distribution plot for selected Pokémon attributes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| attribute | UI component | Dropdown for selecting attributes. |
+| colors | dict | Color mapping for Pokémon types. |
+| filtered_pokemons | dict | Filtered Pokémon data by type. |
+| mo | marimo object | Used to render markdown content. |
+| plt | module | Matplotlib plotting module. |
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+| sns | module | Seaborn plotting module. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| distribution_plot | UI component | Plot for distribution comparison. |
+| plot | function | Function to generate the plot. |
+
+#### Internal Logic
+- The function `plot` is defined to create a histogram plot for each selected Pokémon type using `seaborn`.
+- The plot is displayed using `matplotlib` and embedded in markdown.
+
+### `__(filtered_pokemons, mo, pokemon_types)`
+#### Description
+This cell creates a table of Pokémon data for selected types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filtered_pokemons | dict | Filtered Pokémon data by type. |
+| mo | marimo object | Used to create UI components. |
+| pokemon_types | UI component | Multiselect component for Pokémon types. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| make_table | function | Function to create the table. |
+| table | UI component | Table of Pokémon data. |
+
+#### Internal Logic
+- The function `make_table` is defined to convert filtered Pokémon data into a table format with pagination and multi-selection.
+
+### `__(mo, plot_pokemon, table)`
+#### Description
+This cell handles the drilldown functionality for selected Pokémon.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | Used to render markdown content. |
+| plot_pokemon | function | Function to plot individual Pokémon statistics. |
+| table | UI component | Table of Pokémon data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| drilldown | UI component | Drilldown plot for individual Pokémon. |
+| stat_plot | UI component | Plot of selected Pokémon statistics. |
+
+#### Internal Logic
+- Extracts selected Pokémon names from the table and generates a plot for their statistics.
+
+### `__(pokemon)`
+#### Description
+This cell defines a function to plot statistics for a single Pokémon.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pokemon | DataFrame | Pokémon data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plot_single_pokemon | function | Function to plot a single Pokémon's statistics. |
+
+#### Internal Logic
+- The function `plot_single_pokemon` creates a radar chart for a Pokémon's statistics.
+
+### `__(np, plot_single_pokemon, plt)`
+#### Description
+This cell defines a function to plot statistics for multiple Pokémon.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| np | module | Numpy module for numerical operations. |
+| plot_single_pokemon | function | Function to plot a single Pokémon's statistics. |
+| plt | module | Matplotlib plotting module. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plot_pokemon | function | Function to plot multiple Pokémon's statistics. |
+
+#### Internal Logic
+- The function `plot_pokemon` creates a radar chart for each selected Pokémon using `plot_single_pokemon`.
+
+### `__()`
+#### Description
+This cell imports necessary libraries and loads Pokémon data from a CSV file.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| io | module | IO module for input/output operations. |
+| mo | module | Marimo module for UI components. |
+| np | module | Numpy module for numerical operations. |
+| os | module | OS module for operating system interactions. |
+| pd | module | Pandas module for data manipulation. |
+| plt | module | Matplotlib plotting module. |
+| pokemon | DataFrame | Pokémon data. |
+| requests | module | Requests module for HTTP requests. |
+| sns | module | Seaborn plotting module. |
+
+#### Internal Logic
+- Downloads Pokémon data from a URL and loads it into a Pandas DataFrame.
+- Drops unnecessary columns from the DataFrame.
+
+### `__()`
+#### Description
+This cell defines a color mapping for Pokémon types.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| colors | dict | Color mapping for Pokémon types. |
+
+### `__()`
+#### Description
+This cell imports the `plotly.express` module.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| px | module | Plotly Express module for data visualization. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Used for creating interactive web applications. |
+| numpy | Used for numerical operations. |
+| pandas | Used for data manipulation and analysis. |
+| matplotlib.pyplot | Used for creating static, interactive, and animated visualizations. |
+| seaborn | Used for statistical data visualization. |
+| requests | Used for making HTTP requests to download data. |
+| io | Used for handling input/output operations. |
+| os | Used for interacting with the operating system. |
+| plotly.express | Used for creating interactive plots. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the data download and processing will succeed without issues.
+
+## Logging
+
+The code does not implement any logging mechanisms.

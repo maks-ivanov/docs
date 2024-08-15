@@ -1,0 +1,53 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `frontend/src/core/websocket` directory is a part of a frontend application that manages WebSocket connections. It provides utilities and hooks for establishing and managing WebSocket connections, including support for automatic reconnection and handling of WebSocket events. The directory includes implementations for both dynamic and static WebSocket connections, as well as support for WebAssembly environments. It also contains unit tests to ensure the correct functionality of WebSocket URL generation.
+
+## What does it do?
+
+The code in this directory is responsible for managing WebSocket connections, which are used for real-time communication between the client and server. This is crucial for applications that require live updates, such as collaborative tools or live data feeds. The main functionalities include:
+
+- **WebSocket Connection Management**: The `useWebSocket` and `useMarimoWebSocket` hooks establish and manage WebSocket connections, handling events like opening, closing, and receiving messages. They ensure that the connection is maintained and can automatically reconnect if it is lost.
+
+- **Static WebSocket Implementation**: The `StaticWebsocket` class provides a mock WebSocket implementation for scenarios where a real connection is not needed, such as testing or development environments.
+
+- **WebSocket URL Generation**: The `createWsUrl` function constructs WebSocket URLs based on the current document's base URI and a session ID, ensuring the correct protocol is used.
+
+- **Type Safety and State Management**: The `types.ts` file defines TypeScript types and enumerations to ensure type safety when interacting with WebSocket instances. It also provides a structured way to represent the state of WebSocket connections.
+
+- **Testing**: The `__tests__` directory contains unit tests for the `createWsUrl` function, ensuring it correctly constructs WebSocket URLs under various scenarios.
+
+## Entry points
+
+The main files in this directory are:
+
+- **`useWebSocket.tsx`**: This file contains the `useWebSocket` hook, which is the primary entry point for establishing and managing WebSocket connections. It provides a flexible interface for handling WebSocket events and supports both dynamic and static connections.
+
+- **`useMarimoWebSocket.tsx`**: This file contains the `useMarimoWebSocket` hook, which is specifically designed to manage a WebSocket connection to the Marimo kernel. It processes incoming messages to update the application's state and handle various WebSocket events.
+
+- **`createWsUrl.ts`**: This file defines the `createWsUrl` function, which generates WebSocket URLs based on the current document's base URI and a session ID.
+
+## Key Files
+
+- **`StaticWebsocket.ts`**: Implements a mock WebSocket class that conforms to the `IReconnectingWebSocket` interface, providing a no-operation implementation for testing or development purposes.
+
+- **`types.ts`**: Defines TypeScript types and enumerations related to WebSocket connections, ensuring type safety and providing a structured way to represent WebSocket states and closure reasons.
+
+## Dependencies
+
+The directory uses several external libraries and frameworks:
+
+- **`partysocket/ws`**: Provides the `ReconnectingWebSocket` class, which is used for WebSocket connections with automatic reconnection logic.
+
+- **`jotai`**: A state management library used in the `useMarimoWebSocket` hook to manage application state.
+
+- **`react-error-boundary`**: Used for handling errors gracefully in React components.
+
+- **`@/utils/Logger`**: A utility for logging messages and warnings, used in the `useWebSocket` and `useMarimoWebSocket` hooks.
+
+- **`vitest`**: A testing framework used for writing and executing unit tests in the `__tests__` directory.
+
+These dependencies are chosen to provide robust WebSocket management, state handling, and testing capabilities within the application.

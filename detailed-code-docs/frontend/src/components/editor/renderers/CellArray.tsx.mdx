@@ -1,0 +1,76 @@
+---
+title: "CellArray.tsx"
+---
+
+## High-level description
+
+The `CellArray.tsx` file defines a React component named `CellArray` that is responsible for rendering a list of cells within a notebook interface. It manages the display and interaction of these cells, including handling hotkeys for various actions, managing cell visibility, and rendering additional UI components like banners and alerts. The component also includes functionality for adding new cells, including support for AI-generated content and different cell types like Python, Markdown, and SQL.
+
+## Code Structure
+
+- **CellArray Component**: The main component that renders the notebook cells and manages their interactions.
+- **AddCellButtons Component**: A sub-component that provides UI buttons for adding new cells of different types.
+- **Hotkeys**: Various hotkeys are registered to perform actions like focusing cells, toggling the sidebar, and formatting code.
+- **Effects and Hooks**: Utilizes React hooks like `useEffect` for side effects and custom hooks for managing state and actions.
+
+## Symbols
+
+### `CellArray`
+#### Description
+The `CellArray` component is a React functional component that renders a list of notebook cells. It manages the state and behavior of these cells, including handling user interactions through hotkeys, managing cell visibility, and rendering additional UI components like banners and alerts.
+
+#### Inputs
+| Name       | Type           | Description                           |
+|:-----------|:---------------|:--------------------------------------|
+| notebook   | NotebookState  | The state of the notebook, including cell data and runtime information. |
+| mode       | AppMode        | The current mode of the application (e.g., read, edit). |
+| userConfig | UserConfig     | User-specific configuration settings. |
+| appConfig  | AppConfig      | Application-specific configuration settings. |
+| connStatus | ConnectionStatus | The current status of the WebSocket connection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | The rendered list of cells and associated UI components. |
+
+#### Internal Logic
+- **Hotkeys**: Registers hotkeys for actions like focusing cells, toggling the sidebar, folding/unfolding code, and formatting all cells.
+- **Cell Rendering**: Maps over the notebook cells and renders each one using the `Cell` component, passing necessary props.
+- **Visibility Management**: Uses `useDelayVisibility` to manage the visibility of cells based on the number of cells and the current mode.
+- **Side Effects**: Uses `useEffect` to scroll to a target cell if specified in the notebook state.
+
+### `AddCellButtons`
+#### Description
+The `AddCellButtons` component provides UI buttons for adding new cells to the notebook. It supports adding Python, Markdown, and SQL cells, and includes a button for AI-generated content.
+
+#### Internal Logic
+- **Button Rendering**: Renders buttons for adding different types of cells. Each button triggers the creation of a new cell with specific configurations.
+- **AI Button**: Includes a button for AI-generated content, which toggles the display of an AI input component.
+- **Tooltips**: Uses tooltips to provide additional information about the buttons, such as required dependencies for SQL cells.
+
+## References
+
+- **useCellActions**: Provides actions for manipulating cells, such as creating, deleting, and updating cells.
+- **useTheme**: Provides the current theme settings.
+- **useChromeActions**: Provides actions for manipulating the Chrome state, such as toggling the sidebar.
+- **useDeleteCellCallback**: Provides a callback for deleting cells with undo functionality.
+- **formatAll**: Formats all cells in the notebook using a specified formatting function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management for atoms and hooks. |
+| `lucide-react` | Provides icons used in the UI components. |
+| `react` | Core library for building the UI components. |
+
+## Error Handling
+
+- **WebSocket Connection**: The component checks the WebSocket connection status before performing certain actions, such as saving the notebook.
+
+## Logging
+
+- **Hotkey Actions**: The component logs actions triggered by hotkeys for debugging purposes.
+
+## TODOs
+- No explicit TODOs are present in the code.

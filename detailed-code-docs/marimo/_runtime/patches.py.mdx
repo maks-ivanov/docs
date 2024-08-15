@@ -1,0 +1,169 @@
+---
+title: "patches.py"
+---
+
+## High-level description
+
+The `patches.py` file in the `marimo/_runtime` directory provides a set of utility functions designed to modify or extend the behavior of certain Python modules and runtime settings. These functions are primarily used to integrate the Marimo environment with other systems, such as the Python debugger (`pdb`), the `sys` module, and the Pyodide environment. The file includes functions to patch the Python debugger, modify the system module registry, adjust recursion limits, and mock certain modules for compatibility with specific environments.
+
+## Code Structure
+
+The main symbols in the code are functions that perform specific patching tasks. These functions are independent of each other but are used to modify the behavior of various Python modules and settings to suit the needs of the Marimo runtime environment.
+
+## Symbols
+
+### `patch_pdb`
+#### Description
+This function patches the Python debugger (`pdb`) to use a custom debugger class, `MarimoPdb`, provided by the Marimo environment. It also modifies the `set_trace` function to use this custom debugger.
+
+#### Inputs
+| Name     | Type                  | Description                  |
+|:---------|:----------------------|:-----------------------------|
+| debugger | `marimo_pdb.MarimoPdb` | An instance of the custom Marimo debugger |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Imports the `pdb` module.
+- Replaces `pdb.Pdb` with `marimo_pdb.MarimoPdb`.
+- Replaces `pdb.set_trace` with a partial function that uses the custom debugger.
+
+### `patch_sys_module`
+#### Description
+This function replaces the entry for a given module in the `sys.modules` dictionary, effectively allowing the replacement of a module at runtime.
+
+#### Inputs
+| Name   | Type               | Description                  |
+|:-------|:-------------------|:-----------------------------|
+| module | `types.ModuleType` | The module to be patched     |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sets the entry in `sys.modules` for the given module's name to the provided module.
+
+### `patch_pyodide_networking`
+#### Description
+This function patches the networking capabilities of the Pyodide environment by modifying the `urllib` module to work with Pyodide's HTTP capabilities.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Imports the `pyodide_http` module and calls its `patch_urllib` function.
+
+### `patch_recursion_limit`
+#### Description
+Sets the recursion limit for the Python interpreter, which is useful for environments like Pyodide where the default recursion limit might be insufficient.
+
+#### Inputs
+| Name  | Type | Description                  |
+|:------|:-----|:-----------------------------|
+| limit | `int` | The new recursion limit to set |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Imports the `jedi` module, which has a side effect of increasing the recursion limit.
+- Sets the recursion limit using `sys.setrecursionlimit`.
+
+### `patch_micropip`
+#### Description
+Mocks the `micropip` module with no-op functions, which is useful for environments where `micropip` is not available, such as non-WASM environments.
+
+#### Inputs
+| Name  | Type            | Description                  |
+|:------|:----------------|:-----------------------------|
+| glbls | `dict[Any, Any]` | The global namespace to modify |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Defines a mock `micropip` module with no-op functions.
+- Uses `exec` to inject this mock module into the provided global namespace.
+- Appends a custom finder to `sys.meta_path` to handle imports of `micropip`.
+
+### `create_main_module`
+#### Description
+Creates a new `__main__` module for use as the global namespace in a Marimo kernel, optionally overriding the `input` function and setting the `__file__` attribute.
+
+#### Inputs
+| Name           | Type                              | Description                  |
+|:---------------|:----------------------------------|:-----------------------------|
+| file           | `str | None`                      | The file path to set as `__file__` |
+| input_override | `Callable[[Any], str] | None` | A function to override the `input` function |
+
+#### Outputs
+| Name    | Type               | Description                  |
+|:--------|:-------------------|:-----------------------------|
+| _module | `types.ModuleType` | The newly created main module |
+
+#### Internal Logic
+- Creates a new module named `__main__`.
+- Sets default values for `__builtin__` and `__builtins__`.
+- Optionally sets the `input` function and `__file__` attribute.
+
+### `patch_main_module`
+#### Description
+Patches the `__main__` module to make functions pickleable and load certain overrides and mocks into the global namespace.
+
+#### Inputs
+| Name           | Type                              | Description                  |
+|:---------------|:----------------------------------|:-----------------------------|
+| file           | `str | None`                      | The file path to set as `__file__` |
+| input_override | `Callable[[Any], str] | None` | A function to override the `input` function |
+
+#### Outputs
+| Name    | Type               | Description                  |
+|:--------|:-------------------|:-----------------------------|
+| _module | `types.ModuleType` | The patched main module      |
+
+#### Internal Logic
+- Calls `create_main_module` to create a new main module.
+- Patches the `sys.modules` dictionary to include the new main module.
+
+### `patch_main_module_context`
+#### Description
+A context manager that temporarily replaces the `__main__` module in `sys.modules` with a provided module, restoring the original module upon exit.
+
+#### Inputs
+| Name   | Type               | Description                  |
+|:-------|:-------------------|:-----------------------------|
+| module | `types.ModuleType` | The module to use as `__main__` |
+
+#### Outputs
+| Name    | Type               | Description                  |
+|:--------|:-------------------|:-----------------------------|
+| module  | `types.ModuleType` | The module used as `__main__` |
+
+#### Internal Logic
+- Temporarily replaces `sys.modules["__main__"]` with the provided module.
+- Restores the original `__main__` module upon exit.
+
+## References
+
+- `marimo_pdb.MarimoPdb`: A custom debugger class used in the `patch_pdb` function.
+- `pyodide_http.patch_urllib`: A function used in `patch_pyodide_networking` to modify the `urllib` module for Pyodide.
+- `jedi`: A module imported in `patch_recursion_limit` to adjust the recursion limit.
+
+## Dependencies
+
+| Dependency    | Purpose                                      |
+|:--------------|:---------------------------------------------|
+| `contextlib`  | Used for the context manager in `patch_main_module_context` |
+| `functools`   | Used to create partial functions in `patch_pdb` |
+| `sys`         | Used to modify the system module registry and recursion limit |
+| `textwrap`    | Used to dedent multi-line strings in `patch_micropip` |
+| `types`       | Used to work with Python module types        |
+| `typing`      | Used for type annotations                    |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the operations it performs, such as modifying `sys.modules` or setting the recursion limit, will succeed without issue.

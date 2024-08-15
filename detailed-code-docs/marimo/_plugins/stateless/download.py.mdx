@@ -1,0 +1,67 @@
+---
+title: "download.py"
+---
+
+## High-level description
+
+The `download` function in the `marimo/_plugins/stateless/download.py` file is designed to create a download button for various types of data, such as URLs, byte streams, or file-like objects. It processes the input data to determine the appropriate MIME type and file extension, and then generates an HTML element that represents a download button, which can be rendered in a web application.
+
+## Code Structure
+
+The main function in this file is `download`, which utilizes several helper functions and classes from other modules to achieve its functionality. It interacts with the `Html` class to create the HTML representation of the download button and uses utility functions like `guess_mime_type`, `is_data_empty`, and `mime_type_to_ext` to handle data processing and MIME type determination.
+
+## Symbols
+
+### `download`
+#### Description
+The `download` function generates an HTML download button for a given data input. It supports various data types, including strings, bytes, and file-like objects, and allows optional specification of the filename and MIME type. The function ensures that the data is appropriately processed and represented as a downloadable file in a web application.
+
+#### Inputs
+| Name     | Type                                      | Description                                                                 |
+|:---------|:------------------------------------------|:----------------------------------------------------------------------------|
+| `data`   | `Union[str, bytes, io.BytesIO, io.BufferedReader]` | The data to be downloaded, which can be a URL, byte stream, or file-like object. |
+| `filename` | `Optional[str]`                          | The name of the file to be downloaded. If not provided, it is guessed from the data. |
+| `mimetype` | `Optional[str]`                          | The MIME type of the file. If not provided, it is guessed from the filename. |
+| `disabled` | `bool`                                   | A flag to disable the download button. Defaults to `False`.                  |
+| `label`  | `str`                                      | The label for the download button. Defaults to "Download".                  |
+
+#### Outputs
+| Name | Type  | Description                          |
+|:-----|:------|:-------------------------------------|
+| `Html` | `Html` | An HTML object representing the download button. |
+
+#### Internal Logic
+1. **Data Conversion**: If the data is a file-like object (`io.BufferedReader`), it reads the data into bytes and determines the filename from the file object.
+2. **MIME Type and Extension**: It uses the `guess_mime_type` function to determine the MIME type based on the data or filename. If not provided, defaults to "text/plain". The file extension is determined using `mime_type_to_ext`.
+3. **Data Validation**: Checks if the data is empty using `is_data_empty` and sets the `disabled` flag accordingly.
+4. **Virtual File Creation**: Uses `mo_data.any_data` to create a virtual file representation of the data.
+5. **HTML Generation**: Constructs an HTML element for the download button using `build_stateless_plugin`, embedding the data URL, filename, and other attributes.
+
+## References
+
+- `Html`: A class from `marimo._output.hypertext` used to create HTML elements.
+- `guess_mime_type`, `is_data_empty`, `mime_type_to_ext`: Utility functions from `marimo._plugins.core.media` for handling MIME types and data validation.
+- `build_stateless_plugin`: A function from `marimo._plugins.core.web_component` used to generate HTML for stateless plugins.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `io` | Provides classes for handling byte streams and file-like objects. |
+| `marimo._output.data.data` | Used for creating virtual file representations. |
+| `marimo._output.hypertext` | Provides the `Html` class for HTML element creation. |
+| `marimo._output.rich_help` | Used for documentation purposes with the `mddoc` decorator. |
+| `marimo._plugins.core.media` | Provides utility functions for MIME type handling and data validation. |
+| `marimo._plugins.core.web_component` | Provides functions for building HTML components. |
+
+## Error Handling
+
+The function does not explicitly handle errors beyond basic type checking and defaults. It assumes that the provided data and optional parameters are valid and correctly formatted.
+
+## Logging
+
+There is no logging implemented in this function. Any issues or errors would need to be handled externally or through additional debugging.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,154 @@
+---
+title: "snippets.py"
+---
+
+## High-level description
+
+The `snippets.py` file in the Marimo project is responsible for managing and processing code snippets. It defines data structures to represent snippets and their sections, and provides functionality to read and organize these snippets from Python files. The main function, `read_snippets`, asynchronously reads and processes snippet files, extracting titles and sections, and returns them in a structured format.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `SnippetSection`, `Snippet`, and `Snippets` are data classes that represent different levels of snippet organization.
+- The `read_snippets` function utilizes these data classes to structure the snippets it reads from files.
+- Helper functions like `should_ignore_code`, `get_title_from_code`, `is_markdown`, and `snippet_files` assist in processing and filtering the code snippets.
+
+## Symbols
+
+### `SnippetSection`
+#### Description
+Represents a section of a snippet, which can contain either HTML or code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | str | Unique identifier for the section. |
+| html | Optional[str] | HTML content of the section, if applicable. |
+| code | Optional[str] | Code content of the section, if applicable. |
+
+#### Outputs
+No direct outputs; this is a data structure.
+
+### `Snippet`
+#### Description
+Represents a complete snippet, which consists of a title and multiple sections.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | str | Title of the snippet. |
+| sections | List[SnippetSection] | List of sections that make up the snippet. |
+
+#### Outputs
+No direct outputs; this is a data structure.
+
+### `Snippets`
+#### Description
+A collection of multiple `Snippet` objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| snippets | List[Snippet] | List of snippets. |
+
+#### Outputs
+No direct outputs; this is a data structure.
+
+### `read_snippets`
+#### Description
+Asynchronously reads and processes snippet files, extracting titles and sections, and returns them as a `Snippets` object.
+
+#### Inputs
+None directly; it processes files found by `snippet_files`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| snippets | Snippets | A structured collection of snippets. |
+
+#### Internal Logic
+- Iterates over files returned by `snippet_files`.
+- For each file, it retrieves an application object using `get_app`.
+- Iterates over cells in the application, filtering out those that should be ignored.
+- Extracts titles from markdown cells and runs them to get HTML output.
+- Constructs `SnippetSection` objects for each cell and aggregates them into `Snippet` objects.
+- Returns a `Snippets` object containing all processed snippets, sorted by title.
+
+### `should_ignore_code`
+#### Description
+Determines if a given code string should be ignored based on specific criteria.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code string to evaluate. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ignore | bool | Whether the code should be ignored. |
+
+### `get_title_from_code`
+#### Description
+Extracts a title from a code string if it contains a markdown-style title.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code string to extract the title from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| title | str | The extracted title, or an empty string if none is found. |
+
+### `is_markdown`
+#### Description
+Checks if a code string is a markdown cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code string to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| is_md | bool | Whether the code is a markdown cell. |
+
+### `snippet_files`
+#### Description
+Generates paths to snippet files by walking through a specific directory.
+
+#### Inputs
+None directly; it uses the file system to find files.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_path | Generator[str, Any, None] | Paths to snippet files. |
+
+## References
+
+- `get_app` from `marimo._ast.codegen`: Used to retrieve an application object from a file.
+- `import_files` from `marimo._utils.paths`: Used to locate the directory containing snippet files.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file path operations and directory traversal. |
+| `dataclasses` | Provides the `dataclass` decorator for defining data structures. |
+| `typing` | Provides type hints and optional types for better code clarity. |
+
+## Error Handling
+
+The code uses assertions to ensure that the application object retrieved by `get_app` is not `None`. This is a basic form of error handling to prevent further processing on invalid data.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

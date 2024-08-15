@@ -1,0 +1,99 @@
+---
+title: "utils.test.ts"
+---
+
+## High-level description
+
+The target file `utils.test.ts` contains unit tests for utility functions related to a code editor built using CodeMirror. These tests verify the functionality of converting editor content to Python code, updating editor content from Python code, and splitting editor content at a cursor position. The tests ensure that these utilities work correctly under various scenarios, such as different cursor positions and language settings.
+
+## Code Structure
+
+The main symbols in the code are the utility functions `getEditorCodeAsPython`, `updateEditorCodeFromPython`, and `splitEditor`, which are imported from the `../utils` module. These functions are tested using the `vitest` testing framework. The `createEditor` function is a helper function used to set up an `EditorView` instance with specific configurations for testing purposes. The tests are organized into `describe` blocks, each focusing on a specific utility function.
+
+## Symbols
+
+### `createEditor`
+#### Description
+The `createEditor` function creates an instance of `EditorView` with a given document string. It configures the editor with specific extensions, including language configuration and hotkey settings, to simulate a realistic editor environment for testing.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| doc | string | The initial content of the editor document. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | EditorView | An instance of `EditorView` configured with the provided document and extensions. |
+
+### `getEditorCodeAsPython`
+#### Description
+This function retrieves the content of the editor as Python code. It can return the entire content or a specified slice based on provided positions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editor | EditorView | The editor instance from which to retrieve the code. |
+| fromPos | number (optional) | The starting position for slicing the code. |
+| toPos | number (optional) | The ending position for slicing the code. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | The Python code extracted from the editor. |
+
+### `updateEditorCodeFromPython`
+#### Description
+This function updates the content of the editor with the provided Python code, transforming it if necessary to match the current language settings of the editor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editor | EditorView | The editor instance to update. |
+| pythonCode | string | The Python code to insert into the editor. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | The code that was inserted into the editor. |
+
+### `splitEditor`
+#### Description
+The `splitEditor` function divides the editor's content into two parts at the current cursor position, returning the code before and after the cursor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| editor | EditorView | The editor instance to split. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| beforeCursorCode | string | The code before the cursor position. |
+| afterCursorCode | string | The code after the cursor position. |
+
+## References
+
+- `adaptiveLanguageConfiguration` and `switchLanguage` from `../extension` are used to configure the editor's language settings.
+- `OverridingHotkeyProvider` from `@/core/hotkeys/hotkeys` is used to manage hotkey configurations.
+- `MovementCallbacks` from `../../cells/extensions` is referenced for cell movement configurations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides the `EditorState` and related functionalities for managing editor state. |
+| `@codemirror/view` | Provides the `EditorView` and related functionalities for rendering and interacting with the editor. |
+| `vitest` | A testing framework used to define and run the unit tests. |
+
+## Error Handling
+
+The tests use `vitest`'s `expect` function to assert expected outcomes. If the actual result does not match the expected result, an error is thrown, indicating a test failure.
+
+## Logging
+
+No explicit logging is implemented in the test file. The `vitest` framework handles test output and reporting.
+
+## TODOs
+
+- There is a skipped test case for handling markdown with variables, indicating that f-strings are not currently supported. This suggests a potential area for future development or bug fixing.

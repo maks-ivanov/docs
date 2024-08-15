@@ -1,0 +1,108 @@
+---
+title: "test_series.py"
+---
+
+## High-level description
+
+The target file `test_series.py` contains unit tests for verifying the functionality of functions that summarize different types of data series: numeric, categorical, and date series. These tests ensure that the functions `get_number_series_info`, `get_category_series_info`, and `get_date_series_info` from the `marimo._data.series` module correctly process data from both Pandas and Polars data structures, provided the necessary dependencies are installed.
+
+## Code Structure
+
+The main symbols in the code are the test functions: `test_number_series`, `test_get_with_no_name`, `test_categorical_series`, and `test_date_series`. These functions use the `pytest` framework to validate the behavior of the series information functions. The tests are parameterized to run with both Pandas and Polars data frames, and they are conditionally skipped if the required dependencies are not installed.
+
+## References
+
+- `get_number_series_info`: Function from `marimo._data.series` that provides a summary of a numeric series.
+- `get_category_series_info`: Function from `marimo._data.series` that provides a summary of a categorical series.
+- `get_date_series_info`: Function from `marimo._data.series` that provides a summary of a date series.
+- `DependencyManager`: Class from `marimo._dependencies.dependencies` used to check for the presence of required dependencies.
+
+## Symbols
+
+### `test_number_series`
+#### Description
+Tests the `get_number_series_info` function to ensure it correctly identifies the minimum, maximum, and label of a numeric series. It also checks that a `ValueError` is raised when a non-numeric series is passed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | Any | A data frame from either Pandas or Polars containing numeric and non-numeric columns. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function is parameterized to test both Pandas and Polars data frames.
+- It asserts that the minimum and maximum values of the numeric series are correctly identified.
+- It checks that the label of the series is correctly set.
+- It verifies that a `ValueError` is raised when a non-numeric series is passed to the function.
+
+### `test_get_with_no_name`
+#### Description
+Tests the `get_number_series_info` function to ensure it handles unnamed series correctly by setting the label to an empty string.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a Pandas series without a name.
+- Asserts that the label in the returned `NumberSeriesInfo` is an empty string.
+
+### `test_categorical_series`
+#### Description
+Tests the `get_category_series_info` function to ensure it correctly identifies the unique categories and label of a categorical series.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | Any | A data frame from either Pandas or Polars containing categorical and numeric columns. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function is parameterized to test both Pandas and Polars data frames.
+- It asserts that the unique categories of the categorical series are correctly identified and sorted.
+- It checks that the label of the series is correctly set.
+
+### `test_date_series`
+#### Description
+Tests the `get_date_series_info` function to ensure it correctly identifies the minimum, maximum, and label of a date series. It also checks that a `ValueError` is raised when a non-date series is passed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | Any | A data frame from either Pandas or Polars containing date, categorical, and numeric columns. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function is parameterized to test both Pandas and Polars data frames.
+- It asserts that the minimum and maximum dates of the date series are correctly identified.
+- It checks that the label of the series is correctly set.
+- It verifies that a `ValueError` is raised when non-date series are passed to the function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing the test cases. |
+| `pandas` | Data manipulation library used for creating data frames. |
+| `polars` | Data manipulation library used for creating data frames. |
+| `unittest.mock.Mock` | Used to mock the Pandas and Polars modules if they are not installed. |
+
+## Error Handling
+
+The tests expect `ValueError` to be raised when inappropriate data types are passed to the series information functions, ensuring that the functions handle invalid input gracefully.
+
+## Logging
+
+No explicit logging is implemented in the test file. The `pytest` framework handles test reporting.
+
+## TODOs
+
+No TODOs or notes are present in the code.

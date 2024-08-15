@@ -1,0 +1,56 @@
+---
+title: "builder.ts"
+---
+
+## High-level description
+
+The code in `frontend/src/plugins/core/builder.ts` provides a utility function `createPlugin` that facilitates the creation of plugins in a structured manner. It uses a builder pattern to define the data schema, functions, and rendering logic for a plugin, ensuring that each plugin adheres to a consistent structure and validation process.
+
+## Code Structure
+
+The main function `createPlugin` is a factory function that returns an object with methods to define a plugin's data schema, functions, and renderer. It uses TypeScript's generic types to ensure type safety and flexibility. The function relies on the `zod` library for schema validation and integrates with other parts of the codebase, such as `rpc` for defining remote procedure call functions.
+
+## Symbols
+
+### `createPlugin`
+#### Description
+The `createPlugin` function is a factory function that initiates the creation of a plugin by specifying a tag name. It provides a fluent interface to define the data schema, functions, and renderer for the plugin.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| tagName | string | The HTML tag name for the plugin. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | Object | An object with methods to further define the plugin. |
+
+#### Internal Logic
+1. **withData**: Accepts a `ZodType` validator to define the data schema for the plugin. Returns an object with methods to define functions and renderer.
+2. **withFunctions**: Accepts a `FunctionSchemas` object to define the functions that the plugin can call. Returns an object with a method to define the renderer.
+3. **renderer**: Accepts a `Renderer` function that defines how the plugin should be rendered. Returns an `IPlugin` object that encapsulates the plugin's configuration.
+
+## References
+
+- **Zod**: Used for schema validation to ensure that the plugin's data adheres to a specified structure.
+- **IPluginProps, IPlugin**: Interfaces from `../types` that define the structure and expected properties of a plugin.
+- **FunctionSchemas, PluginFunctions**: Types from `./rpc` that define the structure and validation of functions that a plugin can call.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod`      | Used for defining and validating data schemas. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `createPlugin` function. However, it relies on the `zod` library for schema validation, which will throw errors if the data does not conform to the specified schema.
+
+## Logging
+
+There is no explicit logging in the `createPlugin` function. Any logging would need to be implemented in the functions or renderer provided to the plugin.
+
+## API/Interface Reference
+
+The `createPlugin` function does not expose an API directly but provides a structured way to define plugins that can be used within a larger application. The plugins created using this function can be integrated into a system that supports dynamic plugin loading and execution.

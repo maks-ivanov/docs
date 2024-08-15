@@ -1,0 +1,53 @@
+---
+title: "urls.ts"
+---
+
+## High-level description
+
+The `urls.ts` file provides a utility function, `updateQueryParams`, which is used to modify the query parameters of the current URL in the browser. This function allows for dynamic updates to the URL's query string without reloading the page, by leveraging the browser's history API to replace the current state.
+
+## Code Structure
+
+The main symbol in this file is the `updateQueryParams` function. It is a standalone utility function that interacts with the browser's URL and history APIs to update query parameters. This function is used in various parts of the application, as seen in the related code snippets, to manage URL query parameters dynamically.
+
+## Symbols
+
+### `updateQueryParams`
+#### Description
+The `updateQueryParams` function is designed to update the query parameters of the current URL. It takes a callback function as an argument, which receives the current `URLSearchParams` object. The callback can modify this object to add, update, or delete query parameters. After the modifications, the function updates the browser's history state with the new URL.
+
+#### Inputs
+| Name   | Type                              | Description                                                  |
+|:-------|:----------------------------------|:-------------------------------------------------------------|
+| updater | `(params: URLSearchParams) =&gt; void` | A callback function that modifies the `URLSearchParams` object. |
+
+#### Outputs
+This function does not return any value. It performs its operations by side effects, specifically by updating the browser's URL and history state.
+
+#### Internal Logic
+1. **Create URL Object**: The function starts by creating a new `URL` object using the current window location.
+2. **Modify Query Parameters**: It then calls the provided `updater` function, passing the `searchParams` of the URL, allowing the caller to modify the query parameters.
+3. **Update Browser History**: Finally, it uses `window.history.replaceState` to update the browser's history with the modified URL, ensuring the page does not reload.
+
+## Side Effects
+- The function modifies the browser's URL and history state, which can affect the browser's back/forward navigation and the displayed URL in the address bar.
+
+## References
+
+- The `updateQueryParams` function is referenced in several parts of the application, such as in `edit-app.tsx`, `session.ts`, and `auth.ts`. It is used to manage query parameters related to file paths, session IDs, and authentication tokens.
+
+## Dependencies
+
+The function relies on the browser's built-in `URL` and `window.history` APIs to perform its operations. There are no external library dependencies.
+
+## Error Handling
+
+The function does not include explicit error handling. It assumes that the provided `updater` function will handle any necessary validation or error management related to the query parameters.
+
+## Usage in Related Files
+
+- **`edit-app.tsx`**: The function is used to update the file path in the URL when the filename changes, ensuring the URL reflects the current state of the application.
+- **`session.ts`**: It is used to manage session IDs in the URL, particularly to remove them when not in kiosk mode.
+- **`auth.ts`**: The function is utilized to clean up authentication tokens from the URL after they are no longer needed.
+
+This utility function is a crucial part of the application's ability to manage URL state dynamically, providing a seamless user experience by avoiding full page reloads when query parameters change.

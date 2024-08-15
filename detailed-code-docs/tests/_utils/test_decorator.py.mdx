@@ -1,0 +1,74 @@
+---
+title: "test_decorator.py"
+---
+
+## High-level description
+
+The target file `test_decorator.py` contains unit tests for a `debounce` decorator, which is designed to limit how frequently a function can be called. The tests verify that the decorated function is only executed once within a specified time period, and that it can be called again after the period has elapsed.
+
+## Code Structure
+
+The main symbols in the code are the test functions `test_debounce_within_period` and `test_debounce_after_period`. Both functions utilize the `debounce` decorator from the `marimo._utils.debounce` module to test its behavior under different timing conditions. The `call_count` global variable is used to track how many times the decorated function is actually executed.
+
+## References
+
+- `debounce`: This decorator is imported from `marimo._utils.debounce` and is the primary focus of the tests in this file.
+
+## Symbols
+
+### `test_debounce_within_period`
+#### Description
+This test function verifies that a function decorated with `debounce` is not called again if invoked within the debounce period.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. A function `my_function` is defined and decorated with `debounce` with a `wait_time` of 1.5 seconds.
+2. The global `call_count` is reset to 0.
+3. `my_function` is called, and it is asserted that `call_count` is 1.
+4. The test waits for 0.1 seconds (less than the debounce period) and calls `my_function` again.
+5. It is asserted that `call_count` remains 1, confirming that the function was not called again within the debounce period.
+
+### `test_debounce_after_period`
+#### Description
+This test function checks that a function decorated with `debounce` can be called again after the debounce period has elapsed.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. A function `my_function` is defined and decorated with `debounce` with a `wait_time` of 0.1 seconds.
+2. The global `call_count` is reset to 0.
+3. `my_function` is called, and it is asserted that `call_count` is 1.
+4. The test waits for 0.4 seconds (more than the debounce period) and calls `my_function` again.
+5. It is asserted that `call_count` is 2, confirming that the function was called again after the debounce period.
+
+## Side Effects
+
+- The global variable `call_count` is modified by the test functions to track the number of times the decorated function is executed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `time` | Used to introduce delays in the test execution to simulate the debounce period. |
+| `marimo._utils.debounce` | Provides the `debounce` decorator being tested. |
+
+## Error Handling
+
+The tests use assertions to verify the expected behavior of the `debounce` decorator. If the assertions fail, it indicates that the decorator is not functioning as expected.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

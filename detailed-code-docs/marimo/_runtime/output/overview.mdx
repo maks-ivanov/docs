@@ -1,0 +1,54 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_runtime/output` directory is part of the Marimo framework, which is designed to manage the output of cells within a Marimo notebook. This directory provides functionality to dynamically update and manipulate the output content of notebook cells. It includes modules that expose functions for appending, clearing, replacing, and managing cell outputs. The primary components within this directory are the `__init__.py` and `_output.py` files, which together facilitate the interaction with cell outputs by providing a public interface and implementing the core logic for output management.
+
+## What does it do?
+
+The code in this directory allows users to interact with the output area of a cell in a Marimo notebook. It provides a set of functions that enable users to:
+
+- **Append** new content to the existing output of a cell, allowing for incremental updates.
+- **Clear** the output of a cell, effectively resetting it to an empty state.
+- **Replace** the entire output of a cell with new content, overwriting any existing data.
+- **Replace at a specific index** within the output, allowing for targeted updates to specific parts of the output.
+
+These operations are crucial for creating dynamic and interactive notebook environments where the output can change in response to user actions or computational results.
+
+## Entry points
+
+The main entry point for this directory is the `__init__.py` file, which serves as the initializer for the output module. It imports and exposes key functions from the `_output.py` file, making them accessible for external use. The `__init__.py` file acts as a bridge, providing a simplified interface for interacting with the more complex logic implemented in `_output.py`.
+
+## Key Files
+
+### `__init__.py`
+- **Role**: Acts as the public interface for the output module.
+- **Functionality**: Imports and exposes functions such as `append`, `clear`, `replace`, and `replace_at_index` from the `_output.py` file. These functions are included in the `__all__` list, making them available for use when the module is imported elsewhere in the codebase.
+
+### `_output.py`
+- **Role**: Implements the core logic for managing cell outputs.
+- **Functionality**: Contains functions that interact with the cell's output, utilizing the `CellOp` class to broadcast changes and the `formatting` module to prepare objects for output. Key functions include:
+  - `write_internal`: Formats and broadcasts output for a specified cell.
+  - `replace`: Updates the entire output of a cell.
+  - `replace_at_index`: Replaces or appends output at a specific index.
+  - `append`: Adds new content to the existing output.
+  - `clear`: Resets the output to an empty state.
+  - `flush`: Refreshes the output display.
+  - `remove`: Deletes specific content from the output.
+
+## Dependencies
+
+The directory relies on several external modules and libraries to perform its functions:
+
+- **`marimo._ast.cell`**: Provides the `CellId_t` type for identifying cells.
+- **`marimo._messaging.cell_output`**: Defines the `CellChannel` for managing output channels.
+- **`marimo._messaging.ops`**: Contains the `CellOp` class used for broadcasting output changes.
+- **`marimo._messaging.tracebacks`**: Offers functionality for handling and writing tracebacks.
+- **`marimo._output.formatting`**: Used to format values for output.
+- **`marimo._output.rich_help`**: Provides the `mddoc` decorator for documentation purposes.
+- **`marimo._plugins.stateless.flex`**: Supplies the `vstack` function for stacking outputs vertically.
+- **`marimo._runtime.context`**: Manages the execution context for output operations.
+
+These dependencies are integral to the functionality of the output management system, enabling it to format, broadcast, and manage cell outputs effectively.

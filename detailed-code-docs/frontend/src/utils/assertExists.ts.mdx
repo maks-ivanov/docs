@@ -1,0 +1,60 @@
+---
+title: "assertExists.ts"
+---
+
+## High-level description
+
+The `assertExists` function in the `assertExists.ts` file is a utility function designed to ensure that a given value is neither `null` nor `undefined`. If the value is `null` or `undefined`, it throws an error with a specified message or a default error message. This function is particularly useful for type assertions in TypeScript, ensuring that a variable is of a certain type before proceeding with operations that assume the variable is not `null` or `undefined`.
+
+## Code Structure
+
+The `assertExists` function is a standalone utility function that is exported for use in other parts of the codebase. It is used in various files, such as `home-page.tsx`, `htmlUtils.ts`, and `marimo-tag.ts`, to assert the existence of certain elements or values before performing operations on them.
+
+## Symbols
+
+### `assertExists`
+#### Description
+The `assertExists` function is a TypeScript utility function that checks if a given value is neither `null` nor `undefined`. If the value is `null` or `undefined`, it throws an error with a provided message or a default message. This function is used to assert that a variable is of a specific type, ensuring type safety in TypeScript.
+
+#### Inputs
+| Name    | Type            | Description                                      |
+|:--------|:----------------|:-------------------------------------------------|
+| `x`     | `T \| null \| undefined` | The value to be checked for existence.          |
+| `message` | `string` (optional) | Custom error message to be thrown if `x` is `null` or `undefined`. |
+
+#### Outputs
+The function does not return any value. Instead, it uses TypeScript's `asserts` keyword to assert that `x` is of type `T` if the function does not throw an error.
+
+#### Internal Logic
+1. The function checks if `x` is `undefined` or `null`.
+2. If `x` is `undefined` or `null`, it throws an `Error`.
+   - If a `message` is provided, it uses that as the error message.
+   - Otherwise, it throws a default error message indicating that a value was expected but `null` or `undefined` was received.
+
+## References
+
+The `assertExists` function is referenced in several files:
+- **`home-page.tsx`**: Used to ensure that session IDs exist before attempting to shut down a session.
+- **`htmlUtils.ts`**: Used to assert the existence of a DOM element with a specific tag.
+- **`marimo-tag.ts`**: Used to assert the existence of environment variables or DOM elements.
+
+## Dependencies
+
+The `assertExists` function does not have any external dependencies. It is a pure TypeScript utility function.
+
+## Error Handling
+
+The function handles errors by throwing an `Error` when the input value is `null` or `undefined`. This ensures that the calling code is alerted to the absence of a required value, allowing for early detection of potential issues.
+
+## Usage Example
+
+In the `home-page.tsx` file, `assertExists` is used to ensure that session IDs are valid before attempting to shut down a session. This prevents runtime errors that could occur if a session ID is `null` or `undefined`.
+
+```typescript
+assertExists(ids);
+shutdownSession({
+  sessionId: ids.sessionId as SessionId,
+});
+```
+
+In this example, `assertExists` ensures that `ids` is not `null` or `undefined` before proceeding with the `shutdownSession` function call.

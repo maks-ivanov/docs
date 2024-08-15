@@ -1,0 +1,59 @@
+---
+title: "lazy.ts"
+---
+
+## High-level description
+
+The target file `lazy.ts` defines a utility function `reactLazyWithPreload` that enhances React's lazy loading mechanism by adding a preload capability. This function allows components to be loaded asynchronously while also providing a method to preload them in advance, which can improve user experience by reducing load times when the component is actually needed.
+
+## Code Structure
+
+The main symbol in the code is the `reactLazyWithPreload` function. It returns an object containing two properties: `preload`, a function to initiate the loading of a component, and `Component`, a React component that is loaded lazily. The `preload` function ensures that the component is loaded before it is needed, while the `Component` property uses React's `lazy` function to handle the asynchronous loading.
+
+## Symbols
+
+### `reactLazyWithPreload`
+#### Description
+The `reactLazyWithPreload` function is a utility that combines React's lazy loading with a preload capability. It allows developers to define components that can be loaded asynchronously and also provides a method to preload these components, potentially improving performance by reducing the time it takes to display the component when it is needed.
+
+#### Inputs
+| Name    | Type   | Description |
+|:--------|:-------|:------------|
+| factory | `() =&gt; Promise&lt;{ default: React.ComponentType&lt;T&gt; }&gt;` | A function that returns a promise resolving to a module with a default export of a React component. |
+
+#### Outputs
+| Name      | Type                              | Description |
+|:----------|:----------------------------------|:------------|
+| output    | `LazyComponentWithPreload&lt;T&gt;`     | An object containing a preload function and a lazy-loaded React component. |
+
+#### Internal Logic
+1. **Component Initialization**: A variable `component` is initialized to `null` and is used to store the promise returned by the `factory` function.
+2. **Preload Function**: The `preload` function checks if the `component` is already initialized. If not, it calls the `factory` function to start loading the component.
+3. **Lazy Component**: The `LazyComponent` is created using `React.lazy`, which utilizes the `preload` function to load the component asynchronously.
+4. **Return Object**: The function returns an object containing the `preload` function and the `LazyComponent`.
+
+## References
+
+The `reactLazyWithPreload` function is used in the `MarimoApp.tsx` file to lazily load components like `LazyHomePage`, `LazyRunPage`, and `LazyEditPage`. These components are preloaded based on the application's initial mode, which is determined by the `initialMode` variable.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React`    | Used for creating React components and utilizing the `lazy` function for asynchronous component loading. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `reactLazyWithPreload` function. It relies on the promise-based nature of the `factory` function, which means any errors during the component loading process would need to be handled by the caller or within the component itself.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The code does not expose an API or public interface beyond the `reactLazyWithPreload` function.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

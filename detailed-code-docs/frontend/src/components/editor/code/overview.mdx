@@ -1,0 +1,105 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `readonly-python-code.tsx` file defines a React component named `ReadonlyPythonCode` that renders a read-only Python code editor using the CodeMirror library. This component provides functionality to hide or show the code, copy the code to the clipboard, and toggle between different themes based on the user's preference.
+
+## Code Structure
+
+The main component, `ReadonlyPythonCode`, is a memoized functional component that utilizes several helper components and hooks to manage its state and behavior. It interacts with the CodeMirror library to render the code editor and uses various UI components for buttons and icons. The component also leverages utility functions for class name management and event handling.
+
+## Symbols
+
+### `ReadonlyPythonCode`
+#### Description
+The `ReadonlyPythonCode` component is a React component that renders a read-only Python code editor. It allows users to hide or show the code, copy the code to the clipboard, and adapts its theme based on the user's settings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | object | Contains properties such as `className`, `code`, `initiallyHideCode`, and other `ReactCodeMirrorProps`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered read-only code editor component. |
+
+#### Internal Logic
+- The component uses the `useTheme` hook to determine the current theme.
+- It manages the visibility of the code using the `useState` hook.
+- It conditionally renders buttons for copying the code and toggling code visibility.
+- The `CodeMirror` component is configured with extensions for Python language support and line wrapping.
+- The component is memoized using `React.memo` to prevent unnecessary re-renders.
+
+### `CopyButton`
+#### Description
+The `CopyButton` component renders a button that copies the provided text to the clipboard when clicked.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | object | Contains a `text` property representing the text to be copied. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered button component. |
+
+#### Internal Logic
+- Uses the `Events.stopPropagation` utility to prevent event propagation.
+- Copies the text to the clipboard using the `navigator.clipboard.writeText` method.
+- Displays a toast notification indicating the text has been copied.
+
+### `EyeCloseButton`
+#### Description
+The `EyeCloseButton` component renders a button that, when clicked, triggers a callback to hide the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | object | Contains an `onClick` callback function. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered button component. |
+
+### `HideCodeButton`
+#### Description
+The `HideCodeButton` component renders an icon that, when clicked, triggers a callback to show the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | object | Contains an `onClick` callback function. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | The rendered icon component. |
+
+## References
+
+- `useTheme`: A hook from `@/theme/useTheme` that provides the current theme.
+- `cn`: A utility function from `@/utils/cn` for merging class names.
+- `Events`: A utility from `@/utils/events` for handling event propagation.
+- `customPythonLanguageSupport`: A function from `@/core/codemirror/language/python` that provides language support for Python in CodeMirror.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@uiw/react-codemirror` | Provides the CodeMirror component for rendering the code editor. |
+| `lucide-react` | Provides icons used in the component, such as `CopyIcon`, `EyeIcon`, and `EyeOffIcon`. |
+| `@/components/ui/button` | Provides the `Button` component used for rendering buttons. |
+| `@/components/ui/use-toast` | Provides the `toast` function for displaying notifications. |
+
+## Error Handling
+
+The component does not explicitly handle errors but relies on the browser's clipboard API, which may fail silently if permissions are not granted.
+
+## Logging
+
+The component uses the `toast` function to display a notification when the text is successfully copied to the clipboard.

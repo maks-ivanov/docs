@@ -1,0 +1,89 @@
+---
+title: "index.ts"
+---
+
+## High-level description
+
+The code in `lsp/index.ts` sets up a WebSocket server that listens for incoming connections and forwards them to a language server process. It is designed to handle JSON-RPC communication over WebSockets, allowing clients to connect to specific language servers, such as a "copilot" server, by specifying the appropriate URL path.
+
+## Code Structure
+
+- The code uses the `ws` library to create a WebSocket server.
+- It utilizes the `@sourcegraph/vscode-ws-jsonrpc` library to handle JSON-RPC communication.
+- Language servers are defined in a record, mapping server names to their respective command-line arguments.
+- The server listens for WebSocket connections and forwards messages between the client and the language server process.
+
+## Symbols
+
+### `argv`
+#### Description
+`argv` is an object that holds the parsed command-line arguments using the `minimist` library. It is used to configure the server, such as setting the port number.
+
+### `serverPort`
+#### Description
+`serverPort` is a number that specifies the port on which the WebSocket server will listen. It defaults to 3000 if not provided via command-line arguments.
+
+### `languageServers`
+#### Description
+`languageServers` is a record that maps language server names to an array of command-line arguments needed to start the server. It currently includes a configuration for a "copilot" language server.
+
+### `wss`
+#### Description
+`wss` is an instance of `WebSocketServer` from the `ws` library. It listens for WebSocket connections on the specified port and handles incoming requests.
+
+### `toSocket`
+#### Description
+`toSocket` is a function that adapts a WebSocket connection to an `IWebSocket` interface required by the JSON-RPC library. It provides methods for sending messages, handling errors, and closing the connection.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| webSocket | ws | A WebSocket connection object |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | rpc.IWebSocket | An object implementing the `IWebSocket` interface |
+
+#### Internal Logic
+- The function returns an object with methods to send messages, handle incoming messages, errors, and connection closures, and to dispose of the connection.
+
+### `wss.on("connection", ...)`
+#### Description
+This event handler is triggered when a new WebSocket connection is established. It determines the appropriate language server based on the request URL, creates a local server process, and forwards messages between the client and the server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | ws | The WebSocket client connection |
+| request | http.IncomingMessage | The HTTP request associated with the WebSocket connection |
+
+#### Outputs
+- None directly, but it sets up message forwarding between the client and the language server.
+
+#### Internal Logic
+- It checks the request URL to identify the language server.
+- If a valid server is found, it creates a server process and a WebSocket connection.
+- It forwards messages between the client and the server using the JSON-RPC library.
+- It handles client disconnection by disposing of the server process.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `http` | Used for handling HTTP requests associated with WebSocket connections. |
+| `minimist` | Parses command-line arguments to configure the server. |
+| `ws` | Provides WebSocket server and client functionality. |
+| `@sourcegraph/vscode-ws-jsonrpc` | Handles JSON-RPC communication over WebSockets. |
+| `@sourcegraph/vscode-ws-jsonrpc/lib/server` | Provides server-side utilities for JSON-RPC communication. |
+| `path` | Used to construct file paths for language server scripts. |
+
+## Error Handling
+
+- The code checks if a valid language server is found for the request URL. If not, it logs an error and closes the client connection.
+
+## Logging
+
+- The server logs when it starts listening on a port.
+- It logs when a new client connection is forwarded.
+- It logs when a client connection is closed, including the reason for closure.

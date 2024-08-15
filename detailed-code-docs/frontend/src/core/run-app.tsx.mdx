@@ -1,0 +1,63 @@
+---
+title: "run-app.tsx"
+---
+
+## High-level description
+
+The `run-app.tsx` file defines a React component named `RunApp` that serves as the main entry point for running a notebook application. It initializes the runtime environment, manages WebSocket connections for real-time updates, and renders the application's main UI components, including the header and cell renderer.
+
+## Code Structure
+
+The `RunApp` component is the central piece of this file. It interacts with several other components and hooks to manage the application's state and UI. It uses the `useEffect` hook to initialize and clean up the runtime state, and it utilizes the `useMarimoWebSocket` hook to manage WebSocket connections. The component renders the `AppContainer`, which includes the `AppHeader` and `CellsRenderer` components.
+
+## References
+
+- `RuntimeState`: Manages the lifecycle of the runtime environment.
+- `useMarimoWebSocket`: Manages WebSocket connections for real-time communication with the backend.
+- `useCellActions`: Provides actions to manipulate cell states.
+- `notebookIsRunningAtom`: A Jotai atom that tracks whether the notebook is currently running.
+
+## Symbols
+
+### `RunApp`
+#### Description
+The `RunApp` component is responsible for setting up the runtime environment and rendering the main UI components of the notebook application. It initializes event listeners for runtime state changes, manages WebSocket connections, and renders the application container with its header and cell renderer.
+
+#### Inputs
+| Name      | Type     | Description                      |
+|:----------|:---------|:---------------------------------|
+| appConfig | AppConfig | Configuration object for the app |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX.Element | The rendered UI of the application |
+
+#### Internal Logic
+- **Runtime Initialization**: Uses `useEffect` to start and stop the `RuntimeState` instance, which listens for UI element events.
+- **WebSocket Connection**: Establishes a WebSocket connection using `useMarimoWebSocket`, which handles real-time communication with the backend.
+- **Rendering**: Renders the `AppContainer` component, passing the connection state, running status, and configuration width. Inside the container, it renders the `AppHeader` and `CellsRenderer`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management with atoms |
+| `react` | Provides the base for creating React components |
+
+## Error Handling
+
+- The `RuntimeState` class logs warnings if start or stop methods are called redundantly.
+- The `useMarimoWebSocket` hook handles WebSocket errors by attempting to reconnect or logging specific issues.
+
+## Logging
+
+- The `RuntimeState` and `useMarimoWebSocket` components use a `Logger` utility to log warnings and errors, aiding in debugging and monitoring.
+
+## API/Interface Reference
+
+The `RunApp` component does not directly expose an API but interacts with several internal hooks and components to manage the application's state and UI.
+
+## TODOs
+
+There are no explicit TODOs or notes left in the code.

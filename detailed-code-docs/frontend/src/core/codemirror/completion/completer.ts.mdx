@@ -1,0 +1,65 @@
+---
+title: "completer.ts"
+---
+
+## High-level description
+
+The `completer.ts` file defines an asynchronous function `completer` that provides code completion suggestions in a CodeMirror editor environment. It interacts with the active document and cell context to fetch and display relevant code completions or tooltips, utilizing a global autocompletion service and updating the documentation state when necessary.
+
+## Code Structure
+
+The main function in this file is `completer`, which relies on several imported modules and types to perform its operations. It interacts with the `AUTOCOMPLETER` and `Autocompleter` from the `Autocompleter.ts` file to request and format completion results. It also uses `HTMLCellId` from `ids.ts` to identify the active cell and `Logger` for error logging. The function updates the global state using `store` and `documentationAtom` from the Jotai state management library.
+
+## Symbols
+
+### `completer`
+#### Description
+The `completer` function is responsible for generating code completion suggestions based on the current context within a CodeMirror editor. It retrieves the current document state, identifies the active cell, and requests completion suggestions from an autocompletion service. If a tooltip is more appropriate than a completion suggestion, it updates the documentation state accordingly.
+
+#### Inputs
+| Name    | Type              | Description                                      |
+|:--------|:------------------|:-------------------------------------------------|
+| context | CompletionContext | The context within the CodeMirror editor, including the current document state and cursor position. |
+
+#### Outputs
+| Name   | Type                | Description                                      |
+|:-------|:--------------------|:-------------------------------------------------|
+| result | Promise&lt;CompletionResult \| null&gt; | A promise that resolves to a completion result or null if no suggestions are available. |
+
+#### Internal Logic
+1. **Query Extraction**: The function extracts the text from the start of the document to the current cursor position.
+2. **Active Element Identification**: It identifies the currently active HTML element and attempts to find the associated cell ID using `HTMLCellId`.
+3. **Error Handling**: If no active cell is found, it logs an error and returns null.
+4. **Autocompletion Request**: It sends a request to the `AUTOCOMPLETER` service with the document query and cell ID.
+5. **Tooltip Handling**: If the result is a tooltip, it updates the `documentationAtom` with the tooltip content and returns null.
+6. **Completion Result**: If not a tooltip, it formats the result as a `CompletionResult` using `Autocompleter.asCompletionResult`.
+
+## References
+
+- **`AUTOCOMPLETER` and `Autocompleter`**: These are used to request and format completion results.
+- **`HTMLCellId`**: Utilized to find and parse the cell ID from the active HTML element.
+- **`Logger`**: Used for logging errors when no active cell is found.
+- **`store` and `documentationAtom`**: Used to update the global documentation state.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/autocomplete` | Provides types and functionalities for autocompletion in CodeMirror. |
+| `jotai` | Used for state management, specifically to store and update documentation state. |
+
+## Error Handling
+
+The function handles errors by logging them using the `Logger` utility. Specifically, it logs an error if it fails to find an active cell, which is crucial for generating completion suggestions.
+
+## Side Effects
+
+- The function updates the global state by setting the `documentationAtom` with new tooltip information when applicable.
+
+## Logging
+
+The function uses the `Logger` utility to log errors, which helps in debugging issues related to finding the active cell.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

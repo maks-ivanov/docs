@@ -1,0 +1,101 @@
+---
+title: "auth.py"
+---
+
+## High-level description
+
+The `auth.py` file in the Marimo server API is responsible for handling authentication mechanisms. It provides functions to validate user authentication through various methods such as session cookies, access tokens, and basic authentication. Additionally, it defines middleware classes to manage session cookies and customize session handling based on the server's configuration.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `validate_auth`: This function is the core of the authentication process, checking for valid session cookies, access tokens, and basic authentication headers.
+- `CookieSession`: A class that wraps around session management, providing methods to get and set session-related data like access tokens and usernames.
+- `CustomSessionMiddleware`: A middleware class that customizes session handling, particularly the session cookie, based on the server's configuration and port.
+- `RANDOM_SECRET`: A randomly generated secret used for session management.
+- `_parse_basic_auth_header`, `raise_basic_auth_error`, and `on_auth_error`: Helper functions for parsing authentication headers and handling authentication errors.
+
+## References
+
+- `AppState`: Used to access the application state and session manager, which is crucial for authentication validation.
+- `SessionMiddleware` from Starlette: Extended by `CustomSessionMiddleware` to customize session handling.
+
+## Symbols
+
+### `validate_auth`
+#### Description
+Validates user authentication by checking for a valid session cookie, access token in query parameters, or basic authentication header.
+
+#### Inputs
+| Name      | Type               | Description                                      |
+|:----------|:-------------------|:-------------------------------------------------|
+| conn      | HTTPConnection     | The HTTP connection object containing request data. |
+| form_dict | Optional[dict[str, str]] | Optional form data containing authentication credentials. |
+
+#### Outputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| result | bool | True if authentication is successful, False otherwise. |
+
+#### Internal Logic
+- Checks if the session cookie contains a valid access token.
+- Validates the access token from query parameters if present.
+- Validates the access token from form data if provided.
+- Parses and validates the basic authentication header if present.
+
+### `CookieSession`
+#### Description
+A wrapper around Starlette's session management to provide type-safe methods for accessing and modifying session data.
+
+#### Inputs
+| Name          | Type           | Description                  |
+|:--------------|:---------------|:-----------------------------|
+| session_state | Dict[str, Any] | The session state dictionary. |
+
+#### Outputs
+- None (methods modify the session state in place).
+
+#### Internal Logic
+- Provides methods to get and set the access token and username in the session state.
+
+### `CustomSessionMiddleware`
+#### Description
+Extends Starlette's `SessionMiddleware` to customize session cookie handling based on the server's port and mode.
+
+#### Inputs
+| Name           | Type                          | Description                                      |
+|:---------------|:------------------------------|:-------------------------------------------------|
+| app            | ASGIApp                       | The ASGI application instance.                   |
+| secret_key     | Union[str, Secret]            | The secret key for session encryption.           |
+| session_cookie | str                           | The name of the session cookie.                  |
+| max_age        | Optional[int]                 | The maximum age of the session cookie in seconds.|
+| path           | str                           | The path for which the session cookie is valid.  |
+| same_site      | Literal["lax", "strict", "none"] | The SameSite attribute for the session cookie.   |
+| https_only     | bool                          | Whether the session cookie is HTTPS only.        |
+| domain         | Optional[str]                 | The domain for which the session cookie is valid.|
+
+#### Outputs
+- None (middleware modifies the request/response cycle).
+
+#### Internal Logic
+- Adjusts the session cookie name based on the server's port to avoid conflicts.
+- Calls the parent class's `__call__` method to handle the request/response cycle.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| starlette  | Provides the web framework and middleware support. |
+| packaging  | Used for version comparison.                 |
+
+## Error Handling
+
+- `raise_basic_auth_error`: Raises an HTTP 401 Unauthorized error with a WWW-Authenticate header for basic authentication.
+- `on_auth_error`: Returns a JSON response with a 401 status code and a WWW-Authenticate header when authentication fails.
+
+## Logging
+
+- The `LOGGER` is used to log debug information during the authentication process, such as successful validations and invalid authentication attempts.
+
+## TODOs
+- None present in the code.

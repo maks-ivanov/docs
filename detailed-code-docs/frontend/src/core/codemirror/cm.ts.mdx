@@ -1,0 +1,99 @@
+---
+title: "cm.ts"
+---
+
+## High-level description
+
+The target file `cm.ts` is responsible for setting up the CodeMirror editor with various extensions and configurations tailored for a specific cell in a notebook-like environment. It integrates features such as syntax highlighting, code completion, bracket matching, and custom keymaps, among others, to enhance the code editing experience.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `setupCodeMirror`: This function is the primary entry point for setting up the CodeMirror editor. It utilizes various bundles and configurations to customize the editor's behavior.
+- `basicBundle`: This function provides a set of default extensions and configurations for the CodeMirror editor, including view settings, language support, and editing features.
+- `startCompletionAtEndOfLine`: A utility function to trigger code completion at the end of a line if certain conditions are met.
+
+## Symbols
+
+### `setupCodeMirror`
+#### Description
+Sets up the CodeMirror editor for a specific cell with a variety of extensions and configurations based on the provided options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | `CodeMirrorSetupOpts` | Configuration options for setting up the CodeMirror editor, including cell ID, callbacks, theme, and more. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `Extension[]` | An array of CodeMirror extensions configured for the editor. |
+
+#### Internal Logic
+- The function extracts necessary options from the input and returns an array of extensions.
+- It includes keymap configurations, cell movement and editing bundles, and a basic setup bundle.
+- The `goToDefinitionBundle` is added to support navigation features like going to the definition of a symbol.
+
+### `basicBundle`
+#### Description
+Provides a set of default extensions and configurations for the CodeMirror editor, including view settings, language support, and editing features.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | `CodeMirrorSetupOpts` | Configuration options for setting up the basic bundle, including theme and completion configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `Extension[]` | An array of CodeMirror extensions configured for the basic setup. |
+
+#### Internal Logic
+- Configures the editor view with features like line wrapping, selection drawing, and tooltips.
+- Sets up syntax highlighting, bracket matching, and indentation rules.
+- Integrates language support and editing features like history and find-replace functionality.
+- Configures keymaps for specific actions like accepting completions and indenting code.
+
+### `startCompletionAtEndOfLine`
+#### Description
+Determines whether to start code completion at the end of a line based on the current cursor position and line content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cm | `EditorView` | The CodeMirror editor view instance. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `boolean` | Returns `true` if completion is started, otherwise `false`. |
+
+#### Internal Logic
+- Checks if the current selection is empty and if the cursor is at the end of a line.
+- If the line content before the cursor is not just whitespace, it triggers the `startCompletion` function.
+
+## References
+
+- `keymapBundle`: Used in `setupCodeMirror` to configure keymaps based on user preferences.
+- `cellMovementBundle` and `cellCodeEditingBundle`: Used in `setupCodeMirror` to handle cell-specific movement and editing actions.
+- `goToDefinitionBundle`: Provides functionality to navigate to symbol definitions within the editor.
+- `findReplaceBundle`, `copilotBundle`, `adaptiveLanguageConfiguration`: Various extensions used in `basicBundle` to enhance the editor's capabilities.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/autocomplete` | Provides autocomplete functionality. |
+| `@codemirror/commands` | Offers command utilities like history and indentation. |
+| `@codemirror/language` | Supplies language-related features like syntax highlighting. |
+| `@codemirror/view` | Core view components for rendering the editor. |
+| `@codemirror/state` | Manages the editor's state and extensions. |
+| `@codemirror/theme-one-dark` | Provides a dark theme for the editor. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as ensuring the cursor is at the end of a line before starting completion. More robust error handling might be implemented elsewhere in the application.
+
+## Logging
+
+No logging mechanisms are implemented in this file. Logging might be handled in other parts of the application, especially for debugging or monitoring purposes.

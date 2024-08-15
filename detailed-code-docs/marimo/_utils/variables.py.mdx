@@ -1,0 +1,103 @@
+---
+title: "variables.py"
+---
+
+## High-level description
+
+The target file, `marimo/_utils/variables.py`, provides utility functions for handling variable names in a specific context, likely related to a computational notebook or cell-based execution environment. The functions in this file are primarily concerned with determining if a variable name is local, mangling local variable names to include a cell identifier, and unmangling them back to their original form.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `is_local_then_mangle` uses `is_local` to determine if a variable name should be mangled.
+- `unmangle_local` uses `is_mangled_local` to check if a name is mangled before attempting to unmangle it.
+- `is_mangled_local` and `is_local` are utility functions that provide boolean checks on variable names.
+
+## Symbols
+
+### `is_local_then_mangle`
+#### Description
+This function checks if a given reference is local and, if so, mangles it by prepending a cell identifier. This is useful for ensuring that variable names are unique across different cells in a notebook-like environment.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| ref    | str    | The variable name to check and mangle if local. |
+| cell_id| CellId_t | The identifier of the cell, used for mangling. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | str    | The original or mangled variable name. |
+
+#### Internal Logic
+- Checks if the reference is local using `is_local`.
+- If local and not already mangled, prepends `_cell_{cell_id}` to the reference.
+
+### `unmangle_local`
+#### Description
+This function attempts to unmangle a variable name that was previously mangled with a cell identifier. It returns the original name and the cell identifier if applicable.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| name   | str    | The mangled variable name.         |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | tuple[str, str] | The unmangled name and the cell identifier. |
+
+#### Internal Logic
+- Uses a regular expression to remove the mangling prefix if present.
+- Splits the name to extract the cell identifier.
+
+### `is_mangled_local`
+#### Description
+Determines if a variable name is mangled with a specific cell identifier.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| name   | str    | The variable name to check.        |
+| cell_id| CellId_t | The cell identifier to check against. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | bool   | True if the name is mangled with the cell identifier. |
+
+#### Internal Logic
+- Checks if the name starts with the pattern `_cell_{cell_id}`.
+
+### `is_local`
+#### Description
+Checks if a variable name is considered local based on its prefix.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| name   | str    | The variable name to check.        |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | bool   | True if the name is local.         |
+
+#### Internal Logic
+- A name is local if it starts with a single underscore and not with a double underscore.
+
+## References
+
+- `CellId_t` is referenced from `marimo._ast.cell`, indicating that this utility is used in conjunction with cell identifiers defined elsewhere in the codebase.
+
+## Dependencies
+
+The file imports the `re` module for regular expression operations and `typing` for type annotations, specifically `TYPE_CHECKING` to avoid circular imports during runtime.
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| re         | Used for regular expression operations to manipulate and check variable names. |
+| typing     | Provides type annotations for better code clarity and type checking. |
+
+This file is a utility module that aids in managing variable names in a cell-based execution environment, ensuring that local variables are uniquely identified by their cell of origin.

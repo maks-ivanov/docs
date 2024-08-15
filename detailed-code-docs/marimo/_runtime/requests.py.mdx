@@ -1,0 +1,108 @@
+---
+title: "requests.py"
+---
+
+## High-level description
+
+The `requests.py` file defines a set of data classes that represent various types of requests within the Marimo application. These requests are used to manage the execution of code cells, handle UI interactions, and configure application settings. The file provides a structured way to encapsulate different types of operations that can be performed in the Marimo environment, such as executing code, renaming files, setting UI element values, and more.
+
+## Code Structure
+
+The file is structured around several data classes, each representing a specific type of request. These classes are interconnected through shared attributes and types, such as `CellId_t`, `UIElementId`, and `FunctionCallId`. The data classes are used to encapsulate the data and behavior associated with different operations in the Marimo application.
+
+## Symbols
+
+### `ExecutionRequest`
+#### Description
+Represents a request to execute a specific code cell identified by its `cell_id`. It includes the code to be executed and a timestamp indicating when the request was created.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| cell_id  | CellId_t | The unique identifier of the cell to execute. |
+| code     | str    | The code to be executed in the cell. |
+| timestamp| float  | The time at which the request was created. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+### `ExecuteMultipleRequest`
+#### Description
+Represents a request to execute multiple code cells. It includes lists of cell IDs and corresponding code snippets, along with a timestamp.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| cell_ids | List[CellId_t] | A list of cell IDs to execute. |
+| codes    | List[str] | A list of code snippets corresponding to each cell ID. |
+| timestamp| float  | The time at which the request was created. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_requests | List[ExecutionRequest] | A list of `ExecutionRequest` objects created from the cell IDs and codes. |
+
+#### Internal Logic
+The `execution_requests` property generates a list of `ExecutionRequest` objects by zipping together the `cell_ids` and `codes` lists.
+
+### `SetUIElementValueRequest`
+#### Description
+Represents a request to set the values of UI elements. It includes lists of object IDs and corresponding values, along with a unique token to identify the request.
+
+#### Inputs
+| Name       | Type           | Description                  |
+|:-----------|:---------------|:-----------------------------|
+| object_ids | List[UIElementId] | A list of UI element IDs to update. |
+| values     | List[Any]      | A list of values to set for each UI element. |
+| token      | str            | A unique token identifying the request. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+#### Internal Logic
+The `from_ids_and_values` static method creates a `SetUIElementValueRequest` from a list of tuples containing UI element IDs and values. The `ids_and_values` property returns a list of tuples by zipping the `object_ids` and `values` lists.
+
+### `FunctionCallRequest`
+#### Description
+Represents a request to call a function within a specific namespace. It includes the function call ID, namespace, function name, and arguments.
+
+#### Inputs
+| Name            | Type           | Description                  |
+|:----------------|:---------------|:-----------------------------|
+| function_call_id| FunctionCallId | A unique identifier for the function call. |
+| namespace       | str            | The namespace in which the function resides. |
+| function_name   | str            | The name of the function to call. |
+| args            | Dict[str, Any] | A dictionary of arguments to pass to the function. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+### `AppMetadata`
+#### Description
+Holds metadata about the application, such as query parameters, CLI arguments, and the filename.
+
+#### Inputs
+| Name         | Type                  | Description                  |
+|:-------------|:----------------------|:-----------------------------|
+| query_params | SerializedQueryParams | Query parameters for the app. |
+| cli_args     | SerializedCLIArgs     | Command-line arguments for the app. |
+| filename     | Optional[str]         | The filename of the app, if available. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | N/A         |
+
+## Dependencies
+
+The file imports several modules and types from the Marimo codebase, such as `CellId_t`, `MarimoConfig`, and `DataTableSource`. It also uses standard Python libraries like `time`, `dataclasses`, and `uuid`.
+
+## Error Handling
+
+The `__post_init__` methods in `ExecuteMultipleRequest` and `SetUIElementValueRequest` assert that the lengths of certain lists match, raising an `AssertionError` if they do not. This ensures that the data provided to these requests is consistent and valid.

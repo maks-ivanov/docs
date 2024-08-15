@@ -1,0 +1,87 @@
+---
+title: "recents.py"
+---
+
+## High-level description
+
+The `recents.py` file is part of the Marimo server module and is responsible for managing a list of recently accessed files. It provides functionality to update this list when files are accessed or renamed, and to retrieve the list of recent files, ensuring that temporary files and files outside the current working directory are excluded.
+
+## Code Structure
+
+The main components of the code are the `RecentFilesState` dataclass, the `_is_tmp_file` function, and the `RecentFilesManager` class. The `RecentFilesManager` class uses the `ConfigReader` to read and write the list of recent files to a configuration file. The `_is_tmp_file` function is used to filter out temporary files from being added to the recent files list.
+
+## Symbols
+
+### `RecentFilesState`
+#### Description
+A dataclass that represents the state of recent files, specifically a list of file paths.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+This dataclass simply holds a list of file paths and provides a default factory for initializing the list.
+
+### `_is_tmp_file`
+#### Description
+A helper function that checks if a given filename is located in a temporary or ignored directory.
+
+#### Inputs
+| Name     | Type | Description                      |
+|:---------|:-----|:---------------------------------|
+| filename | str  | The file path to be checked.     |
+
+#### Outputs
+| Name   | Type | Description                                      |
+|:-------|:-----|:-------------------------------------------------|
+| result | bool | Returns `True` if the file is in an ignored path.|
+
+#### Internal Logic
+The function iterates over a tuple of ignored folder paths and checks if the filename starts with any of these paths.
+
+### `RecentFilesManager`
+#### Description
+Manages the list of recent files, providing methods to update the list when files are accessed or renamed, and to retrieve the list of recent files.
+
+#### Inputs
+None (for the class itself, but methods have specific inputs)
+
+#### Outputs
+None (for the class itself, but methods have specific outputs)
+
+#### Internal Logic
+- **Initialization**: Initializes a `ConfigReader` for managing the configuration file where recent files are stored.
+- **`touch` Method**: Updates the recent files list when a file is accessed. It ensures the file is not temporary, moves it to the top of the list, and maintains a maximum number of recent files.
+- **`rename` Method**: Updates the recent files list when a file is renamed, replacing the old filename with the new one.
+- **`get_recents` Method**: Retrieves the list of recent files, filtering out temporary files and those not existing in the current working directory.
+
+## References
+
+- `MarimoFile` from `marimo._server.models.home`: Used in the `get_recents` method to create file objects with metadata.
+- `ConfigReader` from `marimo._utils.config.config`: Used to read and write the recent files list to a configuration file.
+- `pretty_path` from `marimo._utils.paths`: Used to format file paths in a user-friendly way.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `os`       | Used for file path operations and checking file existence.              |
+| `pathlib`  | Used for handling file paths and current working directory operations.  |
+| `dataclasses` | Used to define the `RecentFilesState` dataclass.                     |
+| `typing`   | Provides type hints for better code clarity and type checking.          |
+| `tomlkit`  | Used by `ConfigReader` for reading and writing TOML configuration files.|
+
+## Error Handling
+
+The code handles the absence of a configuration file by using a fallback state when reading the TOML file. This ensures that operations can proceed even if the configuration file does not exist initially.
+
+## Logging
+
+No explicit logging is implemented in this code. However, the use of `ConfigReader` implies that any logging related to configuration reading and writing would be handled there.
+
+## TODOs
+
+No TODOs or notes are present in the code.

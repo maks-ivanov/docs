@@ -1,0 +1,87 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file, `types.ts`, defines types and functions related to the creation and management of cells in a frontend application. It provides interfaces for cell data and runtime state, as well as utility functions to create new cells and manage their runtime states. This file is crucial for handling the state and behavior of cells within the application, including their configuration, execution status, and output management.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `CellData` and `CellRuntimeState` are interfaces that define the structure of a cell's data and runtime state, respectively.
+- `createCell` and `createCellRuntimeState` are functions that initialize new cells and their runtime states using the defined interfaces.
+- The `WithResponse` type is used to extend output messages with additional response data.
+
+## Symbols
+
+### `createCell`
+#### Description
+Creates a new cell with a default state or provided properties. It initializes the cell's data, including its ID, name, code, and configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | CellId | Unique identifier for the cell |
+| name | string | Optional name for the cell, defaults to `DEFAULT_CELL_NAME` |
+| code | string | Optional code content for the cell, defaults to an empty string |
+| lastCodeRun | string or null | Optional snapshot of the last code run, defaults to null |
+| lastExecutionTime | number or null | Optional execution time, defaults to null |
+| edited | boolean | Indicates if the cell has been edited, defaults to false |
+| config | CellConfig | Configuration settings for the cell |
+| serializedEditorState | SerializedEditorState or null | Optional serialized state of the editor, defaults to null |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| CellData | CellData | The initialized cell data object |
+
+#### Internal Logic
+The function returns a `CellData` object with the provided or default values for each property.
+
+### `createCellRuntimeState`
+#### Description
+Initializes a new runtime state for a cell, setting default values for various runtime properties.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | Partial&lt;CellRuntimeState&gt; | Optional partial state to override default values |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| CellRuntimeState | CellRuntimeState | The initialized cell runtime state object |
+
+#### Internal Logic
+The function returns a `CellRuntimeState` object with default values, which can be overridden by the provided partial state.
+
+### `CellData`
+#### Description
+An interface that defines the structure of a cell's data, including its ID, name, code, and configuration.
+
+### `CellRuntimeState`
+#### Description
+An interface that defines the structure of a cell's runtime state, including its output, status, and execution details.
+
+### `WithResponse`
+#### Description
+A type that extends an output message with an optional response field, used for tracking responses to messages sent to the kernel.
+
+## References
+
+- `OutputMessage` from `../kernel/messages`: Used in `CellRuntimeState` to define the type of output messages.
+- `SerializedEditorState` from `../codemirror/types`: Used in `CellData` to define the type of serialized editor state.
+- `Outline` from `./outline`: Used in `CellRuntimeState` to define the type of outline.
+- `CellId` from `./ids`: Used in `CellData` to define the type of cell ID.
+- `DEFAULT_CELL_NAME` from `./names`: Used as a default value for cell names.
+- `Milliseconds` and `Seconds` from `@/utils/time`: Used in `CellRuntimeState` to define time-related properties.
+- `CellConfig` and `RuntimeState` from `../network/types`: Used in `CellData` and `CellRuntimeState` to define configuration and status types.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/utils/time` | Provides types for time-related properties in cell runtime state. |
+
+This file is a core part of the frontend application, providing essential types and functions for managing the state and behavior of cells. It interacts with various other parts of the codebase, including kernel messages, editor state, and configuration settings.

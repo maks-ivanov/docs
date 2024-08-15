@@ -1,0 +1,92 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file, `types.ts`, defines TypeScript interfaces and types that represent the static state of a notebook in a frontend application. It includes structures for managing the state of notebook cells, their configurations, outputs, and associated virtual files. These types are used to ensure type safety and consistency when handling notebook data in the application.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `StaticNotebookState` is an interface that encapsulates the state of a notebook, including cell identifiers, names, codes, configurations, and outputs.
+- `StaticVirtualFiles` is a type that maps file paths to their data URLs, representing virtual files associated with the notebook.
+- `MarimoStaticState` is an interface that combines the notebook state and virtual files, along with additional metadata like version and asset URL.
+
+These symbols are used together to represent and manage the static state of a notebook within the application.
+
+## References
+
+The target file references several other parts of the codebase:
+- `CellId` from `../cells/ids` is used to uniquely identify cells within the notebook.
+- `OutputMessage` from `../kernel/messages` represents the output data of a cell.
+- `CellConfig` from `../network/types` defines the configuration settings for a cell.
+- `Base64String`, `DataURLString`, and `JsonString` from `@/utils/json/base64` are used for encoding and decoding data.
+
+## Symbols
+
+### `StaticNotebookState`
+#### Description
+Represents the state of a notebook, including cell identifiers, names, codes, configurations, and outputs. It is used to manage and store the static data of a notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellIds | `CellId[]` | An array of unique identifiers for each cell. |
+| cellNames | `Array&lt;Base64String&lt;string&gt;&gt;` | An array of base64-encoded names for each cell. |
+| cellCodes | `Array&lt;Base64String&lt;string&gt;&gt;` | An array of base64-encoded code strings for each cell. |
+| cellConfigs | `Array&lt;Base64String&lt;JsonString&lt;CellConfig&gt;&gt;&gt;` | An array of base64-encoded JSON strings representing the configuration of each cell. |
+| cellOutputs | `Record&lt;CellId, Base64String&lt;JsonString&lt;OutputMessage&gt;&gt; | undefined&gt;` | A record mapping each cell ID to its base64-encoded JSON output message. |
+| cellConsoleOutputs | `Record&lt;CellId, Array&lt;Base64String&lt;JsonString&lt;OutputMessage&gt;&gt;&gt; | undefined&gt;` | A record mapping each cell ID to an array of base64-encoded JSON console output messages. |
+
+#### Outputs
+N/A
+
+### `StaticVirtualFiles`
+#### Description
+A type that represents a collection of virtual files, mapping file paths to their data URLs. This is used to manage files associated with the notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | `string` | The file path. |
+| value | `DataURLString` | The data URL string representing the file content. |
+
+#### Outputs
+N/A
+
+### `MarimoStaticState`
+#### Description
+Combines the static state of a notebook with additional metadata, such as version and asset URL. It provides a comprehensive view of the notebook's static data and associated resources.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| version | `string` | The version of the static state. |
+| notebookState | `StaticNotebookState` | The state of the notebook. |
+| assetUrl | `string` | The URL for assets associated with the notebook. |
+| files | `StaticVirtualFiles` | The virtual files associated with the notebook. |
+
+#### Outputs
+N/A
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/utils/json/base64` | Provides utilities for encoding and decoding base64 and JSON strings. |
+| `../cells/ids` | Defines the `CellId` type used for identifying notebook cells. |
+| `../kernel/messages` | Provides the `OutputMessage` type for cell output data. |
+| `../network/types` | Defines the `CellConfig` type for cell configuration settings. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the defined types and interfaces, as they primarily serve as data structures. Error handling would typically occur in the logic that utilizes these types.
+
+## Logging
+
+The code does not implement any logging mechanisms, as it is focused on defining data structures rather than executing logic.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

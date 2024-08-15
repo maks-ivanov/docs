@@ -1,0 +1,149 @@
+---
+title: "home.py"
+---
+
+## High-level description
+
+The target file `marimo/_server/api/endpoints/home.py` defines a set of API endpoints for managing files and sessions in a web application. These endpoints allow users to retrieve recent files, list files in a workspace, get running notebooks, and shut down sessions. The file uses the Starlette framework to define these endpoints and includes authentication requirements for accessing them.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `APIRouter` is used to define and manage the API endpoints.
+- Each endpoint function is decorated with `@router.post` to specify the HTTP method and path.
+- The `AppState` class is used to manage application state and session information.
+- The `parse_request` utility function is used to parse incoming request bodies into specific data classes.
+- The `RecentFilesResponse`, `WorkspaceFilesResponse`, `RunningNotebooksResponse`, and `ShutdownSessionRequest` data classes define the structure of request and response bodies.
+
+## Symbols
+
+### `router`
+#### Description
+An instance of `APIRouter` that is used to define and manage the API endpoints for the home module.
+
+### `read_code`
+#### Description
+Handles POST requests to the `/recent_files` endpoint, returning a list of recent files accessed by the user.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name   | Type               | Description                |
+|:-------|:-------------------|:---------------------------|
+| output | RecentFilesResponse | A response containing recent files |
+
+#### Internal Logic
+- Retrieves the application state using `AppState`.
+- Fetches recent files from the session manager.
+- Returns a `RecentFilesResponse` containing the list of recent files.
+
+### `workspace_files`
+#### Description
+Handles POST requests to the `/workspace_files` endpoint, returning a list of files in the user's workspace.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name   | Type                  | Description                  |
+|:-------|:----------------------|:-----------------------------|
+| output | WorkspaceFilesResponse | A response containing workspace files |
+
+#### Internal Logic
+- Parses the request body into a `WorkspaceFilesRequest`.
+- Checks if the file router is an instance of `LazyListOfFilesAppFileRouter`.
+- Marks the file router as stale and toggles markdown inclusion based on the request.
+- Retrieves the list of files and returns them in a `WorkspaceFilesResponse`.
+
+### `_get_active_sessions`
+#### Description
+A helper function that retrieves active sessions from the application state.
+
+#### Inputs
+| Name      | Type    | Description                |
+|:----------|:--------|:---------------------------|
+| app_state | AppState | The current application state |
+
+#### Outputs
+| Name   | Type            | Description                |
+|:-------|:----------------|:---------------------------|
+| output | List[MarimoFile] | A list of active session files |
+
+#### Internal Logic
+- Iterates over sessions in the session manager.
+- Checks the connection state of each session.
+- Collects session information into `MarimoFile` objects for open or orphaned sessions.
+- Returns the list of active sessions in reverse order.
+
+### `running_notebooks`
+#### Description
+Handles POST requests to the `/running_notebooks` endpoint, returning a list of currently running notebooks.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name   | Type                    | Description                    |
+|:-------|:------------------------|:-------------------------------|
+| output | RunningNotebooksResponse | A response containing running notebooks |
+
+#### Internal Logic
+- Retrieves the application state using `AppState`.
+- Calls `_get_active_sessions` to get active sessions.
+- Returns a `RunningNotebooksResponse` with the list of active sessions.
+
+### `shutdown_session`
+#### Description
+Handles POST requests to the `/shutdown_session` endpoint, shutting down a specified session.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name   | Type                    | Description                    |
+|:-------|:------------------------|:-------------------------------|
+| output | RunningNotebooksResponse | A response containing running notebooks after shutdown |
+
+#### Internal Logic
+- Retrieves the application state using `AppState`.
+- Parses the request body into a `ShutdownSessionRequest`.
+- Closes the specified session using the session manager.
+- Returns a `RunningNotebooksResponse` with the updated list of active sessions.
+
+## References
+
+- `AppState`: Used to manage application state and session information.
+- `parse_request`: Utility function to parse request bodies.
+- `RecentFilesResponse`, `WorkspaceFilesResponse`, `RunningNotebooksResponse`, `ShutdownSessionRequest`: Data classes defining request and response structures.
+- `LazyListOfFilesAppFileRouter`: Used for managing file routing and toggling markdown inclusion.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.authentication.requires` | Used to enforce authentication requirements for endpoints. |
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._server.api.deps.AppState` | Manages application state and session information. |
+| `marimo._server.api.utils.parse_request` | Parses request bodies into data classes. |
+| `marimo._server.file_router.LazyListOfFilesAppFileRouter` | Manages file routing and toggling markdown inclusion. |
+| `marimo._server.model.ConnectionState` | Represents the connection state of a session. |
+| `marimo._server.models.home` | Provides data classes for request and response structures. |
+| `marimo._server.router.APIRouter` | Manages API routing and endpoint definitions. |
+| `marimo._utils.paths.pretty_path` | Formats file paths for display. |
+
+## Error Handling
+
+The code uses exception handling to manage errors related to session management and file operations. For example, if a session ID is missing or invalid, a `ValueError` is raised. Additionally, the `HTTPException` is used in the file router to handle invalid file paths.
+
+## Logging
+
+The code uses the `marimo_logger` from the `marimo._loggers` module to log messages, particularly for debugging purposes, such as when listing directories or reading files.

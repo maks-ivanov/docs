@@ -1,0 +1,74 @@
+---
+title: "language-server.ts"
+---
+
+## High-level description
+
+The `language-server.ts` file defines a `CopilotLanguageServerClient` class that extends the `LanguageServerClient` to interact with a Copilot language server. This client handles various language server protocol (LSP) requests and responses, such as document changes, completions, and user authentication, while also managing the state of the Copilot feature (enabled or disabled).
+
+## Code Structure
+
+- **`CopilotLanguageServerClient`**: This class extends `LanguageServerClient` and provides methods to interact with the Copilot language server, handling document events and authentication processes.
+- **`LSPRequestMap`**: An interface that maps request methods to their parameter and return types, used by the `CopilotLanguageServerClient` to make typed requests to the language server.
+
+## References
+
+- **`isCopilotEnabled`**: A function from `state.ts` that checks if the Copilot feature is enabled.
+- **`getCodes`**: A function from `getCodes.ts` that processes and returns code from editor views.
+- **`Logger`**: A utility from `Logger.ts` used for logging debug information.
+
+## Symbols
+
+### `CopilotLanguageServerClient`
+#### Description
+The `CopilotLanguageServerClient` class is a specialized client for interacting with a Copilot language server. It extends the `LanguageServerClient` to provide additional functionality specific to Copilot, such as handling document events, managing authentication, and processing code completions.
+
+#### Inputs
+- **Constructor**: Inherits inputs from `LanguageServerClient`, typically including server connection details.
+
+#### Outputs
+- Various methods return promises that resolve to specific types defined in `LSPRequestMap`.
+
+#### Internal Logic
+- **Document Events**: Overrides methods like `textDocumentDidOpen`, `textDocumentCompletion`, `textDocumentDidChange`, and `textDocumentHover` to include checks for whether Copilot is enabled.
+- **Authentication**: Methods like `signInInitiate`, `signInConfirm`, and `signOut` handle user authentication with the Copilot server.
+- **Completions**: Methods like `getCompletion`, `acceptCompletion`, and `rejectCompletions` manage code completion requests and responses.
+
+### `LSPRequestMap`
+#### Description
+The `LSPRequestMap` interface defines a mapping between request method names and their corresponding parameter and return types. This is used to ensure type safety when making requests to the language server.
+
+#### Inputs
+- **Method**: A string key representing the request method.
+- **Params**: The parameters required for the request, as defined in the map.
+
+#### Outputs
+- **Return Type**: The expected return type for the request, as defined in the map.
+
+## Side Effects
+
+- **State Management**: The `CopilotLanguageServerClient` interacts with the global state to check if Copilot is enabled.
+- **Document Versioning**: The `textDocumentDidChange` method increments the document version, affecting how changes are tracked.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vscode-languageserver-protocol` | Provides types for LSP communication. |
+| `codemirror-languageserver` | Base class for language server clients. |
+| `./types` | Defines types specific to Copilot requests and responses. |
+| `./state` | Provides functions to check Copilot's enabled state. |
+| `./getCodes` | Utility for processing code from editor views. |
+| `@/utils/Logger` | Logging utility for debugging. |
+
+## Error Handling
+
+- The code does not explicitly handle errors beyond basic promise rejection. It relies on the underlying `LanguageServerClient` for error management.
+
+## Logging
+
+- The `Logger` utility is used in the `signedIn` method to log the status and user information when checking if the user is signed in.
+
+## TODOs
+
+- The `getCodes` function mentions a TODO about sorting import statements topologically, which could improve the quality of code suggestions from Copilot.

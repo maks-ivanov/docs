@@ -1,0 +1,105 @@
+---
+title: "test_autoreload.py"
+---
+
+## High-level description
+
+The target file `test_autoreload.py` contains unit tests for the autoreloading functionality of Python modules. It tests the ability of the `ModuleReloader` to reload modules when their source code changes, including handling errors and syntax issues. Additionally, it tests the `ModuleDependencyFinder` to ensure it correctly identifies module dependencies and manages caching.
+
+## Code Structure
+
+The main symbols in the code are the test functions and the `TestModuleDependencyFinder` class. The test functions (`test_reload_function`, `test_reload_module_with_error`, `test_reload_module_with_syntax_error`) are responsible for testing the `ModuleReloader` class, while the `TestModuleDependencyFinder` class tests the `ModuleDependencyFinder` class. These tests rely on the `update_file` utility function to simulate changes in module files.
+
+## References
+
+- `ModuleReloader` and `ModuleDependencyFinder` are imported from `marimo._runtime.reload.autoreload`.
+- `update_file` is imported from `reload_test_utils`.
+
+## Symbols
+
+### `test_reload_function`
+#### Description
+Tests the basic functionality of the `ModuleReloader` by checking if a module can be reloaded after its source code is modified.
+
+#### Inputs
+| Name     | Type           | Description                  |
+|:---------|:---------------|:-----------------------------|
+| `tmp_path` | `pathlib.Path` | Temporary directory for test files. |
+| `py_modname` | `str`         | Name of the Python module to test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Adds the temporary path to `sys.path`.
+2. Creates a Python file with a simple function.
+3. Imports the module and verifies the function's output.
+4. Modifies the function in the file and reloads the module.
+5. Asserts that the function's output reflects the changes.
+
+### `test_reload_module_with_error`
+#### Description
+Tests the `ModuleReloader`'s behavior when a module contains an import error after modification.
+
+#### Inputs
+| Name     | Type           | Description                  |
+|:---------|:---------------|:-----------------------------|
+| `tmp_path` | `pathlib.Path` | Temporary directory for test files. |
+| `py_modname` | `str`         | Name of the Python module to test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Similar setup as `test_reload_function`.
+2. Modifies the module to include an import error.
+3. Reloads the module and checks that it is marked as failed.
+4. Verifies that the module is still in `sys.modules` but is essentially empty.
+
+### `test_reload_module_with_syntax_error`
+#### Description
+Tests the `ModuleReloader`'s behavior when a module contains a syntax error after modification.
+
+#### Inputs
+| Name     | Type           | Description                  |
+|:---------|:---------------|:-----------------------------|
+| `tmp_path` | `pathlib.Path` | Temporary directory for test files. |
+| `py_modname` | `str`         | Name of the Python module to test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Similar setup as `test_reload_function`.
+2. Modifies the module to include a syntax error.
+3. Reloads the module and checks that it is marked as failed.
+4. Verifies that the module is still in `sys.modules` but is essentially empty.
+
+### `TestModuleDependencyFinder`
+#### Description
+Contains tests for the `ModuleDependencyFinder` class to ensure it correctly identifies and caches module dependencies.
+
+#### Internal Logic
+- `test_dependencies_isolated`: Verifies that dependencies are correctly identified for different modules.
+- `test_dependencies_cached`: Tests the caching mechanism of the `ModuleDependencyFinder`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `importlib` | Used for importing modules dynamically. |
+| `pathlib` | Provides an object-oriented interface for filesystem paths. |
+| `sys` | Accesses system-specific parameters and functions. |
+| `textwrap` | Used for dedenting multi-line strings. |
+
+## Error Handling
+
+The tests implicitly check error handling by verifying the behavior of `ModuleReloader` when modules contain import or syntax errors. The `ModuleReloader` maintains a list of failed modules and ensures they are not reloaded until fixed.
+
+## Logging
+
+The `ModuleReloader` uses a logger to debug messages, particularly when reloading modules. However, the tests do not directly interact with the logging mechanism.
+
+## TODOs
+
+There are no explicit TODOs in the target file.

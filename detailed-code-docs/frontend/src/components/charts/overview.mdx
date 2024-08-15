@@ -1,0 +1,94 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `chart-skeleton.tsx` file defines a React component named `ChartSkeleton` that generates a placeholder chart with animated bars. This component is used to display a loading state for charts by creating a series of bars with random heights, which are deterministically generated based on a provided seed value.
+
+## Code Structure
+
+The main symbols in the code are the `ChartSkeleton` React component and two utility functions: `hashString` and `generateHeights`. The `ChartSkeleton` component uses these utility functions to create a visual representation of a chart skeleton with animated bars.
+
+## Symbols
+
+### `hashString`
+#### Description
+A simple hash function that converts a string into a numeric hash value. This is used to ensure that the random heights generated for the bars are consistent for the same seed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| str  | string | The input string to be hashed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hash | number | A 32-bit integer hash of the input string. |
+
+#### Internal Logic
+- Initializes a hash value to 0.
+- Iterates over each character in the string, updating the hash using bitwise operations.
+- Converts the hash to a 32-bit integer using `Math.trunc`.
+
+### `generateHeights`
+#### Description
+Generates an array of random heights for bars in a chart, based on a seed value. This ensures that the heights are deterministic and consistent for the same seed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| numBars   | number | The number of bars to generate heights for. |
+| maxHeight | number | The maximum possible height for any bar. |
+| seed      | string | A seed value to ensure deterministic random generation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| heights | number[] | An array of heights for the bars. |
+
+#### Internal Logic
+- Converts the seed string into a numeric hash using `hashString`.
+- Iteratively generates a pseudo-random number for each bar using a linear congruential generator formula.
+- Scales the random number to the maximum height and stores it in the heights array.
+
+### `ChartSkeleton`
+#### Description
+A React functional component that renders a skeleton chart with animated bars. It is used as a placeholder while the actual chart data is being loaded.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| seed   | string | A seed value to generate deterministic bar heights. |
+| width  | number | The total width of the chart. |
+| height | number | The total height of the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | A div containing animated bar elements. |
+
+#### Internal Logic
+- Calculates the number of bars and their width.
+- Uses `generateHeights` to get the heights of the bars.
+- Renders a div with a series of child divs, each representing a bar with a specific height and width, styled to animate with a pulse effect.
+
+## References
+
+- The `ChartSkeleton` component is used in the `TableColumnSummary` component from the related file `column-summary.tsx`. It serves as a fallback UI while the actual chart is being loaded asynchronously.
+
+## Dependencies
+
+No external libraries or modules are directly imported in this file, aside from React.
+
+## Error Handling
+
+There is no explicit error handling in this code. The functions assume valid input types and do not handle potential errors such as invalid seed values or negative dimensions.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The `ChartSkeleton` component does not expose any API endpoints or interfaces beyond its React component props. It is used internally within the application to provide a visual loading state.

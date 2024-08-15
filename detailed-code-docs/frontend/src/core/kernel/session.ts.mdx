@@ -1,0 +1,99 @@
+---
+title: "session.ts"
+---
+
+## High-level description
+
+The `session.ts` file is responsible for managing session identifiers within a web application. It provides functionality to generate, validate, and retrieve session IDs, which are used to track user sessions. The session ID is either extracted from the URL or generated anew if not present, and it is used to maintain session continuity across page reloads.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `generateSessionId`: Generates a new session ID.
+- `isSessionId`: Validates whether a given string is a session ID.
+- `sessionId`: A self-invoking function that retrieves or generates a session ID.
+- `getSessionId`: Returns the current session ID.
+
+## Symbols
+
+### `generateSessionId`
+#### Description
+Generates a new session ID prefixed with "s_" followed by a unique identifier of length 6.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sessionId | `SessionId` | A newly generated session ID. |
+
+#### Internal Logic
+- Uses the `createId` function initialized with a length of 6 to generate a unique identifier.
+- Prefixes the generated ID with "s_" and casts it to the `SessionId` type.
+
+### `isSessionId`
+#### Description
+Checks if a given string is a valid session ID.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | `string \| null` | The string to validate as a session ID. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isValid | `boolean` | `true` if the string is a valid session ID, otherwise `false`. |
+
+#### Internal Logic
+- Returns `false` if the input is `null`.
+- Uses a regular expression to check if the string matches the pattern of a session ID.
+
+### `sessionId`
+#### Description
+A self-invoking function that retrieves the session ID from the URL or generates a new one if not present.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sessionId | `SessionId` | The current session ID. |
+
+#### Internal Logic
+- Parses the current URL to extract the session ID using `KnownQueryParams.sessionId`.
+- Validates the extracted ID using `isSessionId`.
+- If valid, removes the session ID from the URL unless in kiosk mode.
+- Logs the session connection status using `Logger`.
+- If no valid session ID is found, generates a new one using `generateSessionId`.
+
+### `getSessionId`
+#### Description
+Returns the current session ID, either retrieved from the URL or newly generated.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| sessionId | `SessionId` | The current session ID. |
+
+## References
+
+- `TypedString` from `@/utils/typed`: Used to define the `SessionId` type.
+- `updateQueryParams` from `@/utils/urls`: Used to modify URL query parameters.
+- `Logger` from `@/utils/Logger`: Used for logging session-related messages.
+- `KnownQueryParams` from `../constants`: Provides constants for known query parameters.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@paralleldrive/cuid2` | Used to generate unique identifiers for session IDs. |
+
+## Side Effects
+
+- Modifies the browser's URL by removing the session ID if not in kiosk mode.
+- Logs messages to the console using the `Logger`.
+
+## Error Handling
+
+The code does not explicitly handle errors but relies on the validation logic in `isSessionId` to ensure that only valid session IDs are processed.
+
+## Logging
+
+The `Logger` is used to log debug messages about session creation and connection status.

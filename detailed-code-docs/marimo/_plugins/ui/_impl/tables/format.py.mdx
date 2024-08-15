@@ -1,0 +1,115 @@
+---
+title: "format.py"
+---
+
+## High-level description
+
+The target file, `format.py`, is part of the Marimo UI plugin implementation for table formatting. It provides utility functions to format table data based on a specified mapping. The main functionality includes formatting individual values, entire rows, or columns of data using either string format templates or callable functions defined in a format mapping.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `FormatMapping`: A type alias for a dictionary that maps column names to either string format templates or callable functions.
+- `format_value`: A function that formats a single value based on the column name and the format mapping.
+- `format_row`: A function that applies formatting to each value in a dictionary representing a row of data.
+- `format_column`: A function that applies formatting to each value in a list representing a column of data.
+
+## Symbols
+
+### `FormatMapping`
+#### Description
+`FormatMapping` is a type alias for a dictionary that maps column names to either string format templates or callable functions. It is used to define how each column's data should be formatted.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | str | The column name. |
+| value | Union[str, Callable[..., JSONType]] | A string format template or a callable function for formatting. |
+
+#### Outputs
+N/A
+
+### `format_value`
+#### Description
+Formats a single value based on the column name and the format mapping. If a formatter is defined for the column, it applies the formatter to the value.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| col | str | The column name. |
+| value | JSONType | The value to be formatted. |
+| format_mapping | FormatMapping | The mapping defining how to format values. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted_value | JSONType | The formatted value. |
+
+#### Internal Logic
+- Checks if the `format_mapping` or `value` is `None` and returns the value as is if true.
+- Retrieves the formatter for the column from the `format_mapping`.
+- If the formatter is a string, it uses the `str.format` method.
+- If the formatter is callable, it calls the function with the value.
+- Returns the formatted value or the original value if no formatter is found.
+
+### `format_row`
+#### Description
+Applies formatting to each value in a dictionary representing a row of data using the provided format mapping.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| row | Dict[str, JSONType] | The row data as a dictionary. |
+| format_mapping | FormatMapping | The mapping defining how to format values. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted_row | Dict[str, JSONType] | The row with formatted values. |
+
+#### Internal Logic
+- Checks if the `format_mapping` is `None` and returns the row as is if true.
+- Iterates over each column-value pair in the row.
+- Applies `format_value` to each value using the column name and format mapping.
+- Returns a new dictionary with formatted values.
+
+### `format_column`
+#### Description
+Applies formatting to each value in a list representing a column of data using the provided format mapping.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| col | str | The column name. |
+| values | List[JSONType] | The list of values in the column. |
+| format_mapping | FormatMapping | The mapping defining how to format values. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted_values | List[JSONType] | The list of formatted values. |
+
+#### Internal Logic
+- Checks if the `format_mapping` is `None` and returns the values as is if true.
+- Iterates over each value in the list.
+- Applies `format_value` to each value using the column name and format mapping.
+- Returns a new list with formatted values.
+
+## References
+
+- `JSONType`: A type alias from `marimo._plugins.core.web_component` that represents JSON-serializable types.
+- `format_value`, `format_row`, `format_column`: These functions are used in other parts of the codebase, such as in `DefaultTableManager` and various table manager classes, to apply formatting to table data.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._plugins.core.web_component` | Provides the `JSONType` type alias used for type annotations. |
+
+## Error Handling
+
+The functions in this file do not explicitly handle errors beyond checking for `None` values. They assume that the format mapping and values are valid and that any callable in the format mapping can handle the provided values.
+
+## Logging
+
+There is no logging implemented in this code.

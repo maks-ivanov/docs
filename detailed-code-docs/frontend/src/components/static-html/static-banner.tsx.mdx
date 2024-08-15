@@ -1,0 +1,81 @@
+---
+title: "static-banner.tsx"
+---
+
+## High-level description
+
+The `static-banner.tsx` file defines a React component, `StaticBanner`, which is used to display a banner in a static Python notebook built using Marimo. This banner provides information about the notebook and offers options to run or edit the notebook, either by downloading the code or using a WebAssembly link.
+
+## Code Structure
+
+The main symbols in the code are the `StaticBanner` component and the `StaticBannerDialog` component. The `StaticBanner` component checks if the current notebook is static and retrieves the Marimo code. If these conditions are met, it renders a banner with a dialog trigger. The `StaticBannerDialog` component is responsible for rendering the dialog that provides options to copy or download the notebook code and offers instructions for running or editing the notebook.
+
+## References
+
+- `isStaticNotebook` from `static-state.ts`: Determines if the current notebook is static.
+- `getMarimoCode` from `marimo-tag.ts`: Retrieves the Marimo code from the DOM.
+- `getFilenameFromDOM` from `htmlUtils.ts`: Gets the filename of the notebook from the DOM.
+- `createShareableLink` from `share.ts`: Creates a shareable WebAssembly link for the notebook.
+- `downloadBlob` from `download.ts`: Handles downloading the notebook code as a file.
+- `toast` from `use-toast.ts`: Displays a toast notification when the code is copied to the clipboard.
+
+## Symbols
+
+### `StaticBanner`
+#### Description
+The `StaticBanner` component checks if the current notebook is static and retrieves the Marimo code. If both conditions are met, it renders a banner with a message and a dialog trigger for further actions.
+
+#### Inputs
+None directly, but it relies on global state and DOM elements.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | The rendered banner component if conditions are met, otherwise `null`. |
+
+#### Internal Logic
+- Checks if the notebook is static using `isStaticNotebook`.
+- Retrieves the Marimo code using `getMarimoCode`.
+- If both checks pass, renders a banner with a message and a `StaticBannerDialog` component.
+
+### `StaticBannerDialog`
+#### Description
+The `StaticBannerDialog` component renders a dialog that provides options to copy or download the notebook code and offers instructions for running or editing the notebook.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | string | The Marimo code to be displayed and manipulated in the dialog. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | The rendered dialog component. |
+
+#### Internal Logic
+- Retrieves the filename from the DOM using `getFilenameFromDOM`.
+- Creates a shareable WebAssembly link using `createShareableLink`.
+- Renders a dialog with instructions for running or editing the notebook.
+- Provides buttons to copy the code to the clipboard and download it as a file.
+- Uses `toast` to notify the user when the code is copied.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Used for creating React components. |
+| `lucide-react` | Provides icons used in the UI. |
+| `@radix-ui/react-dialog` | Used for creating dialog components. |
+
+## Error Handling
+
+- The `getMarimoCode` function uses `invariant` to ensure the presence of the `marimo-code` tag, throwing an error if not found.
+- The `getFilenameFromDOM` function uses `assertExists` to ensure the presence of the `marimo-filename` tag, throwing an error if not found.
+
+## Logging
+
+- The `toast` function is used to display notifications, such as when the code is copied to the clipboard.
+
+## TODOs
+
+No TODOs are present in the code.

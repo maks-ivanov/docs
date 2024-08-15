@@ -1,0 +1,59 @@
+---
+title: "actions.ts"
+---
+
+## High-level description
+
+The target file, `actions.ts`, defines a function `notebookScrollToRunning` that is responsible for scrolling to the first cell in a notebook that is currently in the "running" state. This function interacts with the application's state management system to identify the running cell and then uses a utility function to scroll and highlight it.
+
+## Code Structure
+
+The main function in this file, `notebookScrollToRunning`, interacts with the global state managed by Jotai to retrieve the current state of notebook cells. It utilizes utility functions from other modules to perform its operations, specifically to find and highlight the running cell.
+
+## References
+
+- `store` from `../state/jotai`: Used to access the global state of the application.
+- `Objects` from `@/utils/objects`: Provides utility functions for object manipulation.
+- `notebookAtom` from `./cells`: Represents the state of the notebook, including cell runtime information.
+- `scrollAndHighlightCell` from `@/components/editor/links/cell-link`: Used to scroll to and highlight a specific cell.
+
+## Symbols
+
+### `notebookScrollToRunning`
+#### Description
+The `notebookScrollToRunning` function is designed to locate the first cell in a notebook that is currently executing ("running") and scroll to it, highlighting the cell in the process. This is useful for users to quickly navigate to the active cell in a potentially large notebook.
+
+#### Inputs
+This function does not take any direct inputs. It operates on the global state of the application.
+
+#### Outputs
+This function does not return any outputs. It performs actions that affect the UI by scrolling and highlighting a cell.
+
+#### Internal Logic
+1. **Retrieve Notebook State**: The function accesses the global state using `store.get(notebookAtom)` to obtain the current runtime state of all cells in the notebook.
+2. **Find Running Cell**: It uses `Objects.entries` to iterate over the cell runtime states and identifies the first cell with a status of "running".
+3. **Scroll and Highlight**: If a running cell is found, it calls `scrollAndHighlightCell` with the cell's ID and a focus mode to scroll to and highlight the cell.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Manages global state for the application. |
+| `@/utils/objects` | Provides utility functions for object manipulation. |
+| `@/components/editor/links/cell-link` | Contains functions for scrolling and highlighting cells. |
+
+## Error Handling
+
+The function includes a simple check to return early if no running cell is found, preventing any further actions or errors related to undefined cell states.
+
+## Side Effects
+
+The function affects the UI by scrolling to and highlighting a cell, which is a side effect of its operation on the global state.
+
+## Logging
+
+There is no explicit logging in this function. However, it relies on the state management and utility functions, which may have their own logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

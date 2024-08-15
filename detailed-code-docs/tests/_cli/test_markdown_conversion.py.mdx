@@ -1,0 +1,100 @@
+---
+title: "test_markdown_conversion.py"
+---
+
+## High-level description
+
+The `test_markdown_conversion.py` file is a test suite designed to validate the functionality of converting Python scripts to Markdown and vice versa using the Marimo library. It includes tests for snapshot comparison, idempotency of conversions, handling of frontmatter in Markdown, and code injection scenarios. The tests ensure that the conversion processes are accurate and that the resulting outputs are consistent with expected results.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `convert_from_md` and `convert_from_py` are utility functions used to convert Markdown to Python and Python to Markdown, respectively.
+- `sanitized_version` is a helper function to replace the version number in outputs for consistency.
+- The test functions (`test_markdown_snapshots`, `test_idempotent_markdown_to_marimo`, `test_markdown_frontmatter`, `test_markdown_just_frontmatter`, `test_markdown_empty`, `test_python_to_md_code_injection`, `test_md_to_python_code_injection`) use these utilities to perform various checks and assertions.
+
+## References
+
+- `convert_from_md` and `convert_from_py` reference functions from the Marimo library for conversion tasks.
+- `snapshotter` from `tests/mocks.py` is used for snapshot testing.
+
+## Symbols
+
+### `sanitized_version`
+#### Description
+Replaces the version number in a given output string with a placeholder version "0.0.0" to ensure consistency across tests.
+
+#### Inputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| output | str  | The output string to sanitize. |
+
+#### Outputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| output | str  | The sanitized output string. |
+
+### `convert_from_py`
+#### Description
+Converts a Python script to Markdown by writing the script to a temporary file and using the `export_as_md` function from the Marimo library.
+
+#### Inputs
+| Name | Type | Description          |
+|:-----|:-----|:---------------------|
+| py   | str  | The Python script to convert. |
+
+#### Outputs
+| Name  | Type | Description          |
+|:------|:-----|:---------------------|
+| output | str  | The converted Markdown output. |
+
+#### Internal Logic
+- Writes the Python script to a temporary file.
+- Uses `export_as_md` to convert the script to Markdown.
+- Cleans up the temporary file after conversion.
+
+### `test_markdown_snapshots`
+#### Description
+Tests the conversion of Python scripts to Markdown and compares the output against stored snapshots to ensure consistency.
+
+### `test_idempotent_markdown_to_marimo`
+#### Description
+Tests the idempotency of converting Markdown to Python and back to Markdown, ensuring the process is reversible without loss of information.
+
+### `test_markdown_frontmatter`
+#### Description
+Tests the handling of frontmatter in Markdown, ensuring that metadata is correctly converted to Python.
+
+### `test_markdown_just_frontmatter`
+#### Description
+Tests the conversion of Markdown containing only frontmatter, ensuring metadata is correctly processed.
+
+### `test_markdown_empty`
+#### Description
+Tests the conversion of an empty Markdown string, ensuring it results in an empty output.
+
+### `test_python_to_md_code_injection`
+#### Description
+Tests the conversion of Python scripts with complex code blocks to Markdown, ensuring no code injection vulnerabilities exist.
+
+### `test_md_to_python_code_injection`
+#### Description
+Tests the conversion of Markdown with potentially malicious content to Python, ensuring no code injection vulnerabilities exist.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for running the test suite. |
+
+## Error Handling
+
+- The tests use assertions to validate expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual results.
+
+## Logging
+
+- The `snapshotter` function prints messages when snapshots are updated, providing feedback during test execution.
+
+## TODOs
+
+- There is a TODO comment in the related `markdown.py` file suggesting the consideration of upstreaming some logic to avoid hacks in the current implementation. This indicates potential future improvements in the conversion logic.

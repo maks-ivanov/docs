@@ -1,0 +1,94 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file, `utils.ts`, provides utility functions for handling code transformations and manipulations within a CodeMirror editor environment. These functions are specifically designed to work with a language adapter, allowing the conversion of editor content to and from Python code, as well as splitting the editor content at a specified cursor position.
+
+## Code Structure
+
+The main symbols in the code are interconnected through their use of the `languageAdapterState` to perform language-specific transformations. The functions `getEditorCodeAsPython`, `updateEditorCodeFromPython`, and `splitEditor` all rely on this state to adapt the editor's content to Python or from Python, depending on the context.
+
+## Symbols
+
+### `getEditorCodeAsPython`
+#### Description
+This function retrieves the content of the editor and transforms it into Python code using the current language adapter. It can handle partial content by specifying start and end positions.
+
+#### Inputs
+| Name   | Type         | Description                                      |
+|:-------|:-------------|:-------------------------------------------------|
+| editor | object       | An object containing the editor's state.         |
+| fromPos| number (optional) | The starting position for the slice.         |
+| toPos  | number (optional) | The ending position for the slice.           |
+
+#### Outputs
+| Name         | Type   | Description                                      |
+|:-------------|:-------|:-------------------------------------------------|
+| pythonCode   | string | The transformed Python code from the editor text.|
+
+#### Internal Logic
+- Retrieves the language adapter from the editor's state.
+- Converts the entire document or a specified slice to a string.
+- Uses the language adapter to transform the text to Python code.
+
+### `updateEditorCodeFromPython`
+#### Description
+This function updates the editor's content with Python code, transforming it to the editor's current language using the language adapter.
+
+#### Inputs
+| Name      | Type       | Description                                      |
+|:----------|:-----------|:-------------------------------------------------|
+| editor    | EditorView | The CodeMirror editor view instance.             |
+| pythonCode| string     | The Python code to be inserted into the editor.  |
+
+#### Outputs
+| Name         | Type   | Description                                      |
+|:-------------|:-------|:-------------------------------------------------|
+| code         | string | The transformed code inserted into the editor.   |
+
+#### Internal Logic
+- Retrieves the language adapter from the editor's state.
+- Transforms the Python code into the editor's current language.
+- Dispatches changes to update the editor's document with the transformed code.
+
+### `splitEditor`
+#### Description
+This function splits the editor's content into two parts at the cursor position, returning the content before and after the cursor as Python code.
+
+#### Inputs
+| Name   | Type       | Description                                      |
+|:-------|:-----------|:-------------------------------------------------|
+| editor | EditorView | The CodeMirror editor view instance.             |
+
+#### Outputs
+| Name             | Type   | Description                                      |
+|:-----------------|:-------|:-------------------------------------------------|
+| splitContent     | object | An object containing `beforeCursorCode` and `afterCursorCode` as Python code. |
+
+#### Internal Logic
+- Determines the cursor position and checks if it is at the start or end of a line.
+- Adjusts the cursor position if necessary.
+- Uses `getEditorCodeAsPython` to retrieve the content before and after the cursor.
+- Returns the split content as Python code.
+
+## References
+
+- `languageAdapterState`: This state is used to access the current language adapter, which is crucial for transforming code between different languages.
+- `EditorView` and `EditorState` from CodeMirror: These are used to interact with the editor's content and state.
+
+## Dependencies
+
+| Dependency       | Purpose                                                  |
+|:-----------------|:---------------------------------------------------------|
+| `@codemirror/view` | Provides the `EditorView` type for interacting with the editor. |
+| `@codemirror/state`| Provides the `EditorState` type for accessing the editor's state. |
+
+## Error Handling
+
+The functions assume that the language adapter and editor state are correctly configured. There is no explicit error handling for cases where the language adapter might not support certain transformations.
+
+## Logging
+
+There is no logging implemented in this code.

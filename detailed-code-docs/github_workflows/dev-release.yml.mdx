@@ -1,0 +1,60 @@
+---
+title: "dev-release.yml"
+---
+
+## High-level description
+
+The `dev-release.yml` file is a GitHub Actions workflow configuration designed to automate the process of publishing a development release of a project to Test PyPI and npm. This workflow is triggered by pushes to the `main` branch and involves several steps, including setting up the environment, building the project, patching version numbers, and uploading the build artifacts to the respective package registries.
+
+## Code Structure
+
+The workflow is structured into a series of jobs and steps that are executed sequentially. The main job, `publish_dev_release`, includes steps for canceling previous runs, checking out the repository, setting up necessary environments for Node.js and Python, building the frontend and backend components, patching version numbers, and publishing the artifacts to Test PyPI and npm. Each step is defined with specific actions or shell commands to achieve its purpose.
+
+## Symbols
+
+### `publish_dev_release`
+#### Description
+This job is responsible for executing the entire process of publishing a development release. It runs on the latest Ubuntu environment and includes multiple steps to prepare, build, and publish the project.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | This job does not take direct inputs but relies on the environment and repository state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | This job does not produce direct outputs but results in published packages on Test PyPI and npm. |
+
+#### Internal Logic
+- **Cancel Previous Runs**: Uses the `styfle/cancel-workflow-action` to cancel any previous runs of the workflow that are still in progress.
+- **Checkout Repository**: Uses `actions/checkout` to clone the repository with full history to access version tags.
+- **Setup Node.js and Python**: Configures the environment with specific versions of Node.js and Python, including caching dependencies.
+- **Build Frontend and Backend**: Executes build commands for both frontend and backend components using `make` and `uv` commands.
+- **Patch Version Number**: Increments the patch version number and appends the number of commits since the last tag to form a development version.
+- **Upload to Test PyPI and npm**: Uses `twine` to upload Python packages to Test PyPI and `npm` to publish JavaScript packages to npm.
+- **Comment on Pull Request**: Uses `actions/github-script` to comment on the associated pull request with a link to the development release.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `styfle/cancel-workflow-action` | Cancels previous workflow runs. |
+| `actions/checkout` | Checks out the repository code. |
+| `pnpm/action-setup` | Sets up pnpm for package management. |
+| `actions/setup-node` | Sets up Node.js environment. |
+| `actions/setup-python` | Sets up Python environment. |
+| `yezz123/setup-uv` | Sets up a virtual environment for Python. |
+| `actions/github-script` | Executes JavaScript code using the GitHub API. |
+
+## Error Handling
+
+The workflow includes basic error handling in the `Comment PR` step, where it tries to comment on a pull request and logs an error if it fails. The `continue-on-error: true` option allows the workflow to proceed even if this step encounters an error.
+
+## Logging
+
+The workflow uses console logging to provide feedback during the execution of the `Comment PR` step, particularly when no merged pull request is found or when an error occurs.
+
+## TODOs
+
+There are no explicit TODOs or notes left in the code.

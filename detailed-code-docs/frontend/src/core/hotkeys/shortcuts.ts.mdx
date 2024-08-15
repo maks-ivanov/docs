@@ -1,0 +1,78 @@
+---
+title: "shortcuts.ts"
+---
+
+## High-level description
+
+The `shortcuts.ts` file in the frontend core hotkeys module provides utility functions for handling keyboard shortcuts. It includes functionality to determine the platform (Mac or not) and to parse and evaluate keyboard shortcuts against keyboard events. This is essential for implementing platform-specific shortcut behavior and for checking if a particular keyboard event matches a defined shortcut.
+
+## Code Structure
+
+The file contains two main functions: `isPlatformMac` and `parseShortcut`. These functions are used to determine the platform and to parse keyboard shortcuts, respectively. The `isPlatformMac` function is used by other parts of the codebase to adjust behavior based on the operating system, while `parseShortcut` is used to evaluate if a keyboard event matches a specified shortcut.
+
+## References
+
+- `Logger`: Used for logging warnings when the `isPlatformMac` function is called without a `window` object.
+- `KeyboardEvent`: Used in the `parseShortcut` function to evaluate keyboard events.
+
+## Symbols
+
+### `isPlatformMac`
+#### Description
+Determines if the current platform is a Mac. This is useful for adjusting keyboard shortcuts and other platform-specific behaviors.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns `true` if the platform is Mac, otherwise `false`. |
+
+#### Internal Logic
+- Checks if the `window` object is defined to ensure the code is running in a browser environment.
+- Uses the `navigator` object to determine the platform, checking the `userAgentData` or `platform` property.
+- Tests the platform string for the presence of "mac" using a regular expression.
+
+### `parseShortcut`
+#### Description
+Parses a string representation of a keyboard shortcut and returns a function that checks if a given `KeyboardEvent` matches the shortcut.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| shortcut | string | A string representing the keyboard shortcut, e.g., "Ctrl-Shift-A". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| matcher | function | A function that takes a `KeyboardEvent` and returns `true` if the event matches the shortcut, otherwise `false`. |
+
+#### Internal Logic
+- Splits the shortcut string into individual keys.
+- Returns a function that iterates over the keys and checks if the corresponding properties on the `KeyboardEvent` are satisfied.
+- Ensures that no additional modifier keys are pressed unless specified in the shortcut.
+
+## Side Effects
+
+- The `isPlatformMac` function logs a warning if called without a `window` object.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `Logger`   | Used for logging warnings. |
+
+## Error Handling
+
+- The `isPlatformMac` function logs a warning if it is called in a non-browser environment (i.e., when `window` is undefined).
+
+## Logging
+
+- The `Logger` is used to log warnings in the `isPlatformMac` function when it is called without a `window` object.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

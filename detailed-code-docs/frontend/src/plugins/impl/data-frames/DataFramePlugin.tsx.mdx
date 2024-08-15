@@ -1,0 +1,110 @@
+---
+title: "DataFramePlugin.tsx"
+---
+
+## High-level description
+
+The `DataFramePlugin.tsx` file defines a React component and associated logic for a data frame plugin within a frontend application. This plugin allows users to interact with data frames by applying transformations, sorting, and viewing data in a tabular format. It provides a user interface for transforming data and optionally viewing the corresponding Python code for these transformations.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `DataFramePlugin`: The main plugin created using a builder pattern, which defines data schema, functions, and a renderer.
+- `DataFrameComponent`: A React component that renders the UI for the data frame, including tabs for transformations and code, and handles data fetching and state management.
+- `TransformPanel`: A component used within `DataFrameComponent` to manage and apply transformations to the data.
+- `CodePanel`: A component that displays the Python code representation of the applied transformations.
+
+## References
+
+- `useAsyncData`: A custom hook used for asynchronous data fetching.
+- `createPlugin`: A utility function for creating plugins with specific data schemas and functions.
+- `rpc`: A utility for defining remote procedure call (RPC) functions with input and output validation using Zod schemas.
+
+## Symbols
+
+### `DataFramePlugin`
+#### Description
+The `DataFramePlugin` is a plugin created using a builder pattern that defines the data schema, functions, and renderer for a data frame. It allows users to interact with data frames by applying transformations and viewing data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| S | Transformations | The type of transformations that can be applied to the data frame. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Plugin | IPlugin | The constructed plugin with data schema, functions, and renderer. |
+
+### `DataFrameComponent`
+#### Description
+The `DataFrameComponent` is a React component that renders the user interface for interacting with a data frame. It includes tabs for transformations and code, and handles data fetching, state management, and user interactions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | DataTableProps | Properties including data, functions, and state management callbacks. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered component UI. |
+
+#### Internal Logic
+- Uses `useAsyncData` to fetch data asynchronously.
+- Manages internal state for transformations using `useState`.
+- Renders tabs for transformations and code, using `Tabs`, `TabsContent`, and `TabsTrigger`.
+- Handles user interactions for applying transformations and viewing code.
+
+### `TransformPanel`
+#### Description
+The `TransformPanel` is a component that provides a user interface for managing and applying transformations to a data frame. It allows users to add, remove, and configure transformations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| columns | ColumnDataTypes | The data types of columns in the data frame. |
+| initialValue | Transformations | The initial set of transformations. |
+| onChange | Function | Callback for when transformations change. |
+| onInvalidChange | Function | Callback for when invalid transformations are attempted. |
+| getColumnValues | Function | Function to fetch column values. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered panel UI. |
+
+### `CodePanel`
+#### Description
+The `CodePanel` is a component that displays the Python code representation of the transformations applied to the data frame. It provides a read-only view of the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dataframeName | string | The name of the data frame. |
+| transforms | Transformations | The transformations applied to the data frame. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered code panel UI. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for schema validation of data and function inputs/outputs. |
+| `@radix-ui/react-tabs` | Provides tab components for the UI. |
+| `lucide-react` | Provides icon components for the UI. |
+
+## Error Handling
+
+- The `useAsyncData` hook manages loading and error states for asynchronous data fetching.
+- The `ErrorBanner` component is used to display errors in the UI when data fetching fails.
+
+## Logging
+
+- Errors are logged using the `Logger` utility when they occur in the `ErrorBanner` component.
+
+## TODOs
+- No TODOs are present in the code.

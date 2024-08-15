@@ -1,0 +1,113 @@
+---
+title: "collapseConsoleOutputs.tsx"
+---
+
+## High-level description
+
+The `collapseConsoleOutputs` function in the `collapseConsoleOutputs.tsx` file is designed to process and optimize console output messages. It collapses consecutive plain text outputs on the same channel, handles carriage return characters, and truncates the output to a specified maximum number of lines. This function is particularly useful for managing large volumes of console output data efficiently.
+
+## Code Structure
+
+The main function, `collapseConsoleOutputs`, interacts with several helper functions: `shouldCollapse`, `handleCarriageReturns`, and `truncateHead`. These functions work together to process the console outputs by determining if outputs should be collapsed, handling special characters, and truncating the output to a manageable size.
+
+## Symbols
+
+### `collapseConsoleOutputs`
+#### Description
+The `collapseConsoleOutputs` function processes an array of console output messages, collapsing consecutive plain text outputs on the same channel, handling carriage return characters, and truncating the output to a specified maximum number of lines.
+
+#### Inputs
+| Name           | Type            | Description                                      |
+|:---------------|:----------------|:-------------------------------------------------|
+| consoleOutputs | `OutputMessage[]` | An array of console output messages to process.  |
+| maxLines       | `number`        | The maximum number of lines to retain in the output. Defaults to 5000. |
+
+#### Outputs
+| Name            | Type            | Description                                      |
+|:----------------|:----------------|:-------------------------------------------------|
+| `OutputMessage[]` | `OutputMessage[]` | The processed array of console output messages. |
+
+#### Internal Logic
+1. **Copy Outputs**: Creates a copy of the input array to avoid mutating the original data.
+2. **Collapse Outputs**: Checks if the last two outputs can be collapsed using the `shouldCollapse` function.
+3. **Handle Carriage Returns**: Processes the outputs to handle carriage return characters using `handleCarriageReturns`.
+4. **Truncate Outputs**: Limits the number of lines in the output using `truncateHead`.
+
+### `shouldCollapse`
+#### Description
+Determines if two consecutive console output messages should be collapsed based on their MIME type, channel, and whether they are not from the "stdin" channel.
+
+#### Inputs
+| Name             | Type          | Description                                      |
+|:-----------------|:--------------|:-------------------------------------------------|
+| lastOutput       | `OutputMessage` | The most recent console output message.          |
+| secondLastOutput | `OutputMessage` | The second most recent console output message.   |
+
+#### Outputs
+| Name   | Type      | Description                                      |
+|:-------|:----------|:-------------------------------------------------|
+| `boolean` | `boolean` | Returns `true` if the outputs should be collapsed, otherwise `false`. |
+
+#### Internal Logic
+- Checks if both outputs have the MIME type "text/plain".
+- Ensures both outputs are from the same channel and not from "stdin".
+
+### `handleCarriageReturns`
+#### Description
+Processes the console outputs to handle bare carriage return characters, ensuring that text is displayed correctly.
+
+#### Inputs
+| Name           | Type            | Description                                      |
+|:---------------|:----------------|:-------------------------------------------------|
+| consoleOutputs | `OutputMessage[]` | An array of console output messages to process.  |
+
+#### Outputs
+| Name            | Type            | Description                                      |
+|:----------------|:----------------|:-------------------------------------------------|
+| `OutputMessage[]` | `OutputMessage[]` | The processed array of console output messages with carriage returns handled. |
+
+#### Internal Logic
+- Iterates over the outputs, specifically handling the last output if it is of type "text/plain".
+- Uses a regular expression to find and process carriage return characters, adjusting the text accordingly.
+
+### `truncateHead`
+#### Description
+Truncates the console outputs to ensure that the total number of lines does not exceed a specified limit.
+
+#### Inputs
+| Name           | Type            | Description                                      |
+|:---------------|:----------------|:-------------------------------------------------|
+| consoleOutputs | `OutputMessage[]` | An array of console output messages to process.  |
+| limit          | `number`        | The maximum number of lines to retain.           |
+
+#### Outputs
+| Name            | Type            | Description                                      |
+|:----------------|:----------------|:-------------------------------------------------|
+| `OutputMessage[]` | `OutputMessage[]` | The truncated array of console output messages. |
+
+#### Internal Logic
+- Counts the number of lines in the outputs, starting from the end.
+- If the line count exceeds the limit, it truncates the outputs and adds a warning message.
+
+## References
+
+- The `OutputMessage` type is imported from `frontend/src/core/kernel/messages.ts`.
+- The `invariant` function is imported from `frontend/src/utils/invariant.ts` to ensure type safety and conditions.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `invariant` | Used to assert conditions and ensure type safety. |
+
+## Error Handling
+
+The code uses the `invariant` function to assert conditions and ensure that data types are as expected. If a condition fails, an error is thrown with a descriptive message.
+
+## Side Effects
+
+The function modifies the input array by creating a new array with potentially collapsed and truncated outputs, but it does not alter the original input array directly.
+
+## Performance Considerations
+
+The function is designed to handle large volumes of console output efficiently by collapsing redundant data and truncating excess lines, which can help manage memory usage and improve performance in scenarios with extensive console output.

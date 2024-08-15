@@ -1,0 +1,79 @@
+---
+title: "createWsUrl.ts"
+---
+
+## High-level description
+
+The `createWsUrl.ts` file defines a function `createWsUrl` that constructs a WebSocket URL based on the current document's base URI and a given session ID. This URL is used to establish a WebSocket connection, typically for real-time communication with a server. The function ensures the correct protocol (`ws` or `wss`) is used based on the current page's protocol and appends the session ID as a query parameter to the URL.
+
+## Code Structure
+
+The main function in this file is `createWsUrl`, which relies on a helper function `withoutTrailingSlash` to format the URL path correctly. The `createWsUrl` function also utilizes constants from the `KnownQueryParams` object, which is imported from another module.
+
+## References
+
+- `KnownQueryParams`: This is imported from `../constants` and provides a set of predefined query parameter keys, including `sessionId`, which is used in constructing the WebSocket URL.
+
+## Symbols
+
+### `createWsUrl`
+#### Description
+The `createWsUrl` function constructs a WebSocket URL using the current document's base URI and a provided session ID. It adjusts the protocol to `ws` or `wss` based on the current page's protocol and appends the session ID as a query parameter.
+
+#### Inputs
+| Name      | Type   | Description                  |
+|:----------|:-------|:-----------------------------|
+| sessionId | string | The session ID to be included in the WebSocket URL. |
+
+#### Outputs
+| Name | Type   | Description                  |
+|:-----|:-------|:-----------------------------|
+| url  | string | The constructed WebSocket URL. |
+
+#### Internal Logic
+1. Retrieve the base URI of the current document.
+2. Create a `URL` object from the base URI.
+3. Determine the WebSocket protocol (`ws` or `wss`) based on the current page's protocol (`http` or `https`).
+4. Set the URL's protocol to the determined WebSocket protocol.
+5. Adjust the URL's pathname to include `/ws`, ensuring no trailing slash using the `withoutTrailingSlash` helper function.
+6. Create a `URLSearchParams` object from the current window's location search parameters.
+7. Set the `sessionId` query parameter using the provided session ID.
+8. Convert the search parameters to a string and set it as the URL's search property.
+9. Return the complete URL as a string.
+
+### `withoutTrailingSlash`
+#### Description
+The `withoutTrailingSlash` function removes a trailing slash from a given URL string if it exists.
+
+#### Inputs
+| Name | Type   | Description                  |
+|:-----|:-------|:-----------------------------|
+| url  | string | The URL string to be processed. |
+
+#### Outputs
+| Name | Type   | Description                  |
+|:-----|:-------|:-----------------------------|
+| url  | string | The URL string without a trailing slash. |
+
+#### Internal Logic
+- Check if the URL string ends with a slash (`/`).
+- If it does, remove the trailing slash by slicing the string.
+- Return the modified URL string.
+
+## Dependencies
+
+| Dependency       | Purpose                                                                 |
+|:-----------------|:------------------------------------------------------------------------|
+| `KnownQueryParams` | Provides predefined query parameter keys, including `sessionId`, used in constructing the WebSocket URL. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the inputs are valid and that the environment provides the necessary objects and properties (e.g., `document.baseURI`, `window.location.search`).
+
+## Side Effects
+
+There are no side effects in this code. The function purely constructs and returns a URL string based on the inputs and current document state.
+
+## Logging
+
+The code does not implement any logging mechanisms.

@@ -1,0 +1,66 @@
+---
+title: "useAutoSave.ts"
+---
+
+## High-level description
+
+The `useAutoSave` function in the `useAutoSave.ts` file is a custom React hook designed to manage the automatic saving of data in a web application. It monitors changes in specific dependencies and triggers a save operation after a specified delay, provided certain conditions are met, such as the connection being open and the application not being in kiosk mode.
+
+## Code Structure
+
+The main symbol in this file is the `useAutoSave` function. It utilizes React's `useEffect` and `useRef` hooks to manage side effects and maintain a reference to a timeout ID, respectively. The function is dependent on several input parameters that dictate its behavior, such as the connection status, configuration settings, and whether a save is needed.
+
+## Symbols
+
+### `useAutoSave`
+#### Description
+The `useAutoSave` function is a React hook that automates the saving process of data. It checks if the application is in kiosk mode, and if not, it sets up a delayed save operation based on the user's configuration. The function ensures that the save operation is only triggered when necessary, such as when changes occur and the connection is open.
+
+#### Inputs
+| Name         | Type             | Description                                                                 |
+|:-------------|:-----------------|:----------------------------------------------------------------------------|
+| codes        | string[]         | Array of code strings that may need to be saved.                            |
+| cellConfigs  | CellConfig[]     | Array of cell configurations associated with the codes.                     |
+| cellNames    | string[]         | Array of cell names corresponding to the codes.                             |
+| config       | UserConfig       | User configuration settings, including autosave preferences.                |
+| connStatus   | ConnectionStatus | Current status of the WebSocket connection.                                 |
+| needsSave    | boolean          | Flag indicating whether there are unsaved changes.                          |
+| kioskMode    | boolean          | Flag indicating if the application is in kiosk mode, which disables autosave.|
+| onSave       | () =&gt; void       | Callback function to execute the save operation.                            |
+
+#### Outputs
+The `useAutoSave` function does not return any outputs. It operates through side effects.
+
+#### Internal Logic
+- The function uses `useEffect` to set up a side effect that monitors changes in the provided dependencies.
+- If the application is in kiosk mode, the function exits early, preventing any autosave actions.
+- If autosave is configured to occur "after_delay" and there are unsaved changes with an open connection, it sets a timeout to trigger the `onSave` callback after the specified delay.
+- The timeout is cleared and reset whenever the dependencies change, ensuring that the save operation is only executed after the latest changes.
+- The cleanup function within `useEffect` ensures that any pending timeouts are cleared when the component unmounts or dependencies change.
+
+## References
+
+- `WebSocketState` and `ConnectionStatus` from `../websocket/types` are used to determine the connection status.
+- `UserConfig` from `../config/config-schema` provides the configuration settings, including autosave preferences.
+- `CellConfig` from `../network/types` is used to define the structure of cell configurations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `useEffect` | React hook for performing side effects in function components. |
+| `useRef` | React hook for creating mutable object references that persist for the full lifetime of the component. |
+
+## Error Handling
+
+The function does not explicitly handle errors. It assumes that the provided inputs are valid and that the `onSave` function will handle any errors during the save operation.
+
+## Side Effects
+
+- The function modifies the state of the application by scheduling and potentially executing a save operation.
+- It interacts with the global state by checking the WebSocket connection status and user configuration settings.
+
+## Performance Considerations
+
+- The function efficiently manages the save operation by using a timeout, which prevents unnecessary saves and reduces the load on the system.
+- The use of `useEffect` ensures that the save operation is only triggered when necessary, based on changes in the dependencies.

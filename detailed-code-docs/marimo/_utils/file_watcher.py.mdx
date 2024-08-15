@@ -1,0 +1,102 @@
+---
+title: "file_watcher.py"
+---
+
+## High-level description
+
+The `file_watcher.py` module provides an abstraction for monitoring file changes in a filesystem. It defines a `FileWatcher` class that can be instantiated to watch a specific file and trigger a callback when the file is modified. The module supports two types of file watching mechanisms: using the `watchdog` library for real-time monitoring and a polling mechanism as a fallback when `watchdog` is not available.
+
+## Code Structure
+
+- **FileWatcher (Abstract Base Class)**: This is the main class that defines the interface for file watching. It includes methods for starting and stopping the watcher and a method to handle file changes.
+- **PollingFileWatcher (Subclass of FileWatcher)**: Implements file watching by periodically checking the file's last modified time.
+- **_create_watchdog (Function)**: A helper function that creates a `WatchdogFileWatcher` instance if the `watchdog` library is available.
+
+## References
+
+- **DependencyManager**: Used to check if the `watchdog` library is installed.
+- **LOGGER**: Used for logging debug and warning messages.
+
+## Symbols
+
+### `FileWatcher`
+#### Description
+`FileWatcher` is an abstract base class that defines the interface for file watching. It provides a static method to create a file watcher instance, which can be either a `WatchdogFileWatcher` or a `PollingFileWatcher` depending on the availability of the `watchdog` library.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | `Path` | The path of the file to watch. |
+| callback | `Callback` | A coroutine function to call when the file changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `FileWatcher` | An instance of a file watcher. |
+
+#### Internal Logic
+- The `create` method checks if the `watchdog` library is available using `DependencyManager`.
+- If available, it uses `_create_watchdog` to create a `WatchdogFileWatcher`.
+- Otherwise, it creates a `PollingFileWatcher`.
+
+### `PollingFileWatcher`
+#### Description
+`PollingFileWatcher` is a concrete implementation of `FileWatcher` that monitors file changes by periodically checking the file's last modified time.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | `Path` | The path of the file to watch. |
+| callback | `Callback` | A coroutine function to call when the file changes. |
+| loop | `asyncio.AbstractEventLoop` | The event loop to run the polling task. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This class does not return a value. |
+
+#### Internal Logic
+- The `start` method begins the polling process by creating an asynchronous task.
+- The `_poll` method runs in a loop, checking the file's last modified time every `POLL_SECONDS`.
+- If the file's modification time changes, it triggers the `on_file_changed` method.
+
+### `_create_watchdog`
+#### Description
+A helper function that creates a `WatchdogFileWatcher` instance using the `watchdog` library.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| path | `Path` | The path of the file to watch. |
+| callback | `Callback` | A coroutine function to call when the file changes. |
+| loop | `asyncio.AbstractEventLoop` | The event loop to run the task. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `FileWatcher` | An instance of `WatchdogFileWatcher`. |
+
+#### Internal Logic
+- Imports `watchdog` modules and defines a `WatchdogFileWatcher` class.
+- Sets up a `PatternMatchingEventHandler` to monitor file modifications.
+- Starts the `watchdog` observer to watch the file.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for asynchronous operations and event loop management. |
+| `os` | Used to check file existence and modification times. |
+| `watchdog` | Provides real-time file system monitoring capabilities. |
+
+## Error Handling
+
+- The `PollingFileWatcher` raises a `FileNotFoundError` if the file being watched does not exist.
+
+## Logging
+
+- The module uses a logger (`LOGGER`) to log debug and warning messages, such as when switching between file watching mechanisms or when a file does not exist.
+
+## TODOs
+
+- There are no explicit TODOs in the code, but potential improvements could include handling more file events (e.g., file deletion) and optimizing the polling interval based on file activity.

@@ -1,0 +1,73 @@
+---
+title: "documentation.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/endpoints/documentation.py`, defines an API endpoint for serving documentation snippets in a web application. It uses an asynchronous function to load and return snippets, which are pre-defined pieces of code or documentation, from a data source. The endpoint is part of a larger API routing system that organizes various endpoints for different functionalities.
+
+## Code Structure
+
+- **APIRouter**: This is a custom router class used to define and manage API routes. It is imported from `marimo._server.router`.
+- **Snippets**: A data structure representing a collection of documentation snippets, imported from `marimo._snippets.snippets`.
+- **read_snippets**: An asynchronous function that reads and returns snippets, also imported from `marimo._snippets.snippets`.
+- **LOGGER**: A logger instance for logging purposes, imported from `marimo._loggers`.
+
+## References
+
+- **APIRouter**: Used to define the `/snippets` endpoint.
+- **Snippets and read_snippets**: Used to manage and retrieve the documentation snippets.
+- **LOGGER**: Used for logging, though not actively used in the provided code snippet.
+
+## Symbols
+
+### `router`
+#### Description
+An instance of `APIRouter` used to define and manage API routes for the documentation endpoint.
+
+### `load_snippets`
+#### Description
+An asynchronous function that serves as an API endpoint to load and return documentation snippets. It checks if the snippets are already loaded and, if not, loads them using the `read_snippets` function.
+
+#### Inputs
+| Name    | Type    | Description                        |
+|:--------|:--------|:-----------------------------------|
+| request | Request | The HTTP request object (unused).  |
+
+#### Outputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| Snippets | Snippets | A collection of documentation snippets.          |
+
+#### Internal Logic
+1. The function first deletes the `request` parameter as it is not used.
+2. It checks if the `_SNIPPETS` list is empty.
+3. If `_SNIPPETS` is empty, it appends the result of `await read_snippets()` to `_SNIPPETS`.
+4. Returns the first element of `_SNIPPETS`.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `APIRouter` | Used to define and manage API routes.                                   |
+| `Snippets`  | Represents a collection of documentation snippets.                      |
+| `read_snippets` | Asynchronously reads and returns documentation snippets.            |
+| `LOGGER`    | Provides logging capabilities, though not actively used in this file.   |
+
+## API/Interface Reference
+
+| Endpoint   | Method | Request | Response | Description                                      |
+|:-----------|:-------|:--------|:---------|:-------------------------------------------------|
+| `/snippets`| GET    | None    | JSON     | Loads and returns documentation snippets.        |
+
+## Logging
+
+The `LOGGER` is initialized but not actively used in the provided code snippet. It is set up for potential logging needs.
+
+## Error Handling
+
+The code does not explicitly handle errors within the `load_snippets` function. It assumes that `read_snippets` will execute successfully. Error handling might be implemented in the `read_snippets` function or elsewhere in the application.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

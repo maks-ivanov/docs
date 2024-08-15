@@ -1,0 +1,107 @@
+---
+title: "mpl.py"
+---
+
+## High-level description
+
+The target file `marimo/_output/mpl.py` is a custom backend implementation for Matplotlib within the Marimo framework. It adapts the Matplotlib backend to integrate with Marimo's messaging and output system, allowing for the rendering and display of Matplotlib figures in a Marimo environment. The code handles the conversion of figures to a base64-encoded PNG format and broadcasts them through Marimo's messaging channels.
+
+## Code Structure
+
+The main components of the code are:
+- **FigureCanvas**: An alias for `FigureCanvasAgg`, which is used for rendering figures.
+- **Functions**: `close_figures`, `_internal_show`, and `show` are responsible for managing figure display and closure.
+- **Class**: `FigureManager` extends `FigureManagerBase` to customize the `show` method for Marimo's backend.
+
+## References
+
+- **CellChannel**: Used to specify the output channel for broadcasting figures.
+- **KnownMimeType**: Specifies the MIME type for the image data.
+- **CellOp**: Utilized to broadcast the console output of the figures.
+- **build_data_url**: A utility function to create data URLs for the image data.
+
+## Symbols
+
+### `close_figures`
+#### Description
+Closes all open Matplotlib figures managed by the global figure manager (`Gcf`).
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if there are any open figure managers using `Gcf.get_all_fig_managers()`.
+- Closes all figures using `plt.close("all")` if any are open.
+
+### `_internal_show`
+#### Description
+Handles the rendering and broadcasting of a Matplotlib figure to the Marimo console output.
+
+#### Inputs
+| Name   | Type              | Description                  |
+|:-------|:------------------|:-----------------------------|
+| canvas | FigureCanvasBase  | The canvas containing the figure to be displayed. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a `BytesIO` buffer to store the figure image.
+- Saves the figure as a PNG into the buffer.
+- Closes the figure to free resources.
+- Encodes the image data in base64.
+- Constructs a data URL using `build_data_url`.
+- Broadcasts the image data using `CellOp.broadcast_console_output` with the `MEDIA` channel.
+
+### `FigureManager`
+#### Description
+A custom figure manager that overrides the `show` method to use the `_internal_show` function for displaying figures.
+
+#### Inputs
+None (method `show` does not take inputs)
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `_internal_show` with the canvas associated with the figure manager.
+
+### `show`
+#### Description
+Displays all figures managed by the global figure manager (`Gcf`) using the custom `_internal_show` function.
+
+#### Inputs
+| Name  | Type          | Description                  |
+|:------|:--------------|:-----------------------------|
+| block | Optional[bool]| A placeholder parameter, not used in the function. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Iterates over all figure managers obtained from `Gcf.get_all_fig_managers()`.
+- Calls `_internal_show` for each manager's canvas.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `matplotlib.pyplot` | Used for closing figures and managing figure display. |
+| `matplotlib._pylab_helpers.Gcf` | Manages global figure managers. |
+| `matplotlib.backend_bases` | Provides base classes for figure canvas and manager. |
+| `matplotlib.backends.backend_agg.FigureCanvasAgg` | Used for rendering figures to a buffer. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the operations (e.g., saving figures, encoding data) will succeed under normal conditions.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+No TODOs or notes are present in the code.

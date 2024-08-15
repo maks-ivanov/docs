@@ -1,0 +1,59 @@
+---
+title: "auth.ts"
+---
+
+## High-level description
+
+The code in `frontend/src/core/network/auth.ts` is responsible for removing the `access_token` from the URL query parameters. This is achieved by using a utility function to update the query parameters, ensuring that sensitive information like access tokens is not exposed in the URL.
+
+## Code Structure
+
+The main function in this file, `cleanupAuthQueryParams`, utilizes the `updateQueryParams` function from the `urls.ts` utility file to manipulate the URL's query parameters. It specifically targets the `access_token` parameter, which is defined in the `KnownQueryParams` object from the `constants.ts` file.
+
+## References
+
+- `updateQueryParams`: A utility function from `urls.ts` used to modify URL query parameters.
+- `KnownQueryParams.accessToken`: A constant from `constants.ts` that specifies the key for the access token in the query parameters.
+
+## Symbols
+
+### `cleanupAuthQueryParams`
+#### Description
+The `cleanupAuthQueryParams` function is designed to remove the `access_token` from the URL's query parameters. This is important for security reasons, as it prevents the access token from being exposed in the URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not take any direct inputs. It operates on the current URL's query parameters. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not return any value. It performs an in-place update of the URL. |
+
+#### Internal Logic
+- The function calls `updateQueryParams`, passing a callback function that receives the current `URLSearchParams`.
+- Within the callback, it deletes the `access_token` parameter using `params.delete(KnownQueryParams.accessToken)`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `updateQueryParams` | Used to update the URL's query parameters. |
+| `KnownQueryParams` | Provides a constant for the `access_token` key. |
+
+## Error Handling
+
+The function does not implement any specific error handling. It assumes that the `updateQueryParams` function will handle any potential errors related to URL manipulation.
+
+## Side Effects
+
+- The function modifies the browser's URL by removing the `access_token` query parameter. This change is reflected in the browser's history state.
+
+## Logging
+
+There is no logging implemented in this function.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

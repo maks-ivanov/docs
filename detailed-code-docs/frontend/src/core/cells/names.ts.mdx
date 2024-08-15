@@ -1,0 +1,108 @@
+---
+title: "names.ts"
+---
+
+## High-level description
+
+The target file, `names.ts`, is part of a frontend codebase and is responsible for managing cell names within an application. It provides utilities to normalize cell names, ensure they are valid and unique, and display them appropriately. The file defines constants and functions to handle naming conventions, disallowed names, and default naming behaviors.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `DEFAULT_CELL_NAME` is a constant used as a fallback name for cells.
+- `DISALLOWED_NAMES` is a set of names that are not allowed for cells.
+- `normalizeName` is a function that processes a given name to make it valid according to certain rules.
+- `getValidName` is a function that ensures a given name is unique and not disallowed.
+- `displayCellName` is a function that formats the cell name for display purposes.
+
+## Symbols
+
+### `DEFAULT_CELL_NAME`
+#### Description
+A constant string used as the default name for cells when no specific name is provided or when a name is invalid.
+
+### `DISALLOWED_NAMES`
+#### Description
+A set of strings representing names that are not allowed for cells. This includes reserved words and specific application-related terms.
+
+### `normalizeName`
+#### Description
+This function takes a string and processes it to conform to a valid naming convention by removing spaces, special characters, and optionally converting it to lowercase.
+
+#### Inputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| name      | string  | The original name to be normalized.              |
+| lowercase | boolean | Optional flag to convert the name to lowercase.  |
+
+#### Outputs
+| Name  | Type   | Description                                      |
+|:------|:-------|:-------------------------------------------------|
+| name  | string | The normalized name, suitable for use as a cell name. |
+
+#### Internal Logic
+- Trims whitespace from the input name.
+- If the name is empty after trimming, returns `DEFAULT_CELL_NAME`.
+- If the name starts with a digit, prefixes it with an underscore.
+- Replaces all non-word characters with underscores.
+- Converts the name to lowercase if the `lowercase` flag is true.
+
+### `getValidName`
+#### Description
+Generates a valid and unique name for a cell by checking against existing names and disallowed names.
+
+#### Inputs
+| Name          | Type     | Description                                      |
+|:--------------|:---------|:-------------------------------------------------|
+| name          | string   | The desired name for the cell.                   |
+| existingNames | string[] | A list of names that are already in use.         |
+
+#### Outputs
+| Name   | Type   | Description                                      |
+|:-------|:-------|:-------------------------------------------------|
+| result | string | A valid and unique name for the cell.            |
+
+#### Internal Logic
+- Checks if the desired name is valid (not in `existingNames` or `DISALLOWED_NAMES`).
+- If valid, returns the name.
+- If not, appends a numeric suffix to the name and increments it until a valid name is found.
+
+### `displayCellName`
+#### Description
+Formats a cell name for display, using a default format if the name is the default cell name.
+
+#### Inputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| name      | string | The name of the cell.                            |
+| cellIndex | number | The index of the cell, used for default naming.  |
+
+#### Outputs
+| Name  | Type   | Description                                      |
+|:------|:-------|:-------------------------------------------------|
+| name  | string | The formatted name for display purposes.         |
+
+#### Internal Logic
+- Returns the cell name if it is not the default cell name.
+- If it is the default cell name, returns a formatted string using the cell index.
+
+## References
+
+- The `displayCellName` function is used in various components such as `CustomNode`, `CellLink`, and `ConsoleOutput` to format and display cell names.
+- The `normalizeName` and `getValidName` functions are used in components like `NameCellInput` to ensure cell names are valid and unique.
+
+## Dependencies
+
+No external libraries or modules are directly used in this file. However, the functions are utilized in various parts of the application, as seen in the related code snippets.
+
+## Error Handling
+
+The code does not explicitly handle errors but ensures that invalid or conflicting names are managed by returning default or modified names.
+
+## Logging
+
+There is no logging implemented in this file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

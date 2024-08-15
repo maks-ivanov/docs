@@ -1,0 +1,68 @@
+---
+title: "config.py"
+---
+
+## High-level description
+
+The target file `marimo/_server/api/endpoints/config.py` defines an API endpoint for saving user configuration settings in a server application. It uses the Starlette framework to handle HTTP POST requests to update user configurations both on disk and in the application's runtime environment. The endpoint is protected by an authentication requirement, ensuring that only users with the appropriate permissions can modify configurations.
+
+## Code Structure
+
+- The file imports several modules and classes, including logging utilities, request parsing utilities, and data models for handling requests and responses.
+- It defines a router using `APIRouter` to manage the endpoint.
+- The main function `save_user_config` is decorated to handle POST requests and requires authentication.
+
+## References
+
+- `marimo._loggers`: Provides logging capabilities.
+- `marimo._runtime.requests.SetUserConfigRequest`: A request model for setting user configurations.
+- `marimo._server.api.deps.AppState`: Manages application state and session information.
+- `marimo._server.api.utils.parse_request`: Utility function to parse incoming requests.
+- `marimo._server.models.models`: Contains data models for request and response handling.
+- `marimo._server.router.APIRouter`: Used to define and manage API routes.
+
+## Symbols
+
+### `save_user_config`
+#### Description
+Handles the `/save_user_config` POST endpoint to update user configuration settings. It ensures that the request is authenticated and processes the configuration update both in the server's runtime and the kernel.
+
+#### Inputs
+| Name    | Type    | Description                  |
+|:--------|:--------|:-----------------------------|
+| request | Request | The HTTP request object containing the user configuration data. |
+
+#### Outputs
+| Name           | Type          | Description                                      |
+|:---------------|:--------------|:-------------------------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful processing of the request. |
+
+#### Internal Logic
+1. **Authentication**: The function is decorated with `@requires("edit")`, ensuring that only authenticated users with "edit" permissions can access it.
+2. **Request Parsing**: Uses `parse_request` to parse the incoming request body into a `SaveUserConfigurationRequest` object.
+3. **Configuration Update**: 
+   - Updates the configuration using `app_state.config_manager.save_config`.
+   - If the configuration enables a "copilot" feature, it starts a server using `app_state.session_manager.start_lsp_server`.
+4. **Session Update**: 
+   - Retrieves the current session using `app_state.get_current_session`.
+   - Sends a `SetUserConfigRequest` to the session to update the kernel's view of the configuration.
+5. **Response**: Returns a `SuccessResponse` indicating the operation was successful.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.authentication.requires` | Ensures that the endpoint is accessed only by authenticated users with specific permissions. |
+| `marimo._loggers` | Provides logging functionality to track operations and debug information. |
+| `marimo._server.api.deps.AppState` | Manages application state and session information, crucial for handling configuration updates. |
+| `marimo._server.api.utils.parse_request` | Parses the incoming request body into a structured data model. |
+| `marimo._server.models.models` | Defines data models for request and response handling, ensuring structured data processing. |
+| `marimo._server.router.APIRouter` | Manages API routes, allowing the definition of endpoints and their associated handlers. |
+
+## Error Handling
+
+The function relies on the Starlette framework's built-in error handling for request parsing and authentication. If the request is not authenticated or the parsing fails, appropriate HTTP errors will be raised by the framework.
+
+## Logging
+
+The function uses a logger (`LOGGER`) to log debug information, particularly when starting the copilot server. This helps in tracking the server's operations and diagnosing issues related to configuration changes.

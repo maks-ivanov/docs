@@ -1,0 +1,78 @@
+---
+title: "plotly_formatters.py"
+---
+
+## High-level description
+
+The `plotly_formatters.py` file defines a formatter for Plotly figures within the Marimo framework. It extends the `FormatterFactory` to register a formatter that converts Plotly figures into HTML for rendering in a web-based environment. This is achieved by converting the Plotly figure to a JSON representation and then embedding it into an HTML component using Marimo's plugin system.
+
+## Code Structure
+
+- `PlotlyFormatter` is a subclass of `FormatterFactory` and is responsible for registering a formatter for Plotly figures.
+- The `register` method within `PlotlyFormatter` registers a formatter function for Plotly figures using the `formatting.formatter` decorator.
+- The `render_plotly_dict` static method is used to convert a Plotly figure's JSON representation into an HTML component using Marimo's plugin system.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to specify the MIME type of the output.
+- `FormatterFactory` from `marimo._output.formatters.formatter_factory` is the base class for `PlotlyFormatter`.
+- `Html` from `marimo._output.hypertext` is used to encapsulate the HTML output.
+- `build_stateless_plugin` from `marimo._plugins.core.web_component` is used to create the HTML component for rendering the Plotly figure.
+
+## Symbols
+
+### `PlotlyFormatter`
+#### Description
+`PlotlyFormatter` is a class that extends `FormatterFactory` to provide a formatter for Plotly figures. It registers a function that converts Plotly figures into HTML for rendering in a web-based environment.
+
+#### Inputs
+- None directly, but it operates on Plotly figures when they are passed to the registered formatter function.
+
+#### Outputs
+- The registered formatter function outputs a tuple containing a MIME type and an HTML string.
+
+#### Internal Logic
+- The `package_name` method returns the name of the package, "plotly", which is used to identify the formatter.
+- The `register` method imports necessary Plotly modules and defines a formatter function `_show_plotly_figure` that:
+  - Checks and sets the `dragmode` of the figure to "zoom" if not already set.
+  - Converts the figure to a JSON string using `plotly.io.to_json`.
+  - Uses `render_plotly_dict` to convert the JSON string into an HTML component.
+  - Returns a tuple with the MIME type "text/html" and the HTML component.
+
+### `render_plotly_dict`
+#### Description
+`render_plotly_dict` is a static method that converts a JSON representation of a Plotly figure into an HTML component using Marimo's plugin system.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| json | dict[Any, Any] | The JSON representation of a Plotly figure. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Html | An HTML object representing the Plotly figure. |
+
+#### Internal Logic
+- The method checks if a default renderer is set in `plotly.io.renderers` and retrieves its configuration.
+- It then constructs an HTML component using `build_stateless_plugin` with the component name "marimo-plotly" and the figure and configuration as arguments.
+- Returns an `Html` object encapsulating the constructed HTML.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `plotly.graph_objects` | Used to work with Plotly figures. |
+| `plotly.io` | Used to convert Plotly figures to JSON. |
+
+## Error Handling
+
+- The method `render_plotly_dict` includes a try-except block to handle potential `AttributeError` when accessing the default renderer's configuration.
+
+## Side Effects
+
+- The `register` method modifies the `dragmode` of a Plotly figure if it is not already set, which changes the figure's behavior when rendered.
+
+## Performance Considerations
+
+- The `register` method imports Plotly modules, which could be time-consuming if not already loaded. However, this is done lazily when the formatter is registered, minimizing startup delays.

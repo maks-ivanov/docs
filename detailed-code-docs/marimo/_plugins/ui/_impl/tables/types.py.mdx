@@ -1,0 +1,68 @@
+---
+title: "types.py"
+---
+
+## High-level description
+
+The target file defines a protocol for objects that behave like dataframes, specifically focusing on the `DataFrameLike` protocol. It provides a utility function, `is_dataframe_like`, to check if an object adheres to this protocol. The protocol is designed to facilitate interoperability with different dataframe implementations by ensuring they provide a `__dataframe__` method that returns a `DataFrame` object.
+
+## Code Structure
+
+- **`DataFrameLike` Protocol**: This is a protocol that specifies that any implementing class must have a `__dataframe__` method.
+- **`is_dataframe_like` Function**: This function checks if an object implements the `DataFrameLike` protocol by verifying the presence and callability of the `__dataframe__` method.
+
+## References
+
+- **`DataFrame`**: This is a class from the `dataframe_protocol.py` file that represents the expected return type of the `__dataframe__` method in the `DataFrameLike` protocol.
+
+## Symbols
+
+### `DataFrameLike`
+#### Description
+The `DataFrameLike` protocol defines a contract for objects that can be treated as dataframes. It requires the implementation of a `__dataframe__` method that returns a `DataFrame` object.
+
+#### Inputs
+| Name         | Type | Description |
+|:-------------|:-----|:------------|
+| `nan_as_null` | bool | Indicates if NaN values should be treated as nulls. |
+| `allow_copy`  | bool | Allows copying of data if necessary. |
+
+#### Outputs
+| Name       | Type      | Description |
+|:-----------|:----------|:------------|
+| `DataFrame` | `DataFrame` | A DataFrame object adhering to the interchange protocol. |
+
+### `is_dataframe_like`
+#### Description
+The `is_dataframe_like` function checks if a given object implements the `DataFrameLike` protocol by verifying the presence and callability of the `__dataframe__` method.
+
+#### Inputs
+| Name  | Type   | Description                  |
+|:------|:-------|:-----------------------------|
+| `value` | object | The object to be checked. |
+
+#### Outputs
+| Name    | Type | Description                              |
+|:--------|:-----|:-----------------------------------------|
+| `result` | bool | True if the object is dataframe-like, otherwise False. |
+
+#### Internal Logic
+- The function first checks if the object has a `__dataframe__` attribute.
+- It then verifies that this attribute is callable.
+- Finally, it ensures that calling `__dataframe__` does not produce different results on subsequent calls, which helps guard against certain `__getattr__` implementations.
+
+## Dependencies
+
+The target file depends on the `DataFrame` class from the `dataframe_protocol.py` file, which defines the expected structure and methods for a dataframe object in this context.
+
+## Error Handling
+
+The `is_dataframe_like` function does not perform any error handling beyond checking for the presence and callability of the `__dataframe__` method. It assumes that if these checks pass, the object is a valid `DataFrameLike`.
+
+## Logging
+
+There is no logging implemented in the target file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

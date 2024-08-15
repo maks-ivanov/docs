@@ -1,0 +1,67 @@
+---
+title: "video.py"
+---
+
+## High-level description
+
+The `video` function in the `marimo/_plugins/stateless/video.py` file is designed to render a video as an HTML element. It accepts various input types for the video source, such as URLs or file-like objects, and provides options to control video playback features like controls, autoplay, and looping. The function returns an `Html` object that encapsulates the HTML representation of the video element.
+
+## Code Structure
+
+The main function in this file is `video`, which utilizes several helper functions and classes from other parts of the codebase. It interacts with the `Html` class to create an HTML representation of the video and uses utility functions like `io_to_data_url` and `create_style` to handle video source conversion and style creation, respectively.
+
+## References
+
+- `io_to_data_url`: Converts file-like objects to data URLs.
+- `create_style`: Generates CSS style strings from a dictionary of style properties.
+- `Html`: A class that wraps HTML text for rendering in applications.
+
+## Symbols
+
+### `video`
+#### Description
+The `video` function renders a video as an HTML element. It takes a video source and various playback options as inputs and returns an `Html` object that represents the video element in HTML format.
+
+#### Inputs
+| Name     | Type                                      | Description                                      |
+|:---------|:------------------------------------------|:-------------------------------------------------|
+| `src`    | `Union[str, bytes, io.BytesIO, io.BufferedReader]` | The source of the video, which can be a URL, bytes, or a file-like object. |
+| `controls` | `bool`                                  | Whether to display video controls. Default is `True`. |
+| `muted`  | `bool`                                    | Whether to mute the video. Default is `False`.   |
+| `autoplay` | `bool`                                  | Whether to autoplay the video. Default is `False`. Note: Autoplay works only if `muted` is `True`. |
+| `loop`   | `bool`                                    | Whether to loop the video. Default is `False`.   |
+| `width`  | `Optional[int]`                           | The width of the video in pixels.                |
+| `height` | `Optional[int]`                           | The height of the video in pixels.               |
+| `rounded` | `bool`                                   | Whether to round the corners of the video. Default is `False`. |
+
+#### Outputs
+| Name  | Type  | Description            |
+|:------|:------|:-----------------------|
+| `Html` | `Html` | An `Html` object representing the video element. |
+
+#### Internal Logic
+1. **Source Conversion**: If the source is a `BufferedReader`, it reads the content and converts it to bytes.
+2. **Data URL Resolution**: Uses `io_to_data_url` to convert the video source into a data URL, with a fallback MIME type of "video/mp4".
+3. **Style Creation**: Constructs a style string using `create_style` based on the provided width, height, and rounded options.
+4. **HTML Generation**: Utilizes the `h.video` method from the `_HTMLBuilder` class to generate the HTML video element with the specified attributes and styles.
+5. **Return**: Wraps the generated HTML in an `Html` object and returns it.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `io_to_data_url` | Converts video sources to data URLs for embedding in HTML. |
+| `create_style` | Generates CSS style strings for the video element. |
+| `Html` | Wraps the HTML representation of the video for rendering. |
+
+## Error Handling
+
+The function does not explicitly handle errors but relies on the robustness of the utility functions it uses, such as `io_to_data_url` and `create_style`, to manage any issues with source conversion or style creation.
+
+## Logging
+
+There is no logging implemented in this function.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

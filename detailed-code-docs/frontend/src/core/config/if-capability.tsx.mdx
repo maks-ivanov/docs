@@ -1,0 +1,56 @@
+---
+title: "if-capability.tsx"
+---
+
+## High-level description
+
+The `if-capability.tsx` file defines a React component named `IfCapability` that conditionally renders its children based on the presence of a specified capability. It utilizes the Jotai state management library to access the current capabilities from a global state atom, `capabilitiesAtom`, and checks if a particular capability is enabled before rendering the children.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `IfCapability` is a React functional component that takes `Props` as its input.
+- `Props` is an interface that defines the expected properties for the `IfCapability` component, including a `capability` key and `children`.
+- The component uses the `useAtomValue` hook from Jotai to access the `capabilitiesAtom`, which holds the current state of capabilities.
+
+## References
+
+- `capabilitiesAtom` from `frontend/src/core/config/capabilities.ts` is used to access the current capabilities.
+- `Capabilities` type from `frontend/src/core/kernel/messages.ts` is used to define the type of the `capability` prop.
+
+## Symbols
+
+### `IfCapability`
+#### Description
+The `IfCapability` component is a React functional component that conditionally renders its children based on whether a specified capability is enabled. It achieves this by checking the value of the specified capability in the `capabilitiesAtom`.
+
+#### Inputs
+| Name       | Type                | Description                                      |
+|:-----------|:--------------------|:-------------------------------------------------|
+| capability | keyof Capabilities  | The capability to check for enabling the children. |
+| children   | React.ReactNode     | The React nodes to render if the capability is enabled. |
+
+#### Outputs
+| Name   | Type            | Description                                      |
+|:-------|:----------------|:-------------------------------------------------|
+| output | React.ReactNode | The children nodes if the capability is enabled, otherwise null. |
+
+#### Internal Logic
+1. The component uses the `useAtomValue` hook to retrieve the current state of capabilities from `capabilitiesAtom`.
+2. It checks if the specified `capability` is enabled.
+3. If the capability is enabled, it returns the `children` prop; otherwise, it returns `null`.
+
+## Dependencies
+
+| Dependency | Purpose                                                  |
+|:-----------|:---------------------------------------------------------|
+| React      | To create the `IfCapability` component as a React component. |
+| Jotai      | To manage and access the global state of capabilities.   |
+
+## Error Handling
+
+The component does not implement specific error handling mechanisms. It assumes that the `capabilitiesAtom` will always provide a valid state object.
+
+## Usage Example
+
+In the related file `footer.tsx`, the `IfCapability` component is used to conditionally render a `FooterItem` for opening a terminal, based on whether the "terminal" capability is enabled. This demonstrates how the component can be used to control UI elements based on dynamic capability states.

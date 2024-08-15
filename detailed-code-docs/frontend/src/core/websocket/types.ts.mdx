@@ -1,0 +1,79 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file, `types.ts`, defines TypeScript types and enumerations related to WebSocket connections in a frontend application. It provides a structured way to represent the state of WebSocket connections and the reasons for their closure. Additionally, it defines a type for a public interface of a `ReconnectingWebSocket` to ensure type safety when interacting with WebSocket instances.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `WebSocketState` and `WebSocketClosedReason` are enumerations that define possible states of a WebSocket connection and reasons for its closure, respectively.
+- `ConnectionStatus` is a TypeScript type that uses these enumerations to describe the current status of a WebSocket connection.
+- `PublicInterface` is a utility type that extracts the public interface of a given type.
+- `IReconnectingWebSocket` is a type alias for the public interface of the `ReconnectingWebSocket` class, ensuring that only the public methods and properties are exposed.
+
+## Symbols
+
+### `WebSocketState`
+#### Description
+An enumeration that defines the possible states of a WebSocket connection.
+
+#### Values
+- `CONNECTING`: The WebSocket is in the process of connecting.
+- `OPEN`: The WebSocket connection is open and ready to communicate.
+- `CLOSING`: The WebSocket is in the process of closing.
+- `CLOSED`: The WebSocket connection is closed.
+
+### `WebSocketClosedReason`
+#### Description
+An enumeration that defines possible reasons for a WebSocket connection being closed.
+
+#### Values
+- `KERNEL_DISCONNECTED`: The connection was closed because the kernel disconnected.
+- `ALREADY_RUNNING`: The connection was closed because another instance is already running.
+- `MALFORMED_QUERY`: The connection was closed due to a malformed query.
+
+### `ConnectionStatus`
+#### Description
+A TypeScript type that represents the status of a WebSocket connection, including its state and, if closed, the reason for closure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `WebSocketState` | The current state of the WebSocket connection. |
+| code | `WebSocketClosedReason` | The reason for closure if the state is `CLOSED`. |
+| reason | `string` | A human-readable reason for the connection closure. |
+
+#### Outputs
+This type does not produce outputs but is used to structure data related to WebSocket connection status.
+
+### `PublicInterface&lt;T&gt;`
+#### Description
+A utility type that extracts the public interface of a given type `T`.
+
+#### Internal Logic
+This type uses TypeScript's mapped types to iterate over the keys of `T` and create a new type with the same keys and types.
+
+### `IReconnectingWebSocket`
+#### Description
+A type alias for the public interface of the `ReconnectingWebSocket` class, ensuring that only the public methods and properties are exposed.
+
+## References
+
+- `ReconnectingWebSocket`: This is imported from the `partysocket/ws` module and is used to define the `IReconnectingWebSocket` type.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `partysocket/ws` | Provides the `ReconnectingWebSocket` class used for WebSocket connections with automatic reconnection logic. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond defining reasons for WebSocket closure. Error handling related to WebSocket operations would likely be implemented in other parts of the application where these types are used.
+
+## Logging
+
+The code does not implement logging mechanisms. Logging related to WebSocket operations would likely be implemented in other parts of the application where these types are used.

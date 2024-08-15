@@ -1,0 +1,70 @@
+---
+title: "useAudioRecorder.ts"
+---
+
+## High-level description
+
+The `useAudioRecorder` hook in the target file provides a mechanism for recording audio in a React application. It manages the state and lifecycle of audio recording, including starting, stopping, and pausing/resuming the recording process. The hook also handles permissions for microphone access and provides a callback for when the recording is complete.
+
+## Code Structure
+
+The `useAudioRecorder` hook is the main symbol in the code. It interacts with several other components and utilities:
+- It uses the `useTimer` hook to manage the recording duration.
+- It utilizes the `Logger` utility for logging errors.
+- It employs the `useEvent` hook to create stable event handlers.
+
+## References
+
+- `useTimer`: A custom hook used to track the duration of the audio recording.
+- `Logger`: A utility for logging errors, particularly when microphone access is denied.
+- `useEvent`: A hook from `react-use-event-hook` to create event handlers.
+
+## Symbols
+
+### `useAudioRecorder`
+#### Description
+The `useAudioRecorder` hook manages the audio recording process, including starting, stopping, and pausing/resuming recordings. It handles microphone permissions and provides a callback for when the recording is finished.
+
+#### Inputs
+| Name   | Type                      | Description                                      |
+|:-------|:--------------------------|:-------------------------------------------------|
+| `opts` | `{ onDone?: (blob: Blob) =&gt; void; options?: MediaRecorderOptions; }` | Options for the audio recorder, including a callback for when recording is done and media recorder options. |
+
+#### Outputs
+| Name             | Type                  | Description                                      |
+|:-----------------|:----------------------|:-------------------------------------------------|
+| `start`          | `() =&gt; void`          | Function to start recording.                     |
+| `stop`           | `() =&gt; void`          | Function to stop recording.                      |
+| `pauseResume`    | `() =&gt; void`          | Function to pause or resume recording.           |
+| `allowed`        | `boolean`             | Indicates if microphone access is allowed.       |
+| `recordingBlob`  | `Blob`                | The recorded audio data.                         |
+| `recordingStatus`| `RecordingStatus`     | The current status of the recording.             |
+| `recordingTime`  | `string`              | The duration of the recording in seconds.        |
+| `mediaRecorder`  | `React.MutableRefObject&lt;MediaRecorder | undefined&gt;` | Reference to the MediaRecorder instance. |
+
+#### Internal Logic
+- **Start Recording**: Requests microphone access and initializes a `MediaRecorder` if access is granted. Starts the recording and the timer.
+- **Stop Recording**: Stops the `MediaRecorder` and the timer, and updates the recording status.
+- **Pause/Resume Recording**: Toggles between pausing and resuming the recording, adjusting the timer accordingly.
+- **Cleanup**: Ensures that any active media streams are stopped when the component using the hook is unmounted.
+
+## Side Effects
+- Requests microphone access from the user.
+- Logs errors if microphone access is denied.
+- Stops all media tracks when recording is complete or the component is unmounted.
+
+## Dependencies
+
+| Dependency          | Purpose                                      |
+|:--------------------|:---------------------------------------------|
+| `react-use-event-hook` | Provides stable event handlers for the hook. |
+| `@/utils/Logger`    | Logs errors, particularly for microphone access issues. |
+
+## Error Handling
+- Uses the `Logger` to log errors when microphone access is denied, allowing for debugging and user feedback.
+
+## Logging
+- Logs errors related to microphone access using the `Logger` utility.
+
+## TODOs
+- No TODOs or notes are present in the code.

@@ -1,0 +1,105 @@
+---
+title: "streams.py"
+---
+
+## High-level description
+
+The `streams.py` file in the Marimo project provides a set of classes that wrap around standard input, output, and error streams to facilitate communication between a Python kernel running in a Pyodide environment and a frontend interface. These classes ensure that data is correctly formatted, truncated if necessary, and sent through appropriate channels, maintaining thread safety and compatibility with asynchronous operations.
+
+## Code Structure
+
+The main classes in this file are `PyodideStream`, `PyodideStdout`, `PyodideStderr`, and `PyodideStdin`. These classes are designed to handle the standard input, output, and error streams in a Pyodide environment. `PyodideStream` acts as a base class for managing the communication pipe, while `PyodideStdout`, `PyodideStderr`, and `PyodideStdin` extend the functionality to handle specific stream operations like writing and reading data.
+
+## Symbols
+
+### `PyodideStream`
+#### Description
+`PyodideStream` is a thread-safe wrapper around a communication pipe used to send messages from the kernel to the frontend. It manages the input queue and optionally associates with a cell ID for context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pipe | Callable[[KernelMessage], None] | A callable that sends kernel messages. |
+| input_queue | asyncio.Queue[str] | A queue for managing input strings. |
+| cell_id | Optional[CellId_t] | An optional identifier for the cell associated with this stream. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The `write` method sends a message through the pipe by calling the provided callable with the operation and data.
+
+### `PyodideStdout`
+#### Description
+`PyodideStdout` is a wrapper around the standard output stream, designed to handle writing operations in a Pyodide environment. It ensures that data is correctly formatted and truncated if necessary before being sent to the frontend.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | Stream | The stream object used for writing data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The `_write_with_mimetype` method checks the data type, truncates it if it exceeds a predefined size, and broadcasts it using the `CellOp` class.
+- The `writelines` method iterates over a sequence of strings and writes each line using the `write` method.
+
+### `PyodideStderr`
+#### Description
+`PyodideStderr` is similar to `PyodideStdout` but is specifically for handling the standard error stream. It manages error messages and ensures they are sent to the appropriate channel.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | Stream | The stream object used for writing error data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The `_write_with_mimetype` method functions similarly to that in `PyodideStdout`, but it targets the standard error channel.
+- The `writelines` method processes a sequence of error messages, writing each one to the stream.
+
+### `PyodideStdin`
+#### Description
+`PyodideStdin` handles the standard input stream, allowing for reading operations in a Pyodide environment. It supports reading input with an optional prompt.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | PyodideStream | The stream object used for reading input data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The `_readline_with_prompt` method sends a prompt to the frontend and waits for a response from the input queue.
+- The `readline` and `readlines` methods provide compatibility with standard input operations, using `_readline_with_prompt` to fetch input data.
+
+## References
+
+- `CellOp` from `marimo._messaging.ops`: Used for broadcasting messages to the frontend.
+- `CellOutput` and `CellChannel` from `marimo._messaging.cell_output`: Used for defining the output format and channel.
+- `KnownMimeType` from `marimo._messaging.mimetypes`: Used to specify the MIME type of the data being written.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asyncio` | Used for managing asynchronous operations and queues. |
+| `sys` | Accesses system-specific parameters and functions, such as encoding and error handling. |
+| `marimo._loggers` | Provides logging capabilities for debugging and monitoring. |
+
+## Error Handling
+
+- The `_write_with_mimetype` methods in `PyodideStdout` and `PyodideStderr` raise a `TypeError` if the data is not a string.
+- Data exceeding the `STD_STREAM_MAX_BYTES` limit is truncated, and a warning is written to the standard error stream.
+
+## Logging
+
+- The module uses a logger (`LOGGER`) from `marimo._loggers` to log messages, particularly for debugging purposes.
+
+## TODOs
+
+None

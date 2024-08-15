@@ -1,0 +1,56 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `tests/_output` directory is a collection of test modules designed to validate the functionality of various components within the Marimo framework, specifically focusing on output formatting and HTML generation. The tests cover a range of scenarios, including the conversion of data types to specific MIME types, the integration of third-party libraries, and the generation of HTML elements. The directory ensures that the Marimo framework's output capabilities are robust and correctly handle different data visualization and content types.
+
+## What does it do?
+
+The tests in this directory simulate various scenarios to ensure that the Marimo framework can correctly format and display data in environments like Jupyter notebooks. They verify that data visualization libraries such as Altair, pandas, polars, and matplotlib are properly integrated and that their outputs are formatted into HTML or other appropriate formats. Additionally, the tests check the HTML element generation functions, ensuring that elements like `&lt;div&gt;`, `&lt;img&gt;`, `&lt;video&gt;`, and others are constructed correctly with specified attributes. The tests also validate the conversion of markdown text to HTML, supporting features like bold and italic text, code blocks, LaTeX, links, and footnotes.
+
+## Entry points
+
+The main files in this directory are:
+
+- `test_altair.py`: Tests the Altair formatter, ensuring that Altair charts are correctly converted to HTML.
+- `test_formatter_utils.py`: Tests utility functions related to formatting, such as determining whether to use `src` or `srcdoc` attributes for iframes.
+- `test_formatters.py`: Contains comprehensive tests for the formatter system, including integration with pandas and polars, and handling of broken formatters.
+- `test_structures.py`: Tests the integration of matplotlib and numpy with the Marimo framework, ensuring that matplotlib plots are correctly formatted.
+- `test_builder.py`: Tests the HTML element generation functions provided by the `_HTMLBuilder` class.
+- `test_data.py`: Verifies the functionality of the `marimo._output.data.data` module, ensuring that various content types are processed into virtual files with appropriate filenames and data URLs.
+- `test_md.py`: Tests the `_md` function for converting markdown text into HTML, supporting various markdown features.
+
+## Key Files
+
+- **`test_altair.py`**: Focuses on testing the Altair formatter. It checks if Altair charts are correctly formatted into HTML when executed within the Marimo kernel.
+  
+- **`test_formatter_utils.py`**: Tests the `src_or_src_doc` utility function, which determines whether to return HTML content as a `src` or `srcdoc` attribute for an iframe, based on the execution context.
+
+- **`test_formatters.py`**: Contains a variety of tests for the formatter system, including:
+  - Testing the registration and retrieval of formatters.
+  - Ensuring that different data types, such as lists and DataFrames, are formatted correctly.
+  - Handling exceptions raised by formatters and verifying that errors are reported correctly.
+
+- **`test_structures.py`**: Tests the special case handling of matplotlib objects, ensuring that when matplotlib and numpy are available, the appropriate formatters are registered and can process matplotlib plot lines correctly.
+
+- **`test_builder.py`**: Tests the HTML element generation functions provided by the `_HTMLBuilder` class, ensuring that elements like `&lt;div&gt;`, `&lt;img&gt;`, `&lt;video&gt;`, and others are constructed correctly with specified attributes.
+
+- **`test_data.py`**: Verifies the functionality of the `marimo._output.data.data` module, ensuring that various content types (HTML, plain text, JSON, and CSV) are processed into virtual files with appropriate filenames and data URLs.
+
+- **`test_md.py`**: Tests the `_md` function for converting markdown text into HTML, supporting features like bold and italic text, code blocks, LaTeX, links, and footnotes.
+
+## Dependencies
+
+The tests in this directory rely on several external libraries and frameworks:
+
+- **`pytest`**: Used for running the test cases and handling test execution.
+- **`unittest.mock`**: Used for mocking functions and objects during testing.
+- **`marimo`**: The main framework being tested, specifically its formatting capabilities.
+- **`html`**: Used to escape HTML content in the utility tests.
+- **`matplotlib` and `numpy`**: Used in the `test_structures.py` to test the integration of these libraries with the Marimo framework.
+- **`pandas` and `polars`**: Used in `test_formatters.py` to test the formatting of DataFrames.
+- **`json`**: Used in `test_data.py` to convert a dictionary to a JSON string for testing JSON content.
+
+These dependencies are chosen to ensure that the tests can simulate real-world scenarios where data visualization and manipulation libraries are used in conjunction with the Marimo framework.

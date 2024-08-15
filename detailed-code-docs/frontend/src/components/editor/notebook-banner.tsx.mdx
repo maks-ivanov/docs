@@ -1,0 +1,75 @@
+---
+title: "notebook-banner.tsx"
+---
+
+## High-level description
+
+The `notebook-banner.tsx` file defines a React component, `NotebookBanner`, which is responsible for displaying notification banners within a notebook interface. These banners can convey various types of messages, such as informational alerts or actions like restarting a session. The component utilizes a state management system to handle the display and removal of these banners, and it includes a button to restart the kernel if needed.
+
+## Code Structure
+
+- **NotebookBanner Component**: The main component that renders a list of banners.
+- **RestartSessionButton Component**: A sub-component used within `NotebookBanner` to provide a button for restarting the kernel.
+- **State Management**: Utilizes hooks from `useBanners` and `useBannersActions` to manage the state of the banners.
+
+## References
+
+- **useBanners**: A hook to access the current state of banners.
+- **useBannersActions**: A hook to perform actions on the banner state, such as removing a banner.
+- **renderHTML**: A utility function to safely render HTML content within the banners.
+- **useRestartKernel**: A hook that provides functionality to restart the kernel, used in the `RestartSessionButton`.
+
+## Symbols
+
+### `NotebookBanner`
+#### Description
+The `NotebookBanner` component is responsible for rendering a list of notification banners in a notebook interface. It uses the `useBanners` hook to retrieve the current banners and `useBannersActions` to remove them when necessary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | React.FC | React functional component properties. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | A list of banners or null if no banners are present. |
+
+#### Internal Logic
+- Retrieves the current list of banners using `useBanners`.
+- If no banners are present, returns `null`.
+- Maps over the banners to render each one using the `Banner` component.
+- Includes a button to remove the banner, which calls `removeBanner` from `useBannersActions`.
+- If a banner has an action of "restart", it includes a `RestartSessionButton`.
+
+### `RestartSessionButton`
+#### Description
+The `RestartSessionButton` component provides a button to restart the kernel session. It is used within the `NotebookBanner` when a banner's action is set to "restart".
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | React Element | A button element that triggers a kernel restart. |
+
+#### Internal Logic
+- Uses the `useRestartKernel` hook to get the restart function.
+- Renders a button that, when clicked, calls the restart function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `lucide-react` | Provides icon components used in the UI, such as `AlertCircleIcon`, `RotateCcwIcon`, and `XIcon`. |
+| `jotai` | Used for state management, particularly for managing the banner state. |
+
+## Error Handling
+The component does not explicitly handle errors within its logic. It relies on the hooks and utilities it uses to manage any potential errors, such as state management or HTML rendering.
+
+## Logging
+No logging mechanisms are implemented directly within this component.
+
+## TODOs
+No TODOs or notes are present in the code.

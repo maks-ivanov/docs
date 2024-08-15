@@ -1,0 +1,50 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `frontend/src/core/static` directory is a part of a web application that deals with handling static content, particularly in the context of notebooks. It includes functionality for downloading notebooks as HTML, managing virtual files, and handling static states. The directory is structured to provide utilities and classes that facilitate the management of static notebook data, including asset URLs, virtual file requests, and tracking. The main components include:
+
+- **`download-html.ts`**: Manages the export and download of notebooks as HTML files.
+- **`files.ts`**: Provides mechanisms to handle virtual files by patching global functions like `fetch`.
+- **`static-state.ts`**: Manages the static state of notebooks, including retrieving static data and virtual files.
+- **`types.ts`**: Defines TypeScript interfaces and types for managing notebook states and virtual files.
+- **`virtual-file-tracker.ts`**: Tracks virtual files referenced in cell outputs.
+
+## What does it do?
+
+The directory implements several workflows and processes:
+
+1. **Downloading Notebooks as HTML**: The `download-html.ts` file provides functionality to export a notebook's content, including code and virtual files, into an HTML format. This is achieved through the `downloadAsHTML` function, which orchestrates the export and triggers a download in the user's browser.
+
+2. **Handling Virtual Files**: The `files.ts` file patches the global `fetch` function and a custom loader to handle virtual files. This allows the application to resolve virtual files stored as base64-encoded data URLs, enabling them to be accessed as if they were regular network resources.
+
+3. **Managing Static State**: The `static-state.ts` file provides utilities to parse and access static notebook data stored in the global `window` object. It includes functions to check if a notebook is static and to retrieve its state and associated virtual files.
+
+4. **Tracking Virtual Files**: The `virtual-file-tracker.ts` file includes a singleton class, `VirtualFileTracker`, which maintains a mapping of cell IDs to sets of virtual file paths. This allows for efficient tracking and retrieval of virtual files referenced in cell outputs.
+
+5. **Testing**: The `__tests__` directory contains unit tests for the components mentioned above, ensuring their correct functionality. The tests cover asset URL handling, virtual file handling, and virtual file tracking.
+
+## Entry points
+
+The directory contains several key files, each focusing on different functionalities:
+
+- **`download-html.ts`**: The main entry point for downloading notebooks as HTML files.
+- **`files.ts`**: Handles the patching of global functions to manage virtual files.
+- **`static-state.ts`**: Manages the static state of notebooks.
+- **`virtual-file-tracker.ts`**: Tracks virtual files referenced in cell outputs.
+
+## Key Files
+
+- **`types.ts`**: Defines TypeScript interfaces and types for managing notebook states and virtual files. It ensures type safety and consistency when handling notebook data.
+
+## Dependencies
+
+The directory uses several external libraries and frameworks:
+
+- **`vitest`**: A testing framework used in the `__tests__` directory for writing and executing unit tests.
+- **`node:http`**: Used to create a mock HTTP server for testing purposes.
+- **`@/utils`**: Various utility modules are used across the files for tasks like encoding/decoding data, manipulating file paths, and handling blobs.
+
+These dependencies are chosen to facilitate testing, data manipulation, and file handling in a controlled environment.

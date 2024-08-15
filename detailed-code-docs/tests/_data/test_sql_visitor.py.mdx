@@ -1,0 +1,135 @@
+---
+title: "test_sql_visitor.py"
+---
+
+## High-level description
+
+The target file `test_sql_visitor.py` contains unit tests for the `SQLVisitor` class, which is designed to parse Python Abstract Syntax Trees (AST) to extract SQL queries from method calls named `.execute` or `.sql`. The tests verify that the `SQLVisitor` correctly identifies and extracts SQL queries from various forms of string literals and f-strings within Python code.
+
+## Code Structure
+
+The main symbol in the code is the `SQLVisitor` class, which is imported from the `marimo._data.sql_visitor` module. The tests in the target file use this class to visit AST nodes and extract SQL queries. Each test function creates a source code string, parses it into an AST, and uses an instance of `SQLVisitor` to visit the AST and extract SQL queries. The extracted queries are then asserted against expected results to verify correctness.
+
+## References
+
+- `SQLVisitor`: This class is the primary focus of the tests and is responsible for visiting AST nodes to extract SQL queries.
+- `ast`: The Python Abstract Syntax Tree module is used to parse source code strings into ASTs.
+
+## Symbols
+
+### `test_execute_with_string_literal`
+#### Description
+Tests if `SQLVisitor` can extract a SQL query from a string literal passed to the `execute` method.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code with a SQL query in an `execute` method call. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the correctness of the extracted SQL query. |
+
+### `test_sql_with_string_literal`
+#### Description
+Tests if `SQLVisitor` can extract a SQL query from a string literal passed to the `sql` method.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code with a SQL query in a `sql` method call. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the correctness of the extracted SQL query. |
+
+### `test_execute_with_f_string`
+#### Description
+Tests if `SQLVisitor` can handle f-strings in `execute` method calls and replace expressions with placeholders.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code with a SQL query in an `execute` method call using an f-string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the correctness of the extracted SQL query with placeholders. |
+
+### `test_no_sql_calls`
+#### Description
+Tests if `SQLVisitor` correctly identifies when there are no SQL method calls in the code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code without any SQL method calls. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts that no SQL queries are extracted. |
+
+### `test_sql_with_multiple_arguments`
+#### Description
+Tests if `SQLVisitor` extracts only the first argument as a SQL query when multiple arguments are present in a `sql` method call.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code with a `sql` method call having multiple arguments. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the correctness of the extracted SQL query. |
+
+### `test_multiple_sql_calls`
+#### Description
+Tests if `SQLVisitor` can extract multiple SQL queries from different `sql` method calls in the same code block.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code with multiple `sql` method calls. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts the correctness of the extracted SQL queries. |
+
+### `test_sql_with_variable`
+#### Description
+Tests if `SQLVisitor` does not extract SQL queries when the SQL is stored in a variable before being passed to a `sql` method call.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source_code | str | A string containing Python code where a SQL query is stored in a variable before being used in a `sql` method call. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function asserts that no SQL queries are extracted. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast` | Used to parse Python source code into an Abstract Syntax Tree (AST). |
+| `marimo._data.sql_visitor.SQLVisitor` | The class being tested, which extracts SQL queries from AST nodes. |
+
+## Error Handling
+
+The tests do not explicitly handle errors; they rely on assertions to verify the correctness of the `SQLVisitor`'s behavior. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the `SQLVisitor`.
+
+## Logging
+
+There is no logging implemented in the test code. The focus is on using assertions to validate the behavior of the `SQLVisitor`.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

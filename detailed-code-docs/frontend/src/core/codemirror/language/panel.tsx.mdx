@@ -1,0 +1,63 @@
+---
+title: "panel.tsx"
+---
+
+## High-level description
+
+The `LanguagePanelComponent` in the target file is a React functional component designed to integrate with the CodeMirror editor. It provides a user interface panel for interacting with language-specific features, particularly for SQL language adapters. The component allows users to modify the output variable name for SQL queries and ensures that these names are valid by normalizing them.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `LanguagePanelComponent` is the primary React component that renders a UI panel.
+- It interacts with the `EditorView` from CodeMirror to access the current state and language adapter.
+- The component uses `SQLLanguageAdapter` to determine if specific actions should be rendered.
+- The `normalizeName` function from `names.ts` is used to ensure that variable names are valid.
+
+## Symbols
+
+### `LanguagePanelComponent`
+#### Description
+The `LanguagePanelComponent` is a React functional component that renders a panel within the CodeMirror editor. It provides an interface for users to interact with language-specific settings, such as changing the output variable name for SQL queries. The component ensures that any changes to the variable name are valid and updates the editor state accordingly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | `EditorView` | The CodeMirror editor view instance, providing access to the editor's state and dispatch methods. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| actions | `React.ReactNode` | A React node representing the UI elements for language-specific actions. |
+
+#### Internal Logic
+- The component retrieves the current language adapter from the editor's state.
+- If the language adapter is an instance of `SQLLanguageAdapter`, it renders an input field for the output variable name.
+- The input field's value is initially set to the current `dataframeName` of the `SQLLanguageAdapter`.
+- On change, the `dataframeName` is updated directly.
+- On blur, the input value is normalized using `normalizeName`, and the editor's state is updated with a no-op change to trigger any necessary updates.
+
+## References
+
+- `languageAdapterState` from `extension.ts` is used to access the current language adapter.
+- `SQLLanguageAdapter` from `sql.ts` is used to determine if the component should render SQL-specific actions.
+- `normalizeName` from `names.ts` is used to ensure that variable names are valid.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides the `EditorView` class used to interact with the CodeMirror editor. |
+| `React` | Used to create the functional component and manage UI rendering. |
+
+## Error Handling
+
+The component does not explicitly handle errors but relies on the assumption that the `view` and `languageAdapter` are correctly provided and valid. Any issues with invalid input are mitigated by the `normalizeName` function, which ensures that variable names conform to expected standards.
+
+## Logging
+
+The component does not implement any logging mechanisms. Any debugging or logging would need to be added externally if required.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

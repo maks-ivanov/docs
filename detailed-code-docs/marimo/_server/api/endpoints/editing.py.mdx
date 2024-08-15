@@ -1,0 +1,145 @@
+---
+title: "editing.py"
+---
+
+## High-level description
+
+The target file `marimo/_server/api/endpoints/editing.py` defines a set of API endpoints for editing operations within the Marimo application. These endpoints handle various tasks such as code completion, cell deletion, cell ID synchronization, code formatting, cell configuration, standard input handling, and package installation. Each endpoint is protected by an authentication requirement and processes requests asynchronously.
+
+## Code Structure
+
+The main symbols in the code are the API endpoints defined using the `APIRouter` class. Each endpoint corresponds to a specific editing operation and is decorated with the `@router.post` decorator to handle POST requests. The endpoints interact with the application state and session management to perform their respective operations.
+
+## Symbols
+
+### `router`
+#### Description
+An instance of `APIRouter` that is used to define and manage the API routes for editing operations.
+
+### `code_complete`
+#### Description
+Handles code completion requests by parsing the request body and submitting a code completion request to the current session.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful completion. |
+
+### `delete_cell`
+#### Description
+Processes requests to delete a cell by parsing the request body and submitting a delete cell request to the current session.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful completion. |
+
+### `sync_cell_ids`
+#### Description
+Synchronizes cell IDs by parsing the request body and writing the operation to the current session.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful completion. |
+
+### `format_cell`
+#### Description
+Formats code within a cell by parsing the request body, applying formatting, and returning the formatted code.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| FormatResponse | FormatResponse | Contains the formatted code.   |
+
+#### Internal Logic
+- Parses the request body to obtain the code and formatting preferences.
+- Uses the `DefaultFormatter` to format the code based on the specified line length.
+- Returns the formatted code in a `FormatResponse`.
+
+### `set_cell_config`
+#### Description
+Sets the configuration for a cell by parsing the request body and submitting a set cell configuration request to the current session.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful completion. |
+
+### `stdin`
+#### Description
+Handles standard input requests by parsing the request body and submitting the input to the current session's stdin stream.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful completion. |
+
+### `install_missing_packages`
+#### Description
+Installs missing packages by parsing the request body and submitting an install request to the current session.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| request | Request | The incoming HTTP request.  |
+
+#### Outputs
+| Name          | Type         | Description                      |
+|:--------------|:-------------|:---------------------------------|
+| SuccessResponse | BaseResponse | Indicates successful completion. |
+
+## References
+
+- `AppState`: Used to manage application state and session interactions.
+- `parse_request`: Utility function to parse request bodies into specific request types.
+- `BaseResponse`, `SuccessResponse`, `FormatResponse`: Response models used to structure API responses.
+- `DefaultFormatter`: Utilized for formatting code in the `format_cell` endpoint.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.authentication.requires` | Used to enforce authentication requirements for the endpoints. |
+
+## Error Handling
+
+The code relies on the `parse_request` utility to handle request parsing errors. If a request body cannot be parsed into the expected type, an error will be raised. Additionally, session-related errors are managed by the `AppState` class, which raises exceptions if session information is missing or invalid.
+
+## Logging
+
+The code does not explicitly implement logging within the target file, but it relies on the broader application infrastructure for logging, as seen in related files like `marimo/_utils/formatter.py`.
+
+## API/Interface Reference
+
+The file defines several POST endpoints under the `/api/kernel` prefix, each corresponding to a specific editing operation. These endpoints require authentication and expect JSON request bodies conforming to specific schemas. The responses are structured as JSON objects, with success indicated by a `SuccessResponse` or a `FormatResponse` for the `format_cell` endpoint.

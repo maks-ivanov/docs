@@ -1,0 +1,164 @@
+---
+title: "compiler.py"
+---
+
+## High-level description
+
+The `marimo/_ast/compiler.py` file is responsible for compiling Python code into an Abstract Syntax Tree (AST) and managing the execution context for code cells within the Marimo framework. It provides utilities for handling code cells, including parsing, compiling, and managing source positions, as well as caching and filename generation for temporary files. The file also includes mechanisms for handling imports and managing the execution of code cells in a structured manner.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `compile_cell` is the primary function for compiling code into a `CellImpl` object, which represents a compiled code cell.
+- `cell_factory` is used to create a `Cell` object from a function, handling the extraction of code and metadata.
+- Utility functions like `code_key`, `cell_id_from_filename`, `get_filename`, and `cache` support the main functions by providing hashing, filename parsing, and caching capabilities.
+- `fix_source_position` adjusts the source position of AST nodes for accurate stack traces.
+
+## Symbols
+
+### `code_key`
+#### Description
+Generates a hash key for a given code string, used for caching purposes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code string to hash. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | int | The hash of the code string. |
+
+### `cell_id_from_filename`
+#### Description
+Extracts a cell ID from a given filename, assuming the filename follows a specific pattern.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The filename to parse for a cell ID. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[CellId_t] | The extracted cell ID, or None if not found. |
+
+### `get_filename`
+#### Description
+Generates a temporary filename for a Python file, encoding the cell ID within it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell_id | CellId_t | The cell ID to encode in the filename. |
+| suffix | str | An optional suffix for the filename. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | str | The generated filename. |
+
+### `cache`
+#### Description
+Caches the code in Python's `linecache` for a given filename, facilitating debugging and stack trace generation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The filename to associate with the cached code. |
+| code | str | The code to cache. |
+
+#### Outputs
+None
+
+### `fix_source_position`
+#### Description
+Adjusts the line and column offsets of AST nodes to reflect their actual source positions, aiding in accurate error reporting and debugging.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| node | Any | The AST node to adjust. |
+| source_position | SourcePosition | The source position to apply. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Any | The adjusted AST node. |
+
+### `compile_cell`
+#### Description
+Compiles a string of Python code into a `CellImpl` object, which includes the AST, definitions, references, and other metadata.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The code to compile. |
+| cell_id | CellId_t | The ID of the cell being compiled. |
+| source_position | Optional[SourcePosition] | The source position for the code. |
+| carried_imports | list[ImportData] | Imports to carry over to the new cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | CellImpl | The compiled cell implementation. |
+
+#### Internal Logic
+- Replaces non-breaking spaces with regular spaces.
+- Compiles the code into an AST module.
+- Uses `ScopedVisitor` to analyze the module for definitions and references.
+- Adjusts source positions if provided.
+- Caches the code for debugging purposes.
+- Compiles the module and final expression into executable code objects.
+
+### `cell_factory`
+#### Description
+Creates a `Cell` object from a function, extracting the function's code and metadata to form a code cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| f | Callable[..., Any] | The function to convert into a cell. |
+| cell_id | CellId_t | The ID of the cell being created. |
+| anonymous_file | bool | Whether to use an anonymous file for testing. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Cell | The created cell object. |
+
+#### Internal Logic
+- Extracts source lines from the function.
+- Tokenizes the function to find the start of the body.
+- Adjusts the source position for the cell.
+- Compiles the function code into a `CellImpl` object.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ast` | Used for parsing and manipulating Python abstract syntax trees. |
+| `inspect` | Used for retrieving source code and metadata from functions. |
+| `linecache` | Used for caching code lines for debugging purposes. |
+| `os` | Used for file path manipulations. |
+| `re` | Used for regular expression operations. |
+| `textwrap` | Used for dedenting code strings. |
+| `tokenize` | Used for tokenizing Python source code. |
+| `marimo._ast.cell` | Provides classes and types related to code cells. |
+| `marimo._ast.visitor` | Provides visitor classes for analyzing AST nodes. |
+| `marimo._utils.tmpdir` | Provides utilities for managing temporary directories. |
+| `marimo._utils.variables` | Provides utilities for handling variable names. |
+
+## Error Handling
+
+- The `compile_cell` function handles syntax errors by returning a `CellImpl` with minimal data if the code is empty or contains only comments.
+- The `fix_source_position` function ensures that AST nodes have their line and column offsets adjusted, which helps in accurate error reporting.
+
+## Logging
+
+- The code does not explicitly implement logging, but it uses Python's `linecache` to facilitate debugging by caching code lines.
+
+## TODOs
+
+- The `cell_factory` function contains a TODO comment regarding the handling of module specifications for markdown notebooks, indicating that this is an area for potential improvement.

@@ -1,0 +1,149 @@
+---
+title: "state.ts"
+---
+
+## High-level description
+
+The code in `frontend/src/core/alerts/state.ts` is responsible for managing the state of alerts related to package installation in a frontend application. It defines types for different kinds of package alerts, provides utility functions to identify these alerts, and uses a state management pattern to handle adding and clearing alerts. The state is managed using Jotai atoms, which are part of a reactive state management library for React.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- **Types and Interfaces**: Define the structure of alerts (`MissingPackageAlert`, `InstallingPackageAlert`) and the overall alert state (`AlertState`).
+- **Utility Functions**: `isMissingPackageAlert` and `isInstallingPackageAlert` are type guard functions to differentiate between alert types.
+- **State Management**: The `createReducerAndAtoms` function is used to create a reducer and associated atoms for managing alert state, specifically for adding and clearing package alerts.
+- **React Hooks**: `useAlerts` and `useAlertActions` are hooks that provide access to the alert state and actions, respectively.
+
+## References
+
+- `PackageInstallationStatus` from `frontend/src/core/kernel/messages.ts` is used to define the structure of `InstallingPackageAlert`.
+- `createReducerAndAtoms` from `frontend/src/utils/createReducer.ts` is used to create the reducer and atoms for managing alert state.
+- `generateUUID` from `frontend/src/utils/uuid.ts` is used to generate unique identifiers for alerts.
+
+## Symbols
+
+### `MissingPackageAlert`
+#### Description
+Represents an alert for missing packages, including the list of missing packages and whether they are isolated.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kind | string | The type of alert, which is "missing" for this interface. |
+| packages | string[] | An array of package names that are missing. |
+| isolated | boolean | Indicates if the missing packages are isolated. |
+
+#### Outputs
+N/A
+
+### `InstallingPackageAlert`
+#### Description
+Represents an alert for packages that are currently being installed, including their installation status.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kind | string | The type of alert, which is "installing" for this interface. |
+| packages | PackageInstallationStatus | The status of the packages being installed. |
+
+#### Outputs
+N/A
+
+### `isMissingPackageAlert`
+#### Description
+A type guard function that checks if a given alert is of type `MissingPackageAlert`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alert | MissingPackageAlert \| InstallingPackageAlert | The alert to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if the alert is a `MissingPackageAlert`. |
+
+### `isInstallingPackageAlert`
+#### Description
+A type guard function that checks if a given alert is of type `InstallingPackageAlert`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alert | MissingPackageAlert \| InstallingPackageAlert | The alert to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns true if the alert is an `InstallingPackageAlert`. |
+
+### `AlertState`
+#### Description
+Defines the structure of the alert state, which can hold either a `MissingPackageAlert` or an `InstallingPackageAlert`, or be null.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `createReducerAndAtoms`
+#### Description
+Creates a reducer and associated atoms for managing the alert state, including actions to add and clear alerts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| initialState | () =&gt; AlertState | A function that returns the initial state. |
+| reducers | object | An object defining the reducer functions for state transitions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | object | Contains the reducer, actions, and value atom for state management. |
+
+#### Internal Logic
+- Initializes the state with `packageAlert` set to null.
+- Defines actions `addPackageAlert` and `clearPackageAlert` to modify the state.
+- Uses `generateUUID` to assign unique IDs to alerts.
+
+### `useAlerts`
+#### Description
+A React hook that provides access to the current alert state.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alertState | AlertState | The current state of alerts. |
+
+### `useAlertActions`
+#### Description
+A React hook that provides access to actions for modifying the alert state.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| actions | object | An object containing actions to modify the alert state. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management with atoms. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic type checking and state management. The reducer logs an error if an undefined action type is encountered.
+
+## Logging
+
+The `Logger` is used to log errors when an undefined action type is encountered in the reducer.
+
+## TODOs
+There are no TODOs or notes left in the code.

@@ -1,0 +1,126 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file `test_island_generator.py` contains a suite of tests for the `MarimoIslandGenerator` class and related functions from the `marimo` library. These tests verify the functionality of adding code to the generator, building the application, rendering code blocks, handling different MIME types, and ensuring that the application behaves as expected when generating HTML islands for embedding in web pages.
+
+## Code Structure
+
+The main symbols in the code are test functions that utilize the `MarimoIslandGenerator` class and the `handle_mimetypes` function. These tests are structured to validate the behavior of the generator in various scenarios, such as adding code, building the app, rendering HTML, and handling different types of cell outputs.
+
+## References
+
+- `MarimoIslandGenerator`: A class from `marimo._islands.island_generator` responsible for generating HTML islands.
+- `handle_mimetypes`: A function from `marimo._islands.island_generator` that processes different MIME types for cell outputs.
+- `CellOutput` and `CellChannel`: Classes from `marimo._messaging.cell_output` used to represent and manage cell outputs.
+- `snapshotter`: A utility function from `tests.mocks` used for creating and comparing snapshots of rendered HTML.
+
+## Symbols
+
+### `test_add_code`
+#### Description
+Tests the `add_code` method of the `MarimoIslandGenerator` to ensure that a code cell is correctly added to the generator.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Instantiates a `MarimoIslandGenerator`.
+- Adds a code snippet using `add_code`.
+- Asserts that the code cell is added by checking the length of the cells in the generator's cell manager.
+
+### `test_build`
+#### Description
+Tests the `build` method of the `MarimoIslandGenerator` to ensure the application is built correctly and handles errors when built multiple times.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Instantiates a `MarimoIslandGenerator` and adds a code snippet.
+- Asynchronously builds the app and asserts that it is not `None`.
+- Checks that the `has_run` flag is set to `True`.
+- Asserts that calling `build` again raises a `ValueError`.
+
+### `test_render`
+#### Description
+Tests the rendering functionality of code blocks after building the app.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Adds code blocks to the generator and builds the app.
+- Attempts to render a block without code or output, expecting a `ValueError`.
+- Uses the `snapshot` function to compare the rendered output with expected snapshots.
+
+### `test_render_head`
+#### Description
+Tests the `render_head` method to ensure the correct HTML header is generated after building the app.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Adds a code block and builds the app.
+- Renders the head and uses the `snapshot` function to verify the output.
+
+### `test_handle_image_mimetype`
+#### Description
+Tests the `handle_mimetypes` function for handling image MIME types.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a `CellOutput` with an image MIME type.
+- Asserts that the processed output starts with an `&lt;img` tag.
+
+### `test_handle_json_mimetype`
+#### Description
+Tests the `handle_mimetypes` function for handling JSON MIME types.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a `CellOutput` with a JSON MIME type.
+- Asserts that the processed output starts with a `&lt;marimo-json` tag.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for running the test cases. |
+
+## Error Handling
+
+The tests expect certain errors to be raised under specific conditions, such as calling `build` more than once or rendering without code or output. These are handled using `pytest.raises` to assert that the correct exceptions are thrown.
+
+## Logging
+
+No explicit logging is implemented in the test file. However, the `snapshotter` function provides a mechanism to update and compare snapshots, which indirectly logs differences in expected and actual outputs.
+
+## TODOs
+
+No TODOs are present in the target file.

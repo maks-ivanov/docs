@@ -1,0 +1,67 @@
+---
+title: "upload.tsx"
+---
+
+## High-level description
+
+The `upload.tsx` file provides functionality for handling file uploads within a file explorer component in a web application. It utilizes the `react-dropzone` library to manage file drag-and-drop operations, processes the files by encoding them in base64, and sends them to a server for storage. The component also handles errors and user notifications through a toast system.
+
+## Code Structure
+
+The main function in this file is `useFileExplorerUpload`, which is a custom hook that configures and returns a dropzone for file uploads. It uses several utility functions and components from other parts of the codebase, such as `serializeBlob` for file processing, `sendCreateFileOrFolder` for network requests, and `toast` for user notifications.
+
+## References
+
+- `sendCreateFileOrFolder`: A function from the network requests module used to send file data to the server.
+- `serializeBlob`: A utility function that converts a file blob into a base64-encoded string.
+- `refreshRoot`: A function that refreshes the file tree state after a file upload.
+- `Logger`: A utility for logging errors.
+
+## Symbols
+
+### `useFileExplorerUpload`
+#### Description
+The `useFileExplorerUpload` function is a custom hook that sets up a file upload interface using the `react-dropzone` library. It allows users to drag and drop files for upload, handles file size restrictions, and manages error reporting and notifications.
+
+#### Inputs
+| Name    | Type            | Description                                      |
+|:--------|:----------------|:-------------------------------------------------|
+| options | DropzoneOptions | Configuration options for the dropzone behavior. |
+
+#### Outputs
+| Name   | Type          | Description                                      |
+|:-------|:--------------|:-------------------------------------------------|
+| output | DropzoneProps | Properties and methods for managing file uploads.|
+
+#### Internal Logic
+- **Configuration**: The function configures the dropzone to accept multiple files with a maximum size of 50MB.
+- **Error Handling**: It logs errors using the `Logger` and displays error messages using the `toast` function.
+- **File Processing**: On successful file drop, it serializes each file to a base64 string using `serializeBlob`.
+- **Network Request**: Sends the serialized file data to the server using `sendCreateFileOrFolder`.
+- **State Refresh**: Calls `refreshRoot` to update the file tree state after uploads.
+
+## Side Effects
+- Displays toast notifications for errors and rejected files.
+- Logs errors to the console.
+- Sends network requests to create files on the server.
+- Refreshes the file tree state.
+
+## Dependencies
+
+| Dependency       | Purpose                                                  |
+|:-----------------|:---------------------------------------------------------|
+| `react-dropzone` | Provides drag-and-drop file upload functionality.        |
+| `@/components/ui/use-toast` | Manages toast notifications for user feedback.|
+| `@/core/network/requests` | Handles network requests for file operations.   |
+| `@/utils/blob`   | Provides utilities for file serialization.               |
+| `@/utils/Logger` | Logs errors and other messages to the console.           |
+
+## Error Handling
+- Errors during file upload are logged using the `Logger` and displayed to the user via toast notifications.
+- Rejected files due to size or other constraints are also reported to the user with detailed messages.
+
+## Logging
+- The `Logger` utility is used to log errors encountered during file uploads.
+
+## TODOs
+- There are no explicit TODOs or notes left in the code.

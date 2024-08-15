@@ -1,0 +1,66 @@
+---
+title: "ai-completion-editor.tsx"
+---
+
+## High-level description
+
+The `ai-completion-editor.tsx` file defines a React component named `AiCompletionEditor` that integrates AI-based code completion into a code editor interface. It utilizes the CodeMirror library to provide a side-by-side view of the original and AI-suggested code, allowing users to accept or decline AI-generated code suggestions. The component also includes UI elements for user interaction, such as buttons to accept or decline changes, and a checkbox to include code from other cells in the AI completion process.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `AiCompletionEditor` component is the primary export and is responsible for rendering the editor interface.
+- It uses the `useCompletion` hook to manage AI completion logic, including fetching suggestions and handling user input.
+- The `CodeMirrorMerge` component is used to display the original and modified code side-by-side.
+- UI components like `Button`, `Checkbox`, `Label`, and `Tooltip` are used to create interactive elements within the editor.
+
+## Symbols
+
+### `AiCompletionEditor`
+#### Description
+The `AiCompletionEditor` component provides an interface for AI-assisted code completion. It displays the current code and AI-generated suggestions side-by-side, allowing users to accept or decline the suggestions. The component also includes controls for managing the completion process, such as starting, stopping, and accepting completions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| currentCode | string | The current code in the editor. |
+| currentLanguageAdapter | LanguageAdapterType \| undefined | The language adapter for the current code. |
+| initialPrompt | string \| undefined | The initial prompt for AI completion. |
+| onChange | function | Callback function to handle code changes. |
+| declineChange | function | Callback function to handle declining a change. |
+| acceptChange | function | Callback function to handle accepting a change. |
+| enabled | boolean | Flag to enable or disable the editor. |
+| children | React.ReactNode | Elements to display when there is no completion. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A | The component does not return any outputs. |
+
+#### Internal Logic
+- Initializes AI completion using the `useCompletion` hook, which manages the completion state and interactions with the AI API.
+- Uses `useEffect` to focus the input field when the editor is enabled and to reset the input when the initial prompt changes.
+- Renders a UI with buttons for accepting or declining completions, a checkbox for including other cells' code, and a tooltip for additional information.
+- Displays the original and AI-modified code using `CodeMirrorMerge`, allowing users to compare and accept changes.
+
+## Side Effects
+- The component interacts with the global state using the `useAtom` hook to manage the inclusion of other cells' code.
+- It triggers toast notifications for error handling using the `toast` function.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-codemirror-merge` | Provides the `CodeMirrorMerge` component for side-by-side code comparison. |
+| `ai/react` | Provides the `useCompletion` hook for AI completion logic. |
+| `@codemirror/view` | Used for editor view configurations. |
+| `jotai` | Manages global state with atoms. |
+| `lucide-react` | Provides icon components for the UI. |
+
+## Error Handling
+- Errors during the AI completion process are caught and displayed using toast notifications. The `prettyError` function is used to format error messages.
+
+## Logging
+- The component does not implement any specific logging mechanisms.
+
+## TODOs
+- The code includes a TODO comment in the `getCodes` function, suggesting the need to sort import statements topologically for better AI suggestions.

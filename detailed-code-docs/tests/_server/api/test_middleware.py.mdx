@@ -1,0 +1,100 @@
+---
+title: "test_middleware.py"
+---
+
+## High-level description
+
+The target file `test_middleware.py` contains unit tests for middleware functionalities in a Starlette-based web application. It primarily tests URL routing, authentication mechanisms, and session management using mock configurations and fixtures. The tests ensure that the application behaves correctly under different configurations, such as with or without authentication, and with different session modes.
+
+## Code Structure
+
+The code is structured around test functions and fixtures. The test functions use the `pytest` framework to verify the behavior of the application under various conditions. Fixtures are used to set up different application states, such as with authentication enabled or disabled, and in different session modes (edit or run). The `TestAuth` and `TestNoAuth` classes group related tests for authenticated and non-authenticated scenarios, respectively.
+
+## References
+
+- `create_starlette_app`: A function from `marimo._server.main` that creates a Starlette application with specified configurations.
+- `UserConfigManager`: A class from `marimo._config.manager` used to manage user configurations.
+- `SessionMode`: An enumeration from `marimo._server.model` that defines session modes.
+- `AuthToken`: A class from `marimo._server.tokens` used for handling authentication tokens.
+- `get_mock_session_manager` and `token_header`: Functions from `tests._server.mocks` used to create mock session managers and generate token headers for requests.
+
+## Symbols
+
+### `test_base_url`
+#### Description
+Tests the application's response to requests with and without a specified base URL. It verifies that routes are correctly resolved when a base URL is set.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a Starlette app with a base URL of `/foo`.
+- Mocks the server and sets application state variables.
+- Uses `TestClient` to send GET requests to various endpoints and asserts the expected status codes.
+
+### `test_skew_protection`
+#### Description
+Tests the application's skew protection mechanism, ensuring that requests with outdated tokens are rejected.
+
+#### Inputs
+| Name     | Type     | Description                  |
+|:---------|:---------|:-----------------------------|
+| edit_app | Starlette | A fixture providing the app in edit mode |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Sends GET and POST requests to the application with and without valid tokens.
+- Asserts the expected status codes and checks for the presence of cookies in responses.
+
+### `edit_app`, `read_app`, `no_auth_edit_app`, `no_auth_read_app`
+#### Description
+Fixtures that set up the application in different configurations for testing.
+
+#### Outputs
+| Name | Type     | Description                  |
+|:-----|:---------|:-----------------------------|
+| app  | Starlette | Configured Starlette application |
+
+#### Internal Logic
+- Each fixture creates a Starlette app with specific session modes and authentication settings.
+- Mocks the server and sets application state variables.
+
+### `TestAuth`
+#### Description
+Contains tests for scenarios where authentication is required. It verifies that the application correctly handles authentication via headers and query parameters.
+
+#### Internal Logic
+- Tests unauthorized and authorized access to various endpoints.
+- Verifies that cookies are set correctly upon successful authentication.
+
+### `TestNoAuth`
+#### Description
+Contains tests for scenarios where authentication is not required. It ensures that the application allows access without authentication tokens.
+
+#### Internal Logic
+- Tests access to endpoints without authentication and verifies that no cookies are set.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for writing and running tests. |
+| `uvicorn`  | Used to mock the server for testing. |
+| `starlette.testclient` | Provides a test client for sending requests to the Starlette app. |
+
+## Error Handling
+
+The tests use assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the application.
+
+## Logging
+
+No explicit logging is implemented in the test file. However, the application itself may have logging mechanisms as seen in related files.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

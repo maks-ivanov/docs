@@ -1,0 +1,58 @@
+---
+title: "format_signature.py"
+---
+
+## High-level description
+
+The `format_signature` function in the `marimo/_utils/format_signature.py` file is designed to format Python function or class signatures into a more readable form. It attempts to use the `black` library for formatting if it is installed, otherwise, it falls back to using the `textwrap` module to wrap the signature text to a specified width.
+
+## Code Structure
+
+The main function in this file is `format_signature`, which is responsible for formatting the signature text. It optionally uses the `black` library for formatting if available, otherwise, it uses `textwrap` to ensure the signature fits within a specified width.
+
+## Symbols
+
+### `format_signature`
+#### Description
+The `format_signature` function formats a given Python function or class signature into a more readable form. It uses the `black` library for formatting if it is installed and the signature is for a class or function. If `black` is not available, it uses `textwrap` to wrap the signature text to a specified width.
+
+#### Inputs
+| Name           | Type   | Description                                      |
+|:---------------|:-------|:-------------------------------------------------|
+| `prefix`       | str    | The prefix indicating whether it's a class or function signature (e.g., "class", "def"). |
+| `signature_text` | str  | The actual signature text to be formatted.       |
+| `width`        | int    | The maximum width for the formatted signature. Default is 39. |
+
+#### Outputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| `formatted_signature` | str    | The formatted signature text. |
+
+#### Internal Logic
+1. The function first checks if the `black` library is installed.
+2. If `black` is installed and the prefix indicates a class or function, it attempts to format the signature using `black`'s internal APIs.
+   - It constructs a valid Python function signature by prepending "def " to the `signature_text` and appending ": ...".
+   - It then formats this string using `black` and replaces "def " with the actual `prefix`.
+   - The formatted string is adjusted to remove the added ": ..." and any trailing newlines.
+3. If `black` is not available or an error occurs during formatting, it uses `textwrap.wrap` to wrap the signature text to the specified width.
+   - It ensures that type-annotated arguments are treated as a single word to prevent breaking them across lines.
+   - The wrapped text is then re-expanded to include type annotations.
+
+## References
+
+- The `format_signature` function is used in other parts of the codebase, such as in `marimo/_output/rich_help.py` and `marimo/_runtime/complete.py`, to format function and class signatures for documentation and code completion purposes.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `textwrap` | Used to wrap the signature text to a specified width if `black` is not available. |
+| `black`    | Used for formatting the signature text if it is installed. |
+
+## Error Handling
+
+- The function uses a try-except block to handle the potential absence of the `black` library and any exceptions that might occur during the formatting process with `black`. If an exception occurs, it falls back to using `textwrap`.
+
+## Side Effects
+
+- There are no side effects such as modifications to global state or external resources. The function operates purely on the input parameters and returns a formatted string.

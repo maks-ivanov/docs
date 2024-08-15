@@ -1,0 +1,100 @@
+---
+title: "NavigationMenuPlugin.tsx"
+---
+
+## High-level description
+
+The `NavigationMenuPlugin.tsx` file defines a React component plugin for rendering a navigation menu. This plugin is part of a larger plugin architecture and is designed to be stateless, meaning it does not manage its own state but instead relies on data passed to it. The navigation menu can be configured to display items either horizontally or vertically, and it supports both individual menu items and grouped items with optional tooltips.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+
+- `NavigationMenuPlugin`: A class implementing the `IStatelessPlugin` interface, responsible for rendering the navigation menu using the `NavMenuComponent`.
+- `NavMenuComponent`: A functional component that takes menu data and orientation as props and renders the menu items.
+- `ListItem`: A functional component used to render individual menu items, potentially with tooltips.
+
+The `NavigationMenuPlugin` class uses the `NavMenuComponent` to render the menu, and `NavMenuComponent` uses `ListItem` to render each menu item.
+
+## Symbols
+
+### `NavigationMenuPlugin`
+#### Description
+The `NavigationMenuPlugin` class implements the `IStatelessPlugin` interface to render a navigation menu. It validates the menu data using Zod schemas and renders the menu using the `NavMenuComponent`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IStatelessPluginProps&lt;Data&gt;` | Contains the host element and plugin data for rendering the menu. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered navigation menu component. |
+
+### `NavMenuComponent`
+#### Description
+`NavMenuComponent` is a functional component that renders a navigation menu based on the provided items and orientation. It supports both individual items and grouped items, with optional tooltips for descriptions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| items | `Array&lt;MenuItem | MenuItemGroup&gt;` | The menu items to be displayed. |
+| orientation | `"horizontal" | "vertical"` | The orientation of the menu. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered navigation menu. |
+
+#### Internal Logic
+- The component uses a helper function `maybeWithTooltip` to wrap items with tooltips if a description is provided.
+- The `target` function determines the link target based on whether the URL is external.
+- The `renderMenuItem` function handles rendering of both individual and grouped menu items, applying different styles and structures based on the orientation.
+
+### `ListItem`
+#### Description
+`ListItem` is a functional component that renders an individual menu item as a link, with optional children for descriptions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| label | `string` | The label of the menu item. |
+| children | `React.ReactNode` | Optional description or additional content. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered list item. |
+
+## References
+
+- `IStatelessPlugin` and `IStatelessPluginProps` from `stateless-plugin.ts` define the interface and props structure for stateless plugins.
+- `NavigationMenu`, `NavigationMenuList`, `NavigationMenuItem`, `NavigationMenuTrigger`, `NavigationMenuContent`, `NavigationMenuLink`, and `navigationMenuTriggerStyle` from `navigation.tsx` are used to construct the menu UI.
+- `Tooltip` and `TooltipProvider` from `tooltip.tsx` are used to provide tooltip functionality.
+- `renderHTML` from `RenderHTML.tsx` is used to safely render HTML content within the menu items.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation of menu items and groups. |
+| `@radix-ui/react-navigation-menu` | Provides primitives for building the navigation menu. |
+| `@radix-ui/react-tooltip` | Provides primitives for building tooltips. |
+| `clsx` and `tailwind-merge` | Used for managing and merging CSS class names. |
+
+## Configuration
+
+No specific configuration options are defined within this code. The menu's appearance and behavior are primarily controlled through the data passed to the plugin and the CSS styles applied.
+
+## Error Handling
+
+The code does not explicitly handle errors beyond data validation using Zod schemas. Invalid data structures will not pass validation, preventing rendering issues.
+
+## Logging
+
+There are no logging mechanisms implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

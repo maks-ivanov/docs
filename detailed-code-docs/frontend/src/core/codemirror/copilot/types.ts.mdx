@@ -1,0 +1,114 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file `types.ts` defines TypeScript interfaces and types used for managing interactions with a Copilot service, which appears to be an AI-based code completion tool. These interfaces and types are used to structure the data for signing in, signing out, checking status, and handling code completions within a code editor environment.
+
+## Code Structure
+
+The main symbols in the code are TypeScript interfaces and types that define the structure of data exchanged with the Copilot service. These include parameters and results for sign-in, sign-out, and code completion operations. The interfaces are used to ensure type safety and consistency when interacting with the Copilot service.
+
+## Symbols
+
+### `CopilotSignInInitiateParams`
+#### Description
+An interface representing the parameters required to initiate a sign-in process with the Copilot service. Currently, it is an empty interface, indicating no parameters are needed.
+
+### `CopilotSignInInitiateResult`
+#### Description
+An interface representing the result of initiating a sign-in process. It includes details necessary for the user to complete the sign-in, such as a verification URI and a user code.
+
+#### Outputs
+| Name            | Type   | Description                                      |
+|:----------------|:-------|:-------------------------------------------------|
+| verificationUri | string | The URI where the user can verify their sign-in. |
+| status          | string | The current status of the sign-in process.       |
+| userCode        | string | A code provided to the user for sign-in.         |
+| expiresIn       | number | Time in seconds until the sign-in expires.       |
+| interval        | number | Polling interval in seconds for status updates.  |
+
+### `CopilotSignInConfirmParams`
+#### Description
+An interface representing the parameters required to confirm a sign-in process. It includes the user code obtained during the sign-in initiation.
+
+#### Inputs
+| Name    | Type   | Description                  |
+|:--------|:-------|:-----------------------------|
+| userCode| string | The code provided to the user.|
+
+### `CopilotSignInConfirmResult`
+#### Description
+An interface representing the result of confirming a sign-in process. It includes the status of the sign-in and the user identifier.
+
+#### Outputs
+| Name  | Type          | Description                        |
+|:------|:--------------|:-----------------------------------|
+| status| CopilotStatus | The status of the sign-in process. |
+| user  | string        | The identifier of the signed-in user.|
+
+### `CopilotSignOutParams`
+#### Description
+An interface representing the parameters required to sign out from the Copilot service. It is currently an empty interface, indicating no parameters are needed.
+
+### `CopilotSignOutResult`
+#### Description
+An interface representing the result of a sign-out operation. It includes the status of the sign-out process.
+
+#### Outputs
+| Name  | Type          | Description                        |
+|:------|:--------------|:-----------------------------------|
+| status| CopilotStatus | The status of the sign-out process.|
+
+### `CopilotGetCompletionsParams`
+#### Description
+An interface representing the parameters required to request code completions from the Copilot service. It includes details about the document and the position where completions are requested.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| doc  | object | Details of the document including source code, tab size, indent size, etc. |
+
+### `CopilotGetCompletionsResult`
+#### Description
+An interface representing the result of a code completion request. It includes an array of completion suggestions.
+
+#### Outputs
+| Name        | Type   | Description                          |
+|:------------|:-------|:-------------------------------------|
+| completions | Array  | An array of completion suggestions.  |
+
+### `CopilotAcceptCompletionParams`
+#### Description
+An interface representing the parameters required to accept a code completion suggestion. It includes the unique identifier of the completion.
+
+#### Inputs
+| Name | Type   | Description                          |
+|:-----|:-------|:-------------------------------------|
+| uuid | string | The unique identifier of the completion.|
+
+### `CopilotRejectCompletionParams`
+#### Description
+An interface representing the parameters required to reject code completion suggestions. It includes an array of unique identifiers for the completions to be rejected.
+
+#### Inputs
+| Name | Type   | Description                          |
+|:-----|:-------|:-------------------------------------|
+| uuids| string[]| An array of unique identifiers for the completions.|
+
+### `CopilotStatus`
+#### Description
+A type representing the possible statuses of a Copilot account, such as "SignedIn", "NotAuthorized", etc.
+
+### `CopilotRequestStatus`
+#### Description
+A type representing the possible statuses of a Copilot request, such as "InProgress", "Warning", etc.
+
+## References
+
+The interfaces and types defined in this file are used in the `language-server.ts` file, which implements a client for interacting with the Copilot language server. This client uses the defined types to structure requests and responses for operations like signing in, signing out, and fetching code completions.
+
+## Dependencies
+
+No external libraries or modules are directly used in this file. However, the types and interfaces are utilized by other parts of the codebase, such as the `language-server.ts` file, to interact with the Copilot service.

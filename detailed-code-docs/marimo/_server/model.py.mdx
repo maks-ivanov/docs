@@ -1,0 +1,64 @@
+---
+title: "model.py"
+---
+
+## High-level description
+
+The `marimo/_server/model.py` file defines the core abstractions for managing sessions and their states in a server environment. It includes enumerations for connection states and session modes, as well as an abstract base class for session consumers, which are responsible for handling communication with sessions through different connection types, such as WebSockets.
+
+## Code Structure
+
+The file contains three main components:
+
+1. **Enumerations**: `ConnectionState` and `SessionMode` are enums that define possible states and modes for a session.
+2. **Abstract Base Class**: `SessionConsumer` is an abstract base class that outlines the methods required for any session consumer implementation.
+
+## Symbols
+
+### `ConnectionState`
+#### Description
+`ConnectionState` is an enumeration that represents the possible states of a session's connection. It helps in managing and tracking the lifecycle of a session.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| OPEN | int | Represents an open connection state. |
+| CLOSED | int | Represents a closed connection state. |
+| ORPHANED | int | Represents a state where the session is disconnected but not yet closed. |
+
+### `SessionMode`
+#### Description
+`SessionMode` is an enumeration that defines the mode of a session, indicating whether it is in a read-write or read-only state.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| EDIT | str | Represents a read-write mode for editing sessions. |
+| RUN | str | Represents a read-only mode for running sessions. |
+
+### `SessionConsumer`
+#### Description
+`SessionConsumer` is an abstract base class that defines the interface for session consumers. It is designed to handle communication with a session through various connection types, such as WebSockets.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| consumer_id | ConsumerId | A unique identifier for the session consumer. |
+
+#### Outputs
+None directly, as this is an abstract class.
+
+#### Internal Logic
+- **`on_start`**: An abstract method that should be implemented to start the session consumer and return a subscription function for handling session messages.
+- **`on_stop`**: An abstract method that should be implemented to handle the stopping of the session consumer.
+- **`write_operation`**: An abstract method that should be implemented to handle writing operations to the session.
+- **`connection_state`**: An abstract method that should be implemented to return the current connection state of the session.
+
+## References
+
+- `ConsumerId`: Used as a type for the `consumer_id` parameter in `SessionConsumer`.
+- `MessageOperation` and `KernelMessage`: Referenced in the type hints for methods in `SessionConsumer`, indicating their role in session communication.
+
+## Dependencies
+
+The file imports several modules and types, including `abc` for abstract base classes, `Enum` for creating enumerations, and `Callable` for type hinting function signatures. It also imports `ConsumerId` from `marimo._server.ids` and references types from `marimo._messaging.ops` and `marimo._messaging.types` for message handling.

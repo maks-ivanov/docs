@@ -1,0 +1,147 @@
+---
+title: "test_capture.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_capture.py` contains a series of asynchronous test functions designed to verify the functionality of capturing and redirecting standard output (stdout) and standard error (stderr) streams using the `marimo` library. These tests utilize a mocked kernel environment to simulate the execution of code snippets that interact with stdout and stderr, ensuring that the `marimo` library's capture and redirect mechanisms work as expected.
+
+## Code Structure
+
+The main symbols in the code are the test functions, each of which tests a specific aspect of the `marimo` library's functionality. These functions rely on the `MockedKernel` and `ExecReqProvider` classes from the `tests/conftest.py` file to simulate a kernel environment and provide execution requests, respectively. The `_has_output` function is a utility used to check if a specific pattern appears in the output messages.
+
+## Symbols
+
+### `_has_output`
+#### Description
+The `_has_output` function checks if a given pattern matches any of the output data in a list of messages. It is used to verify that specific output has been captured or redirected correctly.
+
+#### Inputs
+| Name     | Type                      | Description                        |
+|:---------|:--------------------------|:-----------------------------------|
+| messages | list[Tuple[str, Dict[Any, Any]]] | A list of message tuples containing operation type and data. |
+| pattern  | str                       | A regex pattern to match against the output data. |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| result | bool | Returns `True` if the pattern matches any output data, otherwise `False`. |
+
+#### Internal Logic
+The function iterates over the list of messages, checking if the operation type is "cell-op" and if the output data matches the provided regex pattern. If a match is found, it returns `True`; otherwise, it returns `False`.
+
+### `test_capture_stdout`
+#### Description
+Tests the `marimo.capture_stdout()` function to ensure that stdout is captured correctly while stderr is not affected.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| mocked_kernel| MockedKernel    | A mocked kernel environment.       |
+| exec_req     | ExecReqProvider | Provides execution requests.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+Executes a code snippet that writes to both stdout and stderr within a `marimo.capture_stdout()` context. Asserts that stdout is captured in the buffer and stderr remains in the kernel's stderr messages.
+
+### `test_capture_stderr`
+#### Description
+Tests the `marimo.capture_stderr()` function to ensure that stderr is captured correctly while stdout is not affected.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| mocked_kernel| MockedKernel    | A mocked kernel environment.       |
+| exec_req     | ExecReqProvider | Provides execution requests.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+Executes a code snippet that writes to both stdout and stderr within a `marimo.capture_stderr()` context. Asserts that stderr is captured in the buffer and stdout remains in the kernel's stdout messages.
+
+### `test_capture_both`
+#### Description
+Tests capturing both stdout and stderr simultaneously using `marimo.capture_stdout()` and `marimo.capture_stderr()`.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| mocked_kernel| MockedKernel    | A mocked kernel environment.       |
+| exec_req     | ExecReqProvider | Provides execution requests.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+Executes a code snippet that writes to both stdout and stderr within both `marimo.capture_stdout()` and `marimo.capture_stderr()` contexts. Asserts that both stdout and stderr are captured in their respective buffers.
+
+### `test_redirect_stdout`
+#### Description
+Tests the `marimo.redirect_stdout()` function to ensure that stdout is redirected correctly while stderr is not affected.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| mocked_kernel| MockedKernel    | A mocked kernel environment.       |
+| exec_req     | ExecReqProvider | Provides execution requests.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+Executes a code snippet that writes to both stdout and stderr within a `marimo.redirect_stdout()` context. Asserts that stdout is redirected to the stream and stderr remains in the kernel's stderr messages.
+
+### `test_redirect_stderr`
+#### Description
+Tests the `marimo.redirect_stderr()` function to ensure that stderr is redirected correctly while stdout is not affected.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| mocked_kernel| MockedKernel    | A mocked kernel environment.       |
+| exec_req     | ExecReqProvider | Provides execution requests.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+Executes a code snippet that writes to both stdout and stderr within a `marimo.redirect_stderr()` context. Asserts that stderr is redirected to the stream and stdout remains in the kernel's stdout messages.
+
+### `test_redirect_both`
+#### Description
+Tests redirecting both stdout and stderr simultaneously using `marimo.redirect_stdout()` and `marimo.redirect_stderr()`.
+
+#### Inputs
+| Name         | Type            | Description                        |
+|:-------------|:----------------|:-----------------------------------|
+| mocked_kernel| MockedKernel    | A mocked kernel environment.       |
+| exec_req     | ExecReqProvider | Provides execution requests.       |
+
+#### Outputs
+None
+
+#### Internal Logic
+Executes a code snippet that writes to both stdout and stderr within both `marimo.redirect_stdout()` and `marimo.redirect_stderr()` contexts. Asserts that both stdout and stderr are redirected to the stream.
+
+## References
+
+- `MockedKernel` and `ExecReqProvider` from `tests/conftest.py` are used to simulate the kernel environment and provide execution requests.
+- `marimo` library functions such as `capture_stdout`, `capture_stderr`, `redirect_stdout`, and `redirect_stderr` are tested.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `re`       | Used for regex matching in the `_has_output` function. |
+| `tests.conftest` | Provides the `MockedKernel` and `ExecReqProvider` classes for testing. |
+
+## Error Handling
+
+The test functions rely on assertions to validate the expected behavior. If an assertion fails, it indicates that the `marimo` library's capture or redirect functionality is not working as intended.
+
+## Logging
+
+No explicit logging is implemented in the test functions. The focus is on using assertions to verify expected outcomes.

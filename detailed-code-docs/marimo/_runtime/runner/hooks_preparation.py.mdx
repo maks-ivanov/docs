@@ -1,0 +1,67 @@
+---
+title: "hooks_preparation.py"
+---
+
+## High-level description
+
+The target file, `hooks_preparation.py`, is part of the Marimo runtime system and is responsible for preparing the execution environment for running cells in a directed graph of computations. It defines a preparation hook that updates the stale statuses of cells in the graph based on the runner's execution mode and the current state of the graph. This preparation step ensures that cells are correctly marked as stale or queued before execution begins.
+
+## Code Structure
+
+The main symbol in this file is the function `_update_stale_statuses`, which is used as a preparation hook. This function interacts with the `Runner` class from the `cell_runner` module and the `DirectedGraph` class from the `dataflow` module to update the statuses of cells in the graph. The `PREPARATION_HOOKS` list is used to store preparation hooks, including `_update_stale_statuses`.
+
+## References
+
+- `cell_runner.Runner`: The runner class that manages the execution of cells.
+- `dataflow.DirectedGraph`: The graph structure that represents the dependencies between cells.
+- `dataflow.transitive_closure`: A function used to compute the transitive closure of a set of cells in the graph.
+- `import_block_relatives`: A function used to determine relatives of a cell in the context of import blocks.
+
+## Symbols
+
+### `_update_stale_statuses`
+#### Description
+The `_update_stale_statuses` function updates the stale statuses of cells in the runner's graph. It marks cells as stale or queued based on the runner's execution mode and the current state of the graph. This function is used as a preparation hook to ensure that cells are correctly prepared for execution.
+
+#### Inputs
+| Name   | Type                  | Description                        |
+|:-------|:----------------------|:-----------------------------------|
+| runner | `cell_runner.Runner`  | The runner managing cell execution.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value. |
+
+#### Internal Logic
+1. Retrieve the graph from the runner.
+2. If the runner's execution mode is "lazy", compute the transitive closure of the cells to run and mark them as stale.
+3. Iterate over the cells to run:
+   - If a cell is disabled, mark it as stale.
+   - Otherwise, set its runtime state to "queued".
+   - If the cell is stale and the execution mode is "autorun", mark it as not stale.
+
+## Side Effects
+- Modifies the stale status and runtime state of cells in the graph.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataflow` | Provides the `DirectedGraph` class and `transitive_closure` function for managing cell dependencies. |
+| `cell_runner` | Provides the `Runner` class for managing cell execution. |
+
+## Configuration
+No configuration options are defined in this file.
+
+## Error Handling
+This file does not implement specific error handling mechanisms beyond basic exception raising.
+
+## Logging
+No logging mechanisms are implemented in this file.
+
+## API/Interface Reference
+This file does not define an API or public interface.
+
+## TODOs
+No TODOs or notes are present in this file.

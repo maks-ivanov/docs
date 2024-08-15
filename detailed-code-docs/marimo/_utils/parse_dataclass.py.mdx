@@ -1,0 +1,111 @@
+---
+title: "parse_dataclass.py"
+---
+
+## High-level description
+
+The `parse_dataclass.py` file provides utility functions to parse JSON-like data into Python dataclass instances. It includes functions to handle various data types and structures, such as lists, tuples, dictionaries, and unions, while also converting field names from camel case to snake case. This is particularly useful for deserializing data received in JSON format into strongly-typed Python objects.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `to_snake`: A utility function used to convert camel case strings to snake case.
+- `_build_value`: A recursive function that constructs values of specified types, handling complex types like lists, tuples, dictionaries, and unions.
+- `build_dataclass`: A function that constructs a dataclass instance from a dictionary, using `_build_value` to handle nested structures.
+- `parse_raw`: A function that parses raw JSON data into a specified dataclass type, utilizing `build_dataclass` for the actual construction.
+
+## Symbols
+
+### `to_snake`
+#### Description
+Converts a camel case string to snake case. This is useful for transforming JSON keys from camel case (common in JavaScript) to snake case (common in Python).
+
+#### Inputs
+| Name   | Type | Description          |
+|--------|------|----------------------|
+| string | str  | The camel case string to convert. |
+
+#### Outputs
+| Name   | Type | Description          |
+|--------|------|----------------------|
+| output | str  | The converted snake case string. |
+
+### `_build_value`
+#### Description
+Recursively constructs a value of a specified type from a given input. It handles various types, including optionals, lists, tuples, dictionaries, unions, literals, enums, and dataclasses.
+
+#### Inputs
+| Name  | Type  | Description                  |
+|-------|-------|------------------------------|
+| value | Any   | The input value to convert.  |
+| cls   | Type  | The type to convert the value into. |
+
+#### Outputs
+| Name  | Type | Description                  |
+|-------|------|------------------------------|
+| output| T    | The constructed value of type `T`. |
+
+#### Internal Logic
+- Determines the origin class of `cls` to handle different types.
+- Recursively processes the input value based on its type, using `get_args` and `get_origin` to handle generics.
+- Handles special cases for optionals, lists, tuples, dictionaries, unions, literals, and enums.
+
+### `build_dataclass`
+#### Description
+Constructs an instance of a dataclass from a dictionary of values, converting field names from camel case to snake case and using `_build_value` to handle nested structures.
+
+#### Inputs
+| Name   | Type           | Description                        |
+|--------|----------------|------------------------------------|
+| values | dict[Any, Any] | The dictionary of values to use.   |
+| cls    | Type[T]        | The dataclass type to instantiate. |
+
+#### Outputs
+| Name   | Type | Description                        |
+|--------|------|------------------------------------|
+| output | T    | An instance of the dataclass `cls`. |
+
+#### Internal Logic
+- Converts dictionary keys from camel case to snake case.
+- Validates that the keys match the dataclass fields.
+- Uses `_build_value` to construct each field value.
+
+### `parse_raw`
+#### Description
+Parses a raw JSON message into a specified dataclass type. It supports JSON data in both bytes and dictionary formats.
+
+#### Inputs
+| Name    | Type                      | Description                        |
+|---------|---------------------------|------------------------------------|
+| message | Union[bytes, dict[Any, Any]] | The JSON message to parse.         |
+| cls     | Type[T]                   | The dataclass type to instantiate. |
+
+#### Outputs
+| Name   | Type | Description                        |
+|--------|------|------------------------------------|
+| output | T    | An instance of the dataclass `cls`. |
+
+#### Internal Logic
+- If the message is in bytes, it is parsed as JSON.
+- Calls `build_dataclass` to construct the dataclass instance from the parsed data.
+
+## References
+
+- The `parse_raw` function is used in various parts of the codebase, such as in `marimo/_pyodide/bootstrap.py`, `marimo/_runtime/functions.py`, and `marimo/_server/api/utils.py`, indicating its role in deserializing JSON data into dataclass instances.
+
+## Dependencies
+
+| Dependency | Purpose |
+|------------|---------|
+| `dataclasses` | Used for defining and working with dataclass types. |
+| `json` | Used for parsing JSON data. |
+| `enum` | Used for handling enumeration types. |
+| `typing` | Provides type hints and utilities for handling generic types. |
+
+## Error Handling
+
+- The `_build_value` function raises a `ValueError` if a value does not fit any type of a union or literal, providing informative error messages.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

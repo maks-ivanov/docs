@@ -1,0 +1,67 @@
+---
+title: "platform.py"
+---
+
+## High-level description
+
+The target file, `marimo/_utils/platform.py`, provides utility functions to determine the current execution environment. Specifically, it checks if the code is running on a Windows platform or within a Pyodide environment. These checks are useful for conditionally executing platform-specific code or handling platform-specific dependencies.
+
+## Code Structure
+
+The file contains two functions, `is_windows` and `is_pyodide`, which are used to determine the platform on which the code is running. These functions are utilized in other parts of the codebase to adapt behavior based on the platform.
+
+## Symbols
+
+### `is_windows`
+#### Description
+The `is_windows` function checks if the current platform is Windows. It returns `True` if the platform is either "win32" or "cygwin", which are identifiers for Windows platforms in Python's `sys.platform`.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | `True` if the platform is Windows, otherwise `False`. |
+
+#### Internal Logic
+The function uses the `sys.platform` attribute to check if the current platform is "win32" or "cygwin", which are identifiers for Windows systems.
+
+### `is_pyodide`
+#### Description
+The `is_pyodide` function checks if the code is running in a Pyodide environment. Pyodide is a Python distribution for the browser and Node.js based on WebAssembly.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | `True` if running in a Pyodide environment, otherwise `False`. |
+
+#### Internal Logic
+The function checks if "pyodide" is present in the `sys.modules` dictionary, which would indicate that the Pyodide module is loaded and the environment is Pyodide.
+
+## References
+
+The functions `is_windows` and `is_pyodide` are referenced in various parts of the codebase, particularly in modules that need to adapt their behavior based on the platform. For example, they are used in:
+
+- `marimo/_messaging/ops.py`: To determine kernel capabilities and adapt operations based on the platform.
+- `marimo/_runtime/packages/package_managers.py`: To decide which package manager to use based on the environment.
+- `marimo/_runtime/packages/pypi_package_manager.py`: To conditionally execute code related to package management in Pyodide.
+
+## Dependencies
+
+The code relies on the `sys` module from Python's standard library to access platform information and loaded modules.
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| sys | Used to determine the current platform and check for loaded modules. |
+
+## Side Effects
+
+There are no side effects from these functions as they only perform checks and return boolean values based on the current environment.
+
+## Performance Considerations
+
+The functions are lightweight and perform simple checks, so they have minimal performance impact. They are designed to be used frequently throughout the codebase to conditionally execute platform-specific logic.

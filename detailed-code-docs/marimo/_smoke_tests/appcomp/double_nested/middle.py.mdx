@@ -1,0 +1,109 @@
+---
+title: "middle.py"
+---
+
+## High-level description
+
+The target file, `middle.py`, is part of a smoke test suite for the Marimo framework. It defines a Marimo application that demonstrates the use of nested applications and cell-based computation. The application calculates the sum of two values, `x` and `y`, and displays the result using Marimo's markdown rendering capabilities.
+
+## Code Structure
+
+The code is structured around the Marimo framework's concept of "cells," which are essentially functions decorated with `@app.cell`. Each cell performs a specific task, such as importing modules, rendering markdown, or performing calculations. The cells are executed in sequence, and their results can be passed to subsequent cells.
+
+## Symbols
+
+### `app`
+#### Description
+The `app` is an instance of `marimo.App`, which represents the Marimo application. It is configured with a medium width and serves as the main entry point for the application.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a cell within the Marimo application. Each cell is a function that performs a specific task and can return values to be used by other cells.
+
+### First Cell
+#### Description
+This cell imports the Marimo module and returns it. It is used to make the Marimo module available for subsequent cells.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The Marimo module |
+
+### Second Cell
+#### Description
+This cell imports the `app` from the `inner` module and returns it. It demonstrates the use of nested applications within Marimo.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | module | The inner application module |
+
+### Third Cell
+#### Description
+This cell uses the Marimo module to render a markdown header with the text "# middle". It serves as a simple demonstration of Marimo's markdown rendering capabilities.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The Marimo module |
+
+### Fourth Cell
+#### Description
+This cell calculates the sum of two values, `x` and `y`, from the `result` object and renders a markdown message displaying the calculation. It returns the calculated sum.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The Marimo module |
+| result | object | The result object containing definitions of `x` and `y` |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x_plus_y | int/float | The sum of `x` and `y` |
+
+#### Internal Logic
+- Accesses `x` and `y` values from `result.defs`.
+- Calculates their sum.
+- Uses `mo.md` to render a markdown message with the result.
+
+### Fifth Cell
+#### Description
+This asynchronous cell embeds the inner application and retrieves its output. It returns the result object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app | module | The inner application module |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | object | The result object from the embedded application |
+
+#### Internal Logic
+- Calls `app.embed()` to embed the inner application.
+- Awaits the result and accesses its output.
+
+### `if __name__ == "__main__":`
+#### Description
+This block checks if the script is being run as the main module and, if so, calls `app.run()` to start the Marimo application.
+
+## References
+
+- The `marimo` module is heavily used throughout the file, providing the `App` class and markdown rendering capabilities.
+- The `inner` module is referenced to import another application, demonstrating nested application functionality.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Provides the framework for building and running the application |
+
+## Error Handling
+
+The code does not explicitly handle errors. It relies on the Marimo framework to manage any exceptions that may occur during cell execution.
+
+## Logging
+
+The code does not implement any logging mechanisms. It focuses on demonstrating the functionality of Marimo applications through cell execution and markdown rendering.

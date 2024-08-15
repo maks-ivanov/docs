@@ -1,0 +1,66 @@
+---
+title: "module_registry.py"
+---
+
+## High-level description
+
+The `module_registry.py` file defines a `ModuleRegistry` class that manages the registration and tracking of Python modules within a directed graph of cells. It provides functionality to identify which cell is responsible for importing a specific module and to determine which modules are missing from the current Python environment, potentially causing import failures.
+
+## Code Structure
+
+The main symbol in this file is the `ModuleRegistry` class, which interacts with a `DirectedGraph` to manage module imports. The `_is_module_installed` function is a utility function used by the `ModuleRegistry` to check if a module is available in the current Python environment.
+
+## Symbols
+
+### `_is_module_installed`
+#### Description
+This function checks if a given module is installed in the current Python environment. It first checks if the module is already loaded in `sys.modules` and then uses `importlib.util.find_spec` to verify its availability.
+
+#### Inputs
+| Name        | Type   | Description                      |
+|:------------|:-------|:---------------------------------|
+| module_name | str    | The name of the module to check. |
+
+#### Outputs
+| Name    | Type | Description                                      |
+|:--------|:-----|:-------------------------------------------------|
+| result  | bool | `True` if the module is installed, `False` otherwise. |
+
+### `ModuleRegistry`
+#### Description
+The `ModuleRegistry` class manages the registration of modules within a directed graph of cells. It provides methods to find the cell that imports a specific module and to identify modules that are missing from the environment.
+
+#### Inputs
+| Name             | Type               | Description                                      |
+|:-----------------|:-------------------|:-------------------------------------------------|
+| graph            | DirectedGraph      | The graph representing the data flow of cells.   |
+| excluded_modules | set[str] \| None   | Modules to exclude from missing module checks.   |
+
+#### Outputs
+No direct outputs, but provides methods to query module information.
+
+#### Internal Logic
+- **Constructor (`__init__`)**: Initializes the registry with a directed graph and an optional set of excluded modules.
+- **`defining_cell`**: Iterates over the cells in the graph to find the cell that imports a given module.
+- **`modules`**: Collects and returns a set of all modules imported by the cells in the graph.
+- **`missing_modules`**: Uses `_is_module_installed` to determine which modules are not installed and returns a set of these modules, excluding any that are in the `excluded_modules` set.
+
+## References
+
+- **`DirectedGraph`**: Used to represent the data flow of cells and their module imports.
+- **`CellId_t`**: A type alias for cell identifiers, used in the `defining_cell` method.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `importlib.util`   | Used to find the specification of a module to check its availability.    |
+| `sys`              | Used to check if a module is already loaded in the current environment.  |
+
+## Error Handling
+
+The `_is_module_installed` function handles potential exceptions from `importlib.util.find_spec` by first checking `sys.modules`, which avoids errors from non-compliant packages that might not have a `__spec__` attribute.
+
+## Tests
+
+The related test file `test_module_registry.py` includes tests for the `ModuleRegistry` class, verifying the functionality of `defining_cell` and `missing_modules` methods. These tests ensure that the registry correctly identifies the importing cell for a module and accurately reports missing modules.

@@ -1,0 +1,74 @@
+---
+title: "getPyodideVersion.ts"
+---
+
+## High-level description
+
+The target file, `getPyodideVersion.ts`, is responsible for determining the version of Pyodide to be used based on the provided Marimo version. It also handles the dynamic import of the Pyodide library from a CDN, allowing for the use of either a stable or development version of Pyodide depending on the configuration.
+
+## Code Structure
+
+The file contains two main functions: `getPyodideVersion` and `importPyodide`. These functions work together to determine the appropriate version of Pyodide to use and to import it dynamically. The `ALLOW_DEV_VERSIONS` constant is used to control whether development versions of Pyodide are allowed.
+
+## Symbols
+
+### `ALLOW_DEV_VERSIONS`
+#### Description
+A constant that determines whether development versions of Pyodide are allowed. It is set to `false`, meaning only stable versions are used by default.
+
+### `getPyodideVersion`
+#### Description
+This function determines the version of Pyodide to use based on the provided Marimo version. If the Marimo version includes "dev" and development versions are allowed, it returns "dev". Otherwise, it returns a stable version, "v0.26.2".
+
+#### Inputs
+| Name           | Type   | Description                      |
+|:---------------|:-------|:---------------------------------|
+| marimoVersion  | string | The version of Marimo being used |
+
+#### Outputs
+| Name            | Type   | Description                        |
+|:----------------|:-------|:-----------------------------------|
+| pyodideVersion  | string | The version of Pyodide to be used  |
+
+#### Internal Logic
+- Checks if the `marimoVersion` includes "dev" and if `ALLOW_DEV_VERSIONS` is `true`.
+- Returns "dev" if both conditions are met; otherwise, returns "v0.26.2".
+
+### `importPyodide`
+#### Description
+This asynchronous function imports the Pyodide library from a CDN based on the Marimo version. It uses dynamic import statements to load either the development or stable version of Pyodide.
+
+#### Inputs
+| Name           | Type   | Description                      |
+|:---------------|:-------|:---------------------------------|
+| marimoVersion  | string | The version of Marimo being used |
+
+#### Outputs
+| Name   | Type    | Description                  |
+|:-------|:--------|:-----------------------------|
+| result | Promise | A promise that resolves when the import is complete |
+
+#### Internal Logic
+- Checks if the `marimoVersion` includes "dev" and if `ALLOW_DEV_VERSIONS` is `true`.
+- Uses dynamic import statements to load the appropriate version of Pyodide from the CDN.
+- The `@ts-expect-error` comments indicate that TypeScript may not be able to verify the import paths, but they are expected to work.
+
+## References
+
+- The functions `getPyodideVersion` and `importPyodide` are used in other parts of the codebase, such as in `worker.tsx`, `save-worker.ts`, and `worker.ts`, to initialize and manage Pyodide within web workers.
+
+## Dependencies
+
+The file does not explicitly import any external libraries or modules, but it relies on the browser's dynamic import capabilities to load Pyodide from a CDN.
+
+## Error Handling
+
+The file uses `@ts-expect-error` comments to suppress TypeScript errors related to dynamic import paths, indicating that these paths are expected to work despite TypeScript's inability to verify them.
+
+## Side Effects
+
+- The dynamic import of Pyodide from a CDN can affect the application's loading time and network usage, especially if the development version is used.
+
+## Performance Considerations
+
+- The use of dynamic imports allows for lazy loading of the Pyodide library, which can improve initial load times by deferring the loading of Pyodide until it is needed. However, this also means that there may be a delay when Pyodide is first used, as it needs to be fetched from the CDN.

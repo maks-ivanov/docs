@@ -1,0 +1,120 @@
+---
+title: "useActiveOutline.tsx"
+---
+
+## High-level description
+
+The `useActiveOutline.tsx` file provides functionality for managing and interacting with document outlines in a React application. It includes a custom React hook, `useActiveOutline`, which determines the currently active header in a document based on its visibility within the viewport. Additionally, it provides utility functions to find and scroll to specific outline elements within the document.
+
+## Code Structure
+
+The main symbols in this file are interconnected as follows:
+- `useActiveOutline`: A React hook that uses the `IntersectionObserver` API to track which header element is currently active based on its visibility.
+- `findOutlineElements`: A function that identifies and returns all outline elements in the document.
+- `scrollToOutlineItem`: A function that scrolls the document to a specific outline item and temporarily highlights it.
+- `findOutlineItem`: A utility function that locates a specific outline item in the document using either an ID or an XPath.
+
+## Symbols
+
+### `useActiveOutline`
+#### Description
+The `useActiveOutline` hook is used to determine which header element in a document is currently active based on its visibility in the viewport. It utilizes the `IntersectionObserver` API to observe changes in the visibility of header elements and updates the active header ID accordingly.
+
+#### Inputs
+| Name           | Type                                      | Description                                      |
+|:---------------|:------------------------------------------|:-------------------------------------------------|
+| headerElements | Array&lt;readonly [HTMLElement, string]&gt;     | An array of tuples containing header elements and their identifiers. |
+
+#### Outputs
+| Name          | Type                | Description                                      |
+|:--------------|:--------------------|:-------------------------------------------------|
+| activeHeaderId | string \| undefined | The ID of the currently active header element.   |
+
+#### Internal Logic
+- Initializes state and references for tracking the active header and the `IntersectionObserver`.
+- Sets up an `IntersectionObserver` to monitor the visibility of header elements.
+- Updates the `activeHeaderId` when the topmost visible header changes.
+- Cleans up the observer when the component is unmounted or when `headerElements` change.
+
+### `findOutlineElements`
+#### Description
+This function identifies and returns all outline elements in the document by mapping each `OutlineItem` to its corresponding DOM element.
+
+#### Inputs
+| Name  | Type          | Description                                      |
+|:------|:--------------|:-------------------------------------------------|
+| items | OutlineItem[] | An array of outline items to locate in the document. |
+
+#### Outputs
+| Name  | Type                              | Description                                      |
+|:------|:----------------------------------|:-------------------------------------------------|
+| output | Array&lt;[HTMLElement, string]&gt; | An array of tuples containing the located elements and their identifiers. |
+
+#### Internal Logic
+- Uses a map to track occurrences of each identifier.
+- Locates each outline item in the document using `findOutlineItem`.
+- Returns an array of located elements and their identifiers.
+
+### `scrollToOutlineItem`
+#### Description
+This function scrolls the document to a specific outline item and highlights it temporarily.
+
+#### Inputs
+| Name  | Type        | Description                                      |
+|:------|:------------|:-------------------------------------------------|
+| item  | OutlineItem | The outline item to scroll to.                   |
+| index | number      | The index of the occurrence of the item.         |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Locates the element corresponding to the outline item using `findOutlineItem`.
+- Scrolls the element into view with a smooth animation.
+- Temporarily adds a highlight class to the element.
+
+### `findOutlineItem`
+#### Description
+This utility function locates a specific outline item in the document using either an ID or an XPath.
+
+#### Inputs
+| Name  | Type        | Description                                      |
+|:------|:------------|:-------------------------------------------------|
+| item  | OutlineItem | The outline item to locate.                      |
+| index | number      | The index of the occurrence of the item.         |
+
+#### Outputs
+| Name  | Type          | Description                                      |
+|:------|:--------------|:-------------------------------------------------|
+| output | HTMLElement \| null | The located DOM element or null if not found. |
+
+#### Internal Logic
+- Uses `querySelectorAll` to find elements by ID, handling potential duplicates.
+- Uses `document.evaluate` to find elements by XPath.
+
+## References
+
+- `headingToIdentifier` from `frontend/src/core/dom/outline.ts`: Used to convert a heading element to an identifier.
+- `OutlineItem` from `frontend/src/core/cells/outline.ts`: Represents an item in the document outline.
+- `Logger` from `frontend/src/utils/Logger.ts`: Used for logging warnings.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `react`    | Provides hooks like `useEffect`, `useRef`, and `useState`. |
+| `Logger`   | Used for logging warnings and errors.        |
+
+## Error Handling
+
+- The `scrollToOutlineItem` function logs a warning if it cannot find the element for an outline item.
+
+## Side Effects
+
+- The `useActiveOutline` hook sets up an `IntersectionObserver` which can affect performance if many elements are observed.
+- The `scrollToOutlineItem` function modifies the DOM by adding and removing a CSS class for highlighting.
+
+## Performance Considerations
+
+- The `IntersectionObserver` API is used in `useActiveOutline` to efficiently track visibility changes without polling.
+- The `scrollToOutlineItem` function uses smooth scrolling, which may have performance implications on large documents or low-performance devices.

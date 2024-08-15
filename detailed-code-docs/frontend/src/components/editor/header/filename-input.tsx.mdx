@@ -1,0 +1,70 @@
+---
+title: "filename-input.tsx"
+---
+
+## High-level description
+
+The `filename-input.tsx` file defines a React component named `FilenameInput` that provides an input field for users to enter or modify filenames. It includes features such as auto-suggestions for existing files, dynamic width adjustment, and handling of focus and blur events. The component interacts with a backend service to fetch file suggestions and uses various UI components to display these suggestions in a popover.
+
+## Code Structure
+
+The main symbol in this file is the `FilenameInput` component, which is a functional React component. It utilizes several hooks like `useState`, `useEffect`, and `useRef` to manage its state and lifecycle. The component also makes use of utility functions and components from other parts of the codebase, such as `Paths` for path manipulation, `useAsyncData` for asynchronous data fetching, and UI components like `Popover` and `Command` for rendering the input and suggestions.
+
+## References
+
+- `sendListFiles` from `requests.ts`: Used to fetch file suggestions from the backend.
+- `Paths` from `paths.ts`: Provides utility functions for path manipulation.
+- `useAsyncData` from `useAsyncData.ts`: Manages asynchronous data fetching and state.
+- `FILE_TYPE_ICONS` and `guessFileType` from `file-tree/types.ts`: Used to determine file types and their corresponding icons.
+- `getFeatureFlag` from `feature-flag.tsx`: Checks feature flags for conditional logic.
+
+## Symbols
+
+### `FilenameInput`
+#### Description
+The `FilenameInput` component provides an input field for entering or modifying filenames. It supports features like auto-suggestions based on existing files, dynamic width adjustment, and handling of focus and blur events. The component fetches file suggestions from a backend service and displays them in a popover.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| resetOnBlur | boolean | Determines if the input value should reset on blur. |
+| placeholderText | string | Placeholder text for the input field. |
+| initialValue | string \| null | Initial value of the input field. |
+| className | string | Additional CSS classes for styling. |
+| flexibleWidth | boolean | Determines if the input field should adjust its width dynamically. |
+| onNameChange | function | Callback function to handle name changes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX.Element | JSX.Element | The rendered input component with suggestions. |
+
+#### Internal Logic
+- **State Management**: Uses `useState` to manage `searchValue`, `suggestions`, and `focused` states.
+- **Effect Hook**: `useEffect` is used to update the `searchValue` whenever `initialValue` changes.
+- **Focus and Blur Handling**: Functions `onFocus` and `onBlur` manage the focus state and reset the input value if `resetOnBlur` is true.
+- **Suggestions Filtering**: Filters suggestions based on the current input using `Paths.basename`.
+- **Async Data Fetching**: Uses `useAsyncData` to fetch file suggestions from the backend when the input is focused.
+- **Suggestion Selection**: Handles selection of suggestions and updates the input value accordingly.
+- **Dynamic Width**: Adjusts the input field's width based on the length of the input or placeholder text.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Provides React hooks and components. |
+| `@radix-ui/react-popover` | Used for creating popover UI components. |
+| `lucide-react` | Provides icons for file types. |
+| `clsx` and `tailwind-merge` | Used for managing CSS class names. |
+
+## Error Handling
+
+The component does not explicitly handle errors beyond basic exception handling in the `useAsyncData` hook. Errors during data fetching are caught and stored in the state, but not displayed or logged.
+
+## Logging
+
+There is no explicit logging mechanism implemented in this component.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

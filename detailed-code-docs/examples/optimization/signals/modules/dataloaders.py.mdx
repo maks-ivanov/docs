@@ -1,0 +1,101 @@
+---
+title: "dataloaders.py"
+---
+
+## High-level description
+
+The target file, `dataloaders.py`, is a module designed to handle data loading and generation for various datasets related to environmental and solar energy data. It includes functions to fetch and preprocess CO2 data, generate synthetic changepoint data, retrieve PVDAQ solar data, and simulate soiling data for photovoltaic systems. These functions are useful for preparing datasets for analysis or modeling in environmental and energy-related applications.
+
+## Code Structure
+
+The main symbols in the code are functions that either load data from external sources or generate synthetic datasets. These functions are independent of each other but share a common theme of dealing with time-series data related to environmental and solar energy metrics.
+
+## Symbols
+
+### `get_c02_data`
+#### Description
+Fetches and preprocesses CO2 data from a specified URL. The function reads a CSV file, processes it to ensure each year has exactly 53 entries by adding NaN values where necessary, and returns a DataFrame.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| df | `pd.DataFrame` | A DataFrame containing the processed CO2 data with consistent yearly entries. |
+
+#### Internal Logic
+- Reads the CSV file from a URL, skipping initial rows to reach the data.
+- Groups data by year and identifies years with less than 53 entries.
+- Adds NaN entries to those years to ensure uniformity.
+- Concatenates and sorts the DataFrame by the 'decimal' column.
+
+### `make_changepoint_data`
+#### Description
+Generates synthetic time-series data with changepoints and optional periodic components. This is useful for testing algorithms that detect changepoints in time-series data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| seed | `int` | Seed for random number generation to ensure reproducibility. |
+| include_periodic_component | `bool` | Whether to include a periodic component in the generated data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| y | `npt.NDArray` | The generated time-series data. |
+| components | `npt.NDArray` | The components of the time-series data (noise, true values, and optionally periodic component). |
+
+#### Internal Logic
+- Initializes a time-series with a constant value and introduces changepoints by modifying specific segments.
+- Adds Gaussian noise to the series.
+- Optionally adds a sinusoidal component to simulate periodic behavior.
+- Returns the combined series and its components.
+
+### `get_pvdaq_data`
+#### Description
+Loads PVDAQ solar data from a local file or fetches it using an API if the file is not present. The data is then cleaned and returned as a DataFrame.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pv_df | `pd.DataFrame` | A DataFrame containing the cleaned PVDAQ solar data. |
+
+#### Internal Logic
+- Checks if the local data file exists; if not, fetches data using an API.
+- Reads the data into a DataFrame and sets the index to a datetime format.
+- Cleans the data by replacing negative power values with NaN.
+
+### `make_soiling_data`
+#### Description
+Simulates photovoltaic (PV) soiling data over time, incorporating factors like degradation, noise, and cleaning events. This function is useful for modeling the impact of soiling on solar panel performance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| seed | `int` | Seed for random number generation to ensure reproducibility. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ss_df | `pd.DataFrame` | A DataFrame containing simulated soiling data. |
+| name | `str` | A description of the soiling scenario. |
+
+#### Internal Logic
+- Defines helper functions to simulate PV time series with and without seasonal soiling.
+- Generates multiple scenarios of soiling data with varying parameters.
+- Returns one of the generated DataFrames and its corresponding scenario name.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `numpy` | Used for numerical operations and random number generation. |
+| `pandas` | Used for data manipulation and handling time-series data. |
+| `os.path` | Used to check for the existence of local files. |
+| `solardatatools` | Used to fetch PVDAQ data if the local file is not available. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as verifying the existence of a file before attempting to read it. More robust error handling could be implemented to manage potential issues like network errors when fetching data from URLs or APIs.
+
+## Performance Considerations
+
+The functions are designed to handle typical data sizes for environmental and solar datasets. However, performance could be impacted by the size of the datasets, especially when concatenating large DataFrames or performing operations on extensive time-series data. Optimizations could include more efficient data handling techniques or parallel processing for large datasets.

@@ -1,0 +1,116 @@
+---
+title: "flex.py"
+---
+
+## High-level description
+
+The target file, `marimo/_plugins/stateless/flex.py`, provides functions to create flexible layout components using HTML and CSS flexbox properties. It defines functions to stack items either vertically (`vstack`) or horizontally (`hstack`) and a private function `_flex` that serves as the core utility for these layout operations. These functions return an `Html` object that represents the layout of the items with specified alignment, justification, and spacing.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `_flex`: A private function that constructs the flexbox layout using the provided parameters and returns an `Html` object.
+- `vstack`: A public function that uses `_flex` to stack items vertically.
+- `hstack`: A public function that uses `_flex` to stack items horizontally.
+- `_spaced`: A private function that arranges items in a grid with a fixed number of items per row, though it is currently unused.
+
+## Symbols
+
+### `_flex`
+#### Description
+The `_flex` function is a utility that creates a flexbox layout for a sequence of items. It allows customization of the flex direction, justification, alignment, wrapping, and spacing between items.
+
+#### Inputs
+| Name         | Type                              | Description                                                                 |
+|:-------------|:----------------------------------|:----------------------------------------------------------------------------|
+| `items`      | `Sequence[object]`                | A sequence of items to be arranged in the flexbox layout.                    |
+| `direction`  | `Literal["row", "column"]`        | The direction of the flexbox layout, either row or column.                   |
+| `justify`    | `Literal[...]`                    | How to justify the items along the main axis.                                |
+| `align`      | `Optional[Literal[...]]`          | How to align the items along the cross axis.                                 |
+| `wrap`       | `bool`                            | Whether the items should wrap onto multiple lines.                           |
+| `gap`        | `float`                           | The gap between items, specified in rem units.                               |
+| `child_flexes` | `Optional[Sequence[Optional[float]]]` | Optional flex values for individual child items.                             |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| `Html` | `Html` | An `Html` object representing the flexbox layout. |
+
+#### Internal Logic
+- Maps the `justify` and `align` parameters to their corresponding CSS flexbox properties.
+- Constructs a CSS style string using the `create_style` utility.
+- Iterates over the items, applying individual styles if `child_flexes` are provided.
+- Uses the `h.div` method to create HTML div elements for each item and the container.
+
+### `vstack`
+#### Description
+The `vstack` function arranges items in a vertical stack using a flexbox layout. It is a wrapper around the `_flex` function with the `direction` parameter set to "column".
+
+#### Inputs
+| Name    | Type                              | Description                                                                 |
+|:--------|:----------------------------------|:----------------------------------------------------------------------------|
+| `items` | `Sequence[object]`                | A sequence of items to be stacked vertically.                                |
+| `align` | `Optional[Literal[...]]`          | How to align the items horizontally.                                         |
+| `justify` | `Literal[...]`                  | How to justify the items vertically.                                         |
+| `gap`   | `float`                           | The gap between items, specified in rem units.                               |
+| `heights` | `Optional[Literal["equal"] | Sequence[float]]` | Specifies equal heights or a list of relative heights for the items.         |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| `Html` | `Html` | An `Html` object representing the vertical stack layout. |
+
+### `hstack`
+#### Description
+The `hstack` function arranges items in a horizontal stack using a flexbox layout. It is a wrapper around the `_flex` function with the `direction` parameter set to "row".
+
+#### Inputs
+| Name    | Type                              | Description                                                                 |
+|:--------|:----------------------------------|:----------------------------------------------------------------------------|
+| `items` | `Sequence[object]`                | A sequence of items to be stacked horizontally.                              |
+| `justify` | `Literal[...]`                  | How to justify the items horizontally.                                       |
+| `align` | `Optional[Literal[...]]`          | How to align the items vertically.                                           |
+| `wrap`  | `bool`                            | Whether the items should wrap onto multiple lines.                           |
+| `gap`   | `float`                           | The gap between items, specified in rem units.                               |
+| `widths` | `Optional[Literal["equal"] | Sequence[float]]` | Specifies equal widths or a list of relative widths for the items.           |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| `Html` | `Html` | An `Html` object representing the horizontal stack layout. |
+
+### `_spaced`
+#### Description
+The `_spaced` function arranges items in a grid with a fixed number of items per row. It is currently unused but provides an alternative layout method.
+
+#### Inputs
+| Name          | Type                              | Description                                                                 |
+|:--------------|:----------------------------------|:----------------------------------------------------------------------------|
+| `items`       | `Sequence[object]`                | Items to arrange in the grid.                                               |
+| `justify`     | `Literal["left", "right", "center", "normal"]` | How to justify items within the grid.                                       |
+| `items_per_row` | `Optional[int]`                 | Number of items per row.                                                    |
+| `column_gap`  | `float`                           | Gap between columns, specified in rem units.                                |
+| `row_gap`     | `float`                           | Gap between rows, specified in rem units.                                   |
+
+#### Outputs
+| Name  | Type  | Description                |
+|:------|:------|:---------------------------|
+| `Html` | `Html` | An `Html` object representing the grid layout. |
+
+## References
+
+- `create_style`: A utility function from `marimo._output.utils` used to create CSS style strings.
+- `h.div`: A method from `marimo._output.builder` used to create HTML div elements.
+- `as_html`: A function from `marimo._output.formatting` used to convert items to HTML.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._output.builder` | Provides HTML building utilities. |
+| `marimo._output.formatting` | Provides functions for formatting objects as HTML. |
+| `marimo._output.hypertext` | Defines the `Html` class used for HTML representation. |
+| `marimo._output.utils` | Provides utility functions like `create_style`. |
+
+## TODOs
+- There is a TODO comment indicating the potential implementation of `_spaced` as a stateless plugin in the frontend, suggesting future enhancements or usage considerations.

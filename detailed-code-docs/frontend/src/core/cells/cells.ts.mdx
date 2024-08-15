@@ -1,0 +1,164 @@
+---
+title: "cells.ts"
+---
+
+## High-level description
+
+The `cells.ts` file is a core part of the frontend of a notebook application, managing the state and behavior of notebook cells. It defines the structure and initial state of the notebook, provides a reducer to handle various actions on cells (such as creating, moving, deleting, and updating cells), and includes utility functions and hooks for interacting with the notebook state. The file leverages the Jotai library for state management and integrates with other parts of the application to handle cell operations and interactions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- **NotebookState**: Represents the overall state of the notebook, including cell order, data, runtime state, and logs.
+- **Reducer and Actions**: A reducer function and associated actions manage state transitions for various cell operations.
+- **Atoms and Hooks**: Jotai atoms and hooks are used to manage and access the state of the notebook and its cells.
+- **Utility Functions**: Functions like `withScratchCell` and `initialNotebookState` help initialize and modify the notebook state.
+
+## Symbols
+
+### `NotebookState`
+#### Description
+Represents the state of the notebook, including the order of cells, their data, runtime states, handlers, history, scroll target, and logs.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- `cellIds`: Manages the order of cells using a `CollapsibleTree`.
+- `cellData`: Stores data for each cell, such as code and configuration.
+- `cellRuntime`: Maintains runtime information for each cell, like execution status and outputs.
+- `cellHandles`: References to cell components for direct manipulation.
+- `history`: Tracks deleted cells for undo functionality.
+- `scrollKey`: Identifies the cell to scroll to.
+- `cellLogs`: Stores logs of cell messages.
+
+### `initialNotebookState`
+#### Description
+Initializes the notebook state, either from a static state or with a default scratch cell.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `NotebookState` | The initial state of the notebook. |
+
+#### Internal Logic
+- Checks if the notebook is static and parses the static state if true.
+- Otherwise, initializes a default state with a scratch cell.
+
+### `createReducerAndAtoms`
+#### Description
+Creates a reducer and associated actions for managing notebook state transitions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| initialNotebookState | `function` | Function to initialize the notebook state. |
+| reducers | `object` | Object containing reducer functions for various actions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| reducer | `function` | The reducer function for state transitions. |
+| createActions | `function` | Function to create actions for dispatching state changes. |
+| useActions | `function` | Hook to use actions within a component. |
+| valueAtom | `atom` | Jotai atom representing the notebook state. |
+
+#### Internal Logic
+- Defines a reducer function that applies state transitions based on dispatched actions.
+- Provides functions to create and use actions for interacting with the notebook state.
+
+### `useNotebook`
+#### Description
+A React hook to access the current state of the notebook.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | `NotebookState` | The current state of the notebook. |
+
+### `useCellIds`
+#### Description
+A React hook to access the array of cell IDs in the notebook.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellIds | `CollapsibleTree&lt;CellId&gt;` | The current order of cell IDs. |
+
+### `useCellNames`
+#### Description
+A React hook to access the mapping of cell IDs to their names.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| names | `Record&lt;CellId, string&gt;` | Mapping of cell IDs to their names. |
+
+### `useCellErrors`
+#### Description
+A React hook to access the array of cell errors in the notebook.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| errors | `Array` | Array of cell errors. |
+
+### `useCellLogs`
+#### Description
+A React hook to access the logs of all cell messages.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| logs | `Array` | Array of cell logs. |
+
+### `useCellActions`
+#### Description
+A React hook to dispatch cell actions without causing a re-render.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| actions | `object` | Object containing functions to dispatch cell actions. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | State management library used for managing notebook state. |
+| `react` | Used for creating React components and hooks. |
+
+## Error Handling
+
+- The code includes error handling for invalid operations, such as attempting to move or delete a non-existent cell, by logging warnings or throwing errors.
+
+## Logging
+
+- The code uses a `Logger` utility to log warnings and errors, providing feedback during development and debugging.
+
+## TODOs
+- The code includes a TODO comment for creating a component to display/edit the cell's name, indicating a potential area for future development.

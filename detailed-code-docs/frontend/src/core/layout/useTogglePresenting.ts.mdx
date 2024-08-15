@@ -1,0 +1,68 @@
+---
+title: "useTogglePresenting.ts"
+---
+
+## High-level description
+
+The `useTogglePresenting` function in the target file is a custom React hook designed to toggle the presentation mode of a notebook application. It identifies the currently visible cell in the viewport and scrolls to it when switching between presentation and editing modes. This functionality is part of a larger system that manages the state and behavior of a notebook application, allowing users to seamlessly transition between different modes of interaction.
+
+## Code Structure
+
+The main symbol in the code is the `useTogglePresenting` function. It utilizes several imported functions and hooks, such as `useCallback`, `useSetAtom`, and `toggleAppMode`, to manage the state and behavior of the notebook's presentation mode. The function interacts with the `viewStateAtom` to update the application's view state and uses DOM manipulation to identify and scroll to the relevant cell.
+
+## References
+
+- `toggleAppMode`: A function that toggles the application's mode between "edit" and "present".
+- `viewStateAtom`: An atom from the `jotai` library that holds the current view state of the application.
+- `HTMLCellId`: A utility for handling cell IDs in the DOM.
+- `useSetAtom`: A hook from the `jotai` library used to update the state of an atom.
+
+## Symbols
+
+### `useTogglePresenting`
+#### Description
+The `useTogglePresenting` function is a custom React hook that toggles the notebook's presentation state and scrolls to the currently visible cell. It achieves this by updating the view state atom and using DOM manipulation to find and scroll to the relevant cell.
+
+#### Inputs
+None directly, but it uses the `useSetAtom` hook to interact with the `viewStateAtom`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| togglePresenting | function | A function that toggles the presentation mode and scrolls to the visible cell. |
+
+#### Internal Logic
+1. **State Management**: Uses `useSetAtom` to get a setter function for the `viewStateAtom`.
+2. **Callback Definition**: Defines `togglePresenting` using `useCallback` to ensure the function is memoized.
+3. **DOM Interaction**: 
+   - Retrieves all elements with the class "output-area".
+   - Determines the viewport's end position.
+   - Iterates over the output areas to find the first visible one.
+   - Parses the cell ID from the visible element's parent node.
+4. **State Update**: 
+   - Updates the view state with the new mode and the identified cell anchor.
+5. **Scrolling**: 
+   - Uses `requestAnimationFrame` to scroll to the identified cell if it exists.
+
+## Side Effects
+- Modifies the global state of the application by updating the `viewStateAtom`.
+- Interacts with the DOM to find and scroll to elements.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react` | Provides the `useCallback` hook for memoizing functions. |
+| `jotai` | Provides state management capabilities through atoms and hooks. |
+
+## Error Handling
+The code does not explicitly handle errors, but it assumes that the DOM elements and IDs are correctly structured and available.
+
+## Logging
+No logging mechanisms are implemented in this code.
+
+## API/Interface Reference
+The `useTogglePresenting` function does not expose an API but returns a function that can be used to toggle the presentation mode.
+
+## TODOs
+There are no TODOs or notes left in the code.

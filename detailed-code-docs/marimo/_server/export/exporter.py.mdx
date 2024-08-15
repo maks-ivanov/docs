@@ -1,0 +1,66 @@
+---
+title: "exporter.py"
+---
+
+## High-level description
+
+The `exporter.py` file in the Marimo library is responsible for exporting notebook data into various formats such as HTML, script, IPython notebook, and Markdown. It provides functionality to convert the notebook's content, including code, configurations, and outputs, into these formats, facilitating the sharing and distribution of notebook data in different environments.
+
+## Code Structure
+
+The main class in this file is `Exporter`, which contains methods for exporting notebook data into different formats. Each method in the `Exporter` class corresponds to a specific export format, such as HTML, script, IPython notebook, or Markdown. The methods utilize various utilities and configurations from the Marimo library to gather and format the necessary data for export.
+
+## Symbols
+
+### `Exporter`
+#### Description
+The `Exporter` class provides methods to export a notebook's content into different formats. It handles the conversion of notebook data, including code, configurations, and outputs, into formats like HTML, script, IPython notebook, and Markdown.
+
+#### Methods
+
+- **`export_as_html`**: Exports the notebook as an HTML file, including options to include code and console outputs.
+- **`export_as_script`**: Exports the notebook as a Python script, ensuring that no asynchronous code is present.
+- **`export_as_ipynb`**: Exports the notebook as an IPython notebook file (`.ipynb`), converting each cell into a corresponding IPython cell.
+- **`export_as_md`**: Exports the notebook as a Markdown file, including metadata and code blocks.
+
+#### Inputs
+Each method takes specific inputs related to the export process, such as file manager, session view, display configuration, and export request details.
+
+#### Outputs
+Each method returns a tuple containing the exported content as a string and the suggested filename for the exported file.
+
+#### Internal Logic
+- **`export_as_html`**: Reads the static HTML template, gathers cell data, and constructs the HTML content with embedded notebook data.
+- **`export_as_script`**: Checks for asynchronous code, retrieves the topologically sorted cell codes, and concatenates them into a script.
+- **`export_as_ipynb`**: Converts each cell into an IPython notebook cell, handling both code and markdown cells, and writes the notebook structure to a stream.
+- **`export_as_md`**: Constructs a Markdown document with YAML metadata and formatted code blocks, handling markdown and code cells appropriately.
+
+## References
+
+- **`AppFileManager`**: Manages the notebook file and provides access to its content and configurations.
+- **`SessionView`**: Provides access to the current session's view, including cell outputs and console logs.
+- **`DisplayConfig`**: Configuration for display settings, used to customize the export output.
+- **`ExportAsHTMLRequest`**: Represents the request details for exporting as HTML, including options like including code and asset URLs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `base64` | Used for encoding file contents in base64 format. |
+| `mimetypes` | Used to guess the MIME type of files. |
+| `io` | Provides stream handling for file operations. |
+| `os` | Used for file path operations. |
+| `nbformat` | Used for creating and writing IPython notebook files. |
+| `yaml` | Used for handling YAML metadata in Markdown export. |
+
+## Error Handling
+
+- **`export_as_script`**: Raises a `UsageError` if the notebook contains asynchronous code, as it cannot be exported to a flat script.
+
+## Logging
+
+No explicit logging is implemented in this file.
+
+## TODOs
+
+- **`export_as_md`**: There is a TODO comment suggesting the provision of a filter or kernel in the YAML header to make Markdown documents executable.

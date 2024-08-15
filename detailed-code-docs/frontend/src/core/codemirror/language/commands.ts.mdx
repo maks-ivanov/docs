@@ -1,0 +1,93 @@
+---
+title: "commands.ts"
+---
+
+## High-level description
+
+The target file, `commands.ts`, provides functions to manage and manipulate the language mode of a CodeMirror editor instance. It includes utilities to get the current language adapter, check if a language toggle is possible, and perform the toggle to a different language within the editor. These functions are essential for enabling dynamic language switching in a code editor environment.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `getCurrentLanguageAdapter` retrieves the current language mode of the editor.
+- `canToggleToLanguage` checks if the editor can switch to a specified language.
+- `toggleToLanguage` performs the language switch if possible.
+- These functions utilize the `languageAdapterState` and `switchLanguage` from the `extension` module and `LanguageAdapters` from the `LanguageAdapters` module.
+
+## Symbols
+
+### `getCurrentLanguageAdapter`
+#### Description
+This function retrieves the current language adapter type for a given `EditorView`. If the `EditorView` is null, it defaults to "python".
+
+#### Inputs
+| Name       | Type        | Description                  |
+|:-----------|:------------|:-----------------------------|
+| editorView | EditorView \| null | The editor view instance to check the language adapter for. |
+
+#### Outputs
+| Name                  | Type              | Description                        |
+|:----------------------|:------------------|:-----------------------------------|
+| languageAdapterType   | LanguageAdapterType | The current language adapter type, defaulting to "python" if the editor view is null. |
+
+### `canToggleToLanguage`
+#### Description
+Determines if the editor can switch to a specified language. It checks if the current language is different from the target language and if the target language supports the current code.
+
+#### Inputs
+| Name       | Type              | Description                  |
+|:-----------|:------------------|:-----------------------------|
+| editorView | EditorView \| null | The editor view instance to check. |
+| language   | LanguageAdapterType | The target language to switch to. |
+
+#### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| canToggle | boolean | Returns true if the language can be toggled, false otherwise. |
+
+#### Internal Logic
+- Checks if the `editorView` is null or if the current language is already the target language.
+- Uses `LanguageAdapters` to verify if the target language supports the current code.
+
+### `toggleToLanguage`
+#### Description
+Attempts to switch the editor's language to the specified language. It can force the switch if specified in the options.
+
+#### Inputs
+| Name       | Type              | Description                  |
+|:-----------|:------------------|:-----------------------------|
+| editorView | EditorView        | The editor view instance to toggle the language for. |
+| language   | LanguageAdapterType | The target language to switch to. |
+| opts       | { force?: boolean } | Options to force the toggle regardless of current conditions. |
+
+#### Outputs
+| Name    | Type                    | Description                                      |
+|:--------|:------------------------|:-------------------------------------------------|
+| result  | LanguageAdapterType \| false | The new language type if toggled, false if not. |
+
+#### Internal Logic
+- Checks if the toggle is possible using `canToggleToLanguage` unless forced.
+- Calls `switchLanguage` to perform the language switch.
+
+## References
+
+- `languageAdapterState` and `switchLanguage` from `extension.ts` are used to manage and switch the language state.
+- `LanguageAdapters` from `LanguageAdapters.ts` provides the language adapter instances.
+
+## Dependencies
+
+| Dependency         | Purpose                                                  |
+|:-------------------|:---------------------------------------------------------|
+| `@codemirror/view` | Provides the `EditorView` type used in the functions.    |
+
+## Error Handling
+
+The functions handle null `editorView` inputs gracefully by defaulting to "python" or returning false, ensuring robustness in scenarios where the editor view might not be initialized.
+
+## Side Effects
+
+- `toggleToLanguage` modifies the state of the `EditorView` by changing its language adapter, which can affect the editor's behavior and appearance.
+
+## Performance Considerations
+
+- The `canToggleToLanguage` function calls `getEditorCodeAsPython`, which may involve code transformation, potentially impacting performance if used frequently in a large document.

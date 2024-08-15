@@ -1,0 +1,65 @@
+---
+title: "hooks_pre_execution.py"
+---
+
+## High-level description
+
+The target file, `hooks_pre_execution.py`, defines pre-execution hooks for a cell execution runner in the Marimo framework. These hooks are functions that are executed before a cell is run, and they are used to manage the state of the cell, such as setting its staleness and updating its runtime status to "running".
+
+## Code Structure
+
+The file defines two main functions, `_set_staleness` and `_set_status_to_running`, which are used as pre-execution hooks. These functions are added to a list, `PRE_EXECUTION_HOOKS`, which is used by the runner to execute these hooks before running a cell.
+
+## Symbols
+
+### `_set_staleness`
+#### Description
+This function checks if a cell is stale and updates its staleness status. It is used to ensure that a cell is marked as not stale if its execution mode is "lazy" and none of its ancestors are stale.
+
+#### Inputs
+| Name   | Type                  | Description                        |
+|:-------|:----------------------|:-----------------------------------|
+| cell   | `CellImpl`            | The cell whose staleness is being checked. |
+| runner | `cell_runner.Runner`  | The runner managing the cell execution. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the execution graph from the runner.
+- Checks if the runner's execution mode is "lazy" and if any ancestor of the cell is stale.
+- If the conditions are met, it sets the cell's staleness to `False`.
+
+### `_set_status_to_running`
+#### Description
+This function sets the runtime state of a cell to "running". It is used to update the cell's status before execution begins.
+
+#### Inputs
+| Name   | Type                  | Description                        |
+|:-------|:----------------------|:-----------------------------------|
+| cell   | `CellImpl`            | The cell whose status is being updated. |
+| runner | `cell_runner.Runner`  | The runner managing the cell execution. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The runner is not used in this function, so it is deleted.
+- Sets the cell's runtime state to "running".
+
+### `PRE_EXECUTION_HOOKS`
+#### Description
+A list of pre-execution hooks that are executed before a cell is run. It includes the `_set_staleness` and `_set_status_to_running` functions.
+
+## References
+
+- `CellImpl`: Defined in `marimo/_ast/cell.py`, it represents a cell in the execution graph with various properties and methods to manage its state.
+- `cell_runner.Runner`: Defined in `marimo/_runtime/runner/cell_runner.py`, it manages the execution of cells, including handling hooks and execution contexts.
+
+## Dependencies
+
+The file imports `Callable` from `typing` to define the type of pre-execution hooks and imports `CellImpl` and `cell_runner` from other parts of the Marimo framework to interact with cell and runner objects.
+
+## TODOs
+
+- There is a TODO comment suggesting that the check for ancestor staleness in `_set_staleness` could be optimized by ensuring that parent cells are always run before child cells.

@@ -1,0 +1,147 @@
+---
+title: "streams.py"
+---
+
+## High-level description
+
+The `streams.py` file in the `marimo/_messaging` module is responsible for managing the input and output streams in a thread-safe manner. It provides classes and functions to handle standard input, output, and error streams, ensuring that data is correctly forwarded and managed between different components of the system, such as the kernel and the frontend. The file also includes mechanisms to handle large outputs and redirect streams to the frontend.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ThreadSafeStream` is a thread-safe wrapper around a communication pipe, used to send messages from the kernel to the server.
+- `ThreadSafeStdout`, `ThreadSafeStderr`, and `ThreadSafeStdin` are classes that extend the standard input/output/error streams to make them thread-safe and integrate with the `ThreadSafeStream`.
+- `Watcher` is a utility class that monitors and redirects standard streams to the frontend.
+- The `_forward_os_stream` function is used to read data from a file descriptor and forward it to a stream object.
+- The `redirect` function is a context manager that temporarily redirects standard streams to the frontend.
+
+## Symbols
+
+### `ThreadSafeStream`
+#### Description
+A thread-safe wrapper around a communication pipe, used to send messages from the kernel to the server. It ensures that messages are sent in a thread-safe manner using a lock.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| pipe | `TypedConnection[KernelMessage]` | The communication pipe for sending messages. |
+| input_queue | `QueueType[str]` | A queue for handling standard input messages. |
+| cell_id | `Optional[CellId_t]` | An optional identifier for the cell associated with the stream. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes a lock for thread-safe operations.
+- Starts a thread for buffered console output writing.
+- Provides a `write` method to send messages through the pipe, handling potential `OSError` exceptions.
+
+### `ThreadSafeStdout`
+#### Description
+A thread-safe implementation of the standard output stream, integrating with `ThreadSafeStream` to send output data to the frontend.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | `ThreadSafeStream` | The stream used for sending output data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Provides methods to check if the stream is writable, readable, or seekable.
+- Implements a `_write_with_mimetype` method to send data with a specified MIME type, truncating large outputs if necessary.
+- Uses a condition variable to notify when new console messages are available.
+
+### `ThreadSafeStderr`
+#### Description
+A thread-safe implementation of the standard error stream, similar to `ThreadSafeStdout`, but for error messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | `ThreadSafeStream` | The stream used for sending error data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Similar to `ThreadSafeStdout`, but handles error messages.
+- Implements a `_write_with_mimetype` method to send error data with a specified MIME type, truncating large outputs if necessary.
+
+### `ThreadSafeStdin`
+#### Description
+A thread-safe implementation of the standard input stream, providing a subset of stdin functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| stream | `ThreadSafeStream` | The stream used for receiving input data. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Provides methods to check if the stream is writable, readable, or seekable.
+- Implements a `_readline_with_prompt` method to read input data with an optional prompt, sending a prompt request to the frontend.
+
+### `Watcher`
+#### Description
+Monitors and redirects a standard stream to the frontend, using a separate thread to handle the redirection.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| standard_stream | `ThreadSafeStdout` or `ThreadSafeStderr` | The stream to be watched and redirected. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Creates a pipe and a thread to forward data from the file descriptor to the stream.
+- Provides methods to start, pause, and stop the redirection.
+
+### `_forward_os_stream`
+#### Description
+Watches a file descriptor and forwards its data to a stream object, handling exceptions to prevent errors during data forwarding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| standard_stream | `Stdout` or `Stderr` | The stream object to forward data to. |
+| fd | `int` | The file descriptor to watch. |
+
+#### Outputs
+None
+
+### `redirect`
+#### Description
+A context manager that temporarily redirects a standard stream to the frontend, using the `Watcher` class to manage the redirection.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| standard_stream | `Stdout` or `Stderr` | The stream to be redirected. |
+
+#### Outputs
+None
+
+## References
+
+- `TypedConnection` from `marimo._utils.typed_connection` is used for typed communication.
+- `ConsoleMsg` and `buffered_writer` from `marimo._messaging.console_output_worker` are used for handling console messages.
+- `CellChannel` from `marimo._messaging.cell_output` is used to specify the channel of a cell's output.
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to specify MIME types for data.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file descriptor operations and environment variable access. |
+| `sys` | Used for accessing standard streams and system-specific parameters. |
+| `threading` | Used for creating locks and threads for thread-safe operations. |
+| `deque` from `collections` | Used for buffering console messages. |
+
+## TODOs
+
+- There is a TODO comment suggesting improvements for handling large messages over the `multiprocessing.Connection` and frontend performance issues.

@@ -1,0 +1,98 @@
+---
+title: "functions.py"
+---
+
+## High-level description
+
+The code in `marimo/_runtime/functions.py` defines a system for managing and executing functions within a graph-based runtime environment. It provides classes to encapsulate functions, organize them into namespaces, and register them in a global registry. This setup allows for dynamic function execution and management, particularly in contexts where functions may be associated with specific execution cells or contexts.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `Function`: Represents a callable entity with a name, argument class, and the function itself. It can be executed with a dictionary of arguments.
+- `FunctionNamespace`: Organizes multiple `Function` instances under a common namespace, allowing for easy retrieval and management.
+- `FunctionRegistry`: Maintains a collection of `FunctionNamespace` instances, enabling the registration, retrieval, and deletion of functions across different namespaces.
+
+## Symbols
+
+### `EmptyArgs`
+#### Description
+A utility dataclass used for functions that do not require any arguments.
+
+### `Function`
+#### Description
+Encapsulates a callable function with a specific name and argument class. It supports both synchronous and asynchronous functions and associates them with a cell ID if available.
+
+#### Inputs
+| Name     | Type     | Description                                      |
+|:---------|:---------|:-------------------------------------------------|
+| name     | str      | The name of the function.                        |
+| arg_cls  | Type[S]  | The dataclass type for the function's arguments. |
+| function | Callable | The function to be executed.                     |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| result | T    | The result of the function call.   |
+
+#### Internal Logic
+- Initializes with a name, argument class, and function.
+- Attempts to retrieve the current execution context to associate a cell ID.
+- The `__call__` method builds the argument dataclass from a dictionary and executes the function, returning its result.
+
+### `FunctionNamespace`
+#### Description
+Manages a collection of `Function` instances under a specific namespace, allowing for organized function retrieval and management.
+
+#### Inputs
+| Name      | Type                  | Description                        |
+|:----------|:----------------------|:-----------------------------------|
+| namespace | str                   | The namespace identifier.          |
+| functions | dict[str, Function]   | A dictionary of functions.         |
+
+#### Outputs
+- None directly, but provides methods to add and retrieve functions.
+
+#### Internal Logic
+- Uses a dictionary to store functions by their names.
+- Provides methods to add a function and retrieve a function by name.
+
+### `FunctionRegistry`
+#### Description
+A global registry for managing `FunctionNamespace` instances, allowing for the registration, retrieval, and deletion of functions across namespaces.
+
+#### Inputs
+- None directly, but methods accept namespace and function details.
+
+#### Outputs
+- None directly, but provides methods to register, retrieve, and delete functions.
+
+#### Internal Logic
+- Maintains a dictionary of `FunctionNamespace` instances.
+- Provides methods to register a function under a namespace, retrieve a function by namespace and name, and delete a namespace.
+
+## References
+
+- `CellId_t` from `marimo/_ast/cell.py`: Used to associate functions with specific cell IDs.
+- `build_dataclass` from `marimo/_utils/parse_dataclass.py`: Utilized to construct argument dataclasses from dictionaries.
+
+## Dependencies
+
+| Dependency                      | Purpose                                                                 |
+|:--------------------------------|:------------------------------------------------------------------------|
+| `dataclasses`                   | Used for defining data structures like `Function` and `EmptyArgs`.      |
+| `typing`                        | Provides type hints and generic types for function signatures.          |
+| `marimo._ast.cell.CellId_t`     | Represents cell IDs for associating functions with execution contexts.  |
+| `marimo._utils.parse_dataclass` | Provides utility to build dataclass instances from dictionaries.        |
+
+## Error Handling
+
+The code handles the potential absence of an execution context by setting the `cell_id` to `None` if the context is not initialized.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

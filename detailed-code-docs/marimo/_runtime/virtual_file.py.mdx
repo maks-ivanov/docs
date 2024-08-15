@@ -1,0 +1,161 @@
+---
+title: "virtual_file.py"
+---
+
+## High-level description
+
+The `virtual_file.py` module in the Marimo project is responsible for managing virtual files within a runtime environment. It provides functionality to create, manage, and dispose of virtual files, which are essentially in-memory representations of files that can be shared across different processes using shared memory. The module also includes mechanisms for reference counting and lifecycle management of these virtual files.
+
+## Code Structure
+
+The main components of the code are:
+
+- `random_filename`: A function to generate unique random filenames.
+- `VirtualFile`: A class representing a virtual file with attributes like URL, filename, and buffer.
+- `VirtualFileLifecycleItem`: A class that extends `CellLifecycleItem` to manage the lifecycle of virtual files.
+- `VirtualFileRegistryItem` and `VirtualFileRegistry`: Classes to manage the storage and reference counting of virtual files in shared memory.
+- Utility functions like `_without_leading_dot` and `read_virtual_file`.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to ensure correct MIME type handling.
+- `build_data_url` from `marimo._output.utils` is used to create data URLs for virtual files.
+- `CellLifecycleItem` from `marimo._runtime.cell_lifecycle_item` is extended by `VirtualFileLifecycleItem`.
+- `ContextNotInitializedError` from `marimo._runtime.context` is used for error handling when context is not initialized.
+- `HTTPException` and `HTTPStatus` from `marimo._server.api.status` are used for error handling in HTTP contexts.
+- `is_pyodide` from `marimo._utils.platform` is used to check the runtime environment.
+
+## Symbols
+
+### `random_filename`
+#### Description
+Generates a unique random filename using a combination of the current thread ID and a random string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ext | str | The file extension to be used for the filename. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | A unique random filename with the specified extension. |
+
+#### Internal Logic
+- Uses `threading.get_native_id()` to get the current thread ID.
+- Generates a random string of 8 characters from a predefined alphabet.
+- Combines the thread ID and random string to form the filename.
+
+### `VirtualFile`
+#### Description
+Represents a virtual file with attributes for URL, filename, and buffer. It can be initialized with a data URL or a relative URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The name of the file. |
+| buffer | bytes | The content of the file in bytes. |
+| url | Optional[str] | The URL of the file. |
+| as_data_url | bool | Flag to determine if the URL should be a data URL. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| VirtualFile | VirtualFile | An instance of the VirtualFile class. |
+
+#### Internal Logic
+- If `as_data_url` is `True`, constructs a data URL using `build_data_url`.
+- Otherwise, constructs a relative URL based on the buffer size and filename.
+
+### `VirtualFileLifecycleItem`
+#### Description
+Manages the lifecycle of a virtual file, including creation and disposal, within a cell's lifecycle.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ext | str | The file extension. |
+| buffer | bytes | The content of the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| virtual_file | VirtualFile | The managed virtual file. |
+
+#### Internal Logic
+- Uses `random_filename` to generate a unique filename.
+- Adds the virtual file to a registry if the context supports virtual files.
+- Handles reference counting and disposal based on the lifecycle of the cell.
+
+### `VirtualFileRegistryItem`
+#### Description
+Represents an item in the virtual file registry, containing shared memory and a reference count.
+
+### `VirtualFileRegistry`
+#### Description
+Manages a collection of virtual files, providing methods for adding, removing, and reference counting.
+
+#### Internal Logic
+- Uses shared memory to store file contents.
+- Provides methods to increment and decrement reference counts.
+- Handles cleanup of shared memory during shutdown.
+
+### `_without_leading_dot`
+#### Description
+Removes the leading dot from a file extension if present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ext | str | The file extension. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ext | str | The file extension without a leading dot. |
+
+### `read_virtual_file`
+#### Description
+Reads the contents of a virtual file from shared memory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | str | The name of the file. |
+| byte_length | int | The number of bytes to read. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| buffer_contents | bytes | The contents of the file. |
+
+#### Internal Logic
+- Retrieves the shared memory associated with the filename.
+- Reads the specified number of bytes from the shared memory buffer.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `base64` | Encoding and decoding data URLs. |
+| `dataclasses` | Defining data structures for virtual files and registries. |
+| `mimetypes` | Guessing MIME types for files. |
+| `random` | Generating random filenames. |
+| `string` | Providing character sets for random filename generation. |
+| `sys` | Platform-specific operations. |
+| `threading` | Managing thread-specific operations. |
+| `multiprocessing.shared_memory` | Storing file contents in shared memory. |
+
+## Error Handling
+
+- Uses `ContextNotInitializedError` to handle cases where the runtime context is not initialized.
+- Raises `RuntimeError` if a unique filename cannot be generated after multiple attempts.
+- Uses `HTTPException` with `HTTPStatus.NOT_FOUND` for handling file not found errors in shared memory.
+
+## Logging
+
+- Utilizes a logger (`LOGGER`) to debug and log errors related to shared memory operations and virtual file management.
+
+## TODOs
+
+- There is a TODO comment in the `random_filename` function questioning whether callers should redraw if they encounter a filename collision. This suggests a potential improvement area for handling filename uniqueness more robustly.

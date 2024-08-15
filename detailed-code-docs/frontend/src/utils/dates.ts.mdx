@@ -1,0 +1,76 @@
+---
+title: "dates.ts"
+---
+
+## High-level description
+
+The `dates.ts` file provides utility functions for formatting date values into human-readable strings. It includes functions to convert date values into a "pretty" date format and to express how much time has passed since a given date in a more conversational format, such as "Today at 8:00 AM" or "Yesterday at 8:00 AM".
+
+## Code Structure
+
+The file contains two main functions: `prettyDate` and `timeAgo`. Both functions utilize JavaScript's `Date` object to parse and format date values. They also employ a `Logger` to handle any errors that occur during date parsing.
+
+## References
+
+- The `Logger` from `Logger.ts` is used to log warnings when date parsing fails.
+
+## Symbols
+
+### `prettyDate`
+#### Description
+The `prettyDate` function formats a given date value into a human-readable string in the format "MMM DD, YYYY". If the input is null or undefined, it returns an empty string. If the date parsing fails, it logs a warning and returns the input value as a string.
+
+#### Inputs
+| Name  | Type                  | Description                        |
+|:------|:----------------------|:-----------------------------------|
+| value | string \| number \| null \| undefined | The date value to be formatted. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| result | string | The formatted date string or input as string if parsing fails. |
+
+#### Internal Logic
+- Checks if the input value is null or undefined and returns an empty string if true.
+- Attempts to create a `Date` object from the input value.
+- Uses `toLocaleDateString` to format the date into "MMM DD, YYYY".
+- Catches any errors during parsing, logs a warning, and returns the input value as a string.
+
+### `timeAgo`
+#### Description
+The `timeAgo` function provides a human-readable string indicating how much time has passed since the given date. It returns "Today at [time]" if the date is today, "Yesterday at [time]" if it was yesterday, or the full date and time for earlier dates. If parsing fails, it logs a warning.
+
+#### Inputs
+| Name  | Type                  | Description                        |
+|:------|:----------------------|:-----------------------------------|
+| value | string \| number \| null \| undefined | The date value to be evaluated. |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| result | string | A string indicating the time ago or input as string if parsing fails. |
+
+#### Internal Logic
+- Checks if the input value is null, undefined, or zero and returns an empty string if true.
+- Creates `Date` objects for the input date, today, and yesterday.
+- Compares the input date with today and yesterday to determine the appropriate string format.
+- Uses `toLocaleTimeString` to append the time to the formatted date string.
+- Catches any errors during parsing, logs a warning, and returns the input value as a string.
+
+## Side Effects
+
+- Both functions log warnings using the `Logger` if date parsing fails.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `Logger`   | Used for logging warnings when date parsing fails. |
+
+## Error Handling
+
+- Both functions use a try-catch block to handle errors during date parsing. If an error occurs, a warning is logged using the `Logger`, and the input value is returned as a string.
+
+## Logging
+
+- The `Logger` is used to log warnings when date parsing fails, providing a mechanism to track and debug issues related to date formatting.

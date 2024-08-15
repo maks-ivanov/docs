@@ -1,0 +1,95 @@
+---
+title: "state.ts"
+---
+
+## High-level description
+
+The target file, `state.ts`, is part of a frontend application that manages the state related to a feature called "Copilot". This feature appears to be an integration with GitHub Copilot, a code completion tool. The file defines and manages the state of whether the user is signed into Copilot and provides utility functions to check if Copilot is enabled based on user configuration and previous sign-in status.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `copilotSignedInState` is an atom that stores the sign-in state of the Copilot feature.
+- `getIsLastSignedIn` is a function that checks the last sign-in status from local storage.
+- `isCopilotEnabled` is a function that determines if Copilot is enabled based on the last sign-in status and user configuration.
+- `waitForEnabledCopilot` is a function that waits for the user configuration to indicate that Copilot is enabled.
+
+## Symbols
+
+### `copilotSignedInState`
+#### Description
+This is a Jotai atom that stores the sign-in state of the Copilot feature. It uses local storage to persist the state across sessions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| KEY | string | The key used to store the sign-in state in local storage. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| copilotSignedInState | Atom&lt;boolean \| null&gt; | The atom representing the sign-in state, which can be true, false, or null. |
+
+### `getIsLastSignedIn`
+#### Description
+This function checks the last sign-in status of the Copilot feature from local storage.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lastSignedIn | boolean | Returns true if the last sign-in status was "true", otherwise false. |
+
+#### Internal Logic
+- Retrieves the sign-in status from local storage using the key `KEY`.
+- Compares the retrieved value to the string "true" to determine the sign-in status.
+
+### `isCopilotEnabled`
+#### Description
+Determines if the Copilot feature is enabled based on the last sign-in status and the user's configuration.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isEnabled | boolean | Returns true if Copilot is enabled according to the user's configuration and last sign-in status. |
+
+#### Internal Logic
+- Calls `getIsLastSignedIn` to check the last sign-in status.
+- Retrieves the user configuration using `getUserConfig`.
+- Checks if the Copilot feature is set to "github" in the user configuration and if the last sign-in status is true.
+
+### `waitForEnabledCopilot`
+#### Description
+Waits for the user configuration to indicate that the Copilot feature is enabled.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| enabledConfig | Promise&lt;UserConfig&gt; | Resolves when the user configuration indicates that Copilot is enabled. |
+
+#### Internal Logic
+- Uses the `waitFor` function to wait until the `userConfigAtom` satisfies the condition that Copilot is set to "github".
+
+## References
+
+- `getUserConfig` from `config.ts` is used to retrieve the user configuration.
+- `userConfigAtom` from `config.ts` is used in `waitForEnabledCopilot` to monitor changes in the user configuration.
+- `waitFor` from `jotai.ts` is used to implement the waiting mechanism in `waitForEnabledCopilot`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai/utils` | Provides the `atomWithStorage` utility for creating atoms with local storage support. |
+| `jotai` | Used for state management with atoms. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that local storage operations and configuration retrievals are successful.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

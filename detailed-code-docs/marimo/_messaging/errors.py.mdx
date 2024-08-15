@@ -1,0 +1,173 @@
+---
+title: "errors.py"
+---
+
+## High-level description
+
+The `marimo/_messaging/errors.py` file defines a set of error classes used to represent various error conditions that can occur within the Marimo application. These errors are structured as data classes, each representing a specific type of error that can occur during the execution of code cells, such as cycles in data dependencies, multiple definitions of a variable, or syntax errors.
+
+## Code Structure
+
+The file defines several error classes, each corresponding to a specific type of error that can occur in the Marimo application. These classes are interconnected through a union type `Error`, which allows for handling multiple error types in a unified manner.
+
+## Symbols
+
+### `CycleError`
+#### Description
+Represents an error that occurs when there is a cycle in the data dependency graph. This error is used to indicate that a set of cells are involved in a cyclic dependency, which prevents proper execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| edges_with_vars | tuple[EdgeWithVar, ...] | A tuple containing the edges involved in the cycle, along with the variables linking them. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["cycle"] | A literal string indicating the type of error. |
+
+### `MultipleDefinitionError`
+#### Description
+Represents an error that occurs when a variable is defined in multiple cells, leading to ambiguity in the data flow.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the variable that is multiply defined. |
+| cells | tuple[CellId_t, ...] | A tuple of cell IDs where the variable is defined. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["multiple-defs"] | A literal string indicating the type of error. |
+
+### `DeleteNonlocalError`
+#### Description
+Represents an error that occurs when a cell attempts to delete a variable that is not local to it, which is not allowed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the variable that is attempted to be deleted. |
+| cells | tuple[CellId_t, ...] | A tuple of cell IDs where the variable is defined. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["delete-nonlocal"] | A literal string indicating the type of error. |
+
+### `MarimoInterruptionError`
+#### Description
+Represents an error that occurs when an execution is interrupted, typically by a user action.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["interruption"] | A literal string indicating the type of error. |
+
+### `MarimoAncestorPreventedError`
+#### Description
+Represents an error that occurs when an ancestor cell prevents the execution of a descendant cell due to an error.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | A message describing the error. |
+| raising_cell | CellId_t | The ID of the cell that raised the error. |
+| blamed_cell | Optional[CellId_t] | The ID of the cell that is blamed for the error, if applicable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["ancestor-prevented"] | A literal string indicating the type of error. |
+
+### `MarimoAncestorStoppedError`
+#### Description
+Represents an error that occurs when an ancestor cell stops the execution of a descendant cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | A message describing the error. |
+| raising_cell | CellId_t | The ID of the cell that raised the error. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["ancestor-stopped"] | A literal string indicating the type of error. |
+
+### `MarimoExceptionRaisedError`
+#### Description
+Represents an error that occurs when an exception is raised during the execution of a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | A message describing the error. |
+| exception_type | str | The type of exception that was raised. |
+| raising_cell | Optional[CellId_t] | The ID of the cell that raised the exception, if applicable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["exception"] | A literal string indicating the type of error. |
+
+### `MarimoSyntaxError`
+#### Description
+Represents an error that occurs when there is a syntax error in the code of a cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | A message describing the syntax error. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["syntax"] | A literal string indicating the type of error. |
+
+### `UnknownError`
+#### Description
+Represents an error that occurs when an unknown error condition is encountered.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | A message describing the unknown error. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["unknown"] | A literal string indicating the type of error. |
+
+### `MarimoStrictExecutionError`
+#### Description
+Represents an error that occurs when strict execution rules are violated, such as when a reference cannot be resolved.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | A message describing the error. |
+| ref | str | The reference that caused the error. |
+| blamed_cell | Optional[CellId_t] | The ID of the cell that is blamed for the error, if applicable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| type | Literal["strict-exception"] | A literal string indicating the type of error. |
+
+## References
+
+- `CellId_t` from `marimo._ast.cell`: Used to represent cell identifiers.
+- `EdgeWithVar` from `marimo._runtime.dataflow`: Used to represent edges in the data dependency graph with associated variables.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used to define the error classes as data classes. |
+| `typing` | Provides type annotations for the error classes. |
+
+## Error Handling
+
+The file defines specific error classes for different error conditions, allowing for structured error handling throughout the Marimo application. Each error class encapsulates the necessary information to describe the error condition, making it easier to handle and report errors in a consistent manner.

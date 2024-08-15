@@ -1,0 +1,103 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file `types.ts` defines TypeScript interfaces and types for a grid layout system used in a frontend application. These types are used to serialize and deserialize grid layouts, which are stored on the user's disk and must remain backward-compatible. The file outlines the structure of grid layouts and their cells, including properties like columns, row height, and cell positions.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `SerializedGridLayout` and `SerializedGridLayoutCell` define the structure of a grid layout and its cells in a serialized form.
+- `GridLayout` extends `SerializedGridLayout` by adding runtime properties like `scrollableCells` and `cellSide`.
+- `GridLayoutCellSide` and `SerializedGridLayoutCellPosition` are types used within the interfaces to specify cell alignment and position.
+
+## Symbols
+
+### `SerializedGridLayout`
+#### Description
+Defines the structure of a grid layout in its serialized form, which is stored on the user's disk. It includes properties like the number of columns, row height, maximum width, and an array of cells.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| columns | number | Number of columns in the grid. |
+| rowHeight | number | Height of each row in pixels. |
+| maxWidth | number (optional) | Maximum width of the grid layout. |
+| cells | SerializedGridLayoutCell[] | Array of cells in the layout. |
+| bordered | boolean (optional) | Indicates if the grid has a border. |
+
+#### Outputs
+N/A
+
+### `SerializedGridLayoutCell`
+#### Description
+Represents a cell within a serialized grid layout, including its position, scrollability, and alignment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| position | SerializedGridLayoutCellPosition \| null | Position of the cell as [x, y, w, h]. |
+| scrollable | boolean (optional) | Indicates if the cell is scrollable. |
+| side | GridLayoutCellSide (optional) | Alignment of the cell. |
+
+#### Outputs
+N/A
+
+### `GridLayout`
+#### Description
+Extends `SerializedGridLayout` by adding runtime properties for managing the grid layout in the application, such as `scrollableCells` and `cellSide`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cells | Array&lt;{ i: string; x: number; y: number; w: number; h: number; }&gt; | Array of cell objects with position and size. |
+| scrollableCells | Set&lt;CellId&gt; | Set of cell IDs that are scrollable. |
+| cellSide | Map&lt;CellId, GridLayoutCellSide&gt; | Map of cell IDs to their alignment side. |
+
+#### Outputs
+N/A
+
+### `GridLayoutCellSide`
+#### Description
+Defines the possible alignment sides for a grid layout cell, which can be "top", "left", "right", or "bottom".
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `SerializedGridLayoutCellPosition`
+#### Description
+A tuple type representing the position and size of a cell in the grid layout as [x, y, w, h].
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+## References
+
+- `CellId` from `@/core/cells/ids`: Used to uniquely identify cells within the grid layout.
+- `GridLayout` and `GridLayoutCellSide` are used in related files like `grid-layout.tsx` and `plugin.tsx` to manage and render grid layouts.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@/core/cells/ids` | Provides the `CellId` type used for identifying cells. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic TypeScript type checking. The interfaces and types ensure that the data structures conform to expected formats.
+
+## Logging
+
+No logging mechanisms are implemented in this file. However, related files like `plugin.tsx` use logging for warnings and errors.
+
+## TODOs
+
+- The comments in the code suggest potential future enhancements, such as allowing users to set the number of columns and row height, which are currently hardcoded.

@@ -1,0 +1,73 @@
+---
+title: "feedback-button.tsx"
+---
+
+## High-level description
+
+The `feedback-button.tsx` file defines a React component, `FeedbackButton`, which provides a user interface for collecting feedback from users. When the button is clicked, it opens a modal dialog where users can rate their experience using emojis and provide additional comments. The feedback is then sent to a specified API endpoint, and a toast notification is displayed to confirm the submission.
+
+## Code Structure
+
+The main symbols in the code are the `FeedbackButton` component and the `FeedbackModal` component. The `FeedbackButton` uses the `useImperativeModal` hook to open the `FeedbackModal` when clicked. The `FeedbackModal` contains a form that collects user feedback and sends it to an API endpoint. The `EmojiToRating` object maps emojis to numerical ratings, which are used in the feedback form.
+
+## Symbols
+
+### `FeedbackButton`
+#### Description
+The `FeedbackButton` component is a React functional component that renders a button. When clicked, it opens a modal dialog for collecting user feedback.
+
+#### Inputs
+| Name     | Type            | Description                  |
+|:---------|:----------------|:-----------------------------|
+| children | `React.ReactNode` | The content to be displayed inside the button. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Uses the `useImperativeModal` hook to get `openModal` and `closeModal` functions.
+- Renders a `Slot` component that, when clicked, opens the `FeedbackModal` using the `openModal` function.
+
+### `FeedbackModal`
+#### Description
+The `FeedbackModal` component is a React functional component that renders a modal dialog. It contains a form for users to submit feedback, including a rating and a message.
+
+#### Inputs
+| Name   | Type     | Description                  |
+|:-------|:---------|:-----------------------------|
+| onClose | `() =&gt; void` | A function to close the modal. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Renders a form with a rating section and a textarea for additional comments.
+- The rating section uses emojis mapped to numerical values via the `EmojiToRating` object.
+- On form submission, it prevents the default form action, collects form data, and sends it to the API endpoint `https://marimo.io/api/feedback` using a POST request.
+- Closes the modal and displays a toast notification to confirm feedback submission.
+
+## References
+
+- `useImperativeModal`: A hook from `ImperativeModal.tsx` that provides functions to open and close modals.
+- `Constants.issuesPage`: A constant from `constants.ts` used to link to the GitHub issue tracker.
+- `toast`: A function from `use-toast.ts` used to display a notification after feedback submission.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@radix-ui/react-slot` | Used for rendering the `Slot` component. |
+| `@radix-ui/react-dialog` | Provides dialog components for the modal. |
+| `react` | Core library for building the component. |
+
+## Error Handling
+
+The code does not explicitly handle errors from the feedback submission API call. It uses a "fire-and-forget" approach, meaning it does not process the response or handle potential errors.
+
+## Logging
+
+The code uses the `toast` function to display a notification confirming that feedback has been sent. This serves as a form of user feedback rather than traditional logging.
+
+## TODOs
+
+No TODOs or notes are present in the code.

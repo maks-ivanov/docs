@@ -1,0 +1,62 @@
+---
+title: "test_preview_column.py"
+---
+
+## High-level description
+
+The target file `tests/_data/test_preview_column.py` is a test script designed to verify the functionality of the `get_column_preview` function from the `marimo._data.preview_column` module. This function is responsible for generating a preview of a specific column in a dataset, which includes a chart and a summary. The test ensures that the function behaves correctly under different conditions, such as when optional dependencies are installed and when running on different operating systems.
+
+## Code Structure
+
+The main function in this test file is `test_get_column_preview`, which is decorated with `pytest.mark.skipif` to conditionally skip the test based on the presence of certain dependencies and the operating system. The test function uses a mock DataFrame and checks the output of the `get_column_preview` function, asserting that the results are as expected and using a snapshot mechanism to verify the generated chart code and specifications.
+
+## Symbols
+
+### `test_get_column_preview`
+#### Description
+This function tests the `get_column_preview` function to ensure it correctly generates a preview for specified columns in a DataFrame. It checks that the function returns non-null results for chart code, chart specification, and summary, and that no errors are present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not take any direct inputs but uses a predefined DataFrame within the test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not return any outputs but asserts conditions to validate the behavior of `get_column_preview`. |
+
+#### Internal Logic
+1. **Dependency Check**: The test is skipped if the required dependencies (`pandas` and `altair`) are not installed or if the platform is Windows.
+2. **DataFrame Creation**: A sample DataFrame is created with columns of different data types (integer, string, and date).
+3. **Function Invocation**: The `get_column_preview` function is called twice, once for an integer column and once for a date column.
+4. **Assertions**: The test asserts that the result is not `None`, and that the `chart_code`, `chart_spec`, and `summary` are not `None`, while `error` is `None`.
+5. **Snapshot Testing**: The results for `chart_code` and `chart_spec` are saved and compared against existing snapshots to ensure consistency.
+
+## References
+
+- `get_column_preview`: This function from `marimo._data.preview_column` is the primary function being tested. It generates a preview of a dataset column, including a chart and summary.
+- `DependencyManager`: Used to check if the required dependencies (`pandas` and `altair`) are installed.
+- `register_transformers`: A function from `marimo._plugins.ui._impl.charts.altair_transformer` that registers custom data transformers for Altair, which is necessary for rendering charts.
+- `PreviewDatasetColumnRequest`: A data class from `marimo._runtime.requests` that encapsulates the request details for previewing a dataset column.
+- `snapshotter`: A utility from `tests.mocks` used to create and compare snapshots of the test results.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing the test cases. |
+| `pandas` | Required for creating DataFrames used in the test. |
+| `altair` | Required for rendering charts in the `get_column_preview` function. |
+
+## Error Handling
+
+The test function uses assertions to handle errors. If the conditions are not met (e.g., if the result is `None` or if there are discrepancies in the snapshot), the test will fail, indicating an issue with the `get_column_preview` function.
+
+## Logging
+
+No explicit logging is implemented in the test file. However, the `get_column_preview` function being tested does include logging for warnings and errors, which would be captured during test execution if any issues arise.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

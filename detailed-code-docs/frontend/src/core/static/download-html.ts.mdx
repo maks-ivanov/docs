@@ -1,0 +1,89 @@
+---
+title: "download-html.ts"
+---
+
+## High-level description
+
+The target file, `download-html.ts`, is responsible for downloading a notebook as an HTML file. It provides a function to export the current notebook's content, including code and associated virtual files, into an HTML format and then triggers a download of this content as a file. Additionally, it includes a utility function to update asset URLs, which is exposed for testing purposes.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `downloadAsHTML`: This is the primary function that orchestrates the process of exporting the notebook as HTML and downloading it.
+- `updateAssetUrl`: A utility function used to modify asset URLs, which is exposed for testing purposes.
+- The code relies on several utility modules and classes such as `exportAsHTML`, `downloadBlob`, `Paths`, `VirtualFileTracker`, and `Filenames` to perform its operations.
+
+## References
+
+- `exportAsHTML`: A function imported from `../network/requests` that handles the export of notebook content to HTML.
+- `downloadBlob`: A utility function from `@/utils/download` used to trigger the download of a blob as a file.
+- `Paths`: A utility module from `@/utils/paths` used to manipulate file paths.
+- `VirtualFileTracker`: A class from `./virtual-file-tracker` that tracks virtual files associated with the notebook.
+- `Filenames`: A utility module from `@/utils/filenames` used to handle filename transformations.
+
+## Symbols
+
+### `downloadAsHTML`
+#### Description
+The `downloadAsHTML` function is responsible for exporting the current notebook as an HTML file and initiating its download. It achieves this by calling the `exportAsHTML` function to get the HTML content and then using `downloadBlob` to download the content as a file.
+
+#### Inputs
+| Name     | Type   | Description                  |
+|:---------|:-------|:-----------------------------|
+| `opts`   | Object | An object containing options for the download, specifically the filename. |
+
+#### Outputs
+None. The function performs a side effect of downloading a file.
+
+#### Internal Logic
+1. Extracts the `filename` from the `opts` parameter.
+2. Calls `exportAsHTML` with options to include code and virtual files, and to initiate a download.
+3. Uses `Paths.basename` to extract the base name of the file from the provided filename.
+4. Calls `downloadBlob` with the HTML content and a filename transformed to have an `.html` extension using `Filenames.toHTML`.
+
+### `updateAssetUrl`
+#### Description
+The `updateAssetUrl` function modifies asset URLs to point to a specified base URL. It handles relative and absolute URLs, ensuring that assets are correctly referenced from a CDN or other specified location.
+
+#### Inputs
+| Name           | Type   | Description                        |
+|:---------------|:-------|:-----------------------------------|
+| `existingUrl`  | string | The original URL of the asset.     |
+| `assetBaseUrl` | string | The base URL to prepend to assets. |
+
+#### Outputs
+| Name  | Type   | Description                        |
+|:------|:-------|:-----------------------------------|
+| `url` | string | The updated URL with the base URL. |
+
+#### Internal Logic
+1. Checks if the `existingUrl` starts with `./` or `/` and prepends the `assetBaseUrl` accordingly.
+2. For absolute URLs, it checks if the origin is different from the current window location and modifies the URL if necessary.
+3. Returns the original URL if none of the conditions apply.
+
+## Side Effects
+
+- The `downloadAsHTML` function triggers a file download in the user's browser.
+- The `updateAssetUrl` function does not have side effects but is exposed for testing purposes.
+
+## Dependencies
+
+| Dependency         | Purpose                                                                 |
+|:-------------------|:------------------------------------------------------------------------|
+| `exportAsHTML`     | To export the notebook content as HTML.                                 |
+| `downloadBlob`     | To facilitate the download of the HTML content as a file.               |
+| `Paths`            | To manipulate and extract parts of file paths.                          |
+| `VirtualFileTracker` | To track and retrieve filenames of virtual files associated with the notebook. |
+| `Filenames`        | To handle filename transformations, ensuring correct file extensions.   |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `downloadAsHTML` function. It assumes that the `exportAsHTML` and `downloadBlob` functions handle their own errors.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

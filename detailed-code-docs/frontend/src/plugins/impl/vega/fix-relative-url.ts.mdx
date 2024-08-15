@@ -1,0 +1,52 @@
+---
+title: "fix-relative-url.ts"
+---
+
+## High-level description
+
+The code in `fix-relative-url.ts` is designed to ensure that any relative URLs within a Vega-Lite specification are converted to absolute URLs. This is necessary because Vega-Lite requires absolute URLs to function correctly, and relative URLs would otherwise cause errors. The function `fixRelativeUrl` takes a Vega-Lite specification object, checks if it contains a relative URL, and converts it to an absolute URL using a utility function.
+
+## Code Structure
+
+The main function in this file is `fixRelativeUrl`, which operates on a `VegaLiteSpec` object. It utilizes the `asURL` function from the `url.ts` utility file to convert relative URLs to absolute ones.
+
+## References
+
+- `asURL` from `frontend/src/utils/url.ts`: This function is used to convert a relative path to an absolute URL.
+- `VegaLiteSpec` from `frontend/src/plugins/impl/vega/types.ts`: This type defines the structure of the Vega-Lite specification that the `fixRelativeUrl` function operates on.
+
+## Symbols
+
+### `fixRelativeUrl`
+#### Description
+The `fixRelativeUrl` function is responsible for converting any relative URLs in a Vega-Lite specification to absolute URLs. This is crucial for ensuring that the Vega-Lite library can correctly access data resources specified in the visualization spec.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteSpec` | A Vega-Lite specification object that may contain a relative URL in its data property. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteSpec` | The modified Vega-Lite specification object with any relative URLs converted to absolute URLs. |
+
+#### Internal Logic
+1. The function checks if the `spec` object has a `data` property and if this property contains a `url`.
+2. If a `url` is present, it uses the `asURL` function to convert the relative URL to an absolute URL.
+3. The `href` of the resulting URL object is assigned back to `spec.data.url`.
+4. The function returns the modified `spec` object.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `asURL` from `frontend/src/utils/url.ts` | Converts a relative path to an absolute URL using the current document's base URI. |
+
+## Error Handling
+
+The function does not explicitly handle errors. It assumes that the `asURL` function will correctly handle the conversion of the URL. If `asURL` throws an error (e.g., due to an invalid URL), it would propagate up to the caller of `fixRelativeUrl`.
+
+## Usage
+
+The `fixRelativeUrl` function is used in the `VegaComponent` as seen in `vega-component.tsx`. It is part of the data preparation process before rendering a Vega-Lite visualization, ensuring that all URLs are absolute and thus preventing runtime errors in the Vega-Lite library.

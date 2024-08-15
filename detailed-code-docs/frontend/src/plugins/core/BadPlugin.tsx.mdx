@@ -1,0 +1,81 @@
+---
+title: "BadPlugin.tsx"
+---
+
+## High-level description
+
+The `BadPlugin.tsx` file defines a React component, `BadPluginData`, which is responsible for rendering error messages related to data validation issues, particularly those involving `ZodError`. It provides a user interface to display detailed error messages and the problematic data in a structured format using an accordion component. Additionally, the file includes a utility function, `renderError`, to facilitate rendering the `BadPluginData` component.
+
+## Code Structure
+
+The main symbols in the code are the `BadPluginData` React component and the `renderError` function. The `BadPluginData` component is responsible for rendering the UI when there is an error, specifically a `ZodError`, and it uses several UI components like `Alert`, `Accordion`, and `JsonOutput` to display the error details and data. The `renderError` function is a simple utility that returns the `BadPluginData` component, making it easier to use this component elsewhere in the codebase.
+
+## Symbols
+
+### `BadPluginData`
+#### Description
+The `BadPluginData` component is a React functional component that displays error information when data validation fails, particularly when a `ZodError` is encountered. It uses an alert to show a list of validation issues and an accordion to display the associated data in a JSON format.
+
+#### Inputs
+| Name      | Type                | Description                                      |
+|:----------|:--------------------|:-------------------------------------------------|
+| error     | `ZodError \| Error` | The error object, which can be a `ZodError` or a generic `Error`. |
+| shadowRoot| `ShadowRoot \| null`| The shadow DOM root where styles are applied.    |
+| badData   | `Record&lt;string, unknown&gt;` | The data that failed validation.               |
+
+#### Outputs
+| Name | Type       | Description                        |
+|:-----|:-----------|:-----------------------------------|
+| JSX  | `JSX.Element` | The rendered component output.   |
+
+#### Internal Logic
+- Checks if the error is an instance of `ZodError`.
+- If true, it renders an `Alert` component with a list of validation issues.
+- Each issue is displayed as a list item with the path and message.
+- An `Accordion` is used to toggle the visibility of the `badData` in JSON format.
+- The `JsonOutput` component is wrapped in an `EmotionCacheProvider` to ensure styles are correctly applied within the shadow DOM.
+- If the error is not a `ZodError`, it simply displays the error message.
+
+### `renderError`
+#### Description
+The `renderError` function is a utility function that returns the `BadPluginData` component, simplifying the process of rendering error information.
+
+#### Inputs
+| Name      | Type                | Description                                      |
+|:----------|:--------------------|:-------------------------------------------------|
+| error     | `ZodError \| Error` | The error object, which can be a `ZodError` or a generic `Error`. |
+| badData   | `Record&lt;string, unknown&gt;` | The data that failed validation.               |
+| shadowRoot| `ShadowRoot \| null`| The shadow DOM root where styles are applied.    |
+
+#### Outputs
+| Name | Type       | Description                        |
+|:-----|:-----------|:-----------------------------------|
+| JSX  | `JSX.Element` | The rendered component output.   |
+
+## References
+
+- `EmotionCacheProvider`: Used to provide a custom Emotion cache for styling within the shadow DOM.
+- `JsonOutput`: Utilized to render the `badData` in a JSON viewer format.
+- `Alert`, `AlertTitle`: UI components for displaying error messages.
+- `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`: Used to create a collapsible section for viewing data.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod`      | Used for error handling related to data validation. |
+| `@radix-ui/react-accordion` | Provides accordion UI components. |
+| `@emotion/react` and `@emotion/cache` | Used for styling within the shadow DOM. |
+| `@textea/json-viewer` | Used for rendering JSON data in a viewer format. |
+
+## Error Handling
+
+The code specifically handles `ZodError` instances by displaying detailed validation issues. For generic errors, it simply displays the error message. This approach ensures that users are informed about the nature of the data validation issues and can view the problematic data.
+
+## Logging
+
+There is no explicit logging mechanism implemented in this file. However, the related `JsonOutput` component has a TODO comment regarding clipboard functionality, indicating potential future enhancements.
+
+## TODOs
+
+- The `JsonOutput` component has a TODO comment about disabling clipboard functionality until a better solution is implemented. This suggests that there might be plans to enhance the user experience when interacting with JSON data.

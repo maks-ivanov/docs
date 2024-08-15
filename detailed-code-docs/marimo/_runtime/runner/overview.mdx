@@ -1,0 +1,48 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_runtime/runner` directory is part of the Marimo runtime system, which is designed to manage the execution of code cells organized in a directed acyclic graph (DAG) structure. This system is responsible for orchestrating the execution flow, handling errors, and supporting features like debugging, cancellation, and state updates. The main components within this directory include the `cell_runner.py` file, which contains the core `Runner` class, and several hook files (`hooks.py`, `hooks_pre_execution.py`, `hooks_post_execution.py`, `hooks_on_finish.py`, `hooks_preparation.py`) that define various hooks to be executed at different stages of the cell execution lifecycle.
+
+## What does it do?
+
+The Marimo runtime system executes a collection of code cells that are interconnected through dependencies, forming a DAG. The `Runner` class is the central component that manages this execution. It determines the order of execution based on the dependencies and the current execution mode. The system supports both synchronous and asynchronous execution of cells, allowing for flexible and efficient processing.
+
+During execution, the system handles errors by catching and reporting them, ensuring that the user is informed of any issues that arise. It also supports debugging through a custom debugger, `MarimoPdb`, which can be used to step through the execution process.
+
+The system is designed to be extensible through the use of hooks. These hooks allow for custom logic to be executed at various stages of the execution process, such as before execution begins, before and after each cell is run, and after the entire execution process is complete. This extensibility enables the integration of additional features, such as broadcasting outputs to a user interface or managing dependencies.
+
+## Entry points
+
+The main entry point for this directory is the `cell_runner.py` file, which contains the `Runner` class. This class is responsible for managing the execution of cells, handling dependencies, and applying hooks. The execution process begins by initializing a `Runner` instance with the necessary parameters, such as the graph of cell dependencies, global variables, and any hooks to be applied.
+
+The `run_all` method of the `Runner` class is then called to execute all cells in the determined order. This method applies the preparation hooks, computes the cells to be run, and executes each cell while applying pre-execution and post-execution hooks. After all cells have been executed, the on-finish hooks are applied to perform any necessary cleanup or finalization tasks.
+
+## Key Files
+
+- **`cell_runner.py`**: Contains the `Runner` class, which is the core component responsible for managing the execution of cells. It handles dependencies, execution modes, error management, and the application of hooks.
+
+- **`hooks.py`**: Serves as a central registry for various hook types used during the execution of a runner's subgraph. It imports and makes available lists of hooks for different phases of the execution lifecycle.
+
+- **`hooks_pre_execution.py`**: Defines pre-execution hooks that are executed before a cell is run. These hooks manage the state of the cell, such as setting its staleness and updating its runtime status to "running".
+
+- **`hooks_post_execution.py`**: Defines post-execution hooks that are executed after a cell is run. These hooks perform tasks such as updating the status of the cell, broadcasting variables and datasets, and handling outputs.
+
+- **`hooks_on_finish.py`**: Defines hooks that are executed when a cell runner finishes its execution. These hooks handle the propagation of errors related to cell execution interruptions and cancellations.
+
+- **`hooks_preparation.py`**: Defines preparation hooks that update the stale statuses of cells in the graph based on the runner's execution mode and the current state of the graph.
+
+## Dependencies
+
+The directory relies on several external libraries and modules:
+
+- **`asyncio`**: Used for handling asynchronous execution and futures.
+- **`contextlib`**: Provides context managers for resource management.
+- **`functools`**: Used for partial function application in callbacks.
+- **`signal`**: For handling system signals like SIGINT.
+- **`threading`**: For managing threads and synchronization.
+- **`traceback`**: For capturing and printing stack traces.
+
+These dependencies are chosen to support the asynchronous execution model, manage resources efficiently, and handle errors and signals effectively.

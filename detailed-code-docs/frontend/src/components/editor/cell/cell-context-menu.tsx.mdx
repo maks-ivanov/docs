@@ -1,0 +1,61 @@
+---
+title: "cell-context-menu.tsx"
+---
+
+## High-level description
+
+The `cell-context-menu.tsx` file defines a React component named `CellActionsContextMenu` that provides a context menu for cell actions within an editor interface. This component integrates with the editor's state and actions to offer functionalities like copy, cut, paste, download image, and go to definition, enhancing the user interaction with the editor cells.
+
+## Code Structure
+
+The main component, `CellActionsContextMenu`, utilizes several imported components and hooks to create a context menu. It leverages `useCellActionButtons` to fetch additional action buttons specific to the cell and uses various UI components from a context menu library to render the menu. The component also manages state for image-related actions and integrates with the editor's view to perform actions like pasting text and navigating to definitions.
+
+## Symbols
+
+### `CellActionsContextMenu`
+#### Description
+The `CellActionsContextMenu` component renders a context menu for cell actions in an editor. It provides default actions like copy, cut, paste, download image, and go to definition, and integrates additional actions specific to the cell through the `useCellActionButtons` hook.
+
+#### Inputs
+| Name     | Type                  | Description                      |
+|:---------|:----------------------|:---------------------------------|
+| children | React.ReactNode       | The child elements to render.    |
+| props    | CellActionButtonProps | Properties related to cell actions, including methods to interact with the editor view. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | JSX  | The rendered context menu component. |
+
+#### Internal Logic
+- **State Management**: Uses `useState` to track if an image was right-clicked, enabling the "Download image" action.
+- **Default Actions**: Defines a set of default actions (`DEFAULT_CONTEXT_MENU_ITEMS`) with labels, icons, and handlers for copy, cut, paste, download image, and go to definition.
+- **Context Menu Rendering**: Utilizes `ContextMenu`, `ContextMenuTrigger`, `ContextMenuContent`, and `ContextMenuItem` from a UI library to render the context menu.
+- **Event Handling**: Listens for right-click events to determine if an image was clicked, updating the state accordingly.
+- **Integration with Editor**: Uses the `getEditorView` method from props to interact with the editor, particularly for pasting text and navigating to definitions.
+
+## References
+
+- **`useCellActionButtons`**: This hook is used to fetch additional action buttons specific to the cell, which are integrated into the context menu.
+- **`goToDefinitionAtCursorPosition`**: A utility function used to navigate to the definition of a variable at the cursor position within the editor.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating the component and managing state. |
+| `lucide-react` | Provides icons for the context menu items. |
+| `@/components/ui/context-menu` | Provides UI components for rendering the context menu. |
+| `@/core/codemirror/go-to-definition/utils` | Provides functionality to navigate to variable definitions in the editor. |
+
+## Error Handling
+
+The component does not explicitly handle errors but relies on the robustness of the underlying UI components and hooks. Any issues with clipboard operations or editor interactions would need to be managed at a higher level or within the respective utility functions.
+
+## Logging
+
+The component does not implement any logging mechanisms. Any necessary logging should be handled by the functions and hooks it utilizes, such as those interacting with the editor state or performing clipboard operations.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

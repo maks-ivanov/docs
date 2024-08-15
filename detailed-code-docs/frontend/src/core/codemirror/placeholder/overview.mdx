@@ -1,0 +1,92 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file defines extensions for the CodeMirror editor to enhance its functionality with placeholders. It provides two main extensions: one for a smart placeholder that supports auto-completion when the right arrow or Tab key is pressed, and another for a clickable placeholder that includes a link with a custom action when clicked.
+
+## Code Structure
+
+The file contains two main functions, `smartPlaceholderExtension` and `clickablePlaceholderExtension`, which return arrays of CodeMirror extensions. These functions utilize CodeMirror's `placeholder` and `keymap` functionalities to implement their respective features. The `acceptPlaceholder` function is a helper used by `smartPlaceholderExtension` to handle the insertion of placeholder text.
+
+## Symbols
+
+### `smartPlaceholderExtension`
+#### Description
+This function creates a smart placeholder extension for the CodeMirror editor. It displays a placeholder text when the editor is empty and allows the user to accept the placeholder by pressing the right arrow or Tab key.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | string | The placeholder text to display when the editor is empty. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Extension[] | An array of CodeMirror extensions for the smart placeholder functionality. |
+
+#### Internal Logic
+- Uses the `placeholder` function from CodeMirror to display the placeholder text.
+- Defines a keymap with handlers for the "ArrowRight" and "Tab" keys, which call the `acceptPlaceholder` function to insert the placeholder text if the editor is empty.
+
+### `acceptPlaceholder`
+#### Description
+This function handles the insertion of the placeholder text into the editor when it is empty and the user presses a specified key.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cm | EditorView | The CodeMirror editor view instance. |
+| text | string | The placeholder text to insert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | boolean | Returns true if the placeholder was inserted, false otherwise. |
+
+#### Internal Logic
+- Checks if the document is empty.
+- If empty, dispatches changes to insert the placeholder text and moves the cursor to the end of the inserted text.
+
+### `clickablePlaceholderExtension`
+#### Description
+This function creates a clickable placeholder extension for the CodeMirror editor. It displays a placeholder with a clickable link that triggers a custom action when clicked.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | object | An object containing the text segments and click handler for the placeholder. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Extension[] | An array of CodeMirror extensions for the clickable placeholder functionality. |
+
+#### Internal Logic
+- Constructs a DOM element for the placeholder with the specified text segments.
+- Adds a click event listener to the link element to trigger the provided `onClick` function.
+- Returns an array of extensions, including the placeholder and a theme for styling the clickable link.
+
+## References
+
+- The `smartPlaceholderExtension` and `clickablePlaceholderExtension` functions are referenced in the `frontend/src/core/codemirror/language/python.ts` file, where they are used to provide placeholder functionality for Python code cells.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides types and state management for CodeMirror extensions. |
+| `@codemirror/view` | Provides the `EditorView`, `keymap`, and `placeholder` functionalities used to create and manage the editor's view and behavior. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic checks, such as verifying if the document is empty before inserting the placeholder.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

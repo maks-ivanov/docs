@@ -1,0 +1,97 @@
+---
+title: "commands.ts"
+---
+
+## High-level description
+
+The target file, `commands.ts`, provides functions to navigate within a CodeMirror editor instance. It includes functionality to move the cursor to a specific position or line and to locate and select the definition of a variable within the editor. This is particularly useful for enhancing code navigation and editing efficiency in a text editor environment.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `goToPosition`: A utility function used by other functions to move the cursor to a specific position in the editor.
+- `goToVariableDefinition`: Utilizes `goToPosition` to navigate to the first occurrence of a specified variable name in the editor.
+- `goToLine`: Also uses `goToPosition` to navigate to a specific line number in the editor.
+
+## Symbols
+
+### `goToPosition`
+#### Description
+Moves the cursor to a specified position in the editor and centers the view on that position.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | `EditorView` | The editor view instance where the cursor should be moved. |
+| from | `number` | The position in the document to move the cursor to. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Focuses the editor view.
+- Uses `requestAnimationFrame` to ensure the cursor is moved after the next frame, preventing interference from pointer clicks.
+- Dispatches a selection change to move the cursor and centers the view on the specified position.
+
+### `goToVariableDefinition`
+#### Description
+Selects the first occurrence of a specified variable name in the editor view.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | `EditorView` | The editor view containing the document. |
+| variableName | `string` | The name of the variable to locate and select. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `boolean` | Returns `true` if the variable was found and selected, otherwise `false`. |
+
+#### Internal Logic
+- Retrieves the syntax tree of the current editor state.
+- Iterates over the syntax tree nodes to find a node that matches the variable name.
+- If found, calls `goToPosition` to move the cursor to the variable's position.
+
+### `goToLine`
+#### Description
+Moves the cursor to the start of a specified line number in the editor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | `EditorView` | The editor view containing the document. |
+| lineNumber | `number` | The line number to navigate to. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `boolean` | Always returns `true` after moving the cursor. |
+
+#### Internal Logic
+- Retrieves the line object for the specified line number.
+- Calls `goToPosition` to move the cursor to the start of the line.
+
+## References
+
+- The `goToVariableDefinition` function is referenced in other parts of the codebase, such as in `panels.tsx` and `variables-table.tsx`, where it is used to highlight variables in the editor.
+- The `goToLine` function is also referenced in `utils.ts` for navigating to specific lines in a cell.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides the `EditorView` class used to interact with the editor. |
+| `@codemirror/language` | Provides the `syntaxTree` function to access the syntax tree of the document. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms. It assumes that the provided `EditorView` and positions are valid.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

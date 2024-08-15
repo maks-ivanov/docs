@@ -1,0 +1,82 @@
+---
+title: "extension.test.ts"
+---
+
+## High-level description
+
+The target file is a test suite for the `getInitialLanguageAdapter` function, which is part of a CodeMirror extension. This function determines the initial language adapter for a given editor state based on the content of the document. The tests verify that the function correctly identifies the language type (e.g., Python, Markdown, SQL) from the document content.
+
+## Code Structure
+
+The main symbols in the code are the `createState` function and the test suite for `getInitialLanguageAdapter`. The `createState` function is used to set up an `EditorState` with specific configurations, which is then used in the test cases to verify the behavior of `getInitialLanguageAdapter`.
+
+## References
+
+- `adaptiveLanguageConfiguration`: A function imported from the `extension` module, used to configure the editor state with language-specific settings.
+- `getInitialLanguageAdapter`: The function under test, which determines the language adapter based on the editor's content.
+- `EditorState`: A class from the `@codemirror/state` package used to create and manage the state of a CodeMirror editor.
+- `OverridingHotkeyProvider`: A class used to provide custom hotkey configurations.
+- `store` and `capabilitiesAtom`: Used to set up global state for the tests, specifically to configure capabilities like SQL and terminal support.
+
+## Symbols
+
+### `createState`
+#### Description
+The `createState` function creates an `EditorState` with a given document content and a set of extensions, including language configuration and hotkey settings.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| content | string | The document content to initialize the editor state with. |
+
+#### Outputs
+| Name  | Type        | Description                  |
+|:------|:------------|:-----------------------------|
+| state | EditorState | The initialized editor state.|
+
+#### Internal Logic
+- The function initializes an `EditorState` with the provided document content.
+- It applies the `adaptiveLanguageConfiguration` extension with specific settings, such as completion configuration and hotkey provider.
+
+### `getInitialLanguageAdapter`
+#### Description
+This function determines the initial language adapter for a given editor state by analyzing the document content. It returns a language adapter that matches the content, defaulting to Python if no specific language is detected.
+
+#### Inputs
+| Name  | Type               | Description                  |
+|:------|:-------------------|:-----------------------------|
+| state | EditorView["state"] | The state of the editor to analyze. |
+
+#### Outputs
+| Name   | Type            | Description                        |
+|:-------|:----------------|:-----------------------------------|
+| result | LanguageAdapter | The language adapter for the content.|
+
+#### Internal Logic
+- The function retrieves the document content as a Python string.
+- It checks if the content is empty, in which case it defaults to Python.
+- It uses language adapters to determine if the content is supported by Markdown or SQL, returning the appropriate adapter if a match is found.
+
+## Side Effects
+
+- The `beforeAll` hook in the test suite modifies the global state by setting the `capabilitiesAtom` to enable SQL and terminal capabilities.
+
+## Dependencies
+
+| Dependency          | Purpose                                                                 |
+|:--------------------|:------------------------------------------------------------------------|
+| `@codemirror/state` | Provides the `EditorState` class for managing editor state.             |
+| `@/core/hotkeys/hotkeys` | Provides the `OverridingHotkeyProvider` for custom hotkey configurations. |
+| `@/core/state/jotai` | Provides the `store` and `capabilitiesAtom` for managing global state. |
+
+## Error Handling
+
+The test suite uses the `expect` function from `vitest` to assert expected outcomes. If the actual result does not match the expected result, an error is thrown, indicating a test failure.
+
+## Logging
+
+No explicit logging is implemented in the code. The test framework (`vitest`) handles output for test results.
+
+## TODOs
+
+No TODOs or notes are present in the code.

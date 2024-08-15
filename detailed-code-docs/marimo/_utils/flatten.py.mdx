@@ -1,0 +1,131 @@
+---
+title: "flatten.py"
+---
+
+## High-level description
+
+The code in `marimo/_utils/flatten.py` provides utilities for flattening and repacking nested data structures such as lists, tuples, and dictionaries. It includes functions to flatten these structures into a single list and to reconstruct the original structure from the flattened list. The code also includes functionality to detect cyclic structures and check if a nested structure contains a specific instance type.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `flatten` function is the primary interface for flattening nested structures and relies on the `_flatten` helper function.
+- The `_flatten` function uses `_flatten_sequence` to handle lists and tuples and directly processes dictionaries.
+- The `CyclicStructureError` exception is raised by `_flatten` when a cyclic structure is detected.
+- The `contains_instance` function is a utility to check for the presence of a specific instance type within a nested structure.
+
+## Symbols
+
+### `CyclicStructureError`
+#### Description
+A custom exception class used to indicate that a cyclic structure has been detected during the flattening process.
+
+### `_is_leaf`
+#### Description
+Determines if a given object is a leaf node, meaning it is not a list, tuple, or dictionary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | Any | The object to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the object is a leaf node, False otherwise. |
+
+### `_flatten_sequence`
+#### Description
+Flattens a sequence (list or tuple) into a list of its elements and provides a function to reconstruct the original sequence.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | list[Any] or tuple[Any, ...] | The sequence to flatten. |
+| json_compat_keys | bool | Whether to ensure JSON-compatible keys. |
+| seen | set[int] | A set of IDs of seen objects to detect cycles. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | FLATTEN_RET_TYPE | A tuple containing the flattened list and an unflattening function. |
+
+#### Internal Logic
+- Iterates over the sequence, identifying chunks of leaves and nested structures.
+- Flattens leaves directly and recursively flattens nested structures.
+- Constructs an unflattening function to reconstruct the original sequence.
+
+### `_flatten`
+#### Description
+Recursively flattens a nested structure and provides a function to reconstruct it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Any | The structure to flatten. |
+| json_compat_keys | bool | Whether to ensure JSON-compatible keys. |
+| seen | set[int] | A set of IDs of seen objects to detect cycles. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | FLATTEN_RET_TYPE | A tuple containing the flattened list and an unflattening function. |
+
+#### Internal Logic
+- Checks for cyclic structures using the `seen` set.
+- Delegates to `_flatten_sequence` for lists and tuples.
+- Handles dictionaries by flattening each value and managing keys.
+
+### `flatten`
+#### Description
+Public function to flatten a nested structure and return a function to reconstruct it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Any | The structure to flatten. |
+| json_compat_keys | bool | Whether to ensure JSON-compatible keys. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | FLATTEN_RET_TYPE | A tuple containing the flattened list and an unflattening function. |
+
+#### Internal Logic
+- Calls `_flatten` and wraps the unflattening function with additional validation.
+
+### `contains_instance`
+#### Description
+Checks if a nested structure contains an instance of a specified type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | Any | The structure to search. |
+| instance | Any | The instance type to look for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | True if the instance is found, False otherwise. |
+
+#### Internal Logic
+- Recursively traverses the structure, checking each element against the specified instance type.
+
+## Side Effects
+- The `flatten` and `_flatten` functions modify the `seen` set to track visited objects and detect cycles.
+
+## Performance Considerations
+- The implementation minimizes recursion stack depth by handling sequences of leaves as base cases.
+- The code includes a TODO note suggesting the use of a library like `dm-tree` for better performance with large structures.
+
+## References
+- The `flatten` function is used in other parts of the codebase, such as in `marimo/_output/formatters/structures.py` and `marimo/_plugins/ui/_impl/altair_chart.py`, indicating its utility in formatting and UI components.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| itertools | Used for chaining lists during flattening and unflattening. |
+
+## TODOs
+- Consider using a library like `dm-tree` for better performance with large structures, as noted in the initial comments.

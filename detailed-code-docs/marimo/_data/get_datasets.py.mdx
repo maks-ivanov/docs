@@ -1,0 +1,116 @@
+---
+title: "get_datasets.py"
+---
+
+## High-level description
+
+The `get_datasets.py` file is part of the Marimo project and is responsible for extracting datasets from various sources, such as in-memory variables and DuckDB databases. It provides functions to convert these data sources into a standardized `DataTable` format, which can then be used within the Marimo framework for further processing or analysis.
+
+## Code Structure
+
+The main symbols in the code are functions that interact with data sources to produce `DataTable` objects. The `get_datasets_from_variables` function processes in-memory variables, while `get_datasets_from_duckdb` handles data extraction from DuckDB databases. The `_get_data_table` and `_get_datasets_from_duckdb_internal` functions are helper functions that perform the actual data extraction and conversion to `DataTable` objects. The `has_updates_to_datasource` function checks if a given SQL query modifies the data source.
+
+## References
+
+- `DataTable`, `DataTableColumn`, and `DataType` from `marimo._data.models` are used to define the structure of the datasets.
+- `get_table_manager_or_none` from `marimo._plugins.ui._impl.tables.utils` is used to manage table data extraction.
+- `duckdb` is used for interacting with DuckDB databases.
+
+## Symbols
+
+### `get_datasets_from_variables`
+#### Description
+This function takes a list of variables and attempts to convert each into a `DataTable` if possible. It uses the `_get_data_table` helper function to perform the conversion.
+
+#### Inputs
+| Name      | Type               | Description                        |
+|:----------|:-------------------|:-----------------------------------|
+| variables | List[tuple[str, object]] | A list of tuples containing variable names and their corresponding values. |
+
+#### Outputs
+| Name   | Type          | Description                        |
+|:-------|:--------------|:-----------------------------------|
+| tables | List[DataTable] | A list of `DataTable` objects created from the input variables. |
+
+### `_get_data_table`
+#### Description
+This helper function attempts to convert a given value into a `DataTable` using a table manager. If successful, it returns the `DataTable`; otherwise, it returns `None`.
+
+#### Inputs
+| Name         | Type   | Description                        |
+|:-------------|:-------|:-----------------------------------|
+| value        | object | The value to be converted into a `DataTable`. |
+| variable_name| str    | The name of the variable associated with the value. |
+
+#### Outputs
+| Name  | Type            | Description                        |
+|:------|:----------------|:-----------------------------------|
+| table | Optional[DataTable] | A `DataTable` object if conversion is successful, otherwise `None`. |
+
+#### Internal Logic
+- Uses `get_table_manager_or_none` to attempt to retrieve a table manager for the given value.
+- If a table manager is found, it extracts column information and constructs a `DataTable`.
+
+### `has_updates_to_datasource`
+#### Description
+Determines if a given SQL query contains statements that modify the data source, such as `ATTACH`, `DETACH`, `ALTER`, or `CREATE`.
+
+#### Inputs
+| Name  | Type | Description                        |
+|:------|:-----|:-----------------------------------|
+| query | str  | The SQL query to be analyzed. |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| result | bool | `True` if the query modifies the data source, otherwise `False`. |
+
+### `get_datasets_from_duckdb`
+#### Description
+Retrieves all tables from a DuckDB database and converts them into `DataTable` objects.
+
+#### Outputs
+| Name   | Type          | Description                        |
+|:-------|:--------------|:-----------------------------------|
+| tables | List[DataTable] | A list of `DataTable` objects representing tables in the DuckDB database. |
+
+### `_get_datasets_from_duckdb_internal`
+#### Description
+A helper function that performs the actual retrieval and conversion of DuckDB tables into `DataTable` objects.
+
+#### Outputs
+| Name   | Type          | Description                        |
+|:-------|:--------------|:-----------------------------------|
+| tables | List[DataTable] | A list of `DataTable` objects representing tables in the DuckDB database. |
+
+#### Internal Logic
+- Executes a query to list all tables in the DuckDB database.
+- For each table, it extracts column names and types, then constructs a `DataTable`.
+
+### `_db_type_to_data_type`
+#### Description
+Maps DuckDB column types to the internal `DataType` used by the Marimo framework.
+
+#### Inputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| db_type | str  | The DuckDB column type. |
+
+#### Outputs
+| Name   | Type     | Description                        |
+|:-------|:---------|:-----------------------------------|
+| data_type | DataType | The corresponding internal `DataType`. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `duckdb`   | Used for executing SQL queries and extracting table information from DuckDB databases. |
+
+## Logging
+
+The code uses the `marimo_logger` from `marimo._loggers` to log errors, particularly when data extraction fails.
+
+## Error Handling
+
+The code includes error handling in the `_get_data_table` and `get_datasets_from_duckdb` functions, where it logs errors using the `LOGGER` and returns `None` or an empty list in case of exceptions.

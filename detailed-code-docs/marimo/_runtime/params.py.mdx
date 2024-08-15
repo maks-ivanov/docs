@@ -1,0 +1,79 @@
+---
+title: "params.py"
+---
+
+## High-level description
+
+The `params.py` file defines two classes, `QueryParams` and `CLIArgs`, which manage query parameters and command-line arguments for a Marimo application. These classes provide methods to access, modify, and broadcast changes to these parameters, facilitating interaction between the application and its runtime environment.
+
+## Code Structure
+
+The file contains two main classes, `QueryParams` and `CLIArgs`, which are used to handle query parameters and command-line arguments, respectively. Both classes provide methods for accessing and manipulating their respective data, and `QueryParams` includes functionality for broadcasting changes to a stream.
+
+## Symbols
+
+### `QueryParams`
+#### Description
+The `QueryParams` class manages query parameters for a Marimo application. It allows for the retrieval, setting, appending, and removal of query parameters, and broadcasts changes to a specified stream.
+
+#### Inputs
+| Name   | Type                                      | Description                          |
+|:-------|:------------------------------------------|:-------------------------------------|
+| params | `Dict[str, Union[str, List[str]]]`        | Initial query parameters.            |
+| stream | `Optional[Stream]`                        | Stream to broadcast changes.         |
+
+#### Outputs
+- None directly, but methods return various types based on the operation (e.g., `str`, `List[str]`, `None`).
+
+#### Internal Logic
+- **Initialization**: Stores the initial parameters and stream.
+- **Get Methods**: Retrieve parameter values, returning a single value or a list.
+- **Set Methods**: Set or update parameter values, broadcasting changes.
+- **Append Method**: Adds a value to a parameter, broadcasting the change.
+- **Remove Method**: Removes a value or key, broadcasting the change.
+- **Clear Method**: Clears all parameters, broadcasting the change.
+
+### `CLIArgs`
+#### Description
+The `CLIArgs` class handles command-line arguments passed to a Marimo application. It provides methods to access these arguments in a structured manner.
+
+#### Inputs
+| Name   | Type                      | Description                          |
+|:-------|:--------------------------|:-------------------------------------|
+| params | `SerializedCLIArgs`       | Initial command-line arguments.      |
+
+#### Outputs
+- None directly, but methods return various types based on the operation (e.g., `ListOrValue[Primitive]`, `List[Primitive]`, `None`).
+
+#### Internal Logic
+- **Initialization**: Stores the initial command-line arguments.
+- **Get Methods**: Retrieve argument values, returning a single value or a list.
+
+## References
+
+- `Stream`: Used for broadcasting changes in `QueryParams`.
+- `State`: The `QueryParams` class inherits from `State`, which provides reactive state management.
+- `QueryParamsSet`, `QueryParamsAppend`, `QueryParamsDelete`, `QueryParamsClear`: Operations used to broadcast changes to query parameters.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `marimo._messaging.mimetypes` | Defines known MIME types. |
+| `marimo._messaging.ops`       | Provides operations for broadcasting changes. |
+| `marimo._messaging.types`     | Defines the `Stream` class. |
+| `marimo._output.rich_help`    | Provides the `mddoc` decorator for documentation. |
+| `marimo._runtime.state`       | Provides the `State` class for reactive state management. |
+
+## Error Handling
+
+- The `QueryParams` class handles missing keys by returning `None` or an empty list.
+- The `CLIArgs` class similarly handles missing keys by returning `None` or an empty list.
+
+## Logging
+
+- The file does not implement logging directly, but changes to query parameters are broadcasted, which could be logged by the receiving system.
+
+## TODOs
+
+- No TODOs are present in the code.

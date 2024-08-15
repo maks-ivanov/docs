@@ -1,0 +1,97 @@
+---
+title: "types.ts"
+---
+
+## High-level description
+
+The target file, `types.ts`, defines TypeScript types and interfaces for a plugin system in a frontend application. It provides type definitions for plugin properties, state management, and validation mechanisms using the `zod` library. These types are used to ensure that plugins adhere to a consistent structure and can be validated and rendered correctly within the application.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `Setter&lt;S&gt;` is a type alias for a function that updates the state of a plugin.
+- `IPluginProps&lt;S, D, F&gt;` is an interface that defines the properties required by a plugin, including state, data, and functions.
+- `StringifiedPluginData&lt;D&gt;` is a type that maps plugin data to stringified values.
+- `IPlugin&lt;S, D, F&gt;` is an interface that represents a plugin, including its rendering logic, validation, and optional functions.
+
+## Symbols
+
+### `Setter&lt;S&gt;`
+#### Description
+A type alias for a function that updates the state of a plugin. It can either take a new value directly or a function that computes the new value based on the previous state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | `S` or `(prev: S) =&gt; S` | The new state value or a function to compute it. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | `void` | This function does not return a value. |
+
+### `IPluginProps&lt;S, D, F&gt;`
+#### Description
+An interface that defines the properties required by a plugin, including the host element, state, data, and functions that can be called from the plugin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| host | `HTMLElement` | The host element for the plugin. |
+| value | `S` | The current state of the plugin. |
+| setValue | `Setter&lt;S&gt;` | A function to update the plugin's state. |
+| data | `D` | The data associated with the plugin. |
+| functions | `F` | Functions that can be called from the plugin. |
+| children | `React.ReactNode` | Optional children elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | `void` | This interface does not produce outputs. |
+
+### `StringifiedPluginData&lt;D&gt;`
+#### Description
+A type that maps each key in the plugin data to a stringified value, useful for serialization or display purposes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| D | `Record&lt;string, any&gt;` | The plugin data to be stringified. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| [K in keyof D] | `string` | A stringified version of each data value. |
+
+### `IPlugin&lt;S, D, F&gt;`
+#### Description
+An interface representing a plugin, including its rendering logic, validation schema, and optional functions. It ensures that plugins have a consistent structure and can be validated and rendered correctly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| S | `any` | The type of the plugin's state. |
+| D | `Record&lt;string, never&gt;` | The type of the plugin's data. |
+| F | `PluginFunctions` | The type of functions available to the plugin. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| render | `JSX.Element` | The rendered output of the plugin. |
+
+#### Internal Logic
+- The `validator` property uses `zod` to define a schema for validating the plugin's data.
+- The `render` method takes `IPluginProps` as input and returns a JSX element, which is the visual representation of the plugin.
+
+## References
+
+- `ZodType` and `ZodTypeDef` from the `zod` library are used for data validation.
+- `PluginFunctions` and `FunctionSchemas` from `./core/rpc` are used to define and validate functions that plugins can expose.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for defining and validating data schemas. |
+
+The target file is a foundational part of a plugin system, providing type safety and validation for plugins within a frontend application. It ensures that plugins are consistent in structure and behavior, facilitating their integration and use in the application.

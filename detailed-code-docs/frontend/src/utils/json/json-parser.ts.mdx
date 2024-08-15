@@ -1,0 +1,53 @@
+---
+title: "json-parser.ts"
+---
+
+## High-level description
+
+The `json-parser.ts` file provides a utility function, `jsonParseWithSpecialChar`, designed to parse JSON strings while handling special cases such as `NaN`, `Infinity`, and `-Infinity`. These values are not valid in standard JSON, so the function uses a regex-based approach to convert them into a format that can be parsed and then converts them back to their respective JavaScript representations.
+
+## Code Structure
+
+The main symbol in this file is the function `jsonParseWithSpecialChar`. It is designed to handle JSON parsing with special considerations for non-standard JSON values like `NaN`, `Infinity`, and `-Infinity`. This function is used in various parts of the codebase, as seen in the related files, to ensure consistent handling of these special values when parsing JSON data.
+
+## Symbols
+
+### `jsonParseWithSpecialChar`
+#### Description
+The `jsonParseWithSpecialChar` function is a utility for parsing JSON strings that may contain non-standard JSON values such as `NaN`, `Infinity`, and `-Infinity`. It first attempts to parse the string using `JSON.parse`. If this fails, it uses a regex to replace these special values with a unique placeholder, parses the string, and then converts the placeholders back to their respective JavaScript values.
+
+#### Inputs
+| Name  | Type                | Description                                      |
+|:------|:--------------------|:-------------------------------------------------|
+| value | `JsonString&lt;T&gt;` or `string` | The JSON string to be parsed, potentially containing special values. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| T    | T    | The parsed JSON object, with special values converted to their JavaScript equivalents. |
+
+#### Internal Logic
+1. **Initial Parsing Attempt**: The function first tries to parse the input string using `JSON.parse`. If successful, it returns the parsed object.
+2. **Regex Replacement**: If the initial parsing fails, the function uses a regex to find occurrences of `NaN`, `Infinity`, and `-Infinity` that are not within quotes and replaces them with a unique placeholder.
+3. **Secondary Parsing**: The modified string is then parsed again using `JSON.parse`.
+4. **Placeholder Replacement**: During parsing, a reviver function is used to replace the placeholders with their corresponding JavaScript values (`Number.NaN`, `Number.POSITIVE_INFINITY`, `Number.NEGATIVE_INFINITY`).
+
+## References
+
+- The function `jsonParseWithSpecialChar` is referenced in multiple files, such as `htmlUtils.ts`, `main.ts`, and `useMarimoWebSocket.tsx`, indicating its utility in parsing JSON data across different parts of the application.
+
+## Dependencies
+
+The function relies on standard JavaScript functions like `JSON.parse` and `String.prototype.replaceAll`. It does not have external dependencies.
+
+## Error Handling
+
+The function includes error handling by using try-catch blocks. If parsing fails at any stage, it returns an empty object `{}` as a fallback.
+
+## Logging
+
+There is no explicit logging within this function. However, its usage in other parts of the codebase may involve logging, especially when handling messages or data that require parsing.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,56 @@
+---
+title: "getController.ts"
+---
+
+## High-level description
+
+The `getController.ts` file provides a function to dynamically load a WebAssembly (Wasm) controller based on a specified version. If the specific version of the controller cannot be loaded, it falls back to a default controller implementation. This mechanism allows for flexible version management and ensures that a controller is always available, even if the desired version is not.
+
+## Code Structure
+
+The main function in this file is `getController`, which attempts to import a Wasm controller dynamically. If the import fails, it defaults to using the `DefaultWasmController` class. The `DefaultWasmController` is defined in the `bootstrap.ts` file and implements the `WasmController` interface from the `types.ts` file.
+
+## References
+
+- `DefaultWasmController`: A class imported from `bootstrap.ts` that provides a default implementation of the `WasmController` interface.
+- `WasmController`: An interface imported from `types.ts` that defines the expected methods and properties of a Wasm controller.
+
+## Symbols
+
+### `getController`
+#### Description
+The `getController` function is responsible for loading a specific version of a Wasm controller. It attempts to import a JavaScript module corresponding to the specified version. If the import fails (e.g., the module does not exist), it returns an instance of the `DefaultWasmController`.
+
+#### Inputs
+| Name    | Type   | Description                        |
+|:--------|:-------|:-----------------------------------|
+| version | string | The version of the controller to load. |
+
+#### Outputs
+| Name       | Type           | Description                                      |
+|:-----------|:---------------|:-------------------------------------------------|
+| controller | WasmController | The loaded Wasm controller, or a default one if the specific version cannot be loaded. |
+
+#### Internal Logic
+1. The function uses dynamic import syntax to attempt to load a controller module from a path that includes the specified version.
+2. If the import is successful, the loaded module is returned.
+3. If the import fails (e.g., due to a missing module), the function catches the error and returns a new instance of `DefaultWasmController`.
+
+## Dependencies
+
+| Dependency          | Purpose                                                                 |
+|:--------------------|:------------------------------------------------------------------------|
+| `DefaultWasmController` | Provides a fallback implementation of the `WasmController` interface. |
+| `WasmController`    | Defines the interface that all Wasm controllers must implement.          |
+
+## Error Handling
+
+The function uses a try-catch block to handle errors that occur during the dynamic import process. If an error is caught, it defaults to returning an instance of `DefaultWasmController`.
+
+## Logging
+
+There is no explicit logging in this file. However, error handling is implicitly managed by the try-catch block, which ensures that a default controller is returned in case of an import failure.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

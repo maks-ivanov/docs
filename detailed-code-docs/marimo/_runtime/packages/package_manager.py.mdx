@@ -1,0 +1,75 @@
+---
+title: "package_manager.py"
+---
+
+## High-level description
+
+The `package_manager.py` file defines an abstract base class `PackageManager` and a concrete subclass `CanonicalizingPackageManager`. These classes provide a framework for managing package installations, including methods for checking if a package manager is installed, installing packages, and converting between module names and package names. The `CanonicalizingPackageManager` extends this functionality by implementing heuristics for mapping module names to package names and vice versa.
+
+## Code Structure
+
+- `PackageManager`: An abstract base class that defines the interface for a package manager.
+- `CanonicalizingPackageManager`: A subclass of `PackageManager` that provides additional functionality for mapping module names to package names using a registry and basic rules.
+
+## Symbols
+
+### `PackageManager`
+#### Description
+The `PackageManager` class is an abstract base class that defines the interface for a package manager. It includes methods for converting between module names and package names, checking if the package manager is installed, and installing packages.
+
+#### Inputs
+- `module_name`: A string representing the name of a module.
+- `package_name`: A string representing the name of a package.
+- `package`: A string representing the name of a package to be installed.
+
+#### Outputs
+- Returns a string representing the canonical package name for a given module name.
+- Returns a string representing the canonical module name for a given package name.
+- Returns a boolean indicating whether the package manager is installed.
+- Returns a boolean indicating whether the package installation was successful.
+
+#### Internal Logic
+- The class uses the `abc` module to define abstract methods that must be implemented by subclasses.
+- The `is_manager_installed` method uses `shutil.which` to check if the package manager is available on the system.
+- The `install` method attempts to install a package asynchronously and tracks attempted installations.
+
+### `CanonicalizingPackageManager`
+#### Description
+The `CanonicalizingPackageManager` class extends `PackageManager` and provides additional functionality for mapping module names to package names using a registry and basic rules. It requires subclasses to implement the `_construct_module_name_mapping` method.
+
+#### Inputs
+- `module_name`: A string representing the name of a module.
+- `package_name`: A string representing the name of a package.
+
+#### Outputs
+- Returns a string representing the canonical package name for a given module name.
+- Returns a string representing the canonical module name for a given package name.
+
+#### Internal Logic
+- The class initializes mappings lazily and constructs them using the `_construct_module_name_mapping` method.
+- The `module_to_package` method converts module names to package names using the constructed mappings or by replacing underscores with hyphens.
+- The `package_to_module` method converts package names to module names using the constructed mappings or by replacing hyphens with underscores.
+
+## References
+
+- The `CanonicalizingPackageManager` class is referenced by other package manager implementations such as `CondaPackageManager` and `PypiPackageManager` in related files.
+- The `create_package_manager` function in `package_managers.py` uses the `PackageManager` class to instantiate specific package manager implementations.
+
+## Dependencies
+
+- `abc`: Used to define abstract base classes and methods.
+- `shutil`: Used to check if a package manager is installed on the system.
+- `subprocess`: Used to run shell commands for package installation.
+
+## Error Handling
+
+- The `install` method tracks attempted installations to avoid repeated attempts for the same package.
+- The `CanonicalizingPackageManager` class uses assertions to ensure mappings are initialized before use.
+
+## Logging
+
+- The `run` method in `PackageManager` uses `subprocess.run` to execute commands and checks the return code to determine success.
+
+## TODOs
+
+- Subclasses of `CanonicalizingPackageManager` need to implement the `_construct_module_name_mapping` method to provide specific mappings for module and package names.

@@ -1,0 +1,187 @@
+---
+title: "execution.py"
+---
+
+## High-level description
+
+The target file, `execution.py`, defines a set of API endpoints for managing and executing various operations related to a server-side application, likely a notebook or interactive computing environment. These endpoints handle requests for setting UI element values, instantiating components, making function calls, interrupting execution, running code cells, managing scratchpad execution, restarting sessions, and shutting down the server.
+
+## Code Structure
+
+The main symbols in the code are the API endpoints defined using the `APIRouter` class. Each endpoint corresponds to a specific operation that can be performed on the server, such as setting UI element values or running a code cell. The endpoints utilize various request and response models defined in the `models` module, and they interact with the application state through the `AppState` class.
+
+## Symbols
+
+### `set_ui_element_values`
+#### Description
+Handles requests to set values for UI elements. It parses the request body to extract the UI element IDs and their corresponding values, then sends a control request to update these values.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Parses the request body using `parse_request` to create an `UpdateComponentValuesRequest`.
+- Retrieves the current session from `AppState`.
+- Sends a `SetUIElementValueRequest` to update the UI elements.
+
+### `instantiate`
+#### Description
+Handles requests to instantiate a new component. It parses the request body to extract instantiation details and performs the instantiation within the current session.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Parses the request body using `parse_request` to create an `InstantiateRequest`.
+- Retrieves the current session from `AppState`.
+- Calls the `instantiate` method on the session with the parsed request.
+
+### `function_call`
+#### Description
+Handles requests to perform a remote procedure call (RPC). It parses the request body to extract function call details and sends a control request to execute the function.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Parses the request body using `parse_request` to create a `FunctionCallRequest`.
+- Retrieves the current session from `AppState`.
+- Sends the function call request to the session.
+
+### `interrupt`
+#### Description
+Handles requests to interrupt the current execution in the kernel. This endpoint is protected and requires "edit" permissions.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Retrieves the current session from `AppState`.
+- Calls the `try_interrupt` method on the session to interrupt execution.
+
+### `run_cell`
+#### Description
+Handles requests to run a code cell. It updates the cell code in the kernel if needed and registers new cells for unseen cell IDs. This endpoint requires "edit" permissions.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Parses the request body using `parse_request` to create a `RunRequest`.
+- Retrieves the current session from `AppState`.
+- Sends an execution request to the session.
+
+### `run_scratchpad`
+#### Description
+Handles requests to run code in a scratchpad environment. This endpoint requires "edit" permissions.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Parses the request body using `parse_request` to create a `RunScratchpadRequest`.
+- Retrieves the current session from `AppState`.
+- Sends an execution request to the session.
+
+### `restart_session`
+#### Description
+Handles requests to restart the current session without affecting other sessions. This endpoint requires "edit" permissions.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Retrieves the current session ID from `AppState`.
+- Closes the session using the session manager.
+
+### `shutdown`
+#### Description
+Handles requests to shut down the kernel. It checks if the server should be shut down entirely based on the number of active sessions.
+
+#### Inputs
+| Name    | Type   | Description          |
+|:--------|:-------|:---------------------|
+| request | Request | The incoming HTTP request |
+
+#### Outputs
+| Name          | Type          | Description                |
+|:--------------|:--------------|:---------------------------|
+| SuccessResponse | BaseResponse | Indicates successful operation |
+
+#### Internal Logic
+- Logs the shutdown request.
+- Retrieves the session manager and file router from `AppState`.
+- Determines if the server should be shut down based on session count and file operations.
+- Calls `shutdown_server` if conditions are met, otherwise closes the current session.
+
+## References
+
+- `AppState`: Used to manage application state and session interactions.
+- `parse_request`: Utility function to parse request bodies into specific request models.
+- `SetUIElementValueRequest`, `InstantiateRequest`, `FunctionCallRequest`, `RunRequest`, `RunScratchpadRequest`: Request models used to structure incoming data.
+- `SuccessResponse`: Response model indicating successful operations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette.authentication.requires` | Used to enforce authentication requirements on certain endpoints. |
+| `marimo._loggers` | Provides logging capabilities. |
+| `marimo._server.api.deps.AppState` | Manages application state and session interactions. |
+| `marimo._server.api.utils.parse_request` | Parses request bodies into specific request models. |
+| `marimo._server.models.models` | Defines request and response models used by the endpoints. |
+| `marimo._server.router.APIRouter` | Provides routing capabilities for defining API endpoints. |
+| `marimo._server.uvicorn_utils.close_uvicorn` | Utility function to shut down the Uvicorn server. |
+
+## Logging
+
+The code uses a logger (`LOGGER`) from the `marimo._loggers` module to log debug information, particularly in the `shutdown` endpoint to log when a shutdown request is received and when the server is being shut down.

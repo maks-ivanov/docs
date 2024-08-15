@@ -1,0 +1,89 @@
+---
+title: "registerReactComponent.tsx"
+---
+
+## High-level description
+
+The `registerReactComponent.tsx` file provides a mechanism to register React components as custom web components within a web application. It defines a factory function that allows React components to be used as custom HTML elements, handling the synchronization of UI element values and attributes between the React component and the rest of the application. This integration facilitates the use of React components in environments that support web components, enabling seamless communication and rendering within the DOM.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `PluginSlotInternal` is a React component that manages the state and rendering of a plugin, handling value synchronization and attribute changes.
+- `registerReactComponent` is a function that registers a React component as a custom web component, using the `PluginSlotInternal` component for rendering.
+- `WebComponent` is a class that extends `HTMLElement` and represents the custom element, managing lifecycle events and rendering the React component within a shadow DOM.
+- Utility functions and hooks like `useEventListener`, `createInputEvent`, and `prettyParse` are used to handle events, parse data, and manage state.
+
+## Symbols
+
+### `PluginSlotInternal`
+#### Description
+`PluginSlotInternal` is a React component that manages the rendering and state synchronization of a plugin within a custom web component. It handles value updates, attribute changes, and provides a mechanism to reset and set children for the plugin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hostElement | HTMLElement | The host element for the plugin. |
+| plugin | IPlugin&lt;T, unknown&gt; | The plugin to be rendered. |
+| children | ReactNode | The children elements to be rendered within the plugin. |
+| getInitialValue | () =&gt; T | A function to get the initial value for the plugin. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | JSX.Element | The rendered plugin component. |
+
+#### Internal Logic
+- Initializes state for child nodes and value using `useState`.
+- Uses `useImperativeHandle` to expose `reset` and `setChildren` methods.
+- Listens for value updates using `useEventListener`.
+- Observes attribute changes with a `MutationObserver` to update plugin data.
+- Uses `useMemo` to create a map of functions callable by the plugin.
+- Renders an error if the initial value parsing fails, otherwise renders the plugin using `Suspense`.
+
+### `registerReactComponent`
+#### Description
+`registerReactComponent` registers a React component as a custom web component, allowing it to be used as a native HTML element. It sets up the component's lifecycle, rendering, and style management within a shadow DOM.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plugin | IPlugin&lt;T, unknown&gt; | The plugin containing the component to register. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Defines a `WebComponent` class extending `HTMLElement`.
+- Attaches a shadow DOM and copies stylesheets to it.
+- Observes changes to the element's children and attributes to trigger re-renders.
+- Uses `ReactDOM.createRoot` to render the React component within the shadow DOM.
+- Implements `connectedCallback` and `disconnectedCallback` for lifecycle management.
+
+## References
+
+- `defineCustomElement` from `defineCustomElement.ts` is used to register the custom element.
+- `createInputEvent` and `MarimoValueUpdateEvent` from `events.ts` are used for event handling.
+- `parseAttrValue`, `parseDataset`, and `parseInitialValue` from `htmlUtils.ts` are used for data parsing.
+- `getUIElementObjectId` from `ui-element.ts` is used to retrieve the object ID of a UI element.
+- `FUNCTIONS_REGISTRY` from `FunctionRegistry.ts` is used for function call management.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| React | Used for creating and managing React components. |
+| ReactDOM | Used for rendering React components into the DOM. |
+| Zod | Used for data validation within plugins. |
+
+## Error Handling
+
+- The `prettyParse` function logs and throws an error if data parsing fails.
+- The `renderError` function from `BadPlugin.tsx` is used to render errors when initial value parsing fails.
+
+## Logging
+
+- The `Logger` utility is used for logging errors and warnings throughout the code.
+
+## TODOs
+None

@@ -1,0 +1,60 @@
+---
+title: "chart-spec-model.tsx"
+---
+
+## High-level description
+
+The `ColumnChartSpecModel` class in the `chart-spec-model.tsx` file is designed to generate and manage chart specifications for data columns in a data table. It provides functionality to create Vega-Lite specifications for visualizing data based on the type of data in each column, such as dates, numbers, and booleans, and integrates these specifications into a broader data table component.
+
+## Code Structure
+
+The main symbol in this file is the `ColumnChartSpecModel` class, which interacts with data types and column summaries to produce chart specifications. It uses the `TopLevelFacetedUnitSpec` type from an external module to define the structure of the charts. The class relies on field types and column summaries to determine how to visualize each column's data.
+
+## Symbols
+
+### `ColumnChartSpecModel`
+#### Description
+The `ColumnChartSpecModel` class is responsible for creating and managing chart specifications for columns in a data table. It uses the data type of each column to generate appropriate Vega-Lite chart specifications, which can be used to render visual representations of the data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | `T[]` | The data to be visualized, where `T` is a generic type representing the data structure. |
+| fieldTypes | `FieldTypes` | A mapping of column names to their data types. |
+| summaries | `ColumnHeaderSummary[]` | An array of summaries for each column, providing metadata like min, max, unique values, etc. |
+| opts | `{ includeCharts: boolean }` | Options for the model, including whether to include charts in the output. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| getHeaderSummary | `{ summary: ColumnHeaderSummary, type: DataType, spec: TopLevelFacetedUnitSpec | undefined }` | Returns a summary, type, and optional chart spec for a given column. |
+
+#### Internal Logic
+- **Constructor**: Initializes the model with data, field types, column summaries, and options. It maps column summaries to a dictionary for quick access.
+- **getHeaderSummary**: Retrieves the summary, type, and optionally the Vega-Lite spec for a specified column.
+- **getVegaSpec**: Generates a Vega-Lite specification for a column based on its data type. It supports different chart configurations for date, integer, number, and boolean types, while returning `null` for unknown or string types.
+
+## Side Effects
+- The class maintains an internal map of column summaries, which is used to quickly access summary data for each column.
+
+## References
+- **`TopLevelFacetedUnitSpec`**: This type is imported from an external module and is used to define the structure of the Vega-Lite chart specifications.
+- **`ColumnHeaderSummary` and `FieldTypes`**: These types are imported from a local `types` module and are used to define the structure of column summaries and field types.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@radix-ui/colors` | Provides color constants used in chart specifications. |
+| `@/plugins/impl/data-explorer/queries/types` | Provides the `TopLevelFacetedUnitSpec` type for defining chart specifications. |
+
+## Error Handling
+The code does not explicitly handle errors. It assumes that the inputs provided (such as data, field types, and summaries) are valid and correctly formatted.
+
+## Logging
+There is no logging implemented in this code.
+
+## API/Interface Reference
+The `ColumnChartSpecModel` class does not expose an API but provides methods to retrieve chart specifications and summaries for columns in a data table. It is used internally within the data table component to generate visualizations.
+
+## TODOs
+There are no TODOs or notes left in the code.

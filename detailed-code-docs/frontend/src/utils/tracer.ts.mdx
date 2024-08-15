@@ -1,0 +1,72 @@
+---
+title: "tracer.ts"
+---
+
+## High-level description
+
+The `tracer.ts` file defines a simple tracing utility for measuring the performance of code execution. It provides functionality to start and end spans, which are time intervals representing the execution of a particular piece of code. The tracer can also wrap synchronous and asynchronous functions to automatically measure their execution time and log the results.
+
+## Code Structure
+
+The main symbol in this code is the `Tracer` class, which manages a collection of `Span` objects. Each `Span` represents a time interval with a start time, optional end time, status, and attributes. The `Tracer` class provides methods to start and end spans, wrap functions for automatic tracing, and log the collected spans.
+
+## Symbols
+
+### `Span`
+#### Description
+A `Span` is an interface representing a time interval with a name, start time, optional end time, status, and attributes. It includes a method to end the span.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the span. |
+| startTime | number | The start time of the span in milliseconds since the epoch. |
+| endTime | number (optional) | The end time of the span in milliseconds since the epoch. |
+| status | SpanStatus (optional) | The status of the span, either "ok" or "error". |
+| attributes | Record&lt;string, unknown&gt; | Additional attributes associated with the span. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| end | function | A function to end the span, optionally setting its status. |
+
+### `Tracer`
+#### Description
+The `Tracer` class is responsible for managing spans, which are used to measure the performance of code execution. It provides methods to start and end spans, wrap functions for automatic tracing, and log the collected spans.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the span. |
+| attributes | Record&lt;string, unknown&gt; | Additional attributes associated with the span. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spans | Span[] | An array of spans managed by the tracer. |
+
+#### Internal Logic
+- **startSpan**: Creates a new span with the given name and attributes, records the start time, and adds it to the list of spans.
+- **endSpan**: Sets the end time and status of a given span.
+- **getSpans**: Returns the list of all spans.
+- **wrap**: Wraps a synchronous function, automatically starting and ending a span around its execution.
+- **wrapAsync**: Wraps an asynchronous function, automatically starting and ending a span around its execution.
+- **logSpans**: Logs all spans to the console, including their start and end times, duration, status, and attributes, but only in a development environment.
+
+## Side Effects
+- The `logSpans` method outputs span information to the console, but only when the environment is set to development.
+
+## Dependencies
+No external libraries or modules are used in this code.
+
+## Error Handling
+- The `wrap` and `wrapAsync` methods catch errors during function execution, mark the span status as "error", and rethrow the error.
+
+## Logging
+- The `logSpans` method logs detailed information about each span to the console, including child spans, start and end times, duration, status, and attributes.
+
+## References
+- The `Tracer` class is imported and instantiated in the related file `frontend/src/core/wasm/worker/tracer.ts`, where it is assigned to a global variable `t`.
+
+## TODOs
+No TODOs or notes are present in the code.

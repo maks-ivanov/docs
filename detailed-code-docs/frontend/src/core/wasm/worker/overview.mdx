@@ -1,0 +1,41 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The directory is focused on managing a WebAssembly (Wasm) environment using Pyodide, a Python runtime for the web. It facilitates the execution of Python code within a web application by setting up and managing the Pyodide environment, handling file system operations, and enabling communication between web workers and the main application thread. The main components include the `DefaultWasmController` for managing the Pyodide lifecycle, utility functions for file system operations, and mechanisms for remote procedure calls (RPC) to handle various operations like starting sessions and executing Python functions.
+
+## What does it do?
+
+The code in this directory allows a web application to run Python code directly in the browser using WebAssembly. It sets up a Python environment with Pyodide, which is a Python distribution for the browser. This setup includes loading necessary Python packages, managing a virtual file system, and enabling communication between the web worker and the main application thread. The system handles requests to execute Python code, manage files, and perform other operations asynchronously, ensuring efficient and seamless integration of Python capabilities into the web application.
+
+## Entry points
+
+The main files in this directory include:
+
+- **`bootstrap.ts`**: Sets up the Pyodide environment and manages the lifecycle of the Python runtime. It is responsible for loading Pyodide, installing packages, and initializing a Python session.
+- **`worker.ts`**: A web worker script that manages the execution of a notebook environment using Pyodide. It handles RPC for various operations like starting sessions, loading packages, and executing Python functions.
+- **`save-worker.ts`**: Another web worker script focused on handling the saving of notebooks. It uses Pyodide to execute Python code and manages file operations using a WebAssembly-based filesystem.
+
+These files are organized to facilitate the flow of data and control between the web application and the Python environment, ensuring that operations are performed asynchronously and efficiently.
+
+## Key Files
+
+- **`fs.ts`**: Defines a `WasmFileSystem` object for managing a virtual file system within the Pyodide environment. It handles operations like creating directories, reading and writing files, and synchronizing with persistent storage.
+- **`getController.ts`**: Provides a function to dynamically load a Wasm controller based on a specified version, ensuring flexible version management.
+- **`getFS.ts`**: A utility function that acts as a type-safe wrapper around the `FS` object from the Pyodide environment, ensuring reliable file system operations.
+- **`getMarimoWheel.ts`**: Generates a string specifying the version of the Marimo package to be used, handling different scenarios based on the input version string.
+- **`getPyodideVersion.ts`**: Determines the version of Pyodide to be used and handles the dynamic import of the Pyodide library from a CDN.
+- **`message-buffer.ts`**: Implements a `MessageBuffer` class to manage messages that arrive before a worker is ready to process them, ensuring no messages are lost during initialization.
+- **`tracer.ts`**: Creates and exports a `Tracer` instance for performance measurement and logging, making it accessible globally.
+- **`types.ts`**: Defines TypeScript interfaces and types for a Wasm controller and a bridge used in the application, facilitating interactions with the Python runtime environment.
+
+## Dependencies
+
+- **`pyodide`**: Provides a Python environment in the browser, allowing Python code execution within a web application.
+- **`rpc-anywhere`**: Facilitates RPC communication between web workers and the main application thread, enabling asynchronous operations.
+- **`Logger`**: Used for logging messages and errors, providing insights into the operation of the system.
+- **`@/utils/tracer`**: Provides the `Tracer` class used for performance measurement and logging.
+
+These dependencies are crucial for setting up and managing the Pyodide environment, handling file system operations, and enabling communication between different parts of the application.

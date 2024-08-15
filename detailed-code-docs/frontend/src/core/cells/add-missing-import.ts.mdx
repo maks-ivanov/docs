@@ -1,0 +1,102 @@
+---
+title: "add-missing-import.ts"
+---
+
+## High-level description
+
+The target file, `add-missing-import.ts`, provides utility functions to ensure that necessary Python import statements are present in a notebook environment. It checks if a specific module and variable are already imported or defined, and if not, it adds the import statement to the notebook. This functionality is crucial for maintaining the correct execution context in a dynamic notebook environment where code cells can be added or modified.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `maybeAddMissingImport`: A generic function that checks for missing imports and adds them if necessary.
+- `maybeAddMarimoImport` and `maybeAddAltairImport`: Specific implementations of `maybeAddMissingImport` for the "marimo" and "altair" modules, respectively. These functions utilize `maybeAddMissingImport` to perform their tasks.
+
+## Symbols
+
+### `maybeAddMissingImport`
+#### Description
+This function checks if a specified Python module and variable are already imported in the notebook. If not, it adds the import statement. It is a generic utility that can be used for any module and variable combination.
+
+#### Inputs
+| Name          | Type     | Description                                      |
+|:--------------|:---------|:-------------------------------------------------|
+| moduleName    | string   | The name of the module to import.                |
+| variableName  | string   | The name of the variable to import.              |
+| onAddImport   | function | Callback function to execute when adding import. |
+| appStore      | object   | The application state store, defaulting to `store`. |
+
+#### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| result  | boolean | Returns `true` if an import was added, `false` otherwise. |
+
+#### Internal Logic
+1. Retrieves the current state of variables from the `appStore`.
+2. Checks if `variableName` is already present in the variables state.
+3. If not present, it checks if the import statement already exists in the notebook using a regular expression.
+4. If the import statement is not found, it constructs the import statement and calls `onAddImport` with this statement.
+
+### `maybeAddMarimoImport`
+#### Description
+This function ensures that the "marimo" module is imported as "mo" in the notebook. It uses `maybeAddMissingImport` to perform the check and addition.
+
+#### Inputs
+| Name          | Type     | Description                                      |
+|:--------------|:---------|:-------------------------------------------------|
+| autoRun       | boolean  | Determines if the import should be executed immediately. |
+| createNewCell | function | Function to create a new cell in the notebook.   |
+| fromCellId    | CellId   | Optional ID of the cell from which to add the import. |
+
+#### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| result  | boolean | Returns `true` if an import was added, `false` otherwise. |
+
+#### Internal Logic
+1. Calls `maybeAddMissingImport` with "marimo" and "mo".
+2. If an import is added, it creates a new cell with the import statement.
+3. If `autoRun` is true, it sends a request to execute the new cell.
+
+### `maybeAddAltairImport`
+#### Description
+This function ensures that the "altair" module is imported as "alt" in the notebook. It follows a similar pattern to `maybeAddMarimoImport`.
+
+#### Inputs
+| Name          | Type     | Description                                      |
+|:--------------|:---------|:-------------------------------------------------|
+| autoRun       | boolean  | Determines if the import should be executed immediately. |
+| createNewCell | function | Function to create a new cell in the notebook.   |
+| fromCellId    | CellId   | Optional ID of the cell from which to add the import. |
+
+#### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| result  | boolean | Returns `true` if an import was added, `false` otherwise. |
+
+#### Internal Logic
+1. Calls `maybeAddMissingImport` with "altair" and "alt".
+2. If an import is added, it creates a new cell with the import statement.
+3. If `autoRun` is true, it sends a request to execute the new cell.
+
+## References
+
+- `sendRun`: A function imported from `../network/requests` used to execute code cells.
+- `store`: The application state store imported from `../state/jotai`.
+- `variablesAtom`: An atom representing the state of variables, imported from `../variables/state`.
+- `notebookAtom`: An atom representing the state of the notebook, imported from `./cells`.
+- `CellId`: A utility for managing cell IDs, imported from `./ids`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai`    | Used for state management in the application. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks for the presence of variables and import statements. It assumes that the state retrieval and regular expression operations will succeed without exceptions.
+
+## Logging
+
+The code does not implement any logging mechanisms. It relies on the callback function `onAddImport` to handle the addition of import statements, which could be extended to include logging if necessary.

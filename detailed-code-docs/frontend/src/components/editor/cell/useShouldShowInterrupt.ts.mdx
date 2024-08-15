@@ -1,0 +1,53 @@
+---
+title: "useShouldShowInterrupt.ts"
+---
+
+## High-level description
+
+The `useShouldShowInterrupt` hook is a custom React hook designed to determine whether an interrupt button should be displayed in a user interface. It evaluates the running state of a cell and ensures that the interrupt button is shown only after a specified delay to prevent flickering, providing a smoother user experience.
+
+## Code Structure
+
+The main symbol in the code is the `useShouldShowInterrupt` function, which is a custom React hook. It utilizes React's `useState` and `useEffect` hooks to manage and update the state based on the running status of a cell. The hook is used in other components, such as `RunButton` and `RunControlButton`, to conditionally render the interrupt button.
+
+## Symbols
+
+### `useShouldShowInterrupt`
+#### Description
+The `useShouldShowInterrupt` function is a custom React hook that determines whether the interrupt button should be displayed. It uses a timer to introduce a delay before showing the button, which helps avoid flickering when the cell's running state changes.
+
+#### Inputs
+| Name   | Type    | Description                        |
+|:-------|:--------|:-----------------------------------|
+| running | boolean | Indicates if the cell is currently running |
+
+#### Outputs
+| Name            | Type    | Description                                      |
+|:----------------|:--------|:-------------------------------------------------|
+| shouldShowInterrupt | boolean | Returns true if the interrupt button should be shown |
+
+#### Internal Logic
+- The hook initializes a state variable `hasRunLongEnough` to track if the cell has been running long enough to show the interrupt button.
+- It uses the `useEffect` hook to set up a side effect that runs whenever the `running` state changes.
+- If the cell is running, it sets `hasRunLongEnough` to false and starts a timer with a delay of 200 milliseconds.
+- After the delay, it sets `hasRunLongEnough` to true, indicating that the interrupt button can be shown.
+- If the `running` state changes or the component unmounts, the timer is cleared to prevent memory leaks.
+
+## References
+
+- The `useShouldShowInterrupt` hook is used in the `RunButton` component in `frontend/src/components/editor/cell/RunButton.tsx` and the `RunControlButton` component in `frontend/src/components/editor/controls/Controls.tsx`. These components use the hook to decide when to display the interrupt button based on the running state of a cell.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `useState` | Manages the local state within the hook.      |
+| `useEffect`| Handles side effects, such as setting timers. |
+
+## Side Effects
+
+- The hook sets a timeout to delay the display of the interrupt button. This timeout is cleared if the `running` state changes or the component unmounts, ensuring no memory leaks occur.
+
+## Performance Considerations
+
+- The use of a 200ms delay helps prevent flickering of the interrupt button, which can enhance the user experience by providing a smoother interface transition when the cell's running state changes.

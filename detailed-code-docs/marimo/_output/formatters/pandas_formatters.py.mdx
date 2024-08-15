@@ -1,0 +1,63 @@
+---
+title: "pandas_formatters.py"
+---
+
+## High-level description
+
+The `pandas_formatters.py` file defines a `PandasFormatter` class that extends the `FormatterFactory` abstract base class. This class is responsible for registering custom formatters for Pandas DataFrame and Series objects, allowing them to be displayed in a specific format (HTML) when used within the Marimo framework. The formatters are registered using decorators and are designed to handle the display settings for rows, columns, and dimensions.
+
+## Code Structure
+
+- `PandasFormatter` is a subclass of `FormatterFactory`.
+- The `register` method within `PandasFormatter` is responsible for setting Pandas display options and registering formatters for Pandas DataFrame and Series objects.
+- The formatters are registered using decorators from the `formatting` module, specifically `@formatting.opinionated_formatter` and `@formatting.formatter`.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to specify the MIME type of the formatted output.
+- `FormatterFactory` from `marimo._output.formatters.formatter_factory` is the base class for `PandasFormatter`.
+- `flatten_string` from `marimo._output.utils` is used to flatten HTML strings.
+- `table` from `marimo._plugins.ui._impl.table` is used to format DataFrames in a tabular format.
+
+## Symbols
+
+### `PandasFormatter`
+#### Description
+The `PandasFormatter` class is responsible for registering formatters for Pandas DataFrame and Series objects. It sets specific display options for Pandas and defines how these objects should be formatted for display within the Marimo framework.
+
+#### Inputs
+No direct inputs; however, it interacts with Pandas DataFrame and Series objects.
+
+#### Outputs
+No direct outputs; it registers formatters that produce HTML representations of DataFrame and Series objects.
+
+#### Internal Logic
+- The `package_name` method returns the string "pandas", indicating the package this formatter is associated with.
+- The `register` method:
+  - Sets Pandas display options for maximum rows, columns, and dimension display.
+  - Defines and registers two formatters for DataFrame objects:
+    - `_show_marimo_dataframe`: Uses the `table` function to format the DataFrame with pagination.
+    - `_show_dataframe`: Converts the DataFrame to an HTML string, considering the display options for rows, columns, and dimensions.
+  - Defines and registers a formatter for Series objects, converting them to a DataFrame and then to an HTML string.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pandas` | Used for DataFrame and Series objects. |
+| `marimo._messaging.mimetypes` | Provides the `KnownMimeType` type for specifying MIME types. |
+| `marimo._output.formatters.formatter_factory` | Provides the `FormatterFactory` base class. |
+| `marimo._output.utils` | Provides utility functions like `flatten_string`. |
+| `marimo._plugins.ui._impl.table` | Provides the `table` function for formatting DataFrames. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `PandasFormatter` class. It assumes that the Pandas library and the Marimo framework's components will function as expected.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

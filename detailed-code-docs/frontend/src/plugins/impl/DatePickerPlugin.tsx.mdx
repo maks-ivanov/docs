@@ -1,0 +1,82 @@
+---
+title: "DatePickerPlugin.tsx"
+---
+
+## High-level description
+
+The `DatePickerPlugin.tsx` file defines a `DatePickerPlugin` class that implements a date picker component for a frontend application. This plugin is designed to be used within a larger plugin architecture, allowing users to select dates within specified bounds. It includes validation for the input data and renders a date picker input field with optional labeling and full-width styling.
+
+## Code Structure
+
+- The `DatePickerPlugin` class implements the `IPlugin` interface, which requires a `tagName`, a `validator`, and a `render` method.
+- The `DatePicker` functional component is used within the `render` method of `DatePickerPlugin` to create the actual date picker UI.
+- The `DatePicker` component uses the `Labeled` component to optionally display a label alongside the date picker input.
+
+## Symbols
+
+### `DatePickerPlugin`
+#### Description
+The `DatePickerPlugin` class is a plugin that provides a date picker UI component. It validates input data using the `zod` library and renders a date picker input field with optional label and styling.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;T, Data&gt;` | The properties required to render the plugin, including state, data, and functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered date picker component. |
+
+#### Internal Logic
+- The `validator` property uses `zod` to define the expected structure of the input data, including optional and default values.
+- The `render` method returns a `DatePicker` component, passing necessary props for rendering.
+
+### `DatePicker`
+#### Description
+The `DatePicker` component is a functional component that renders an HTML date input field. It ensures the selected date is within specified bounds and updates the state accordingly.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `DatePickerProps` | Properties including the current value, setter function, and configuration data. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered date picker input field. |
+
+#### Internal Logic
+- Uses a `useRef` hook to reference the input element.
+- The `handleInput` function validates the date input against the `start` and `stop` bounds and updates the state with the new date value.
+- Utilizes the `useId` hook to generate a unique ID for the input field.
+- Applies conditional styling using the `cn` utility function.
+
+## References
+
+- The `Labeled` component from `common/labeled.tsx` is used to optionally display a label for the date picker.
+- The `cn` utility function from `utils/cn.ts` is used for conditional class name merging.
+- The `IPlugin` and `IPluginProps` interfaces from `types.ts` define the structure and requirements for plugins.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation. |
+| `clsx` and `tailwind-merge` | Used by the `cn` function for class name management. |
+
+## Error Handling
+
+The `handleInput` function includes basic bounds validation to ensure the selected date is within the specified `start` and `stop` range. This is necessary because browser validation may not handle keyboard input changes effectively.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## API/Interface Reference
+
+The `DatePickerPlugin` class implements the `IPlugin` interface, which requires a `render` method to output a `JSX.Element`. The plugin is identified by the `tagName` "marimo-date-picker" and can be used within a larger plugin system as defined in `plugins.ts`.
+
+## TODOs
+
+No TODOs or notes are present in the code.

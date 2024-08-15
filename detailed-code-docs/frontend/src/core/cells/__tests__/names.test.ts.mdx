@@ -1,0 +1,100 @@
+---
+title: "names.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for functions related to cell name management in a frontend application. These tests ensure that cell names are normalized, validated, and displayed correctly according to specific rules. The functions being tested are `normalizeName`, `getValidName`, and `displayCellName`, which are imported from another module.
+
+## Code Structure
+
+The test file is structured using the `vitest` testing framework, with each function being tested in its own `describe` block. Each `describe` block contains multiple `it` blocks, which define individual test cases for the respective function. The functions being tested are imported from the `names.ts` module, which contains the actual implementation of these functions.
+
+## References
+
+The test file references the following functions from the `names.ts` module:
+- `normalizeName`
+- `DEFAULT_CELL_NAME`
+- `getValidName`
+- `displayCellName`
+
+## Symbols
+
+### `normalizeName`
+#### Description
+Tests the `normalizeName` function, which normalizes a given name by removing special characters, replacing spaces with underscores, and optionally converting the name to lowercase.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name to be normalized. |
+| lowercase | boolean | Optional flag to convert the name to lowercase. Defaults to `true`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| normalizedName | string | The normalized version of the input name. |
+
+#### Internal Logic
+- Trims whitespace from the input name.
+- Returns `DEFAULT_CELL_NAME` if the input is empty or only contains whitespace.
+- Prepends an underscore if the name starts with a number.
+- Replaces non-word characters with underscores.
+- Converts the name to lowercase if the `lowercase` flag is `true`.
+
+### `getValidName`
+#### Description
+Tests the `getValidName` function, which generates a non-conflicting name by appending a numeric suffix if necessary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The desired name. |
+| existingNames | string[] | A list of names that are already in use. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| validName | string | A non-conflicting name. |
+
+#### Internal Logic
+- Checks if the desired name is not in the `existingNames` set and not in the `DISALLOWED_NAMES` set.
+- If the name is valid, returns it.
+- Otherwise, appends a numeric suffix to the name until a valid name is found.
+
+### `displayCellName`
+#### Description
+Tests the `displayCellName` function, which returns a display-friendly version of a cell name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The cell name. |
+| cellIndex | number | The index of the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| displayName | string | The display-friendly version of the cell name. |
+
+#### Internal Logic
+- Returns the input name if it is not the `DEFAULT_CELL_NAME`.
+- Returns a string in the format `cell-{cellIndex}` if the name is the `DEFAULT_CELL_NAME`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for defining and running unit tests. |
+
+## Error Handling
+
+The test cases do not explicitly handle errors, as they rely on the `vitest` framework to catch and report any assertion failures.
+
+## Logging
+
+There is no logging implemented in the test file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

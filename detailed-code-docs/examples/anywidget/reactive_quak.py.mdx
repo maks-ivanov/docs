@@ -1,0 +1,67 @@
+---
+title: "reactive_quak.py"
+---
+
+## High-level description
+
+The `reactive_quak.py` file is a script that uses the `marimo` library to create a reactive data visualization application. It reads a dataset of athletes from a remote Parquet file, processes the data using the `polars` library, and visualizes it using a custom widget from the `quak` library and an Altair chart. The application is structured using `marimo`'s reactive programming model, which allows for dynamic updates to the UI based on data changes.
+
+## Code Structure
+
+The code is structured around the `marimo.App` class, which is used to define a reactive application. The application is composed of several cells, each defined by the `@app.cell` decorator. These cells are executed in sequence and can pass data between each other. The main components of the application include data loading, widget creation, data selection, and visualization.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of the `marimo.App` class, which serves as the main application object. It is configured with a medium width and is responsible for managing the lifecycle of the application, including the execution of cells and rendering of UI components.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a reactive cell within the `marimo` application. Each cell can import modules, perform computations, and return data that can be used by other cells. The cells are executed in the order they are defined, and their outputs can be passed as inputs to subsequent cells.
+
+### `__()`
+#### Description
+The `__()` function is a placeholder for multiple cells in the application. Each occurrence of `__()` represents a different cell with its own logic and purpose. The function names are not unique, but they are differentiated by their inputs and outputs.
+
+#### Inputs and Outputs
+Each cell defined by `__()` has different inputs and outputs, which are used to pass data between cells. The inputs and outputs are specified in the function signature and return statement, respectively.
+
+#### Internal Logic
+- The first cell imports the necessary libraries (`marimo`, `polars`, and `quak`) and returns them for use in subsequent cells.
+- The second cell reads a Parquet file containing athlete data using `polars`, creates a `quak.Widget` with the data, and returns both the DataFrame and the widget.
+- The third cell uses Altair to create a bar chart of the top 10 nationalities by count, based on a grouped selection of the data.
+- The fourth cell retrieves the data from the widget and returns it as a selection.
+- The fifth cell processes the selection to count occurrences by nationality and returns the grouped selection.
+
+### `if __name__ == "__main__":`
+#### Description
+This block checks if the script is being run as the main module and, if so, calls `app.run()` to start the application. This is a common Python idiom for making a script both importable as a module and executable as a standalone program.
+
+## References
+
+- `marimo.App`: The main application class used to create and manage the reactive application.
+- `polars`: A DataFrame library used for reading and processing the athlete data.
+- `quak.Widget`: A custom widget used to display the athlete data in the UI.
+- `altair`: A library used to create the bar chart visualization.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo`   | Used to create and manage the reactive application and UI components. |
+| `polars`   | Used for efficient data manipulation and processing. |
+| `quak`     | Provides a custom widget for displaying data. |
+| `altair`   | Used for creating interactive data visualizations. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond the basic exception handling provided by Python. It assumes that the data sources and libraries are available and correctly configured.
+
+## Logging
+
+The code does not implement any logging mechanisms. Any errors or messages would be output to the standard error or console by default.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

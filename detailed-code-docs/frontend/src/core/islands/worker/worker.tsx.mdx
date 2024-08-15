@@ -1,0 +1,101 @@
+---
+title: "worker.tsx"
+---
+
+## High-level description
+
+The `worker.tsx` file is responsible for setting up a Web Worker that integrates with the Pyodide environment to execute Python code within a web application. It initializes Pyodide, handles remote procedure calls (RPC) for starting sessions, loading packages, and executing functions on a Python bridge. The worker communicates with the main thread using a message-based transport system, allowing asynchronous operations and error handling.
+
+## Code Structure
+
+The main components of the code are interconnected as follows:
+- **Pyodide Initialization**: The `loadPyodideAndPackages` function initializes the Pyodide environment and sets up the `ReadonlyWasmController`.
+- **RPC Handling**: The `createRPCRequestHandler` function defines handlers for various RPC requests such as `startSession`, `loadPackages`, and `bridge`.
+- **Message Buffer**: The `MessageBuffer` class is used to queue messages until the worker is ready to process them.
+- **Deferred Operations**: The `Deferred` class is used to manage asynchronous operations, particularly for the readiness of the Pyodide environment and the bridge.
+
+## References
+
+- **`ReadonlyWasmController`**: Used to manage the Pyodide environment and filesystem operations.
+- **`MessageBuffer`**: Buffers messages until the worker is ready.
+- **`Deferred`**: Manages asynchronous operations.
+- **`Logger`**: Used for logging errors and messages.
+- **`prettyError`**: Formats error messages for better readability.
+- **`invariant`**: Ensures certain conditions are met, throwing errors if not.
+
+## Symbols
+
+### `loadPyodideAndPackages`
+#### Description
+Initializes the Pyodide environment and sets up the `ReadonlyWasmController` to manage the WebAssembly environment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not return any value. |
+
+#### Internal Logic
+- Retrieves the Marimo and Pyodide versions.
+- Imports Pyodide using the `importPyodide` function.
+- Initializes the `ReadonlyWasmController` and assigns it to `self.controller`.
+- Handles errors by logging them and sending an `initializedError` message via RPC.
+
+### `requestHandler`
+#### Description
+Handles RPC requests for starting sessions, loading packages, and executing functions on the Python bridge.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | Object | Contains parameters for the specific RPC request. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not return any value. |
+
+#### Internal Logic
+- **startSession**: Mounts the filesystem and starts a session using the `ReadonlyWasmController`.
+- **loadPackages**: Loads Python packages based on the code provided.
+- **bridge**: Executes a function on the Python bridge, handling payload serialization and deserialization.
+
+### `getMarimoVersion`
+#### Description
+Retrieves the Marimo version stored in the worker's name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | This function does not take any direct inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| version | string | The Marimo version. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pyodide` | Provides the interface for running Python in the browser. |
+| `rpc-anywhere` | Facilitates RPC communication between the worker and the main thread. |
+| `Logger` | Used for logging messages and errors. |
+| `Deferred` | Manages asynchronous operations. |
+
+## Error Handling
+
+- Errors during Pyodide initialization and session start are caught and logged using the `Logger`.
+- Errors are formatted using the `prettyError` function before being sent as RPC messages.
+
+## Logging
+
+- The `Logger` is used extensively to log debug information, errors, and other messages throughout the code.
+
+## TODOs
+
+- There is a TODO comment in the related `bridge.ts` file suggesting the abstraction of the worker constructor logic. This indicates potential future refactoring to improve code modularity and reusability.

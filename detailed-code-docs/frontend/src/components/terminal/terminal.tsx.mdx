@@ -1,0 +1,83 @@
+---
+title: "terminal.tsx"
+---
+
+## High-level description
+
+The `TerminalComponent` in `terminal.tsx` is a React component that integrates a terminal emulator using the `xterm.js` library. It establishes a WebSocket connection to facilitate real-time communication with a backend server, allowing users to interact with a terminal interface within a web application. The component manages terminal visibility, resizing, and connection lifecycle, ensuring a seamless user experience.
+
+## Code Structure
+
+- **TerminalComponent**: The main React component that renders the terminal interface.
+- **createWsUrl**: A utility function to construct the WebSocket URL for terminal communication.
+
+## References
+
+- **Strings.withoutTrailingSlash**: A utility function from `strings.ts` used to format the WebSocket URL.
+- **@xterm/xterm**: The terminal emulator library used to create and manage the terminal interface.
+- **@xterm/addon-attach**: An addon for `xterm.js` to attach a terminal to a WebSocket.
+- **@xterm/addon-fit**: An addon for `xterm.js` to fit the terminal to its container.
+
+## Symbols
+
+### `TerminalComponent`
+#### Description
+The `TerminalComponent` is a React functional component that renders a terminal interface using `xterm.js`. It manages the terminal's lifecycle, including initialization, WebSocket connection, and resizing.
+
+#### Inputs
+| Name    | Type     | Description                        |
+|:--------|:---------|:-----------------------------------|
+| visible | boolean  | Determines if the terminal is visible. |
+| onClose | function | Callback function to handle terminal closure. |
+
+#### Outputs
+The component does not return any outputs but renders a terminal interface within a `div`.
+
+#### Internal Logic
+- **Initialization**: Uses `useState` to create a terminal instance and load the `FitAddon`.
+- **WebSocket Connection**: Establishes a WebSocket connection using `createWsUrl` and attaches it to the terminal using `AttachAddon`.
+- **Visibility Handling**: Adjusts terminal focus and fitting when the `visible` prop changes.
+- **Mounting and Resizing**: Opens the terminal in a `div` and adjusts its size on window resize events.
+
+### `createWsUrl`
+#### Description
+Constructs a WebSocket URL based on the current document's base URI, switching protocols as necessary (HTTP to WS, HTTPS to WSS).
+
+#### Inputs
+None directly, but it uses `document.baseURI` internally.
+
+#### Outputs
+| Name | Type   | Description                  |
+|:-----|:-------|:-----------------------------|
+| url  | string | The constructed WebSocket URL. |
+
+#### Internal Logic
+- Parses the base URI to determine the appropriate WebSocket protocol.
+- Adjusts the URL path to append `/terminal/ws`.
+- Returns the formatted WebSocket URL.
+
+## Side Effects
+
+- **WebSocket Connection**: Establishes a WebSocket connection that persists while the terminal is active.
+- **Event Listeners**: Adds and removes event listeners for window resizing.
+
+## Dependencies
+
+| Dependency          | Purpose                                      |
+|:--------------------|:---------------------------------------------|
+| `@xterm/xterm`      | Provides the terminal emulator functionality.|
+| `@xterm/addon-attach` | Attaches the terminal to a WebSocket.       |
+| `@xterm/addon-fit`  | Fits the terminal to its container.          |
+| `react`             | Used for building the component.             |
+
+## Error Handling
+
+- The component does not explicitly handle errors beyond basic WebSocket disconnection handling, which triggers the `onClose` callback.
+
+## Logging
+
+No explicit logging is implemented within this component.
+
+## TODOs
+
+No TODOs are present in the code.

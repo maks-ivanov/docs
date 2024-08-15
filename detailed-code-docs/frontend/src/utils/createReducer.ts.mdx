@@ -1,0 +1,136 @@
+---
+title: "createReducer.ts"
+---
+
+## High-level description
+
+The `createReducer.ts` file provides utility functions to create reducers and their associated actions for managing state in a React application. It includes functionality to create reducers with middleware support and integrates with the Jotai state management library to create atoms and hooks for state management. The file is designed to streamline the process of setting up reducers and actions, making it easier to manage complex state logic in a modular way.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `ReducerAction&lt;T&gt;`: Defines the structure of actions that can be dispatched to a reducer.
+- `ReducerHandler&lt;State, Payload&gt;` and `ReducerHandlers&lt;State&gt;`: Define the structure of functions that handle specific action types within a reducer.
+- `ReducerCreatorResult&lt;State, RH&gt;`: Represents the result of creating a reducer, including the reducer function and a method to create actions.
+- `createReducer`: A function that creates a reducer and its associated actions.
+- `createReducerAndAtoms`: Extends `createReducer` by integrating with Jotai to create atoms and hooks for state management, and supports middleware.
+
+## Symbols
+
+### `ReducerAction&lt;T&gt;`
+#### Description
+Defines the structure of an action that can be dispatched to a reducer. It includes a `type` to identify the action and a `payload` to carry any data needed for the action.
+
+#### Inputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| type   | string | The type of action to be performed. |
+| payload | T     | The data associated with the action. |
+
+#### Outputs
+N/A
+
+### `ReducerHandler&lt;State, Payload&gt;`
+#### Description
+A function type that defines how a specific action type should modify the state. It takes the current state and the action's payload as inputs and returns the new state.
+
+#### Inputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| state  | State | The current state.          |
+| payload | Payload | The data associated with the action. |
+
+#### Outputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| state  | State | The new state after applying the action. |
+
+### `ReducerHandlers&lt;State&gt;`
+#### Description
+An interface that maps action types to their corresponding `ReducerHandler` functions.
+
+#### Inputs
+N/A
+
+#### Outputs
+N/A
+
+### `ReducerCreatorResult&lt;State, RH&gt;`
+#### Description
+Represents the result of creating a reducer, including the reducer function and a method to create actions.
+
+#### Inputs
+N/A
+
+#### Outputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| reducer | Reducer&lt;State, any&gt; | The reducer function. |
+| createActions | (dispatch: Dispatch) =&gt; ReducerActions&lt;RH&gt; | A function to create actions. |
+
+### `createReducer`
+#### Description
+Creates a reducer and its associated actions based on the provided initial state and reducer handlers.
+
+#### Inputs
+| Name         | Type | Description                  |
+|:-------------|:-----|:-----------------------------|
+| initialState | () =&gt; State | A function that returns the initial state. |
+| reducers     | RH   | An object mapping action types to reducer handlers. |
+
+#### Outputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| result | ReducerCreatorResult&lt;State, RH&gt; | The created reducer and actions. |
+
+#### Internal Logic
+- Initializes the state using the `initialState` function.
+- Defines a reducer function that checks if the action type exists in the provided reducers and applies the corresponding handler.
+- Logs an error if an undefined action type is encountered.
+- Provides a `createActions` function to generate action dispatchers.
+
+### `createReducerAndAtoms`
+#### Description
+Extends `createReducer` by integrating with Jotai to create atoms and hooks for state management, and supports middleware.
+
+#### Inputs
+| Name         | Type | Description                  |
+|:-------------|:-----|:-----------------------------|
+| initialState | () =&gt; State | A function that returns the initial state. |
+| reducers     | RH   | An object mapping action types to reducer handlers. |
+| middleware   | Array&lt;Middleware&lt;State&gt;&gt; | Optional middleware functions to be applied. |
+
+#### Outputs
+| Name   | Type | Description                  |
+|:-------|:-----|:-----------------------------|
+| result | Object | Contains the reducer, actions, value atom, and useActions hook. |
+
+#### Internal Logic
+- Uses `createReducer` to create the base reducer and actions.
+- Wraps the reducer with middleware support.
+- Creates a Jotai atom to hold the state and a hook to access actions.
+- Uses a `WeakMap` to cache actions for each atom setter to ensure consistent references.
+
+## References
+
+- `Logger`: Used for logging errors when an undefined action type is encountered.
+- `atom`, `useSetAtom`: Jotai functions used to create and manage state atoms.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| jotai | State management library used to create atoms and hooks. |
+| @tanstack/react-table | Provides the `NoInfer` type used in type definitions. |
+| react | Provides the `Reducer` type used in type definitions. |
+
+## Error Handling
+
+- Logs an error using `Logger.error` if an action type is not defined in the reducers.
+
+## Logging
+
+- Utilizes the `Logger` utility to log errors related to undefined action types.
+
+## TODOs
+None.

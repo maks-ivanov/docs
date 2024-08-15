@@ -1,0 +1,103 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file `test_progress.py` contains unit tests for the `_Progress` class, which is part of a progress indicator system in the Marimo framework. These tests verify the initialization, updating, and closing functionalities of the `_Progress` class, ensuring that it behaves correctly under various conditions, such as when updating progress or when the progress indicator is closed.
+
+## Code Structure
+
+The main symbol in this file is the `_Progress` class, which is tested through several test functions. These functions use the `pytest` framework and the `unittest.mock` library to simulate and verify the behavior of the `_Progress` class. The tests cover initialization, progress updates with and without arguments, and handling of closed progress indicators.
+
+## Symbols
+
+### `test_progress_init`
+#### Description
+Tests the initialization of the `_Progress` class to ensure that all attributes are set correctly and that the initial rate and ETA are as expected.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes a `_Progress` object with specific parameters.
+- Asserts that the object's attributes match the expected values.
+- Sleeps for a short duration to simulate time passing.
+- Checks that the initial rate is `0.0` and the ETA is `None`.
+
+### `test_update_progress`
+#### Description
+Tests the `update_progress` method of the `_Progress` class to ensure it correctly updates the progress and related attributes.
+
+#### Inputs
+| Name      | Type | Description |
+|:----------|:-----|:------------|
+| mock_flush | Any  | Mock object for the flush function to verify it is called. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes a `_Progress` object with a large total.
+- Sleeps to simulate time passing.
+- Calls `update_progress` with specific increment and title/subtitle changes.
+- Asserts that the current progress, title, and subtitle are updated correctly.
+- Verifies that the rate and ETA are calculated and greater than zero.
+- Ensures the `flush` method is called once.
+
+### `test_update_progress_no_args`
+#### Description
+Tests the `update_progress` method without any arguments to ensure it defaults to incrementing by one.
+
+#### Inputs
+| Name      | Type | Description |
+|:----------|:-----|:------------|
+| mock_flush | Any  | Mock object for the flush function, though not used in this test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes a `_Progress` object with `show_rate` and `show_eta` set to `False`.
+- Sleeps to simulate time passing.
+- Calls `update_progress` without arguments.
+- Asserts that the current progress is incremented by one.
+- Verifies that the rate and ETA remain `None`.
+
+### `test_update_progress_closed`
+#### Description
+Tests the behavior of the `update_progress` method when the progress indicator is closed, ensuring it raises a `RuntimeError`.
+
+#### Inputs
+| Name      | Type | Description |
+|:----------|:-----|:------------|
+| mock_flush | Any  | Mock object for the flush function to verify it is called. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Initializes a `_Progress` object.
+- Closes the progress indicator.
+- Asserts that the `closed` attribute is `True`.
+- Attempts to call `update_progress` and expects a `RuntimeError`.
+- Verifies that the `flush` method is called once.
+
+## References
+
+- `_Progress` class from `marimo._plugins.stateless.status._progress`: The class being tested.
+- `flush` function from `marimo._runtime.output._output`: Mocked to verify it is called during progress updates.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for writing and running the unit tests. |
+| `unittest.mock` | Used to mock the `flush` function to verify its invocation. |
+
+## Error Handling
+
+The tests expect a `RuntimeError` to be raised when attempting to update a closed progress indicator, ensuring that the `_Progress` class correctly handles this error condition.

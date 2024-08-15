@@ -1,0 +1,76 @@
+---
+title: "log_formatter.py"
+---
+
+## High-level description
+
+The `log_formatter.py` file defines a custom log formatter, `LogFormatter`, which extends Python's built-in logging capabilities. It provides features such as color-coded log messages when supported by the terminal, timestamps on each log line, and robustness against string/byte encoding issues. The formatter is designed to be compatible with the `logging.config.dictConfig` and supports the `colorama` library for color output on Windows systems.
+
+## Code Structure
+
+- The `_stderr_supports_color` function checks if the terminal supports colored output.
+- The `LogFormatter` class extends `logging.Formatter` and provides custom formatting for log messages, including color support and timestamping.
+
+## References
+
+- The `LogFormatter` class is used in the `marimo/_loggers.py` file to format log messages for the Marimo application.
+
+## Symbols
+
+### `_stderr_supports_color`
+#### Description
+Determines if the standard error stream supports colored output, which is useful for enhancing log readability in terminals.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Returns `True` if the terminal supports color, otherwise `False`. |
+
+#### Internal Logic
+- Checks if `sys.stderr` is a TTY (teletypewriter) and if the `curses` module is available.
+- Uses `curses` to check if the terminal supports colors.
+- Catches any exceptions to ensure that the function fails gracefully, defaulting to no color support.
+
+### `LogFormatter`
+#### Description
+A custom log formatter that extends `logging.Formatter` to provide color-coded log messages, timestamps, and encoding robustness.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fmt | str | Log message format string. |
+| datefmt | str | Date format string for timestamps. |
+| style | str | Style of the format string (default is `%`). |
+| color | bool | Enables or disables color support. |
+| colors | Dict[int, int] | Mapping of log levels to terminal color codes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted | str | The formatted log message. |
+
+#### Internal Logic
+- Initializes with default formats and color mappings.
+- Checks if color support is enabled and if the terminal supports it.
+- Uses `curses` to set up color codes or defaults to ANSI codes if `curses` is unavailable.
+- Overrides the `format` method to apply color codes and format the log message with timestamps and exception information if present.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `logging` | Provides the base logging functionality. |
+| `curses` | Used to determine terminal color support. |
+| `sys` | Used to check if the standard error stream is a TTY. |
+
+## Error Handling
+
+- The `_stderr_supports_color` function uses broad exception handling to ensure that any errors in checking terminal capabilities do not disrupt the application, defaulting to non-colored logs.
+
+## Logging
+
+- The `LogFormatter` class is designed to enhance logging by adding color and timestamps, making logs more readable and informative.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

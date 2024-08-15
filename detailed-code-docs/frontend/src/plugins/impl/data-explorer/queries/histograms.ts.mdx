@@ -1,0 +1,59 @@
+---
+title: "histograms.ts"
+---
+
+## High-level description
+
+The target file defines a `QueryCreator` object named `histograms` that is used to generate a specific type of query for creating histogram visualizations. This query is designed to be used within a data exploration tool, leveraging the `compassql` library to specify the structure and constraints of the histogram visualizations.
+
+## Code Structure
+
+The main symbol in the code is the `histograms` object, which is an implementation of the `QueryCreator` interface. It contains a method `createQuery` that constructs a query object based on a given input query. This object is used to define the specifications for generating histogram visualizations.
+
+## Symbols
+
+### `histograms`
+#### Description
+The `histograms` object is a `QueryCreator` that defines the structure and constraints for generating histogram visualizations. It specifies the type of query, a limit on the number of results, and a method to create a query with specific parameters for histogram generation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| query | `Query` | An input query object that provides the initial data and transformation specifications. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `Query` | A query object configured for generating histogram visualizations. |
+
+#### Internal Logic
+- The `createQuery` method constructs a new query object with a specific structure:
+  - The `spec` field is populated with data and transformation specifications from the input query.
+  - The `mark` and various encoding fields are set to `SHORT_WILDCARD`, allowing for flexible specification of these properties.
+  - The encodings include a binning operation and a count aggregation, which are typical for histograms.
+  - The query is grouped by `fieldTransform` and ordered by `fieldOrder`, `aggregationQuality`, and `effectiveness`.
+  - The `chooseBy` field specifies criteria for selecting the best query results.
+  - The `config` field includes a setting to disable automatic count addition.
+
+## References
+
+- The `histograms` object references the `Query` type and `SHORT_WILDCARD` from the `compassql` library.
+- It is used in the related file `reducer.ts` to generate histogram visualizations when the query is empty.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `compassql` | Used for query construction and wildcard specifications. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the input query is valid and that the `compassql` library functions as expected.
+
+## Logging
+
+There are no logging mechanisms implemented in this code.
+
+## API/Interface Reference
+
+The `histograms` object does not expose an API but implements the `QueryCreator` interface, which includes the `createQuery` method for generating queries.

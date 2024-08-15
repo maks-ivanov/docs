@@ -1,0 +1,57 @@
+---
+title: "test_get_datasets.py"
+---
+
+## High-level description
+
+The target file `tests/_data/test_get_datasets.py` is a test script designed to verify the functionality of the `has_updates_to_datasource` function from the `marimo._data.get_datasets` module. This function checks if a given SQL query string contains statements that would update a data source, such as `ATTACH`, `DETACH`, `ALTER`, or `CREATE`. The test is conditionally executed based on the presence of the `duckdb` dependency.
+
+## Code Structure
+
+The test script uses the `pytest` framework to define a single test function, `test_has_updates_to_datasource`. This function tests the `has_updates_to_datasource` function with various SQL query strings to ensure it correctly identifies queries that would update a data source. The test is skipped if the `duckdb` dependency is not installed, as determined by the `DependencyManager` class.
+
+## References
+
+- `has_updates_to_datasource`: This function is imported from `marimo._data.get_datasets` and is the primary function being tested.
+- `DependencyManager`: This class from `marimo._dependencies.dependencies` is used to check if the `duckdb` dependency is installed.
+
+## Symbols
+
+### `test_has_updates_to_datasource`
+#### Description
+This test function verifies the behavior of the `has_updates_to_datasource` function by asserting its output for different SQL query strings. It checks whether the function correctly identifies SQL statements that would update a data source.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not take any direct inputs. It uses hardcoded SQL query strings for testing. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not return any outputs. It uses assertions to validate the behavior of `has_updates_to_datasource`. |
+
+#### Internal Logic
+- The function uses `pytest.mark.skipif` to conditionally skip the test if the `duckdb` dependency is not installed.
+- It asserts that `has_updates_to_datasource` returns `False` for a non-updating query (`"hello"`).
+- It asserts that `has_updates_to_datasource` returns `True` for queries that include `ATTACH`, `DETACH`, and `CREATE TABLE` statements.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for defining and running the test case. |
+| `marimo._data.get_datasets` | Provides the `has_updates_to_datasource` function being tested. |
+| `marimo._dependencies.dependencies` | Provides the `DependencyManager` class to check for the `duckdb` dependency. |
+
+## Error Handling
+
+The test function does not include explicit error handling. It relies on `pytest` to handle any assertion failures or exceptions that occur during the test execution.
+
+## Logging
+
+There is no logging implemented in the test script itself. However, the `has_updates_to_datasource` function in the related code may log errors if it encounters issues while processing SQL statements.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

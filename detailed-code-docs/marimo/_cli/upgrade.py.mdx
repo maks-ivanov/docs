@@ -1,0 +1,126 @@
+---
+title: "upgrade.py"
+---
+
+## High-level description
+
+The `upgrade.py` file in the `marimo` CLI module is responsible for checking if a newer version of the Marimo package is available on PyPI (Python Package Index). It manages the state of the CLI regarding the latest version information and notifies the user if an update is available. The file includes functionality to fetch the latest version data from PyPI, compare it with the current version, and update the state accordingly.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `MarimoCLIState`: A data class that holds the state of the CLI regarding the latest version and the last time it checked for updates.
+- `check_for_updates`: A public function that initiates the update check process.
+- `_check_for_updates_internal`: A private function that handles the internal logic of checking for updates, including reading and writing the state.
+- `_update_with_latest_version`: A private function that updates the state with the latest version information from PyPI.
+- `_fetch_data_from_url`: A private utility function that fetches data from a given URL, specifically used to get version information from PyPI.
+
+## Symbols
+
+### `MarimoCLIState`
+#### Description
+`MarimoCLIState` is a data class that encapsulates the state of the Marimo CLI regarding version updates. It stores the latest version available and the last time the version check was performed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| latest_version | Optional[str] | The latest version of Marimo available. |
+| last_checked_at | Optional[str] | The date when the last version check was performed. |
+
+#### Outputs
+N/A
+
+### `check_for_updates`
+#### Description
+This function is the entry point for checking if a new version of Marimo is available. It calls the internal function `_check_for_updates_internal` and handles any exceptions to prevent the CLI from crashing.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `_check_for_updates_internal`
+#### Description
+This function performs the actual logic of checking for updates. It reads the current state from a configuration file, updates the state with the latest version information if necessary, and notifies the user if a new version is available.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Reads the current state from a `state.toml` file using `ConfigReader`.
+2. Updates the state with the latest version from PyPI using `_update_with_latest_version`.
+3. Compares the current version with the latest version and prints a message if an update is available.
+4. Writes the updated state back to the `state.toml` file.
+
+### `_update_with_latest_version`
+#### Description
+This function updates the `MarimoCLIState` with the latest version information from PyPI if a day has passed since the last check.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | MarimoCLIState | The current state of the CLI. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | MarimoCLIState | The updated state with the latest version information. |
+
+#### Internal Logic
+1. Checks if a day has passed since the last version check.
+2. Fetches the latest version from PyPI using `_fetch_data_from_url`.
+3. Updates the `latest_version` and `last_checked_at` fields in the state.
+4. Returns the updated state.
+
+### `_fetch_data_from_url`
+#### Description
+This function fetches JSON data from a specified URL and returns it as a dictionary. It is used to retrieve version information from PyPI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | str | The URL to fetch data from. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Dict[str, Any] | The JSON data fetched from the URL. |
+
+#### Internal Logic
+1. Opens a URL connection with a specified timeout.
+2. Reads the response and decodes it using the specified encoding.
+3. Parses the JSON data and returns it.
+4. Raises an `HTTPException` if the HTTP request fails.
+
+## References
+
+- `ConfigReader`: Used to read and write the state from a `state.toml` file.
+- `HTTPException`: Used to handle HTTP errors when fetching data from a URL.
+- `version.parse`: From the `packaging` library, used to compare version strings.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `json` | To parse JSON data from the PyPI API. |
+| `urllib.request` | To make HTTP requests to fetch data from PyPI. |
+| `dataclasses` | To define the `MarimoCLIState` data class. |
+| `datetime` | To handle date and time operations for version checks. |
+| `packaging.version` | To parse and compare version strings. |
+
+## Error Handling
+
+- The code uses a try-except block in `check_for_updates` to catch any exceptions and prevent the CLI from crashing.
+- `_fetch_data_from_url` raises an `HTTPException` if the HTTP request fails, which is caught in `_update_with_latest_version`.
+
+## Logging
+
+The code does not implement any logging mechanisms. It uses print statements to notify the user about available updates.
+
+## TODOs
+
+No TODOs or notes are present in the code.

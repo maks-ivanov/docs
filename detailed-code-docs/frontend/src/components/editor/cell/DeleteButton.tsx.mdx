@@ -1,0 +1,58 @@
+---
+title: "DeleteButton.tsx"
+---
+
+## High-level description
+
+The `DeleteButton` component in the `DeleteButton.tsx` file is a React component designed to render a button with a trash icon, which is used to delete a cell in an editor interface. It provides a tooltip with contextual messages based on the cell's runtime status and whether the application is closed, ensuring that users are informed about the button's functionality and any restrictions on its use.
+
+## Code Structure
+
+The `DeleteButton` component is a functional React component that utilizes several imported components and utilities to render a button with a tooltip. It uses the `Tooltip` component to display messages, the `Button` component to render the button itself, and the `Trash2Icon` from the `lucide-react` library to display a trash icon. The component's appearance and behavior are influenced by the `status` and `appClosed` properties passed to it.
+
+## Symbols
+
+### `DeleteButton`
+#### Description
+The `DeleteButton` component renders a button with a trash icon that is used to delete a cell. It displays a tooltip with a message that varies depending on the cell's runtime status and whether the application is closed. The button's click event can be handled by an optional `onClick` function passed as a prop.
+
+#### Inputs
+| Name      | Type                                                      | Description                                                                 |
+|:----------|:----------------------------------------------------------|:----------------------------------------------------------------------------|
+| `status`  | `RuntimeState`                                            | The current runtime status of the cell, which affects the tooltip message.  |
+| `appClosed` | `boolean`                                               | Indicates whether the application is closed, affecting the button's state.  |
+| `onClick` | `(e: React.MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void` (optional) | An optional click event handler for the button.                             |
+
+#### Outputs
+| Name | Type      | Description                        |
+|:-----|:----------|:-----------------------------------|
+| -    | `JSX.Element` | The rendered button component. |
+
+#### Internal Logic
+1. **Determine Loading State**: The button is considered "loading" if the cell's status is either "running" or "queued".
+2. **Set Tooltip Message**: The tooltip message is set based on the `appClosed` status and the cell's `status`. Different messages are shown if the app is disconnected, the cell is running, or queued.
+3. **Render Button**: The button is rendered with a `Tooltip` component wrapping it. The button uses the `Button` component with specific styles and a `Trash2Icon` inside it. The button's class names are dynamically set using the `cn` utility to reflect its state (e.g., inactive if the app is closed or loading).
+
+## References
+
+- **`RuntimeState`**: This type is imported from `@/core/network/types` and is used to determine the cell's current status.
+- **`Tooltip`**: A component from `../../ui/tooltip` used to display contextual messages.
+- **`Button`**: A component from `../../ui/button` used to render the button with specific styles.
+- **`cn`**: A utility function from `../../../utils/cn` used to merge and conditionally apply class names.
+
+## Dependencies
+
+| Dependency   | Purpose                                                                 |
+|:-------------|:------------------------------------------------------------------------|
+| `lucide-react` | Provides the `Trash2Icon` used in the button.                          |
+| `../../ui/tooltip` | Provides the `Tooltip` component for displaying messages.          |
+| `../../ui/button` | Provides the `Button` component for rendering the button.           |
+| `../../../utils/cn` | Utility for merging and conditionally applying class names.       |
+
+## Error Handling
+
+The component does not implement specific error handling mechanisms beyond basic React component behavior. It assumes that the props provided are valid and does not handle errors internally.
+
+## Logging
+
+The component does not implement any logging mechanisms.

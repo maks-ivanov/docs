@@ -1,0 +1,108 @@
+---
+title: "router.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `PyodideRouter` class, which is responsible for managing URL parameters and hash fragments in a web application. These tests ensure that the `PyodideRouter` correctly retrieves and modifies URL components, such as filenames and code snippets, using the browser's `window.location` and `window.history` APIs.
+
+## Code Structure
+
+The main symbol in the target file is the `describe` block, which groups together several test cases for the `PyodideRouter` class. Each test case uses the `test` function to define a specific scenario, and the `expect` function to assert the expected outcomes. The `beforeEach` and `afterEach` hooks are used to set up and tear down the test environment, ensuring that the `window.location` and `window.history` objects are properly mocked and restored.
+
+## References
+
+- `PyodideRouter`: This is the class being tested, imported from the `router.ts` file. It provides methods for interacting with URL parameters and hash fragments.
+
+## Symbols
+
+### `describe("URLPyodideRouter", () =&gt; { ... })`
+#### Description
+This block contains a suite of tests for the `PyodideRouter` class, verifying its behavior in various scenarios related to URL manipulation.
+
+### `beforeEach(() =&gt; { ... })`
+#### Description
+Sets up the test environment by mocking the `window.location` and `window.history.replaceState` objects to ensure tests run in isolation without affecting the actual browser state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| window.location | Location | Mocked to simulate different URLs. |
+| window.history.replaceState | Function | Mocked to track calls to replace the browser history state. |
+
+### `afterEach(() =&gt; { ... })`
+#### Description
+Restores the original `window.location` and `window.history.replaceState` objects after each test to ensure no side effects persist between tests.
+
+### `test("getFilename returns correct filename from URL", () =&gt; { ... })`
+#### Description
+Tests that the `getFilename` method of `PyodideRouter` correctly extracts the filename from the URL's query parameters.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The filename extracted from the URL, expected to be "test.py". |
+
+### `test("getFilename returns null when filename is not in URL", () =&gt; { ... })`
+#### Description
+Verifies that the `getFilename` method returns `null` when the URL does not contain a filename query parameter.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | null | Expected result when no filename is present in the URL. |
+
+### `test("getCode returns correct code from URL", () =&gt; { ... })`
+#### Description
+Checks that the `getCodeFromSearchParam` method retrieves the correct code snippet from the URL's query parameters.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The code snippet extracted from the URL, expected to be `print("Hello, World!")`. |
+
+### `test("getCode from hash returns correct code", () =&gt; { ... })`
+#### Description
+Ensures that the `getCodeFromHash` method extracts the correct code snippet from the URL's hash fragment.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | string | The code snippet extracted from the hash, expected to be `print('Hello, World!')`. |
+
+### `test("getCode from hash with query params returns correct code", () =&gt; { ... })`
+#### Description
+Tests that both `getCodeFromHash` and `getFilename` methods work correctly when the URL contains both a hash fragment and query parameters.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codeResult | string | The code snippet extracted from the hash. |
+| filenameResult | string | The filename extracted from the query parameters. |
+
+### `test("setFilename correctly modifies URL", () =&gt; { ... })`
+#### Description
+Verifies that the `setFilename` method correctly updates the URL's query parameters and calls `window.history.replaceState`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Whether `window.history.replaceState` was called with the correct arguments. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| vitest | Provides the testing framework and utilities such as `describe`, `test`, `expect`, and `vi` for mocking. |
+
+## Error Handling
+
+The tests do not explicitly handle errors, as they rely on the `expect` function to assert expected outcomes. If an assertion fails, the test framework will report the failure.
+
+## Logging
+
+There is no logging implemented in the test file. The focus is on assertions to verify the behavior of the `PyodideRouter` class.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,87 @@
+---
+title: "filters.ts"
+---
+
+## High-level description
+
+The target file, `filters.ts`, is part of a data table component in a frontend application. It defines a set of filter types and a factory function to create filter objects for different data types such as text, number, date, boolean, and select. Additionally, it provides a function to convert these filter objects into filter conditions that can be applied to data columns.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `FilterType` is a type that defines the possible filter types.
+- `Filter` is an object that acts as a factory for creating filter objects of different types.
+- `ColumnFilterValue` and `ColumnFilterForType` are types that represent the values of filters and their specific types.
+- `filterToFilterCondition` is a function that converts a filter object into a condition or set of conditions that can be used to filter data.
+
+## Symbols
+
+### `FilterType`
+#### Description
+`FilterType` is a TypeScript type that defines the possible types of filters that can be applied to data columns. These include "text", "number", "date", "select", and "boolean".
+
+### `Filter`
+#### Description
+`Filter` is an object that provides factory methods to create filter objects for different data types. Each method returns a filter object with a specific type and associated options or values.
+
+#### Inputs
+- `number`: An object with optional `min` and `max` properties to define a range.
+- `text`: A string to filter text data.
+- `date`: An object with optional `min` and `max` properties to define a date range.
+- `boolean`: A boolean value to filter boolean data.
+- `select`: An array of strings representing selectable options.
+
+#### Outputs
+Each method returns a filter object with a `type` property and additional properties specific to the filter type.
+
+### `filterToFilterCondition`
+#### Description
+This function converts a filter object into a condition or set of conditions that can be used to filter data in a table. It maps the filter's properties to a format that can be understood by the data filtering logic.
+
+#### Inputs
+| Name   | Type                | Description                          |
+|:-------|:--------------------|:-------------------------------------|
+| columnId | string             | The ID of the column to filter.      |
+| filter  | ColumnFilterValue  | The filter object to convert.        |
+
+#### Outputs
+| Name       | Type                      | Description                                      |
+|:-----------|:--------------------------|:-------------------------------------------------|
+| conditions | ConditionType[] or ConditionType | A condition or array of conditions for filtering. |
+
+#### Internal Logic
+- For "number" filters, it creates conditions for `min` and `max` values using "&gt;=" and "&lt;=" operators.
+- For "text" filters, it creates a condition using the "contains" operator.
+- For "date" filters, it creates conditions for `min` and `max` dates using "&gt;=" and "&lt;=" operators, converting dates to ISO strings.
+- For "boolean" filters, it creates a condition using "is_true" or "is_false" operators.
+- For "select" filters, it creates a condition using the "in" operator with the provided options.
+- Uses `assertNever` to ensure all filter types are handled.
+
+## References
+
+- `DataType` from `@/core/kernel/messages`: Used in the `ColumnMeta` interface to specify the data type of a column.
+- `ConditionType` from `@/plugins/impl/data-frames/schema`: Used to define the structure of filter conditions.
+- `ColumnId` from `@/plugins/impl/data-frames/types`: Used to typecast the `columnId` parameter in `filterToFilterCondition`.
+- `assertNever` from `@/utils/assertNever`: Used to ensure exhaustive handling of filter types.
+
+## Dependencies
+
+| Dependency                  | Purpose                                                                 |
+|:----------------------------|:------------------------------------------------------------------------|
+| `@tanstack/react-table`     | Provides the `RowData` type and allows extending the `ColumnMeta` interface. |
+| `@/core/kernel/messages`    | Provides the `DataType` type used in column metadata.                   |
+| `@/plugins/impl/data-frames/schema` | Provides the `ConditionType` type for filter conditions.          |
+| `@/plugins/impl/data-frames/types`  | Provides the `ColumnId` type for column identification.           |
+| `@/utils/assertNever`       | Provides a utility function for exhaustive type checking.               |
+
+## Error Handling
+
+The `assertNever` function is used to ensure that all possible filter types are handled in the `filterToFilterCondition` function. If an unknown filter type is encountered, an error is thrown.
+
+## Side Effects
+
+The `filterToFilterCondition` function does not have side effects; it purely transforms input data into a different format.
+
+## Logging
+
+The `assertNever` function logs unexpected objects, which can be useful for debugging if an unhandled filter type is encountered.

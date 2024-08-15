@@ -1,0 +1,48 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file `utils.ts` contains a utility function `isWasm` that checks if the current environment is running in a WebAssembly (WASM) context, specifically for Pyodide. This function is used to determine if certain features or behaviors should be enabled or disabled based on the runtime environment.
+
+## Symbols
+
+### `isWasm`
+#### Description
+The `isWasm` function is a utility function that checks whether the current environment is running in a WebAssembly (WASM) context, specifically for Pyodide. It does this by looking for a specific DOM element, `&lt;marimo-wasm&gt;`, which indicates that the environment is set up for WASM execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The function does not take any inputs. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | boolean | Returns `true` if the `&lt;marimo-wasm&gt;` element is found in the document, indicating a WASM environment; otherwise, returns `false`. |
+
+#### Internal Logic
+The function uses `document.querySelector` to search for the presence of a `&lt;marimo-wasm&gt;` element in the DOM. If such an element is found, it returns `true`, indicating that the environment is WASM-based. If not, it returns `false`.
+
+## References
+
+The `isWasm` function is referenced in several related files, indicating its role in determining the runtime environment for various components and functionalities. For example:
+- In `user-config-form.tsx`, it is used to disable certain form fields when running in a WASM environment.
+- In `machine-stats.tsx`, it is used to conditionally fetch usage statistics based on the environment.
+- In `file-explorer.tsx`, it is used to adjust file operations and UI behaviors depending on whether the application is running in WASM.
+- In `htmlUtils.ts`, it is used to determine how to retrieve the filename from the DOM or URL.
+- In `handlers.ts`, it is used to adjust capabilities and configurations based on the environment.
+- In `requests.ts`, it helps decide which request handling strategy to use, such as network requests or Pyodide bridge requests.
+
+## Dependencies
+
+The function does not have any external dependencies, but it relies on the presence of a specific DOM element to determine the environment.
+
+## Side Effects
+
+There are no side effects associated with this function, as it only reads from the DOM and does not modify any state or external resources.
+
+## Performance Considerations
+
+The function performs a simple DOM query, which is generally efficient. However, frequent calls to this function could potentially impact performance if the DOM is large or complex. It is advisable to cache the result if the environment is unlikely to change during the application's lifecycle.

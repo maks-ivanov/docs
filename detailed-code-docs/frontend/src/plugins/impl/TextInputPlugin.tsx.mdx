@@ -1,0 +1,97 @@
+---
+title: "TextInputPlugin.tsx"
+---
+
+## High-level description
+
+The `TextInputPlugin.tsx` file defines a `TextInputPlugin` class that implements a text input component for a frontend application. This plugin supports various input types such as text, password, email, and URL, and includes features like validation, icons for specific input types, and optional labels. The plugin is designed to be integrated into a larger system of UI components, providing a standardized way to handle text input with validation and styling.
+
+## Code Structure
+
+- **TextInputPlugin**: A class implementing the `IPlugin` interface, responsible for rendering the text input component and validating its configuration.
+- **TextComponent**: A functional React component that renders the actual input field with optional icons and validation feedback.
+- **validate**: A utility function that checks the validity of the input value based on its type (e.g., email, URL).
+
+## Symbols
+
+### `TextInputPlugin`
+#### Description
+The `TextInputPlugin` class implements the `IPlugin` interface to provide a text input component with validation and customizable properties such as placeholder, label, input type, and more.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IPluginProps&lt;T, Data&gt;` | The properties required to render the plugin, including state, data, and functions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered text input component. |
+
+#### Internal Logic
+- The `validator` property uses `zod` to define and validate the structure of the input data.
+- The `render` method returns a `TextComponent` with the necessary props for rendering.
+
+### `TextComponent`
+#### Description
+A React functional component that renders a labeled input field with optional icons and validation feedback.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `TextComponentProps` | The properties for rendering the text component, including value, setValue, and other input attributes. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered input field with label and optional adornments. |
+
+#### Internal Logic
+- Uses `useState` to manage the input value on blur.
+- Determines the validity of the input using the `validate` function.
+- Renders an icon based on the input type and an end adornment showing the character count if `maxLength` is specified.
+
+### `validate`
+#### Description
+A utility function that validates the input value based on its type, specifically for email and URL types.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kind | `InputType` | The type of input (e.g., email, URL) to validate. |
+| value | `string` | The input value to validate. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isValid | `boolean` | Whether the input value is valid for the specified type. |
+
+#### Internal Logic
+- Returns `true` for empty values, as they are considered valid.
+- Uses `zod` to validate email and URL formats.
+
+## References
+
+- **`Input` Component**: Used to render the actual input field with styling and behavior defined in `input.tsx`.
+- **`Labeled` Component**: Used to wrap the input field with a label, providing layout options.
+- **`cn` Utility**: Used for conditional class name merging.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `zod` | Used for data validation. |
+| `lucide-react` | Provides icons for different input types. |
+| `react` | Used for building the component. |
+
+## Error Handling
+
+The `validate` function uses `zod`'s `safeParse` method to handle validation errors gracefully, returning a boolean indicating success or failure.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

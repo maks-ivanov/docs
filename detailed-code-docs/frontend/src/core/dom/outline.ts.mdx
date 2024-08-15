@@ -1,0 +1,158 @@
+---
+title: "outline.ts"
+---
+
+## High-level description
+
+The `outline.ts` file in the `frontend/src/core/dom` directory provides functions to parse HTML content and generate an outline structure based on HTML headings (`h1`, `h2`, `h3`). It also includes utility functions to manipulate and query these outlines, such as merging multiple outlines, determining if an outline can be collapsed, and finding the range of cells to collapse in a document.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `getOutline` is responsible for parsing HTML and generating an outline.
+- `headingToIdentifier` generates a unique identifier for a heading element.
+- `mergeOutlines` combines multiple outlines into a single one.
+- `parseOutline` processes an `OutputMessage` to extract an outline.
+- `canCollapseOutline` checks if an outline can be collapsed based on its headings.
+- `findCollapseRange` determines the range of cells that can be collapsed based on the outline structure.
+
+## References
+
+- `OutputMessage` from `../kernel/messages` is used in `parseOutline`.
+- `Outline` and `OutlineItem` from `../cells/outline` are used to define the structure of outlines.
+- `Logger` from `@/utils/Logger` is used for logging errors.
+- `invariant` from `@/utils/invariant` is used for runtime checks.
+
+## Symbols
+
+### `getOutline`
+#### Description
+Parses an HTML string to extract headings (`h1`, `h2`, `h3`) and constructs an `Outline` object containing these headings as `OutlineItem`s.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| html | string | The HTML content to parse for headings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outline | Outline | An object containing the parsed headings as outline items. |
+
+#### Internal Logic
+- Uses `DOMParser` to parse the HTML string.
+- Selects all `h1`, `h2`, and `h3` elements.
+- For each heading, extracts the text content and level, and generates an identifier using `headingToIdentifier`.
+- Constructs and returns an `Outline` object with these items.
+
+### `headingToIdentifier`
+#### Description
+Generates a unique identifier for a heading element, either by its `id` attribute or by constructing an XPath expression.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| heading | Element | The heading element to generate an identifier for. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| identifier | OutlineItem["by"] | An object containing either an `id` or a `path` for the heading. |
+
+#### Internal Logic
+- Checks if the heading has an `id` attribute and returns it if present.
+- If no `id` is present, constructs an XPath expression based on the heading's tag name and text content.
+
+### `mergeOutlines`
+#### Description
+Combines multiple `Outline` objects into a single `Outline`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outlines | Array&lt;Outline \| null&gt; | An array of outlines to merge. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mergedOutline | Outline | A single outline containing all items from the input outlines. |
+
+#### Internal Logic
+- Filters out null outlines.
+- Flattens the items from all non-null outlines into a single array.
+
+### `parseOutline`
+#### Description
+Parses an `OutputMessage` to extract an `Outline` if the message contains HTML data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | OutputMessage \| null | The message containing potential HTML data to parse. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outline | Outline \| null | The parsed outline or null if parsing fails. |
+
+#### Internal Logic
+- Checks if the output is non-null and has a `text/html` mimetype.
+- Uses `getOutline` to parse the HTML data.
+- Logs an error and returns null if parsing fails.
+
+### `canCollapseOutline`
+#### Description
+Determines if an outline can be collapsed based on the presence of headings with levels 1, 2, or 3.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outline | Outline \| null | The outline to check for collapsibility. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| canCollapse | boolean | True if the outline can be collapsed, false otherwise. |
+
+#### Internal Logic
+- Returns false if the outline is null.
+- Checks if any item in the outline has a level of 1, 2, or 3.
+
+### `findCollapseRange`
+#### Description
+Finds the range of cells to collapse in an outline given a starting index.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| startIndex | number | The starting index for finding the collapse range. |
+| outlines | Array&lt;Outline \| null&gt; | An array of outlines to search through. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| range | [number, number] \| null | The start and end indices of the collapse range, or null if not found. |
+
+#### Internal Logic
+- Determines the highest header level in the starting outline.
+- Iterates through subsequent outlines to find the next outline with an equal or higher header level.
+- Returns the range from the start index to the found index or the end of the outlines.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `DOMParser` | Used to parse HTML strings into a document object. |
+| `Logger` | Used for logging errors during outline parsing. |
+| `invariant` | Used for runtime checks to ensure data integrity. |
+
+## Error Handling
+
+- The `parseOutline` function uses a try-catch block to handle errors during HTML parsing and logs errors using the `Logger`.
+
+## Logging
+
+- Errors during outline parsing are logged using the `Logger.error` method.
+
+## TODOs
+- No TODOs are present in the code.

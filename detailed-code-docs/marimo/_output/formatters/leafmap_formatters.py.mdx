@@ -1,0 +1,70 @@
+---
+title: "leafmap_formatters.py"
+---
+
+## High-level description
+
+The `leafmap_formatters.py` file defines a `LeafmapFormatter` class that extends the `FormatterFactory` abstract base class. This class is responsible for registering custom formatters for rendering `leafmap` objects, specifically `leafmap.folium.Map` and `leafmap.Map`, as HTML content within an iframe. The formatters ensure that these map objects are displayed correctly in environments like Jupyter notebooks, handling layout issues by wrapping the map HTML in an iframe with specific styling.
+
+## Code Structure
+
+- `LeafmapFormatter` is a subclass of `FormatterFactory`.
+- It contains static and instance methods to register formatters for `leafmap` objects.
+- The formatters use utility functions and classes from other modules to generate HTML content.
+
+## References
+
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to specify the MIME type of the output.
+- `h` from `marimo._output.builder` is used to create HTML elements.
+- `src_or_src_doc` from `marimo._output.formatters.utils` is used to determine the appropriate attribute for the iframe.
+- `flatten_string` from `marimo._output.utils` is used to process the HTML content.
+
+## Symbols
+
+### `LeafmapFormatter`
+#### Description
+The `LeafmapFormatter` class is responsible for registering formatters for `leafmap` objects. It provides a mechanism to convert these objects into HTML content that can be embedded in an iframe, ensuring proper display in environments like Jupyter notebooks.
+
+#### Methods
+
+##### `package_name`
+- **Description**: Returns the name of the package that this formatter is associated with, which is "leafmap".
+- **Inputs**: None
+- **Outputs**: 
+  | Name | Type | Description |
+  |:-----|:-----|:------------|
+  | package_name | str | The name of the package, "leafmap". |
+
+##### `register`
+- **Description**: Registers formatters for `leafmap.folium.Map` and `leafmap.Map` objects. These formatters convert the map objects into HTML content wrapped in an iframe.
+- **Inputs**: None
+- **Outputs**: None
+
+#### Internal Logic
+- The `register` method imports the `leafmap` package and the `formatting` module.
+- It defines two formatters using the `formatting.formatter` decorator:
+  - `_show_folium_map` for `leafmap.folium.Map` objects.
+  - `_show_map` for `leafmap.Map` objects.
+- Each formatter converts the map object to HTML using its `to_html` method.
+- The HTML content is wrapped in an iframe using the `h.iframe` method, with specific styles and attributes to ensure proper display.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `leafmap` | Provides the map objects that are formatted. |
+| `marimo._output.builder` | Used to create HTML elements like iframes. |
+| `marimo._output.formatters.utils` | Provides utility functions for handling HTML content. |
+| `marimo._output.utils` | Provides utility functions for processing strings. |
+
+## Error Handling
+
+- The `src_or_src_doc` function handles the absence of a context by defaulting to using `srcdoc` for the iframe.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

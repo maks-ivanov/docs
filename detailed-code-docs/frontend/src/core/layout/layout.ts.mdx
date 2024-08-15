@@ -1,0 +1,83 @@
+---
+title: "layout.ts"
+---
+
+## High-level description
+
+The `layout.ts` file is responsible for managing the layout state of a notebook application. It defines the structure and initial state of the layout, provides functions to manipulate the layout state, and includes a mechanism to serialize the layout for saving purposes. The file utilizes the Jotai library for state management and integrates with other components and utilities to handle different layout types and their data.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `LayoutState` and `LayoutData` define the types for the layout state and data.
+- `initialLayoutState` provides the initial state for the layout.
+- `createReducerAndAtoms` is used to create a reducer and associated atoms for managing layout state.
+- `useLayoutState` and `useLayoutActions` are hooks for accessing the layout state and dispatching actions.
+- `getSerializedLayout` is a function to serialize the current layout state for saving.
+
+## References
+
+- `createReducerAndAtoms` from `@/utils/createReducer` is used to create the reducer and atoms for managing layout state.
+- `cellRendererPlugins` from `@/components/editor/renderers/plugins` is used to find the appropriate plugin for serializing the layout.
+- `getNotebook` and `notebookCells` from `../cells/cells` and `../cells/utils` are used to retrieve notebook data for serialization.
+- `store` from `../state/jotai` is used to access the global state.
+- `Logger` from `@/utils/Logger` is used for logging errors.
+
+## Symbols
+
+### `LayoutData`
+#### Description
+`LayoutData` is a type that represents the data associated with a layout. It can either be a `GridLayout` or `undefined`.
+
+### `LayoutState`
+#### Description
+`LayoutState` is an interface that defines the structure of the layout state, including the selected layout type and the data associated with each layout type.
+
+### `initialLayoutState`
+#### Description
+Provides the initial state for the layout, setting the default layout type to "vertical" and initializing an empty layout data object.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `LayoutState` | The initial layout state with default values. |
+
+### `useLayoutState`
+#### Description
+A hook that returns the current layout state using the Jotai `useAtomValue` hook.
+
+### `useLayoutActions`
+#### Description
+A hook that returns the actions for manipulating the layout state, created using the `createReducerAndAtoms` utility.
+
+### `getSerializedLayout`
+#### Description
+Serializes the current layout state for saving, using the appropriate plugin to serialize the layout data based on the selected layout type.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `object` or `undefined` | The serialized layout data, or `undefined` if the layout is the default "vertical" type or if no data is available. |
+
+#### Internal Logic
+- Retrieves the current notebook and layout state.
+- Checks if the selected layout is "vertical" or if layout data is undefined, returning `undefined` in these cases.
+- Finds the appropriate plugin for the selected layout type and uses it to serialize the layout data.
+- Logs an error if no plugin is found for the selected layout type.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management with atoms and hooks. |
+| `@/utils/createReducer` | Provides utilities for creating reducers and atoms. |
+| `@/components/editor/renderers/plugins` | Contains plugins for rendering and serializing different layout types. |
+| `@/utils/Logger` | Provides logging functionality. |
+
+## Error Handling
+
+- The `getSerializedLayout` function logs an error using `Logger.error` if an unknown layout type is encountered.
+
+## Logging
+
+- The `Logger` utility is used to log errors when an unknown layout type is encountered in the `getSerializedLayout` function.

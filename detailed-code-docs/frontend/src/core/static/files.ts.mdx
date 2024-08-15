@@ -1,0 +1,83 @@
+---
+title: "files.ts"
+---
+
+## High-level description
+
+The target file, `files.ts`, provides functionality to patch the global `fetch` function and a custom loader to handle virtual files in a web application. It allows these functions to resolve virtual files stored as base64-encoded data URLs, enabling the application to fetch and use these files as if they were regular network resources. This is particularly useful in static environments where files are preloaded and need to be accessed without actual network requests.
+
+## Code Structure
+
+The main symbols in the code are two functions: `patchFetch` and `patchVegaLoader`. Both functions are designed to override existing methods (`fetch` and a custom loader's `http` method, respectively) to handle virtual files. They both use the `deserializeBlob` utility to convert base64-encoded data URLs into `Blob` objects, which can then be used as file data.
+
+## References
+
+- `deserializeBlob`: A utility function from `@/utils/blob` that converts base64-encoded data URLs into `Blob` objects.
+- `getStaticVirtualFiles`: A function from `./static-state` that retrieves the current set of virtual files.
+- `DataURLString`: A type from `@/utils/json/base64` representing a base64-encoded data URL.
+
+## Symbols
+
+### `patchFetch`
+#### Description
+Overrides the global `fetch` function to intercept requests for virtual files and return their data as `Blob` objects. If a requested file is not virtual, it falls back to the original `fetch` function.
+
+#### Inputs
+| Name  | Type               | Description                                      |
+|:------|:-------------------|:-------------------------------------------------|
+| files | StaticVirtualFiles | A mapping of file paths to base64-encoded data URLs. |
+
+#### Outputs
+| Name | Type       | Description                                      |
+|:-----|:-----------|:-------------------------------------------------|
+| -    | Function   | A function to restore the original `fetch` method. |
+
+#### Internal Logic
+1. Store the original `fetch` function.
+2. Override `window.fetch` to check if the requested URL corresponds to a virtual file.
+3. If it does, use `deserializeBlob` to convert the base64 data to a `Blob` and return it as a `Response`.
+4. If not, call the original `fetch` function.
+5. Return a function to restore the original `fetch`.
+
+### `patchVegaLoader`
+#### Description
+Modifies a custom loader's `http` method to handle virtual files similarly to `patchFetch`. It returns the file content as a string if the file is virtual.
+
+#### Inputs
+| Name  | Type               | Description                                      |
+|:------|:-------------------|:-------------------------------------------------|
+| loader | Object            | An object with an `http` method for fetching resources. |
+| files | StaticVirtualFiles | A mapping of file paths to base64-encoded data URLs. |
+
+#### Outputs
+| Name | Type       | Description                                      |
+|:-----|:-----------|:-------------------------------------------------|
+| -    | Function   | A function to restore the original `http` method. |
+
+#### Internal Logic
+1. Bind the original `http` method of the loader.
+2. Override the `http` method to check if the requested URL corresponds to a virtual file.
+3. If it does, use `deserializeBlob` to convert the base64 data to a `Blob` and return its text content.
+4. If not, call the original `http` method.
+5. Handle data URLs directly by deserializing them.
+6. Return a function to restore the original `http` method.
+
+## Dependencies
+
+| Dependency         | Purpose                                                  |
+|:-------------------|:---------------------------------------------------------|
+| `@/utils/blob`     | Provides the `deserializeBlob` function for converting base64 data URLs to `Blob` objects. |
+| `./static-state`   | Provides the `getStaticVirtualFiles` function to retrieve virtual files. |
+| `@/utils/json/base64` | Defines the `DataURLString` type used for base64-encoded data URLs. |
+
+## Error Handling
+
+Both `patchFetch` and `patchVegaLoader` handle errors by falling back to the original methods if a virtual file is not found. In `patchVegaLoader`, if an error occurs during the original `http` call, it checks if the URL is a data URL and attempts to deserialize it directly.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

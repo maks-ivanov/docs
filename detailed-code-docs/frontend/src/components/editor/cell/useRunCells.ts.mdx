@@ -1,0 +1,89 @@
+---
+title: "useRunCells.ts"
+---
+
+## High-level description
+
+The `useRunCells.ts` file provides utility functions for executing code cells within a notebook interface. It defines hooks that allow for running individual cells, multiple cells, or all cells that have been modified or interrupted. The execution process involves preparing the cells, retrieving their code, and sending it to a backend service for execution.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `useRunStaleCells`: Utilizes `useRunCells` to run all cells that are considered "stale" (edited or interrupted).
+- `useRunCell`: Uses `useRunCells` to run a specific cell identified by its `CellId`.
+- `useRunCells`: The core function that handles the execution of cells by preparing them and sending their code to be run.
+
+## References
+
+- `staleCellIds`: A function from `cells.ts` that identifies cells that need to be run.
+- `useCellActions`: Provides actions related to cell manipulation.
+- `useNotebook`: Retrieves the current state of the notebook.
+- `getEditorCodeAsPython`: Converts editor content to Python code.
+- `sendRun`: Sends the code to be executed to a backend service.
+- `Logger`: Used for logging errors during the execution process.
+
+## Symbols
+
+### `useRunStaleCells`
+#### Description
+Creates a function that runs all cells that have been edited or interrupted.
+
+#### Outputs
+| Name          | Type       | Description                                      |
+|:--------------|:-----------|:-------------------------------------------------|
+| runStaleCells | Function   | A function that, when called, runs stale cells.  |
+
+#### Internal Logic
+- Retrieves the current notebook state.
+- Uses `useRunCells` to create a function that runs cells identified by `staleCellIds`.
+
+### `useRunCell`
+#### Description
+Creates a function that runs a specific cell identified by its `CellId`.
+
+#### Inputs
+| Name  | Type   | Description                  |
+|:------|:-------|:-----------------------------|
+| cellId | CellId | The identifier of the cell to run. |
+
+#### Outputs
+| Name    | Type     | Description                                  |
+|:--------|:---------|:---------------------------------------------|
+| runCell | Function | A function that, when called, runs the specified cell. |
+
+#### Internal Logic
+- Uses `useRunCells` to create a function that runs the cell if `cellId` is defined.
+
+### `useRunCells`
+#### Description
+Creates a function that runs a list of cells by preparing them and sending their code for execution.
+
+#### Inputs
+| Name    | Type       | Description                  |
+|:--------|:-----------|:-----------------------------|
+| cellIds | CellId[]   | An array of cell identifiers to run. |
+
+#### Internal Logic
+- Retrieves the current notebook state and cell actions.
+- Iterates over the provided `cellIds` to gather code from each cell.
+- Prepares each cell for execution if necessary.
+- Sends the collected code to the backend using `sendRun`.
+- Logs any errors encountered during the execution process.
+
+## Side Effects
+- The `useRunCells` function modifies the state of cells by preparing them for execution.
+- It also logs errors using the `Logger` utility.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `react-use-event-hook` | Used to create stable event handlers. |
+| `@/core/network/requests` | Provides the `sendRun` function for executing code. |
+| `@/utils/Logger` | Used for logging errors. |
+
+## Error Handling
+- Errors during the execution of cells are caught and logged using the `Logger.error` method.
+
+## Logging
+- The `Logger` utility is used to log errors that occur during the execution of cells. This helps in debugging and monitoring the execution process.

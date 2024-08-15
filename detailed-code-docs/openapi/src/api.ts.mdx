@@ -1,0 +1,75 @@
+---
+title: "api.ts"
+---
+
+## High-level description
+
+The `openapi/src/api.ts` file is an auto-generated TypeScript file that defines the structure of an API using TypeScript interfaces and types. It provides a comprehensive mapping of API endpoints, request and response structures, and associated data schemas. This file is primarily used to ensure type safety and consistency when interacting with the API in a TypeScript environment.
+
+## Code Structure
+
+The main structure of the code revolves around the `paths` and `components` interfaces. The `paths` interface defines various API endpoints, each with its HTTP method, request parameters, and response types. The `components` interface contains schemas that define the structure of data used in requests and responses. These schemas are referenced within the `paths` interface to provide detailed type information for each endpoint.
+
+## References
+
+- The file references various schemas defined in the `components` interface, which are used to structure the request and response bodies for the API endpoints.
+- The related `openapi/api.yaml` file provides the OpenAPI specification that this TypeScript file is generated from, ensuring that the TypeScript types align with the API's actual structure.
+
+## Symbols
+
+### `paths`
+#### Description
+The `paths` interface defines the API endpoints available in the application. Each endpoint is represented as a key in the interface, with the HTTP method (e.g., `get`, `post`) as a nested object. These objects specify the parameters, request bodies, and response types for each endpoint.
+
+#### Internal Logic
+- Each endpoint is defined with a path string as the key.
+- The HTTP method (e.g., `get`, `post`) is a nested object containing:
+  - `parameters`: Defines any path or query parameters required by the endpoint.
+  - `requestBody`: Specifies the expected structure of the request body, referencing schemas from the `components` interface.
+  - `responses`: Details the possible responses, including status codes and the structure of the response body.
+
+### `components`
+#### Description
+The `components` interface contains schemas that define the structure of data used in API requests and responses. These schemas are referenced by the `paths` interface to provide detailed type information.
+
+#### Internal Logic
+- The `schemas` object within `components` contains various data structures, each defined as an interface.
+- Each schema represents a specific data model, such as `AiCompletionRequest`, `FileCreateRequest`, or `SuccessResponse`.
+- These schemas are used to ensure that data passed to and from the API adheres to the expected format.
+
+### `OneOf`, `XOR`, `Without`
+#### Description
+These are utility types used to define complex data structures that involve conditional or exclusive properties.
+
+#### Internal Logic
+- `Without&lt;T, U&gt;`: Creates a type by excluding properties of type `U` from type `T`.
+- `XOR&lt;T, U&gt;`: Represents a type that can be either `T` or `U`, but not both, ensuring mutual exclusivity.
+- `OneOf&lt;T extends any[]&gt;`: Recursively applies `XOR` to an array of types, ensuring that only one of the types in the array is present.
+
+## Dependencies
+
+The file does not explicitly import any external libraries or modules, as it is auto-generated and relies on TypeScript's type system to define the API structure.
+
+## API/Interface Reference
+
+The file defines a comprehensive API interface with various endpoints. Here are some key endpoints:
+
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| `/api/ai/completion` | POST | `AiCompletionRequest` | JSON object | Get AI completion for a prompt |
+| `/api/files/create` | POST | `FileCreateRequest` | `FileCreateResponse` | Create a new file or directory |
+| `/api/kernel/run` | POST | `RunRequest` | `SuccessResponse` | Run a cell in the kernel |
+| `/api/status` | GET | None | JSON object | Get the status of the application |
+| `/auth/login` | POST | Form data | HTML or redirect | Submit login form |
+
+## Error Handling
+
+The file defines specific response codes for each endpoint, such as `200` for successful operations and `400` or `404` for errors. The response types are defined to handle these cases, but the actual error handling logic would be implemented in the server-side code that uses this API specification.
+
+## Logging
+
+The file does not implement any logging mechanisms, as it is focused on defining the API structure and types. Logging would be handled by the server-side application that implements the API.
+
+## TODOs
+
+There are no TODOs or notes left in the code, as it is an auto-generated file meant to reflect the current state of the API as defined in the OpenAPI specification.

@@ -1,0 +1,258 @@
+---
+title: "sql_cars.py"
+---
+
+## High-level description
+
+The `sql_cars.py` file is a script that utilizes the Marimo framework to create an interactive data exploration application focused on a dataset of cars. The application allows users to filter and visualize car data using SQL queries executed via DuckDB, and it provides various UI components for user interaction, such as dropdowns and sliders. The script also includes data visualization using Altair to display trends and comparisons within the dataset.
+
+## Code Structure
+
+The script is structured around the Marimo framework, which uses a cell-based approach to define different parts of the application. Each cell is decorated with `@app.cell`, indicating that it is a component of the Marimo application. The script uses SQL queries to manipulate and analyze the car dataset, and it leverages UI components to allow user interaction. The results are visualized using Altair charts.
+
+## Symbols
+
+### `app`
+#### Description
+The `app` is an instance of `marimo.App`, which serves as the main application object for the Marimo framework. It is configured with a medium width and is responsible for managing the lifecycle and execution of the cells within the script.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a cell within the Marimo application. Each cell represents a discrete unit of functionality, such as loading data, executing SQL queries, or rendering UI components. The decorator allows the Marimo framework to manage the execution order and dependencies between cells.
+
+### `__(data)`
+#### Description
+This cell loads the cars dataset and processes the 'Year' column to extract the year as an integer.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | object | An object providing access to the cars dataset. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars_df | DataFrame | The processed cars dataset with the 'Year' column as integers. |
+
+### `__(cars_df, mo)`
+#### Description
+This cell creates or replaces a SQL table named 'cars' using the provided cars DataFrame.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars_df | DataFrame | The cars dataset. |
+| mo | object | The Marimo object for executing SQL queries. |
+
+#### Outputs
+None
+
+### `__(cars_df, mo)`
+#### Description
+This cell sets up UI components for filtering the cars dataset, including a dropdown for 'Origin', a range slider for 'Year', and a number input for selecting the top N cars.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars_df | DataFrame | The cars dataset. |
+| mo | object | The Marimo object for creating UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| origin | UI component | Dropdown for selecting car origin. |
+| top_n | UI component | Number input for selecting the top N cars. |
+| year_range | UI component | Range slider for selecting the year range. |
+
+### `__(origin)`
+#### Description
+This cell generates a SQL filter string based on the selected car origin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| origin | UI component | Dropdown for selecting car origin. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| origin_filter | str | SQL filter string for the selected origin. |
+
+### `__(mo, origin, top_n)`
+#### Description
+This cell updates the markdown display to show the top N cars, optionally filtered by origin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | object | The Marimo object for rendering markdown. |
+| origin | UI component | Dropdown for selecting car origin. |
+| top_n | UI component | Number input for selecting the top N cars. |
+
+#### Outputs
+None
+
+### `__(mo, origin_filter, top_n, year_range)`
+#### Description
+This cell executes a SQL query to retrieve the top N cars within the specified year range and origin filter, ordered by horsepower.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | object | The Marimo object for executing SQL queries. |
+| origin_filter | str | SQL filter string for the selected origin. |
+| top_n | UI component | Number input for selecting the top N cars. |
+| year_range | UI component | Range slider for selecting the year range. |
+
+#### Outputs
+None
+
+### `__(mo)`
+#### Description
+This cell displays a markdown header for the breakdown of cars by origin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | object | The Marimo object for rendering markdown. |
+
+#### Outputs
+None
+
+### `__(cars, mo, year_range)`
+#### Description
+This cell executes a SQL query to calculate average horsepower and MPG by origin, and identifies the top car by horsepower within the specified year range.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars | DataFrame | The cars dataset. |
+| mo | object | The Marimo object for executing SQL queries. |
+| year_range | UI component | Range slider for selecting the year range. |
+
+#### Outputs
+None
+
+### `__(alt, duckdb, mo, year_range)`
+#### Description
+This cell creates an Altair chart to visualize the trend of average horsepower and MPG over time.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | Altair module for creating charts. |
+| duckdb | module | DuckDB module for executing SQL queries. |
+| mo | object | The Marimo object for rendering charts. |
+| year_range | UI component | Range slider for selecting the year range. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| base | Chart | Base Altair chart object. |
+| line1 | Chart | Altair line chart for average horsepower. |
+| line2 | Chart | Altair line chart for average MPG. |
+
+### `__(alt, duckdb, mo, year_range)`
+#### Description
+This cell creates a scatter plot using Altair to visualize the relationship between horsepower and miles per gallon, colored by origin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | Altair module for creating charts. |
+| duckdb | module | DuckDB module for executing SQL queries. |
+| mo | object | The Marimo object for rendering charts. |
+| year_range | UI component | Range slider for selecting the year range. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chart | Chart | Altair scatter plot chart. |
+
+### `__(chart, mo)`
+#### Description
+This cell handles user interaction with the chart, allowing users to select cars and providing feedback if no cars are selected.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| chart | Chart | Altair chart object. |
+| mo | object | The Marimo object for handling UI interactions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| selected_cars | DataFrame | DataFrame of cars selected by the user. |
+
+### `__(aggs, aggs_selected, mo)`
+#### Description
+This cell calculates and displays statistics for the selected cars, comparing them to the overall dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| aggs | DataFrame | Aggregated statistics for the overall dataset. |
+| aggs_selected | DataFrame | Aggregated statistics for the selected cars. |
+| mo | object | The Marimo object for rendering UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| diff | function | Function to calculate percentage differences. |
+| title_case | function | Function to convert strings to title case. |
+
+### `__(cars, mo, selected_cars)`
+#### Description
+This cell calculates aggregated statistics for both the selected cars and the overall dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cars | DataFrame | The cars dataset. |
+| mo | object | The Marimo object for executing SQL queries. |
+| selected_cars | DataFrame | DataFrame of cars selected by the user. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| aggs | DataFrame | Aggregated statistics for the overall dataset. |
+| aggs_selected | DataFrame | Aggregated statistics for the selected cars. |
+
+### `__()`
+#### Description
+This cell imports necessary modules and libraries for the application.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alt | module | Altair module for creating charts. |
+| data | module | Vega datasets module for accessing datasets. |
+| duckdb | module | DuckDB module for executing SQL queries. |
+| mo | module | Marimo module for building the application. |
+| pd | module | Pandas module for data manipulation. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Framework for building interactive applications. |
+| pandas | Data manipulation and analysis. |
+| duckdb | SQL execution engine. |
+| altair | Data visualization library. |
+| vega_datasets | Provides access to example datasets. |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond basic exception raising. It assumes that the necessary libraries are installed and that the dataset is available and correctly formatted.
+
+## Logging
+
+The script does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The script does not expose an API but provides an interactive interface through the Marimo framework, allowing users to interact with the dataset via UI components.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

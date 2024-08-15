@@ -1,0 +1,100 @@
+---
+title: "test_home.py"
+---
+
+## High-level description
+
+The target file `test_home.py` contains a set of test cases for the API endpoints related to the home functionality of a server application. These tests are designed to verify the behavior of the server when interacting with workspace files, running notebooks, and managing sessions. The tests utilize the `pytest` framework and are decorated with session management utilities to simulate different session states.
+
+## Code Structure
+
+The main symbols in the code are the test functions, each of which is responsible for testing a specific API endpoint. These functions are interconnected through the use of session management decorators and shared constants like `SESSION_ID` and `HEADERS`. The decorators `@with_session` and `@pytest.mark.skipif` are used to manage session states and conditionally skip tests, respectively.
+
+## Symbols
+
+### `test_workspace_files`
+#### Description
+Tests the `/api/home/workspace_files` endpoint to ensure it returns the correct file information for the current session.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves the current file key using `get_session_manager`.
+2. Sends a POST request to `/api/home/workspace_files` with session headers.
+3. Asserts that the response contains exactly one file with the expected path.
+
+### `test_workspace_files_no_files`
+#### Description
+Tests the `/api/home/recent_files` endpoint to ensure it handles cases where no files are present.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Sends a POST request to `/api/home/recent_files` with session headers.
+2. Asserts that the response contains a non-null list of files.
+
+### `test_running_notebooks`
+#### Description
+Tests the `/api/home/running_notebooks` endpoint to verify it returns the correct running notebook information.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves the current file key using `get_session_manager`.
+2. Sends a POST request to `/api/home/running_notebooks` with session headers.
+3. Asserts that the response contains exactly one file with the expected path.
+
+### `test_shutdown_session`
+#### Description
+Tests the `/api/home/shutdown_session` endpoint to ensure it properly shuts down the session.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Sends a POST request to `/api/home/shutdown_session` with session headers and the session ID.
+2. Asserts that the response status is 200 and the session is successfully shut down.
+
+## Side Effects
+
+- The `test_shutdown_session` function modifies the session state by shutting down the session.
+
+## References
+
+- `get_session_manager`: Used to retrieve the session manager for the current client.
+- `token_header`: Used to generate authentication headers for API requests.
+- `with_session`: A decorator that manages session creation and cleanup for the test functions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest`   | Used for writing and executing test cases. |
+| `starlette.testclient` | Provides the `TestClient` for making API requests in tests. |
+
+## TODOs
+
+- The `test_shutdown_session` function includes a TODO comment indicating that debugging is needed for Windows, as the test is currently skipped on Windows CI due to failures.

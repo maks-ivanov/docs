@@ -1,0 +1,83 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `island_generator.py` file is part of the Marimo library and is responsible for generating HTML "islands" that embed Python code and its outputs into web pages. These islands can be interactive, allowing for dynamic content updates when the page is loaded. The file defines classes and methods to create, configure, and render these islands, facilitating the integration of Python code into static site generators or other HTML-based platforms.
+
+## Code Structure
+
+The main components of the code are two classes: `MarimoIslandStub` and `MarimoIslandGenerator`. The `MarimoIslandStub` class represents a single code cell that can be rendered as an HTML island, while the `MarimoIslandGenerator` class manages multiple stubs, builds the application, and renders the complete HTML content. The generator class also provides methods to load code from files and configure the rendering of the islands.
+
+## Symbols
+
+### `MarimoIslandStub`
+#### Description
+Represents a single code cell that can be rendered as an HTML island. It holds the code, configuration options, and output for the cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell_id | str | Unique identifier for the cell. |
+| app_id | str | Identifier for the application the cell belongs to. |
+| code | str | The Python code to be executed in the cell. |
+| display_code | bool | Whether to display the code in the HTML. |
+| display_output | bool | Whether to display the output in the HTML. |
+| is_reactive | bool | Whether the code block will run with Pyodide. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Optional[CellOutput] | The output of the cell, if available. |
+
+#### Internal Logic
+- The `output` property retrieves the cell's output from the session view if it hasn't been cached yet.
+- The `render` method generates the HTML for the island, including the code and output based on the configuration options.
+
+### `MarimoIslandGenerator`
+#### Description
+Manages the creation and rendering of multiple `MarimoIslandStub` instances. It can load code from files, build the application, and render the complete HTML content for embedding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_id | str | Identifier for the application. Defaults to "main". |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| build | App | The built application. |
+| render_html | str | The complete HTML content for the application. |
+
+#### Internal Logic
+- The `from_file` method loads code cells from a specified file and creates stubs for each.
+- The `add_code` method adds a new code cell to the generator and returns a `MarimoIslandStub`.
+- The `build` method compiles the application and prepares it for rendering.
+- The `render_head`, `render_body`, and `render_html` methods generate the HTML content for the head, body, and complete document, respectively.
+
+## References
+
+- `InternalApp`, `App`, and `_AppConfig` from `marimo._ast.app` are used to manage the application and its configuration.
+- `Cell`, `CellConfig`, and `compile_cell` from `marimo._ast.cell` and `marimo._ast.compiler` are used to create and configure code cells.
+- `CellOutput` from `marimo._messaging.cell_output` is used to handle the output of code cells.
+- `as_html` and `uri_encode_component` from `marimo._output.formatting` and `marimo._output.utils` are used for HTML formatting and encoding.
+- `json_output` from `marimo._plugins.stateless.json_output` is used to format JSON data for output.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `json` | Used for handling JSON data. |
+| `textwrap.dedent` | Used for removing common leading whitespace from strings. |
+| `typing` | Provides type hints and annotations. |
+
+## Error Handling
+
+- The `render` method raises a `ValueError` if neither code nor output is included in the rendering options.
+
+## TODOs
+
+- The `render` method contains a TODO comment about allowing non-disabled code editors, indicating potential future enhancements.
+
+This file is a crucial part of the Marimo library, enabling the integration of Python code into web pages with interactive capabilities. It leverages various components of the Marimo framework to manage code execution and output rendering.

@@ -1,0 +1,91 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file contains unit tests for the `createWsUrl` function, which is responsible for generating a WebSocket URL based on the current window location. The tests ensure that the function correctly constructs the URL using either the `ws` or `wss` protocol, depending on whether the window's protocol is `http` or `https`.
+
+## Code Structure
+
+The main symbol in the target file is the `describe` block, which contains multiple test cases (`it` blocks) for the `createWsUrl` function. The `beforeAll` and `afterAll` hooks are used to save and restore the original `window` object, ensuring that the tests do not affect the global state.
+
+## References
+
+- `createWsUrl`: This function is imported from the `client.ts` file and is the primary subject of the tests in the target file.
+
+## Symbols
+
+### `describe("createWsUrl")`
+#### Description
+This block groups together all the test cases related to the `createWsUrl` function. It sets up the necessary environment for testing and contains individual test cases to verify the function's behavior.
+
+### `beforeAll`
+#### Description
+Saves the original `window` object before any tests are run, allowing it to be restored later.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `afterAll`
+#### Description
+Restores the original `window` object after all tests have been executed, ensuring that the global state is not permanently altered by the tests.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `it("should create a WebSocket URL based on the window location")`
+#### Description
+Tests that the `createWsUrl` function generates a WebSocket URL using the `ws` protocol when the window's protocol is `http`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| window.location.protocol | string | The protocol of the window location, set to "http:" for this test. |
+| window.location.hostname | string | The hostname of the window location, set to "localhost" for this test. |
+| window.location.port | string | The port of the window location, set to "3000" for this test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expectedUrl | string | The expected WebSocket URL, "ws://localhost:30000/copilot". |
+
+### `it("should use wss protocol when window location protocol is https")`
+#### Description
+Tests that the `createWsUrl` function generates a WebSocket URL using the `wss` protocol when the window's protocol is `https`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| window.location.protocol | string | The protocol of the window location, set to "https:" for this test. |
+| window.location.hostname | string | The hostname of the window location, set to "localhost" for this test. |
+| window.location.port | string | The port of the window location, set to "3000" for this test. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expectedUrl | string | The expected WebSocket URL, "wss://localhost:30000/copilot". |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for setting up and running the unit tests. |
+
+## Error Handling
+
+The tests do not include explicit error handling beyond the basic assertions provided by the `expect` function. If the `createWsUrl` function does not return the expected URL, the test will fail, indicating a discrepancy.
+
+## Logging
+
+No logging mechanisms are implemented in the test file.
+
+## TODOs
+
+- The `createWsUrl` function in the related `client.ts` file contains a TODO comment indicating that the WebSocket port should be configurable, rather than relying on appending a "0" to the existing port. This is a potential area for future improvement.

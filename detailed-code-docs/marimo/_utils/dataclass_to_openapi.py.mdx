@@ -1,0 +1,114 @@
+---
+title: "dataclass_to_openapi.py"
+---
+
+## High-level description
+
+The target file, `dataclass_to_openapi.py`, provides functionality to convert Python data types, particularly dataclasses, into OpenAPI schemas. This conversion is essential for generating API documentation that describes the structure of data exchanged between clients and servers in a standardized format.
+
+## Code Structure
+
+The main class in this file is `PythonTypeToOpenAPI`, which is responsible for converting Python types to OpenAPI schemas. It uses helper functions like `_unique` and `_is_optional` to assist in this conversion process. The class relies on type hints and Python's typing module to determine the structure and constraints of the data types being converted.
+
+## Symbols
+
+### `PythonTypeToOpenAPI`
+#### Description
+The `PythonTypeToOpenAPI` class is designed to convert Python types, including dataclasses, into OpenAPI-compatible schemas. It handles various Python types, such as basic types, collections, and custom dataclasses, and translates them into the corresponding OpenAPI schema definitions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name_overrides | `Dict[Any, str]` | A dictionary to override default names for certain types. |
+| camel_case | `bool` | A flag indicating whether to convert field names to camelCase. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| convert | `Dict[str, Any]` | The OpenAPI schema for the given Python type. |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the `name_overrides` and `camel_case` attributes and prepares a dictionary for optional name overrides.
+- **Conversion Logic**: The `convert` method handles the conversion of various Python types to OpenAPI schemas. It checks the origin of the type (e.g., `Union`, `List`, `Dict`, `Literal`, etc.) and applies the appropriate conversion logic.
+  - **Union Types**: Handles optional types and multiple type options using `oneOf`.
+  - **Collection Types**: Converts lists and dictionaries to OpenAPI array and object types, respectively.
+  - **Literal Types**: Converts literals to OpenAPI enums.
+  - **Dataclasses**: Uses the `convert_dataclass` method to handle dataclass conversion.
+  - **Basic Types**: Maps basic Python types to their OpenAPI counterparts (e.g., `str` to `string`).
+  - **Enums and Forward References**: Handles enum types and forward references appropriately.
+
+### `convert_dataclass`
+#### Description
+Converts a Python dataclass into an OpenAPI schema, detailing its properties and required fields.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cls | `Type[Any]` | The dataclass to convert. |
+| processed_classes | `Dict[Any, str]` | A dictionary of already processed classes to avoid circular references. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| schema | `Dict[str, Any]` | The OpenAPI schema for the dataclass. |
+
+#### Internal Logic
+- **Dataclass Check**: Verifies if the input class is a dataclass.
+- **Schema Name**: Determines the schema name using `name_overrides` or the class name.
+- **Type Hints and Fields**: Retrieves type hints and fields from the dataclass.
+- **Properties and Required Fields**: Constructs the properties and required fields for the schema based on the dataclass fields and their types.
+- **ClassVar Handling**: Handles `ClassVar` fields by adding them as enum properties.
+
+### `_unique`
+#### Description
+A helper function that ensures a list of items contains unique dictionaries, primarily used to avoid duplicate schema definitions in `oneOf` lists.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| items | `list[Any]` | A list of items to be filtered for uniqueness. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `list[Any]` | A list of unique items. |
+
+### `_is_optional`
+#### Description
+Determines if a dataclass field is optional, i.e., if it is a `Union` that includes `None`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| field | `dataclasses.Field[Any]` | The field to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| is_optional | `bool` | True if the field is optional, otherwise False. |
+
+## References
+
+- `to_camel_case`: A function from `marimo._server.models.base` used to convert snake_case to camelCase.
+- `NotRequired`: A type from `marimo._utils.typing` used to handle optional fields in type hints.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `dataclasses` | Used for handling dataclass structures. |
+| `typing` | Provides type hints and utilities for type inspection. |
+| `marimo._server.models.base` | Provides the `to_camel_case` function for name conversion. |
+| `marimo._utils.typing` | Provides the `NotRequired` type for optional fields. |
+
+## Error Handling
+
+The code raises a `ValueError` if an unsupported type is encountered during conversion or if a non-dataclass is passed to `convert_dataclass`.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

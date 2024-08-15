@@ -1,0 +1,169 @@
+---
+title: "google_cloud_storage.py"
+---
+
+## High-level description
+
+The target file is a Python script that uses the Marimo framework to create an interactive application for browsing Google Cloud Storage buckets and their contents. It provides a user interface to authenticate with Google Cloud, select a storage bucket, filter files by prefix, and display file details in a table format. The application is designed to run as a standalone app using Marimo's reactive notebook capabilities.
+
+## Code Structure
+
+The code is structured using Marimo's reactive notebook framework, where each `@app.cell` decorator defines a reactive cell. These cells are executed in response to changes in their dependencies, such as user inputs or other cell outputs. The main components include setting up Google Cloud authentication, listing and selecting storage buckets, filtering and displaying files, and handling file content display based on type.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which represents the main application. It is configured to have a full-width layout and serves as the container for all reactive cells defined in the script.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define reactive cells within the Marimo application. Each cell can contain code that executes in response to changes in its dependencies, such as user inputs or other cell outputs.
+
+### `credentials`
+#### Description
+This cell handles the configuration of Google Cloud credentials. It provides a user interface element for optionally specifying the path to a credentials file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The Marimo module used for UI elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| credentials | object | The user input for the credentials file path. |
+
+### `buckets, client`
+#### Description
+This cell sets up the Google Cloud Storage client and retrieves a list of available buckets. It uses the credentials provided by the user or defaults to the environment's authentication.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| credentials | object | The user input for the credentials file path. |
+| os | module | The OS module for environment variable manipulation. |
+| storage | module | The Google Cloud Storage module for client operations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| buckets | list | A list of available storage buckets. |
+| client | object | The Google Cloud Storage client. |
+
+### `selected_bucket`
+#### Description
+This cell provides a dropdown UI element for selecting a bucket from the list of available buckets.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| buckets | list | A list of available storage buckets. |
+| mo | module | The Marimo module used for UI elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| selected_bucket | object | The user-selected bucket. |
+
+### `get_prefix, set_prefix`
+#### Description
+This cell manages the state for file prefix filtering, allowing users to filter files by a specific prefix.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The Marimo module used for state management. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get_prefix | function | Function to get the current prefix. |
+| set_prefix | function | Function to set a new prefix. |
+
+### `bucket`
+#### Description
+This cell retrieves the selected bucket object from the Google Cloud Storage client.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | object | The Google Cloud Storage client. |
+| mo | module | The Marimo module used for UI elements. |
+| selected_bucket | object | The user-selected bucket. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bucket | object | The selected bucket object. |
+
+### `blobs`
+#### Description
+This cell lists the blobs (files) in the selected bucket, optionally filtered by a prefix.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bucket | object | The selected bucket object. |
+| get_prefix | function | Function to get the current prefix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| blobs | list | A list of blobs in the selected bucket. |
+
+### `file_table`
+#### Description
+This cell displays the files in a table format, allowing users to filter by prefix and view file details.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| blobs | list | A list of blobs in the selected bucket. |
+| bucket | object | The selected bucket object. |
+| mo | module | The Marimo module used for UI elements. |
+| set_prefix | function | Function to set a new prefix. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file_table | object | The UI table displaying file details. |
+
+### `Load selected file`
+#### Description
+This cell loads and displays the content of the selected file from the table, handling different content types such as images and text.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bucket | object | The selected bucket object. |
+| file_table | object | The UI table displaying file details. |
+| mo | module | The Marimo module used for UI elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This cell does not return a value but updates the UI. |
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| marimo | Used for creating the reactive application and UI elements. |
+| google-cloud-storage | Provides the client for interacting with Google Cloud Storage. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic environment variable manipulation and client setup. It assumes that the Google Cloud Storage client and bucket operations will succeed if the correct credentials are provided.
+
+## Logging
+
+The code does not implement any logging mechanisms. It relies on Marimo's UI elements to provide feedback to the user.
+
+## API/Interface Reference
+
+The script does not expose an API but provides a user interface through Marimo's reactive notebook framework. The interface includes elements for credential input, bucket selection, file filtering, and file content display.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

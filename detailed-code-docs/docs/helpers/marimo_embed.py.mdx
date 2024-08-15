@@ -1,0 +1,99 @@
+---
+title: "marimo_embed.py"
+---
+
+## High-level description
+
+The `marimo_embed.py` file defines a custom directive for the Sphinx documentation system, which allows embedding Marimo applications directly into documentation pages. This is achieved by generating an HTML iframe that loads a Marimo app with specified configurations such as size, mode, and app width.
+
+## Code Structure
+
+The main components of the code are the `uri_encode_component` function and the `MarimoEmbed` class. The `uri_encode_component` function is used to URL-encode the Marimo app code, while the `MarimoEmbed` class is a Sphinx directive that constructs the HTML iframe for embedding the app.
+
+## Symbols
+
+### `uri_encode_component`
+#### Description
+This function URL-encodes a given string, which is necessary for safely embedding code in a URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | str | The string to be URL-encoded. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| encoded_code | str | The URL-encoded version of the input string. |
+
+#### Internal Logic
+The function uses `urllib.parse.quote` to encode the input string, allowing certain characters to remain unencoded by specifying them in the `safe` parameter.
+
+### `MarimoEmbed`
+#### Description
+The `MarimoEmbed` class is a Sphinx directive that generates an HTML iframe to embed a Marimo application within documentation. It allows customization of the app's size, mode, and width through directive options.
+
+#### Inputs
+- **Directive Options**:
+  | Name      | Type | Description |
+  |:----------|:-----|:------------|
+  | size      | str  | The size of the iframe, with possible values like "default", "medium", "large". |
+  | mode      | str  | The mode of the app, such as "read" or "edit". |
+  | app_width | str  | The width of the app, either "normal" or "full". |
+
+- **Content**: The content of the directive, which is the code to be embedded in the Marimo app.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| nodes_list | list | A list containing a single `nodes.raw` object with the HTML iframe. |
+
+#### Internal Logic
+1. **Configuration Retrieval**: The directive retrieves options for size, mode, and app width, providing default values if not specified.
+2. **Code Construction**: It constructs the Marimo app code by combining a header, the directive content, and a footer.
+3. **Encoding**: The complete code is URL-encoded using the `uri_encode_component` function.
+4. **HTML Generation**: An HTML iframe is generated with the encoded code as a source, and various permissions are set for the iframe.
+5. **Node Creation**: A `nodes.raw` object is created with the HTML content and returned as a list.
+
+## References
+
+- The `MarimoEmbed` class is referenced in the `docs/conf.py` file, where it is registered as a Sphinx directive under the name "marimo-embed".
+
+## Dependencies
+
+| Dependency     | Purpose                                      |
+|:---------------|:---------------------------------------------|
+| `docutils`     | Provides the base `Directive` class and `nodes` for creating custom directives. |
+| `urllib.parse` | Used for URL-encoding the Marimo app code.   |
+
+## Configuration
+
+The `MarimoEmbed` directive allows the following configuration options:
+
+| Option    | Type | Default  | Description                                      |
+|:----------|:-----|:---------|:-------------------------------------------------|
+| size      | str  | "default"| Determines the size of the iframe.               |
+| mode      | str  | "read"   | Sets the mode of the Marimo app.                 |
+| app_width | str  | "normal" | Specifies the width of the app within the iframe.|
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the inputs provided to the directive are valid and that the URL encoding will succeed without issues.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## API/Interface Reference
+
+The `MarimoEmbed` class exposes a Sphinx directive interface with the following options:
+
+| Option    | Description                                      |
+|:----------|:-------------------------------------------------|
+| size      | Determines the size of the iframe.               |
+| mode      | Sets the mode of the Marimo app.                 |
+| app_width | Specifies the width of the app within the iframe.|
+
+## TODOs
+
+There are no TODOs or notes left in the code.

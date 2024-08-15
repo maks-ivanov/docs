@@ -1,0 +1,87 @@
+---
+title: "dependency-graph-minimap.tsx"
+---
+
+## High-level description
+
+The `DependencyGraphMinimap` component is a React component that visualizes a dependency graph using the `ReactFlow` library. It manages the state of nodes and edges, updates them based on changes in input data, and provides interactive features such as node and edge selection. The component is designed to render a minimap view of a dependency graph, allowing users to interact with and explore the relationships between different elements in a structured manner.
+
+## Code Structure
+
+- **`DependencyGraphMinimap`**: The main React component that renders the dependency graph minimap.
+- **`VerticalElementsBuilder`**: A utility class used to create nodes and edges for the graph.
+- **`useTranslateExtent`**: A function that calculates the extent of the graph for translation purposes.
+- **`useFitToViewOnDimensionChange`**: A custom hook that adjusts the view of the graph when its dimensions change.
+
+## References
+
+- **`VerticalElementsBuilder`**: Used to create the initial set of nodes and edges for the graph.
+- **`useFitToViewOnDimensionChange`**: Ensures the graph fits the view when dimensions change.
+- **`GraphSelectionPanel`**: Renders a panel for displaying details about selected nodes or edges.
+- **`scrollAndHighlightCell`**: Used to scroll to and highlight a specific cell when a node is double-clicked.
+
+## Symbols
+
+### `DependencyGraphMinimap`
+#### Description
+The `DependencyGraphMinimap` component is responsible for rendering a minimap of a dependency graph using the `ReactFlow` library. It manages the state of nodes and edges, updates them based on changes in the input data, and provides interactive features such as node and edge selection.
+
+#### Inputs
+| Name       | Type                | Description                                      |
+|:-----------|:--------------------|:-------------------------------------------------|
+| `cellIds`  | `CellId[]`          | Array of cell identifiers.                       |
+| `variables`| `Variables`         | Object containing variable information.          |
+| `cellAtoms`| `Array&lt;Atom&lt;CellData&gt;&gt;` | Array of cell data atoms.                     |
+| `children` | `React.ReactNode`   | Optional children to render within the component.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `JSX.Element` | Renders the dependency graph minimap. |
+
+#### Internal Logic
+- Initializes nodes and edges using `VerticalElementsBuilder`.
+- Manages state for nodes, edges, selected node, and selected edge.
+- Uses `useEffect` to update nodes and edges when `cellIds`, `variables`, or `cellAtoms` change.
+- Handles node and edge selection, updating the state accordingly.
+- Renders a `GraphSelectionPanel` based on the current selection.
+- Configures `ReactFlow` with various interaction settings.
+
+### `useTranslateExtent`
+#### Description
+Calculates the extent of the graph for translation purposes, ensuring that the graph can be scrolled to show all nodes.
+
+#### Inputs
+| Name  | Type   | Description                  |
+|:------|:-------|:-----------------------------|
+| `nodes` | `Node[]` | Array of graph nodes.     |
+| `height`| `number` | Height of the graph view. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `CoordinateExtent` | The calculated extent for graph translation. |
+
+#### Internal Logic
+- Computes the top and bottom bounds of the graph based on node positions.
+- Returns a `CoordinateExtent` that limits the graph's translation to the visible nodes.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `reactflow` | Used for rendering and managing the graph visualization. |
+| `jotai` | Used for managing state with atoms. |
+| `react-use-event-hook` | Provides a hook for handling events. |
+
+## Error Handling
+
+The component does not explicitly handle errors beyond basic React error boundaries. It assumes that the input data is valid and that the `ReactFlow` library handles any internal errors related to graph rendering.
+
+## Logging
+
+The component does not implement any logging mechanisms. It relies on the parent application to handle logging if necessary.
+
+## API/Interface Reference
+
+The component does not expose an API or public interface beyond its React props. It is intended to be used as a part of a larger application where it receives data and configuration through its props.

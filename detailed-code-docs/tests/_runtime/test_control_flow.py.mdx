@@ -1,0 +1,91 @@
+---
+title: "test_control_flow.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_control_flow.py` contains asynchronous test functions designed to verify the behavior of the `marimo` runtime's control flow, specifically focusing on the `stop` functionality. These tests ensure that the execution of code cells within a kernel can be conditionally halted using the `marimo.stop` function, and they validate the resulting state of the kernel's global variables and the output of the stopped cells.
+
+## Code Structure
+
+The main symbols in the code are the asynchronous test functions: `test_stop_false`, `test_stop_true`, and `test_stop_output`. Each function tests different aspects of the `marimo.stop` function's behavior. They all utilize the `Kernel` class from the `marimo._runtime.runtime` module to execute code cells and check the state of the kernel's global variables after execution.
+
+## Symbols
+
+### `test_stop_false`
+#### Description
+This test function verifies that when `marimo.stop(False)` is called within a cell, the execution continues normally, and all subsequent code is executed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel instance used to execute the code cells. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes two cells: the first cell imports `marimo`, initializes `x`, calls `marimo.stop(False)`, and initializes `y`; the second cell initializes `z` based on `y`.
+- Asserts that all variables `x`, `y`, and `z` are correctly set in the kernel's global state, indicating that execution was not halted.
+
+### `test_stop_true`
+#### Description
+This test function checks that when `marimo.stop(True)` is called, the execution of the current cell is halted, and subsequent code in the cell is not executed.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel instance used to execute the code cells. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes two cells initially to set up the kernel's state.
+- Re-executes the first cell with `marimo.stop(True)` to halt execution after setting `x`.
+- Asserts that `x` is set, `y` is not set, and `z` is not set, confirming that execution was halted and subsequent code was not executed.
+
+### `test_stop_output`
+#### Description
+This test function ensures that when `marimo.stop(True, 'stopped!')` is called, the cell's execution is halted, and the specified output is returned.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | Kernel | The kernel instance used to execute the code cells. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Executes a cell that calls `marimo.stop(True, 'stopped!')`.
+- Uses a `Runner` to execute the cell and capture the output.
+- Asserts that the output is `'stopped!'` and that a `MarimoStopError` exception is raised, confirming the expected behavior of the stop function.
+
+## References
+
+- `marimo._runtime.control_flow.stop`: The function being tested, which conditionally halts cell execution.
+- `marimo._runtime.requests.ExecutionRequest`: Used to create requests for executing code cells.
+- `marimo._runtime.runner.cell_runner.Runner`: Used to execute cells and capture their output.
+- `marimo._runtime.runtime.Kernel`: The kernel class that manages the execution of code cells and maintains their state.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.control_flow` | Provides the `stop` function and related exceptions. |
+| `marimo._runtime.requests` | Defines the `ExecutionRequest` class for executing code cells. |
+| `marimo._runtime.runner.cell_runner` | Provides the `Runner` class for executing cells. |
+| `marimo._runtime.runtime` | Contains the `Kernel` class used to manage code execution and state. |
+
+## Error Handling
+
+The test functions rely on assertions to verify the expected state of the kernel's global variables and the output of executed cells. If the assertions fail, it indicates that the `marimo.stop` function did not behave as expected.
+
+## Logging
+
+No explicit logging is implemented in the test functions. The focus is on using assertions to validate the behavior of the code.
+
+## TODOs
+
+No TODOs are present in the target file.

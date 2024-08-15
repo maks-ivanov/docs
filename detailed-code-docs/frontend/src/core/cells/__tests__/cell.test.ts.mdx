@@ -1,0 +1,54 @@
+---
+title: "cell.test.ts"
+---
+
+## High-level description
+
+The target file `cell.test.ts` contains unit tests for the `outputIsStale` function, which is responsible for determining whether a cell's output is considered stale based on its current state and whether it has been edited. The tests cover various scenarios, including different runtime states of the cell, whether the cell has been edited, and the timing of output reception relative to the cell's execution.
+
+## Code Structure
+
+The main symbol in this file is the `outputIsStale` function, which is imported from the `cell.ts` file. The tests are organized using the `describe` and `it` functions from the `vitest` testing framework. Each test case simulates a different scenario by creating a cell object with specific properties and then asserting the expected result of the `outputIsStale` function.
+
+## References
+
+- `outputIsStale`: This function is imported from `cell.ts` and is the primary focus of the tests in this file.
+- `RuntimeState`: A type imported from `network/types.ts` that defines the possible states a cell can be in, such as "queued", "running", "idle", and "disabled-transitively".
+- `OutputMessage`: A type imported from `kernel/messages.ts` used to define the structure of the output message in the `createOutput` function.
+
+## Symbols
+
+### `createOutput`
+#### Description
+The `createOutput` function creates a mock `OutputMessage` object with predefined properties. This is used in the tests to simulate a cell's output.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `OutputMessage` | A mock output message with a JSON mimetype and a timestamp. |
+
+### `describe("outputIsStale", () =&gt; {...})`
+#### Description
+This block contains a series of test cases for the `outputIsStale` function. Each test case checks a specific condition or scenario to ensure the function behaves as expected.
+
+#### Internal Logic
+- **Test Cases**: Each `it` block represents a test case that sets up a cell object with specific properties and checks the return value of `outputIsStale`.
+- **Scenarios Covered**: The tests cover scenarios such as the cell being edited, loading, running with output received before or after execution start, being interrupted, and having a stale status.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Provides the testing framework functions `expect`, `describe`, and `it`. |
+
+## Error Handling
+
+The tests do not include explicit error handling as they rely on the `vitest` framework to handle assertions and report failures.
+
+## Logging
+
+There is no logging implemented in this test file.
+
+## TODOs
+
+There is a comment in one of the test cases indicating a potential edge case that might not occur in practice, suggesting that the state of a cell being both interrupted and edited is unlikely.

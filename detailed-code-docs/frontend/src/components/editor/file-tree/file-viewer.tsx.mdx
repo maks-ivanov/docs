@@ -1,0 +1,63 @@
+---
+title: "file-viewer.tsx"
+---
+
+## High-level description
+
+The `file-viewer.tsx` file is a React component that provides a user interface for viewing and editing files within a file tree structure. It supports various file types, including text, images, audio, and video, and allows users to perform actions such as downloading, copying, and saving file contents. The component integrates with a backend service to fetch file details and update file contents.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `FileViewer`: The primary React component that renders the file viewer interface.
+- `useAsyncData`: A custom hook used to fetch file details asynchronously.
+- `sendFileDetails` and `sendUpdateFile`: Functions for interacting with the backend to retrieve and update file data.
+- `LazyAnyLanguageCodeMirror`: A lazy-loaded component for editing text files with syntax highlighting.
+- `ErrorBanner`: A component for displaying error messages.
+- Various utility functions and components for handling file downloads, tooltips, and theme management.
+
+## Symbols
+
+### `FileViewer`
+#### Description
+The `FileViewer` component is responsible for displaying and managing the contents of a file. It supports different file types and provides functionalities such as viewing, editing, downloading, and saving files. The component uses asynchronous data fetching to load file details and updates the file contents through backend requests.
+
+#### Inputs
+| Name         | Type     | Description                                      |
+|:-------------|:---------|:-------------------------------------------------|
+| `file`       | `FileInfo` | The file information object containing details like path and name. |
+| `onOpenNotebook` | `(evt: Pick&lt;Event, "stopPropagation" | "preventDefault"&gt;) =&gt; void` | A callback function to open a notebook associated with the file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | N/A  | The component does not return any output but renders UI elements. |
+
+#### Internal Logic
+- **State Management**: Uses `useState` to manage the internal state of the file contents and loading status.
+- **Data Fetching**: Utilizes `useAsyncData` to fetch file details asynchronously and update the component state.
+- **File Operations**: Provides functions to handle file saving (`handleSaveFile`) and downloading (`handleDownload`).
+- **Rendering**: Conditionally renders different components based on the file type, such as `ImageViewer`, `CsvViewer`, `AudioViewer`, and `VideoViewer`.
+- **Effect Hook**: Uses `useEffect` to manage unsaved file contents when the component unmounts or the file changes.
+
+## Side Effects
+- The component updates the `unsavedContentsForFile` map to store unsaved changes for files.
+- It interacts with the clipboard API to copy file contents.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides the `EditorView` and `keymap` for text editing. |
+| `jotai` | Used for state management with atoms, particularly for hotkey configurations. |
+| `lucide-react` | Provides icon components used in the UI. |
+| `@radix-ui/react-tooltip` | Used for displaying tooltips in the UI. |
+
+## Error Handling
+- The component uses the `ErrorBanner` to display error messages when data fetching fails.
+
+## Logging
+- Errors are logged using the `Logger` utility within the `ErrorBanner` component.
+
+## TODOs
+- There are no explicit TODOs or notes left in the code.

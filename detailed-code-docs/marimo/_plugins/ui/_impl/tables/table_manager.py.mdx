@@ -1,0 +1,76 @@
+---
+title: "table_manager.py"
+---
+
+## High-level description
+
+The `table_manager.py` file defines an abstract base class `TableManager` and a factory class `TableManagerFactory` for managing and manipulating tabular data. The `TableManager` class provides a framework for converting data to different formats (like CSV and JSON), applying formatting, sorting, selecting rows and columns, and other operations on tabular data. The `TableManagerFactory` is an abstract class intended to create instances of `TableManager`.
+
+## Code Structure
+
+The main symbols in the code are the `TableManager` class and the `TableManagerFactory` class. The `TableManager` class is an abstract base class that defines a set of methods for managing tabular data, which must be implemented by any subclass. The `TableManagerFactory` class is an abstract factory class that provides a method for creating instances of `TableManager`.
+
+## Symbols
+
+### `TableManager`
+#### Description
+The `TableManager` class is an abstract base class that provides a framework for managing tabular data. It defines methods for converting data to different formats, applying formatting, sorting, selecting rows and columns, and other operations. Subclasses must implement these methods to handle specific types of data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | T | The data to be managed by the `TableManager`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- The class defines several abstract methods that subclasses must implement, such as `apply_formatting`, `supports_filters`, `sort_values`, `to_csv`, `to_json`, `select_rows`, `select_columns`, `get_row_headers`, `limit`, `search`, `is_type`, `get_summary`, `get_num_rows`, `get_num_columns`, and `get_column_names`.
+- The `to_data` method converts the data to a JSON format, optionally applying a format mapping.
+- The `supports_download`, `supports_selection`, and `supports_altair` methods return boolean values indicating whether the table supports downloading, selection, and Altair visualization, respectively.
+- The `get_field_types` method returns an empty dictionary by default, allowing the frontend to infer field types.
+
+### `TableManagerFactory`
+#### Description
+The `TableManagerFactory` class is an abstract factory class that provides a method for creating instances of `TableManager`. Subclasses must implement the `package_name` and `create` methods to specify the package name and create a `TableManager` instance, respectively.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- The class defines two abstract static methods: `package_name` and `create`.
+- The `package_name` method should return the name of the package that the factory is associated with.
+- The `create` method should return a type of `TableManager` that the factory can create.
+
+## References
+
+- The `TableManager` class references several types and classes from other parts of the codebase, such as `FormatMapping`, `ColumnSummary`, `DataType`, `ExternalDataType`, and `JSONType`.
+- The `to_data` method uses the `csv` function from the `marimo._output.data.data` module to convert data to a CSV format.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `abc` | Provides the `ABC` class for defining abstract base classes. |
+| `typing` | Provides type hints and generic types for the class. |
+| `marimo._output.data.data` | Used for converting data to CSV format. |
+| `marimo._data.models` | Provides data models like `ColumnSummary`, `DataType`, and `ExternalDataType`. |
+| `marimo._plugins.core.web_component` | Provides the `JSONType` type alias. |
+| `marimo._plugins.ui._impl.tables.format` | Provides the `FormatMapping` type. |
+
+## Error Handling
+
+The `TableManager` class uses abstract methods to enforce that subclasses implement specific functionality. If a subclass does not implement these methods, a `NotImplementedError` will be raised when the method is called.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this file.

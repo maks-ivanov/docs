@@ -1,0 +1,107 @@
+---
+title: "shutdown.spec.ts"
+---
+
+## High-level description
+
+The `shutdown.spec.ts` file is an end-to-end (E2E) test script using Playwright to automate testing of a web application. It focuses on testing the application's behavior during session resumption, kernel restart, and shutdown processes. The tests ensure that the application correctly handles these scenarios, including verifying UI elements and session states.
+
+## Code Structure
+
+The main symbols in the code are the test cases defined using Playwright's `test` function. Each test case is responsible for a specific scenario: resuming a session, restarting the kernel, and handling shutdown. The tests utilize helper functions and configurations from other files, such as `getAppUrl` from `playwright.config.ts` and `takeScreenshot` from `helper.ts`.
+
+## References
+
+- `getAppUrl`: This function is imported from `playwright.config.ts` and is used to retrieve the URL of the application being tested.
+- `takeScreenshot`: This function is imported from `helper.ts` and is used to capture screenshots during the tests.
+
+## Symbols
+
+### `test("can resume a session")`
+#### Description
+This test verifies that a session can be resumed correctly after a page reload. It checks that the input and output values persist across sessions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | Represents the browser page used for testing. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Navigate to the application URL using `getAppUrl`.
+2. Verify that the text "None" is visible on the page.
+3. Fill a textbox with "12345" and execute the form using a keyboard shortcut.
+4. Verify that the output "12345" and "54321" are visible.
+5. Reload the page and verify that the session is resumed with the same outputs visible.
+
+### `test("restart kernel")`
+#### Description
+This test checks the functionality of restarting the kernel within the application and ensures that the UI reflects the kernel restart.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | Represents the browser page used for testing. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Navigate to the application URL.
+2. Open the notebook menu and select "Restart kernel".
+3. Confirm the restart action.
+4. Verify that the text "None" is visible, indicating a fresh kernel state.
+
+### `test("shutdown shows disconnected text")`
+#### Description
+This test ensures that the application displays the correct messages and handles unsaved changes when the kernel is shut down.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| page | Page | Represents the browser page used for testing. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Navigate to the application URL.
+2. Click the "Shutdown" button and confirm the action.
+3. Verify that the "kernel not found" message is displayed.
+4. Check that the recovery modal is not shown when there are no unsaved changes.
+5. Make changes, save, and verify that the recovery modal appears.
+6. Capture a screenshot of the page.
+
+### `test.afterAll`
+#### Description
+This function is executed after all tests have run. It restarts the server to ensure a clean state for subsequent test runs.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `startServer` with the application name to restart the server.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@playwright/test` | Provides the testing framework and utilities for browser automation. |
+| `node:url` | Used to convert the module URL to a file path. |
+
+## Error Handling
+
+The tests rely on Playwright's built-in error handling mechanisms. Assertions using `expect` will throw errors if conditions are not met, causing the test to fail.
+
+## Logging
+
+The code does not explicitly implement logging, but Playwright's test runner will output test results and errors to the console.
+
+## TODOs
+
+No TODOs are present in the code.

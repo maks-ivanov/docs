@@ -1,0 +1,74 @@
+---
+title: "base.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/models/base.py`, provides utility functions for converting strings and dictionary keys from snake_case to camelCase. This is particularly useful for ensuring consistent naming conventions when interfacing with systems or APIs that expect camelCase formatting.
+
+## Code Structure
+
+The file contains two main functions: `to_camel_case` and `deep_to_camel_case`. The `to_camel_case` function is responsible for converting individual snake_case strings to camelCase, while `deep_to_camel_case` applies this conversion recursively to all keys in a dictionary, including nested dictionaries and lists.
+
+## Symbols
+
+### `to_camel_case`
+#### Description
+Converts a given snake_case string to camelCase. This is useful for transforming variable names or keys to a format that is commonly used in JavaScript and other languages.
+
+#### Inputs
+| Name      | Type | Description                  |
+|:----------|:-----|:-----------------------------|
+| snake_str | str  | A string in snake_case format |
+
+#### Outputs
+| Name       | Type | Description                  |
+|:-----------|:-----|:-----------------------------|
+| camel_case | str  | The input string in camelCase format |
+
+#### Internal Logic
+- If the input string is empty, it returns an empty string.
+- If the string does not contain an underscore, it returns the string as is.
+- Otherwise, it splits the string by underscores, capitalizes each part, and joins them back together. The first character of the result is then converted to lowercase to ensure camelCase formatting.
+
+### `deep_to_camel_case`
+#### Description
+Recursively converts all keys in a dictionary from snake_case to camelCase. This function can handle nested dictionaries and lists, making it suitable for complex data structures.
+
+#### Inputs
+| Name       | Type | Description                                  |
+|:-----------|:-----|:---------------------------------------------|
+| snake_dict | Any  | A dictionary or list with snake_case keys    |
+
+#### Outputs
+| Name       | Type         | Description                                  |
+|:-----------|:-------------|:---------------------------------------------|
+| camel_dict | dict[str, Any] | A dictionary with all keys in camelCase format |
+
+#### Internal Logic
+- If the input is a list, it applies the conversion to each element.
+- If the input is a string, it directly converts it using `to_camel_case`.
+- For dictionaries, it iterates over each key-value pair:
+  - Converts the key to camelCase.
+  - Recursively applies the conversion to the value if it is a dictionary or a list.
+  - Constructs a new dictionary with the converted keys and values.
+
+## References
+
+- The `deep_to_camel_case` function is used in other parts of the codebase, such as in `marimo/_pyodide/pyodide_session.py` and `marimo/_server/router.py`, to ensure that data structures are formatted correctly for API responses or other integrations.
+
+## Dependencies
+
+The file uses the `typing` module for type annotations, specifically `Any` and `dict[str, Any]`.
+
+## Error Handling
+
+The functions do not explicitly handle errors, as they assume valid input types (strings for `to_camel_case` and dictionaries/lists for `deep_to_camel_case`). If the input types are incorrect, Python's built-in type errors will be raised.
+
+## Logging
+
+There is no logging implemented in this file. The functions are straightforward and do not perform operations that typically require logging.
+
+## Testing
+
+The related file `marimo/_server/models/test_base.py` contains tests for both `to_camel_case` and `deep_to_camel_case`, ensuring that they correctly convert various input cases to camelCase. These tests cover simple strings, nested dictionaries, lists of dictionaries, and mixed types.

@@ -1,0 +1,63 @@
+---
+title: "holoviews_formatters.py"
+---
+
+## High-level description
+
+The `HoloViewsFormatter` class in the target file is a specialized formatter for rendering HoloViews objects within the Marimo framework. It extends the `FormatterFactory` to register formatters for various HoloViews object types, enabling them to be converted into HTML for display. The formatter also integrates with Plotly if the output is a Plotly figure, ensuring compatibility and enhanced visualization capabilities.
+
+## Code Structure
+
+- `HoloViewsFormatter` is a subclass of `FormatterFactory`.
+- It uses the `DependencyManager` to check for the presence of Plotly.
+- The `register` method defines a series of formatters for different HoloViews object types.
+- The `_show_chart` function is a key component that handles the rendering of HoloViews objects and integrates with Plotly if necessary.
+
+## References
+
+- `DependencyManager` from `marimo._dependencies.dependencies` is used to check for Plotly's presence.
+- `KnownMimeType` from `marimo._messaging.mimetypes` is used to define the MIME type of the output.
+- `FormatterFactory` from `marimo._output.formatters.formatter_factory` is the base class for `HoloViewsFormatter`.
+- `PlotlyFormatter` from `marimo._output.formatters.plotly_formatters` is used to render Plotly figures.
+- `as_html` from `marimo._output.formatting` is used to convert backend output to HTML.
+
+## Symbols
+
+### `HoloViewsFormatter`
+#### Description
+The `HoloViewsFormatter` class is responsible for registering formatters for HoloViews objects, allowing them to be rendered as HTML within the Marimo framework. It checks if the output is a Plotly figure and uses the `PlotlyFormatter` to render it accordingly.
+
+#### Inputs
+- None directly, but it registers formatters for various HoloViews object types.
+
+#### Outputs
+- None directly, but the registered formatters return a tuple of `KnownMimeType` and `str`.
+
+#### Internal Logic
+- The `register` method imports HoloViews and registers formatters for several HoloViews object types using the `formatting.formatter` decorator.
+- The `_show_chart` function renders the HoloViews plot using `hv.render`.
+- If the rendered output is a dictionary (indicating a Plotly figure), it uses `PlotlyFormatter.render_plotly_dict` to convert it to HTML.
+- Otherwise, it uses `as_html` to convert the output to HTML.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `holoviews` | Used for rendering and formatting HoloViews objects. |
+| `marimo._dependencies.dependencies.DependencyManager` | Checks for the presence of Plotly. |
+| `marimo._messaging.mimetypes.KnownMimeType` | Defines the MIME type of the output. |
+| `marimo._output.formatters.formatter_factory.FormatterFactory` | Base class for creating formatters. |
+| `marimo._output.formatters.plotly_formatters.PlotlyFormatter` | Used to render Plotly figures. |
+| `marimo._output.formatting.as_html` | Converts backend output to HTML. |
+
+## Error Handling
+
+- The code does not explicitly handle errors within the `HoloViewsFormatter`. It assumes that the necessary dependencies are available and that the rendering functions will succeed.
+
+## Logging
+
+- There is no explicit logging in the `HoloViewsFormatter` class.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,103 @@
+---
+title: "sql.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `SQLLanguageAdapter` class, which is part of a codebase that integrates SQL language support into a larger system, likely involving code editing or transformation. The tests verify the functionality of methods that transform SQL code embedded in Python strings, ensuring that SQL code can be correctly extracted, transformed, and validated for support.
+
+## Code Structure
+
+The main symbol in the code is the `SQLLanguageAdapter` class, which is tested using the `vitest` testing framework. The tests are organized into three main sections: `transformIn`, `transformOut`, and `isSupported`, each corresponding to a method in the `SQLLanguageAdapter` class. The `beforeAll` hook is used to set up the necessary state before running the tests.
+
+## References
+
+- `SQLLanguageAdapter` from `../sql`: The class being tested.
+- `store` and `capabilitiesAtom` from `@/core/state/jotai` and `@/core/config/capabilities`: Used to set up the environment for the tests.
+
+## Symbols
+
+### `SQLLanguageAdapter`
+#### Description
+The `SQLLanguageAdapter` class is responsible for handling SQL code embedded within Python strings. It provides methods to transform SQL code into a format suitable for execution and to verify if a given string is supported for SQL transformation.
+
+#### Methods
+
+#### `transformIn`
+##### Description
+Extracts SQL code from a Python string and calculates the offset of the SQL code within the string.
+
+##### Inputs
+| Name       | Type   | Description                      |
+|:-----------|:-------|:---------------------------------|
+| pythonCode | string | The Python string containing SQL |
+
+##### Outputs
+| Name      | Type   | Description                                      |
+|:----------|:-------|:-------------------------------------------------|
+| innerCode | string | The extracted SQL code                           |
+| offset    | number | The position of the SQL code within the string   |
+
+##### Internal Logic
+- Checks if the input string is supported using `isSupported`.
+- Trims the input string and handles empty strings.
+- Uses regular expressions to match and extract SQL code from the input string.
+- Calculates the offset of the SQL code within the input string.
+
+#### `transformOut`
+##### Description
+Wraps SQL code in a Python string format suitable for execution.
+
+##### Inputs
+| Name | Type   | Description         |
+|:-----|:-------|:--------------------|
+| code | string | The SQL code to wrap |
+
+##### Outputs
+| Name        | Type   | Description                                      |
+|:------------|:-------|:-------------------------------------------------|
+| wrappedCode | string | The SQL code wrapped in a Python string format   |
+| offset      | number | The position of the SQL code within the wrapped string |
+
+##### Internal Logic
+- Uses the last quote prefix and dataframe name to format the SQL code.
+- Escapes triple double quotes within the SQL code.
+- Constructs the wrapped string with appropriate indentation.
+
+#### `isSupported`
+##### Description
+Determines if a given Python string is supported for SQL transformation.
+
+##### Inputs
+| Name       | Type   | Description                      |
+|:-----------|:-------|:---------------------------------|
+| pythonCode | string | The Python string to check       |
+
+##### Outputs
+| Name      | Type    | Description                                      |
+|:----------|:--------|:-------------------------------------------------|
+| isSupported | boolean | Whether the string is supported for SQL transformation |
+
+##### Internal Logic
+- Checks if SQL capabilities are enabled in the global state.
+- Verifies that the string does not contain multiple `mo.sql` calls.
+- Uses regular expressions to check if the string matches supported SQL formats.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `vitest`   | Used for writing and running unit tests      |
+| `jotai`    | Used for managing global state in the tests  |
+
+## Error Handling
+
+- The `transformIn` method throws an error if the input string is not supported for SQL transformation.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

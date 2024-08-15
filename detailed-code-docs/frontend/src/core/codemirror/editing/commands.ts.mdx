@@ -1,0 +1,82 @@
+---
+title: "commands.ts"
+---
+
+## High-level description
+
+The target file, `commands.ts`, defines utility functions for creating and executing bulk commands in a CodeMirror editor environment. It provides a mechanism to apply a single command to multiple editor instances simultaneously, specifically focusing on folding and unfolding all code sections within these editors.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `BulkCommand`: A type definition for a function that applies a command to multiple `EditorView` instances.
+- `makeBulkCommand`: A function that generates a `BulkCommand` from a single `Command`.
+- `foldAllBulk` and `unfoldAllBulk`: Constants that represent bulk commands for folding and unfolding all code sections, respectively, using the `makeBulkCommand` function.
+
+## Symbols
+
+### `BulkCommand`
+#### Description
+`BulkCommand` is a type alias for a function that takes an array of `Nullable&lt;EditorView&gt;` and returns a boolean. It represents a command that can be applied to multiple editor views.
+
+#### Inputs
+| Name   | Type                        | Description                              |
+|:-------|:----------------------------|:-----------------------------------------|
+| targets | Array&lt;Nullable&lt;EditorView&gt;&gt; | An array of editor views to apply the command to. |
+
+#### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| changed | boolean | Indicates if any of the editor views were changed. |
+
+### `makeBulkCommand`
+#### Description
+`makeBulkCommand` is a function that creates a `BulkCommand` from a single `Command`. It applies the given command to all non-null editor views in the provided array.
+
+#### Inputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| command | Command | A single command to be applied to each editor view. |
+
+#### Outputs
+| Name    | Type    | Description                                      |
+|:--------|:--------|:-------------------------------------------------|
+| result  | BulkCommand | A function that applies the command to multiple editor views. |
+
+#### Internal Logic
+- The function iterates over each `EditorView` in the `targets` array.
+- If the `EditorView` is not null, it applies the command to it.
+- It tracks whether any of the commands resulted in a change and returns this as a boolean.
+
+### `foldAllBulk`
+#### Description
+`foldAllBulk` is a bulk command that applies the `foldAll` command to multiple editor views. It is created using the `makeBulkCommand` function.
+
+### `unfoldAllBulk`
+#### Description
+`unfoldAllBulk` is a bulk command that applies the `unfoldAll` command to multiple editor views. It is created using the `makeBulkCommand` function.
+
+## References
+
+- `foldAll` and `unfoldAll` from `@codemirror/language`: These are the commands used to fold and unfold code sections in an editor.
+- `EditorView` and `Command` from `@codemirror/view`: These are the types used to represent editor views and commands.
+
+## Dependencies
+
+| Dependency            | Purpose                                                                 |
+|:----------------------|:------------------------------------------------------------------------|
+| `@codemirror/language`| Provides the `foldAll` and `unfoldAll` commands for code folding.       |
+| `@codemirror/view`    | Provides the `EditorView` and `Command` types for interacting with editors. |
+| `vitest`              | Provides the `Nullable` type used in the `BulkCommand` type definition. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms. It assumes that the commands and editor views are valid and that the operations will succeed.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

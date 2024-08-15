@@ -1,0 +1,101 @@
+---
+title: "hotkeys.ts"
+---
+
+## High-level description
+
+The `hotkeys.ts` file defines a system for managing keyboard shortcuts (hotkeys) in a frontend application. It provides a structure for defining hotkeys, resolving them based on the user's platform (macOS, Windows, Linux), and allows for customization and overriding of default hotkeys. The file includes interfaces and classes to manage hotkey definitions, resolve platform-specific keys, and provide hotkey information to other parts of the application.
+
+## Code Structure
+
+The main components of the code are:
+
+- **Interfaces and Types**: `Hotkey`, `ResolvedHotkey`, `Platform`, and `HotkeyGroup` define the structure and types for hotkeys and their groupings.
+- **Constants**: `DEFAULT_HOT_KEY` is a record of default hotkeys mapped to their actions.
+- **Functions**: `isHotkeyAction` and `getDefaultHotkey` are utility functions to check if a string is a hotkey action and to retrieve the default hotkey for an action.
+- **Classes**: `HotkeyProvider` and `OverridingHotkeyProvider` manage the resolution of hotkeys, taking into account platform-specific overrides and user-defined overrides.
+
+## References
+
+- `isPlatformMac` from `shortcuts.ts` is used to determine the platform for resolving hotkeys.
+- `Objects` from `utils/objects.ts` is used for operations like iterating over keys and grouping hotkeys.
+
+## Symbols
+
+### `Hotkey`
+#### Description
+Defines the structure of a hotkey, including its name, group, and key configuration, which can vary by platform.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the hotkey. |
+| group | HotkeyGroup | The group to which the hotkey belongs. |
+| key | string or object | The key combination for the hotkey, with optional platform-specific overrides. |
+
+#### Outputs
+N/A
+
+### `ResolvedHotkey`
+#### Description
+Represents a hotkey with a resolved key combination for the current platform.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the hotkey. |
+| key | string | The resolved key combination for the hotkey. |
+
+#### Outputs
+N/A
+
+### `HotkeyProvider`
+#### Description
+Manages the resolution of hotkeys, determining the correct key combination based on the user's platform and any overrides.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hotkeys | Record&lt;HotkeyAction, Hotkey&gt; | A record of hotkeys to manage. |
+| isMac | boolean | Optional flag to specify if the platform is macOS. |
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Initializes with a set of hotkeys and determines the platform.
+- Provides methods to iterate over hotkeys, resolve a hotkey for a specific action, and get display names and groups for hotkeys.
+
+### `OverridingHotkeyProvider`
+#### Description
+Extends `HotkeyProvider` to allow for user-defined overrides of hotkeys.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| overrides | Partial&lt;Record&lt;HotkeyAction, string&gt;&gt; | User-defined overrides for hotkeys. |
+
+#### Outputs
+N/A
+
+#### Internal Logic
+- Overrides the `getHotkey` method to apply user-defined key overrides on top of the default hotkeys.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `isPlatformMac` | Determines the platform for resolving hotkeys. |
+| `Objects` | Provides utility functions for object manipulation. |
+
+## Error Handling
+
+The code does not explicitly handle errors but assumes valid input for hotkey definitions and platform checks.
+
+## Logging
+
+No logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

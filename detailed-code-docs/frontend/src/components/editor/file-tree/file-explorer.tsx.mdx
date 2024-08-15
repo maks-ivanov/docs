@@ -1,0 +1,122 @@
+---
+title: "file-explorer.tsx"
+---
+
+## High-level description
+
+The `file-explorer.tsx` file defines a React component called `FileExplorer` that provides a user interface for navigating and managing a file tree structure. It allows users to perform operations such as creating, renaming, moving, and deleting files and folders. The component integrates with a backend service to fetch and update file data, and it uses a variety of UI elements to provide a rich user experience, including toolbars, dropdown menus, and modals.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `FileExplorer`: The main component that renders the file tree and handles user interactions.
+- `Toolbar`: A sub-component that provides buttons for file operations like creating files/folders and refreshing the view.
+- `Node`: A sub-component that represents each file or folder in the tree, with actions like rename, delete, and open.
+- `RequestingTree`: A class that manages the file tree data and communicates with the backend for file operations.
+- `useImperativeModal`: A hook used to open modals for user prompts and confirmations.
+
+## References
+
+- `RequestingTree`: Used to manage the file tree data and perform operations like create, delete, and rename.
+- `useImperativeModal`: Used to open modals for user input and confirmations.
+- `useAsyncData`: Used to fetch and manage asynchronous data for the file tree.
+- `FileViewer`: A component used to display the contents of a selected file.
+
+## Symbols
+
+### `FileExplorer`
+#### Description
+The `FileExplorer` component renders a file tree and provides functionality for managing files and folders. It allows users to create, rename, move, and delete files and folders, and to view file contents.
+
+#### Inputs
+| Name   | Type   | Description          |
+|:-------|:-------|:---------------------|
+| height | number | The height of the file explorer component. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX  | The rendered file explorer component. |
+
+#### Internal Logic
+- Initializes the file tree using `useAsyncData` to fetch data from the backend.
+- Uses `useImperativeModal` to open modals for creating files/folders and confirming deletions.
+- Handles user interactions such as selecting, renaming, and deleting files through event handlers.
+- Manages the open state of folders to maintain the user's view preferences.
+
+### `Toolbar`
+#### Description
+The `Toolbar` component provides a set of buttons for performing file operations such as creating files/folders, uploading files, refreshing the view, and collapsing all folders.
+
+#### Inputs
+| Name          | Type     | Description |
+|:--------------|:---------|:------------|
+| onRefresh     | function | Callback to refresh the file tree. |
+| onCreateFile  | function | Callback to create a new file. |
+| onCreateFolder| function | Callback to create a new folder. |
+| onCollapseAll | function | Callback to collapse all folders. |
+| tree          | RequestingTree | The file tree data manager. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX  | The rendered toolbar component. |
+
+### `Node`
+#### Description
+The `Node` component represents a single file or folder in the file tree. It provides UI elements for interacting with the file, such as renaming, deleting, and opening.
+
+#### Inputs
+| Name       | Type                  | Description |
+|:-----------|:----------------------|:------------|
+| node       | NodeApi&lt;FileInfo&gt;     | The file or folder node data. |
+| style      | React.CSSProperties   | The style to apply to the node. |
+| dragHandle | React.Ref&lt;HTMLDivElement&gt; | Reference for drag-and-drop operations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | JSX  | The rendered node component. |
+
+#### Internal Logic
+- Determines the file type and selects the appropriate icon.
+- Provides a dropdown menu with actions like open, rename, copy path, and delete.
+- Handles user interactions such as clicking to open or toggle folders.
+
+### `RequestingTree`
+#### Description
+The `RequestingTree` class manages the file tree data and communicates with the backend to perform file operations such as listing, creating, renaming, and deleting files and folders.
+
+#### Inputs
+| Name      | Type   | Description |
+|:----------|:-------|:------------|
+| callbacks | object | An object containing functions for backend requests. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| void | void | The class does not return values but updates the file tree state. |
+
+#### Internal Logic
+- Initializes the file tree by fetching data from the backend.
+- Provides methods for expanding folders, renaming files, moving files, creating files/folders, and deleting files.
+- Updates the file tree state and notifies listeners of changes.
+
+## Dependencies
+
+| Dependency      | Purpose                                      |
+|:----------------|:---------------------------------------------|
+| `react-arborist`| Provides the tree structure and rendering.   |
+| `lucide-react`  | Provides icons for UI elements.              |
+| `jotai`         | Manages global state for the file tree.      |
+| `react-use-event-hook` | Provides hooks for event handling.    |
+
+## Error Handling
+- Uses `ErrorBanner` to display errors encountered during data fetching or file operations.
+- Displays toast notifications for errors and confirmations using the `toast` utility.
+
+## Logging
+- Uses the `Logger` utility to log errors encountered during file operations.
+
+## TODOs
+- No TODOs or notes are present in the code.

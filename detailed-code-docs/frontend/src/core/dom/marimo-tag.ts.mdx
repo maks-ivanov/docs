@@ -1,0 +1,86 @@
+---
+title: "marimo-tag.ts"
+---
+
+## High-level description
+
+The `marimo-tag.ts` file defines a set of functions to retrieve configuration and metadata for a Marimo application from the DOM or environment variables. It provides two configurations: one for DOM-based settings and another for "islands" mode, which is determined by the `isIslands` function. The file exports functions to get the Marimo version, server token, app configuration, user configuration, and code, depending on the mode.
+
+## Code Structure
+
+The main symbols in the code are two objects, `domBasedMarimoSettings` and `islandsBasedMarimoSettings`, which implement the `MarimoSettings` interface. These objects provide methods to retrieve various Marimo-related settings. The exported functions are selected based on the result of the `isIslands` function, which determines whether the application is running in "islands" mode or not. The `getMarimoDOMValue` function is a utility used by `domBasedMarimoSettings` to extract data from the DOM.
+
+## Symbols
+
+### `MarimoSettings`
+#### Description
+The `MarimoSettings` interface defines a contract for retrieving various Marimo-related settings, such as version, server token, app configuration, user configuration, and code.
+
+#### Inputs
+None directly, but the methods within the interface expect certain DOM elements or environment variables to be present.
+
+#### Outputs
+The interface methods return strings or objects, depending on the specific method.
+
+### `domBasedMarimoSettings`
+#### Description
+This object implements the `MarimoSettings` interface for a DOM-based environment. It retrieves Marimo settings from specific DOM elements using the `getMarimoDOMValue` function.
+
+#### Internal Logic
+- `getMarimoVersion`, `getMarimoServerToken`, `getMarimoAppConfig`, and `getMarimoUserConfig` use `getMarimoDOMValue` to fetch data attributes from specific DOM elements.
+- `getMarimoCode` retrieves and decodes the inner HTML of a `marimo-code` element.
+
+### `islandsBasedMarimoSettings`
+#### Description
+This object implements the `MarimoSettings` interface for an "islands" environment, where settings are primarily fetched from environment variables.
+
+#### Internal Logic
+- `getMarimoVersion` asserts the existence of the `VITE_MARIMO_VERSION` environment variable.
+- Other methods return default or empty values, as they are not applicable in this mode.
+
+### `getMarimoDOMValue`
+#### Description
+A utility function that retrieves a data attribute from a specified DOM element.
+
+#### Inputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| tagName | string | The name of the DOM element to query. |
+| key     | string | The data attribute key to retrieve.  |
+
+#### Outputs
+| Name  | Type   | Description                        |
+|:------|:-------|:-----------------------------------|
+| value | string | The value of the specified data attribute. |
+
+#### Internal Logic
+- Uses `document.querySelector` to find the element.
+- Uses `invariant` to ensure the element and data attribute exist.
+- Returns the data attribute value.
+
+## References
+
+- `assertExists` from `@/utils/assertExists`: Used in `islandsBasedMarimoSettings` to ensure environment variables are present.
+- `invariant` from `@/utils/invariant`: Used to assert conditions in `getMarimoDOMValue` and `getMarimoCode`.
+- `isIslands` from `@/core/islands/utils`: Determines which settings configuration to use.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `assertExists` | Ensures that a value exists, throwing an error if it does not. |
+| `invariant` | Asserts that a condition is true, throwing an error if it is not. |
+| `isIslands` | Determines if the application is running in "islands" mode. |
+
+## Error Handling
+
+The code uses the `invariant` function to handle errors by asserting conditions. If a condition fails, an error is thrown with a specified message. This is used to ensure that required DOM elements and data attributes are present.
+
+## Side Effects
+
+- The `getMarimoCode` function accesses the DOM to retrieve and decode the inner HTML of a `marimo-code` element.
+- The `getMarimoDOMValue` function accesses the DOM to retrieve data attributes.
+
+## Logging
+
+No explicit logging is implemented in this file. Errors are thrown using `invariant`, which could be caught and logged by higher-level error handling mechanisms.

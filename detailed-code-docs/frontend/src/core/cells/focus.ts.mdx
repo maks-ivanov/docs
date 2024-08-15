@@ -1,0 +1,133 @@
+---
+title: "focus.ts"
+---
+
+## High-level description
+
+The target file, `focus.ts`, is part of a frontend application that manages the focus state of cells within a notebook interface. It utilizes the `jotai` state management library to track and update the focus state of cells, specifically the last focused cell, and provides utility functions to interact with this state.
+
+## Code Structure
+
+The main symbols in the code are interconnected through the use of `jotai` atoms, which are used to manage and share state across different parts of the application. The `lastFocusedCellIdAtom` and `lastFocusedCellAtom` are central to this file, with utility functions like `useLastFocusedCellId`, `useSetLastFocusedCellId`, and `cellFocusDetailsAtom` providing interfaces to interact with these atoms.
+
+## References
+
+- `CellId` from `./ids`: Used to type the cell identifiers.
+- `SCRATCH_CELL_ID` and `notebookAtom` from `./cells`: Used to manage special cases and access the notebook state.
+- `EditorView` from `@codemirror/view`: Used to manage the editor view of a cell.
+- `CellConfig` and `RuntimeState` from `../network/types`: Used to define the configuration and runtime state of a cell.
+
+## Symbols
+
+### `lastFocusedCellIdAtom`
+#### Description
+An atom that holds the state of the last focused cell's ID. It is initialized to `null` and can be updated to track which cell was last focused.
+
+#### Inputs
+None directly, but it is used and updated by other functions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lastFocusedCellId | `CellId \| null` | The ID of the last focused cell or `null` if no cell is focused. |
+
+### `useLastFocusedCellId`
+#### Description
+A hook that returns the current value of the `lastFocusedCellIdAtom`, allowing components to access the ID of the last focused cell.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lastFocusedCellId | `CellId \| null` | The ID of the last focused cell or `null`. |
+
+### `useSetLastFocusedCellId`
+#### Description
+A hook that provides a setter function to update the `lastFocusedCellIdAtom`. It prevents setting the ID to `SCRATCH_CELL_ID`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId \| null` | The ID of the cell to set as the last focused. |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves a setter function for `lastFocusedCellIdAtom`.
+- Checks if the provided `cellId` is equal to `SCRATCH_CELL_ID` and returns early if true.
+- Otherwise, updates the atom with the provided `cellId`.
+
+### `lastFocusedCellAtom`
+#### Description
+An atom that holds detailed information about the last focused cell, including its configuration, status, and editor view.
+
+#### Inputs
+None directly, but it depends on `lastFocusedCellIdAtom` and `notebookAtom`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lastFocusedCell | `object \| null` | An object containing details about the last focused cell or `null`. |
+
+#### Internal Logic
+- Uses the `get` function to retrieve the current `cellId` from `lastFocusedCellIdAtom`.
+- If `cellId` is `null` or `SCRATCH_CELL_ID`, returns `null`.
+- Otherwise, calls `cellFocusDetails` to get detailed information about the cell.
+
+### `cellFocusDetailsAtom`
+#### Description
+A function that returns an atom for retrieving detailed focus information about a specific cell.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId` | The ID of the cell for which to retrieve focus details. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellFocusDetailsAtom | `atom` | An atom that provides focus details for the specified cell. |
+
+### `cellFocusDetails`
+#### Description
+A function that retrieves detailed information about a cell's focus state, including its name, configuration, status, and editor view.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellId | `CellId` | The ID of the cell for which to retrieve details. |
+| notebookState | `NotebookState` | The current state of the notebook. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cellDetails | `object \| null` | An object containing details about the cell or `null` if the cell is not found. |
+
+#### Internal Logic
+- Extracts `cellData`, `cellHandles`, and `cellRuntime` from `notebookState`.
+- Retrieves the data, runtime, and handle for the specified `cellId`.
+- If data or handle is missing, returns `null`.
+- Constructs and returns an object with the cell's ID, name, configuration, status, editor view, and output presence.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `jotai` | Used for state management, specifically for creating and managing atoms. |
+| `@codemirror/view` | Provides types and functionality related to the editor view of a cell. |
+
+## Error Handling
+
+The code includes checks to prevent setting the `lastFocusedCellIdAtom` to `SCRATCH_CELL_ID`, which is a special identifier that should not be treated as a regular cell ID.
+
+## Side Effects
+
+- The `useSetLastFocusedCellId` function modifies the state of `lastFocusedCellIdAtom`.
+- The `lastFocusedCellAtom` and `cellFocusDetailsAtom` depend on the state of other atoms and can trigger updates in components that use them.
+
+## Performance Considerations
+
+The use of `jotai` for state management is generally efficient, but care should be taken to avoid unnecessary updates to atoms, especially in large notebooks with many cells.

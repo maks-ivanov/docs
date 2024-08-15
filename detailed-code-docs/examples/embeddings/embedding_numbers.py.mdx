@@ -1,0 +1,95 @@
+---
+title: "embedding_numbers.py"
+---
+
+## High-level description
+
+The `embedding_numbers.py` script is an interactive application built using the `marimo` framework. It demonstrates how to use the `pymde` library to create embeddings of the MNIST dataset, which consists of 70,000 28x28 grayscale images of handwritten digits. The application allows users to explore the embeddings by adjusting parameters such as embedding dimension and constraint type, and visualizes the results using matplotlib.
+
+## Code Structure
+
+The script is structured as a series of `@app.cell` decorated functions, which are a feature of the `marimo` framework. Each function represents a cell in the application, contributing to the overall functionality by handling different aspects such as UI elements, data processing, and visualization. The functions are interconnected, with some functions returning values that are used as inputs for others.
+
+## References
+
+- `marimo`: A framework used to build the interactive application.
+- `pymde`: A library used for creating embeddings.
+- `torch`: Used for tensor operations and checking CUDA availability.
+- `matplotlib.pyplot`: Used for plotting and visualizing images and embeddings.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of `marimo.App`, which serves as the main application object. It manages the lifecycle and execution of the application cells.
+
+### `@app.cell`
+#### Description
+A decorator provided by `marimo` to define a cell in the application. Each decorated function represents a distinct part of the application, such as UI components or data processing logic.
+
+### `__generated_with`
+#### Description
+A string indicating the version of the tool or framework used to generate the script. In this case, it is "0.1.19".
+
+### `mo`
+#### Description
+An alias for the `marimo` module, used within the cells to access UI components and other functionalities provided by `marimo`.
+
+### `compute_embedding`
+#### Description
+A function that computes the embedding of the MNIST dataset using the `pymde.preserve_neighbors` function. It caches the results to avoid redundant computations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| embedding_dim | int | The dimension of the embedding (2 or 3). |
+| constraint | object | The constraint type for the embedding, either `Centered` or `Standardized`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | tuple | A tuple containing the MDE object and the computed embedding. |
+
+#### Internal Logic
+- Checks if the embedding for the given parameters is already cached.
+- If not cached, it computes the embedding using `pymde.preserve_neighbors`.
+- Stores the result in the cache and returns it.
+
+### `show_random_images`
+#### Description
+A function that displays a random selection of images from the MNIST dataset.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| n_images | int | The number of random images to display. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fig | Figure | A matplotlib figure containing the displayed images. |
+
+#### Internal Logic
+- Selects random indices from the MNIST dataset.
+- Reshapes and displays the selected images using matplotlib.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used to build the interactive application. |
+| `pymde` | Used for creating embeddings of the MNIST dataset. |
+| `torch` | Used for tensor operations and checking CUDA availability. |
+| `matplotlib.pyplot` | Used for plotting and visualizing images and embeddings. |
+
+## Error Handling
+
+The script does not explicitly handle errors beyond basic exception raising. It assumes that the necessary libraries are installed and that the MNIST dataset is available.
+
+## Logging
+
+The script uses `mo.output.append` to provide feedback to the user when an embedding is being computed. This is a form of user-facing logging to indicate progress.
+
+## TODOs
+
+There are no explicit TODOs or notes left in the code.

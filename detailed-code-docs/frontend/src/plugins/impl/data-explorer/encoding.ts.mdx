@@ -1,0 +1,112 @@
+---
+title: "encoding.ts"
+---
+
+## High-level description
+
+The target file, `encoding.ts`, is part of a data visualization plugin that deals with encoding specifications for charting. It defines types and functions to convert between internal field definitions and external field queries, which are used to specify how data fields should be visualized in a chart. The code is adapted from the Vega Voyager project and is designed to handle various encoding channels and field functions, ensuring compatibility with the CompassQL library.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `EncodingChannel` and `FieldDefinition` are types that define the possible channels and field properties for encoding.
+- `toFieldQuery` and `fromFieldQuery` are functions that convert between `FieldDefinition` and `FieldQuery` types.
+- The code references utility functions and types from other modules, such as `toFieldQueryFunctionMixins` and `fromFieldQueryFunctionMixins` for handling field functions, and `removeUndefined` for cleaning up objects.
+
+## References
+
+- `compassql/build/src/query/encoding`: Provides `FieldQuery` type and related utilities.
+- `compassql/build/src/query/expandedtype`: Provides `ExpandedType` type.
+- `compassql/build/src/wildcard`: Provides utilities for handling wildcards.
+- `./functions/function`: Provides functions for handling field query function mixins.
+- `./functions/types`: Provides `FieldFunction` type.
+- `./queries/removeUndefined`: Provides a utility function to remove undefined properties from objects.
+- `@/utils/invariant`: Provides a utility function for runtime assertions.
+- `@/utils/Logger`: Provides a logging utility.
+
+## Symbols
+
+### `EncodingChannel`
+#### Description
+Defines a set of possible channels for encoding data in a chart, such as "x", "y", "color", etc.
+
+### `FieldDefinition`
+#### Description
+Represents the definition of a field encoding, including the field name, optional function, scale, axis, legend, type, and description.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| field | `WildcardProperty&lt;string&gt;` | The field name, possibly a wildcard. |
+| fn | `FieldFunction` | Optional function applied to the field. |
+| scale | `FieldQuery["scale"]` | Optional scale configuration. |
+| axis | `FieldQuery["axis"]` | Optional axis configuration. |
+| legend | `FieldQuery["legend"]` | Optional legend configuration. |
+| type | `ExpandedType` | The data type of the field. |
+| description | `string` | Optional description of the field. |
+
+### `SpecificEncoding`
+#### Description
+A type that maps `EncodingChannel` to `FieldDefinition`, allowing partial specification of encodings.
+
+### `toFieldQuery`
+#### Description
+Converts a `FieldDefinition` and an encoding channel into a `FieldQuery` object, which is used by CompassQL to define how a field should be visualized.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fieldDef | `FieldDefinition` | The field definition to convert. |
+| channel | `EncodingChannel` or `SHORT_WILDCARD` | The encoding channel or a wildcard. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `FieldQuery` | The resulting field query object. |
+
+#### Internal Logic
+- Extracts the function (`fn`) from the `FieldDefinition`.
+- Uses `toFieldQueryFunctionMixins` to convert the function into query mixins.
+- Combines the channel, function mixins, and other properties into a `FieldQuery`.
+
+### `fromFieldQuery`
+#### Description
+Converts a `FieldQuery` back into a `FieldDefinition`, handling any necessary transformations and validations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fieldQ | `FieldQuery` | The field query to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `FieldDefinition` | The resulting field definition. |
+
+#### Internal Logic
+- Extracts properties from the `FieldQuery`.
+- Validates the type, converting unsupported types and logging warnings if necessary.
+- Uses `fromFieldQueryFunctionMixins` to extract the function from the query.
+- Asserts that the field is defined using `invariant`.
+- Cleans up the resulting object using `removeUndefined`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `compassql` | Provides types and utilities for query encoding and handling wildcards. |
+| `@/utils/invariant` | Used for runtime assertions to ensure conditions are met. |
+| `@/utils/Logger` | Used for logging warnings and errors. |
+
+## Error Handling
+
+- The `fromFieldQuery` function throws an error if a wildcard type is encountered, as wildcards are not supported in this context.
+- The `invariant` function is used to assert that a field is defined, throwing an error if the condition is not met.
+
+## Logging
+
+- The `Logger` utility is used to log warnings when an unsupported type is encountered, providing feedback to developers or users.
+
+## TODOs
+
+- There are commented-out properties (`sort` and `stack`) in the `FieldDefinition` interface, indicating potential future use or expansion of functionality.

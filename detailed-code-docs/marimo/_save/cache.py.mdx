@@ -1,0 +1,79 @@
+---
+title: "cache.py"
+---
+
+## High-level description
+
+The `cache.py` file in the Marimo project is responsible for defining structures and functions related to caching mechanisms. It provides a `Cache` class to represent cache entries and a function `contextual_defs` to resolve variable names within a specific execution context. The caching system is designed to support different types of caching strategies, such as content-addressed and execution path caching, which are identified by specific prefixes.
+
+## Code Structure
+
+- **CacheType**: A type alias for cache types, which can be "ContentAddressed", "ExecutionPath", or "Unknown".
+- **CACHE_PREFIX**: A dictionary mapping each `CacheType` to a string prefix for easy identification.
+- **ValidCacheSha**: A named tuple to store a SHA hash and its associated cache type.
+- **Cache**: A data class representing a cache entry, including definitions, hash, cache type, and a hit flag.
+- **contextual_defs**: A function that uses the current execution context to resolve private variable names in a cache.
+
+## Symbols
+
+### `Cache`
+#### Description
+The `Cache` class is a data structure that holds information about a cache entry. It includes the definitions of variables, a hash representing the cache, the type of cache, and a flag indicating whether the cache was a hit.
+
+#### Inputs
+| Name       | Type            | Description                        |
+|:-----------|:----------------|:-----------------------------------|
+| defs       | dict[Name, Any] | A dictionary of variable definitions. |
+| hash       | str             | A string representing the cache hash. |
+| cache_type | CacheType       | The type of cache (e.g., "ContentAddressed"). |
+| hit        | bool            | A flag indicating if the cache was a hit. |
+
+#### Outputs
+N/A
+
+### `contextual_defs`
+#### Description
+The `contextual_defs` function resolves private variable names in a cache using the current execution context. It modifies variable names by adding a prefix based on the current cell's execution context.
+
+#### Inputs
+| Name  | Type  | Description                        |
+|:------|:------|:-----------------------------------|
+| cache | Cache | A cache object containing variable definitions. |
+
+#### Outputs
+| Name | Type                        | Description |
+|:-----|:----------------------------|:------------|
+| dict | dict[tuple[Name, Name], Any] | A dictionary mapping original and modified variable names to their values. |
+
+#### Internal Logic
+- Retrieves the current execution context using `get_context()`.
+- Asserts that the context is not `None`.
+- Constructs a private prefix using the cell ID from the context.
+- Iterates over the variable definitions in the cache, replacing leading underscores in variable names with the private prefix.
+
+## References
+
+- **Name**: A type alias for strings, used to represent variable names.
+- **get_context**: A function from `marimo._runtime.context` that retrieves the current execution context.
+
+## Dependencies
+
+| Dependency                  | Purpose                                      |
+|:----------------------------|:---------------------------------------------|
+| `re`                        | Used for regular expression operations.      |
+| `collections.namedtuple`    | Used to create the `ValidCacheSha` named tuple. |
+| `dataclasses.dataclass`     | Used to define the `Cache` class.            |
+| `typing.Literal`            | Used to define the `CacheType` type alias.   |
+| `marimo._runtime.context`   | Provides the `get_context` function to access execution context. |
+
+## Error Handling
+
+- The `contextual_defs` function asserts that the execution context is not `None`, raising an assertion error if it is.
+
+## Side Effects
+
+- The `contextual_defs` function modifies variable names by adding a prefix based on the current execution context.
+
+## Performance Considerations
+
+- The use of regular expressions in `contextual_defs` could have performance implications if the number of variables is large, but this is generally negligible for typical use cases.

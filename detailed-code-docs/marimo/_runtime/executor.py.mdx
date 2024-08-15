@@ -1,0 +1,225 @@
+---
+title: "executor.py"
+---
+
+## High-level description
+
+The `executor.py` file in the Marimo project is responsible for executing code cells within a runtime environment. It defines a framework for executing cells either synchronously or asynchronously, with support for different execution strategies, such as "relaxed" and "strict" modes. The file also includes error handling mechanisms to manage runtime exceptions and missing references during execution.
+
+## Code Structure
+
+The main components of the code are the `Executor` abstract base class, the `DefaultExecutor` and `StrictExecutor` classes that implement specific execution strategies, and utility functions for managing execution types and handling errors. The `execute_cell` and `execute_cell_async` functions are central to executing code cells, while the `register_execution_type` function allows for the registration of different execution strategies.
+
+## Symbols
+
+### `MarimoRuntimeException`
+#### Description
+A custom exception class that serves as a wrapper for all runtime exceptions in the Marimo environment.
+
+### `MarimoNameError`
+#### Description
+A custom exception class that wraps a standard `NameError` to include additional context, specifically a reference string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | str | The error message. |
+| ref | str | The reference string associated with the error. |
+
+### `MarimoMissingRefError`
+#### Description
+A custom exception class for handling missing reference errors, optionally wrapping a `NameError`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ref | str | The missing reference. |
+| name_error | Optional[NameError] | An optional `NameError` to wrap. |
+
+### `raise_name_error`
+#### Description
+Handles `NameError` exceptions by raising a `MarimoRuntimeException`, potentially wrapping it in a `MarimoMissingRefError` if the missing name is part of the graph's definitions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| graph | Optional[DirectedGraph] | The graph of cell dependencies. |
+| name_error | NameError | The original `NameError` to handle. |
+
+### `register_execution_type`
+#### Description
+A decorator function that registers a new execution type by associating a string key with an `Executor` class.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | str | The key to associate with the `Executor` class. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| wrapper | Callable[[Type[Executor]], Type[Executor]] | A decorator function for registering the executor. |
+
+### `execute_cell_async`
+#### Description
+Executes a cell asynchronously using the specified execution type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | CellImpl | The cell to execute. |
+| glbls | dict[str, Any] | The global variables for execution. |
+| graph | DirectedGraph | The graph of cell dependencies. |
+| execution_type | str | The type of execution strategy to use. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Any | The result of the cell execution. |
+
+### `execute_cell`
+#### Description
+Executes a cell synchronously using the specified execution type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | CellImpl | The cell to execute. |
+| glbls | dict[str, Any] | The global variables for execution. |
+| graph | DirectedGraph | The graph of cell dependencies. |
+| execution_type | str | The type of execution strategy to use. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Any | The result of the cell execution. |
+
+### `Executor`
+#### Description
+An abstract base class defining the interface for executing cells, both synchronously and asynchronously.
+
+### `DefaultExecutor`
+#### Description
+Implements the "relaxed" execution strategy, allowing for both synchronous and asynchronous execution of cells.
+
+#### Internal Logic
+- Executes the cell's body and evaluates the last expression.
+- Handles `NameError` by invoking `raise_name_error`.
+- Wraps exceptions in `MarimoRuntimeException`.
+
+### `StrictExecutor`
+#### Description
+Implements the "strict" execution strategy, which includes additional checks and management of global variables and references.
+
+#### Internal Logic
+- Manages global variables and references before execution.
+- Uses `sanitize_inputs` to prepare the execution environment.
+- Restores global state and updates outputs after execution.
+
+### `sanitize_inputs`
+#### Description
+Prepares the execution environment by managing global variables and references, ensuring that only necessary variables are included.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | CellImpl | The cell to execute. |
+| refs | set[str] | The set of references required by the cell. |
+| glbls | dict[str, Any] | The global variables for execution. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| backup | dict[str, Any] | A backup of the original global variables. |
+
+### `update_outputs`
+#### Description
+Restores the global state and updates the outputs after cell execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell | CellImpl | The cell that was executed. |
+| glbls | dict[str, Any] | The global variables for execution. |
+| backup | dict[str, Any] | A backup of the original global variables. |
+
+### `build_ref_predicate`
+#### Description
+Builds a predicate function to determine if a reference should be included in a reference search based on its type.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| glbls | dict[str, Any] | The global variables dictionary. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| predicate | Callable[[Name, VariableData], bool] | A function to determine if a reference should be included. |
+
+### `is_instance_by_name`
+#### Description
+Checks if an object is an instance of a class with a specific name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | object | The object to check. |
+| name | str | The name of the class to check against. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Whether the object is an instance of the specified class. |
+
+### `is_unclonable_type`
+#### Description
+Determines if an object is of a type that cannot be cloned.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | object | The object to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Whether the object is unclonable. |
+
+### `from_unclonable_module`
+#### Description
+Checks if an object is from a module that is considered unclonable.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | object | The object to check. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | bool | Whether the object is from an unclonable module. |
+
+## References
+
+- `CellImpl` from `marimo._ast.cell`: Represents a cell in the execution environment.
+- `DirectedGraph` from `marimo._runtime.dataflow`: Represents the graph of cell dependencies.
+- `shallow_copy`, `ZeroCopy`, `CloneError` from `marimo._runtime.copy`: Utilities for managing object copying during execution.
+- `is_mangled_local`, `unmangle_local` from `marimo._utils.variables`: Utilities for handling variable names.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `inspect` | Used for introspection to check if objects are functions, modules, or classes. |
+| `re` | Used for regular expression operations, particularly in error handling. |
+| `weakref` | Used for creating weak references to objects. |
+| `deepcopy` | Used for creating deep copies of objects. |
+
+## Error Handling
+
+The code implements custom exceptions like `MarimoRuntimeException`, `MarimoNameError`, and `MarimoMissingRefError` to handle specific runtime errors. The `raise_name_error` function is used to manage `NameError` exceptions, potentially wrapping them in a `MarimoMissingRefError` if the missing name is part of the graph's definitions.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,97 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The target file `test_cell_runner.py` contains asynchronous test functions designed to validate the behavior of the `Runner` class from the `marimo` library. These tests focus on ensuring that the `Runner` correctly handles cell execution, captures output, and manages exceptions, including verifying that tracebacks include line numbers and that base exceptions are caught.
+
+## Code Structure
+
+The main symbols in the code are the asynchronous test functions: `test_cell_output`, `test_traceback_includes_lineno`, and `test_base_exception_caught`. Each function uses the `Kernel` and `ExecReqProvider` classes to set up and execute code cells, then verifies the results using assertions. The `Runner` class is instantiated within each test to manage the execution of these cells.
+
+## References
+
+- `Kernel`: Used to execute code cells and manage the execution environment.
+- `ExecReqProvider`: Provides execution requests for the cells to be tested.
+- `Runner`: Manages the execution of code cells and captures their output.
+- `capture_stderr`: A context manager used to capture standard error output during cell execution.
+
+## Symbols
+
+### `test_cell_output`
+#### Description
+This test verifies that the `Runner` correctly captures the output of a code cell. It checks that the last expression in the cell is returned as the output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | `Kernel` | The kernel instance used to execute the cell. |
+| exec_req | `ExecReqProvider` | Provides the execution request for the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function uses assertions to validate behavior. |
+
+#### Internal Logic
+1. The kernel runs a cell containing the code `"'hello'; 123"`.
+2. A `Runner` is instantiated with the kernel's graph, globals, and debugger.
+3. The `Runner` executes the cell and asserts that the output is `123`.
+
+### `test_traceback_includes_lineno`
+#### Description
+This test ensures that when an exception is raised in a cell, the traceback includes the line number where the exception occurred.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | `Kernel` | The kernel instance used to execute the cell. |
+| exec_req | `ExecReqProvider` | Provides the execution request for the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function uses assertions to validate behavior. |
+
+#### Internal Logic
+1. The kernel runs a cell containing code that raises a `ValueError`.
+2. A `Runner` is instantiated and used to execute the cell.
+3. The standard error output is captured, and the test asserts that the output includes "line 3".
+
+### `test_base_exception_caught`
+#### Description
+This test checks that the `Runner` can catch a `BaseException` and that the traceback includes the line number where the exception was raised.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| execution_kernel | `Kernel` | The kernel instance used to execute the cell. |
+| exec_req | `ExecReqProvider` | Provides the execution request for the cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The function uses assertions to validate behavior. |
+
+#### Internal Logic
+1. The kernel runs a cell containing code that raises a `BaseException`.
+2. A `Runner` is instantiated and used to execute the cell.
+3. The standard error output is captured, and the test asserts that the output includes "line 3".
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.capture` | Provides the `capture_stderr` context manager to capture standard error output. |
+| `marimo._runtime.runner.cell_runner` | Contains the `Runner` class used to execute code cells. |
+| `marimo._runtime.runtime` | Provides the `Kernel` class for managing the execution environment. |
+| `tests.conftest` | Provides the `ExecReqProvider` class for creating execution requests. |
+
+## Error Handling
+
+The tests use assertions to validate expected behavior. If an assertion fails, it indicates that the `Runner` did not behave as expected, such as not capturing the correct output or not including the correct line number in a traceback.
+
+## Logging
+
+The tests do not implement any logging mechanisms. They rely on assertions to validate behavior and capture output using the `capture_stderr` context manager.

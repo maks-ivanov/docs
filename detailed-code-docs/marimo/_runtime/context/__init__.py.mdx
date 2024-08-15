@@ -1,0 +1,93 @@
+---
+title: "__init__.py"
+---
+
+## High-level description
+
+The target file `marimo/_runtime/context/__init__.py` serves as an initializer for the context module within the Marimo runtime. It imports and exposes several key components related to runtime context management, such as context retrieval, context initialization errors, and context teardown. These components are crucial for managing execution contexts and global contexts in a thread-local manner, ensuring that each client or session has its own isolated context.
+
+## Code Structure
+
+The target file primarily acts as a bridge, exposing various symbols from the `types.py` file within the same module. These symbols include classes and functions that manage the runtime and execution contexts, handle context initialization errors, and provide mechanisms to check and teardown contexts.
+
+## References
+
+The target file references the following symbols from `marimo/_runtime/context/types.py`:
+
+- `ContextNotInitializedError`
+- `ExecutionContext`
+- `RuntimeContext`
+- `get_context`
+- `get_global_context`
+- `runtime_context_installed`
+- `teardown_context`
+
+These symbols are essential for understanding the context management system within the Marimo runtime.
+
+## Symbols
+
+### `get_context`
+#### Description
+Retrieves the current runtime context for the thread. If the context has not been initialized, it raises a `ContextNotInitializedError`.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runtime_context | `RuntimeContext` | The current runtime context for the thread. |
+
+#### Internal Logic
+Checks if the `_THREAD_LOCAL_CONTEXT.runtime_context` is `None`. If it is, raises a `ContextNotInitializedError`. Otherwise, returns the current runtime context.
+
+### `get_global_context`
+#### Description
+Returns the global context shared by all sessions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| global_context | `GlobalContext` | The global context instance. |
+
+### `ContextNotInitializedError`
+#### Description
+An exception raised when attempting to access a runtime context that has not been initialized.
+
+### `ExecutionContext`
+#### Description
+A data class representing the execution context, which includes information such as the cell ID and output.
+
+### `RuntimeContext`
+#### Description
+An abstract base class representing the runtime context, which includes various registries and context-specific properties and methods.
+
+### `runtime_context_installed`
+#### Description
+Checks if a runtime context has been installed for the current thread.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| installed | `bool` | `True` if a runtime context is installed, `False` otherwise. |
+
+#### Internal Logic
+Attempts to retrieve the current context using `get_context()`. If a `ContextNotInitializedError` is caught, returns `False`. Otherwise, returns `True`.
+
+### `teardown_context`
+#### Description
+Unsets the current runtime context, typically used for testing purposes.
+
+## Dependencies
+
+The target file relies on the `types.py` file within the same module for the implementation of the context management components. It also indirectly depends on various other modules and classes referenced within `types.py`, such as `FunctionRegistry`, `CellLifecycleRegistry`, and `VirtualFileRegistry`.
+
+## Error Handling
+
+The primary error handling mechanism in the context management system is the `ContextNotInitializedError`, which is raised when attempting to access a runtime context that has not been initialized. This ensures that context-dependent operations are not performed without a valid context.
+
+## Side Effects
+
+- The `teardown_context` function modifies the global `_THREAD_LOCAL_CONTEXT` by setting its `runtime_context` attribute to `None`.
+- The `initialize_context` function sets the `runtime_context` attribute of `_THREAD_LOCAL_CONTEXT`, which affects the state of the current thread's context.
+
+## Performance Considerations
+
+The use of thread-local storage for managing contexts ensures that each thread has its own isolated context, which is crucial for performance in multi-threaded environments. This design minimizes contention and potential race conditions between threads.

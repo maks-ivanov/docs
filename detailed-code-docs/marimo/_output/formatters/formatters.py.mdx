@@ -1,0 +1,60 @@
+---
+title: "formatters.py"
+---
+
+## High-level description
+
+The `formatters.py` file in the `marimo/_output/formatters` directory is responsible for managing the registration of various formatters used within the Marimo application. These formatters are designed to handle the display of different data types and third-party library outputs in a Marimo notebook. The file includes mechanisms to register formatters both for built-in types and for third-party libraries, ensuring that the appropriate formatter is used when a supported library is imported.
+
+## Code Structure
+
+The main components of the code are:
+- **Formatter Classes**: These are imported from various modules and represent different formatters for specific libraries or data types.
+- **THIRD_PARTY_FACTORIES**: A dictionary mapping package names to their corresponding formatter factories for third-party libraries.
+- **NATIVE_FACTORIES**: A sequence of formatter factories for built-in types that do not require third-party imports.
+- **register_formatters Function**: This function is responsible for registering the formatters with the Marimo system, hooking into Python's import system to ensure formatters are registered when their associated packages are imported.
+
+## Symbols
+
+### `register_formatters`
+#### Description
+The `register_formatters` function registers formatters with the Marimo system. It hooks into Python's import system to register formatters for third-party libraries lazily, meaning they are only registered when the corresponding library is imported. This approach minimizes startup time by avoiding unnecessary imports.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- It first registers formatters for any third-party modules that are already imported.
+- It then modifies Python's import system to register formatters for third-party modules when they are imported in the future.
+- Finally, it registers formatters for built-in types immediately, as these do not depend on any third-party imports.
+
+## References
+
+- **FormatterFactory**: An abstract base class for all formatter factories, providing the interface for registering formatters.
+- **Various Formatter Classes**: These include `AltairFormatter`, `MatplotlibFormatter`, `PandasFormatter`, etc., each responsible for a specific library or data type.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `sys` | Used to access the list of currently imported modules and to modify the import system. |
+| `typing` | Provides type annotations for better code clarity and type checking. |
+
+## Error Handling
+
+The code includes error handling for cases where a module's `find_spec` method might not exist, which can occur with certain vendored dependencies. This is managed by checking for the existence of `find_spec` before attempting to use it.
+
+## Performance Considerations
+
+The lazy registration of third-party formatters is a key performance consideration. By delaying the registration until the library is actually imported, the code avoids the overhead of importing potentially large libraries at startup, thus improving the user experience by reducing initial load times.
+
+## Logging
+
+The code does not explicitly implement logging, but it is structured to handle potential issues gracefully, such as missing `find_spec` methods, which could be logged if integrated with a logging system.
+
+## TODOs
+
+There are no explicit TODOs in the code, but maintaining the import hooks and ensuring compatibility with future Python versions could be areas for future attention.

@@ -1,0 +1,45 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `marimo/_output/formatters` directory is part of the Marimo framework and is responsible for handling the formatting of various data types and third-party library outputs for display within the Marimo environment, particularly in web-based interfaces like notebooks. This directory contains multiple formatter classes, each designed to integrate with specific libraries or data types, such as Altair, Bokeh, Pandas, Plotly, and more. These formatters convert data into HTML or other suitable formats for rendering, ensuring compatibility and enhanced visualization capabilities within Marimo.
+
+## What does it do?
+
+The formatters in this directory enable the Marimo framework to display complex data visualizations and structures in a user-friendly manner. When a user works with data in a Marimo notebook, these formatters automatically convert the data into a format that can be rendered in the notebook's web interface. For example, if a user creates a Plotly chart, the `PlotlyFormatter` will convert the chart into an HTML component that can be displayed directly in the notebook. Similarly, if a user works with a Pandas DataFrame, the `PandasFormatter` will format the DataFrame as an HTML table for easy viewing.
+
+The process typically involves:
+1. Detecting the type of data or library being used.
+2. Applying the appropriate formatter to convert the data into a displayable format.
+3. Rendering the formatted data in the notebook or web interface.
+
+This system allows users to seamlessly integrate and visualize data from various sources without needing to manually convert or format the data themselves.
+
+## Entry points
+
+The main entry point for this directory is the `formatters.py` file, which manages the registration of all formatters. It hooks into Python's import system to ensure that formatters are registered when their associated libraries are imported. This lazy registration approach minimizes startup time by avoiding unnecessary imports.
+
+## Key Files
+
+- **`altair_formatters.py`**: Handles the formatting of Altair charts, converting them into HTML iframes for display.
+- **`bokeh_formatters.py`**: Formats Bokeh plots into HTML content for embedding in iframes.
+- **`pandas_formatters.py`**: Formats Pandas DataFrames and Series into HTML tables.
+- **`plotly_formatters.py`**: Converts Plotly figures into HTML components using Marimo's plugin system.
+- **`seaborn_formatters.py`**: Formats Seaborn grid objects for display in Marimo's media viewer.
+- **`formatter_factory.py`**: Defines the `FormatterFactory` abstract base class, which provides a structure for creating and registering formatters.
+- **`utils.py`**: Contains utility functions like `src_or_src_doc` for determining the appropriate HTML attributes for embedding content.
+
+## Dependencies
+
+The directory relies on several external libraries to handle specific data types and visualizations:
+
+- **Altair**: For creating and rendering charts.
+- **Bokeh**: For generating interactive plots.
+- **Pandas**: For handling DataFrame and Series objects.
+- **Plotly**: For creating interactive charts and graphs.
+- **Seaborn**: For statistical data visualization.
+- **Tqdm**: For progress bars in notebook environments.
+
+These dependencies are chosen for their robust capabilities in data visualization and manipulation, allowing Marimo to support a wide range of data types and formats.

@@ -1,0 +1,74 @@
+---
+title: "release.yml"
+---
+
+## High-level description
+
+The target file, `.github/workflows/release.yml`, is a GitHub Actions workflow configuration file designed to automate the release process of a project named "marimo". It is triggered by a push event with a tag that matches a semantic versioning pattern (e.g., `1.0.0`). The workflow includes steps to set up the environment, build the project, and publish the resulting artifacts to package registries like PyPI and npm.
+
+## Code Structure
+
+The workflow is structured into a series of jobs and steps that are executed sequentially. The main job, `publish_release`, runs on an Ubuntu environment and includes steps for canceling previous runs, checking out the repository, setting up Node.js and Python environments, building the frontend and backend components, and publishing the artifacts to PyPI and npm.
+
+## Symbols
+
+### `publish_release`
+#### Description
+The `publish_release` job is the core of the workflow, responsible for executing the steps necessary to build and publish the project. It runs on the latest Ubuntu environment and uses bash as the shell for executing commands.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | The job does not take direct inputs but relies on environment variables and secrets. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A  | N/A  | The job does not produce direct outputs but results in published packages. |
+
+#### Internal Logic
+1. **Cancel Previous Runs**: Uses the `styfle/cancel-workflow-action` to cancel any previous runs of the workflow.
+2. **Checkout Repository**: Uses `actions/checkout` to clone the repository.
+3. **Setup Node.js**: Configures Node.js environment using `actions/setup-node`, with caching for dependencies.
+4. **Build Frontend**: Executes a make command to build the frontend.
+5. **Setup Python**: Configures Python 3.10 environment using `actions/setup-python`.
+6. **Build Marimo**: Installs necessary Python packages and builds the project.
+7. **Upload to PyPI**: Uses `twine` to upload the built Python package to PyPI.
+8. **Update package.json Version**: Updates the version in `package.json` based on the current version of the marimo package.
+9. **Upload wasm to npm**: Publishes the WebAssembly package to npm.
+10. **Update package.json Name**: Modifies the package name in `package.json`.
+11. **Rebuild Frontend**: Rebuilds the frontend with production settings.
+12. **Upload Islands to npm**: Publishes the rebuilt frontend to npm.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `styfle/cancel-workflow-action@0.12.1` | Cancels previous workflow runs. |
+| `actions/checkout@v4` | Checks out the repository code. |
+| `pnpm/action-setup@v2` | Sets up pnpm for package management. |
+| `actions/setup-node@v4` | Sets up Node.js environment. |
+| `actions/setup-python@v5` | Sets up Python environment. |
+| `twine` | Used for uploading Python packages to PyPI. |
+
+## Configuration
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| `TURBO_TOKEN` | Secret | N/A | Token for Turbo configuration. |
+| `TURBO_TEAM` | String | `marimo` | Team name for Turbo. |
+| `NODE_AUTH_TOKEN` | Secret | N/A | Authentication token for npm. |
+| `TWINE_USERNAME` | Secret | N/A | Username for PyPI. |
+| `TWINE_PASSWORD` | Secret | N/A | Password for PyPI. |
+
+## Error Handling
+
+The workflow does not explicitly handle errors beyond the default behavior of GitHub Actions, which is to stop execution on any step failure. Each step is expected to succeed for the workflow to continue.
+
+## Logging
+
+The workflow relies on GitHub Actions' built-in logging to provide output for each step. This includes command outputs and any errors encountered during execution.
+
+## TODOs
+
+There is a commented-out section for setting up `uv` with a note indicating it does not work when running `marimo --version`. This suggests a potential area for future improvement or debugging.

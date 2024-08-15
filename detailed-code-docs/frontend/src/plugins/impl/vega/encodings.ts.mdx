@@ -1,0 +1,80 @@
+---
+title: "encodings.ts"
+---
+
+## High-level description
+
+The target file, `encodings.ts`, is part of a Vega-Lite plugin implementation. It provides utility functions to handle Vega-Lite encodings, specifically focusing on identifying fields used in non-xy encodings and making certain encodings interactive. The file defines two main functions: `findEncodedFields`, which extracts fields from specified encodings, and `makeEncodingInteractive`, which modifies encodings to support interactivity, particularly by adjusting opacity based on selection parameters.
+
+## Code Structure
+
+The main symbols in the code are two functions: `findEncodedFields` and `makeEncodingInteractive`. These functions operate on Vega-Lite specifications and encodings, utilizing types and constants defined in the file and imported from other modules. The `ALLOWED_ENCODING_TYPES` constant is used to filter which encoding types are processed by these functions.
+
+## Symbols
+
+### `findEncodedFields`
+#### Description
+The `findEncodedFields` function identifies and returns a list of fields that are encoded in a given Vega-Lite specification, focusing on non-xy encodings that are typically used in legends.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `VegaLiteSpec` | A Vega-Lite specification object that may contain various encodings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fields | `string[]` | An array of field names that are encoded in the specification. |
+
+#### Internal Logic
+- The function first checks if the `spec` is defined and contains an `encoding` property.
+- It iterates over the entries of the `encoding` object.
+- For each encoding, it checks if the encoding type is in `ALLOWED_ENCODING_TYPES`.
+- It extracts the field name if it exists directly in the encoding or within a `condition` object.
+- The function returns an array of these field names.
+
+### `makeEncodingInteractive`
+#### Description
+The `makeEncodingInteractive` function modifies a given encoding to make it interactive by adjusting the opacity based on specified parameters. This is used to visually signal selection in a chart.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | `"opacity"` | The encoding key to be made interactive, currently only supports "opacity". |
+| encodings | `SharedCompositeEncoding&lt;Field&gt;` | The existing encodings to be modified. |
+| paramNames | `string[]` | A list of parameter names used to determine interactivity conditions. |
+| mark | `AnyMark | undefined` | The mark definition which may influence the initial opacity. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updatedEncodings | `SharedCompositeEncoding&lt;Field&gt;` | The modified encodings with interactive properties. |
+
+#### Internal Logic
+- Constructs a `test` object using the provided `paramNames`.
+- Retrieves the initial opacity from the `Marks` utility.
+- Modifies the `opacity` encoding to include a `condition` that uses the `test` object and sets a reduced opacity value for non-selected states.
+
+## References
+
+- **Marks**: The `Marks` module is used to retrieve mark types and initial opacity values.
+- **Types**: Various types such as `VegaLiteSpec`, `EncodingType`, and `Encodings` are imported from the `types` module to ensure type safety and clarity.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `./marks` | Provides utility functions for handling mark types and properties. |
+| `./types` | Supplies type definitions for Vega-Lite specifications and encodings. |
+
+## Error Handling
+
+The functions in this file do not explicitly handle errors beyond basic checks for undefined or missing properties. They assume that the input specifications are well-formed according to the Vega-Lite schema.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

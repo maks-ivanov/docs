@@ -1,0 +1,70 @@
+---
+title: "sql_visitor.py"
+---
+
+## High-level description
+
+The `sql_visitor.py` file defines a class `SQLVisitor` that extends Python's `ast.NodeVisitor` to traverse an Abstract Syntax Tree (AST) and identify SQL queries embedded within Python code. The SQL queries are expected to be part of method calls named `execute` or `sql`. The file also includes a utility function `normalize_sql_f_string` to handle SQL queries formatted as f-strings, replacing expressions with placeholders.
+
+## Code Structure
+
+The main components of the code are the `SQLVisitor` class and the `normalize_sql_f_string` function. The `SQLVisitor` class is responsible for traversing the AST and collecting SQL queries, while the `normalize_sql_f_string` function is used to process f-strings within SQL queries.
+
+## Symbols
+
+### `SQLVisitor`
+#### Description
+The `SQLVisitor` class is designed to traverse an AST and collect SQL queries that are part of method calls named `execute` or `sql`. It stores these queries in a list for later retrieval.
+
+#### Inputs
+- `node`: `ast.Call` - An AST node representing a function or method call.
+
+#### Outputs
+- None directly, but it populates the `_sqls` list with SQL query strings.
+
+#### Internal Logic
+- The `visit_Call` method checks if a method call is named `execute` or `sql`.
+- It verifies if the first argument of the call is a string or an f-string.
+- If the argument is a string, it is directly added to the `_sqls` list.
+- If the argument is an f-string, it is processed using `normalize_sql_f_string` to replace expressions with placeholders before adding it to the list.
+- The `get_sqls` method returns the list of collected SQL queries.
+
+### `normalize_sql_f_string`
+#### Description
+This function processes f-strings to convert them into regular strings by replacing expressions with placeholders. This is useful for creating valid SQL queries from f-strings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| node | `ast.JoinedStr` | An AST node representing an f-string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `str` | A string with expressions replaced by placeholders. |
+
+#### Internal Logic
+- The function iterates over the parts of the f-string.
+- It recursively processes each part, replacing expressions with a placeholder (`'_'`).
+- It joins the processed parts into a single string and replaces any double quotes with single quotes.
+
+## References
+
+- The `SQLVisitor` class is used in the `CellImpl` class from the `marimo/_ast/cell.py` file to extract SQL queries from code cells.
+- The `normalize_sql_f_string` function is also referenced in the `marimo/_ast/visitor.py` file for handling SQL queries within f-strings.
+
+## Dependencies
+
+The code relies on Python's `ast` module for parsing and traversing the Abstract Syntax Tree.
+
+## Error Handling
+
+The code does not explicitly handle errors within the `SQLVisitor` class or the `normalize_sql_f_string` function. It assumes that the input AST nodes are correctly formed.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

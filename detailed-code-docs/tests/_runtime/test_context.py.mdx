@@ -1,0 +1,88 @@
+---
+title: "test_context.py"
+---
+
+## High-level description
+
+The target file `tests/_runtime/test_context.py` contains unit tests for the `marimo` library's runtime context functionality. It tests whether the runtime context is correctly installed and whether the code is running in a notebook environment. The tests utilize the `Kernel` class and `ExecReqProvider` from the `marimo` library to simulate execution environments and verify the context's state.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `test_context_installed` function uses the `Kernel` class and `ExecReqProvider` to simulate a runtime environment and check if the context is installed.
+- The `test_context_not_installed` function directly checks the context's installation status without simulating an execution environment.
+- The `test_not_running_in_notebook` function checks if the code is running in a notebook environment using a utility function.
+
+## Symbols
+
+### `test_context_installed`
+#### Description
+This asynchronous test function verifies that the runtime context is correctly installed when executed within a simulated kernel environment.
+
+#### Inputs
+| Name            | Type          | Description                                      |
+|:----------------|:--------------|:-------------------------------------------------|
+| execution_kernel| `Kernel`      | A simulated kernel environment for execution.    |
+| exec_req        | `ExecReqProvider` | Provides execution requests for testing.     |
+
+#### Outputs
+None
+
+#### Internal Logic
+- The function retrieves the kernel instance `k` from the `execution_kernel`.
+- It runs a code snippet using the `exec_req` provider to check if the runtime context is installed.
+- Asserts that the `installed` variable in the kernel's global scope is `True`.
+
+### `test_context_not_installed`
+#### Description
+This test function checks that the runtime context is not installed when not explicitly set up.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Directly asserts that the `runtime_context_installed` function returns `False`.
+
+### `test_not_running_in_notebook`
+#### Description
+This test function verifies that the code is not running in a notebook environment.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Imports the `running_in_notebook` utility function.
+- Asserts that `running_in_notebook` returns `False`.
+
+## References
+
+- `Kernel`: A class from `marimo._runtime.runtime` used to simulate a runtime environment.
+- `ExecReqProvider`: A class from `tests.conftest` that provides execution requests for testing.
+- `runtime_context_installed`: A function from `marimo._runtime.context` that checks if the runtime context is installed.
+- `running_in_notebook`: A utility function from `marimo._runtime.context.utils` that checks if the code is running in a notebook.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._runtime.context` | Provides context-related functions and utilities. |
+| `marimo._runtime.runtime` | Contains the `Kernel` class for simulating execution environments. |
+| `tests.conftest` | Provides fixtures and utilities for testing, including `ExecReqProvider`. |
+
+## Error Handling
+
+The tests rely on assertions to verify expected outcomes. If an assertion fails, it indicates that the context is not behaving as expected, which would be reported as a test failure.
+
+## Logging
+
+No explicit logging is implemented in the test functions. They rely on the testing framework to report assertion failures.
+
+## TODOs
+
+No TODOs are present in the code.

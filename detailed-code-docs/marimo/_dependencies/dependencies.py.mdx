@@ -1,0 +1,88 @@
+---
+title: "dependencies.py"
+---
+
+## High-level description
+
+The `dependencies.py` file in the `marimo/_dependencies` directory is responsible for managing and checking the status of various Python package dependencies required by the Marimo application. It provides utilities to verify if a package is installed, check its version, and enforce version constraints. This is crucial for ensuring that the application runs with the correct versions of its dependencies.
+
+## Code Structure
+
+The main components of the code are the `Dependency` class, which represents a single package dependency, and the `DependencyManager` class, which provides a collection of predefined dependencies used throughout the Marimo application. The `_version_check` function is a utility function used by the `Dependency` class to verify version constraints.
+
+## Symbols
+
+### `Dependency`
+#### Description
+The `Dependency` class represents a single package dependency. It provides methods to check if the package is installed, verify its version, and enforce version constraints.
+
+#### Inputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| pkg        | str    | The name of the package.                         |
+| min_version| str or None | The minimum version required (optional).    |
+| max_version| str or None | The maximum version allowed (optional).     |
+
+#### Outputs
+| Name   | Type | Description                          |
+|:-------|:-----|:-------------------------------------|
+| has()  | bool | Returns True if the package is installed. |
+
+#### Internal Logic
+- The `has` method checks if the package is installed using `importlib.util.find_spec`.
+- If version constraints are specified, it calls `warn_if_mismatch_version` to check for version mismatches.
+- The `require` method raises a `ModuleNotFoundError` if the package is not installed.
+- The `require_at_version` method checks for version constraints and raises an error if they are not met.
+- The `get_version` method retrieves the installed version of the package using `importlib.metadata.version`.
+
+### `_version_check`
+#### Description
+A utility function that checks if a given version of a package falls within specified minimum and maximum version constraints.
+
+#### Inputs
+| Name       | Type   | Description                                      |
+|:-----------|:-------|:-------------------------------------------------|
+| pkg        | str    | The name of the package.                         |
+| v          | str    | The current version of the package.              |
+| min_v      | str or None | The minimum version required (optional).    |
+| max_v      | str or None | The maximum version allowed (optional).     |
+| raise_error| bool   | Whether to raise an error on version mismatch.   |
+
+#### Outputs
+| Name   | Type | Description                          |
+|:-------|:-----|:-------------------------------------|
+| result | bool | Returns True if the version is within constraints. |
+
+#### Internal Logic
+- Parses the current, minimum, and maximum versions using `packaging.version.parse`.
+- Checks if the current version is less than the minimum or greater than or equal to the maximum.
+- Writes a warning to `sys.stderr` or raises a `RuntimeError` if `raise_error` is True and the version is out of bounds.
+
+### `DependencyManager`
+#### Description
+A class that provides a collection of predefined `Dependency` instances for common packages used in the Marimo application.
+
+#### Internal Logic
+- Defines static `Dependency` instances for various packages like `pandas`, `numpy`, `altair`, etc.
+- Provides a static `has` method to check if a package is installed by creating a `Dependency` instance and calling its `has` method.
+
+## Dependencies
+
+The code uses the following external libraries:
+| Dependency | Purpose |
+|:-----------|:--------|
+| `importlib.metadata` | To retrieve the version of installed packages. |
+| `importlib.util` | To check if a package is installed. |
+| `packaging.version` | To parse and compare version strings. |
+
+## Error Handling
+
+The code raises a `ModuleNotFoundError` if a required package is not installed and a `RuntimeError` if a package version does not meet specified constraints.
+
+## Side Effects
+
+- Writes warnings to `sys.stderr` if a package version is out of bounds but `raise_error` is False.
+
+## Performance Considerations
+
+- The `has` method uses `importlib.util.find_spec`, which can be relatively fast for checking package installation but may not be suitable for frequent calls in performance-critical paths.

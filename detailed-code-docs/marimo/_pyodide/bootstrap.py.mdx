@@ -1,0 +1,108 @@
+---
+title: "bootstrap.py"
+---
+
+## High-level description
+
+The `bootstrap.py` file in the `marimo/_pyodide` directory is responsible for initializing and managing Pyodide sessions within the Marimo application. It provides functions to instantiate a session, create a new session with specific configurations, and save files. The file integrates with various components of the Marimo system, such as messaging, configuration, and file management, to facilitate the execution of code in a Pyodide environment.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `instantiate` function initializes execution requests for a session.
+- `create_session` function sets up a new Pyodide session, configuring it with user settings and managing communication with the kernel.
+- `save_file` function handles the saving of notebook data to a file.
+
+These functions utilize classes and methods from other parts of the Marimo codebase, such as `PyodideSession`, `PyodideBridge`, and `AppFileManager`.
+
+## Symbols
+
+### `instantiate`
+#### Description
+The `instantiate` function initializes execution requests for all cells in a session's application and sends a control request to the session.
+
+#### Inputs
+| Name    | Type           | Description                  |
+|:--------|:---------------|:-----------------------------|
+| session | PyodideSession | The session to be instantiated |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Retrieves the application from the session's app manager.
+- Constructs execution requests for each cell in the application.
+- Sends a `CreationRequest` to the session with the execution requests and an empty `SetUIElementValueRequest`.
+
+### `create_session`
+#### Description
+The `create_session` function creates and configures a new Pyodide session, setting up necessary components like the app file manager and message handling.
+
+#### Inputs
+| Name            | Type                   | Description                                      |
+|:----------------|:-----------------------|:-------------------------------------------------|
+| filename        | str                    | The filename of the application to load          |
+| query_params    | SerializedQueryParams  | Query parameters for the session                 |
+| message_callback| Callable[[str], None]  | Callback function for handling kernel messages   |
+| user_config     | MarimoConfig           | User-specific configuration settings             |
+
+#### Outputs
+| Name    | Type                       | Description                  |
+|:--------|:---------------------------|:-----------------------------|
+| session | PyodideSession             | The created Pyodide session  |
+| bridge  | PyodideBridge              | The bridge for the session   |
+
+#### Internal Logic
+- Defines a `write_kernel_message` function to handle kernel messages.
+- Merges user configuration with default settings.
+- Initializes an `AppFileManager` with the provided filename and configuration.
+- Sends a `KernelReady` message to indicate the kernel is ready.
+- Creates a `PyodideSession` and a `PyodideBridge` for managing the session and returns them.
+
+### `save_file`
+#### Description
+The `save_file` function saves the notebook data to a specified file.
+
+#### Inputs
+| Name     | Type | Description                  |
+|:---------|:-----|:-----------------------------|
+| request  | str  | JSON string of the save request |
+| filename | str  | The filename to save the data to |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Parses the save request using `parse_raw`.
+- Initializes an `AppFileManager` with the filename.
+- Calls the `save` method on the file manager to persist the notebook data.
+
+## References
+
+- `marimo._config.config.MarimoConfig`: Used for user configuration settings.
+- `marimo._messaging.ops.KernelCapabilities`, `KernelReady`, `serialize`: Used for messaging and kernel readiness.
+- `marimo._plugins.core.json_encoder.WebComponentEncoder`: Used for JSON encoding of messages.
+- `marimo._runtime.requests`: Contains request classes like `AppMetadata`, `CreationRequest`, `ExecutionRequest`.
+- `marimo._server.file_manager.AppFileManager`: Manages file operations for the application.
+- `marimo._server.model.SessionMode`: Defines session modes.
+- `marimo._server.models.models.SaveNotebookRequest`: Represents a request to save a notebook.
+- `marimo._utils.parse_dataclass.parse_raw`: Utility for parsing JSON into dataclass instances.
+
+## Dependencies
+
+| Dependency | Purpose                                      |
+|:-----------|:---------------------------------------------|
+| `json`     | For handling JSON serialization and deserialization |
+| `typing`   | For type annotations and checking            |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic exception raising. It assumes that the provided inputs are valid and that the operations will succeed. Any exceptions that occur during execution would likely propagate up to the caller.
+
+## Logging
+
+The code does not implement any logging mechanisms. It relies on the surrounding infrastructure to handle any necessary logging.
+
+## TODOs
+
+None

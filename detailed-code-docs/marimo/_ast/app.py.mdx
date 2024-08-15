@@ -1,0 +1,120 @@
+---
+title: "app.py"
+---
+
+## High-level description
+
+The `marimo/_ast/app.py` file defines the core structure and functionality of a Marimo application, which is essentially a notebook that operates as a dataflow graph. The main components include the `App` class, which manages the lifecycle and execution of cells within the notebook, and the `CellManager` class, which handles the registration and management of individual cells. The file also includes mechanisms for embedding applications, handling configurations, and managing execution contexts.
+
+## Code Structure
+
+- **App**: The main class representing a Marimo notebook, managing the execution of cells and the overall application lifecycle.
+- **CellManager**: Manages the registration and retrieval of cells within the application.
+- **_AppConfig**: Holds configuration specific to a Marimo application.
+- **CellData**: Represents a cell along with its metadata.
+- **_Namespace**: A mapping class used to manage variable namespaces within the application.
+- **AppEmbedResult**: Represents the result of embedding an application, including its output and definitions.
+
+## References
+
+- **Cell**: Represents an executable cell within the notebook.
+- **CellConfig**: Configuration for individual cells.
+- **AppKernelRunner**: Manages the execution of the application in a kernel context.
+- **AppScriptRunner**: Manages the execution of the application in a script context.
+- **dataflow.DirectedGraph**: Represents the dataflow graph of the application.
+- **FunctionCallRequest** and **SetUIElementValueRequest**: Used for handling function calls and UI element updates.
+
+## Symbols
+
+### `_AppConfig`
+#### Description
+Holds configuration specific to a Marimo application, such as width, title, and layout file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| updates | dict[str, Any] | Dictionary of configuration updates |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| config | _AppConfig | Updated configuration object |
+
+#### Internal Logic
+- Uses `from_untrusted_dict` to create a configuration from a dictionary, ignoring unrecognized keys.
+- Provides methods to convert the configuration to a dictionary and update it with new values.
+
+### `CellData`
+#### Description
+Represents a cell along with its metadata, including its ID, code, name, configuration, and the original cell object.
+
+### `_Namespace`
+#### Description
+A mapping class used to manage variable namespaces within the application, allowing access to variables defined in cells.
+
+### `AppEmbedResult`
+#### Description
+Represents the result of embedding an application, including its visual output and a mapping of defined variables.
+
+### `App`
+#### Description
+Represents a Marimo notebook, managing the execution of cells and the overall application lifecycle.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kwargs | Any | Configuration options for the application |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| outputs | tuple[Sequence[Any], Mapping[str, Any]] | Execution results and global definitions |
+
+#### Internal Logic
+- Initializes the application with a configuration and manages cell registration through `CellManager`.
+- Provides methods to add cells, run the application, and handle asynchronous execution.
+- Manages the dataflow graph and checks for cycles, multiple definitions, and nonlocal deletions.
+
+### `CellManager`
+#### Description
+Manages the registration and retrieval of cells within the application, providing methods to create, register, and access cells.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prefix | str | Prefix for cell IDs |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cell_id | CellId_t | Unique identifier for a cell |
+
+#### Internal Logic
+- Generates unique cell IDs and manages cell data.
+- Provides decorators for cell registration and handles unparsable cells.
+- Offers methods to access cell names, codes, configurations, and valid cells.
+
+### `InternalApp`
+#### Description
+An internal representation of an app, exposing private APIs used by the server and other internal components.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `random` | Used for generating random cell IDs. |
+| `string` | Provides string constants for ID generation. |
+| `dataclasses` | Used for defining data structures like `_AppConfig` and `CellData`. |
+| `uuid` | Generates unique identifiers for nested applications. |
+
+## Error Handling
+- Raises `CycleError` if the application graph contains cycles.
+- Raises `MultipleDefinitionError` if a name is defined multiple times.
+- Raises `DeleteNonlocalError` if a nonlocal reference is deleted.
+- Raises `UnparsableError` if the application contains unparsable cells.
+
+## Logging
+- Uses a logger (`LOGGER`) to log warnings about unrecognized configuration keys.
+
+## TODOs
+- No explicit TODOs are present in the code.

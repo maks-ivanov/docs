@@ -1,0 +1,70 @@
+---
+title: "handlers.py"
+---
+
+## High-level description
+
+The target file, `handlers.py`, is part of the Marimo runtime system and is responsible for handling system signals, specifically interrupts and termination signals. It provides mechanisms to safely interrupt the execution of a kernel and to handle termination signals by cleaning up resources and exiting the process. This is crucial for managing the lifecycle of a kernel process, ensuring that it can be interrupted or terminated gracefully.
+
+## Code Structure
+
+The main symbols in the code are two functions: `construct_interrupt_handler` and `construct_sigterm_handler`. Both functions are designed to create handlers for specific signals that can be registered with the operating system. These handlers are used to manage the behavior of the kernel when it receives interrupt or termination signals.
+
+## Symbols
+
+### `construct_interrupt_handler`
+#### Description
+This function constructs a handler for interrupt signals (e.g., SIGINT). The handler is designed to interrupt the execution of the kernel by broadcasting an `Interrupted` message and raising a `MarimoInterrupt` exception if the kernel is currently executing.
+
+#### Inputs
+| Name   | Type    | Description          |
+|:-------|:--------|:---------------------|
+| kernel | Kernel  | The kernel instance that is to be interrupted. |
+
+#### Outputs
+| Name | Type     | Description |
+|:-----|:---------|:------------|
+| -    | Callable | A function that handles interrupt signals. |
+
+#### Internal Logic
+- The handler logs a debug message indicating that an interrupt request was received.
+- It checks if the kernel's execution context is not `None`, indicating that the kernel is currently executing.
+- If the kernel is executing, it broadcasts an `Interrupted` message and raises a `MarimoInterrupt` exception to stop the execution.
+
+### `construct_sigterm_handler`
+#### Description
+This function constructs a handler for termination signals (e.g., SIGTERM). The handler ensures that the kernel is properly shut down and the process exits without running any atexit handlers, which could lead to undefined behavior.
+
+#### Inputs
+| Name   | Type    | Description          |
+|:-------|:--------|:---------------------|
+| kernel | Kernel  | The kernel instance that is to be terminated. |
+
+#### Outputs
+| Name | Type     | Description |
+|:-----|:---------|:------------|
+| -    | Callable | A function that handles termination signals. |
+
+#### Internal Logic
+- The handler uses a `Bit` dataclass to track if the shutdown process has already been initiated, ensuring the handler is reentrant.
+- If the shutdown process has not been initiated, it sets the `shutting_down` flag to `True`.
+- It calls the `shutdown` method on the virtual file registry to clean up resources.
+- It uses `os._exit(0)` to forcefully exit the process, bypassing any atexit handlers.
+
+## References
+
+- `Interrupted` from `marimo._messaging.ops`: Used to broadcast an interrupt message.
+- `MarimoInterrupt` from `marimo._runtime.control_flow`: Raised to stop the kernel execution.
+- `get_context` from `marimo._runtime.context`: Used to access the current runtime context, specifically the virtual file registry for shutdown operations.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os`       | Used for exiting the process with `os._exit(0)`. |
+| `dataclasses` | Used to define the `Bit` class for tracking shutdown state. |
+| `marimo._loggers` | Provides the logger for logging debug messages. |
+
+## TODOs
+
+- There is a TODO comment in the `interrupt_handler` function indicating a potential issue where the kernel might not be interrupted if it is in a `run` state but not executing. The probability of this happening is considered low, but it is noted as an area for potential improvement.

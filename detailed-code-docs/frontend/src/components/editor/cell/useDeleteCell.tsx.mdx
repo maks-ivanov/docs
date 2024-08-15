@@ -1,0 +1,66 @@
+---
+title: "useDeleteCell.tsx"
+---
+
+## High-level description
+
+The `useDeleteCellCallback` function in the `useDeleteCell.tsx` file provides a mechanism to delete a cell from a notebook-like interface in a React application. It ensures that the deletion is performed optimistically, meaning the UI is updated immediately, and if the deletion fails on the server, it reverts the change. Additionally, it provides a user interface feedback mechanism using a toast notification, allowing users to undo the deletion if needed.
+
+## Code Structure
+
+The main function in this file is `useDeleteCellCallback`, which utilizes several imported functions and components to perform its task. It interacts with the cell management system through `useCellActions`, communicates with the server using `sendDeleteCell`, and provides user feedback using the `toast` function and `UndoButton` component.
+
+## Symbols
+
+### `useDeleteCellCallback`
+#### Description
+The `useDeleteCellCallback` function is a custom hook that returns a callback function for deleting a cell. It handles the deletion process, including optimistic UI updates, server communication, and error handling with a fallback mechanism. It also provides a toast notification to inform the user of the deletion and offers an undo option.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | object | An object containing the `cellId` of the cell to be deleted. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | function | A callback function that deletes a cell when invoked. |
+
+#### Internal Logic
+1. **Retrieve Cell Actions**: The function uses `useCellActions` to get the `deleteCell` and `undoDeleteCell` actions.
+2. **Check Cell Count**: It retrieves the current cells using `getCells` and checks if there is more than one cell. If only one cell exists, it exits early to prevent deletion.
+3. **Optimistic Deletion**: It calls `deleteCell` to remove the cell from the UI immediately.
+4. **Server Communication**: It sends a request to delete the cell on the server using `sendDeleteCell`. If the request fails, it calls `undoDeleteCell` to revert the UI change.
+5. **User Feedback**: It uses the `toast` function to display a notification that the cell was deleted, with an action to undo the deletion. The `UndoButton` component is used to provide this functionality.
+
+## References
+
+- **`UndoButton`**: A component used to provide an undo action in the toast notification.
+- **`toast`**: A function used to display notifications to the user.
+- **`getCells`**: A function that retrieves the current list of cells.
+- **`useCellActions`**: A hook that provides actions for manipulating cells, such as deleting and undoing deletions.
+- **`sendDeleteCell`**: A function that sends a request to the server to delete a cell.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `react-use-event-hook` | Provides the `useEvent` hook for creating stable event handlers. |
+
+## Error Handling
+
+The function handles errors in the server request to delete a cell by catching the promise rejection and calling `undoDeleteCell` to revert the UI change.
+
+## Logging
+
+The function does not implement any logging mechanisms directly, but it uses the `toast` function to provide user feedback, which can be considered a form of user-facing logging.
+
+## Side Effects
+
+- **UI Update**: The function updates the UI optimistically by removing the cell immediately.
+- **Server Communication**: It sends a request to the server to delete the cell.
+- **User Feedback**: It displays a toast notification to inform the user of the deletion and provides an undo option.
+
+## Performance Considerations
+
+The function performs an optimistic update, which can improve the perceived performance by updating the UI immediately without waiting for the server response. However, it must handle potential errors gracefully to ensure consistency between the UI and server state.

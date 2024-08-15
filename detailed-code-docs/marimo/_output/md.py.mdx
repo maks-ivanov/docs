@@ -1,0 +1,77 @@
+---
+title: "md.py"
+---
+
+## High-level description
+
+The target file `marimo/_output/md.py` is responsible for converting markdown text into HTML using the `markdown` library, with additional processing to handle specific markdown extensions and HTML transformations. It provides a function to render markdown text as HTML, which can be used to display formatted content in a web application or notebook environment.
+
+## Code Structure
+
+The main symbols in the code are the `_md` function and the `md` function. The `_md` function is a helper function that performs the actual conversion of markdown to HTML, while the `md` function is a documented interface that wraps `_md` and provides additional documentation and usage examples.
+
+## Symbols
+
+### `_md`
+#### Description
+The `_md` function converts a string of markdown text into an HTML object, applying various markdown extensions and configurations to enhance the output. It also optionally applies CSS classes for styling.
+
+#### Inputs
+| Name                  | Type               | Description                                                                 |
+|:----------------------|:-------------------|:----------------------------------------------------------------------------|
+| text                  | str                | The markdown text to be converted to HTML.                                  |
+| apply_markdown_class  | bool               | Whether to apply default CSS classes for styling the HTML output.           |
+| size                  | Optional[MarkdownSize] | An optional size parameter to adjust the styling of the HTML output.        |
+
+#### Outputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| output   | Html | The resulting HTML object after conversion from markdown. |
+
+#### Internal Logic
+1. The function first cleans the input text using `cleandoc` to remove leading whitespace.
+2. It then uses the `markdown.markdown` function to convert the markdown text to HTML, applying a set of extensions for syntax highlighting, tables, LaTeX, and more.
+3. The resulting HTML is processed to replace `&lt;p&gt;` tags with `&lt;span&gt;` tags to avoid issues with nested `&lt;div&gt;` elements.
+4. If `apply_markdown_class` is true, it wraps the HTML in a `&lt;span&gt;` with specific CSS classes for styling.
+5. Finally, it returns the HTML wrapped in a `Html` object.
+
+### `md`
+#### Description
+The `md` function is a documented interface for converting markdown text to HTML. It provides detailed documentation on how to use markdown with Python interpolation and LaTeX, and it returns an HTML object.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | str  | The markdown text to be converted to HTML. |
+
+#### Outputs
+| Name     | Type | Description          |
+|:---------|:-----|:---------------------|
+| output   | Html | The resulting HTML object after conversion from markdown. |
+
+#### Internal Logic
+- The `md` function simply calls the `_md` function with the provided text and returns its result. It is decorated with `@mddoc` to include rich documentation.
+
+## References
+
+- The `Html` class from `marimo._output.hypertext` is used to wrap the HTML output.
+- The `ExternalLinksExtension` from `marimo._output.md_extensions.external_links` is used to modify external links in the markdown.
+- The `mddoc` decorator from `marimo._output.rich_help` is used to add documentation to the `md` function.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| markdown   | Used to convert markdown text to HTML with various extensions.          |
+
+## Error Handling
+
+The code does not explicitly handle errors, but it relies on the `markdown` library to process the markdown text. Any errors in markdown processing would likely raise exceptions from the `markdown` library.
+
+## Logging
+
+There is no logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

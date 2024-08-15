@@ -1,0 +1,96 @@
+---
+title: "events.ts"
+---
+
+## High-level description
+
+The target file, `events.ts`, is responsible for defining and managing custom events in a TypeScript-based frontend application. It provides a utility function to create custom events and defines several specific events used for communication between UI elements and the application, such as value input, value update, value readiness, and incoming messages. These events facilitate interaction and synchronization between different components of the application, particularly in the context of a UI framework named Marimo.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `defineCustomEvent`: A generic function that creates a structure for custom events.
+- Specific custom events like `MarimoValueInputEvent`, `MarimoValueUpdateEvent`, `MarimoValueReadyEvent`, and `MarimoIncomingMessageEvent` are defined using `defineCustomEvent`.
+- These events are used to communicate changes and updates in UI elements, as seen in the `createInputEvent` function and the global event map augmentation.
+
+## References
+
+- `UIElementId` from `../cells/ids`: Used in the definition of some custom events to identify UI elements.
+- `createInputEvent`: Utilizes `MarimoValueInputEvent` to create and dispatch input events.
+
+## Symbols
+
+### `defineCustomEvent`
+#### Description
+A utility function to define a custom event with a specific type and associated data. It provides methods to check if an event is of the custom type and to create new instances of the event.
+
+#### Inputs
+| Name      | Type   | Description                  |
+|:----------|:-------|:-----------------------------|
+| eventName | string | The name of the custom event |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | -    | Returns an object with methods to handle the custom event |
+
+#### Internal Logic
+- The function returns an object with:
+  - `TYPE`: The event name.
+  - `is`: A method to check if an event is of the custom type.
+  - `create`: A method to create a new custom event with the specified initialization data.
+
+### `MarimoValueInputEvent`, `MarimoValueUpdateEvent`, `MarimoValueReadyEvent`, `MarimoIncomingMessageEvent`
+#### Description
+These are specific custom events defined using `defineCustomEvent`. They are used to handle different types of interactions and data exchanges within the Marimo UI framework.
+
+#### Inputs
+Each event type has specific data associated with it, defined in the `defineCustomEvent` call.
+
+#### Outputs
+Each event type returns a structure that can be used to create and manage events of that type.
+
+### `createInputEvent`
+#### Description
+Creates and dispatches a `MarimoValueInputEvent` to signal a change in a UI element's value.
+
+#### Inputs
+| Name    | Type       | Description                        |
+|:--------|:-----------|:-----------------------------------|
+| value   | ValueType  | The new value of the component     |
+| element | HTMLElement| The element that triggered the change |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | MarimoValueInputEventType | The created input event |
+
+#### Internal Logic
+- The function creates a `MarimoValueInputEvent` with the provided value and element.
+- The event is configured to bubble and be composed, allowing it to propagate through the DOM.
+
+## Side Effects
+
+- The `createInputEvent` function dispatches a custom event that can affect other parts of the application by signaling a change in a UI element's value.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `../cells/ids` | Provides the `UIElementId` type used in some custom events |
+
+## Error Handling
+
+The code does not explicitly handle errors within the `defineCustomEvent` or `createInputEvent` functions, assuming that the inputs are valid and the environment supports the necessary DOM APIs.
+
+## Logging
+
+No logging mechanisms are implemented in this file.
+
+## API/Interface Reference
+
+The file does not define an API or public interface beyond the custom events and utility functions for event creation and management.
+
+## TODOs
+
+No TODOs or notes are present in the code.

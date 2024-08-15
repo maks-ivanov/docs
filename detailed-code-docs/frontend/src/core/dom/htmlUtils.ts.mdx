@@ -1,0 +1,134 @@
+---
+title: "htmlUtils.ts"
+---
+
+## High-level description
+
+The `htmlUtils.ts` file provides utility functions for handling HTML elements and their attributes in a web application. It includes functions for parsing and serializing JSON data from HTML attributes, managing initial values of UI elements, and retrieving filenames from the DOM, particularly in environments that may involve WebAssembly (WASM).
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `parseAttrValue` and `parseDataset` are used to parse JSON data from HTML attributes.
+- `parseInitialValue` and `serializeInitialValue` handle the initialization and serialization of values for UI elements.
+- `getFilenameFromDOM` retrieves filenames from the DOM, with special handling for WASM environments.
+- The file imports utility functions and types from other modules, such as `assertExists`, `jsonParseWithSpecialChar`, `Objects`, `UIElementId`, `isWasm`, and `PyodideRouter`.
+
+## References
+
+- `jsonParseWithSpecialChar` from `json-parser.ts` is used to parse JSON strings with special characters.
+- `Objects.mapValues` from `objects.ts` is used to transform values in an object.
+- `UIElementId` from `ids.ts` is used to parse and manage UI element identifiers.
+- `isWasm` from `utils.ts` is used to check if the environment is WASM.
+- `PyodideRouter` from `router.ts` is used to manage URL parameters in a WASM environment.
+- `assertExists` from `assertExists.ts` is used to ensure that certain DOM elements exist.
+
+## Symbols
+
+### `parseAttrValue`
+#### Description
+Parses a string attribute value as JSON, handling special characters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | string \| undefined | The attribute value to parse. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | T | The parsed JSON value. |
+
+#### Internal Logic
+Uses `jsonParseWithSpecialChar` to parse the input string, providing a default empty string if the input is undefined.
+
+___
+
+### `parseDataset`
+#### Description
+Parses the `dataset` attributes of an HTML element into a record of key-value pairs, converting JSON strings to objects.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| element | HTMLElement | The HTML element whose dataset is to be parsed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Record&lt;string, unknown&gt; | A record of parsed dataset attributes. |
+
+#### Internal Logic
+Uses `Objects.mapValues` to iterate over the dataset and applies `parseAttrValue` to each string value.
+
+___
+
+### `parseInitialValue`
+#### Description
+Determines the initial value for a UI element, either from a parent element's object ID or from a `data-initial-value` attribute.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| element | HTMLElement | The HTML element to parse the initial value from. |
+| registry | UIElementRegistry | The registry to check for existing UI elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | T | The initial value for the UI element. |
+
+#### Internal Logic
+Checks if the parent element is a `&lt;marimo-ui-element/&gt;` with a valid object ID in the registry. If so, it retrieves the value from the registry; otherwise, it parses the `data-initial-value` attribute.
+
+___
+
+### `serializeInitialValue`
+#### Description
+Serializes a value into a JSON string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | unknown | The value to serialize. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | The serialized JSON string. |
+
+#### Internal Logic
+Uses `JSON.stringify` to convert the input value to a JSON string.
+
+___
+
+### `getFilenameFromDOM`
+#### Description
+Retrieves the filename from the DOM, with special handling for WASM environments.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string \| null | The filename, or null if not found. |
+
+#### Internal Logic
+Checks if the environment is WASM using `isWasm`. If so, it attempts to get the filename from `PyodideRouter`. Otherwise, it looks for a `marimo-filename` tag in the DOM and asserts its existence using `assertExists`.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `assertExists` | Ensures that a DOM element exists. |
+| `jsonParseWithSpecialChar` | Parses JSON strings with special characters. |
+| `Objects` | Provides utility functions for object manipulation. |
+| `UIElementId` | Manages UI element identifiers. |
+| `isWasm` | Checks if the environment is WASM. |
+| `PyodideRouter` | Manages URL parameters in a WASM environment. |
+
+## Error Handling
+
+- The `getFilenameFromDOM` function uses `assertExists` to throw an error if the `marimo-filename` tag is not found in the DOM.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this file.

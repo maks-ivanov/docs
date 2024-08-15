@@ -1,0 +1,172 @@
+---
+title: "test_registry.py"
+---
+
+## High-level description
+
+The target file `test_registry.py` contains a series of test functions designed to verify the behavior of the UI element registry within the Marimo framework. These tests ensure that UI elements are correctly registered, resolved, and maintained within the registry, even when operations such as caching, lens resolution, and element deletion are involved.
+
+## Code Structure
+
+The main symbols in the code are test functions that interact with the Marimo framework's UI element registry. These functions use the `Kernel` and `ExecReqProvider` classes to simulate execution environments and test various scenarios involving UI elements.
+
+## References
+
+- `Kernel`: A class from `marimo._runtime.runtime` that manages the execution of code and the state of the UI elements.
+- `ExecReqProvider`: A class from `tests.conftest` that provides execution requests for testing purposes.
+- `get_context`: A function from `marimo._runtime.context` that retrieves the current runtime context, including the UI element registry.
+
+## Symbols
+
+### `test_cached_element_still_registered`
+#### Description
+This asynchronous test function verifies that a UI element, once registered, remains registered even when accessed through a cached function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| k | Kernel | The kernel instance used to run the test code. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Runs a series of execution requests to import necessary modules and define a cached slider function.
+2. Verifies that the slider element is registered in the UI element registry.
+3. Re-runs the slider construction and checks that the slider remains registered.
+
+### `test_resolve_simple_noop`
+#### Description
+Tests the resolution of a simple UI element without any operations, ensuring it resolves correctly in the registry.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| executing_kernel | Kernel | The kernel instance used to run the test code. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates a simple text UI element.
+2. Asserts that the registry resolves the element correctly with a given lens.
+
+### `test_resolve_array_noop`
+#### Description
+Tests the resolution of an array of UI elements without any operations, ensuring they resolve correctly in the registry.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| executing_kernel | Kernel | The kernel instance used to run the test code. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates an array containing text and slider UI elements.
+2. Asserts that the registry resolves the array correctly with a given lens.
+
+### `test_resolve_lens_array`
+#### Description
+Tests the resolution of individual elements within an array, ensuring they resolve correctly in the registry.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| executing_kernel | Kernel | The kernel instance used to run the test code. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates an array containing text and slider UI elements.
+2. Asserts that the registry resolves individual elements within the array correctly.
+
+### `test_resolve_lens_nested`
+#### Description
+Tests the resolution of nested UI elements, ensuring they resolve correctly in the registry.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| executing_kernel | Kernel | The kernel instance used to run the test code. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Creates a nested structure of arrays and dictionaries containing UI elements.
+2. Asserts that the registry resolves various nested elements correctly.
+
+### `test_lens_not_bound`
+#### Description
+Asynchronously tests that a UI element lens is not bound to any names in the registry.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| k | Kernel | The kernel instance used to run the test code. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Runs an execution request to create an array of UI elements.
+2. Asserts that the first element of the array is not bound to any names, while the array itself is bound.
+
+### `test_parent_bound_to_view`
+#### Description
+Asynchronously tests that a parent UI element is bound to its view in the registry.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| k | Kernel | The kernel instance used to run the test code. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Runs an execution request to create an array and a child element.
+2. Asserts that both the array and the child are bound to names in the registry.
+
+### `test_dont_delete_element_with_wrong_python_id`
+#### Description
+Asynchronously tests that a UI element is not deleted from the registry if the Python ID does not match.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| k | Kernel | The kernel instance used to run the test code. |
+| exec_req | ExecReqProvider | Provides execution requests for the test. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Runs execution requests to create a slider UI element.
+2. Asserts that the slider is registered.
+3. Attempts to delete the slider with an incorrect Python ID and verifies it remains registered.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Provides the UI framework and runtime context for the tests. |
+| `pytest` | Used for structuring and running the test cases. |
+
+## Error Handling
+
+The test functions use assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior of the UI element registry.
+
+## Logging
+
+No explicit logging is implemented in the test functions. However, the Marimo framework may log internal operations during test execution.
+
+## TODOs
+
+No TODOs are present in the code.

@@ -1,0 +1,175 @@
+---
+title: "test_files.py"
+---
+
+## High-level description
+
+The target file `tests/_server/api/endpoints/test_files.py` contains a suite of test cases for various file operations in a server environment using the FastAPI framework. These tests cover functionalities such as renaming files, reading code from files, saving files with specific configurations, and handling file operations with invalid inputs. The tests are designed to ensure that the API endpoints for file management behave as expected under different scenarios.
+
+## Code Structure
+
+The main symbols in the code are test functions that are decorated with session management utilities. These functions interact with the API endpoints using a `TestClient` to simulate HTTP requests and verify the responses. The tests are organized to cover different aspects of file operations, such as renaming, reading, saving, and handling invalid files.
+
+## Symbols
+
+### `test_rename`
+#### Description
+Tests the file renaming functionality of the API. It verifies that a file can be renamed successfully and that the old filename no longer exists.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves the current filename using the session manager.
+2. Asserts that the file exists.
+3. Generates a new random filename.
+4. Sends a POST request to the `/api/kernel/rename` endpoint with the new filename.
+5. Asserts that the response indicates success and that the file has been renamed.
+
+### `test_read_code`
+#### Description
+Tests the ability to read code from a file using the API. It checks that the response contains the expected code content.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Sends a POST request to the `/api/kernel/read_code` endpoint.
+2. Asserts that the response status is 200 and that the content starts with "import marimo".
+
+### `test_save_file`
+#### Description
+Tests the file saving functionality of the API. It verifies that code can be saved to a file with specific configurations and that the content is correctly written.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves a unique filename using the session manager.
+2. Sends a POST request to the `/api/kernel/save` endpoint with code and configuration details.
+3. Asserts that the response is successful and that the file contains the expected content.
+4. Repeats the save operation with different configurations to ensure flexibility.
+
+### `test_save_with_header`
+#### Description
+Tests saving a file with a header. It ensures that the header is preserved in the file content.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves a unique filename and ensures it exists.
+2. Prepends a header to the file content.
+3. Sends a POST request to save the file with code and configuration details.
+4. Asserts that the header is preserved and the file contains the expected content.
+
+### `test_save_with_invalid_file`
+#### Description
+Tests saving a file with invalid content. It checks that the header is not removed when the file content is invalid.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves a unique filename and ensures it exists.
+2. Prepends an invalid header to the file content.
+3. Sends a POST request to save the file with code and configuration details.
+4. Asserts that the header is not removed and the file contains the expected content.
+
+### `test_save_file_cannot_rename`
+#### Description
+Tests the scenario where a file cannot be renamed. It verifies that the API returns an appropriate error message.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Sends a POST request to save a file with a non-existent filename.
+2. Asserts that the response status is 400 and contains a "cannot rename" error message.
+
+### `test_save_app_config`
+#### Description
+Tests saving application configuration to a file. It ensures that the configuration is correctly written to the file.
+
+#### Inputs
+| Name   | Type       | Description          |
+|:-------|:-----------|:---------------------|
+| client | TestClient | The test client used to make API requests. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves a unique filename.
+2. Sends a POST request to save the application configuration.
+3. Asserts that the response is successful and the configuration is present in the file.
+
+### `test_rename_propagates`
+#### Description
+Tests that renaming a file propagates changes to the variables in a running session. It verifies that the new filename is reflected in the session variables.
+
+#### Inputs
+| Name     | Type                 | Description          |
+|:---------|:---------------------|:---------------------|
+| client   | TestClient           | The test client used to make API requests. |
+| websocket | WebSocketTestSession | The websocket session for real-time communication. |
+
+#### Outputs
+None
+
+#### Internal Logic
+1. Retrieves the current filename and ensures it exists.
+2. Sends a POST request to run code that references the current filename.
+3. Asserts that the session variables reflect the current filename.
+4. Renames the file and asserts that the session variables are updated with the new filename.
+
+## References
+
+- `get_session_manager`: Used to retrieve the session manager for managing file operations.
+- `token_header`, `with_session`, `with_websocket_session`: Utility functions and decorators for managing authentication and session state.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file path operations and checking file existence. |
+| `random` | Used to generate random filenames for testing. |
+| `fastapi.testclient` | Provides the `TestClient` for simulating API requests. |
+
+## Error Handling
+
+The tests assert expected outcomes and error messages, such as checking for a 400 status code and specific error details when a file cannot be renamed.
+
+## TODOs
+
+- There are no explicit TODOs in the code, but the tests could be expanded to cover additional edge cases or error scenarios.

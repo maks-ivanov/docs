@@ -1,0 +1,79 @@
+---
+title: "AccordionPlugin.tsx"
+---
+
+## High-level description
+
+The `AccordionPlugin.tsx` file defines a React component plugin named `AccordionPlugin` that is used to render an accordion UI element. This plugin is part of a larger plugin system and is designed to handle the display of collapsible sections, allowing for either single or multiple sections to be open at a time. It uses the `zod` library for data validation and integrates with a custom rendering function to safely render HTML content.
+
+## Code Structure
+
+- **AccordionPlugin**: Implements the `IStatelessPlugin` interface, providing a `render` method to output the accordion UI.
+- **AccordionComponent**: A functional React component that renders the accordion using the provided data and children.
+
+## References
+
+- **`renderHTML`**: A function from `RenderHTML.tsx` used to safely render HTML content within the accordion.
+- **`Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`**: Components imported from `accordion.tsx` that provide the basic structure and behavior of the accordion UI.
+
+## Symbols
+
+### `AccordionPlugin`
+#### Description
+The `AccordionPlugin` class is a stateless plugin that renders an accordion UI component. It validates input data using `zod` and renders the accordion with specified labels and behavior (single or multiple open sections).
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| props | `IStatelessPluginProps&lt;Data&gt;` | Contains the host element, plugin data, and optional children elements. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered accordion component. |
+
+#### Internal Logic
+- **Data Validation**: Uses `zod` to ensure the `labels` are an array of strings and `multiple` is a boolean.
+- **Rendering**: Calls `AccordionComponent` with the validated data and children.
+
+### `AccordionComponent`
+#### Description
+A functional component that renders the accordion UI based on the provided labels and whether multiple sections can be open simultaneously.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| labels | `string[]` | Array of HTML strings for each accordion item's label. |
+| multiple | `boolean` | Determines if multiple accordion sections can be open at once. |
+| children | `React.ReactNode` | The content to be displayed within each accordion section. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | `JSX.Element` | The rendered accordion UI component. |
+
+#### Internal Logic
+- **Accordion Type**: Determines the accordion type (`single` or `multiple`) based on the `multiple` prop.
+- **Rendering**: Iterates over `children`, rendering each within an `AccordionItem` with a corresponding `AccordionTrigger` and `AccordionContent`.
+- **HTML Rendering**: Uses `renderHTML` to safely render the HTML labels.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for creating React components and handling component lifecycle. |
+| `zod` | Provides schema validation for the plugin's data. |
+| `@/components/ui/accordion` | Supplies the accordion UI components. |
+| `RenderHTML` | Safely renders HTML content within the accordion. |
+
+## Error Handling
+
+The code uses `zod` for schema validation, ensuring that the input data conforms to expected types before rendering. This helps prevent runtime errors related to invalid data.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

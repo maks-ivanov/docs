@@ -1,0 +1,92 @@
+---
+title: "interactive_cluster_analysis.py"
+---
+
+## High-level description
+
+The `interactive_cluster_analysis.py` script is a Marimo application designed to perform interactive cluster analysis on the MNIST dataset. It uses embeddings to visualize digit clusters, allowing users to interactively explore the data through a UI that includes charts and tables. The application leverages Marimo's capabilities to create a reactive and interactive environment for data exploration.
+
+## Code Structure
+
+The script is structured as a series of Marimo cells, each defined by the `@app.cell` decorator. These cells encapsulate different parts of the application logic, such as data loading, embedding computation, visualization, and user interaction. The cells are executed in a reactive manner, meaning that changes in one cell can trigger updates in others, maintaining a consistent state throughout the application.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of the `marimo.App` class, which serves as the main application object for the Marimo framework. It manages the lifecycle of the application and coordinates the execution of cells.
+
+### `@app.cell`
+#### Description
+A decorator used to define a cell in the Marimo application. Each cell represents a unit of computation or UI logic that can be executed independently and reactively.
+
+### `compute_embedding`
+#### Description
+A cached function that computes the embedding of the MNIST dataset using the `pymde` library. It preserves neighbor relationships in the data and returns the computed embedding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| embedding_dim | int | The dimension of the embedding space. |
+| constraint | pymde.Constraint | A constraint object that defines how the embedding should be computed. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| X | torch.Tensor | The computed embedding of the dataset. |
+
+#### Internal Logic
+- Displays a warning message indicating that the embedding is being computed.
+- Uses `pymde.preserve_neighbors` to compute the embedding, selecting the appropriate device (CPU or CUDA) based on availability.
+- Clears the output once the computation is complete.
+
+### `show_images`
+#### Description
+A function that displays a set of images from the MNIST dataset based on provided indices. It uses Matplotlib to render the images in a grid format.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| indices | list | A list of indices specifying which images to display. |
+| max_images | int | The maximum number of images to display. Default is 10. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fig | matplotlib.figure.Figure | A Matplotlib figure containing the displayed images. |
+
+#### Internal Logic
+- Reshapes the MNIST data to extract the specified images.
+- Creates a subplot for each image and displays it using a grayscale colormap.
+- Adjusts the layout to ensure the images are displayed neatly.
+
+## References
+
+- `pymde`: Used for computing embeddings of the MNIST dataset.
+- `altair`: Utilized for creating interactive charts to visualize the embeddings.
+- `pandas`: Used for data manipulation and creating dataframes from the embedding results.
+- `torch`: Employed for tensor operations and random sampling of the dataset.
+- `matplotlib.pyplot`: Used for rendering images of the MNIST dataset.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Provides the framework for building interactive applications. |
+| `pymde` | Used for computing embeddings with constraints. |
+| `altair` | Used for creating interactive visualizations. |
+| `pandas` | Used for data manipulation and creating dataframes. |
+| `torch` | Used for tensor operations and random sampling. |
+| `matplotlib.pyplot` | Used for plotting and displaying images. |
+
+## Error Handling
+
+The script uses Marimo's reactive execution model to handle dependencies between cells. If a cell fails, it will not affect the execution of other independent cells, and the application will continue to function with the available data.
+
+## Logging
+
+The script uses Marimo's markdown capabilities to provide feedback to the user, such as indicating when the embedding is being computed. This is done through the `mo.md` function, which displays messages in the application's UI.
+
+## TODOs
+
+No explicit TODOs are present in the code. The script appears to be a complete example of an interactive cluster analysis application using Marimo.

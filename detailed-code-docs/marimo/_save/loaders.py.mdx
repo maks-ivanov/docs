@@ -1,0 +1,76 @@
+---
+title: "loaders.py"
+---
+
+## High-level description
+
+The `loaders.py` file in the Marimo project defines an abstract base class `Loader` and a concrete implementation `PickleLoader` for managing the saving and loading of persistent caches. These loaders are responsible for handling cache files, which are used to store and retrieve data efficiently, ensuring that computations do not need to be repeated unnecessarily. The `PickleLoader` specifically uses Python's `pickle` module to serialize and deserialize cache data.
+
+## Code Structure
+
+- **Loader (Abstract Base Class)**: Provides a blueprint for cache loaders, defining methods for checking cache hits, loading, and saving caches.
+- **PickleLoader (Concrete Class)**: Implements the `Loader` interface using the `pickle` module to handle cache files.
+
+## References
+
+- **Cache**: A class from `marimo._save.cache` that represents the cache data structure.
+- **CacheType**: A type alias from `marimo._save.cache` that specifies the type of cache.
+- **CACHE_PREFIX**: A dictionary from `marimo._save.cache` that maps cache types to their respective prefixes.
+- **Name**: A type alias from `marimo._ast.visitor` representing variable names.
+
+## Symbols
+
+### `Loader`
+#### Description
+The `Loader` class is an abstract base class that defines the interface for cache loaders. It provides methods for building cache paths, checking cache hits, loading caches, and saving caches. It is designed to be extended by concrete implementations that handle specific serialization formats or storage backends.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the cache. |
+| save_path | str | The directory path where the cache will be saved. |
+
+#### Outputs
+None directly, as this is an abstract class.
+
+#### Internal Logic
+- Initializes the `Loader` with a name and save path, creating the directory if it doesn't exist.
+- Provides a method `build_path` to construct the file path for a cache based on a hashed context and cache type.
+- Defines abstract methods `cache_hit`, `load_cache`, and `save_cache` that must be implemented by subclasses.
+
+### `PickleLoader`
+#### Description
+The `PickleLoader` class is a concrete implementation of the `Loader` interface that uses the `pickle` module to serialize and deserialize cache data. It provides methods to check if a cache file exists, load a cache from a file, and save a cache to a file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the cache. |
+| save_path | str | The directory path where the cache will be saved. |
+
+#### Outputs
+None directly, as this class handles file operations.
+
+#### Internal Logic
+- Overrides `build_path` to append a `.pickle` extension to the cache file path.
+- Implements `cache_hit` to check if a cache file exists at the constructed path.
+- Implements `load_cache` to read and deserialize a cache file using `pickle`.
+- Implements `save_cache` to serialize and write a cache to a file using `pickle`.
+
+## Side Effects
+- The `Loader` and `PickleLoader` classes interact with the file system, creating directories and reading/writing files.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `os` | Used for file path operations and checking file existence. |
+| `pickle` | Used for serializing and deserializing cache data. |
+| `pathlib.Path` | Used for handling file paths in a platform-independent way. |
+| `abc` | Provides the `ABC` and `abstractmethod` for defining abstract base classes. |
+
+## Error Handling
+- The `PickleLoader` class uses assertions to ensure that the loaded data is of the expected type (`Cache`). If the assertions fail, an error message is provided indicating a potential inconsistency in the cache.
+
+## TODOs
+- There is a TODO comment in the `cache_attempt` method of the `Loader` class suggesting the need for more robust verification of cache consistency.

@@ -1,0 +1,86 @@
+---
+title: "utils.ts"
+---
+
+## High-level description
+
+The target file `utils.ts` provides utility functions for working with the CodeMirror editor, specifically focusing on cursor position and Vim mode detection. These utilities help determine if the cursor is at the start or end of the editor and whether the editor is in Vim's normal mode, which can be used to enhance the editor's behavior in different contexts, such as when integrating Vim-like keybindings.
+
+## Code Structure
+
+The main symbols in the code are utility functions that interact with the CodeMirror editor's state. These functions are used to check the cursor's position within the editor and to determine the current mode of the editor when Vim keybindings are enabled. The functions are interconnected in that they all operate on the `EditorState` or `EditorView` objects provided by CodeMirror.
+
+## Symbols
+
+### `isAtStartOfEditor`
+#### Description
+This function checks if the cursor is positioned at the very start of the editor's document.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ev | `{ state: EditorState }` | An object containing the editor's state. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `boolean` | Returns `true` if the cursor is at the start of the document, otherwise `false`. |
+
+#### Internal Logic
+The function accesses the `selection.main` property of the `EditorState` to determine the cursor's position. It checks if both `from` and `to` are `0`, indicating the start of the document.
+
+### `isAtEndOfEditor`
+#### Description
+This function checks if the cursor is at the end of the editor's document. It also accounts for Vim's normal mode, where the cursor can be on the second to last character.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ev | `{ state: EditorState }` | An object containing the editor's state. |
+| isVim | `boolean` | A flag indicating if Vim mode is enabled. Defaults to `false`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `boolean` | Returns `true` if the cursor is at the end of the document, otherwise `false`. |
+
+#### Internal Logic
+The function calculates the document length and checks if the cursor's `from` and `to` positions match the document's length. If Vim mode is enabled, it allows the cursor to be on the second to last character.
+
+### `isInVimNormalMode`
+#### Description
+This function checks if the editor is currently in Vim's normal mode.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ev | `EditorView` | The editor view object. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | `boolean` | Returns `true` if the editor is in Vim's normal mode, otherwise `false`. |
+
+#### Internal Logic
+The function retrieves the Vim state from the editor view using `getCM`. It checks the `mode`, `insertMode`, and `visualMode` properties to determine if the editor is in normal mode.
+
+## References
+
+- The `getCM` function from the `@replit/codemirror-vim` package is used to access the Vim state of the editor.
+- The `EditorState` and `EditorView` from `@codemirror/state` and `@codemirror/view` are used to interact with the editor's state and view.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/state` | Provides the `EditorState` used to access the editor's document and selection. |
+| `@codemirror/view` | Provides the `EditorView` used to interact with the editor's view. |
+| `@replit/codemirror-vim` | Provides Vim integration for CodeMirror, including the `getCM` function to access Vim state. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the provided `EditorState` and `EditorView` are valid and that the Vim state can be accessed without issues.
+
+## Logging
+
+The code does not implement any logging mechanisms.

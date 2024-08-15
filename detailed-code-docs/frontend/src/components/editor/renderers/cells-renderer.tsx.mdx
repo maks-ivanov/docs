@@ -1,0 +1,65 @@
+---
+title: "cells-renderer.tsx"
+---
+
+## High-level description
+
+The `CellsRenderer` component in the target file is responsible for rendering notebook cells in a React application. It determines the layout and rendering logic based on the application mode (edit or read) and URL parameters. The component uses plugins to render cells in different layouts, such as grid or slides, and allows for layout customization through URL parameters.
+
+## Code Structure
+
+- **`CellsRenderer` Component**: The main component that renders notebook cells based on the current application mode and layout settings.
+- **Plugins**: Used to render cells in different layouts. The component selects a plugin based on the current layout type.
+- **Layout Management**: The component interacts with layout state and actions to determine how cells should be displayed.
+
+## References
+
+- **`useNotebook`**: A hook from `cells.ts` that provides access to the notebook state.
+- **`useLayoutState` and `useLayoutActions`**: Hooks from `layout.ts` that manage layout state and actions.
+- **`kioskModeAtom`**: An atom from `mode.ts` that indicates if the application is in kiosk mode.
+- **`cellRendererPlugins`**: A collection of plugins used to render cells in different layouts.
+- **`KnownQueryParams`**: Constants for known URL query parameters, used to override layout settings.
+
+## Symbols
+
+### `CellsRenderer`
+#### Description
+The `CellsRenderer` component is a React functional component that renders notebook cells based on the current application mode and layout settings. It uses memoization to optimize rendering performance and supports layout customization through URL parameters.
+
+#### Inputs
+| Name     | Type                  | Description                        |
+|:---------|:----------------------|:-----------------------------------|
+| appConfig| `AppConfig`           | Configuration settings for the app.|
+| mode     | `AppMode`             | The current mode of the application (e.g., edit, read). |
+| children | `React.ReactNode`     | The child components to render.    |
+
+#### Outputs
+| Name     | Type                  | Description                        |
+|:---------|:----------------------|:-----------------------------------|
+| body     | `React.ReactNode`     | The rendered output of the component. |
+
+#### Internal Logic
+1. **Mode Check**: If the mode is "edit" and not in kiosk mode, it directly renders the children.
+2. **Layout Override**: In "read" mode, it checks URL parameters to potentially override the layout type.
+3. **Plugin Selection**: It selects a plugin based on the final layout type.
+4. **Cell Rendering**: If a plugin is found, it flattens the notebook cells and uses the plugin's component to render them.
+5. **Layout Data**: It passes the current layout data or initializes it using the plugin's method.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React`    | Used for creating the React component. |
+| `jotai`    | Used for state management with atoms. |
+
+## Error Handling
+The component does not explicitly handle errors but relies on the presence of plugins and layout data to render cells. If no plugin is found for the current layout, it defaults to rendering the children.
+
+## Performance Considerations
+The component uses `React.memo` to optimize rendering by preventing unnecessary re-renders when the props have not changed.
+
+## Logging
+No explicit logging is implemented in the component.
+
+## TODOs
+No TODOs are present in the code.

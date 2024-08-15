@@ -1,0 +1,103 @@
+---
+title: "switchable-multi-select.tsx"
+---
+
+## High-level description
+
+The `switchable-multi-select.tsx` file defines a React component called `SwitchableMultiSelect`. This component allows users to toggle between a multi-select dropdown and a textarea input for selecting multiple options. It provides a flexible interface for users to either select from predefined options or input custom values directly.
+
+## Code Structure
+
+The main symbols in the code are the `SwitchableMultiSelect` and `TextAreaMultiSelect` components, along with the utility function `ensureStringArray`. The `SwitchableMultiSelect` component uses the `TextAreaMultiSelect` component when the textarea mode is active. The `ensureStringArray` function is used to ensure that the input values are consistently handled as arrays of strings.
+
+## Symbols
+
+### `SwitchableMultiSelect`
+#### Description
+The `SwitchableMultiSelect` component is a React functional component that allows users to switch between a combobox (multi-select dropdown) and a textarea for selecting multiple options. It provides a user-friendly interface for managing multiple selections with the flexibility to toggle between two input methods.
+
+#### Inputs
+| Name               | Type       | Description                                      |
+|:-------------------|:-----------|:-------------------------------------------------|
+| options            | string[]   | The list of options available for selection.     |
+| value              | string[]   | The current selected values.                     |
+| className          | string     | Optional CSS class for styling the component.    |
+| placeholder        | string     | Placeholder text for the input field.            |
+| comboBoxClassName  | string     | CSS class for styling the combobox.              |
+| textAreaClassName  | string     | CSS class for styling the textarea.              |
+| onChange           | function   | Callback function to handle changes in selection.|
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None |      |             |
+
+#### Internal Logic
+- The component maintains a state `showTextArea` to toggle between the combobox and textarea.
+- It uses the `renderInput` function to conditionally render either the `Combobox` or `TextAreaMultiSelect` based on the `showTextArea` state.
+- A `Toggle` button with an `EditIcon` is used to switch between the two input modes, with a `Tooltip` providing context-sensitive hints.
+
+### `TextAreaMultiSelect`
+#### Description
+The `TextAreaMultiSelect` component is a React functional component that treats a textarea as a multi-select input, where each line in the textarea represents a separate value. It is used within the `SwitchableMultiSelect` component when the textarea mode is active.
+
+#### Inputs
+| Name        | Type       | Description                                      |
+|:------------|:-----------|:-------------------------------------------------|
+| value       | string[]   | The current values, each represented by a line.  |
+| onChange    | function   | Callback function to handle changes in the textarea.|
+| className   | string     | Optional CSS class for styling the textarea.     |
+| placeholder | string     | Placeholder text for the textarea.               |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None |      |             |
+
+#### Internal Logic
+- The component converts the array of values into a single string with each value on a new line using the `DELIMINATOR`.
+- It listens for changes in the textarea and updates the values by splitting the input string back into an array using the `DELIMINATOR`.
+
+### `ensureStringArray`
+#### Description
+The `ensureStringArray` function ensures that the input is consistently handled as an array of strings. It is used to normalize the input values for the `SwitchableMultiSelect` and `TextAreaMultiSelect` components.
+
+#### Inputs
+| Name  | Type               | Description                                      |
+|:------|:-------------------|:-------------------------------------------------|
+| value | string \| string[] | The input value that needs to be normalized.     |
+
+#### Outputs
+| Name | Type     | Description                                      |
+|:-----|:---------|:-------------------------------------------------|
+|      | string[] | The normalized array of strings.                 |
+
+#### Internal Logic
+- If the input value is `null` or `undefined`, it returns an empty array.
+- If the input is already an array, it returns the array as is.
+- If the input is a single string, it wraps it in an array and filters out any `null` or empty strings.
+
+## References
+
+- The `SwitchableMultiSelect` component uses the `Combobox`, `ComboboxItem`, `Textarea`, `Tooltip`, `Toggle`, and `EditIcon` components from various UI libraries.
+- The `cn` utility function is used for conditional class name merging.
+
+## Dependencies
+
+| Dependency   | Purpose                                      |
+|:-------------|:---------------------------------------------|
+| `React`      | For creating React components and hooks.     |
+| `lucide-react` | Provides the `EditIcon` used in the toggle button. |
+| `@/utils/cn` | Utility for merging and conditionally applying CSS classes. |
+
+## Error Handling
+
+The code does not implement specific error handling mechanisms beyond basic React component error boundaries.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## API/Interface Reference
+
+The `SwitchableMultiSelect` component does not expose an API but provides a user interface for selecting multiple options through either a combobox or a textarea. It relies on props for configuration and state management.

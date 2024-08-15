@@ -1,0 +1,79 @@
+---
+title: "spec.ts"
+---
+
+## High-level description
+
+The target file, `spec.ts`, is part of a data visualization plugin and is responsible for converting a `ChartSpec` object into a `SpecQuery` object. This conversion involves adapting the chart's encoding specifications into a format that can be used by the CompassQL library for generating visualizations. The file primarily focuses on transforming the encoding details of a chart specification into a query format that CompassQL can process.
+
+## Code Structure
+
+The main function in this file is `toSpecQuery`, which takes a `ChartSpec` object and returns a `SpecQuery` object. It relies on the helper function `adaptEncodings` to transform the encoding part of the `ChartSpec` into a list of `EncodingQuery` objects. The `adaptEncodings` function, in turn, uses the `toFieldQuery` function from the `encoding.ts` file to convert individual field definitions into field queries.
+
+## References
+
+- `ChartSpec` from `state/types.ts`: Defines the structure of the chart specification.
+- `toFieldQuery` from `encoding.ts`: Converts field definitions into field queries.
+- `EncodingQuery` and `SpecQuery` from CompassQL: Used to define the structure of the query objects.
+
+## Symbols
+
+### `toSpecQuery`
+#### Description
+The `toSpecQuery` function converts a `ChartSpec` object into a `SpecQuery` object. This transformation is necessary for using the CompassQL library to generate visualizations based on the chart specifications.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | `ChartSpec` | The chart specification containing mark type, encodings, and configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `SpecQuery` | The converted specification query suitable for CompassQL. |
+
+#### Internal Logic
+- Extracts the `mark`, `encoding`, and `config` from the `ChartSpec`.
+- Calls `adaptEncodings` to transform the `encoding` into a list of `EncodingQuery` objects.
+- Constructs and returns a `SpecQuery` object with the transformed encodings and other properties.
+
+### `adaptEncodings`
+#### Description
+The `adaptEncodings` function transforms the encoding part of a `ChartSpec` into a list of `EncodingQuery` objects. It maps each encoding channel and its definition to a field query using the `toFieldQuery` function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| encoding | `SpecificEncoding` | The encoding definitions for various channels in the chart. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | `EncodingQuery[]` | A list of encoding queries derived from the chart's encoding definitions. |
+
+#### Internal Logic
+- Iterates over each entry in the `encoding` object.
+- For each channel and its definition, calls `toFieldQuery` to convert it into an `EncodingQuery`.
+- Returns an array of these `EncodingQuery` objects.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `compassql` | Provides the `EncodingQuery` and `SpecQuery` types used for constructing queries. |
+
+## Error Handling
+
+The code does not explicitly handle errors within the target file. It assumes that the inputs are valid and that the `toFieldQuery` function will handle any necessary validation or error reporting.
+
+## Logging
+
+There is no logging implemented in the target file.
+
+## API/Interface Reference
+
+The file does not expose an API or public interface directly. It provides utility functions for internal use within the data visualization plugin.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

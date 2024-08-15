@@ -1,0 +1,58 @@
+---
+title: "test_interrupt.py"
+---
+
+## High-level description
+
+The target file `test_interrupt.py` contains a unit test for the `InterruptHandler` class from the `marimo._server.api.interrupt` module. This test verifies the behavior of the `InterruptHandler` when handling an interrupt signal (such as Ctrl+C) and simulating user input to confirm shutdown. It ensures that the shutdown process is correctly triggered based on user input.
+
+## Code Structure
+
+The test file primarily interacts with the `InterruptHandler` class, which is responsible for managing interrupt signals and handling shutdown procedures. The test uses Python's `unittest.mock` library to simulate and verify the behavior of the `InterruptHandler`.
+
+## Symbols
+
+### `test_interrupt_handler`
+#### Description
+This function tests the behavior of the `InterruptHandler` class when handling an interrupt signal and user input. It ensures that the shutdown process is correctly triggered only after user confirmation.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+1. A `Mock` object is created to simulate the shutdown callable.
+2. An instance of `InterruptHandler` is created with `quiet` mode disabled and the mock shutdown callable.
+3. The interrupt handler is registered to handle signals.
+4. The test simulates a Ctrl+C signal by scheduling the loop to stop and calling the interrupt handler.
+5. The event loop is run to process the simulated signal.
+6. It asserts that the shutdown callable has not been called yet.
+7. The test simulates user input 'y' to confirm shutdown using `patch`.
+8. The loop is again scheduled to stop and call the interrupt handler, and the event loop is run.
+9. It asserts that the shutdown callable was called once after user input.
+
+## References
+
+- `InterruptHandler`: The class being tested, which is responsible for handling interrupt signals and managing shutdown procedures.
+- `Mock`: Used to simulate the shutdown callable.
+- `patch`: Used to simulate user input during the test.
+
+## Dependencies
+
+| Dependency     | Purpose                                      |
+|:---------------|:---------------------------------------------|
+| `unittest.mock`| To mock objects and patch functions for testing. |
+
+## Error Handling
+
+The test does not explicitly handle errors, as it relies on assertions to verify the expected behavior. If the behavior does not match expectations, the test will fail, indicating an issue with the `InterruptHandler` implementation.
+
+## Logging
+
+No logging mechanisms are implemented in this test file.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

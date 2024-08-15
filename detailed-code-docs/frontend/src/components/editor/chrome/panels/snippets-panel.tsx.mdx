@@ -1,0 +1,100 @@
+---
+title: "snippets-panel.tsx"
+---
+
+## High-level description
+
+The `snippets-panel.tsx` file defines a React component called `SnippetsPanel` that is part of a larger editor interface. This component is responsible for displaying a list of code snippets, allowing users to search through them, view their details, and insert them into an editor. It also provides functionality for users to contribute new snippets.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `SnippetsPanel` is the main component that manages the state and rendering of the snippets list and the selected snippet's details.
+- `SnippetList` is a sub-component used within `SnippetsPanel` to render the list of available snippets.
+- `SnippetViewer` is another sub-component used to display the details of a selected snippet.
+- The component uses several hooks and utility functions such as `useAsyncData`, `useTheme`, and `useLastFocusedCellId` to manage data fetching, theming, and focus state.
+
+## Symbols
+
+### `SnippetsPanel`
+#### Description
+The `SnippetsPanel` component is responsible for fetching and displaying a list of code snippets. It allows users to search for snippets, view their details, and insert them into an editor. It also handles error and loading states during data fetching.
+
+#### Inputs
+None directly, but it uses hooks to manage state and data.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | The rendered UI of the snippets panel. |
+
+#### Internal Logic
+- Uses `useAsyncData` to fetch snippets from the server.
+- Manages the state of the selected snippet using `useState`.
+- Renders a search input, a list of snippets, and a viewer for the selected snippet.
+- Handles error and loading states by displaying an `ErrorBanner` or `Spinner`.
+
+### `SnippetList`
+#### Description
+`SnippetList` is a component that renders a list of snippets and allows the user to select one.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| snippets | Snippet[] | An array of snippet objects to display. |
+| onSelect | function | Callback function to handle snippet selection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | The rendered list of snippets. |
+
+### `SnippetViewer`
+#### Description
+`SnippetViewer` displays the details of a selected snippet, including its title and sections. It allows users to insert the snippet or its code sections into the editor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| snippet | Snippet | The snippet object to display. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX Element | React Element | The rendered details of the selected snippet. |
+
+#### Internal Logic
+- Uses `useTheme` to apply the current theme to the code editor.
+- Provides buttons to insert the entire snippet or individual code sections into the editor.
+- Renders HTML content using `renderHTML` and code sections using `LazyAnyLanguageCodeMirror`.
+
+## References
+
+- `useAsyncData`: A hook used to fetch data asynchronously.
+- `ErrorBanner`: A component used to display error messages.
+- `renderHTML`: A utility function to safely render HTML content.
+- `readSnippets`: A function to fetch snippets from the server.
+- `LazyAnyLanguageCodeMirror`: A component for rendering code with syntax highlighting.
+- `useTheme`: A hook to get the current theme.
+- `useLastFocusedCellId`: A hook to get the ID of the last focused cell.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `React` | Used for building the component. |
+| `lucide-react` | Provides icons used in the UI. |
+| `cmdk` | Used for command input and list components. |
+| `@codemirror/view` | Provides extensions for the code editor. |
+
+## Error Handling
+
+- The component uses an `ErrorBanner` to display errors that occur during data fetching.
+- The `useAsyncData` hook manages error states and provides an error object to the component.
+
+## Logging
+
+- Errors are logged using the `Logger` utility when they occur.
+
+## TODOs
+None present in the code.

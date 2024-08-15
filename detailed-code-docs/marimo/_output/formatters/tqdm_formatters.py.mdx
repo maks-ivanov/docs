@@ -1,0 +1,59 @@
+---
+title: "tqdm_formatters.py"
+---
+
+## High-level description
+
+The `TqdmFormatter` class in the `tqdm_formatters.py` file is designed to integrate the `tqdm` progress bar library with the Marimo framework, specifically for environments running in a notebook. It achieves this by overriding the `tqdm` progress bar with a custom implementation that uses Marimo's native `progress_bar` class, allowing for a consistent user interface within the Marimo ecosystem.
+
+## Code Structure
+
+- `TqdmFormatter` is a subclass of `FormatterFactory`, which is an abstract base class for creating formatters that can be registered at runtime.
+- The `register` method in `TqdmFormatter` checks if the code is running in a notebook environment and, if so, replaces the `tqdm.notebook.tqdm` function with a custom function that maps its parameters to Marimo's `progress_bar`.
+
+## Symbols
+
+### `TqdmFormatter`
+#### Description
+The `TqdmFormatter` class is responsible for adapting the `tqdm` progress bar to work within the Marimo framework, specifically in notebook environments. It does this by replacing the `tqdm` function with a custom function that translates its parameters to Marimo's `progress_bar`.
+
+#### Inputs
+- None directly, but it uses the `running_in_notebook` function to determine the environment.
+
+#### Outputs
+- None directly, but it modifies the behavior of `tqdm.notebook.tqdm` when registered.
+
+#### Internal Logic
+- The `package_name` method returns the string "tqdm", indicating the third-party package this formatter is associated with.
+- The `register` method:
+  - Checks if the code is running in a notebook using `running_in_notebook`.
+  - If true, it imports `tqdm.notebook` and defines a new function `tqdm_to_progress_bar` that maps `tqdm` parameters to Marimo's `progress_bar`.
+  - Replaces `tqdm.notebook.tqdm` with `tqdm_to_progress_bar`.
+
+## References
+
+- `FormatterFactory`: The abstract base class that `TqdmFormatter` extends, providing the structure for package-specific formatters.
+- `progress_bar`: A class from `marimo._plugins.stateless.status._progress` that provides a Marimo-native progress bar implementation.
+- `running_in_notebook`: A utility function from `marimo._runtime.context.utils` that checks if the code is running in a notebook environment.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `tqdm.notebook` | Provides the original `tqdm` progress bar functionality that is overridden in notebook environments. |
+
+## Error Handling
+
+The code does not explicitly handle errors, but it assumes that the `tqdm` package is available when running in a notebook. If `tqdm` is not installed, the import statement would raise an `ImportError`.
+
+## Side Effects
+
+- The `register` method modifies the `tqdm.notebook.tqdm` function, which affects all subsequent uses of `tqdm` in the notebook environment.
+
+## Performance Considerations
+
+- The replacement of `tqdm` with a custom function is done only if the code is running in a notebook, minimizing unnecessary overhead in other environments.
+
+## TODOs
+
+- There are no TODOs or notes left in the code.

@@ -1,0 +1,48 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `tests/_runtime/reload` directory is part of a testing suite designed to verify the functionality of module reloading in a Python runtime environment. It includes configuration files, utility functions, and test scripts that collectively ensure that changes to Python modules are detected and handled correctly. The directory is structured to test various aspects of module reloading, including handling errors, managing dependencies, and ensuring that changes in modules trigger appropriate actions in the runtime environment.
+
+## What does it do?
+
+The directory facilitates testing of the module reloading process, which is crucial for applications that need to dynamically update code without restarting the entire application. It includes:
+
+- **Configuration for Testing**: The `conftest.py` file sets up a fixture to generate random module names, ensuring that each test runs in isolation without namespace conflicts.
+  
+- **Module Import Testing**: The `reload_data` directory contains placeholder modules (`a.py`, `b.py`, `c.py`, `d.py`) to test the import and reloading mechanisms. These files are used to verify that the import system works correctly and can handle changes in module content.
+
+- **Utility Functions**: The `reload_test_utils.py` file provides functions to generate random module names and update Python files with a delay. This ensures that file timestamps differ, which is essential for testing autoreload functionality.
+
+- **Autoreload Tests**: The `test_autoreload.py` file contains unit tests for the autoreloading functionality, checking if modules are reloaded correctly when their source code changes. It also tests error handling when modules contain syntax or import errors.
+
+- **Module Watcher Tests**: The `test_module_watcher.py` file includes asynchronous tests to verify that the system detects changes in modules and handles them appropriately. It tests various scenarios, including nested modules, third-party libraries, and modified cells, ensuring that the runtime environment responds correctly to changes.
+
+## Entry points
+
+The main files in this directory are:
+
+- **`conftest.py`**: Sets up the testing environment by providing a fixture for generating random module names.
+- **`reload_test_utils.py`**: Offers utility functions for generating module names and updating files, which are used across various tests.
+- **`test_autoreload.py`**: Contains tests for the autoreloading functionality, focusing on module reloading and error handling.
+- **`test_module_watcher.py`**: Includes tests for the module watcher, ensuring that changes in modules are detected and handled correctly.
+
+## Key Files
+
+- **`reload_data` Directory**: Contains placeholder modules (`a.py`, `b.py`, `c.py`, `d.py`) used to test the import and reloading mechanisms. These files are minimalistic and primarily serve to trigger import actions.
+
+## Dependencies
+
+The directory relies on several external libraries and frameworks:
+
+- **`pytest`**: Used for defining and running test cases, providing fixtures, and managing test execution.
+- **`asyncio`**: Utilized for asynchronous operations within the tests, particularly in `test_module_watcher.py`.
+- **`importlib`**: Used for dynamic module imports in the tests.
+- **`pathlib`**: Provides an object-oriented interface for filesystem paths, used for managing test files.
+- **`random`**: Generates random samples for creating unique module names.
+- **`textwrap`**: Used to dedent code before writing it to files, ensuring proper formatting.
+- **`time`**: Introduces delays to ensure timestamp differences between `.py` and `.pyc` files.
+
+These dependencies are chosen to facilitate testing of dynamic module reloading, ensuring that the system can handle changes in code efficiently and correctly.

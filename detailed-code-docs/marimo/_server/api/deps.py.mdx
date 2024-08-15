@@ -1,0 +1,81 @@
+---
+title: "deps.py"
+---
+
+## High-level description
+
+The target file, `marimo/_server/api/deps.py`, defines classes and methods for managing application state within a server environment. It provides mechanisms to extract and manipulate the state of the application from HTTP requests or ASGI applications, particularly focusing on session management and configuration retrieval. This is crucial for maintaining the state across different requests and ensuring that the application behaves consistently.
+
+## Code Structure
+
+The main symbols in the code are the `AppStateBase` and `AppState` classes. `AppStateBase` serves as a foundational class for managing the application's state, while `AppState` extends this functionality to include request-specific operations. These classes interact with various components such as `SessionManager`, `UserConfigManager`, and `SessionMode` to provide a comprehensive state management solution.
+
+## Symbols
+
+### `AppStateBase`
+#### Description
+`AppStateBase` is a class that provides a base structure for managing the application's state. It includes methods to initialize the state from an ASGI application and provides properties to access various components of the application's state, such as session management, configuration, and server details.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| state | State | The state object from the ASGI application. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- The class initializes with a `State` object, which is stored as an instance variable.
+- It provides several properties to access components like `session_manager`, `mode`, `host`, `port`, etc., by casting the state attributes to their respective types.
+
+### `AppState`
+#### Description
+`AppState` extends `AppStateBase` to include request-specific state management. It provides methods to extract session information from HTTP requests and ensures that the current session is valid and accessible.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| request | Union[Request, WebSocket] | The incoming HTTP request or WebSocket connection. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| N/A | N/A | N/A |
+
+#### Internal Logic
+- The class initializes with a request object and extracts the application state from it.
+- It includes methods like `get_current_session_id`, `require_current_session_id`, `get_current_session`, and `require_current_session` to manage session IDs and ensure valid sessions.
+- It also provides methods to handle query parameters, ensuring required parameters are present and accessible.
+
+## References
+
+- `SessionManager`: Used to manage sessions within the application.
+- `UserConfigManager`: Manages user-specific configurations.
+- `SessionMode`: Enum to determine the mode of the session (e.g., edit or run).
+- `SkewProtectionToken`: Used for session security and protection against version skew.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `starlette` | Provides ASGI application components like `Request`, `WebSocket`, and `State`. |
+| `uvicorn` | Used for server management and operations. |
+
+## Error Handling
+
+The code raises `ValueError` exceptions when required session IDs or query parameters are missing, ensuring that the application does not proceed with invalid or incomplete data.
+
+## Logging
+
+The code uses a logger (`LOGGER`) to log warnings, particularly when invalid session IDs are encountered, which helps in debugging and monitoring the application's behavior.
+
+## Side Effects
+
+- The `require_current_session_id` and `require_current_session` methods raise exceptions if the session ID is missing or invalid, which can terminate the request processing.
+- The `AppState` class modifies the request object by extracting headers and query parameters, which can affect subsequent operations on the request.
+
+## Performance Considerations
+
+The use of casting and property accessors ensures that the state is accessed efficiently, minimizing overhead in retrieving state components. However, care should be taken to ensure that the state object is correctly initialized and populated to avoid runtime errors.

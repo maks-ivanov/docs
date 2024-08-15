@@ -1,0 +1,106 @@
+---
+title: "formatter.py"
+---
+
+## High-level description
+
+The `formatter.py` file in the Marimo project provides a utility for formatting code using different formatters. It defines a hierarchy of formatter classes that attempt to format code using the `ruff` and `black` formatters, falling back to no formatting if neither is available. The file also includes error handling and logging to inform users about the availability of these formatters.
+
+## Code Structure
+
+The main symbols in the code are classes that represent different formatters. The `Formatter` class is a base class, and `DefaultFormatter`, `RuffFormatter`, and `BlackFormatter` are subclasses that implement specific formatting strategies. The `DefaultFormatter` class attempts to use `RuffFormatter` first, then `BlackFormatter`, and logs a warning if neither is available. The `RuffFormatter` and `BlackFormatter` classes implement the actual formatting logic using the respective tools.
+
+## References
+
+- `CellId_t` from `marimo._ast.cell`: Used as a key type in the `CellCodes` dictionary.
+- `DependencyManager` from `marimo._dependencies.dependencies`: Used to check the availability of `ruff` and `black` formatters.
+- `LOGGER` from `marimo._loggers`: Used for logging warnings and errors.
+
+## Symbols
+
+### `Formatter`
+#### Description
+The `Formatter` class serves as a base class for code formatters. It provides a basic structure for formatting code but does not implement any specific formatting logic.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| line_length | int | The maximum line length for formatted code. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | `CellCodes` | The input code, returned unmodified. |
+
+### `DefaultFormatter`
+#### Description
+The `DefaultFormatter` class extends `Formatter` and attempts to format code using `ruff` first, then `black`, and logs a warning if neither is available.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | `CellCodes` | A dictionary mapping cell IDs to code strings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | `CellCodes` | The formatted code, or an empty dictionary if no formatter is available. |
+
+#### Internal Logic
+- Checks if `ruff` is available using `DependencyManager.ruff.has()`.
+- If `ruff` is available, it uses `RuffFormatter` to format the code.
+- If `ruff` is not available but `black` is, it uses `BlackFormatter`.
+- Logs a warning if neither formatter is available.
+
+### `RuffFormatter`
+#### Description
+The `RuffFormatter` class extends `Formatter` and formats code using the `ruff` tool.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | `CellCodes` | A dictionary mapping cell IDs to code strings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted_codes | `CellCodes` | The code formatted by `ruff`, or an empty dictionary if formatting fails. |
+
+#### Internal Logic
+- Runs the `ruff` command using `subprocess.run`.
+- Iterates over each code snippet, formats it using `ruff`, and collects the results.
+- Logs errors if formatting fails.
+
+### `BlackFormatter`
+#### Description
+The `BlackFormatter` class extends `Formatter` and formats code using the `black` library.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | `CellCodes` | A dictionary mapping cell IDs to code strings. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted_codes | `CellCodes` | The code formatted by `black`, or the original code if formatting fails. |
+
+#### Internal Logic
+- Imports the `black` library and checks for its availability.
+- Iterates over each code snippet, formats it using `black`, and collects the results.
+- Returns the original code if formatting fails.
+
+### `FormatError`
+#### Description
+A custom exception class used to indicate errors during the formatting process.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `subprocess` | Used to run external commands for formatting with `ruff`. |
+| `black` | A Python code formatter used by `BlackFormatter`. |
+
+## Logging
+
+The code uses a logger (`LOGGER`) to log warnings and errors related to the availability and execution of code formatters. This helps in diagnosing issues when formatters are not installed or fail to format the code.

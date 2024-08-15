@@ -1,0 +1,151 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `altair_transformer.py` file provides custom data transformation functions for the Altair visualization library. These functions convert data into JSON or CSV formats and return URLs pointing to virtual files instead of writing the data to disk. This approach allows handling larger datasets efficiently by leveraging in-memory data handling.
+
+## Code Structure
+
+The main symbols in the code are functions that transform data into specific formats and return URLs. These functions are interconnected with utility functions for data conversion and virtual file handling. The `register_transformers` function is responsible for registering these custom transformers with Altair.
+
+## Symbols
+
+### `_to_marimo_json`
+#### Description
+Converts data into a JSON format and returns a URL pointing to a virtual file containing the JSON data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Data | The data to be converted to JSON. |
+| kwargs | Any | Additional arguments (unused). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | _ToJsonReturnUrlDict | A dictionary containing the URL and format type. |
+
+#### Internal Logic
+- Converts the input data to a JSON string using `_data_to_json_string`.
+- Encodes the JSON string and creates a virtual file using `mo_data.json`.
+- Returns a dictionary with the virtual file URL and format type.
+
+### `_to_marimo_csv`
+#### Description
+Converts data into a CSV format and returns a URL pointing to a virtual file containing the CSV data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Data | The data to be converted to CSV. |
+| kwargs | Any | Additional arguments (unused). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | _ToCsvReturnUrlDict | A dictionary containing the URL and format type. |
+
+#### Internal Logic
+- Converts the input data to a CSV string using `_data_to_csv_string`.
+- Encodes the CSV string and creates a virtual file using `mo_data.csv`.
+- Returns a dictionary with the virtual file URL and format type.
+
+### `_to_marimo_inline_csv`
+#### Description
+Converts data into a CSV format and inlines the CSV data in the URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | Data | The data to be converted to CSV. |
+| kwargs | Any | Additional arguments (unused). |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | _ToCsvReturnUrlDict | A dictionary containing the URL and format type. |
+
+#### Internal Logic
+- Converts the input data to a CSV string using `_data_to_csv_string`.
+- Encodes the CSV string in base64 and builds a data URL using `build_data_url`.
+- Returns a dictionary with the data URL and format type.
+
+### `_data_to_json_string`
+#### Description
+Converts the input data into a JSON string representation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | _DataType | The data to be converted to a JSON string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | str | A JSON string representation of the data. |
+
+#### Internal Logic
+- Checks if the data is a Pandas DataFrame and sanitizes it using Altair utilities.
+- Converts the sanitized DataFrame to a JSON string.
+- Handles Narwhals DataFrame by converting it to a native format.
+- Uses table managers to convert data to JSON if applicable.
+
+### `_data_to_csv_string`
+#### Description
+Converts the input data into a CSV string representation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | _DataType | The data to be converted to a CSV string. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | str | A CSV string representation of the data. |
+
+#### Internal Logic
+- Uses a table manager to convert the data to a CSV string.
+
+### `register_transformers`
+#### Description
+Registers custom data transformers for Altair to handle data as virtual files.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Registers the custom CSV and JSON transformers with Altair's data transformer registry.
+- Ensures that the previous options are preserved and defaults to CSV for efficiency.
+
+## References
+
+- `mo_data.json` and `mo_data.csv` are used to create virtual files.
+- `build_data_url` is used to create data URLs with base64 encoding.
+- `get_table_manager` and `get_table_manager_or_none` are used to manage data conversion.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `altair` | Used for data transformation and sanitization. |
+| `pandas` | Used for handling DataFrame data types. |
+| `narwhals` | Used for handling Narwhals DataFrame data types. |
+
+## Error Handling
+
+- Raises `NotImplementedError` if the data type is not supported for JSON conversion.
+- Uses assertions to ensure the correct type of JSON string.
+
+## Logging
+
+No explicit logging is implemented in this code.
+
+## TODOs
+
+No TODOs are present in the code.

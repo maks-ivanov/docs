@@ -1,0 +1,129 @@
+---
+title: "test_runtime.py"
+---
+
+## High-level description
+
+The `test_runtime.py` file contains a suite of tests designed to validate the functionality of the `Kernel` class and its associated components within the Marimo runtime environment. These tests cover various aspects of the runtime, including execution of code cells, handling of errors, management of UI elements, and state transitions. The tests ensure that the kernel behaves correctly under different scenarios, such as executing cells with dependencies, handling errors like cycle errors or multiple definition errors, and managing UI element interactions.
+
+## Code Structure
+
+The main structure of the code revolves around the `TestExecution` and `TestStrictExecution` classes, which contain multiple asynchronous test methods. These methods interact with the `Kernel` class to simulate different runtime scenarios. The tests use the `pytest` framework for assertions and asynchronous test execution. The `Kernel` class is the central component being tested, and it interacts with various other components like `ExecutionRequest`, `DeleteCellRequest`, and `SetUIElementValueRequest`.
+
+## References
+
+- `Kernel`: The main class being tested, responsible for managing the execution of code cells and handling runtime operations.
+- `ExecutionRequest`, `DeleteCellRequest`, `SetUIElementValueRequest`: Request classes used to interact with the kernel during tests.
+- `CycleError`, `MultipleDefinitionError`, `DeleteNonlocalError`, `MarimoStrictExecutionError`: Error classes used to validate error handling in the kernel.
+
+## Symbols
+
+### `TestExecution`
+#### Description
+This class contains tests for the execution of code cells in the kernel. It verifies the correct execution of cells, handling of dependencies, and management of global variables.
+
+#### Inputs
+- `any_kernel`: An instance of the `Kernel` class used for testing.
+
+#### Outputs
+- None directly, but assertions are made to validate the kernel's behavior.
+
+#### Internal Logic
+- The tests simulate the execution of code cells with dependencies and verify the correct propagation of values and states.
+- Tests handle scenarios like updating cell values, deleting cells, and checking for stale states.
+
+### `TestStrictExecution`
+#### Description
+This class tests the kernel's behavior under strict execution mode, where stricter rules are applied to cell execution and state management.
+
+#### Inputs
+- `strict_kernel`: An instance of the `Kernel` class configured for strict execution.
+
+#### Outputs
+- None directly, but assertions are made to validate the kernel's behavior under strict execution.
+
+#### Internal Logic
+- Tests focus on ensuring that the kernel correctly handles strict execution rules, such as preventing execution with undefined references and managing private variables.
+
+### `TestImports`
+#### Description
+This class tests the kernel's handling of import statements and their effects on cell execution.
+
+#### Inputs
+- `k`: An instance of the `Kernel` class used for testing.
+
+#### Outputs
+- None directly, but assertions are made to validate the kernel's import handling.
+
+#### Internal Logic
+- Tests verify that imports trigger the correct execution of dependent cells and that re-imports do not cause unnecessary re-execution.
+
+### `TestStoredOutput`
+#### Description
+This class tests the storage and management of cell outputs, particularly UI elements.
+
+#### Inputs
+- `any_kernel`: An instance of the `Kernel` class used for testing.
+
+#### Outputs
+- None directly, but assertions are made to validate the storage of outputs.
+
+#### Internal Logic
+- Tests ensure that UI elements are correctly stored and managed across cell executions and that non-UI outputs are not stored unnecessarily.
+
+### `TestDisable`
+#### Description
+This class tests the kernel's handling of cell disabling and re-enabling, ensuring that state transitions are managed correctly.
+
+#### Inputs
+- `any_kernel`: An instance of the `Kernel` class used for testing.
+
+#### Outputs
+- None directly, but assertions are made to validate the handling of disabled cells.
+
+#### Internal Logic
+- Tests verify that disabling and re-enabling cells correctly updates their states and that dependent cells are managed appropriately.
+
+### `TestAsyncIO`
+#### Description
+This class tests the kernel's support for asynchronous I/O operations within cells.
+
+#### Inputs
+- `any_kernel`: An instance of the `Kernel` class used for testing.
+
+#### Outputs
+- None directly, but assertions are made to validate async I/O handling.
+
+#### Internal Logic
+- Tests ensure that asynchronous operations like `await` and `asyncio` functions are handled correctly by the kernel.
+
+### `TestStateTransitions`
+#### Description
+This class tests the kernel's management of state transitions during cell execution, particularly in response to errors and interruptions.
+
+#### Inputs
+- `mocked_kernel`: A mocked instance of the `Kernel` class used for testing.
+
+#### Outputs
+- None directly, but assertions are made to validate state transitions.
+
+#### Internal Logic
+- Tests verify that state transitions are correctly managed, ensuring that cells return to an idle state after errors or interruptions.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing test cases. |
+
+## Error Handling
+
+The tests include scenarios that trigger various errors, such as `CycleError`, `MultipleDefinitionError`, and `DeleteNonlocalError`. These errors are used to validate the kernel's error handling mechanisms, ensuring that it correctly identifies and reports errors during cell execution.
+
+## Logging
+
+The tests do not explicitly implement logging, but the kernel's internal logging mechanisms may be triggered during test execution, providing insights into the kernel's operations and any issues encountered.
+
+## TODOs
+
+- The code includes a TODO comment in the `marimo/_config/config.py` file, indicating a planned migration from "normal" to "compact" width types. This is not directly related to the tests but may impact future configurations.

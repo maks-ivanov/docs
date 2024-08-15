@@ -1,0 +1,98 @@
+---
+title: "editor.stories.tsx"
+---
+
+## High-level description
+
+The target file `editor.stories.tsx` is a Storybook story file for a code editor component built using CodeMirror. It defines two stories, `Primary` and `DefaultPython`, which showcase different configurations of the editor, including extensions for syntax highlighting and integration with GitHub Copilot for code suggestions.
+
+## Code Structure
+
+The main symbols in the code are the `meta` object, the `Editor` component, and the two story objects `Primary` and `DefaultPython`. The `meta` object defines metadata for the Storybook, such as the title of the story. The `Editor` component is a React component that initializes a CodeMirror editor instance with specified extensions. The `Primary` and `DefaultPython` story objects define how the editor is rendered with different configurations.
+
+## Symbols
+
+### `meta`
+#### Description
+The `meta` object provides metadata for the Storybook, including the title of the story.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+### `Editor`
+#### Description
+The `Editor` component is a React component that sets up a CodeMirror editor instance within a `div` element. It uses the `useEffect` hook to initialize the editor when the component mounts and cleans up when it unmounts.
+
+#### Inputs
+| Name      | Type         | Description                        |
+|:----------|:-------------|:-----------------------------------|
+| `opts`    | `{ extensions?: Extension[] }` | Options for configuring the editor, including extensions. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `React.ReactNode` | A `div` element that contains the CodeMirror editor. |
+
+#### Internal Logic
+- Uses `useRef` to create a reference to a `div` element.
+- Uses `useEffect` to initialize a `CodeMirror` editor when the component mounts.
+- The editor is configured with a document containing Python code and any provided extensions.
+- Cleans up by destroying the editor instance when the component unmounts.
+
+### `Primary`
+#### Description
+The `Primary` story renders the `Editor` component with a basic setup of CodeMirror extensions, including a theme and hotkey provider.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `args` | `any` | Arguments passed to the story. |
+| `ctx` | `any` | Context object containing global settings like theme. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `React.ReactNode` | A `div` containing the configured `Editor` component. |
+
+### `DefaultPython`
+#### Description
+The `DefaultPython` story renders a `CodeMirror` component with Python language support and Copilot integration.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| -    | `React.ReactNode` | A `div` containing the configured `CodeMirror` component. |
+
+## References
+
+- `basicBundle` from `../core/codemirror/cm`: Used to configure the basic setup of the CodeMirror editor.
+- `copilotBundle` from `@/core/codemirror/copilot/extension`: Used to integrate Copilot features into the editor.
+- `CopilotConfig` from `@/core/codemirror/copilot/copilot-config`: A component used in the `DefaultPython` story to manage Copilot configuration.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@storybook/react` | Used for creating and managing stories in Storybook. |
+| `@codemirror/state` | Provides state management for the CodeMirror editor. |
+| `@codemirror/view` | Provides the view layer for the CodeMirror editor. |
+| `@uiw/react-codemirror` | A React wrapper for CodeMirror. |
+| `@codemirror/lang-python` | Provides Python language support for CodeMirror. |
+
+## Error Handling
+
+The `Editor` component uses a `useEffect` hook to manage the lifecycle of the CodeMirror editor instance. It checks if the `ref` is set before attempting to create the editor, preventing potential errors from accessing a null reference.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

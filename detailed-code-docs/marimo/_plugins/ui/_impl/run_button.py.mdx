@@ -1,0 +1,64 @@
+---
+title: "run_button.py"
+---
+
+## High-level description
+
+The `run_button` class in the `marimo/_plugins/ui/_impl/run_button.py` file defines a UI element that acts as a button to trigger computations in a notebook or application. When clicked, the button's value is set to `True`, causing any dependent cells to execute. After execution, the value is reset to `False` if automatic execution is enabled. This class extends the `UIElement` class, inheriting its properties and methods to manage UI interactions and state.
+
+## Code Structure
+
+The `run_button` class is a subclass of `UIElement`, which is a generic class for UI elements with a value that can be updated based on frontend interactions. The `run_button` class uses the `button` component from the `input` module to define its frontend representation and behavior. It also interacts with the runtime context to manage its state and execution flow.
+
+## Symbols
+
+### `run_button`
+#### Description
+The `run_button` class represents a button UI element that triggers computations when clicked. It is designed to integrate with a reactive notebook or application environment, where clicking the button sets its value to `True`, triggering the execution of any cells that reference it. The value is automatically reset to `False` after execution if automatic execution is enabled.
+
+#### Inputs
+| Name       | Type     | Description                                                                 |
+|:-----------|:---------|:----------------------------------------------------------------------------|
+| kind       | Literal  | The visual style of the button, can be 'neutral', 'success', 'warn', or 'danger'. |
+| disabled   | bool     | Indicates whether the button is disabled.                                    |
+| tooltip    | Optional[str] | A tooltip to display when hovering over the button.                        |
+| label      | str      | The text label for the button.                                               |
+| on_change  | Optional[Callable[[Any], None]] | A callback function that is called when the button's value changes. |
+| full_width | bool     | Determines if the button should take up the full width of its container.      |
+
+#### Outputs
+| Name  | Type | Description                          |
+|:------|:-----|:-------------------------------------|
+| value | bool | The current value of the button, `True` when clicked, `False` otherwise. |
+
+#### Internal Logic
+- **Initialization**: The constructor initializes the button with default values and sets up the UI element using the `button` component. It sets the initial value to `False` and configures the button's appearance and behavior based on the provided arguments.
+- **Value Conversion**: The `_convert_value` method converts the frontend value to a boolean. It returns `False` if the value is `0` (indicating initialization) and `True` otherwise.
+- **Update Completion**: The `_on_update_completion` method resets the button's value to `False` after the associated cells have been executed, unless the context is a lazy kernel, in which case it does nothing to avoid premature resets.
+
+## References
+
+- **`UIElement`**: The `run_button` class extends the `UIElement` class, which provides the foundational structure and behavior for UI elements in the Marimo framework.
+- **`button`**: The `run_button` class uses the `button` component from the `input` module to define its frontend representation and behavior.
+- **`ContextNotInitializedError`**: This exception is handled in the `_on_update_completion` method to manage cases where the runtime context is not initialized.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for generating markdown documentation. |
+| `marimo._plugins.ui._core.ui_element` | Contains the `UIElement` class, which `run_button` extends. |
+| `marimo._plugins.ui._impl.input` | Provides the `button` component used by `run_button`. |
+| `marimo._runtime.context.types` | Provides the `ContextNotInitializedError` exception. |
+
+## Error Handling
+
+- The `_on_update_completion` method handles `ContextNotInitializedError` to ensure that the button's value is reset only when the runtime context is properly initialized.
+
+## Logging
+
+No explicit logging mechanisms are implemented in the `run_button` class. However, errors in the `on_change` callback would typically be logged by the framework's logging system.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,128 @@
+---
+title: "ops.py"
+---
+
+## High-level description
+
+The `ops.py` file in the `marimo/_messaging` directory defines various message types and operations that the kernel can send to the frontend in the Marimo application. These operations are primarily related to cell execution, UI interactions, and kernel status updates. The file uses dataclasses to define structured messages that encapsulate different types of operations and their associated data.
+
+## Code Structure
+
+The main symbols in the code are dataclasses that represent different operations or messages that can be sent from the kernel to the frontend. These include operations related to cell execution (`CellOp`), function call results (`FunctionCallResult`), UI element interactions (`SendUIElementMessage`, `RemoveUIElements`), and kernel status updates (`KernelReady`, `Interrupted`, `CompletedRun`). Each dataclass defines the structure of the message, including required and optional fields.
+
+## Symbols
+
+### `serialize`
+#### Description
+The `serialize` function attempts to convert a dataclass instance into a dictionary. It first tries to use the `asdict` function from the `dataclasses` module. If that fails, it falls back to using a custom JSON encoder, `WebComponentEncoder`, to handle serialization.
+
+#### Inputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| datacls | Any  | The dataclass instance to serialize |
+
+#### Outputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| output | Dict[str, JSONType] | The serialized dictionary representation of the dataclass |
+
+### `Op`
+#### Description
+The `Op` class is a base dataclass for operations that can be broadcasted to the frontend. It includes a method to serialize the operation and a method to broadcast it over a stream.
+
+#### Inputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| stream | Optional[Stream] | The stream to broadcast the operation to |
+
+#### Outputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| None   | None | This method does not return a value |
+
+#### Internal Logic
+- The `broadcast` method checks if a stream is provided; if not, it attempts to get the current context and use its stream.
+- It writes the serialized operation to the stream.
+- If serialization fails, it logs an exception.
+
+### `CellOp`
+#### Description
+The `CellOp` class represents an operation to transition a cell's state. It includes fields for cell output, console messages, execution status, and more.
+
+#### Inputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| cell_id | CellId_t | The ID of the cell |
+| output | Optional[CellOutput] | The output of the cell |
+| console | Optional[Union[CellOutput, List[CellOutput]]] | Console messages to append |
+| status | Optional[RuntimeStateType] | The execution status of the cell |
+| stale_inputs | Optional[bool] | Whether the cell has stale inputs |
+
+#### Outputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| None   | None | This class does not return a value |
+
+#### Internal Logic
+- The `maybe_truncate_output` method checks if the output size exceeds a maximum limit and truncates it if necessary.
+- The `broadcast_output`, `broadcast_empty_output`, `broadcast_console_output`, `broadcast_status`, and `broadcast_error` methods are static methods that handle broadcasting different types of cell operations.
+
+### `FunctionCallResult`
+#### Description
+Represents the result of a function call, including the function call ID, return value, and status.
+
+#### Inputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| function_call_id | str | The ID of the function call |
+| return_value | JSONType | The return value of the function call |
+| status | HumanReadableStatus | The status of the function call |
+
+#### Outputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| None   | None | This class does not return a value |
+
+#### Internal Logic
+- The `serialize` method attempts to serialize the function call result and logs an exception if serialization fails.
+
+### `KernelReady`
+#### Description
+Indicates that the kernel is ready for execution, including information about cell IDs, codes, names, layout, and more.
+
+#### Inputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| cell_ids | Tuple[CellId_t, ...] | The IDs of the cells |
+| codes | Tuple[str, ...] | The code for each cell |
+| names | Tuple[str, ...] | The names of the cells |
+| layout | Optional[LayoutConfig] | The layout configuration |
+| configs | Tuple[CellConfig, ...] | The configuration for each cell |
+| resumed | bool | Whether the kernel was resumed from a previous session |
+| ui_values | Optional[Dict[str, JSONType]] | The values of UI elements if resumed |
+| last_executed_code | Optional[Dict[CellId_t, str]] | The last executed code for each cell if resumed |
+| last_execution_time | Optional[Dict[CellId_t, float]] | The last execution time for each cell if resumed |
+| app_config | _AppConfig | The application configuration |
+| kiosk | bool | Whether the kernel is in kiosk mode |
+| capabilities | KernelCapabilities | The capabilities of the kernel |
+
+#### Outputs
+| Name   | Type | Description                |
+|:-------|:-----|:---------------------------|
+| None   | None | This class does not return a value |
+
+## Dependencies
+
+The code relies on several external libraries and modules:
+- `json`: For JSON serialization and deserialization.
+- `dataclasses`: For defining data structures with default methods like `__init__` and `__repr__`.
+- `typing`: For type annotations and type checking.
+- `marimo._loggers`: For logging operations.
+- `marimo._runtime.context`: For accessing the runtime context.
+- `marimo._plugins.core.json_encoder`: For custom JSON encoding.
+- `marimo._messaging.cell_output`: For handling cell output operations.
+- `marimo._messaging.types`: For defining stream types and operations.
+
+## Error Handling
+
+The code includes error handling mechanisms, particularly in the `serialize` and `broadcast` methods, where exceptions are caught and logged to prevent the application from crashing due to serialization or broadcasting errors.

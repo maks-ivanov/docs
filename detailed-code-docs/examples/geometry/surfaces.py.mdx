@@ -1,0 +1,102 @@
+---
+title: "surfaces.py"
+---
+
+## High-level description
+
+The `surfaces.py` file is a script that uses the `marimo` library to create an interactive application for visualizing different 3D surfaces. It allows users to select from a set of predefined surfaces (paraboloid, saddle, sphere, and torus) and adjust parameters to see how these changes affect the surface's shape. The application uses `matplotlib` for plotting and provides a user interface for parameter selection and visualization.
+
+## Code Structure
+
+The code is structured around the `marimo` library's `App` and `cell` decorators, which are used to define interactive components of the application. Each `@app.cell` function represents a distinct part of the application, such as setting up the plot, defining the surface functions, or creating UI elements for user interaction. The functions are interconnected, with some functions returning values that are used as inputs to others.
+
+## Symbols
+
+### `app`
+#### Description
+`app` is an instance of `marimo.App`, which is used to create and manage the interactive application. It serves as the main entry point for defining the application's behavior and layout.
+
+### `@app.cell`
+#### Description
+The `@app.cell` decorator is used to define a function as a cell in the `marimo` application. Each cell represents a component of the application, such as a UI element or a computational function.
+
+### `plot_3d_surface`
+#### Description
+This function is responsible for plotting a 3D surface using `matplotlib`. It creates a 3D plot and applies the selected surface function to generate the surface data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| surface_function | function | A function that returns the x, y, z coordinates for the surface |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ax | Axes3D | The 3D axes object containing the plotted surface |
+
+#### Internal Logic
+- Creates a 3D plot using `matplotlib`.
+- Calls the `surface_function` to get the x, y, z data.
+- Plots the surface using `ax.plot_surface`.
+- Sets axis labels and figure size.
+
+### `grid`
+#### Description
+Generates a grid of x and y values over specified limits, used for plotting surfaces.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| xlim | tuple | The limits for the x-axis |
+| ylim | tuple | The limits for the y-axis |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| meshgrid | tuple | A meshgrid of x and y values |
+
+#### Internal Logic
+- Uses `numpy.linspace` to create evenly spaced values within the given limits.
+- Uses `numpy.meshgrid` to create a grid from these values.
+
+### `paraboloid`, `saddle`, `sphere`, `torus`
+#### Description
+These functions define the mathematical representation of each surface type. They return the x, y, z coordinates for plotting.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Various | Various | Parameters specific to each surface type |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| x, y, z | tuple | The coordinates for the surface |
+
+#### Internal Logic
+- Each function uses the `grid` function to generate x and y values.
+- Computes the z values based on the specific mathematical formula for each surface type.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo` | Used for creating the interactive application and UI components. |
+| `matplotlib` | Used for plotting the 3D surfaces. |
+| `numpy` | Used for numerical operations and generating grids. |
+
+## Error Handling
+
+The code includes basic error handling for unrecognized function values in the function that sets axis limits, raising a `ValueError` if an invalid function is selected.
+
+## Logging
+
+There is no explicit logging mechanism implemented in the code.
+
+## API/Interface Reference
+
+The code does not explicitly define an API or public interface beyond the interactive application created with `marimo`.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

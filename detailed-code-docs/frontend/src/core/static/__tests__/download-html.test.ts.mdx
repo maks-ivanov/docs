@@ -1,0 +1,98 @@
+---
+title: "download-html.test.ts"
+---
+
+## High-level description
+
+The target file contains unit tests for the `updateAssetUrl` function, which is part of a module responsible for handling asset URLs in a web application. The tests ensure that the function correctly converts relative and absolute URLs to a standardized format using a specified base URL, while also verifying that URLs from the same origin remain unchanged.
+
+## Code Structure
+
+The main symbol in the target file is the `describe` block, which groups together several test cases for the `updateAssetUrl` function. Each test case is defined using the `it` function, which specifies the expected behavior of `updateAssetUrl` under different conditions. The `expect` function is used to assert that the actual output of `updateAssetUrl` matches the expected output.
+
+## References
+
+- The `updateAssetUrl` function is imported from the `visibleForTesting` object in the `download-html.ts` file. This function is the primary focus of the tests in the target file.
+
+## Symbols
+
+### `describe("updateAssetUrl", () =&gt; { ... })`
+#### Description
+The `describe` block is used to group together a series of test cases that validate the behavior of the `updateAssetUrl` function. It provides a context for the tests, indicating that they are all related to the `updateAssetUrl` functionality.
+
+### `it('should convert relative URL starting with "./"', () =&gt; { ... })`
+#### Description
+This test case checks that the `updateAssetUrl` function correctly converts a relative URL starting with "./" to an absolute URL using the provided asset base URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| existingUrl | string | A relative URL starting with "./". |
+| assetBaseUrl | string | The base URL to be prepended to the relative URL. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expected | string | The expected absolute URL after conversion. |
+
+### `it('should convert relative URL starting with "/"', () =&gt; { ... })`
+#### Description
+This test case verifies that the `updateAssetUrl` function converts a relative URL starting with "/" to an absolute URL using the provided asset base URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| existingUrl | string | A relative URL starting with "/". |
+| assetBaseUrl | string | The base URL to be prepended to the relative URL. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expected | string | The expected absolute URL after conversion. |
+
+### `it("should convert absolute URL from a different origin", () =&gt; { ... })`
+#### Description
+This test case ensures that the `updateAssetUrl` function converts an absolute URL from a different origin to an absolute URL using the provided asset base URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| existingUrl | string | An absolute URL from a different origin. |
+| assetBaseUrl | string | The base URL to be used for conversion. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expected | string | The expected absolute URL after conversion. |
+
+### `it("should not modify URL from the same origin", () =&gt; { ... })`
+#### Description
+This test case checks that the `updateAssetUrl` function does not modify a URL if it is from the same origin as the current window location.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| existingUrl | string | An absolute URL from the same origin. |
+| assetBaseUrl | string | The base URL, which should not affect the URL from the same origin. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| expected | string | The original URL, unchanged. |
+
+#### Internal Logic
+- The test mocks the `window.location.origin` to match the origin of the `existingUrl`, ensuring that the function recognizes it as from the same origin.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| vitest | Provides the testing framework used for writing and executing the test cases. |
+
+## Error Handling
+
+The test cases do not explicitly handle errors, as they rely on the `expect` function to assert correct behavior. If the function does not behave as expected, the test will fail, indicating an issue with the implementation.
+
+## Logging
+
+There is no logging implemented in the test cases. The focus is on verifying the correctness of the `updateAssetUrl` function through assertions.

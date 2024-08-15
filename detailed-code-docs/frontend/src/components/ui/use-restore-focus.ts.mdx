@@ -1,0 +1,53 @@
+---
+title: "use-restore-focus.ts"
+---
+
+## High-level description
+
+The `useRestoreFocus` hook is designed to manage focus restoration in web applications, specifically for use with Radix Dialogs. It captures the currently focused element when a dialog is opened and restores focus to that element when the dialog is closed, ensuring a seamless user experience by maintaining focus context.
+
+## Code Structure
+
+The main symbol in the code is the `useRestoreFocus` function, which is a custom React hook. This hook internally manages the state of the last focused element and provides two functions, `onOpenAutoFocus` and `onCloseAutoFocus`, to handle focus management when dialogs are opened and closed, respectively.
+
+## Symbols
+
+### `useRestoreFocus`
+#### Description
+The `useRestoreFocus` hook is a custom React hook that manages focus restoration for elements, particularly useful in dialog components. It captures the element that was focused before a dialog is opened and restores focus to it when the dialog is closed.
+
+#### Inputs
+This hook does not take any direct inputs but relies on the browser's `document.activeElement` to determine the currently focused element.
+
+#### Outputs
+| Name             | Type       | Description                                                                 |
+|:-----------------|:-----------|:----------------------------------------------------------------------------|
+| `onOpenAutoFocus`  | `function` | A function to be called when a dialog is opened to capture the currently focused element. |
+| `onCloseAutoFocus` | `function` | A function to be called when a dialog is closed to restore focus to the previously focused element. |
+
+#### Internal Logic
+- **State Management**: Uses the `useState` hook to store the last focused element.
+- **`onOpenAutoFocus` Function**: Captures the currently focused element using `document.activeElement` and stores it in the state.
+- **`onCloseAutoFocus` Function**: Checks if the current focus is on the document body. If so, it restores focus to the last focused element stored in the state and prevents the default event behavior to ensure focus restoration.
+
+## References
+
+The `useRestoreFocus` hook is used in various components such as `CellActionsDropdownInternal`, `AlertDialogContent`, and `DialogContent` to manage focus when these components are opened or closed.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `useState` | Used to manage the state of the last focused element. |
+
+## Error Handling
+
+The `onCloseAutoFocus` function includes a check to ensure that focus is only restored if the current focus is on the document body. This prevents unnecessary focus changes and potential errors if the focus is already on a valid element.
+
+## Side Effects
+
+The hook modifies the focus state of the document by potentially changing the focused element when dialogs are closed. This is a controlled side effect intended to enhance user experience by maintaining focus context.
+
+## Performance Considerations
+
+The hook is lightweight and primarily relies on the browser's native focus management, making it efficient for use in dialog components. The use of `useState` ensures that the focus state is managed efficiently within the React component lifecycle.

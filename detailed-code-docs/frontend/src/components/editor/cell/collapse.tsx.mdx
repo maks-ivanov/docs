@@ -1,0 +1,96 @@
+---
+title: "collapse.tsx"
+---
+
+## High-level description
+
+The target file, `collapse.tsx`, defines React components that manage the UI for collapsing and expanding cells within a notebook editor interface. It provides a toggle button to collapse or expand a cell and a banner to display the status of collapsed cells, including any errors, stale states, or running processes.
+
+## Code Structure
+
+The main components in this file are `CollapseToggle` and `CollapsedCellBanner`. `CollapseToggle` is a button that allows users to collapse or expand a cell, while `CollapsedCellBanner` displays a banner for collapsed cells, showing the number of cells collapsed and any relevant status indicators. These components utilize various icons and UI elements from external libraries and other parts of the codebase.
+
+## Symbols
+
+### `CollapseToggle`
+#### Description
+`CollapseToggle` is a React functional component that renders a button to toggle the collapsed state of a cell. It uses a tooltip to indicate whether the cell can be expanded or collapsed.
+
+#### Inputs
+| Name       | Type     | Description                                      |
+|:-----------|:---------|:-------------------------------------------------|
+| isCollapsed | boolean  | Indicates if the cell is currently collapsed.    |
+| canCollapse | boolean  | Indicates if the cell can be collapsed.          |
+| onClick     | function | Callback function to handle the toggle action.   |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | A button element with a tooltip and icon. |
+
+#### Internal Logic
+- The component checks if the cell can be collapsed and is not already collapsed. If not, it returns `null`.
+- It renders a `Button` component with a `Tooltip` that displays "Expand" or "Collapse" based on the `isCollapsed` state.
+- The `Arrow` component is used to display the appropriate icon (either `ChevronRightIcon` or `ChevronDownIcon`).
+
+### `Arrow`
+#### Description
+`Arrow` is a helper component that renders an icon indicating the collapsed or expanded state of a cell.
+
+#### Inputs
+| Name       | Type     | Description                                      |
+|:-----------|:---------|:-------------------------------------------------|
+| isCollapsed | boolean  | Indicates if the cell is currently collapsed.    |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | An icon element representing the state. |
+
+#### Internal Logic
+- The component returns a `ChevronRightIcon` if `isCollapsed` is true, otherwise, it returns a `ChevronDownIcon`.
+
+### `CollapsedCellBanner`
+#### Description
+`CollapsedCellBanner` is a React functional component that displays a banner for collapsed cells, showing the number of cells collapsed and any status indicators like errors, stale states, or running processes.
+
+#### Inputs
+| Name   | Type     | Description                                      |
+|:-------|:---------|:-------------------------------------------------|
+| onClick | function | Callback function to handle the banner click.    |
+| cellId  | CellId   | The unique identifier for the cell.              |
+| count   | number   | The number of cells that are collapsed.          |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSX  | React Element | A div element representing the banner. |
+
+#### Internal Logic
+- The component uses the `useNotebook` hook to access the notebook state and `getDescendantsStatus` to determine the status of descendant cells.
+- It renders a `div` with a `Toolbar` component that displays the number of collapsed cells and icons indicating any errors, stale states, or running processes.
+- The `Toolbar` component is used to layout the center and right sections of the banner.
+
+## References
+
+- `useNotebook` from `@/core/cells/cells`: Used to access the notebook state.
+- `getDescendantsStatus` from `@/core/cells/utils`: Used to determine the status of descendant cells.
+- `Button`, `Tooltip` from `@/components/ui`: Used for UI elements.
+- Icons from `lucide-react`: Used for visual indicators.
+
+## Dependencies
+
+| Dependency   | Purpose                                      |
+|:-------------|:---------------------------------------------|
+| `lucide-react` | Provides icons for UI components.           |
+| `@/components/ui/button` | Provides the `Button` component.  |
+| `@/components/ui/tooltip` | Provides the `Tooltip` component.|
+| `@/utils/cn` | Utility for merging class names.             |
+
+## Error Handling
+
+The components do not explicitly handle errors but rely on the parent components and hooks to manage state and handle any errors related to cell operations.
+
+## Logging
+
+There is no explicit logging in this file. Any logging would be handled by the parent components or the hooks used within these components.

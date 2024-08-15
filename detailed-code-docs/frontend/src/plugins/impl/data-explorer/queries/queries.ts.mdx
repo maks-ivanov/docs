@@ -1,0 +1,161 @@
+---
+title: "queries.ts"
+---
+
+## High-level description
+
+The target file, `queries.ts`, is part of a data visualization plugin that generates and manages queries for visualizing data using the CompassQL library. It provides functions to create and manipulate queries, generate related view results, and transform query results into visualizable chart specifications. The code is designed to work with a schema and a set of query specifications to recommend and generate visualizations.
+
+## Code Structure
+
+The main symbols in the code are functions that interact with each other to process queries and generate visualization results. The key functions include `allRelatedViewResults`, `mainViewResult`, `relatedViewResult`, `fromSpecQueryModelGroup`, `toPlot`, and `toQuery`. These functions utilize various utility functions and types from both internal and external modules to achieve their functionality.
+
+## Symbols
+
+### `getFeaturesForRelatedViewRules`
+#### Description
+This function analyzes a `SpecQuery` to determine the presence of open positions, style channels, and open facets in the query's encodings.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| spec | SpecQuery | The specification query to analyze. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | Object | An object indicating the presence of open positions, style channels, and open facets. |
+
+#### Internal Logic
+The function iterates over the encodings in the `SpecQuery` and checks the channel type to set flags for open positions, style channels, and open facets.
+
+### `allRelatedViewResults`
+#### Description
+Generates a set of related view results based on the given query and schema, focusing on adding quantitative, categorical, and temporal fields.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| query | Query | The main query to generate related views for. |
+| schema | Schema | The schema used to guide the query recommendations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| charts | Partial&lt;ResultingCharts&gt; | A partial set of resulting charts with related views. |
+
+#### Internal Logic
+The function uses `getFeaturesForRelatedViewRules` to determine which related views to generate and calls `relatedViewResult` for each applicable field type.
+
+### `mainViewResult`
+#### Description
+Generates the main view result for a given query and schema, returning the top plot recommendation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mainQuery | Query | The main query to generate the view for. |
+| schema | Schema | The schema used to guide the query recommendations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Result or undefined | The main view result, or undefined if the query is empty. |
+
+#### Internal Logic
+The function checks if the query is empty, and if not, it uses the `recommend` function to get a model group and transforms it into plots.
+
+### `relatedViewResult`
+#### Description
+Generates a related view result by creating a new query from a `QueryCreator` and using it to recommend plots.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| queryCreator | QueryCreator | The creator used to generate a new query. |
+| mainQuery | Query | The main query to base the new query on. |
+| schema | Schema | The schema used to guide the query recommendations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Result | The related view result containing plots and the query. |
+
+#### Internal Logic
+The function creates a new query using the `QueryCreator`, recommends plots using the `recommend` function, and returns the result.
+
+### `fromSpecQueryModelGroup`
+#### Description
+Transforms a `SpecQueryModelGroup` into an array of `ResultPlot` objects using a specified data source.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| modelGroup | SpecQueryModelGroup | The model group to transform. |
+| data | NamedData | The data source to use in the plots. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plots | ResultPlot[] | An array of result plots. |
+
+#### Internal Logic
+The function maps over the items in the model group, converting each item into a `ResultPlot` using the `toPlot` function.
+
+### `toPlot`
+#### Description
+Converts a `SpecQueryModel` into a `ResultPlot` using a specified data source.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | NamedData | The data source to use in the plot. |
+| specQ | SpecQueryModel | The specification query model to convert. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| plot | ResultPlot | The resulting plot object. |
+
+#### Internal Logic
+The function extracts field information from the `SpecQueryModel` and constructs a `ResultPlot` with the field definitions and the converted specification.
+
+### `toQuery`
+#### Description
+Converts chart specification parameters into a `Query` object, considering wildcards and grouping options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| params | Object | Parameters including the chart spec and auto-add count flag. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| query | Query | The resulting query object. |
+
+#### Internal Logic
+The function converts the chart spec to a `SpecQuery`, checks for wildcards, and sets grouping and ordering options based on the presence of wildcards.
+
+## References
+
+- `compassql/build/src/query`: Provides types and functions for query manipulation.
+- `vega-lite`: Used for checking channel types and defining data sources.
+- `./field-suggestion`: Provides functions to add fields to queries.
+- `./utils`: Contains utility functions for query manipulation.
+- `./types`: Defines types used in the query results and plots.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| compassql | Used for query creation, manipulation, and recommendation. |
+| vega-lite | Used for data and channel definitions. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond basic checks, such as verifying if a query is empty. It assumes that the input data and schema are valid and that the CompassQL library functions will execute without errors.
+
+## Logging
+
+There is no explicit logging in the target file, but related files may include logging for specific conditions, such as unsupported types.

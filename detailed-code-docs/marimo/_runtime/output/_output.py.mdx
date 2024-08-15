@@ -1,0 +1,175 @@
+---
+title: "_output.py"
+---
+
+## High-level description
+
+The target file, `marimo/_runtime/output/_output.py`, is part of the Marimo framework and is responsible for managing the output of cells within a Marimo notebook. It provides functions to replace, append, clear, and manage the output of cells, allowing for dynamic updates and rendering of cell outputs in a notebook environment.
+
+## Code Structure
+
+The main symbols in the code are functions that interact with the cell's output. These functions utilize the `CellOp` class from the `marimo._messaging.ops` module to broadcast changes to the cell's output. The functions also rely on the `formatting` module to convert objects into a format suitable for output.
+
+## Symbols
+
+### `write_internal`
+#### Description
+This function formats a given value and broadcasts it as output for a specified cell. It handles tracebacks if present and uses the `CellOp` class to send the formatted output to the appropriate channel.
+
+#### Inputs
+| Name   | Type     | Description                |
+|:-------|:---------|:---------------------------|
+| cell_id | CellId_t | The identifier of the cell |
+| value  | object   | The value to be formatted and output |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+1. Formats the input value using `formatting.try_format`.
+2. If a traceback is present, it writes the traceback using `write_traceback`.
+3. Broadcasts the formatted output using `CellOp.broadcast_output`.
+
+### `replace`
+#### Description
+Replaces the current output of a cell with a new value. It is a public API function that can be used to update the output area of a cell.
+
+#### Inputs
+| Name  | Type   | Description          |
+|:------|:-------|:---------------------|
+| value | object | The new value to set as the cell's output |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+1. Retrieves the current execution context.
+2. If the context is valid, it updates the output with the formatted value.
+3. Calls `write_internal` to broadcast the new output.
+
+### `replace_at_index`
+#### Description
+Replaces the output at a specific index in a cell's output list. If the index is equal to the length of the output list, it appends the value.
+
+#### Inputs
+| Name  | Type | Description                        |
+|:------|:-----|:-----------------------------------|
+| value | object | The new value to replace or append |
+| idx   | int   | The index at which to replace the output |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+1. Checks if the execution context and output are valid.
+2. Validates the index and either replaces or appends the value.
+3. Uses `vstack` to stack outputs vertically and calls `write_internal`.
+
+### `append`
+#### Description
+Appends a new value to the cell's output, stacking it vertically with existing outputs.
+
+#### Inputs
+| Name  | Type   | Description          |
+|:------|:-------|:---------------------|
+| value | object | The value to append to the cell's output |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+1. Retrieves the current execution context.
+2. Appends the formatted value to the output list.
+3. Calls `write_internal` to broadcast the updated output.
+
+### `clear`
+#### Description
+Clears the output of a cell by replacing it with `None`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not take any inputs |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+Calls the `replace` function with `None` to clear the output.
+
+### `flush`
+#### Description
+Re-renders the current output of a cell. This is an internal function used to refresh the output display.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not take any inputs |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+1. Retrieves the current execution context.
+2. If output is present, it stacks the outputs and calls `write_internal`.
+
+### `remove`
+#### Description
+Removes a specific value from the cell's output.
+
+#### Inputs
+| Name  | Type   | Description          |
+|:------|:-------|:---------------------|
+| value | object | The value to remove from the cell's output |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value |
+
+#### Internal Logic
+1. Filters the output list to exclude the specified value.
+2. Updates the output and calls `flush` to refresh the display.
+
+## References
+
+- `CellOp` from `marimo._messaging.ops`: Used for broadcasting output changes.
+- `formatting` from `marimo._output`: Used for formatting values for output.
+- `get_context` from `marimo._runtime.context`: Retrieves the current execution context.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._ast.cell` | Provides the `CellId_t` type for cell identification. |
+| `marimo._messaging.cell_output` | Defines the `CellChannel` for output channels. |
+| `marimo._messaging.ops` | Contains the `CellOp` class for broadcasting operations. |
+| `marimo._messaging.tracebacks` | Provides functionality to write tracebacks. |
+| `marimo._output.formatting` | Used for formatting output values. |
+| `marimo._output.rich_help` | Provides the `mddoc` decorator for documentation. |
+| `marimo._plugins.stateless.flex` | Provides the `vstack` function for stacking outputs. |
+| `marimo._runtime.context` | Provides context management functions. |
+
+## Error Handling
+
+The code handles errors primarily through the `try_format` function, which captures exceptions during formatting and returns a traceback if an error occurs.
+
+## Logging
+
+There is no explicit logging in this file, but errors during formatting are captured and can be written as tracebacks.
+
+## TODOs
+
+No TODOs are present in the code.

@@ -1,0 +1,74 @@
+---
+title: "waitForWs.ts"
+---
+
+## High-level description
+
+The `waitForWs.ts` file provides a utility function `waitForWs` that attempts to establish a WebSocket connection to a specified URL with a linear backoff strategy. If the connection fails, it retries a specified number of times before throwing an error. This utility is useful for ensuring that a WebSocket server is available before proceeding with operations that depend on it.
+
+## Code Structure
+
+The main symbols in the code are the `waitForWs` function and the `tryConnection` function. The `waitForWs` function is the primary export and is responsible for managing the retry logic and backoff strategy. It internally uses the `tryConnection` function to attempt to establish a WebSocket connection.
+
+## References
+
+- The `waitForWs` function is referenced in the `frontend/src/core/codemirror/copilot/client.ts` file, where it is used to ensure a WebSocket connection is available before proceeding with other operations.
+
+## Symbols
+
+### `waitForWs`
+#### Description
+The `waitForWs` function attempts to establish a WebSocket connection to a given URL. It retries the connection a specified number of times with a linear backoff strategy if the initial attempts fail.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The WebSocket URL to connect to. |
+| tries | number | The number of connection attempts before giving up. Defaults to 5. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | Promise&lt;string&gt; | Resolves with the URL if the connection is successful, otherwise throws an error. |
+
+#### Internal Logic
+1. The function iterates up to the specified number of `tries`.
+2. For each attempt, it calls `tryConnection` to try establishing a WebSocket connection.
+3. If `tryConnection` throws an error, the function waits for a period proportional to the attempt number (linear backoff) before retrying.
+4. If all attempts fail, it throws an error indicating the failure to connect.
+
+### `tryConnection`
+#### Description
+The `tryConnection` function attempts to establish a WebSocket connection to a given URL and resolves or rejects based on the connection's success or failure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The WebSocket URL to connect to. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | Promise&lt;string&gt; | Resolves with the URL if the connection is successful, otherwise rejects with an error. |
+
+#### Internal Logic
+1. Creates a new WebSocket instance with the provided URL.
+2. Sets up event handlers for `onopen` and `onerror`:
+   - `onopen`: Closes the WebSocket and resolves the promise with the URL.
+   - `onerror`: Closes the WebSocket and rejects the promise with an error.
+
+## Dependencies
+
+The code relies on the native `WebSocket` API available in modern browsers for establishing WebSocket connections.
+
+## Error Handling
+
+The `waitForWs` function handles errors by catching exceptions thrown by `tryConnection` and implementing a retry mechanism with linear backoff. If all retries fail, it throws an error indicating the failure to connect.
+
+## Logging
+
+There is no explicit logging implemented in this code.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,99 @@
+---
+title: "structures.py"
+---
+
+## High-level description
+
+The target file, `structures.py`, is part of the Marimo library and is responsible for formatting nested data structures such as lists, tuples, and dictionaries. It provides functionality to format the leaves of these structures into a specific format, typically for display or serialization purposes. The file also includes a formatter class that integrates with a broader formatting system to handle specific cases, such as when dealing with matplotlib objects.
+
+## Code Structure
+
+The main components of the code are:
+
+- `_leaf_formatter`: A helper function that formats individual leaf nodes of a data structure.
+- `format_structure`: A function that formats the leaves of a given nested structure.
+- `StructuresFormatter`: A class that extends `FormatterFactory` to register formatters for specific data types and handle special cases like matplotlib objects.
+
+## Symbols
+
+### `_leaf_formatter`
+#### Description
+Formats a single leaf node of a data structure into a string representation. It attempts to use a registered formatter for the value, and if none is available, it defaults to JSON serialization or a plain text representation.
+
+#### Inputs
+| Name  | Type   | Description                  |
+|:------|:-------|:-----------------------------|
+| value | object | The leaf node to be formatted |
+
+#### Outputs
+| Name   | Type | Description                        |
+|:-------|:-----|:-----------------------------------|
+| output | str  | The formatted string representation |
+
+#### Internal Logic
+- Attempts to retrieve a formatter for the given value using `formatting.get_formatter`.
+- If a formatter is found, it uses it to format the value.
+- If no formatter is found, it tries to serialize the value to JSON.
+- If JSON serialization fails (e.g., due to a non-serializable type), it falls back to a plain text representation.
+
+### `format_structure`
+#### Description
+Formats the leaves of a nested structure (list, tuple, or dictionary) while preserving the original structure's shape.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t    | Union[tuple, list, dict] | The nested structure to be formatted |
+
+#### Outputs
+| Name   | Type | Description |
+|:-------|:-----|:------------|
+| output | Union[tuple, list, dict] | The formatted structure with the same shape as the input |
+
+#### Internal Logic
+- Flattens the input structure using the `flatten` function, which returns a list of leaf nodes and a repacker function.
+- Formats each leaf node using `_leaf_formatter`.
+- Uses the repacker function to reconstruct the structure with the formatted leaves.
+
+### `StructuresFormatter`
+#### Description
+A formatter class that registers formatters for list, tuple, and dictionary types. It handles special cases, such as when the structure contains matplotlib objects, to avoid redundant formatting.
+
+#### Inputs
+No direct inputs; operates on the types it registers formatters for.
+
+#### Outputs
+No direct outputs; registers formatters and returns formatted data when invoked.
+
+#### Internal Logic
+- Registers formatters for list, tuple, and dictionary types using decorators.
+- Checks if the structure contains matplotlib objects and handles them specially to avoid redundant formatting.
+- Uses `format_structure` to format the structure and returns the result as a JSON string or plain text if a cyclic structure is detected.
+
+## References
+
+- `formatting.get_formatter`: Used to retrieve a formatter for a given value.
+- `flatten`: A utility function used to flatten nested structures.
+- `CyclicStructureError`: An exception raised when a cyclic structure is detected during flattening.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `json`     | Used for JSON serialization of values |
+| `sys`      | Used to check for the presence of matplotlib in the system modules |
+| `formatting` | Provides the formatting protocol and utilities for registering and retrieving formatters |
+| `FormatterFactory` | Base class for creating formatter factories |
+
+## Error Handling
+
+- The code handles `TypeError` during JSON serialization in `_leaf_formatter` by falling back to a plain text representation.
+- It catches `CyclicStructureError` in `StructuresFormatter` to handle cyclic structures gracefully by returning a plain text representation.
+
+## Logging
+
+No explicit logging is implemented in this file.
+
+## TODOs
+
+No TODOs are present in the code.

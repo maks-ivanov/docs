@@ -1,0 +1,65 @@
+---
+title: "field-suggestion.ts"
+---
+
+## High-level description
+
+The code in `field-suggestion.ts` is designed to create query creators for suggesting fields to be added to data visualizations. It provides mechanisms to generate queries that can suggest adding categorical, quantitative, or temporal fields to a visualization specification. This is achieved by defining specific query creators that modify existing queries to include additional field queries based on the type of field being suggested.
+
+## Code Structure
+
+The main function in this file is `makeFieldSuggestionQueryCreator`, which is used to create query creators for different types of fields. These query creators are then exported as `addCategoricalField`, `addQuantitativeField`, and `addTemporalField`. Each of these exports is a specific instance of a query creator tailored to suggest a particular type of field.
+
+## Symbols
+
+### `makeFieldSuggestionQueryCreator`
+#### Description
+This function creates a query creator object that can be used to generate queries for suggesting additional fields in a data visualization. It takes parameters that define the type of field to be suggested, the limit on the number of suggestions, and an additional field query to be included in the query.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| params | object | An object containing the type of field, limit, and additional field query. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | QueryCreator | A query creator object that can generate field suggestion queries. |
+
+#### Internal Logic
+- The function destructures the `params` object to extract `type`, `limit`, and `additionalFieldQuery`.
+- It returns an object with the following properties:
+  - `type`: The type of field suggestion.
+  - `limit`: The maximum number of suggestions.
+  - `createQuery`: A method that takes a `Query` object and returns a new `Query` object with the additional field query included in the `encodings` array. The new query also specifies how to group, order, and choose the best field suggestions.
+
+### `addCategoricalField`
+#### Description
+An instance of a query creator for suggesting categorical fields. It uses the `makeFieldSuggestionQueryCreator` function to create a query creator with specific parameters for categorical fields.
+
+### `addQuantitativeField`
+#### Description
+An instance of a query creator for suggesting quantitative fields. It uses the `makeFieldSuggestionQueryCreator` function to create a query creator with specific parameters for quantitative fields.
+
+### `addTemporalField`
+#### Description
+An instance of a query creator for suggesting temporal fields. It uses the `makeFieldSuggestionQueryCreator` function to create a query creator with specific parameters for temporal fields.
+
+## References
+
+- `FieldQuery`, `Query`, and `SHORT_WILDCARD` are imported from the `compassql` library, which is used for building and manipulating queries.
+- The `QueryCreator` and `ResultingCharts` types are imported from the `types.ts` file, which defines the structure and types used in the query creation process.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| compassql | Used for building and manipulating queries related to data visualization. |
+
+## Error Handling
+
+The code does not explicitly handle errors. It assumes that the inputs provided to the `makeFieldSuggestionQueryCreator` function are valid and that the `Query` objects passed to the `createQuery` method are correctly structured.
+
+## Logging
+
+There is no logging implemented in this code.

@@ -1,0 +1,359 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+The `model_comparison.py` script is designed to facilitate a user interface for comparing predictions from two models, Model A and Model B, on a set of text examples. It allows users to navigate through examples, view model predictions, and record their preference for each example. The script uses the `marimo` library to create an interactive application with UI components like buttons, tables, and markdown text.
+
+## Code Structure
+
+The script is structured using the `marimo` library's `App` and `cell` decorators to define various UI components and functionalities. Each `@app.cell` decorator defines a separate function that contributes to the overall application, such as displaying markdown text, creating buttons for navigation, and handling user preferences. The functions are interconnected through shared state and UI elements, allowing for a cohesive user experience.
+
+## Symbols
+
+### `app`
+#### Description
+An instance of the `marimo.App` class, which serves as the main application object for the script. It manages the lifecycle and execution of the UI components defined in the script.
+
+### `@app.cell`
+#### Description
+A decorator provided by the `marimo` library that is used to define individual components or functionalities within the application. Each decorated function represents a cell in the application, contributing to the UI or logic.
+
+### `__(mo)`
+#### Description
+A function that uses the `marimo` library to display a markdown header for the application.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | The marimo object used to interact with the UI components. |
+
+#### Outputs
+None
+
+### `__(NUMBER_OF_EXAMPLES, mo)`
+#### Description
+Defines navigation buttons ("next" and "previous") to cycle through examples and manages the current index state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NUMBER_OF_EXAMPLES | int | The total number of examples available for comparison. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| decrement_index | function | Function to decrement the current index. |
+| get_index | function | Function to get the current index. |
+| increment_index | function | Function to increment the current index. |
+| next_button | UI component | Button to go to the next example. |
+| previous_button | UI component | Button to go to the previous example. |
+| set_index | function | Function to set the current index. |
+
+#### Internal Logic
+- Uses `mo.state` to manage the current index.
+- Defines `increment_index` and `decrement_index` functions to update the index within bounds.
+- Creates UI buttons for navigation and associates them with the index update functions.
+
+### `__(NUMBER_OF_EXAMPLES, get_index, mo, set_index)`
+#### Description
+Creates a UI component to display and update the current example index.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NUMBER_OF_EXAMPLES | int | The total number of examples available for comparison. |
+| get_index | function | Function to get the current index. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+| set_index | function | Function to set the current index. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| index | UI component | A number input UI component for the current example index. |
+
+### `__(mo)`
+#### Description
+Displays a markdown message prompting the user to choose between the two models.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | The marimo object used to interact with the UI components. |
+
+#### Outputs
+None
+
+### `__(NUMBER_OF_EXAMPLES, mo, num_a_preferred, num_b_preferred)`
+#### Description
+Displays a table summarizing the user's preferences for Model A and Model B.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NUMBER_OF_EXAMPLES | int | The total number of examples available for comparison. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+| num_a_preferred | int | The number of times Model A was preferred. |
+| num_b_preferred | int | The number of times Model B was preferred. |
+
+#### Outputs
+None
+
+### `__(index, mo, next_button, previous_button)`
+#### Description
+Arranges the index display and navigation buttons in a horizontal stack.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| index | UI component | A number input UI component for the current example index. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+| next_button | UI component | Button to go to the next example. |
+| previous_button | UI component | Button to go to the previous example. |
+
+#### Outputs
+None
+
+### `__(CHOICES_PATH, get_choices, index, mo, write_choices)`
+#### Description
+Handles user preference selection and updates the choices file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| CHOICES_PATH | str | Path to the file where user choices are stored. |
+| get_choices | function | Function to get the current list of choices. |
+| index | UI component | A number input UI component for the current example index. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+| write_choices | function | Function to write the choices to a file. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| preference | str | The user's preferred model for the current example. |
+
+#### Internal Logic
+- Retrieves the current preference for the example at the current index.
+- Prompts the user to choose if no preference is set.
+- Writes the updated choices to the specified file.
+
+### `__(annotate, mo)`
+#### Description
+Displays annotated model names with color coding.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| annotate | function | Function to annotate text with color. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+
+#### Outputs
+None
+
+### `__(CHOICES_PATH, PARAGRAPHS, load_choices, mo)`
+#### Description
+Initializes the state for user choices based on a file or default values.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| CHOICES_PATH | str | Path to the file where user choices are stored. |
+| PARAGRAPHS | list | List of text paragraphs for comparison. |
+| load_choices | function | Function to load choices from a file. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get_choices | function | Function to get the current list of choices. |
+| set_choices | function | Function to set the list of choices. |
+
+### `__(index, mo, set_choices)`
+#### Description
+Creates buttons for selecting Model A or Model B as the preferred model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| index | UI component | A number input UI component for the current example index. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+| set_choices | function | Function to set the list of choices. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model_A | UI component | Button to select Model A. |
+| model_B | UI component | Button to select Model B. |
+
+### `__(PARAGRAPHS, SPANS, annotate, index, mo)`
+#### Description
+Displays the predictions of Model A and Model B for the current example with annotations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PARAGRAPHS | list | List of text paragraphs for comparison. |
+| SPANS | list | List of predicted spans for each paragraph. |
+| annotate | function | Function to annotate text with color. |
+| index | UI component | A number input UI component for the current example index. |
+| mo | marimo object | The marimo object used to interact with the UI components. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model_A_prediction | UI component | Annotated prediction for Model A. |
+| model_B_prediction | UI component | Annotated prediction for Model B. |
+
+### `__(mo, model_A_prediction, model_B_prediction)`
+#### Description
+Arranges the model predictions in a horizontal stack for display.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | marimo object | The marimo object used to interact with the UI components. |
+| model_A_prediction | UI component | Annotated prediction for Model A. |
+| model_B_prediction | UI component | Annotated prediction for Model B. |
+
+#### Outputs
+None
+
+### `__(get_choices)`
+#### Description
+Calculates the number of times each model was preferred by the user.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| get_choices | function | Function to get the current list of choices. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| num_a_preferred | int | The number of times Model A was preferred. |
+| num_b_preferred | int | The number of times Model B was preferred. |
+
+### `__()`
+#### Description
+Returns the path to the file where user choices are stored.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| CHOICES_PATH | str | Path to the file where user choices are stored. |
+
+### `__(json, os)`
+#### Description
+Provides functions to load and write user choices to a file.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| load_choices | function | Function to load choices from a file. |
+| write_choices | function | Function to write choices to a file. |
+
+#### Internal Logic
+- `load_choices`: Reads choices from a JSON file or initializes with `None` if the file does not exist.
+- `write_choices`: Writes the choices to a JSON file.
+
+### `__(PARAGRAPHS, random)`
+#### Description
+Generates random prediction spans for each paragraph.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PARAGRAPHS | list | List of text paragraphs for comparison. |
+| random | module | The random module for generating random numbers. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| SPANS | list | List of predicted spans for each paragraph. |
+| predict_spans | function | Function to generate random spans for a given text. |
+
+#### Internal Logic
+- `predict_spans`: Generates two random spans within the text for each model.
+
+### `__(HAMLET, textwrap)`
+#### Description
+Processes the text of "Hamlet" into paragraphs for comparison.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HAMLET | str | The full text of "Hamlet". |
+| textwrap | module | The textwrap module for formatting text. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PARAGRAPHS | list | List of text paragraphs for comparison. |
+
+#### Internal Logic
+- Splits the text into paragraphs and trims each to a maximum of 1000 characters.
+
+### `__()`
+#### Description
+Provides a function to annotate text with HTML markup for color highlighting.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| annotate | function | Function to annotate text with color. |
+
+#### Internal Logic
+- `annotate`: Wraps a specified span of text with HTML `&lt;mark&gt;` tags for color highlighting.
+
+### `__(PARAGRAPHS)`
+#### Description
+Calculates the number of examples based on the number of paragraphs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PARAGRAPHS | list | List of text paragraphs for comparison. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| NUMBER_OF_EXAMPLES | int | The total number of examples available for comparison. |
+
+### `__(urllib)`
+#### Description
+Downloads the text of "Hamlet" from a specified URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| urllib | module | The urllib module for handling URL operations. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HAMLET | str | The full text of "Hamlet". |
+| f | file object | The file object used to read the text. |
+
+### `__()`
+#### Description
+Imports the `marimo` library and returns it for use in the script.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| mo | module | The marimo module for creating UI components. |
+
+### `__()`
+#### Description
+Imports several standard libraries and returns them for use in the script.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| json | module | The json module for handling JSON data. |
+| os | module | The os module for interacting with the operating system. |
+| random | module | The random module for generating random numbers. |
+| textwrap | module | The textwrap module for formatting text. |
+| urllib | module | The urllib

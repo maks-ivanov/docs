@@ -1,0 +1,74 @@
+---
+title: "hooks_on_finish.py"
+---
+
+## High-level description
+
+The target file, `hooks_on_finish.py`, defines functions that are executed as hooks when a cell runner finishes its execution in the Marimo runtime environment. These hooks handle the propagation of errors related to cell execution interruptions and cancellations, ensuring that appropriate error messages are broadcasted to the user interface for cells that were not executed due to these issues.
+
+## Code Structure
+
+The file defines two main functions, `_send_interrupt_errors` and `_send_cancellation_errors`, which are used as hooks to handle specific error scenarios when a runner finishes executing cells. These functions are added to the `ON_FINISH_HOOKS` list, which is a collection of hooks to be executed at the end of a runner's lifecycle.
+
+## Symbols
+
+### `_send_interrupt_errors`
+#### Description
+This function handles the scenario where a runner is interrupted before all scheduled cells are executed. It sets the runtime state of the unexecuted cells to "idle" and broadcasts an interruption error for each of these cells.
+
+#### Inputs
+| Name   | Type                  | Description                                      |
+|:-------|:----------------------|:-------------------------------------------------|
+| runner | `cell_runner.Runner`  | The runner instance that was interrupted.        |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Checks if there are any cells left to run in the runner.
+- Asserts that the runner was indeed interrupted.
+- Iterates over the cells that were not run, setting their state to "idle".
+- Broadcasts a `MarimoInterruptionError` for each unexecuted cell, clearing their console outputs.
+
+### `_send_cancellation_errors`
+#### Description
+This function manages the errors for cells that were cancelled due to an exception in an ancestor cell. It sets the runtime state of these cells to "idle" and broadcasts specific errors based on the type of exception that caused the cancellation.
+
+#### Inputs
+| Name   | Type                  | Description                                      |
+|:-------|:----------------------|:-------------------------------------------------|
+| runner | `cell_runner.Runner`  | The runner instance with cancelled cells.        |
+
+#### Outputs
+None
+
+#### Internal Logic
+- Iterates over the cells that were cancelled due to exceptions in ancestor cells.
+- For each cancelled cell, checks if its state is not already "idle" and sets it to "idle".
+- Determines the type of exception that caused the cancellation and creates an appropriate error message.
+- Broadcasts the error message for each cancelled cell, clearing their console outputs.
+
+## References
+
+- `cell_runner.Runner`: The runner class from `marimo._runtime.runner.cell_runner` that manages the execution of cells.
+- `CellOp.broadcast_error`: A method from `marimo._messaging.ops` used to send error messages to the frontend.
+- Various error classes from `marimo._messaging.errors`, such as `MarimoInterruptionError`, `MarimoAncestorStoppedError`, etc., which represent different types of execution errors.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `marimo._loggers` | Provides logging capabilities for the Marimo runtime. |
+| `marimo._messaging.errors` | Defines error classes used to represent different execution errors. |
+| `marimo._messaging.ops` | Contains operations for broadcasting messages to the frontend. |
+| `marimo._runtime.control_flow` | Provides control flow exceptions like `MarimoStopError`. |
+| `marimo._runtime.runner.cell_runner` | Contains the `Runner` class that manages cell execution. |
+
+## Side Effects
+
+- The functions modify the runtime state of cells within the runner by setting them to "idle".
+- They broadcast error messages to the frontend, which may affect the user interface by clearing console outputs and displaying error notifications.
+
+## Logging
+
+The file uses a logger instance, `LOGGER`, from `marimo._loggers` to log messages, although specific logging calls are not present in the provided code snippet.

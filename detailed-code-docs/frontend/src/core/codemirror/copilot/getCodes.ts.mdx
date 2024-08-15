@@ -1,0 +1,54 @@
+---
+title: "getCodes.ts"
+---
+
+## High-level description
+
+The `getCodes.ts` file provides a function `getCodes` that aggregates and processes code from multiple editor views, specifically for use with AI code completion tools like Copilot. It collects code from all editor views, filters out a specified code snippet, and sorts the remaining code to prioritize import statements, which can enhance the quality of AI-generated code suggestions.
+
+## Code Structure
+
+The main function in this file is `getCodes`, which relies on two imported functions: `getAllEditorViews` and `getEditorCodeAsPython`. The `getAllEditorViews` function retrieves all editor views, while `getEditorCodeAsPython` converts the code from these views into Python format. The `getCodes` function then processes this data to produce a single string of code.
+
+## References
+
+- `getAllEditorViews`: This function is imported from the `cells` module and is used to retrieve all editor views.
+- `getEditorCodeAsPython`: This function is imported from the `language/utils` module and is used to convert editor code into Python format.
+
+## Symbols
+
+### `getCodes`
+#### Description
+The `getCodes` function aggregates code from all editor views, excluding a specified code snippet, and sorts the code to place import statements at the top. This sorted code is then returned as a single string, which can be used to provide context for AI code completion tools.
+
+#### Inputs
+| Name      | Type   | Description                          |
+|:----------|:-------|:-------------------------------------|
+| otherCode | string | A code snippet to exclude from the aggregation. |
+
+#### Outputs
+| Name  | Type   | Description                      |
+|:------|:-------|:---------------------------------|
+| codes | string | Aggregated and sorted code string.|
+
+#### Internal Logic
+1. **Retrieve Editor Views**: Calls `getAllEditorViews` to get all editor views.
+2. **Convert to Python**: Uses `getEditorCodeAsPython` to convert each editor's code to Python.
+3. **Filter and Exclude**: Filters out the `otherCode` from the list of codes.
+4. **Sort Imports**: Sorts the remaining code snippets to place import statements at the top.
+5. **Concatenate and Return**: Concatenates the sorted code snippets with `otherCode` and returns the result as a single string.
+
+## Side Effects
+There are no side effects as the function only processes and returns data without modifying any external state.
+
+## TODOs
+- The code contains a TODO comment suggesting that the import statements should be sorted topologically, which implies a future enhancement to improve the order of imports based on dependencies.
+
+## Dependencies
+
+| Dependency                  | Purpose                                                                 |
+|:----------------------------|:------------------------------------------------------------------------|
+| `getAllEditorViews`         | To retrieve all editor views for processing.                            |
+| `getEditorCodeAsPython`     | To convert editor code into Python format for consistent processing.    |
+
+This file is part of a larger system that integrates with AI code completion tools, and its functionality is crucial for providing context to these tools to generate more accurate and relevant code suggestions.

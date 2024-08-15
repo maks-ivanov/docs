@@ -1,0 +1,57 @@
+---
+title: "requests-toasting.ts"
+---
+
+## High-level description
+
+The `requests-toasting.ts` file is responsible for enhancing network request handling by adding error toasting functionality. It wraps existing request handlers with additional logic to display error messages as toast notifications when requests fail. This is achieved by intercepting errors, formatting them, and using a toast utility to display user-friendly error messages.
+
+## Code Structure
+
+The main function in this file, `createErrorToastingRequests`, takes an object containing request handlers and returns a new object with the same handlers wrapped to include error handling and toasting. It uses a predefined set of error messages corresponding to different request keys to determine what message to display when an error occurs.
+
+## References
+
+- **`toast`**: Imported from `use-toast.ts`, this function is used to display toast notifications.
+- **`Logger`**: Imported from `Logger.ts`, it is used to log errors to the console.
+- **`prettyError`**: Imported from `errors.ts`, this function is used to format error messages into a more readable form.
+
+## Symbols
+
+### `createErrorToastingRequests`
+#### Description
+This function wraps request handlers with error handling logic that displays toast notifications for errors. It uses a mapping of request keys to error messages to determine the appropriate message to display for each type of request.
+
+#### Inputs
+| Name     | Type                        | Description                                      |
+|:---------|:----------------------------|:-------------------------------------------------|
+| delegate | `EditRequests & RunRequests` | An object containing request handler functions.  |
+
+#### Outputs
+| Name     | Type                        | Description                                      |
+|:---------|:----------------------------|:-------------------------------------------------|
+| handlers | `EditRequests & RunRequests` | A new object with wrapped request handler functions. |
+
+#### Internal Logic
+1. **Error Message Mapping**: A constant `MESSAGES` is defined, mapping each request key to a corresponding error message.
+2. **Handler Wrapping**: For each request handler in the `delegate` object, a new handler is created that:
+   - Tries to execute the original handler.
+   - Catches any errors, formats them using `prettyError`, and displays a toast notification with the error message.
+   - Logs the error using `Logger.error`.
+   - Rethrows the error to allow further handling by the caller.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `use-toast` | Provides the `toast` function to display toast notifications.           |
+| `Logger`    | Used for logging errors to the console.                                 |
+| `errors`    | Provides the `prettyError` function to format error messages.           |
+
+## Error Handling
+
+The function implements error handling by catching exceptions thrown by request handlers. It formats these errors using the `prettyError` function and displays them as toast notifications. Additionally, it logs the errors using the `Logger` utility.
+
+## Logging
+
+The `Logger` utility is used to log errors to the console. This is done in the catch block of each wrapped request handler to ensure that all errors are logged for debugging purposes.

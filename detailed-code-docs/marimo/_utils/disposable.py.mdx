@@ -1,0 +1,54 @@
+---
+title: "disposable.py"
+---
+
+## High-level description
+
+The `Disposable` class in the `marimo/_utils/disposable.py` file is a utility designed to manage resources that need explicit cleanup. It encapsulates an action that is executed when the `dispose` method is called, ensuring that resources are properly released. This class is particularly useful in scenarios where deterministic cleanup is required, such as managing connections or temporary files.
+
+## Code Structure
+
+The `Disposable` class is the primary symbol in this file. It provides a mechanism to encapsulate a cleanup action and track whether the action has been executed. The class includes methods to execute the action, check if it has been executed, and create a no-op disposable.
+
+## Symbols
+
+### `Disposable`
+#### Description
+The `Disposable` class is designed to encapsulate a cleanup action that should be executed when the object is no longer needed. It provides methods to execute the action, check if the action has been executed, and create a disposable with no action.
+
+#### Inputs
+| Name   | Type     | Description                        |
+|:-------|:---------|:-----------------------------------|
+| action | Callable | A function to be called upon disposal. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | The class methods do not return any value. |
+
+#### Internal Logic
+- **Constructor (`__init__`)**: Initializes the `Disposable` object with a given action and sets the `_is_disposed` flag to `False`.
+- **`__call__` Method**: Allows the object to be called like a function, which internally calls the `dispose` method.
+- **`dispose` Method**: Executes the encapsulated action and sets the `_is_disposed` flag to `True`.
+- **`is_disposed` Method**: Returns the current state of the `_is_disposed` flag, indicating whether the action has been executed.
+- **`empty` Static Method**: Returns a `Disposable` instance with a no-op action, useful for scenarios where a disposable is required but no action is necessary.
+
+## References
+
+The `Disposable` class is referenced in other parts of the codebase, such as in the `Room` class within the `marimo/_server/sessions.py` file, where it is used to manage resources associated with session consumers. It is also used in the `Distributor` class in the `marimo/_utils/distributor.py` file to manage consumer removal.
+
+## Dependencies
+
+The `Disposable` class relies on the `Callable` type from the `typing` module to define the type of the action it encapsulates.
+
+## Error Handling
+
+The `Disposable` class does not implement specific error handling mechanisms. It assumes that the provided action is safe to execute without exceptions. If the action might raise exceptions, it should be handled externally.
+
+## Logging
+
+The `Disposable` class does not implement any logging. It is a simple utility class focused on resource management.
+
+## Testing
+
+The `Disposable` class is tested in the `tests/_utils/test_disposable.py` file. The tests verify that the action is called upon disposal and that the `is_disposed` method accurately reflects the disposal state. The `empty` method is also tested to ensure it behaves as expected.

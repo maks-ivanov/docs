@@ -1,0 +1,245 @@
+---
+title: "test_file_manager.py"
+---
+
+## High-level description
+
+The target file `tests/_server/test_file_manager.py` contains a suite of unit tests for the `AppFileManager` class, which is part of the `marimo` library. These tests are designed to verify the functionality of file management operations such as renaming, saving, and reading files, as well as handling exceptions related to these operations. The tests use the `pytest` framework to ensure that the `AppFileManager` behaves correctly under various scenarios, including error conditions.
+
+## Code Structure
+
+The main symbol in this file is the `AppFileManager` class, which is tested through various test functions. The test functions are organized to cover different aspects of file management, such as renaming files, saving configurations, and reading file contents. The `pytest` framework is used to manage test fixtures and assertions.
+
+## References
+
+- `AppFileManager`: The class being tested, which is defined in `marimo/_server/file_manager.py`.
+- `HTTPException` and `HTTPStatus`: Used for handling HTTP-related exceptions, defined in `marimo/_server/api/status.py`.
+- `SaveNotebookRequest`: A data model used for saving notebook requests, defined in `marimo/_server/models/models.py`.
+- `CellConfig`: A configuration class for cells, defined in `marimo/_ast/cell.py`.
+
+## Symbols
+
+### `app_file_manager`
+#### Description
+A pytest fixture that creates an instance of `AppFileManager` with a temporary file. This fixture is used in multiple test functions to provide a consistent setup for testing file management operations.
+
+#### Inputs
+None directly, but it sets up a temporary file for use in tests.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| manager | `AppFileManager` | An instance of `AppFileManager` initialized with a temporary file. |
+
+#### Internal Logic
+- Creates a temporary Python file with some initial content.
+- Instantiates `AppFileManager` with the temporary file's name.
+- Yields the `AppFileManager` instance for use in tests.
+- Ensures cleanup by deleting the temporary file after tests are run.
+
+### `test_rename_same_filename`
+#### Description
+Tests that renaming a file to its current name does not change the filename.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the filename remains unchanged.
+
+### `test_rename_to_existing_filename`
+#### Description
+Tests that renaming a file to an existing filename raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.BAD_REQUEST` is raised.
+
+### `test_successful_rename`
+#### Description
+Tests that a file can be successfully renamed to a new filename.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the filename is updated to the new filename.
+
+### `test_rename_exception`
+#### Description
+Tests that renaming a file to an invalid path raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.SERVER_ERROR` is raised.
+
+### `test_rename_create_new_file`
+#### Description
+Tests that a new file is created when renaming from a `None` filename.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the new file is created.
+
+### `test_rename_different_filetype`
+#### Description
+Tests renaming a file to a different file type and checks content transformation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts content changes according to the new file type.
+
+### `test_save_app_config_valid`
+#### Description
+Tests saving a valid app configuration to a file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the file contains the expected configuration.
+
+### `test_save_app_config_exception`
+#### Description
+Tests that saving an app configuration to an invalid path raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.SERVER_ERROR` is raised.
+
+### `test_save_filename_change_not_allowed`
+#### Description
+Tests that changing the filename during a save operation raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.BAD_REQUEST` is raised.
+
+### `test_save_existing_filename`
+#### Description
+Tests that saving to an existing filename raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.BAD_REQUEST` is raised.
+
+### `test_save_successful`
+#### Description
+Tests that a file can be successfully saved.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the file is saved successfully.
+
+### `test_save_cannot_rename`
+#### Description
+Tests that saving to an invalid path raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.BAD_REQUEST` is raised.
+
+### `test_read_valid_filename`
+#### Description
+Tests reading the contents of a valid file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the file content is read correctly.
+
+### `test_read_unnamed_notebook`
+#### Description
+Tests that reading an unnamed notebook raises an `HTTPException`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that an `HTTPException` with `HTTPStatus.BAD_REQUEST` is raised.
+
+### `test_read_layout`
+#### Description
+Tests reading the layout configuration of an app.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the layout configuration is read correctly.
+
+### `test_to_code`
+#### Description
+Tests converting the app to code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| app_file_manager | `AppFileManager` | The file manager instance to test. |
+
+#### Outputs
+None, but asserts that the generated code matches the expected output.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and executing test cases. |
+| `os`, `tempfile` | Used for file operations and creating temporary files. |
+
+## Error Handling
+
+The tests handle errors by asserting that specific exceptions (`HTTPException`) are raised with expected status codes (`HTTPStatus.BAD_REQUEST`, `HTTPStatus.SERVER_ERROR`) in various scenarios.
+
+## Logging
+
+The `AppFileManager` class uses logging (via `LOGGER`) to debug and track file operations, although this is not directly tested in the target file.

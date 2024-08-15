@@ -1,0 +1,101 @@
+---
+title: "kernel_context.py"
+---
+
+## High-level description
+
+The `kernel_context.py` file defines the `KernelRuntimeContext` class, which encapsulates the runtime state for a session in the Marimo framework. This class provides various properties and methods to interact with the kernel's execution context, manage UI element IDs, and handle state updates. Additionally, the file includes functions to create and initialize kernel contexts, which are essential for setting up the environment in which the kernel operates.
+
+## Code Structure
+
+The main symbol in this file is the `KernelRuntimeContext` class, which extends the `RuntimeContext` class. This class interacts with a `Kernel` object to provide access to various runtime properties and methods. The file also defines two functions, `create_kernel_context` and `initialize_kernel_context`, which are responsible for setting up the kernel context.
+
+## Symbols
+
+### `KernelRuntimeContext`
+#### Description
+The `KernelRuntimeContext` class encapsulates the runtime state for a session, providing access to the kernel's execution context, global variables, and other runtime properties. It also manages UI element IDs and handles state updates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _kernel | Kernel | The kernel associated with this runtime context. |
+| _app | Optional[InternalApp] | The application that owns this context, if any. |
+| _id_provider | Optional[IDProvider] | An ID provider for UI elements, if any. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| graph | DirectedGraph | The dataflow graph of the kernel. |
+| globals | dict[str, Any] | The global variables of the kernel. |
+| execution_context | ExecutionContext | The current execution context of the kernel. |
+| lazy | bool | Whether the kernel is in lazy execution mode. |
+| cell_id | Optional[CellId_t] | The ID of the currently executing cell, if any. |
+| cli_args | CLIArgs | The command-line arguments passed to the kernel. |
+| query_params | QueryParams | The query parameters for the kernel. |
+
+#### Internal Logic
+- The class provides properties to access various aspects of the kernel's state, such as the dataflow graph, global variables, and execution context.
+- It includes context managers for managing UI element IDs and setting the current cell ID.
+- Methods like `take_id`, `get_ui_initial_value`, and `register_state_update` interact with the kernel to manage UI elements and state updates.
+
+### `create_kernel_context`
+#### Description
+Creates a new `KernelRuntimeContext` instance, initializing it with the provided kernel, stream, and other parameters.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kernel | Kernel | The kernel to associate with the new context. |
+| stream | Stream | The stream for communication with the kernel. |
+| stdout | Optional[Stdout] | The standard output stream, if any. |
+| stderr | Optional[Stderr] | The standard error stream, if any. |
+| virtual_files_supported | bool | Whether virtual files are supported. |
+| app | Optional[InternalApp] | The application to associate with the context, if any. |
+| parent | Optional[KernelRuntimeContext] | The parent context, if any. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | KernelRuntimeContext | The newly created kernel runtime context. |
+
+### `initialize_kernel_context`
+#### Description
+Initializes the thread-local or session-specific context for the kernel, ensuring that it is set up correctly for each client thread.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kernel | Kernel | The kernel to initialize the context for. |
+| stream | Stream | The stream for communication with the kernel. |
+| stdout | Optional[Stdout] | The standard output stream, if any. |
+| stderr | Optional[Stderr] | The standard error stream, if any. |
+| virtual_files_supported | bool | Whether virtual files are supported. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value. |
+
+## References
+
+- `Kernel`: The kernel object that the `KernelRuntimeContext` interacts with to access runtime properties and methods.
+- `ExecutionContext`: Represents the execution context of the kernel, providing information about the currently executing cell.
+- `IDProvider`: A utility for generating stable IDs for UI elements across sessions.
+- `CLIArgs` and `QueryParams`: Classes for managing command-line arguments and query parameters, respectively.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `contextlib` | Provides the `contextmanager` decorator for creating context managers. |
+| `dataclasses` | Used to define the `KernelRuntimeContext` class as a dataclass. |
+| `typing` | Provides type annotations for better code clarity and type checking. |
+
+## Error Handling
+
+The `KernelRuntimeContext` class raises a `NoIDProviderException` if an ID is requested without an ID provider being set. This ensures that IDs are only generated when a valid provider is available.
+
+## Logging
+
+The file does not implement any specific logging mechanisms. However, it relies on exceptions to signal errors, such as when an ID provider is not available.

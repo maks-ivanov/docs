@@ -1,0 +1,165 @@
+---
+title: "cells.test.ts"
+---
+
+## High-level description
+
+The target file `cells.test.ts` is a test suite for the cell management functionality in a notebook application. It uses the `vitest` testing framework to verify the behavior of various operations on notebook cells, such as creating, updating, deleting, moving, and running cells. The tests ensure that the cell reducer and associated actions correctly manipulate the notebook state.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- **NotebookState**: Represents the state of the notebook, including cell data and runtime information.
+- **exportedForTesting**: Contains the `initialNotebookState`, `reducer`, and `createActions` functions, which are used to manage the notebook state.
+- **CellId**: A utility for generating unique identifiers for cells.
+- **Actions**: Created using `createActions`, these are used to dispatch various operations on the notebook state.
+- **Tests**: Each test case uses the actions to manipulate the state and then verifies the expected outcomes using assertions.
+
+## References
+
+- **NotebookState**: Defined in `cells.ts`, it is crucial for understanding the structure and management of the notebook's state.
+- **CellId**: Defined in `ids.ts`, it provides the mechanism for generating unique cell identifiers.
+- **notebookCells**: A utility function from `utils.ts` that retrieves the cells from the notebook state.
+
+## Symbols
+
+### `formatCells`
+#### Description
+Formats the cells in a notebook state into a string representation for easier comparison in tests.
+
+#### Inputs
+| Name    | Type          | Description                  |
+|:--------|:--------------|:-----------------------------|
+| notebook | NotebookState | The state of the notebook.   |
+
+#### Outputs
+| Name   | Type   | Description                        |
+|:-------|:-------|:-----------------------------------|
+| output | string | Formatted string of cell details.  |
+
+#### Internal Logic
+- Retrieves the cells from the notebook state using `notebookCells`.
+- Maps each cell to a string containing its key and code.
+- Joins the strings with newlines for readability.
+
+### `describe("cell reducer")`
+#### Description
+A test suite that groups together multiple test cases related to the cell reducer functionality.
+
+### `it("can add a cell after another cell")`
+#### Description
+Tests the ability to add a new cell after an existing cell in the notebook.
+
+#### Internal Logic
+- Uses `createNewCell` action to add a cell after the first cell.
+- Asserts that the formatted cell output matches the expected snapshot.
+
+### `it("can add a cell to the end with code")`
+#### Description
+Tests adding a new cell to the end of the notebook with initial code.
+
+#### Internal Logic
+- Adds a cell with code "import numpy as np" to the end.
+- Verifies the cell's code, edited status, and last run status.
+
+### `it("can delete a cell")`
+#### Description
+Tests the deletion of a cell and the ability to undo the deletion.
+
+#### Internal Logic
+- Adds a new cell, deletes it, and checks the state.
+- Uses `undoDeleteCell` to restore the deleted cell and verifies the state.
+
+### `it("can update a cell")`
+#### Description
+Tests updating the code of an existing cell.
+
+#### Internal Logic
+- Updates the first cell's code to "import numpy as np".
+- Verifies the updated code in the formatted output.
+
+### `it("can move a cell")`
+#### Description
+Tests moving a cell within the notebook.
+
+#### Internal Logic
+- Moves a cell to the end and back to its original position.
+- Verifies the order of cells after each move.
+
+### `it("can drag and drop a cell")`
+#### Description
+Tests the drag-and-drop functionality for rearranging cells.
+
+#### Internal Logic
+- Simulates dragging a cell to a new position and verifies the order.
+
+### `it("can run cell and receive cell messages")`
+#### Description
+Tests running a cell and handling various cell messages.
+
+#### Internal Logic
+- Simulates running a cell and receiving different types of messages.
+- Verifies the cell's status, output, and other properties after each message.
+
+### `it("errors reset status to idle")`
+#### Description
+Tests that errors reset a cell's status to idle.
+
+#### Internal Logic
+- Simulates an error response and checks that the cell's status is reset.
+
+### `it("can run a stale cell")`
+#### Description
+Tests running a cell that has stale inputs.
+
+#### Internal Logic
+- Updates a cell's code, marks it as stale, and verifies its status after running.
+
+### `it("can format code and update cell")`
+#### Description
+Tests formatting code in a cell and updating its state.
+
+#### Internal Logic
+- Formats the code in a cell and checks the updated state.
+
+### `it("can update a cells config")`
+#### Description
+Tests updating the configuration of a cell.
+
+#### Internal Logic
+- Updates a cell's configuration and verifies the changes.
+
+### `it("can run a stopped cell")`
+#### Description
+Tests running a cell that was previously stopped.
+
+#### Internal Logic
+- Simulates stopping a cell and then running it again, verifying the state.
+
+### `it("can initialize stdin")`
+#### Description
+Tests initializing and handling stdin messages for a cell.
+
+#### Internal Logic
+- Simulates receiving stdin messages and setting responses, verifying the console outputs.
+
+### `it("can receive console when the cell is idle and will clear when starts again")`
+#### Description
+Tests receiving console messages when a cell is idle and clearing them when it starts running.
+
+#### Internal Logic
+- Simulates receiving console messages in different states and verifies the outputs.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| vitest     | Testing framework used for writing and running the tests. |
+
+## Error Handling
+
+The test suite uses assertions to verify expected outcomes. If an assertion fails, it indicates a discrepancy between the expected and actual behavior, which is reported by the testing framework.
+
+## Logging
+
+The test suite uses inline snapshots and `expect` statements to log and verify the state of the notebook after each operation. This helps in identifying any unexpected changes in the state.

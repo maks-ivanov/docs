@@ -1,0 +1,112 @@
+---
+title: "test_codegen.py"
+---
+
+## High-level description
+
+The target file `tests/_ast/test_codegen.py` is a test suite for the code generation functionality of the `marimo` library. It primarily tests the generation of Python code from a sequence of code cells, ensuring that the generated code matches expected outputs. The tests cover various scenarios, including handling of empty cells, asynchronous code, syntax errors, and configuration options.
+
+## Code Structure
+
+The main symbols in the code are organized into classes and functions that test different aspects of the code generation process. The `TestGeneration` class focuses on testing the generation of file contents from code cells, while the `TestGetCodes` class tests the retrieval of code from generated files. The `TestApp` class tests the execution of a `marimo` application, and the `TestToFunctionDef` class tests the conversion of code cells to function definitions. The `test_recover` function tests the recovery of code from a disconnected frontend.
+
+## Symbols
+
+### `get_expected_filecontents`
+#### Description
+Reads the expected contents of a generated file, replacing the `__generated_with` version string with the current version of the `marimo` library.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the file to read, without the `.py` extension. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| contents | str | The expected contents of the file with the version string updated. |
+
+### `get_filepath`
+#### Description
+Constructs the file path for a given file name within the `codegen_data` directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | str | The name of the file, without the `.py` extension. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filepath | str | The full file path to the specified file. |
+
+### `wrap_generate_filecontents`
+#### Description
+Wraps the `codegen.generate_filecontents` function to make the `cell_configs` argument optional, providing default configurations if none are supplied.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| codes | list[str] | A list of code strings representing the cells. |
+| names | list[str] | A list of names for the code cells. |
+| cell_configs | Optional[list[CellConfig]] | Optional configurations for each cell. |
+| config | Optional[_AppConfig] | Optional application configuration. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| contents | str | The generated file contents. |
+
+### `TestGeneration`
+#### Description
+A class containing static methods to test the generation of file contents from code cells. It includes tests for empty cells, cells with configurations, asynchronous code, and handling of syntax errors.
+
+### `TestGetCodes`
+#### Description
+A class containing static methods to test the retrieval of code and names from generated files. It verifies that the code and names match expected values for various scenarios, including asynchronous code and syntax errors.
+
+### `TestApp`
+#### Description
+A class containing static methods to test the execution of a `marimo` application. It verifies that the application runs correctly and that configurations can be updated.
+
+### `TestToFunctionDef`
+#### Description
+A class containing methods to test the conversion of code cells to function definitions. It checks that the generated function definitions match expected outputs for various code scenarios.
+
+### `test_recover`
+#### Description
+Tests the recovery of code from a disconnected frontend by generating a module from JSON data representing code cells.
+
+### `test_get_header_comments`
+#### Description
+Tests the extraction of header comments from a file, ensuring that only valid comments are retrieved.
+
+### `test_get_header_comments_invalid`
+#### Description
+Tests the behavior when attempting to extract header comments from an invalid file, expecting no comments to be found.
+
+### `test_sqls`
+#### Description
+Tests the extraction of SQL statements from a code cell, verifying that the correct SQL queries are identified.
+
+## References
+
+- `codegen.generate_filecontents`: The function used to generate Python file contents from code cells.
+- `codegen.get_app`: A function to load and return a `marimo` application from a file.
+- `codegen.to_functiondef`: Converts a code cell to a function definition.
+- `codegen.generate_unparsable_cell`: Generates code for cells that cannot be parsed.
+- `codegen.recover`: Recovers code from a disconnected frontend.
+- `codegen.get_header_comments`: Retrieves header comments from a file.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `pytest` | Used for writing and running tests. |
+| `marimo` | The library being tested, providing functionality for code generation and application management. |
+
+## TODOs
+
+- More tests for attributes, class definitions, and closures.
+- Tests for built-in functions.
+- Tests for deleting cells.

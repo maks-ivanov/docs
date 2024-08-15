@@ -1,0 +1,72 @@
+---
+title: "vega-loader.ts"
+---
+
+## High-level description
+
+The `vega-loader.ts` file is a TypeScript module that provides a wrapper around the `vega-loader` library, adding TypeScript types to its functions. It primarily focuses on reading and loading data in various formats, such as JSON and CSV, and provides utility functions to handle data parsing and loading from URLs. The module also defines custom type parsers and re-exports them for use in other parts of the application.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- The `read` function utilizes the `vega-loader`'s `read` function to parse data.
+- The `createLoader` function wraps the `vega-loader`'s `loader` function to provide a loader object with `load` and `http` methods.
+- The `FieldTypes` and `typeParsers` are types and constants that define how data fields should be parsed.
+- The `DataType` type is imported from another module and used to define the structure of data types.
+
+## References
+
+- `DataType` is imported from `@/core/kernel/messages`, which defines various data types used in the application.
+- The `vega-loader` library is used for data loading and parsing functionalities.
+
+## Symbols
+
+### `read`
+#### Description
+The `read` function is a wrapper around the `vega-loader`'s `read` function, providing TypeScript type support for parsing data in various formats.
+
+#### Inputs
+| Name   | Type                                                                 | Description                                      |
+|:-------|:---------------------------------------------------------------------|:-------------------------------------------------|
+| data   | `string` \| `Record&lt;string, unknown&gt;` \| `Array&lt;Record&lt;string, unknown&gt;&gt;` | The data to be parsed.                           |
+| format | `DataFormat` \| `{ type: DataFormat["type"]; parse: "auto" }` \| `{ type: DataFormat["type"]; parse: FieldTypes; }` \| `undefined` | The format in which the data is provided.        |
+
+#### Outputs
+| Name   | Type  | Description                                      |
+|:-------|:------|:-------------------------------------------------|
+| output | `T[]` | An array of parsed data objects.                 |
+
+### `createLoader`
+#### Description
+The `createLoader` function creates a loader object using the `vega-loader` library, which can load data from URLs and handle HTTP requests.
+
+#### Outputs
+| Name   | Type                                                                 | Description                                      |
+|:-------|:---------------------------------------------------------------------|:-------------------------------------------------|
+| output | `{ load: (url: string) =&gt; Promise&lt;string \| Record&lt;string, unknown&gt; \| Array&lt;Record&lt;string, unknown&gt;&gt;&gt;; http: (url: string) =&gt; Promise&lt;string&gt;; }` | A loader object with `load` and `http` methods.  |
+
+### `FieldTypes`
+#### Description
+`FieldTypes` is a type alias for a record that maps field names to their corresponding `DataType`.
+
+### `typeParsers`
+#### Description
+`typeParsers` is a constant that re-exports the `vega-loader`'s type parsers, which are functions used to parse different data types.
+
+## Dependencies
+
+| Dependency   | Purpose                                      |
+|:-------------|:---------------------------------------------|
+| `vega-loader`| Provides data loading and parsing functions. |
+
+## Error Handling
+
+The code does not explicitly handle errors beyond the basic functionality provided by the `vega-loader` library. It assumes that the library will handle any parsing or loading errors internally.
+
+## Logging
+
+The code does not implement any logging mechanisms.
+
+## TODOs
+
+There are no TODOs or notes left in the code.

@@ -1,0 +1,55 @@
+---
+title: "utils.py"
+---
+
+## High-level description
+The target file `marimo/_plugins/utils.py` contains a utility function `remove_none_values` that is designed to clean a dictionary by removing any key-value pairs where the value is `None`. This function is useful for sanitizing data structures before they are processed or serialized, ensuring that only meaningful data is retained.
+
+## Code Structure
+The main symbol in this file is the function `remove_none_values`. It utilizes Python's dictionary comprehension to filter out entries with `None` values. The function is generic, using type variables `S` and `T` to allow for flexibility in the types of keys and values in the dictionary.
+
+## References
+The function `remove_none_values` is referenced in the related file `marimo/_plugins/stateless/stat.py`, where it is used to clean up the arguments for a stateless plugin before they are passed to the `build_stateless_plugin` function.
+
+## Symbols
+
+### `remove_none_values`
+#### Description
+The `remove_none_values` function is designed to take a dictionary and return a new dictionary with all entries that have `None` values removed. This is particularly useful in scenarios where `None` values are not desired in the data structure, such as when preparing data for serialization or API requests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| d | dict[S, T] | A dictionary with keys of type `S` and values of type `T`. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | dict[S, T] | A new dictionary with the same keys and values as the input, but with all entries where the value is `None` removed. |
+
+#### Internal Logic
+The function uses a dictionary comprehension to iterate over the items of the input dictionary `d`. For each key-value pair, it checks if the value is not `None`. If the value is not `None`, the pair is included in the resulting dictionary. This results in a new dictionary that excludes any entries with `None` values.
+
+## Dependencies
+The function does not have any external dependencies beyond the standard library and type annotations.
+
+## Error Handling
+The function does not include explicit error handling. It assumes that the input is a dictionary and that the operation of checking for `None` values is valid for the dictionary's values.
+
+## Usage Example
+Here is a simple usage example of the `remove_none_values` function:
+
+```python
+data = {
+    "name": "Alice",
+    "age": None,
+    "email": "alice@example.com",
+    "phone": None
+}
+
+cleaned_data = remove_none_values(data)
+print(cleaned_data)
+# Output: {'name': 'Alice', 'email': 'alice@example.com'}
+```
+
+This example demonstrates how the function removes entries with `None` values, resulting in a dictionary that only contains meaningful data.

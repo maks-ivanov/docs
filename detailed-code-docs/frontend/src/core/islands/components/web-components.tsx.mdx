@@ -1,0 +1,73 @@
+---
+title: "web-components.tsx"
+---
+
+## High-level description
+
+The `web-components.tsx` file defines a custom HTML element, `MarimoIslandElement`, which is responsible for rendering the output of a Marimo cell in a web application. This component integrates with the React ecosystem to render dynamic content, manage state, and handle interactions within the Marimo notebook environment.
+
+## Code Structure
+
+The main symbol in this file is the `MarimoIslandElement` class, which extends the `HTMLElement` interface to create a custom web component. This class interacts with several other components and utilities, such as `ReactDOM`, `ErrorBoundary`, `TooltipProvider`, and `MarimoOutputWrapper`, to render and manage the content of Marimo cells. It also utilizes the `store` from Jotai for state management and interacts with the `UI_ELEMENT_REGISTRY` for managing UI elements.
+
+## Symbols
+
+### `MarimoIslandElement`
+#### Description
+The `MarimoIslandElement` class is a custom HTML element that renders the output of a Marimo cell. It manages the rendering of cell outputs and optional code editors, and it integrates with the React ecosystem to provide a dynamic and interactive user experience.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `this.dataset.appId` | string | The application ID associated with the Marimo cell. |
+| `this.dataset.cellIdx` | string | The index of the cell within the application. |
+| `this` | HTMLElement | The HTML element representing the Marimo cell. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| `this.root` | Root | The React root used for rendering the component. |
+
+#### Internal Logic
+- **Constructor**: Initializes the element by adding a specific class to its class list.
+- **Getters**: 
+  - `appId`: Retrieves the application ID from the element's dataset, ensuring it exists.
+  - `cellId`: Retrieves the cell ID using the index from the dataset and the global store.
+  - `code`: Extracts the code from the embedded element using a utility function.
+- **Lifecycle Method**: 
+  - `connectedCallback`: Invoked when the element is added to the document. It sets up the initial rendering of the cell's output and optional editor.
+- **Rendering**: 
+  - `render`: Uses React to render the cell's output and editor within an error boundary and tooltip provider.
+- **Helper Methods**: 
+  - `getOptionalEditor`: Retrieves and validates an optional code editor element.
+  - `querySelectorOrThrow`: Selects a child element by a selector, throwing an error if not found.
+
+## References
+
+- **`invariant`**: Used to assert conditions and throw errors if they are not met.
+- **`store`**: A Jotai store used for managing global state.
+- **`notebookAtom`**: An atom representing the state of the notebook, used to retrieve cell IDs.
+- **`extractIslandCodeFromEmbed`**: A utility function to extract code from the embedded element.
+- **`MarimoOutputWrapper`**: A React component that wraps the output rendering logic.
+- **`UI_ELEMENT_REGISTRY`**: A registry for managing UI elements associated with Marimo cells.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `ReactDOM` | Used to create a React root for rendering the component. |
+| `jotai` | Provides state management capabilities. |
+| `react-error-boundary` | Used to catch and handle errors in the React component tree. |
+| `html-react-parser` | Parses HTML strings into React elements. |
+
+## Error Handling
+
+- The `invariant` function is used throughout the class to ensure that required data attributes are present and valid. If a condition is not met, an error is thrown with a descriptive message.
+
+## Logging
+
+- The `Logger` utility is used in related files to log warnings and errors, although it is not directly used in this file.
+
+## TODOs
+
+- There is a TODO comment in the `getOptionalEditor` method suggesting the addition of specificity to the editor selection process.

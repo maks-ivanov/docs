@@ -1,0 +1,81 @@
+---
+title: "extensions.ts"
+---
+
+## High-level description
+
+The target file, `extensions.ts`, is part of a frontend application using CodeMirror, a versatile text editor implemented in JavaScript. This file defines extensions for CodeMirror that enhance the editor's functionality by adding keymaps for formatting code and toggling between languages, as well as ensuring the active line is visible when the editor is resized. These extensions are designed to improve the user experience by providing keyboard shortcuts for common actions and maintaining visibility of the active line during editing.
+
+## Code Structure
+
+The main symbols in the code are two functions: `formatKeymapExtension` and `scrollActiveLineIntoView`. The `formatKeymapExtension` function creates a keymap for formatting code and toggling between languages, while `scrollActiveLineIntoView` ensures the active line is visible when the editor is resized. These functions utilize various imported utilities and types, such as `EditorView`, `keymap`, `CellId`, `CodeCallbacks`, and `HotkeyProvider`.
+
+## References
+
+- `formatEditorViews` from `./format`: Used to format the code in the editor views.
+- `getCurrentLanguageAdapter` and `toggleToLanguage` from `./language/commands`: Used to determine the current language and toggle between languages.
+- `smartScrollIntoView` from `../../utils/scroll`: Used to scroll the active line into view.
+- `invariant` from `@/utils/invariant`: Used to assert conditions.
+- `HotkeyProvider` from `@/core/hotkeys/hotkeys`: Provides hotkey configurations.
+
+## Symbols
+
+### `formatKeymapExtension`
+#### Description
+The `formatKeymapExtension` function adds a keymap to the CodeMirror editor for formatting code and toggling between Python and Markdown languages. It uses hotkeys to trigger these actions and updates the editor view accordingly.
+
+#### Inputs
+| Name      | Type           | Description                                      |
+|:----------|:---------------|:-------------------------------------------------|
+| cellId    | `CellId`       | The identifier for the cell being edited.        |
+| callbacks | `CodeCallbacks`| Callbacks for updating cell code and toggling.   |
+| hotkeys   | `HotkeyProvider` | Provides the hotkeys for the actions.          |
+
+#### Outputs
+| Name   | Type     | Description                        |
+|:-------|:---------|:-----------------------------------|
+| output | `Keymap` | A keymap for the CodeMirror editor.|
+
+#### Internal Logic
+- Retrieves hotkeys for formatting and toggling actions.
+- Defines keymap actions for formatting code and toggling between Python and Markdown.
+- Uses `formatEditorViews` to format code and `toggleToLanguage` to switch languages.
+- Calls `afterToggleMarkdown` if the language is toggled to Markdown.
+
+### `scrollActiveLineIntoView`
+#### Description
+The `scrollActiveLineIntoView` function ensures that the active line in the CodeMirror editor is visible when the editor is resized. It adjusts the scroll position to keep the active line within view, considering an offset to avoid obstruction by UI elements.
+
+#### Inputs
+None
+
+#### Outputs
+| Name   | Type     | Description                        |
+|:-------|:---------|:-----------------------------------|
+| output | `UpdateListener` | An update listener for the editor.|
+
+#### Internal Logic
+- Listens for updates to the editor's height and document changes.
+- Identifies the active line using the class `cm-activeLine cm-line`.
+- Uses `smartScrollIntoView` to adjust the scroll position, ensuring the active line is visible with specified offsets.
+
+## Dependencies
+
+| Dependency          | Purpose                                      |
+|:--------------------|:---------------------------------------------|
+| `@codemirror/view`  | Provides the `EditorView` and `keymap` utilities. |
+| `@/core/hotkeys/hotkeys` | Provides the `HotkeyProvider` for managing hotkeys. |
+| `@/utils/invariant` | Provides the `invariant` function for assertions. |
+| `../../utils/scroll` | Provides the `smartScrollIntoView` function for scrolling logic. |
+
+## Error Handling
+
+- The `invariant` function is used to ensure that the `App` element is found before attempting to scroll, throwing an error if the condition is not met.
+
+## Logging
+
+No explicit logging mechanisms are implemented in this code.
+
+## TODOs
+
+No TODOs or notes are present in the code.

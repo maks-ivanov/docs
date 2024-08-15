@@ -1,0 +1,116 @@
+---
+title: "hints.ts"
+---
+
+## High-level description
+
+The code in `hints.ts` is part of a CodeMirror-based editor extension that provides tooltip hints and documentation for code elements. It integrates with an autocompletion system to fetch and display relevant documentation as tooltips when the user hovers over or positions the cursor on certain code elements. The code also includes mechanisms to debounce requests to avoid excessive server calls.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `hintTooltip`: This function sets up the tooltip behavior for the editor, using the `hoverTooltip` from CodeMirror to display documentation.
+- `requestDocumentation`: An asynchronous function that fetches documentation for a given position in the editor.
+- `getPositionAtWordBounds`: A utility function that determines the start and end positions of a word at a given cursor position.
+- `debouncedAutocomplete`: A debounced function that requests documentation when the cursor moves.
+- `cursorPositionDocumentation`: An update listener that triggers documentation requests based on cursor movement.
+
+## References
+
+- `HTMLCellId` from `ids.ts` is used to identify and parse cell elements in the editor.
+- `AUTOCOMPLETER` and `Autocompleter` from `Autocompleter.ts` are used to request and format autocompletion results.
+- `Logger` from `Logger.ts` is used for logging errors.
+- `documentationAtom` from `state.ts` is used to store the fetched documentation in a global state.
+
+## Symbols
+
+### `hintTooltip`
+#### Description
+Sets up tooltip behavior in the editor to display documentation when hovering over code elements.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | Array | An array of tooltip configurations for the editor. |
+
+#### Internal Logic
+- Uses `hoverTooltip` to create a tooltip that fetches documentation asynchronously.
+- Includes `cursorPositionDocumentation` to handle cursor-based documentation requests.
+
+### `requestDocumentation`
+#### Description
+Fetches documentation for a specific position in the editor, using the autocompletion system.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view instance. |
+| pos | number | The position in the document to fetch documentation for. |
+| excludeTypes | string[] | Optional types to exclude from the documentation. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | Tooltip or null | The tooltip with documentation or null if not available. |
+
+#### Internal Logic
+- Finds the HTML cell container and parses its ID.
+- Determines the word boundaries at the given position.
+- Requests documentation from the `AUTOCOMPLETER`.
+- Formats the result as a tooltip using `Autocompleter.asHoverTooltip`.
+
+### `getPositionAtWordBounds`
+#### Description
+Determines the start and end positions of a word at a given cursor position in the document.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| doc | Text | The document text. |
+| pos | number | The cursor position. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output1 | Object | An object containing `startToken` and `endToken` positions. |
+
+#### Internal Logic
+- Iterates backward and forward from the position to find non-word characters, marking the word boundaries.
+
+### `debouncedAutocomplete`
+#### Description
+A debounced function that requests documentation when the cursor moves, to prevent excessive server requests.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| view | EditorView | The editor view instance. |
+| position | number | The cursor position. |
+
+#### Internal Logic
+- Calls `requestDocumentation` and updates the global state with the fetched documentation.
+
+### `cursorPositionDocumentation`
+#### Description
+An update listener that triggers documentation requests based on cursor movement within text elements.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `@codemirror/view` | Provides the editor view and tooltip functionalities. |
+| `@codemirror/state` | Manages the editor state and document text. |
+| `lodash-es` | Used for the `debounce` function to limit request frequency. |
+| `jotai` | Manages global state for documentation storage. |
+
+## Error Handling
+
+- Uses `Logger.error` to log errors when failing to find active cells.
+
+## Performance Considerations
+
+- The use of `debounce` in `debouncedAutocomplete` is crucial to prevent excessive server requests, which could degrade performance.
+
+## Logging
+
+- The `Logger` utility is used to log errors, which can be configured to disable logging in production environments.

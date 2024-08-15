@@ -1,0 +1,55 @@
+---
+title: "commands.py"
+---
+
+## High-level description
+
+The target file, `commands.py`, is part of the Marimo CLI tool and provides a command for converting Jupyter notebooks (`.ipynb`) or Markdown files (`.md`) into Marimo notebooks. This conversion process involves stripping out outputs from Jupyter notebooks and processing Markdown cells with specific code blocks. The command is implemented using the `click` library, which facilitates the creation of command-line interfaces.
+
+## Code Structure
+
+The main symbol in this file is the `convert` function, which is a command-line interface (CLI) command defined using the `click` library. This function utilizes helper functions from other modules to perform the conversion of files.
+
+## References
+
+- `convert_from_ipynb`: A function from `marimo._cli.convert.ipynb` used to convert Jupyter notebook content to Marimo format.
+- `convert_from_md`: A function from `marimo._cli.convert.markdown` used to convert Markdown content to Marimo format.
+- `load_external_file`: A utility function from `marimo._cli.convert.utils` used to load the content of a file, either from a local path or a GitHub URL.
+
+## Symbols
+
+### `convert`
+#### Description
+The `convert` function is a CLI command that converts a Jupyter notebook or Markdown file into a Marimo notebook. It determines the file type based on the file extension and uses the appropriate conversion function to process the file content.
+
+#### Inputs
+| Name     | Type   | Description                                                                 |
+|:---------|:-------|:----------------------------------------------------------------------------|
+| filename | string | The path to the file to be converted, which can be a local file or a GitHub URL. |
+
+#### Outputs
+This function does not return any values. Instead, it outputs the converted notebook content to the standard output using `click.echo`.
+
+#### Internal Logic
+1. **File Extension Check**: The function first checks the file extension of the provided filename. It supports `.ipynb`, `.md`, and `.qmd` extensions.
+2. **Load File Content**: It uses the `load_external_file` function to read the file content, which can handle both local files and files hosted on GitHub.
+3. **Conversion**: Depending on the file extension:
+   - If the file is a Jupyter notebook (`.ipynb`), it calls `convert_from_ipynb` to convert the content.
+   - If the file is a Markdown file (`.md` or `.qmd`), it calls `convert_from_md`.
+4. **Output**: The converted content is printed to the standard output using `click.echo`.
+
+## Dependencies
+
+| Dependency | Purpose                                                                 |
+|:-----------|:------------------------------------------------------------------------|
+| `click`    | Used to create the command-line interface for the `convert` command.    |
+| `pathlib`  | Used to handle file paths and extract file extensions.                  |
+
+## Error Handling
+The function raises a `click.UsageError` if the provided file does not have a supported extension (`.ipynb`, `.md`, or `.qmd`). This ensures that users are informed of incorrect file types before any processing occurs.
+
+## Logging
+The function uses `click.echo` to output the converted notebook content, which is a standard practice for CLI applications to handle output.
+
+## TODOs
+There are no TODOs or notes left in the code.

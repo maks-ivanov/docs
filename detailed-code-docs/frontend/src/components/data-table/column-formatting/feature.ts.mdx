@@ -1,0 +1,92 @@
+---
+title: "feature.ts"
+---
+
+## High-level description
+
+The target file defines a feature for formatting columns in a data table using the TanStack Table library. It provides mechanisms to initialize, configure, and apply various formatting options to table columns based on their data types, such as date, number, string, and boolean. The file also includes utility functions for formatting values according to specified options.
+
+## Code Structure
+
+The main symbol in the code is the `ColumnFormattingFeature`, which is a `TableFeature` object that integrates with the TanStack Table library to provide column formatting capabilities. It interacts with other symbols such as `applyFormat`, which is a function used to apply specific formatting to values based on their data type and format option. The feature relies on utility functions like `prettyNumber` and `prettyScientificNumber` for number formatting and `logNever` for handling unexpected cases.
+
+## Symbols
+
+### `ColumnFormattingFeature`
+#### Description
+The `ColumnFormattingFeature` is a feature object that extends the functionality of a table by adding column formatting capabilities. It defines initial state, default options, and methods for creating and managing column formatting.
+
+#### Inputs
+- `state`: The initial state of the table.
+- `table`: The table instance to which the feature is being added.
+- `column`: The column instance for which formatting is being configured.
+
+#### Outputs
+- Returns an object with methods and properties to manage column formatting.
+
+#### Internal Logic
+- **getInitialState**: Initializes the column formatting state with an empty object.
+- **getDefaultOptions**: Sets default options for column formatting, including enabling formatting and defining a state updater.
+- **createColumn**: Adds methods to a column instance for getting, setting, and applying formatting based on the column's data type and the table's state.
+
+### `applyFormat`
+#### Description
+The `applyFormat` function applies a specified format to a value based on its data type. It handles various data types such as date, number, string, and boolean, and applies the appropriate formatting logic.
+
+#### Inputs
+| Name     | Type         | Description                        |
+|:---------|:-------------|:-----------------------------------|
+| `value`  | `unknown`    | The value to be formatted.         |
+| `format` | `FormatOption` | The format option to apply.       |
+| `dataType` | `DataType` | The data type of the value.        |
+
+#### Outputs
+| Name     | Type   | Description                        |
+|:---------|:-------|:-----------------------------------|
+| `output` | `string` | The formatted value as a string.  |
+
+#### Internal Logic
+- Checks if the value is null or undefined and returns an empty string if so.
+- Uses a switch statement to handle different data types and applies the corresponding formatting logic.
+- Utilizes utility functions like `prettyNumber` and `prettyScientificNumber` for number formatting.
+- Uses `Intl.NumberFormat` and `Intl.DateTimeFormat` for locale-specific formatting of numbers and dates.
+
+### `formattingExample`
+#### Description
+The `formattingExample` function provides examples of formatted values for different format options. It is likely used for demonstration or testing purposes.
+
+#### Inputs
+| Name     | Type         | Description                        |
+|:---------|:-------------|:-----------------------------------|
+| `format` | `FormatOption` | The format option to demonstrate. |
+
+#### Outputs
+| Name     | Type   | Description                        |
+|:---------|:-------|:-----------------------------------|
+| `output` | `string | number | undefined | null` | An example of a formatted value. |
+
+## References
+
+- **`@tanstack/react-table`**: The library used for table management, providing types and utilities for table features.
+- **`@/utils/numbers`**: Provides utility functions for number formatting.
+- **`@/utils/assertNever`**: Provides a utility function for handling unexpected cases in switch statements.
+
+## Dependencies
+
+| Dependency                  | Purpose                                      |
+|:----------------------------|:---------------------------------------------|
+| `@tanstack/react-table`     | Provides the table management framework.     |
+| `@/utils/numbers`           | Contains utility functions for number formatting. |
+| `@/utils/assertNever`       | Provides a utility for handling unexpected cases. |
+
+## Error Handling
+
+- The `logNever` function is used to log unexpected data types in the `applyFormat` function, ensuring that any unhandled cases are noted without throwing an error.
+
+## Logging
+
+- The `logNever` function logs unexpected objects to the console, which is useful for debugging and ensuring exhaustive handling of data types.
+
+## TODOs
+
+No TODOs or notes are present in the code.

@@ -1,0 +1,105 @@
+---
+title: "RuntimeState.test.ts"
+---
+
+## High-level description
+
+The target file `RuntimeState.test.ts` contains unit tests for the `RuntimeState` class, which is responsible for managing the lifecycle of event listeners related to UI elements in a frontend application. The tests ensure that the `RuntimeState` class correctly registers and deregisters event listeners for custom events, specifically the `MarimoValueReadyEvent`, and that it enforces a singleton pattern for its operation.
+
+## Code Structure
+
+The main symbols in the code are interconnected as follows:
+- `RuntimeState`: The class being tested, which manages event listeners for UI elements.
+- `UIElementRegistry`: A singleton class that maintains the state of UI elements and is used by `RuntimeState`.
+- `MarimoValueReadyEvent`: A custom event type that `RuntimeState` listens for.
+- `RunRequests`: An interface defining the `sendComponentValues` function, which is mocked in the tests.
+
+## References
+
+- `RuntimeState`: The class under test, defined in `RuntimeState.ts`.
+- `UIElementRegistry`: Referenced as a dependency for `RuntimeState`.
+- `MarimoValueReadyEvent`: A custom event type used in the tests.
+- `RunRequests`: Provides the type for the mocked function `sendComponentValues`.
+
+## Symbols
+
+### `describe("RuntimeState", () =&gt; { ... })`
+#### Description
+This is a test suite for the `RuntimeState` class, using the `vitest` testing framework. It contains multiple test cases to verify the behavior of the `RuntimeState` class.
+
+### `beforeEach(() =&gt; { ... })`
+#### Description
+A setup function that runs before each test case. It clears all mocks, initializes a mock function for `sendComponentValues`, and resets the `UIElementRegistry` singleton instance.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Clears all mock functions using `vi.clearAllMocks()`.
+- Initializes `mockSendComponentValues` as a mock function that returns a resolved promise.
+- Resets the `UIElementRegistry` by clearing its entries.
+- Instantiates a new `RuntimeState` object with the `UIElementRegistry`.
+
+### `test("start should register event listener", () =&gt; { ... })`
+#### Description
+Tests that the `start` method of `RuntimeState` registers an event listener for the `MarimoValueReadyEvent`.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `runtimeState.start(mockSendComponentValues)`.
+- Asserts that `addEventListener` is called with the correct event type and a function.
+
+### `test("it can only start once", () =&gt; { ... })`
+#### Description
+Tests that the `start` method of `RuntimeState` can only be called once, ensuring idempotency.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `runtimeState.start(mockSendComponentValues)` twice.
+- Asserts that `addEventListener` is called only once.
+
+### `test("stop should remove event listener", () =&gt; { ... })`
+#### Description
+Tests that the `stop` method of `RuntimeState` removes the event listener for the `MarimoValueReadyEvent`.
+
+#### Inputs
+None
+
+#### Outputs
+None
+
+#### Internal Logic
+- Calls `runtimeState.start(mockSendComponentValues)`.
+- Calls `runtimeState.stop()`.
+- Asserts that `removeEventListener` is called with the correct event type and a function.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `vitest` | Used for testing, providing functions like `describe`, `test`, `expect`, and `vi` for mocking. |
+
+## Error Handling
+
+The tests do not explicitly handle errors, but they rely on the `vitest` framework to catch and report any exceptions or failed assertions during test execution.
+
+## Logging
+
+The `RuntimeState` class uses a `Logger` to warn if `start` or `stop` methods are called inappropriately, but this is not directly tested in the provided test cases.
+
+## TODOs
+
+No TODOs or notes are present in the code.

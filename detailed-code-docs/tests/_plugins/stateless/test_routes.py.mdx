@@ -1,0 +1,76 @@
+---
+title: "test_routes.py"
+---
+
+## High-level description
+
+The target file `test_routes.py` contains test cases for verifying the behavior of route handling in a system using the `marimo` framework. It tests both lazy and non-lazy route configurations to ensure that routes are correctly registered and executed, and that the expected HTML output is produced.
+
+## Code Structure
+
+The main symbols in the code are two asynchronous test functions: `test_routes_lazy` and `test_routes_non_lazy`. These functions utilize the `Kernel` and `ExecReqProvider` classes to set up and execute route configurations, then verify the results against expected outputs. The `Kernel` class is responsible for managing the execution environment, while `ExecReqProvider` helps in creating execution requests for the tests.
+
+## Symbols
+
+### `test_routes_lazy`
+#### Description
+This function tests the lazy route configuration in the `marimo` framework. It verifies that routes are registered as functions and that they produce the expected HTML output when executed.
+
+#### Inputs
+| Name    | Type            | Description                                      |
+|:--------|:----------------|:-------------------------------------------------|
+| k       | Kernel          | The execution environment for running the test.  |
+| exec_req| ExecReqProvider | Provides execution requests for the test.        |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value. |
+
+#### Internal Logic
+1. The function uses `exec_req.get` to create an execution request that defines several routes using the `marimo` framework.
+2. It runs the execution request using the `Kernel` instance `k`.
+3. After garbage collection, it retrieves the current runtime context.
+4. It asserts that four functions are registered in the function registry, corresponding to the four routes.
+5. It iterates over the registered functions, executes them, and checks that the HTML output matches the expected results.
+
+### `test_routes_non_lazy`
+#### Description
+This function tests the non-lazy route configuration in the `marimo` framework. It ensures that routes are not registered as functions and that the expected HTML output is directly available in the route text.
+
+#### Inputs
+| Name    | Type            | Description                                      |
+|:--------|:----------------|:-------------------------------------------------|
+| k       | Kernel          | The execution environment for running the test.  |
+| exec_req| ExecReqProvider | Provides execution requests for the test.        |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| None | None | This function does not return a value. |
+
+#### Internal Logic
+1. The function uses `exec_req.get` to create an execution request that defines non-lazy routes using the `marimo` framework.
+2. It runs the execution request using the `Kernel` instance `k`.
+3. It retrieves the current runtime context and asserts that no functions are registered in the function registry.
+4. It checks that the expected HTML output is present in the `routes.text` attribute, verifying that the routes are correctly configured.
+
+## References
+
+- `Kernel`: Used to manage the execution environment for the tests.
+- `ExecReqProvider`: Used to create execution requests for the tests.
+- `get_context`: Retrieves the current runtime context, which is used to verify the function registry.
+
+## Dependencies
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| `gc`       | Used to force garbage collection after running the execution requests. |
+
+## Error Handling
+
+The test functions use assertions to verify the expected behavior. If any assertion fails, it indicates a discrepancy between the expected and actual behavior of the route handling, which would be reported as a test failure.
+
+## Logging
+
+There is no explicit logging in the test functions. They rely on assertions to validate the behavior and report any discrepancies as test failures.
