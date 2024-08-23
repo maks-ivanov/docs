@@ -1,0 +1,61 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains an example implementation of an automated code review system using GPTScript as part of a GitHub Actions workflow. The system is designed to review pull requests in a GitHub repository, providing feedback and comments based on the changes made in the pull request.
+
+## What does it do?
+The code in this directory sets up an automated process that:
+
+1. Triggers when a pull request is opened, updated, or reopened in a GitHub repository.
+2. Retrieves details about the pull request, such as its URL and the number of changed files.
+3. Uses GPTScript to analyze the code changes and generate a review.
+4. Posts the generated review as a comment on the pull request.
+5. Sets the status of the pull request based on the review outcome (pass or fail).
+
+This automation helps streamline the code review process by providing an initial assessment of the changes, potentially catching common issues or suggesting improvements before human reviewers look at the code.
+
+## Entry points
+The main components of this system are:
+
+1. `codereview.gpt`: This file contains the GPTScript code and prompts used for performing the code review. It defines the logic and criteria for analyzing the code changes.
+
+2. `workflow.yaml`: This is the GitHub Actions workflow file that orchestrates the entire process. It defines the steps to be executed when a pull request event occurs, including installing dependencies, running the GPTScript review, and interacting with the GitHub API.
+
+The workflow file (`workflow.yaml`) serves as the entry point for the automation. It defines a job named `pr_review` that executes a series of steps to perform the code review process.
+
+## Dependencies
+The system relies on several external tools and services:
+
+1. GitHub Actions: The automation platform that runs the workflow.
+2. OpenAI API: Used by GPTScript to generate the code review. An API key is required.
+3. GPTScript: A tool for running AI-powered scripts, which is installed as part of the workflow.
+4. GitHub CLI (`gh`): Used to interact with the GitHub API for posting comments.
+5. `jq`: A lightweight command-line JSON processor used for parsing GitHub event data.
+
+## Configuration
+The system requires the following configuration:
+
+1. Environment Variables:
+   - `OPENAI_API_KEY`: The API key for accessing OpenAI services.
+   - `GH_TOKEN`: A GitHub token for authentication and API access.
+
+These environment variables should be configured as secrets in the GitHub repository settings to ensure secure access.
+
+2. Workflow Configuration:
+   The `workflow.yaml` file defines the trigger events (pull request opened, synchronized, or reopened) and the steps to be executed. It can be customized to adjust the behavior of the automation.
+
+3. GPTScript Configuration:
+   The `codereview.gpt` file contains the GPTScript code and prompts that define the criteria and logic for the code review. This can be modified to adjust the review process or focus on specific aspects of code quality.
+
+To use this example:
+
+1. Create a new GitHub repository.
+2. Copy the `codereview.gpt` file to the root of the repository.
+3. Create a `.github/workflows/main.yaml` file and copy the contents of `workflow.yaml` into it.
+4. Configure the `OPENAI_API_KEY` and `GH_TOKEN` as secrets in the repository settings.
+5. Create a new branch, add some code files, and open a pull request.
+6. The GitHub Action will automatically trigger and perform the code review.
+
+This setup provides a foundation for automated code reviews that can be customized and expanded based on specific project requirements.

@@ -1,0 +1,119 @@
+---
+title: "url.go"
+---
+
+## High-level description
+This file, `pkg/loader/url.go`, contains functionality for loading and caching remote resources (primarily GPTScript tools) via URLs. It provides mechanisms to fetch, parse, and cache content from various sources, including HTTP(S) URLs and version control systems (VCS).
+
+## Code Structure
+The main components of this file are:
+1. `VCSLookup` type and related functions for handling version control system lookups.
+2. `cacheKey` and `cacheValue` structs for managing cached content.
+3. `loadURL` function, which is the core function for fetching and caching remote content.
+4. `getWithDefaults` function for handling HTTP requests with fallback to default files.
+5. `ContentFromURL` function as a public API for fetching content from a URL.
+
+## Symbols
+
+### `VCSLookup`
+#### Description
+A function type for looking up version control system (VCS) information.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| context.Context | context.Context | The context for the operation |
+| *cache.Client | *cache.Client | The cache client |
+| string | string | The name or identifier for the VCS lookup |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The URL |
+| string | string | The bearer token |
+| *types.Repo | *types.Repo | Repository information |
+| bool | bool | Whether the lookup was successful |
+| error | error | Any error encountered during the lookup |
+
+### `AddVSC`
+#### Description
+Adds a VCS lookup function to the list of VCS lookups.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| lookup | VCSLookup | The VCS lookup function to add |
+
+### `loadURL`
+#### Description
+Loads content from a URL, using caching mechanisms and handling various scenarios such as relative paths and VCS lookups.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| cache | *cache.Client | The cache client |
+| base | *source | The base source information |
+| name | string | The name or URL to load |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *source | *source | The loaded source information |
+| bool | bool | Whether the operation was successful |
+| error | error | Any error encountered during the operation |
+
+#### Internal Logic
+1. Checks if the content is already cached and returns it if valid.
+2. Constructs the full URL based on the base path and relative/absolute URL.
+3. Performs VCS lookups if necessary.
+4. Makes an HTTP request to fetch the content.
+5. Handles various HTTP status codes and redirects.
+6. Caches the fetched content for future use.
+
+### `getWithDefaults`
+#### Description
+Attempts to fetch content from a URL, falling back to default file names if the initial request fails.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | *http.Request | The HTTP request to execute |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []byte | []byte | The fetched content |
+| string | string | The default file name used (if any) |
+| error | error | Any error encountered during the operation |
+
+#### Internal Logic
+1. Tries to fetch the content using the original URL.
+2. If unsuccessful, attempts to append default file names to the URL and retry.
+3. Returns the content if successful, or an error if all attempts fail.
+
+### `ContentFromURL`
+#### Description
+A public function to fetch content from a URL, optionally using caching.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The URL to fetch content from |
+| disableCache | bool | Whether to disable caching |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The fetched content |
+| error | error | Any error encountered during the operation |
+
+## Dependencies
+- `github.com/gptscript-ai/gptscript/pkg/cache`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+## Error Handling
+The code uses error wrapping and returning to propagate errors up the call stack. It also includes some custom error handling for specific HTTP status codes and scenarios.
+
+## Caching
+The code implements a caching mechanism using the `cache.Client` to store and retrieve content, reducing unnecessary network requests for frequently accessed resources.

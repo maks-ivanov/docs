@@ -1,0 +1,74 @@
+---
+title: "parser_test.go"
+---
+
+## High-level description
+This file contains unit tests for the parser package of the gptscript project. It tests various aspects of parsing GPTScript, including hashbang detection, global variable parsing, tool parsing, input/output filter parsing, and metadata parsing.
+
+## Symbols
+
+### TestHashBang
+#### Description
+This function tests the `isGPTScriptHashBang` function to ensure it correctly identifies valid and invalid GPTScript hashbangs.
+
+#### Internal Logic
+The test uses the `autogold` library to compare expected results with the output of `isGPTScriptHashBang` for various input strings. It checks both valid and invalid hashbangs.
+
+### TestParseGlobals
+#### Description
+This function tests the parsing of global variables and tool definitions in GPTScript.
+
+#### Internal Logic
+1. Defines an input string with global variables and a tool definition.
+2. Calls the `Parse` function with the input and `AssignGlobals` option set to true.
+3. Uses `autogold` to compare the expected parsed output with the actual output.
+
+### TestParseSkip
+#### Description
+This function tests the parsing of multiple tools and text nodes, including skipped sections and invalid tool definitions.
+
+#### Internal Logic
+1. Defines a complex input string with multiple tool definitions, text nodes, and skip directives.
+2. Calls the `Parse` function with the input.
+3. Uses `autogold` to compare the expected parsed output with the actual output.
+
+### TestParseInput
+#### Description
+This function tests the parsing of input filters and shared input filters.
+
+#### Internal Logic
+1. Defines an input string with input filters and shared input filters.
+2. Calls the `Parse` function with the input.
+3. Uses `autogold` to compare the expected parsed output with the actual output.
+
+### TestParseOutput
+#### Description
+This function tests the parsing of output filters and shared output filters.
+
+#### Internal Logic
+1. Defines an input string with output filters and shared output filters.
+2. Calls the `Parse` function with the input.
+3. Uses `autogold` to compare the expected parsed output with the actual output.
+
+### TestParseMetaData
+#### Description
+This function tests the parsing of metadata associated with tools.
+
+#### Internal Logic
+1. Defines an input string with multiple metadata sections for different tools.
+2. Calls the `ParseTools` function with the input.
+3. Asserts that only one tool is parsed.
+4. Uses `autogold` to compare the expected metadata map with the actual parsed metadata.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| strings | For creating string readers from input strings |
+| testing | For writing and running unit tests |
+| github.com/gptscript-ai/gptscript/pkg/types | For accessing types used in the parser |
+| github.com/hexops/autogold/v2 | For comparing expected and actual test results |
+| github.com/stretchr/testify/assert | For making assertions in tests |
+| github.com/stretchr/testify/require | For making required assertions in tests |
+
+## Error Handling
+The tests use `require.NoError(t, err)` to ensure that parsing operations do not return errors. If an error occurs, the test will fail immediately.

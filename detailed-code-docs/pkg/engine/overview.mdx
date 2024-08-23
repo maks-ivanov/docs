@@ -1,0 +1,52 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/engine` directory contains the core implementation of the GPTScript execution engine. It provides functionality for executing commands, managing daemons, handling HTTP requests, processing OpenAPI specifications, and managing the overall execution flow of GPTScript tools.
+
+## What does it do?
+The engine package is responsible for:
+1. Executing various types of tools (commands, HTTP requests, OpenAPI operations, etc.)
+2. Managing daemon processes for long-running services
+3. Handling environment variables and configuration
+4. Interacting with language models for completions
+5. Managing the execution context and state of GPTScript programs
+6. Providing progress updates during tool execution
+
+## Entry points
+The main entry point for the engine is the `Engine` struct defined in `engine.go`. This struct provides methods like `Start` and `Continue` that initiate and control the execution of GPTScript tools. Other important files include:
+
+- `cmd.go`: Handles command execution and environment setup
+- `daemon.go`: Manages daemon processes and port allocation
+- `http.go`: Processes HTTP-based tool execution
+- `openapi.go`: Implements OpenAPI tool execution and parameter handling
+
+The flow of control typically starts with the `Engine.Start` method, which initiates the execution of a tool. From there, the engine determines the appropriate method to handle the specific tool type (e.g., `runCommand`, `runHTTP`, `runOpenAPI`) and processes the tool accordingly.
+
+## Key Files
+1. `engine.go`: Defines the core `Engine` struct and methods for managing execution flow.
+2. `cmd.go`: Implements command execution and environment handling.
+3. `daemon.go`: Provides functionality for managing daemon processes.
+4. `http.go`: Handles HTTP-based tool execution.
+5. `openapi.go`: Implements OpenAPI tool execution and parameter serialization.
+
+## Dependencies
+The engine package relies on several external libraries and internal packages:
+
+1. `github.com/google/shlex`: Used for parsing shell-like syntax.
+2. `github.com/tidwall/gjson`: Provides JSON parsing and querying capabilities.
+3. `github.com/gptscript-ai/gptscript/pkg/openapi`: Handles OpenAPI specifications and operations.
+4. `github.com/gptscript-ai/gptscript/pkg/types`: Defines common types used throughout the project.
+5. `github.com/gptscript-ai/gptscript/pkg/version`: Provides version information.
+6. Standard Go libraries: `net/http`, `encoding/json`, `context`, etc.
+
+## Configuration
+The engine can be configured through environment variables and the `Engine` struct fields. Some notable configuration options include:
+
+- `GPTSCRIPT_OPENAPI_REVAMP`: Enables an alternative OpenAPI implementation when set to "true".
+- Port range for daemon processes: Can be set using the `SetPorts` function.
+- `Engine.Env`: Allows setting environment variables for tool execution.
+- `Engine.Progress`: A channel for reporting progress updates during execution.
+
+The engine is designed to be flexible and extensible, allowing for different types of tool execution and integration with various language models and runtime environments.

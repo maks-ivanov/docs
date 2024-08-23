@@ -1,0 +1,118 @@
+---
+title: "run.go"
+---
+
+## High-level description
+This code implements a server for executing GPTScript programs. It provides functionality for running GPTScript tools, handling input/output, managing credentials, and streaming events during execution.
+
+## Code Structure
+The main components are:
+- `server` struct (implied): Handles execution and streaming of GPTScript programs.
+- `loaderFunc`: A function type for loading programs.
+- `execAndStream`: Main method for executing and streaming results of a GPTScript program.
+- Helper functions for processing events, writing responses, and handling errors.
+
+## Symbols
+
+### `loaderWithLocation`
+#### Description
+Creates a new loader function that includes a specified location in the loader options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| f | loaderFunc | Original loader function |
+| loc | string | Location to be added to loader options |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| loaderFunc | func | New loader function with location included |
+
+### `execAndStream`
+#### Description
+Executes a GPTScript program and streams the results.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the execution |
+| programLoader | loaderFunc | Function to load the program |
+| logger | mvl.Logger | Logger for the execution |
+| w | http.ResponseWriter | HTTP response writer |
+| opts | gptscript.Options | Options for GPTScript execution |
+| chatState | string | Current chat state |
+| input | string | Input for the program |
+| subTool | string | Sub-tool to be executed |
+| toolDef | fmt.Stringer | Tool definition |
+
+#### Internal Logic
+1. Initializes GPTScript with provided options.
+2. Loads the program using the provided loader.
+3. Starts a goroutine to run the chat and collect output.
+4. Processes and streams the output events.
+
+### `processEventStreamOutput`
+#### Description
+Processes and streams the output events from a GPTScript execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the execution |
+| logger | mvl.Logger | Logger for the execution |
+| w | http.ResponseWriter | HTTP response writer |
+| id | string | Run ID |
+| events | &lt;-chan event | Channel for receiving events |
+| output | &lt;-chan runner.ChatResponse | Channel for receiving chat responses |
+| errChan | chan error | Channel for receiving errors |
+
+#### Internal Logic
+1. Sets up streaming headers.
+2. Streams events as they are received.
+3. Processes the final output or error.
+4. Sends a DONE event when finished.
+
+### `streamEvents`
+#### Description
+Streams events from a GPTScript execution as server-sent events.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the execution |
+| logger | mvl.Logger | Logger for the execution |
+| w | http.ResponseWriter | HTTP response writer |
+| run | *runInfo | Information about the current run |
+| events | &lt;-chan event | Channel for receiving events |
+
+#### Internal Logic
+1. Continuously receives events from the channel.
+2. Processes each event and writes it as a server-sent event.
+3. Stops when the context is done or a RunFinish event is received.
+
+### Helper Functions
+- `writeResponse`: Writes a JSON response to the HTTP writer.
+- `writeError`: Writes an error response to the HTTP writer.
+- `writeServerSentEvent`: Writes a server-sent event to the HTTP writer.
+- `setStreamingHeaders`: Sets the appropriate headers for streaming server-sent events.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Handling request context |
+| encoding/json | JSON encoding/decoding |
+| fmt | Formatting strings |
+| net/http | HTTP server functionality |
+| github.com/gptscript-ai/gptscript/pkg/gptscript | GPTScript core functionality |
+| github.com/gptscript-ai/gptscript/pkg/loader | Program loading |
+| github.com/gptscript-ai/gptscript/pkg/mvl | Logging |
+| github.com/gptscript-ai/gptscript/pkg/runner | Running GPTScript programs |
+| github.com/gptscript-ai/gptscript/pkg/server | Server-related functionality |
+| github.com/gptscript-ai/gptscript/pkg/types | Common types |
+
+## Error Handling
+The code uses a combination of returning errors and writing error responses to the HTTP writer. Errors are logged and sent back to the client as JSON responses with appropriate HTTP status codes.
+
+## Logging
+Logging is done using the `mvl.Logger` interface, which is passed to various functions. It's used to log debug information, warnings, and errors throughout the execution process.

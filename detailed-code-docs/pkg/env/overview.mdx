@@ -1,0 +1,56 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/env` directory contains utility functions for working with environment variables, executable paths, and system-related operations in Go. It provides a set of tools to handle common tasks related to environment manipulation and executable lookup, with cross-platform support (particularly for Windows and Unix-like systems).
+
+## What does it do?
+This package offers several key functionalities:
+
+1. Environment Variable Handling: It allows retrieving environment variables with fallback default values, converting strings to environment-like formats, and searching for specific variables within a list of environment strings.
+
+2. Executable Path Management: The package provides functions to search for executables in the system PATH, considering platform-specific nuances like file extensions on Windows.
+
+3. Path Manipulation: It includes utilities to append binary paths to the PATH environment variable and handle path-related operations across different operating systems.
+
+4. String Comparison for Executables: The package offers functions to compare executable names, taking into account platform-specific considerations like the ".exe" extension on Windows.
+
+5. Logging: While not fully implemented in the provided code, there's a setup for a custom logging solution using an external package.
+
+These functionalities are designed to simplify common tasks related to environment and system operations, making it easier for developers to write cross-platform Go code that interacts with the system environment and executable paths.
+
+## Key Files
+
+### env.go
+This file contains the core functionality of the package. It includes several important functions:
+
+- `VarOrDefault`: Retrieves an environment variable with a fallback default value.
+- `ToEnvLike`: Converts a string to an environment variable-like format.
+- `Getenv`: Searches for and retrieves an environment variable from a list of environment strings.
+- `Matches`: Checks if a command matches a given binary name.
+- `AppendPath`: Appends a binary path to the PATH environment variable.
+- `Lookup`: Searches for an executable in the system PATH, with special handling for Windows.
+
+These functions provide a comprehensive toolkit for environment and path-related operations, with cross-platform considerations built-in.
+
+### log.go
+This file sets up a package-level logging variable. It initializes a `log` variable using an external logging package (`mvl`) from the same project. While the specific logging implementation is not visible in this file, it suggests that the package has a custom logging solution integrated throughout its operations.
+
+## Dependencies
+The package relies on several standard Go libraries and one custom package:
+
+1. `fmt`: Used for string formatting operations.
+2. `os`: Provides a platform-independent interface to operating system functionality.
+3. `path/filepath`: Used for manipulating file paths in a cross-platform manner.
+4. `strings`: Provides utility functions for string manipulation.
+5. `github.com/gptscript-ai/gptscript/pkg/mvl`: A custom package used for logging initialization.
+
+The use of these dependencies allows the package to perform its operations efficiently while maintaining cross-platform compatibility.
+
+## Configuration
+While the package doesn't use explicit configuration files, it does interact heavily with environment variables. The `VarOrDefault` function, for example, allows for flexible configuration by retrieving environment variables with fallback values. This approach enables users of the package to configure behavior through environment variables, a common practice in Go applications.
+
+The package also considers platform-specific configurations, such as the `PATHEXT` environment variable on Windows, which is used in the `Lookup` function to handle executable extensions properly.
+
+In summary, the `pkg/env` directory provides a robust set of utilities for environment and system operations in Go, with a focus on cross-platform compatibility and ease of use. Its functions abstract away many of the complexities involved in working with environment variables and executable paths across different operating systems.

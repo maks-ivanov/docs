@@ -1,0 +1,47 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the command-line interface (CLI) implementation for GPTScript, a tool for running and managing AI-powered scripts. It provides various subcommands and options for executing GPTScript programs, managing credentials, formatting scripts, and interacting with language models.
+
+## What does it do?
+The CLI allows users to:
+1. Execute GPTScript programs with various options
+2. Manage credentials for different contexts and tools
+3. Format GPTScript files
+4. Parse GPTScript content and output as JSON
+5. Retrieve environment variables, including handling compressed values
+6. Run a GPTScript SDK server
+7. Evaluate inline scripts with customizable parameters
+
+## Entry points
+The main entry point is defined in `main.go`, which sets up the execution environment and handles daemon processes if necessary. The core CLI functionality is implemented in `gptscript.go`, which defines the `GPTScript` struct and its methods for command execution and chat interactions.
+
+Key files and their purposes:
+- `gptscript.go`: Defines the main `GPTScript` struct and CLI command structure
+- `eval.go`: Implements the `Eval` command for executing inline scripts
+- `credential.go`, `credential_delete.go`, `credential_show.go`: Handle credential management
+- `fmt.go`: Implements the formatting command for GPTScript files
+- `parse.go`: Provides functionality to parse GPTScript content
+- `sdk_server.go`: Implements the SDK server command
+
+## Dependencies
+The CLI relies on several external libraries and internal packages:
+1. `github.com/spf13/cobra`: For building the command-line interface
+2. `github.com/gptscript-ai/gptscript/pkg/*`: Various internal packages for GPTScript functionality
+3. Standard Go libraries: `encoding/json`, `compress/gzip`, `os`, `context`, etc.
+
+## Configuration
+The CLI uses a combination of command-line flags, environment variables, and configuration files to set up its behavior. Key configuration options include:
+- Cache settings
+- OpenAI API options
+- Display and output formatting options
+- Credential management settings
+- Model and tool selection
+
+Error handling is implemented throughout the codebase, with errors being propagated up the call stack and often returned alongside results. The `Run` method in `gptscript.go` is responsible for handling and reporting top-level errors.
+
+Logging is done using a custom logging package (`mvl`) for debug and error logging. Log levels can be controlled through command-line flags.
+
+This CLI provides a comprehensive interface for working with GPTScript, allowing users to interact with AI models, manage scripts, and customize execution parameters through a command-line environment.

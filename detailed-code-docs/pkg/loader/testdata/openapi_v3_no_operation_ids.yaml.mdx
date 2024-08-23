@@ -1,0 +1,85 @@
+---
+title: "openapi_v3_no_operation_ids.yaml"
+---
+
+## High-level description
+This YAML file defines an OpenAPI 3.0.0 specification for a simple Pet Store API. It outlines the structure, endpoints, request/response formats, and data models for a basic pet management system, including operations to list, create, and retrieve pet information.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| /pets | GET | Query param: limit (optional) | 200: Paged array of pets, default: Error | List all pets |
+| /pets | POST | Pet object in request body | 201: Null response, default: Error | Create a pet |
+| /pets/{petId} | GET | Path param: petId | 200: Pet object, default: Error | Get info for a specific pet |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| OpenAPI 3.0.0 | API specification standard |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| servers.url | string | http://petstore.swagger.io/v1 | Base URL for the API |
+
+## Components
+### Schemas
+#### Pet
+| Property | Type | Required | Description |
+|:---------|:-----|:---------|:------------|
+| id | integer (int64) | Yes | Pet's unique identifier |
+| name | string | Yes | Pet's name |
+| tag | string | No | Optional tag for the pet |
+
+#### Pets
+An array of Pet objects with a maximum of 100 items.
+
+#### Error
+| Property | Type | Required | Description |
+|:---------|:-----|:---------|:------------|
+| code | integer (int32) | Yes | Error code |
+| message | string | Yes | Error message |
+
+## Endpoints
+### /pets
+#### GET
+Retrieves a list of pets.
+
+##### Parameters
+| Name | In | Type | Required | Description |
+|:-----|:---|:-----|:---------|:------------|
+| limit | query | integer (int32) | No | Maximum number of items to return (max 100) |
+
+##### Responses
+- 200: Successfully returns a paged array of pets
+  - Headers:
+    - x-next: Link to the next page of responses
+  - Content: application/json (Pets schema)
+- default: Unexpected error (Error schema)
+
+#### POST
+Creates a new pet.
+
+##### Request Body
+- Content: application/json (Pet schema)
+- Required: Yes
+
+##### Responses
+- 201: Null response (successful creation)
+- default: Unexpected error (Error schema)
+
+### /pets/{petId}
+#### GET
+Retrieves information for a specific pet.
+
+##### Parameters
+| Name | In | Type | Required | Description |
+|:-----|:---|:-----|:---------|:------------|
+| petId | path | string | Yes | The id of the pet to retrieve |
+
+##### Responses
+- 200: Successfully returns the requested pet information
+  - Content: application/json (Pet schema)
+- default: Unexpected error (Error schema)
+
+This OpenAPI specification provides a clear structure for a simple Pet Store API, defining the available endpoints, request/response formats, and data models. It serves as a blueprint for implementing and documenting the API, ensuring consistency and ease of understanding for developers working with this service.

@@ -1,0 +1,156 @@
+---
+title: "busybox.go"
+---
+
+## High-level description
+This code defines a `Runtime` struct for managing the Busybox runtime environment on Windows systems. It provides functionality to download, install, and set up Busybox, which is used to support shell-like commands in a Windows environment.
+
+## Code Structure
+The `Runtime` struct implements methods for identifying, supporting, and setting up the Busybox runtime. The main functionality revolves around downloading the appropriate Busybox release, verifying its integrity, and installing it in a specified directory.
+
+## Symbols
+
+### Runtime
+#### Description
+The `Runtime` struct represents the Busybox runtime environment and implements methods required for its management.
+
+### ID
+#### Description
+Returns the identifier for the Busybox runtime.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | string | The string "busybox" |
+
+### GetHash
+#### Description
+This method is implemented to satisfy an interface but currently returns no hash.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | types.Tool | Unused parameter |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | An empty string |
+| error | error | Always nil |
+
+### Supports
+#### Description
+Determines if the Busybox runtime supports the given command on Windows.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | types.Tool | Unused parameter |
+| cmd | []string | The command to check for support |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | True if the command is supported, false otherwise |
+
+#### Internal Logic
+1. Checks if the operating system is Windows.
+2. Verifies if the command matches any of the supported shell commands (bash, sh, /bin/sh, /bin/bash).
+
+### Binary
+#### Description
+This method is implemented to satisfy an interface but currently returns no binary information.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | Always false |
+| []string | []string | Always nil |
+| error | error | Always nil |
+
+### Setup
+#### Description
+Sets up the Busybox runtime environment.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the setup operation |
+| _ | types.Tool | Unused parameter |
+| dataRoot | string | The root directory for data storage |
+| _ | string | Unused parameter |
+| env | []string | The current environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []string | []string | Updated environment variables |
+| error | error | Any error encountered during setup |
+
+#### Internal Logic
+1. Calls `getRuntime` to download and install Busybox if necessary.
+2. Appends the Busybox binary path to the PATH environment variable.
+
+### getReleaseAndDigest
+#### Description
+Retrieves the download URL and SHA256 digest for the latest Busybox release.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The download URL for the Busybox release |
+| string | string | The SHA256 digest of the release |
+| error | error | Any error encountered while parsing the release data |
+
+#### Internal Logic
+Parses the embedded `SHASUMS256.txt` file to extract the release information.
+
+### getRuntime
+#### Description
+Downloads, verifies, and installs the Busybox runtime if it's not already present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the download operation |
+| cwd | string | The current working directory |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The path to the installed Busybox runtime |
+| error | error | Any error encountered during the process |
+
+#### Internal Logic
+1. Gets the release URL and digest.
+2. Checks if Busybox is already installed.
+3. If not installed, downloads and extracts Busybox.
+4. Runs the Busybox installation command.
+5. Moves the installed files to the target directory.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| bufio | For reading release data |
+| bytes | For creating a byte reader |
+| context | For handling context in operations |
+| embed | For embedding the SHASUMS256.txt file |
+| errors | For error handling |
+| fmt | For formatting strings |
+| io/fs | For file system operations |
+| os | For operating system interactions |
+| os/exec | For executing commands |
+| path | For path manipulation |
+| path/filepath | For file path operations |
+| runtime | For getting OS information |
+| strings | For string manipulation |
+| github.com/gptscript-ai/gptscript/pkg/env | For environment variable handling |
+| github.com/gptscript-ai/gptscript/pkg/hash | For hashing operations |
+| github.com/gptscript-ai/gptscript/pkg/repos/download | For downloading and extracting files |
+| github.com/gptscript-ai/gptscript/pkg/types | For custom types |
+
+## Error Handling
+The code uses standard Go error handling practices, returning errors when operations fail. It also uses `errors.Is` for checking specific error types.
+
+## Logging
+The code includes a single logging statement using `log.Infof` to inform about the Busybox download process.

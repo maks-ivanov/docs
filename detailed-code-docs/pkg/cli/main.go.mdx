@@ -1,0 +1,43 @@
+---
+title: "main.go"
+---
+
+## High-level description
+This code defines the main entry point for a CLI application. It handles the execution of a daemon process and sets up the main command execution context with signal handling.
+
+## Symbols
+
+### `Main()`
+#### Description
+The `Main()` function serves as the entry point for the CLI application. It checks for a specific daemon command, handles debug mode, and sets up the main command execution context.
+
+#### Internal Logic
+1. Check if the program is being run as a daemon:
+   - If the second argument is "sys.daemon", it attempts to run the daemon process.
+   - If GPTSCRIPT_DEBUG environment variable is set to "true", it enables debug mode.
+   - If there's an error running the daemon, it logs the error and exits.
+
+2. Set up a context with signal handling:
+   - Creates a context that will be canceled when an interrupt signal (SIGINT) is received.
+
+3. Execute the main command:
+   - Calls `cmd.MainCtx()` with the created context and a new command instance.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For creating and managing context |
+| os | For accessing command-line arguments and environment variables |
+| os/signal | For handling OS signals |
+| github.com/gptscript-ai/cmd | For executing the main command |
+| github.com/gptscript-ai/gptscript/pkg/daemon | For running the daemon process |
+| github.com/gptscript-ai/gptscript/pkg/mvl | For debug logging |
+
+## Error Handling
+The function logs any errors that occur while running the daemon using `log.Debugf()`. If an error occurs, the program exits with a status code of 0.
+
+## Logging
+Debug logging is enabled when the `GPTSCRIPT_DEBUG` environment variable is set to "true". The `mvl.SetDebug()` function is called to enable debug mode.
+
+## TODOs
+There are no explicit TODOs in the code.

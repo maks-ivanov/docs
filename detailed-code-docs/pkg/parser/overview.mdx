@@ -1,0 +1,69 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/parser` directory contains the implementation of a parser for GPTScript, a domain-specific language for defining and working with AI tools. The parser is responsible for processing GPTScript input, extracting tool parameters, and creating structured representations of GPTScript documents and tools.
+
+## What does it do?
+The parser in this directory performs the following main tasks:
+
+1. Reads GPTScript input from a provided source (e.g., a file or string).
+2. Processes the input line by line, identifying different components such as tool definitions, parameters, instructions, and metadata.
+3. Handles special cases like comments, blank lines, and separators.
+4. Constructs a structured representation of the GPTScript document, including tools, text nodes, and global variables.
+5. Extracts and organizes metadata associated with tools.
+6. Provides functionality to parse input and output filters for tools.
+7. Offers options for customizing the parsing process, such as assigning global variables or specifying file locations.
+
+The parser enables developers to work with GPTScript programmatically by converting the text-based script into structured data that can be easily manipulated and used within applications.
+
+## Key Files
+
+1. `parser.go`: This file contains the main implementation of the parser. It defines the core parsing functions, data structures, and helper methods used to process GPTScript input.
+
+   Key components in this file include:
+   - `Parse` function: The main entry point for parsing GPTScript input into a `Document` structure.
+   - `ParseTools` function: A specialized function for extracting tool definitions from the input.
+   - `parse` function: The internal function that performs the actual line-by-line parsing of the input.
+   - Data structures like `Document`, `Node`, `TextNode`, and `ToolNode` to represent the parsed content.
+   - Helper functions for normalizing input, processing parameters, and handling special cases.
+
+2. `parser_test.go`: This file contains unit tests for the parser implementation. It includes tests for various aspects of the parsing process, ensuring the correct functionality of the parser.
+
+   Key test functions in this file include:
+   - `TestHashBang`: Tests the detection of valid GPTScript hashbangs.
+   - `TestParseGlobals`: Tests parsing of global variables and tool definitions.
+   - `TestParseSkip`: Tests parsing of multiple tools, text nodes, and skip directives.
+   - `TestParseInput` and `TestParseOutput`: Test parsing of input and output filters.
+   - `TestParseMetaData`: Tests parsing of metadata associated with tools.
+
+## Dependencies
+The parser relies on the following external libraries:
+
+1. `github.com/getkin/kin-openapi/openapi3` (version not specified):
+   - Used for OpenAPI schema definitions, likely for validating tool parameters or input/output schemas.
+
+2. `github.com/gptscript-ai/gptscript/pkg/types` (version not specified):
+   - Provides types specific to GPTScript, such as the `Tool` struct used in the parsing process.
+
+3. Testing dependencies:
+   - `github.com/hexops/autogold/v2`: Used for comparing expected and actual test results.
+   - `github.com/stretchr/testify/assert` and `github.com/stretchr/testify/require`: Used for making assertions in unit tests.
+
+These dependencies were chosen to provide robust schema validation (OpenAPI), leverage existing GPTScript type definitions, and facilitate comprehensive testing of the parser implementation.
+
+## Configuration
+The parser does not use explicit configuration files or environment variables. However, it provides configuration options through the `Options` type, which can be passed to the `Parse` and `ParseTools` functions. These options allow customization of the parsing process, such as:
+
+- Assigning global variables
+- Specifying file locations for error reporting
+- Setting a global model for tools
+- Providing default tools
+
+Example usage of options:
+```go
+doc, err := Parse(input, parser.AssignGlobals(true), parser.Location("path/to/file.gpt"))
+```
+
+The parser also uses a `context` struct internally to manage the parsing state, but this is not directly configurable by users of the package.

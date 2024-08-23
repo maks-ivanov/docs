@@ -1,0 +1,85 @@
+---
+title: "app.py"
+---
+
+## High-level description
+This Flask application implements a treasure hunt game generator. It uses GPTScript to create clues for a real-world treasure hunt based on user-provided locations. The app exposes a web interface for users to input locations and receive generated clues.
+
+## Code Structure
+The main components of the code are:
+1. Flask application setup
+2. Route handlers for the web interface and clue generation
+3. Utility function for executing the GPTScript and handling output
+
+## Symbols
+
+### `app`
+#### Description
+The main Flask application instance.
+
+### `print_output`
+#### Description
+A utility function to print the output and error streams from the GPTScript execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| out | iterable | Output stream from the script execution |
+| err | iterable | Error stream from the script execution |
+
+#### Internal Logic
+Iterates through both error and output streams, printing each line.
+
+### `index`
+#### Description
+Route handler for the root URL ('/'), renders the main page of the application.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rendered_template | HTML | The rendered 'index.html' template |
+
+### `get_clues`
+#### Description
+Route handler for the '/get-clues' endpoint, processes user input and generates treasure hunt clues.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| code | string | User-provided locations, sent as JSON in the request body |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| summary | string | Generated clues for the treasure hunt |
+
+#### Internal Logic
+1. Generates a unique request ID
+2. Creates a unique output file name
+3. Executes the GPTScript to generate clues
+4. Reads the generated clues from the output file
+5. Returns the clues as a response
+
+#### Error Handling
+If an exception occurs during processing, it returns a JSON response with the error message and a 500 status code.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Flask | Web framework for the application |
+| gptscript.command | For executing the GPTScript file |
+| os | File and path operations |
+| uuid | Generating unique identifiers |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| FLASK_DEBUG | boolean | True | Enables Flask debug mode when set to True |
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| / | GET | N/A | HTML | Renders the main page |
+| /get-clues | POST | JSON with 'code' key | Text | Generates and returns treasure hunt clues |
+
+This Flask application provides a web interface for a treasure hunt game generator. It uses GPTScript to create clues based on user-provided locations. The application handles user input, generates unique identifiers for each request, executes the GPTScript, and returns the generated clues. Error handling and output management are implemented to ensure smooth operation and debugging capabilities.

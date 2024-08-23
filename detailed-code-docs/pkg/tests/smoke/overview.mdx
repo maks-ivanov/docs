@@ -1,0 +1,122 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+This directory contains the smoke test suite for the GPTScript project. It consists of a main test file (`smoke_test.go`) and a `testdata` directory with various test cases. The smoke tests are designed to verify the correct functioning of the GPTScript command-line tool across different AI models and tool implementations.
+
+## What does it do?
+
+The smoke test suite performs the following key functions:
+
+1. Runs the `gptscript` command-line tool with various test cases.
+2. Compares the actual output events with expected events stored in JSON files.
+3. Uses an AI judge to determine if the outputs are equivalent, considering specific criteria for comparison.
+4. Verifies the behavior of different AI models (Claude 3.5 Sonnet, GPT-4 Turbo, GPT-4o, and Mistral Large) when interacting with external tools, particularly a tool named "Bob".
+5. Tests two different implementations of the Bob tool: a standard version and a shell script version.
+
+The workflow typically involves:
+1. An AI model receiving a task to interact with the Bob tool.
+2. The model processing the instruction and invoking the Bob tool.
+3. The Bob tool responding to a specific question.
+4. The AI model processing Bob's response and generating a final output.
+5. The test suite comparing this output against expected results.
+
+## Entry points
+
+The main entry point for the smoke tests is the `TestSmoke` function in `smoke_test.go`. This function orchestrates the entire testing process by:
+
+1. Initializing an OpenAI client and a smoke test judge.
+2. Retrieving test cases from the `testdata` directory using the `getTestcases` function.
+3. Iterating through each test case, running the `gptscript` command, and comparing actual events with expected events.
+4. Using the AI judge to determine if the outputs are equivalent and logging the reasoning.
+
+The data flow starts from the `testdata` directory, which contains the expected output JSON files for each AI model and Bob implementation. The control flow then moves to the `TestSmoke` function, which processes these test cases and generates actual outputs for comparison.
+
+## Key Files
+
+1. `smoke_test.go`: The main test file containing the `TestSmoke` function and helper functions for running tests and processing results.
+
+2. `testdata/Bob/` and `testdata/BobAsShell/`: Directories containing expected output JSON files for different AI models interacting with the Bob tool. Key files in each directory include:
+   - `claude-3-5-sonnet-20240620-expected.json`
+   - `gpt-4-turbo-2024-04-09-expected.json`
+   - `gpt-4o-2024-05-13-expected.json`
+   - `mistral-large-2402-expected.json`
+
+These JSON files contain detailed logs of the entire conversation flow, including run starts, API calls, tool invocations, and run completions.
+
+## Dependencies
+
+The smoke test suite relies on several external libraries and internal packages:
+
+1. `github.com/gptscript-ai/chat-completion-client`: For interacting with OpenAI API.
+2. `github.com/gptscript-ai/gptscript/pkg/runner`: Provides runner-related types and functions.
+3. `github.com/gptscript-ai/gptscript/pkg/tests/judge`: Implements the AI judge for comparing outputs.
+4. `github.com/gptscript-ai/gptscript/pkg/types`: Provides common types used in the project.
+5. `github.com/stretchr/testify`: Assertion library for testing.
+6. `gotest.tools/v3/icmd`: Helps with running and asserting command-line programs.
+
+The test suite also depends on various AI models and providers:
+
+- Claude 3.5 Sonnet (20240620) from Anthropic
+- GPT-4 Turbo (2024-04-09) from OpenAI
+- GPT-4o (2024-05-13) from OpenAI
+- Mistral Large (2402) from Mistral AI
+
+Provider references include:
+- `github.com/gptscript-ai/claude3-anthropic-provider` for Claude
+- `github.com/gptscript-ai/mistral-laplateforme-provider` for Mistral
+
+## Configuration
+
+While there are no separate configuration files, each JSON log in the `testdata` directory contains embedded configuration details within the event objects. These include:
+
+1. Model names and versions
+2. Available tools (primarily the "Bob" tool)
+3. System instructions or prompts
+4. Token usage limits
+
+A typical configuration snippet looks like this:
+
+```json
+{
+  "time": "2024-06-20T12:00:00Z",
+  "type": "runStart",
+  "callContext": {
+    "model": "claude-3-5-sonnet-20240620",
+    "provider": "github.com/gptscript-ai/claude3-anthropic-provider",
+    "tools": [
+      {
+        "name": "bob",
+        "description": "Bob is a helpful assistant.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "question"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful AI assistant."
+      },
+      {
+        "role": "user",
+        "content": "Ask Bob how he's doing and repeat his reply exactly."
+      }
+    ]
+  }
+}
+```
+
+The main difference between the "Bob" and "BobAsShell" subdirectories is the implementation of the Bob tool. In "BobAsShell", Bob is specifically implemented as a shell script, adding an extra layer of complexity to the test scenario by involving shell script execution.
+
+In summary, this smoke test suite provides a comprehensive framework for verifying the behavior of the GPTScript command-line tool and various AI models when interacting with external tools. By comparing actual outputs against expected results, developers can ensure the reliability and consistency of the system across different AI providers and tool implementations.

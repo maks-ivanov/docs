@@ -1,0 +1,90 @@
+---
+title: "prompt.go"
+---
+
+## High-level description
+This code implements HTTP handlers for managing prompts in a server-client architecture. It provides functionality for sending prompts to clients and receiving responses, utilizing a token-based authentication system and managing concurrent prompt requests.
+
+## Code Structure
+The code defines two main HTTP handler functions: `promptResponse` and `prompt`. These functions interact with a shared `server` struct that manages prompt channels and authentication. The `writePromptResponse` function is a helper for writing JSON responses.
+
+## Symbols
+
+### `promptResponse`
+#### Description
+Handles the client's response to a prompt.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| w | http.ResponseWriter | HTTP response writer |
+| r | *http.Request | HTTP request object |
+
+#### Internal Logic
+1. Retrieves the prompt ID from the URL path.
+2. Checks if a prompt channel exists for the given ID.
+3. Decodes the prompt response from the request body.
+4. Attempts to send the response through the prompt channel.
+5. Sets appropriate HTTP status codes based on the operation's success.
+
+### `prompt`
+#### Description
+Handles incoming prompt requests from authenticated clients.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| w | http.ResponseWriter | HTTP response writer |
+| r | *http.Request | HTTP request object |
+
+#### Internal Logic
+1. Verifies the authentication token.
+2. Retrieves the prompt ID from the URL path.
+3. Checks if a prompt channel already exists for the given ID.
+4. Decodes the prompt from the request body.
+5. Creates a new prompt channel and stores it.
+6. Sends a prompt event to the events channel.
+7. Waits for a response on the prompt channel or for the context to be canceled.
+8. Writes the prompt response or an error.
+
+### `writePromptResponse`
+#### Description
+Helper function to write JSON responses for prompts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| logger | mvl.Logger | Logger instance |
+| w | http.ResponseWriter | HTTP response writer |
+| code | int | HTTP status code |
+| resp | any | Response data to be marshaled to JSON |
+
+#### Internal Logic
+1. Marshals the response data to JSON.
+2. Sets the HTTP status code.
+3. Writes the JSON response to the response writer.
+4. Logs any errors that occur during the process.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding and decoding |
+| fmt | Formatting and error handling |
+| net/http | HTTP server and request handling |
+| time | Time-related operations |
+| gcontext | Custom context package |
+| mvl | Custom logging package |
+| runner | Custom package for event handling |
+| gserver | Custom server package |
+| types | Custom types package |
+
+## Error Handling
+The code uses the `writeError` function (not shown in this file) to handle and respond to various error conditions, such as invalid tokens, decoding errors, and not found errors.
+
+## Concurrency
+The code uses channels (`chan map[string]string`) to manage concurrent prompt requests and responses. It also employs a read-write mutex (`s.lock`) to safely access and modify the `waitingToPrompt` map.
+
+## Performance Considerations
+The code uses non-blocking channel operations in `promptResponse` to avoid potential deadlocks if the prompter is no longer waiting for a response.
+
+This documentation provides a comprehensive overview of the `prompt.go` file, explaining its main components, functionality, and important considerations for understanding and maintaining the code.

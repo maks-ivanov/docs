@@ -1,0 +1,53 @@
+---
+title: "default.go"
+---
+
+## High-level description
+This code defines a set of runtime environments for the GPTScript project, including Busybox, Python, Node.js, and Go. It provides a default configuration for these runtimes and a function to create a new RuntimeManager with the specified runtimes.
+
+## Code Structure
+The main symbols in this code are the `Runtimes` slice and the `Default` function. The `Runtimes` slice contains instances of various runtime implementations, while the `Default` function creates a new RuntimeManager using these runtimes.
+
+## Symbols
+
+### `Runtimes`
+#### Description
+`Runtimes` is a slice of `repos.Runtime` interfaces, containing various runtime environments used by the GPTScript project.
+
+#### Internal Logic
+The slice includes:
+1. A Busybox runtime
+2. Three Python runtimes (versions 3.12, 3.11, and 3.10)
+3. A Node.js runtime (version 20)
+4. A Go runtime (version 1.23.0)
+
+The Python 3.12 and Node.js 20 runtimes are set as default.
+
+### `Default`
+#### Description
+`Default` is a function that creates and returns a new `engine.RuntimeManager` using the predefined `Runtimes`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cacheDir | string | The directory to use for caching runtime-related files |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | engine.RuntimeManager | A new RuntimeManager instance |
+
+#### Internal Logic
+The function calls `repos.New()` with the provided `cacheDir` and all the runtimes defined in the `Runtimes` slice.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/gptscript-ai/gptscript/pkg/engine | Provides the RuntimeManager interface |
+| github.com/gptscript-ai/gptscript/pkg/repos | Provides the Runtime interface and New function |
+| github.com/gptscript-ai/gptscript/pkg/repos/runtimes/busybox | Implements the Busybox runtime |
+| github.com/gptscript-ai/gptscript/pkg/repos/runtimes/golang | Implements the Go runtime |
+| github.com/gptscript-ai/gptscript/pkg/repos/runtimes/node | Implements the Node.js runtime |
+| github.com/gptscript-ai/gptscript/pkg/repos/runtimes/python | Implements the Python runtime |
+
+This code serves as a central configuration point for the various runtimes used in the GPTScript project, allowing easy management and initialization of these runtimes through a single `Default` function call.

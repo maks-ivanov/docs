@@ -1,0 +1,50 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This code defines a package named `counter` that provides functionality for generating and managing unique, incrementing counter values. It uses atomic operations to ensure thread-safety when accessing and modifying the counter.
+
+## Symbols
+
+### `counter`
+#### Description
+`counter` is a package-level variable of type `int32` initialized with the current Unix timestamp. It serves as the base value for the counter.
+
+### `Reset`
+#### Description
+`Reset` is a function that sets the counter to a specified value using atomic operations to ensure thread-safety.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| i | int32 | The value to set the counter to |
+
+#### Internal Logic
+The function uses `atomic.StoreInt32` to safely set the value of the counter.
+
+### `Next`
+#### Description
+`Next` is a function that increments the counter and returns the new value as a string.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | string | The incremented counter value as a string |
+
+#### Internal Logic
+The function uses `atomic.AddInt32` to safely increment the counter and then converts the result to a string using `fmt.Sprint`.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | Used for converting the counter value to a string |
+| sync/atomic | Used for atomic operations on the counter |
+| time | Used to initialize the counter with the current Unix timestamp |
+
+## Performance Considerations
+The use of atomic operations ensures that the counter can be safely accessed and modified concurrently, making it suitable for use in multi-threaded applications. However, frequent calls to `Next()` in a highly concurrent environment may lead to contention and potential performance bottlenecks.
+
+___
+
+This package provides a simple, thread-safe counter implementation that can be used to generate unique, incrementing values across an application. It's particularly useful for scenarios where you need to assign unique identifiers or track the order of events in a concurrent environment.

@@ -1,0 +1,97 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+This directory contains a set of JSON files that represent expected outputs from various AI models interacting with a tool named "Bob". These files serve as test data for smoke tests, capturing detailed logs of conversations between AI assistants and the Bob tool. Each file corresponds to a different AI model, including Claude 3.5 Sonnet, GPT-4 Turbo, GPT-4o, and Mistral Large.
+
+## What does it do?
+
+The files in this directory document the expected behavior of different AI models when given a specific task: to interact with a tool named "Bob" and ask how he's doing. The logs capture the entire process, from system initialization to the final output, including:
+
+1. The initial prompt or instruction given to the AI model
+2. The AI model's decision to use the Bob tool
+3. The interaction with the Bob tool
+4. The AI model's processing of Bob's response
+5. The final output from the AI model
+
+These logs are used to verify that each AI model behaves correctly and consistently when interacting with external tools, ensuring that the integration between the AI models and the Bob tool works as expected across different model versions and providers.
+
+## Key Files
+
+1. `claude-3-5-sonnet-20240620-expected.json`: Contains the expected output for the Claude 3.5 Sonnet model.
+2. `gpt-4-turbo-2024-04-09-expected.json`: Represents the expected behavior of the GPT-4 Turbo model.
+3. `gpt-4o-2024-05-13-expected.json`: Logs the expected interaction for the GPT-4o model.
+4. `mistral-large-2402-expected.json`: Captures the expected output for the Mistral Large model.
+
+Each file follows a similar structure, containing an array of JSON objects that represent different events in the conversation flow, such as run starts, API calls, tool invocations, and run completions.
+
+## Dependencies
+
+The logs indicate the use of various AI models and providers:
+
+1. Claude 3.5 Sonnet (20240620) from Anthropic
+2. GPT-4 Turbo (2024-04-09) from OpenAI
+3. GPT-4o (2024-05-13) from OpenAI
+4. Mistral Large (2402) from Mistral AI
+
+Additionally, the logs reference the following providers:
+
+- `github.com/gptscript-ai/claude3-anthropic-provider` for Claude
+- `github.com/gptscript-ai/mistral-laplateforme-provider` for Mistral
+
+The "Bob" tool is a custom component used across all tests, simulating an external tool that the AI models interact with.
+
+## Configuration
+
+While not explicitly defined in a separate configuration file, each JSON log contains configuration details embedded within the event objects. These include:
+
+1. Model names and versions
+2. Available tools (primarily the "Bob" tool)
+3. System instructions or prompts
+4. Token usage limits
+
+For example, in the Claude log:
+
+```json
+{
+  "time": "2024-06-20T12:00:00Z",
+  "type": "runStart",
+  "callContext": {
+    "model": "claude-3-5-sonnet-20240620",
+    "provider": "github.com/gptscript-ai/claude3-anthropic-provider",
+    "tools": [
+      {
+        "name": "bob",
+        "description": "Bob is a helpful assistant.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "question"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful AI assistant."
+      },
+      {
+        "role": "user",
+        "content": "Ask Bob how he's doing and repeat his reply exactly."
+      }
+    ]
+  }
+}
+```
+
+This configuration sets up the model, available tools, and initial instructions for the conversation.
+
+In summary, this directory contains valuable test data that allows developers to verify the correct functioning of various AI models when interacting with external tools. By comparing actual outputs against these expected results, the system's reliability and consistency across different AI providers can be ensured.

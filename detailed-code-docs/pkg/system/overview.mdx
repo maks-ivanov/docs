@@ -1,0 +1,59 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/system` directory contains Go code that provides essential functionality for managing and configuring a GPTScript system. It includes utilities for handling binary paths, system prompts, and schema definitions for tool and chat interactions. This package serves as a core component for system-level operations and configurations within the GPTScript ecosystem.
+
+## What does it do?
+The `pkg/system` package performs several key functions:
+
+1. Binary Management: It provides methods to locate and set the path of the current executable binary. This is useful for scenarios where the application needs to fork or restart itself.
+
+2. System Prompt Handling: It defines and manages the system prompt used in AI interactions. This prompt sets the behavior and characteristics of the AI system.
+
+3. Schema Definitions: It includes OpenAPI 3.0 schema definitions for tool and chat interactions, which standardize the structure of these interactions within the system.
+
+4. Configuration Management: It allows for configuration of certain system aspects through environment variables, such as overriding the default system prompt.
+
+5. Utility Functions: It provides utility functions for tasks like determining if a given content is a default prompt and extracting it if so.
+
+These functionalities work together to provide a robust foundation for system-level operations in GPTScript, ensuring consistent behavior across different parts of the application.
+
+## Key Files
+
+### bin.go
+This file focuses on managing the path of the GPTScript binary. It defines:
+- `BinEnvVar`: A constant for the environment variable storing the binary path.
+- `SetBinToSelf()`: A function to set the binary path environment variable.
+- `Bin()`: A function to retrieve the binary path, with fallback mechanisms.
+
+### currentbin.go
+This file contains the `currentBin()` function, which determines the full path of the currently executing binary. It handles various scenarios, including executables in the system PATH and relative paths.
+
+### prompt.go
+This file defines constants, variables, and functions related to system prompts and schemas. Key elements include:
+- `Suffix`: The default file extension for GPTScript files.
+- `InternalSystemPrompt`: The default system prompt for AI interactions.
+- `DefaultToolSchema` and `DefaultChatSchema`: OpenAPI 3.0 schemas for tool and chat interactions.
+- `IsDefaultPrompt()`: A utility function to check and extract default prompts from JSON content.
+
+## Dependencies
+The package relies on several standard Go libraries and one external library:
+
+1. `os`: Used for environment variable operations and accessing command-line arguments.
+2. `os/exec`: Used for looking up executables in the system PATH.
+3. `path/filepath`: Used for path manipulation and conversion to absolute paths.
+4. `encoding/json`: Used for JSON parsing and manipulation.
+5. `strings`: Used for string manipulation.
+6. `github.com/getkin/kin-openapi/openapi3`: Used for OpenAPI 3.0 schema definitions.
+
+## Configuration
+The package uses environment variables for configuration:
+
+1. `GPTSCRIPT_BIN`: Stores the path of the GPTScript binary.
+2. `GPTSCRIPT_INTERNAL_SYSTEM_PROMPT`: Can be used to override the default internal system prompt.
+
+These environment variables allow for flexible configuration of the system without modifying the code.
+
+In summary, the `pkg/system` package provides essential system-level functionality for GPTScript, handling binary management, system prompts, and interaction schemas. It offers a mix of low-level utilities and high-level configurations that form the backbone of the GPTScript system's operation.

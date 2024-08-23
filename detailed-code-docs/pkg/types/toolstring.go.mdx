@@ -1,0 +1,78 @@
+---
+title: "toolstring.go"
+---
+
+## High-level description
+This code defines functions for generating display text for various tools and system operations in the GPTScript project. It provides a way to create user-friendly descriptions of tool executions and system commands.
+
+## Symbols
+
+### `ToDisplayText`
+#### Description
+This function generates a display text for a given tool and input. It handles different types of tools, including system tools and repository-based tools.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | Tool | The tool for which to generate display text |
+| input | string | Input data for the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Generated display text for the tool |
+
+#### Internal Logic
+1. Check if the tool has an interpreter.
+2. If the interpreter starts with "sys.", process it as a system tool.
+3. For repository-based tools, generate a display text with the repository information.
+4. For tools with a specific location, generate a display text with the location.
+5. Return an empty string if none of the above conditions are met.
+
+### `ToSysDisplayString`
+#### Description
+This function generates a display string for system tools based on the tool ID and arguments.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | The ID of the system tool |
+| args | map[string]string | Arguments for the system tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Generated display string for the system tool |
+| error | error | Error if the tool ID is unknown or if there's an issue processing the arguments |
+
+#### Internal Logic
+1. Use a switch statement to handle different system tool IDs.
+2. For each tool, generate an appropriate display string using the provided arguments.
+3. Handle special cases like "sys.openapi" with environment variable checks and JSON processing.
+4. Return an error for unknown tool IDs.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | Used for JSON marshaling and unmarshaling |
+| fmt | Used for string formatting |
+| os | Used for environment variable access |
+| path/filepath | Used for file path manipulation |
+| strings | Used for string manipulation |
+
+## Error Handling
+The code implements basic error handling, primarily in the `ToSysDisplayString` function. It returns errors for unknown tool IDs and when there are issues processing JSON data for the "sys.openapi" tool.
+
+## Configuration
+The code checks for an environment variable `GPTSCRIPT_OPENAPI_REVAMP` to determine the behavior of the "sys.openapi" tool display string generation.
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| GPTSCRIPT_OPENAPI_REVAMP | string | "" | When set to "true", enables pretty-printing of JSON arguments for the "sys.openapi" tool |
+
+## Notes
+1. The code assumes the existence of a `Tool` type with methods like `GetInterpreter()` and fields like `Source.Repo` and `Source.Location`.
+2. The `ToDisplayText` function handles different types of tools, including system tools, repository-based tools, and tools with specific locations.
+3. The `ToSysDisplayString` function provides detailed handling for various system tools, generating user-friendly display strings based on the tool's functionality and arguments.
+4. There's special handling for the "sys.openapi" tool, which includes JSON pretty-printing when a specific environment variable is set.
+5. The code uses string manipulation functions extensively to format and clean up display strings.

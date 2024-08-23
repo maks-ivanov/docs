@@ -1,0 +1,90 @@
+---
+title: "set.go"
+---
+
+## High-level description
+This code defines a set of types and functions for managing tool references in a GPTScript system. It provides a structured way to store, manipulate, and retrieve tool references, maintaining their order and uniqueness.
+
+## Code Structure
+The main types defined are `toolRefKey`, `toolRefSet`, and `ToolReference`. The `toolRefSet` type contains methods to manage a set of tool references, including adding, listing, and checking for the presence of tools.
+
+## Symbols
+
+### `toolRefKey`
+#### Description
+A struct that uniquely identifies a tool reference by its name, toolID, and argument.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the tool reference |
+| toolID | string | The ID of the tool |
+| arg | string | An argument associated with the tool reference |
+
+### `toolRefSet`
+#### Description
+A struct that manages a set of tool references, maintaining their order and uniqueness.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| set | map[toolRefKey]ToolReference | A map to store tool references |
+| order | []toolRefKey | A slice to maintain the order of tool references |
+| err | error | An error field to store any errors encountered during operations |
+
+### `List() ([]ToolReference, error)`
+#### Description
+Returns a list of all tool references in the set, maintaining their original order.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | []ToolReference | A slice of ToolReference objects |
+| err | error | Any error encountered during the operation |
+
+### `HasTool(toolID string) bool`
+#### Description
+Checks if a tool with the given toolID exists in the set.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| toolID | string | The ID of the tool to check for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | bool | True if the tool exists in the set, false otherwise |
+
+### `AddAll(values []ToolReference, err error)`
+#### Description
+Adds multiple tool references to the set and sets the error if one is provided.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| values | []ToolReference | A slice of ToolReference objects to add |
+| err | error | An error to set if provided |
+
+### `Add(value ToolReference)`
+#### Description
+Adds a single tool reference to the set if it doesn't already exist.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| value | ToolReference | The ToolReference object to add |
+
+#### Internal Logic
+1. Creates a `toolRefKey` from the input `ToolReference`.
+2. Checks if the key already exists in the set.
+3. If it doesn't exist, initializes the set map if necessary.
+4. Adds the reference to the set and appends the key to the order slice.
+
+## Dependencies
+This code depends on the `ToolReference` type, which is likely defined in another part of the package.
+
+## Error Handling
+The `toolRefSet` struct includes an `err` field to store errors. The `AddAll` method sets this error if one is provided.
+
+Your response should not exceed 3000 words or 4000 tokens. Focus on providing clear, concise information that can be directly inferred from the code. Include optional sections only when they provide significant value for understanding the code.

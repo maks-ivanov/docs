@@ -1,0 +1,72 @@
+---
+title: "openapi_test.go"
+---
+
+## High-level description
+This file contains unit tests for the OpenAPI loader functionality in the gptscript project. It tests the loading and parsing of OpenAPI specifications (both v2 and v3) in different formats (YAML and JSON) and verifies the correct creation of tools based on these specifications.
+
+## Code Structure
+The file consists of several test functions that load OpenAPI specifications, parse them into tools, and verify the results. The main functions being tested are `readTool` and the underlying OpenAPI parsing logic. The tests use both standard Go testing assertions and the `autogold` library for snapshot testing.
+
+## Symbols
+
+### `TestLoadOpenAPI`
+#### Description
+This function tests the loading of OpenAPI specifications in different versions and formats.
+
+#### Internal Logic
+1. Defines a helper function `numOpenAPITools` to count OpenAPI tools in a ToolSet.
+2. Loads and parses OpenAPI v3 YAML specification.
+3. Loads and parses OpenAPI v2 JSON specification.
+4. Loads and parses OpenAPI v2 YAML specification.
+5. Verifies that each parsed specification results in 3 OpenAPI tools.
+6. Compares the ToolSets generated from v2 JSON and YAML to ensure they're identical.
+
+### `TestOpenAPIv3`
+#### Description
+Tests the parsing of OpenAPI v3 YAML specification.
+
+#### Internal Logic
+1. Loads the OpenAPI v3 YAML file.
+2. Parses it using `readTool`.
+3. Uses `autogold.ExpectFile` to compare the resulting ToolSet against a saved snapshot.
+
+### `TestOpenAPIv3NoOperationIDs`
+#### Description
+Tests the parsing of OpenAPI v3 YAML specification without operation IDs.
+
+#### Internal Logic
+Similar to `TestOpenAPIv3`, but uses a different input file without operation IDs.
+
+### `TestOpenAPIv2`
+#### Description
+Tests the parsing of OpenAPI v2 YAML specification.
+
+#### Internal Logic
+Similar to `TestOpenAPIv3`, but uses an OpenAPI v2 YAML file.
+
+### `TestOpenAPIv3Revamp`, `TestOpenAPIv3NoOperationIDsRevamp`, `TestOpenAPIv2Revamp`
+#### Description
+These functions test the parsing of OpenAPI specifications with a new parsing logic enabled by an environment variable.
+
+#### Internal Logic
+1. Sets the `GPTSCRIPT_OPENAPI_REVAMP` environment variable to "true".
+2. Loads and parses the respective OpenAPI specification.
+3. Compares the resulting ToolSet against a saved snapshot.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for cancellation and timeouts |
+| os | File operations and environment variable handling |
+| testing | Go's testing framework |
+| github.com/gptscript-ai/gptscript/pkg/types | Custom types used in the project |
+| github.com/hexops/autogold/v2 | Snapshot testing |
+| github.com/stretchr/testify/require | Assertion library for testing |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| GPTSCRIPT_OPENAPI_REVAMP | string | not set | When set to "true", enables a new OpenAPI parsing logic |
+
+Note: The presence of this environment variable suggests that there might be ongoing changes or improvements to the OpenAPI parsing logic.

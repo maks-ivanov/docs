@@ -1,0 +1,57 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the implementation of a Busybox runtime environment for Windows systems within the GPTScript project. The main purpose is to provide shell-like command functionality in a Windows environment by managing the download, installation, and setup of Busybox.
+
+## What does it do?
+The code in this directory enables the following workflow:
+
+1. It checks if a given command is supported by the Busybox runtime on Windows.
+2. When setting up the runtime, it downloads the latest Busybox release if it's not already installed.
+3. It verifies the integrity of the downloaded Busybox package using SHA256 checksums.
+4. It installs Busybox in a specified directory and adds it to the system's PATH.
+5. It provides an interface for other parts of the GPTScript project to interact with the Busybox runtime.
+
+This functionality allows Windows users to run Unix-like shell commands, enhancing the cross-platform capabilities of the GPTScript project.
+
+## Key Files
+
+1. `busybox.go`: This is the main file containing the `Runtime` struct and its methods. It implements the core functionality for managing the Busybox runtime, including downloading, installing, and setting up the environment.
+
+2. `busybox_test.go`: This file contains unit tests for the `Runtime` struct, specifically testing the `Setup` method on non-Windows systems. It ensures that the Busybox environment is correctly set up and the necessary files are present.
+
+3. `log.go`: This file sets up a package-level logger using the `mvl` (Minimal Verbosity Logger) package from the GPTScript project. It provides consistent logging capabilities across the Busybox package.
+
+## Dependencies
+The Busybox runtime implementation relies on several external libraries and internal packages:
+
+1. Standard Go libraries: `bufio`, `bytes`, `context`, `embed`, `errors`, `fmt`, `io/fs`, `os`, `os/exec`, `path`, `path/filepath`, `runtime`, `strings`
+2. GPTScript internal packages:
+   - `github.com/gptscript-ai/gptscript/pkg/env`: For environment variable handling
+   - `github.com/gptscript-ai/gptscript/pkg/hash`: For hashing operations
+   - `github.com/gptscript-ai/gptscript/pkg/repos/download`: For downloading and extracting files
+   - `github.com/gptscript-ai/gptscript/pkg/types`: For custom types
+   - `github.com/gptscript-ai/gptscript/pkg/mvl`: For logging functionality
+3. External libraries:
+   - `github.com/adrg/xdg`: Used for XDG Base Directory Specification in testing
+   - `github.com/samber/lo`: Provides utility functions for testing
+   - `github.com/stretchr/testify/require`: Provides assertion functions for testing
+
+## Configuration
+The Busybox runtime uses the following configuration:
+
+1. The `SHASUMS256.txt` file is embedded in the binary and contains the release information and checksums for the Busybox package.
+2. The runtime checks for the existence of Busybox in a specific directory structure: `&lt;dataRoot&gt;/runtimes/busybox/&lt;version&gt;/busybox.exe`
+3. Environment variables:
+   - The `PATH` environment variable is updated to include the Busybox binary location.
+   - In the test file, a `testCacheHome` variable is dynamically set to determine the cache directory for testing purposes.
+
+## Error Handling
+The code uses standard Go error handling practices, returning errors when operations fail. It uses `errors.Is` for checking specific error types. The `Setup` method, in particular, returns any errors encountered during the download, verification, or installation process.
+
+## Logging
+The package uses a custom logging system (`mvl`) from the GPTScript project. A package-level logger is defined in `log.go`, which can be used throughout the package for consistent logging. The main functionality in `busybox.go` includes a logging statement to inform about the Busybox download process.
+
+In summary, this directory provides a crucial component for enabling Unix-like shell commands on Windows systems within the GPTScript project, handling the complexities of runtime management, cross-platform compatibility, and system integration.

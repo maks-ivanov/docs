@@ -1,0 +1,63 @@
+---
+title: "Overview"
+---
+
+Here's a detailed documentation for the `pkg/embedded/embed.go` file:
+
+## High-level description
+This file defines a package `embedded` that provides functionality to run GPTScript in an embedded mode. It allows for customization of the filesystem and sets up the environment for running GPTScript as an embedded application.
+
+## Code Structure
+The main function `Run` is the entry point for running GPTScript in embedded mode. It uses the `Options` struct to configure the filesystem and sets up the environment before potentially executing the main CLI functionality.
+
+## Symbols
+
+### `Options`
+#### Description
+A struct that holds configuration options for the embedded execution.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| FS | fs.FS | An optional filesystem interface to be used |
+
+### `Run`
+#### Description
+The main function to run GPTScript in embedded mode. It sets up the environment and potentially executes the main CLI functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | ...Options | Variadic parameter of Options for configuration |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | bool | Indicates whether the main CLI function was executed |
+
+#### Internal Logic
+1. Iterates through the provided options and sets the internal filesystem if specified.
+2. Calls `system.SetBinToSelf()` to set the binary path.
+3. Checks if the `GPTSCRIPT_EMBEDDED` environment variable is set to "true".
+   - If true, calls `cli.Main()` and returns true.
+   - If false, sets the environment variable to "true" and returns false.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| io/fs | Provides the FS interface used in Options |
+| os | Used for environment variable operations |
+| github.com/gptscript-ai/gptscript/internal | Internal package (likely for shared functionality) |
+| github.com/gptscript-ai/gptscript/pkg/cli | Contains the Main function for CLI execution |
+| github.com/gptscript-ai/gptscript/pkg/system | Provides system-related functionality |
+
+## Side Effects
+- Modifies the `internal.FS` variable if a custom filesystem is provided.
+- Sets the `GPTSCRIPT_EMBEDDED` environment variable to "true".
+
+## Error Handling
+This function does not explicitly handle errors. Any errors that occur during the execution of `cli.Main()` or `os.Setenv()` are not caught or returned.
+
+## Notes
+- The function is designed to be called multiple times, but will only execute `cli.Main()` once when the `GPTSCRIPT_EMBEDDED` environment variable is set to "true".
+- The return value indicates whether `cli.Main()` was executed, which can be used by the caller to determine if further action is needed.

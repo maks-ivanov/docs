@@ -1,0 +1,153 @@
+---
+title: "Overview"
+---
+
+Here's a high-level description and documentation of the `gptscript.go` file:
+
+## High-level description
+
+This file defines the core `GPTScript` struct and associated functions for managing and executing GPTScript programs. It provides functionality for creating, running, and managing GPTScript instances, handling chat interactions, and integrating with various components like caching, monitoring, and credential management.
+
+## Code Structure
+
+The main `GPTScript` struct serves as the central point for managing GPTScript execution. It contains references to key components like the LLM registry, runner, cache, and workspace management. The file also defines several functions for creating, configuring, and running GPTScript instances, as well as handling chat interactions and tool management.
+
+## Symbols
+
+### GPTScript
+#### Description
+The main struct representing a GPTScript instance, containing references to core components and configuration.
+
+#### Internal Logic
+- Manages the lifecycle of a GPTScript instance
+- Holds references to the LLM registry, runner, cache, and workspace
+- Provides methods for chat interactions and tool execution
+
+### New
+#### Description
+Creates a new GPTScript instance with the provided options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| o | ...Options | Configuration options for the GPTScript instance |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *GPTScript | *GPTScript | The created GPTScript instance |
+| error | error | Any error encountered during creation |
+
+#### Internal Logic
+1. Processes and completes the provided options
+2. Sets up the LLM registry, cache, and credential store
+3. Initializes the runner and remote client
+4. Sets up the prompt server if not disabled
+
+### Chat
+#### Description
+Initiates a chat interaction with the GPTScript instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prevState | runner.ChatState | The previous chat state, if any |
+| prg | types.Program | The program to execute |
+| envs | []string | Environment variables |
+| input | string | The input for the chat interaction |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.ChatResponse | runner.ChatResponse | The response from the chat interaction |
+| error | error | Any error encountered during the chat |
+
+### Run
+#### Description
+Executes a GPTScript program with the given input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prg | types.Program | The program to execute |
+| envs | []string | Environment variables |
+| input | string | The input for the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The output of the program execution |
+| error | error | Any error encountered during execution |
+
+### Close
+#### Description
+Closes the GPTScript instance and performs cleanup.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| closeDaemons | bool | Whether to close associated daemons |
+
+### GetModel
+#### Description
+Returns the LLM model registry associated with the GPTScript instance.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| engine.Model | engine.Model | The LLM model registry |
+
+### ListTools
+#### Description
+Lists the available tools for a given program.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prg | types.Program | The program to list tools for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []types.Tool | []types.Tool | The list of available tools |
+
+### ListModels
+#### Description
+Lists the available LLM models for the given providers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| providers | ...string | The providers to list models for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []string | []string | The list of available models |
+| error | error | Any error encountered while listing models |
+
+## Dependencies
+The file relies on several external packages and internal modules:
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling context and cancellation |
+| fmt | For string formatting |
+| os | For interacting with the operating system |
+| path/filepath | For file path manipulation |
+| slices | For slice operations |
+| strings | For string manipulation |
+| Various internal packages | For cache, config, credentials, engine, hash, llm, monitor, mvl, openai, prompt, remote, repos/runtimes, runner, and types |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where appropriate. It also includes some custom error types and handling for specific scenarios, such as credential management and LLM interactions.
+
+## Logging
+The file uses a custom logging package (`mvl`) for debug and error logging throughout the code.
+
+This documentation provides an overview of the main components and functionality of the `gptscript.go` file. For more detailed information on specific functions or components, refer to the inline comments and function descriptions in the source code.

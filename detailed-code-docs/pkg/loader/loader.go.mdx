@@ -1,0 +1,111 @@
+---
+title: "loader.go"
+---
+
+## High-level description
+This code defines a package `loader` that provides functionality for loading and parsing GPTScript programs and tools. It handles loading from local files, remote URLs, and OpenAPI specifications, and assembles them into a structured program representation.
+
+## Code Structure
+The main symbols in this code are interconnected to form a pipeline for loading and processing GPTScript programs:
+
+1. `ProgramFromSource` and `Program` are the entry points for loading programs.
+2. These functions use `resolve` to locate and load the source content.
+3. `readTool` is used to parse the loaded content into tool definitions.
+4. `link` is used to connect tools and resolve references between them.
+5. Various helper functions like `loadLocal`, `loadURL`, and `loadOpenAPI` are used throughout the process.
+
+## Symbols
+
+### `ProgramFromSource`
+#### Description
+Loads a GPTScript program from a given source content string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| content | string | The source content of the program |
+| subToolName | string | Name of a specific sub-tool to load (optional) |
+| opts | ...Options | Additional options for loading |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| types.Program | struct | The loaded program |
+| error | error | Any error encountered during loading |
+
+#### Internal Logic
+1. Creates a new `types.Program` struct.
+2. Calls `readTool` to parse the content into tool definitions.
+3. Sets the entry tool ID for the program.
+
+### `Program`
+#### Description
+Loads a GPTScript program from a given name or path.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| name | string | Name or path of the program to load |
+| subToolName | string | Name of a specific sub-tool to load (optional) |
+| opts | ...Options | Additional options for loading |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| types.Program | struct | The loaded program |
+| error | error | Any error encountered during loading |
+
+#### Internal Logic
+1. Normalizes the input name.
+2. Creates a new `types.Program` struct.
+3. Calls `resolve` to locate and load the program content.
+4. Sets the entry tool ID for the program.
+
+### `resolve`
+#### Description
+Resolves and loads a tool or program from a given name or path.
+
+#### Internal Logic
+1. Checks if the tool is a built-in tool.
+2. If not, calls `input` to load the source content.
+3. Calls `readTool` to parse the content into tool definitions.
+4. Returns the resulting tools.
+
+### `readTool`
+#### Description
+Parses the content of a source into tool definitions.
+
+#### Internal Logic
+1. Checks if the content is a pre-assembled program.
+2. If not, attempts to parse as OpenAPI specification.
+3. If not OpenAPI, parses as GPTScript.
+4. Calls `link` to resolve references between tools.
+
+### `link`
+#### Description
+Links tools together, resolving references between them.
+
+#### Internal Logic
+1. Adds the tool to the program's tool set.
+2. Resolves references to other tools.
+3. Sets default values for the tool.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/getkin/kin-openapi/openapi3 | Parsing and handling OpenAPI specifications |
+| github.com/gptscript-ai/gptscript/pkg/assemble | Handling assembled programs |
+| github.com/gptscript-ai/gptscript/pkg/builtin | Managing built-in tools |
+| github.com/gptscript-ai/gptscript/pkg/cache | Caching functionality |
+| github.com/gptscript-ai/gptscript/pkg/hash | Generating hash digests |
+| github.com/gptscript-ai/gptscript/pkg/openapi | OpenAPI-related utilities |
+| github.com/gptscript-ai/gptscript/pkg/parser | Parsing GPTScript content |
+| github.com/gptscript-ai/gptscript/pkg/types | Common type definitions |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where they occur. It includes custom error types like `types.ErrToolNotFound` for specific error conditions.
+
+## Performance Considerations
+The code implements caching for OpenAPI documents to improve performance when loading the same document multiple times. The `CacheTimeout` constant is set to one hour, indicating how long cached items are considered valid.

@@ -1,0 +1,118 @@
+---
+title: "load.go"
+---
+
+## High-level description
+This code provides functionality for loading and parsing OpenAPI specifications, converting them into a structured format that can be used within the application. It supports loading from both local files and URLs, and handles different versions of OpenAPI specifications (v2 and v3).
+
+## Code Structure
+The main function `Load` serves as an entry point, which then delegates to either `loadFromURL` or `loadFromFile` based on the source. These functions ultimately call `LoadFromBytes`, which does the actual parsing and conversion of the OpenAPI specification. The `IsOpenAPI` function is used to determine the version of the OpenAPI specification.
+
+## Symbols
+
+### `Load`
+#### Description
+Loads an OpenAPI specification from either a URL or a local file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source | string | The source of the OpenAPI specification (URL or file path) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *openapi3.T | *openapi3.T | Parsed OpenAPI specification |
+| error | error | Any error encountered during loading |
+
+#### Internal Logic
+1. Checks if the source is a URL or a local file path
+2. Calls the appropriate loading function (`loadFromURL` or `loadFromFile`)
+
+### `loadFromURL`
+#### Description
+Loads an OpenAPI specification from a given URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source | string | The URL of the OpenAPI specification |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *openapi3.T | *openapi3.T | Parsed OpenAPI specification |
+| error | error | Any error encountered during loading |
+
+#### Internal Logic
+1. Makes an HTTP GET request to the given URL
+2. Reads the response body
+3. Calls `LoadFromBytes` with the content
+
+### `loadFromFile`
+#### Description
+Loads an OpenAPI specification from a local file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| source | string | The file path of the OpenAPI specification |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *openapi3.T | *openapi3.T | Parsed OpenAPI specification |
+| error | error | Any error encountered during loading |
+
+#### Internal Logic
+1. Reads the file content
+2. Calls `LoadFromBytes` with the content
+
+### `LoadFromBytes`
+#### Description
+Parses and converts an OpenAPI specification from raw bytes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | []byte | The raw content of the OpenAPI specification |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *openapi3.T | *openapi3.T | Parsed OpenAPI specification |
+| error | error | Any error encountered during parsing |
+
+#### Internal Logic
+1. Determines the OpenAPI version using `IsOpenAPI`
+2. For OpenAPI v2, converts it to v3
+3. For OpenAPI v3, uses the OpenAPI v3 loader
+4. Returns the parsed OpenAPI document
+
+### `IsOpenAPI`
+#### Description
+Checks if the given data is an OpenAPI specification and returns its version.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| data | []byte | The raw content to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| int | int | The OpenAPI version (2 or 3), or 0 if not an OpenAPI spec |
+
+#### Internal Logic
+1. Attempts to unmarshal the data into a struct with relevant fields
+2. Checks for the presence of "openapi" or "swagger" fields
+3. Parses the version number and returns it
+
+## Dependencies
+- "github.com/getkin/kin-openapi/openapi2"
+- "github.com/getkin/kin-openapi/openapi2conv"
+- "github.com/getkin/kin-openapi/openapi3"
+- "gopkg.in/yaml.v3"
+- "sigs.k8s.io/yaml"
+
+These dependencies are used for parsing and converting OpenAPI specifications.

@@ -1,0 +1,120 @@
+---
+title: "runtimemanager.go"
+---
+
+## High-level description
+This code defines a runtime manager logger that wraps an existing runtime manager, adding logging functionality. It's part of a larger system for executing GPT-based scripts, handling context, and managing runtime environments.
+
+## Code Structure
+The main component is the `runtimeManagerLogger` struct, which implements the `engine.RuntimeManager` interface. It wraps an existing runtime manager and adds logging capabilities. The `runtimeWithLogger` function creates this wrapper.
+
+## Symbols
+
+### `runtimeWithLogger`
+#### Description
+Creates a new `runtimeManagerLogger` instance, wrapping an existing `engine.RuntimeManager` with logging functionality.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| callCtx | engine.Context | The context of the current call |
+| monitor | Monitor | The monitor used for logging events |
+| rm | engine.RuntimeManager | The original runtime manager to be wrapped |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| engine.RuntimeManager | interface | The wrapped runtime manager with logging capabilities |
+
+#### Internal Logic
+- If the input `rm` is nil, it returns nil.
+- Otherwise, it creates and returns a new `runtimeManagerLogger` instance.
+
+### `runtimeManagerLogger`
+#### Description
+A struct that implements the `engine.RuntimeManager` interface, adding logging functionality to an existing runtime manager.
+
+#### Internal Logic
+- Stores the call context, monitor, and original runtime manager.
+- Implements methods of the `engine.RuntimeManager` interface, adding logging where appropriate.
+
+### `runtimeManagerLogger.Infof`
+#### Description
+Logs an informational message using the monitor.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | string | The message format string |
+| args | ...any | Arguments for the format string |
+
+#### Internal Logic
+- Creates an `Event` with the current time, event type `EventTypeCallProgress`, call context, and formatted message.
+- Sends the event to the monitor.
+
+### `runtimeManagerLogger.GetContext`
+#### Description
+Wraps the original runtime manager's `GetContext` method, adding logging context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context |
+| tool | types.Tool | The tool being used |
+| cmd | []string | The command |
+| env | []string | The environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The context string |
+| []string | []string | The updated environment variables |
+| error | error | Any error that occurred |
+
+#### Internal Logic
+- Calls the original runtime manager's `GetContext` method with added logging information.
+
+### `runtimeManagerLogger.EnsureCredentialHelpers`
+#### Description
+Wraps the original runtime manager's `EnsureCredentialHelpers` method, adding logging context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred |
+
+#### Internal Logic
+- Calls the original runtime manager's `EnsureCredentialHelpers` method with added logging information.
+
+### `runtimeManagerLogger.SetUpCredentialHelpers`
+#### Description
+A placeholder method that panics when called, indicating it's not implemented.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context |
+| cliCfg | *config.CLIConfig | The CLI configuration |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred |
+
+#### Internal Logic
+- Panics with the message "not implemented".
+
+## Dependencies
+The code relies on several internal packages:
+- `github.com/gptscript-ai/gptscript/pkg/config`
+- `github.com/gptscript-ai/gptscript/pkg/engine`
+- `github.com/gptscript-ai/gptscript/pkg/mvl`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+## Error Handling
+Error handling is mostly delegated to the wrapped runtime manager. The `SetUpCredentialHelpers` method panics, indicating it's not implemented and should be handled by the caller if used.

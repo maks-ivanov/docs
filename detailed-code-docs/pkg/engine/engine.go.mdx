@@ -1,0 +1,103 @@
+---
+title: "engine.go"
+---
+
+## High-level description
+This file defines the core engine for executing GPTScript tools and managing the execution flow. It includes structures and methods for handling tool calls, managing state, and interacting with language models.
+
+## Code Structure
+The main symbols in this code are:
+
+1. `Engine`: The central struct that manages tool execution and interactions with the language model.
+2. `Context`: Represents the execution context for a tool call, including program and state information.
+3. `State`: Holds the current state of execution, including input, completion, pending calls, and results.
+4. `Return`: Represents the return value of a tool execution, including state, calls, and results.
+
+These symbols are interconnected, with `Engine` using `Context` to manage execution, and `Context` containing `State` and `Return` information.
+
+## Symbols
+
+### `Model` (interface)
+#### Description
+Defines the interface for interacting with language models.
+
+#### Methods
+- `Call`: Sends a completion request to the model and returns the response.
+- `ProxyInfo`: Returns proxy information for the model.
+
+### `RuntimeManager` (interface)
+#### Description
+Manages the runtime environment for tool execution.
+
+#### Methods
+- `GetContext`: Prepares the execution context for a tool.
+- `EnsureCredentialHelpers`: Ensures credential helpers are set up.
+- `SetUpCredentialHelpers`: Sets up credential helpers.
+
+### `Engine` (struct)
+#### Description
+The main engine for executing GPTScript tools and managing the execution flow.
+
+#### Fields
+- `Model`: The language model to use for completions.
+- `RuntimeManager`: Manages the runtime environment.
+- `Env`: Environment variables for execution.
+- `Progress`: Channel for reporting progress.
+
+#### Methods
+- `Start`: Initiates the execution of a tool.
+- `Continue`: Continues execution with new results.
+- `complete`: Sends a completion request to the model and processes the response.
+
+### `Context` (struct)
+#### Description
+Represents the execution context for a tool call.
+
+#### Fields
+- `commonContext`: Common context information.
+- `Ctx`: The Go context for the execution.
+- `Parent`: The parent context (if any).
+- `LastReturn`: The last return value.
+- `CurrentReturn`: The current return value.
+- `Engine`: Reference to the Engine.
+- `Program`: The GPTScript program being executed.
+- `Input`: The input for the current tool call.
+
+#### Methods
+- `ParentID`: Returns the ID of the parent context.
+- `CurrentAgent`: Returns the current agent information.
+- `GetCallContext`: Creates a CallContext from the current Context.
+- `SubCallContext`: Creates a new Context for a sub-call.
+- `WrappedContext`: Wraps the context with an Engine reference.
+
+### `State` (struct)
+#### Description
+Holds the current state of execution.
+
+#### Fields
+- `Input`: The input for the current execution.
+- `Completion`: The completion request.
+- `Pending`: Pending tool calls.
+- `Results`: Results of tool calls.
+
+### `Return` (struct)
+#### Description
+Represents the return value of a tool execution.
+
+#### Fields
+- `State`: The current state.
+- `Calls`: Pending calls to be made.
+- `Result`: The result of the execution.
+
+## Dependencies
+- `github.com/gptscript-ai/gptscript/pkg/config`
+- `github.com/gptscript-ai/gptscript/pkg/context`
+- `github.com/gptscript-ai/gptscript/pkg/counter`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+- `github.com/gptscript-ai/gptscript/pkg/version`
+
+## Error Handling
+The code uses custom error types like `ErrChatFinish` for specific scenarios. It also uses standard Go error handling patterns with returned errors.
+
+## API/Interface Reference
+The main interfaces exposed are `Model` and `RuntimeManager`. The `Engine` struct provides the primary methods for interacting with the GPTScript execution engine.

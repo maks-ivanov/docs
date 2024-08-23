@@ -1,0 +1,66 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/repos` directory contains code for managing repositories, runtimes, and tool environments in the GPTScript project. It provides functionality for downloading and extracting files, managing Git repositories, and setting up various runtime environments such as Python, Node.js, Go, and Busybox.
+
+## What does it do?
+This package enables the following key functionalities:
+
+1. File Download and Extraction: Downloads files from URLs, verifies their integrity using SHA256 digests, and extracts their contents to specified directories.
+
+2. Git Repository Management: Handles cloning, fetching, and checking out specific commits from Git repositories. It supports both pure Go implementation and system Git commands.
+
+3. Runtime Environment Setup: Manages the setup and configuration of various runtime environments, including Python, Node.js, Go, and Busybox. This includes version management, dependency installation, and environment variable configuration.
+
+4. Credential Helper Management: Sets up and manages credential helpers for Git operations.
+
+5. Context Management: Provides a mechanism to set up the context for running tools, including working directory and environment variables.
+
+The package is designed to work across different platforms and can adapt to various environments, making it suitable for both local development and server-side applications.
+
+## Entry points
+The main entry points for this package are:
+
+1. `Manager` struct in `get.go`: This is the central structure for managing repositories and runtimes. Key methods include:
+   - `New`: Creates a new Manager instance.
+   - `GetContext`: Sets up the context for running a tool.
+   - `EnsureCredentialHelpers`: Ensures credential helpers are set up correctly.
+
+2. `Extract` function in `download/download.go`: Handles downloading and extracting files from URLs.
+
+3. `Checkout` function in `git/git.go`: Orchestrates the process of fetching a repository and checking out a specific commit.
+
+4. Runtime implementations in the `runtimes` subdirectory: Each runtime (Python, Node.js, Go, Busybox) has its own implementation file with specific setup and management functions.
+
+## Key Files
+1. `get.go`: Contains the `Manager` struct and methods for managing repositories and runtimes.
+2. `download/download.go`: Implements file downloading and extraction functionality.
+3. `git/git.go`: Provides Git repository management functions.
+4. `runtimes/python/python.go`: Implements the Python runtime setup and management.
+5. `runtimes/node/node.go`: Implements the Node.js runtime setup and management.
+6. `runtimes/golang/golang.go`: Implements the Go runtime setup and management.
+7. `runtimes/busybox/busybox.go`: Implements the Busybox runtime setup and management.
+8. `runtimes/default.go`: Defines default runtime configurations.
+
+## Dependencies
+The package relies on several external libraries and internal packages:
+
+1. `github.com/BurntSushi/locker`: For locking mechanisms.
+2. `github.com/mholt/archiver/v4`: Used for archive extraction.
+3. `github.com/go-git/go-git/v5`: For pure Go Git operations.
+4. `github.com/adrg/xdg`: For XDG Base Directory Specification.
+5. `github.com/samber/lo`: Provides utility functions.
+6. Internal packages from `github.com/gptscript-ai/gptscript/pkg/`: For configuration, credentials, environment management, and more.
+
+## Configuration
+The package uses various configuration approaches:
+
+1. Environment variables: Used for controlling behavior, such as forcing pure Go Git implementation.
+2. File-based caching: Stores setup states to avoid redundant operations.
+3. JSON configuration files: Used for runtime-specific configurations, such as Python version information.
+
+The `runtimes/default.go` file provides a centralized configuration point for all runtimes, allowing easy management and initialization through a single `Default` function call.
+
+This package forms a crucial part of the GPTScript project, providing the necessary infrastructure to manage repositories, set up runtime environments, and execute tools across various programming languages and platforms.

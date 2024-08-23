@@ -1,0 +1,86 @@
+---
+title: "tool.go"
+---
+
+## High-level description
+This code defines the structure and functionality for managing tools and programs in a GPTScript system. It includes types and methods for handling tool definitions, tool references, and program structures, as well as utility functions for parsing and manipulating tool-related data.
+
+## Code Structure
+The main types defined are `Tool`, `ToolDef`, `Parameters`, `Program`, and `ToolReference`. These types are interconnected, with `Tool` embedding `ToolDef`, which in turn embeds `Parameters`. The `Program` type contains a set of `Tool`s, and `ToolReference` is used to reference tools within the system.
+
+## Symbols
+
+### `Tool` struct
+#### Description
+Represents a tool in the GPTScript system, containing its definition, ID, mapping to other tools, and source information.
+
+#### Internal Logic
+- Manages tool mappings and references
+- Handles tool types (e.g., context, agent, input, output)
+- Provides methods for retrieving related tools and credentials
+
+### `Program` struct
+#### Description
+Represents a program in the GPTScript system, containing a set of tools and metadata.
+
+#### Internal Logic
+- Manages a set of tools
+- Provides methods for accessing and manipulating the tool set
+
+### `Parameters` struct
+#### Description
+Defines the parameters for a tool, including its name, description, and various configuration options.
+
+### `ToolReference` struct
+#### Description
+Represents a reference to a tool, including its name, ID, and any arguments.
+
+### `SplitArg` function
+#### Description
+Splits a tool string into the tool name and arguments, discarding any alias.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hasArg | string | The input string containing tool name and possibly arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prefix | string | The tool name |
+| arg | string | The arguments, if any |
+
+### `ParseCredentialArgs` function
+#### Description
+Parses a credential tool name and arguments into a tool alias and a map of arguments.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| toolName | string | The tool name and arguments string |
+| input | string | JSON input for resolving argument references |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The original tool name |
+| string | string | The alias, if any |
+| map[string]any | map | The parsed arguments |
+| error | error | Any error encountered during parsing |
+
+## Dependencies
+The code relies on several external libraries:
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/getkin/kin-openapi/openapi3 | OpenAPI schema handling |
+| github.com/google/shlex | Shell-style string splitting |
+| github.com/gptscript-ai/gptscript/pkg/system | Default schema definitions |
+| golang.org/x/exp/maps | Map manipulation utilities |
+
+## Error Handling
+The code defines a custom error type `ErrToolNotFound` for handling cases where a requested tool is not found in the system.
+
+## TODOs
+There are no explicit TODOs in the code.
+
+This code provides a comprehensive framework for managing tools and programs in a GPTScript system, with a focus on flexibility and extensibility. It includes various utility functions for parsing and manipulating tool-related data, as well as methods for retrieving and organizing tools based on their types and relationships.

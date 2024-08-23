@@ -1,0 +1,48 @@
+---
+title: "assemble.go"
+---
+
+Here's a detailed documentation for the `assemble.go` file:
+
+## High-level description
+This file defines the `assemble` package, which provides functionality to serialize a GPTScript program into a single artifact. The main purpose is to combine the program structure and its tools into a single, easily transportable format.
+
+## Symbols
+
+### `Header`
+#### Description
+`Header` is a byte slice constant that serves as a magic number or identifier for the assembled GPTScript format. It contains the ASCII representation of the string "GPTSCRIPT!".
+
+### `Assemble`
+#### Description
+`Assemble` is a function that serializes a GPTScript program into a single artifact. It writes the header followed by a JSON-encoded representation of the program to the provided output writer.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prg | types.Program | The GPTScript program to be assembled |
+| output | io.Writer | The writer to which the assembled program will be written |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | An error if the assembly process fails, nil otherwise |
+
+#### Internal Logic
+1. Write the `Header` to the output.
+2. Use `json.NewEncoder` to encode the `prg` (Program) as JSON and write it to the output.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | For JSON encoding of the program |
+| io | For writing the assembled program to an output stream |
+| github.com/gptscript-ai/gptscript/pkg/types | For the Program type definition |
+
+## References
+The `Assemble` function is used in the `gptscript.go` file within the `cli` package. It's called when the `--assemble` flag is set, allowing users to create a single artifact from a GPTScript program.
+
+## Performance Considerations
+The `Assemble` function performs I/O operations and JSON encoding, which can be relatively expensive for large programs. However, for typical use cases, the performance impact should be minimal.
+
+This assembly process creates a standardized format for GPTScript programs, which can be useful for distribution, storage, or transmission of complete programs in a single file.

@@ -1,0 +1,78 @@
+---
+title: "eval.go"
+---
+
+## High-level description
+The `eval.go` file defines an `Eval` struct and its `Run` method, which is responsible for executing GPTScript instructions. It allows users to run inline scripts with various configuration options, including tool selection, chat mode, and model parameters.
+
+## Code Structure
+The main components of this code are:
+1. The `Eval` struct, which holds configuration options for script execution.
+2. The `Run` method, which processes the configuration and executes the script using the GPTScript runner.
+
+## References
+This code references several other packages and types:
+- `github.com/gptscript-ai/gptscript/pkg/chat`
+- `github.com/gptscript-ai/gptscript/pkg/gptscript`
+- `github.com/gptscript-ai/gptscript/pkg/input`
+- `github.com/gptscript-ai/gptscript/pkg/loader`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+## Symbols
+
+### `Eval` struct
+#### Description
+The `Eval` struct holds configuration options for script execution, including tool selection, chat mode, and model parameters.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Tools | []string | List of tools available to call |
+| Chat | bool | Enable chat mode |
+| MaxTokens | int | Maximum number of tokens to output |
+| Model | string | The model to use |
+| JSON | bool | Output JSON |
+| Temperature | string | Set the temperature ("creativity") |
+| InternalPrompt | *bool | Set to false to disable the internal prompt |
+| gptscript | *GPTScript | Pointer to the GPTScript instance |
+
+### `Run` method
+#### Description
+The `Run` method processes the configuration options and executes the script using the GPTScript runner.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *cobra.Command | The Cobra command instance |
+| args | []string | Command-line arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Create a `types.Tool` struct with the configuration options.
+2. Parse the temperature if provided.
+3. Create new GPTScript options.
+4. Initialize a new GPTScript runner.
+5. Load the program from the provided source.
+6. Get tool input from the specified file.
+7. If chat mode is enabled, start a chat session.
+8. Otherwise, run the tool and print the output.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | Formatting and error handling |
+| os | Environment variables and file operations |
+| strconv | Parsing string to float |
+| strings | String manipulation |
+| github.com/spf13/cobra | Command-line interface |
+| github.com/gptscript-ai/gptscript/pkg/* | Various GPTScript functionalities |
+
+## Error Handling
+The `Run` method returns errors for various failure scenarios, such as parsing errors, initialization errors, and execution errors.
+
+## API/Interface Reference
+The `Run` method is likely part of a command-line interface, as it takes a `*cobra.Command` as an input. It processes command-line arguments and flags to configure and execute GPTScript instructions.

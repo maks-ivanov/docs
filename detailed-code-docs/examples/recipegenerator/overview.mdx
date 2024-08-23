@@ -1,0 +1,73 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The "examples/recipegenerator" directory contains a Flask-based web application that generates recipe suggestions based on images of grocery items uploaded by users. The application leverages GPTScript and GPTScript Vision for image analysis and recipe generation. It consists of a Python backend, an HTML frontend, and associated configuration files.
+
+## What does it do?
+This application allows users to upload images of grocery items through a web interface. Once an image is uploaded, the system processes it using artificial intelligence to identify the ingredients present in the image. Based on these identified ingredients, the application then generates a suitable recipe suggestion. The process involves several steps:
+
+1. The user uploads an image through the web interface.
+2. The backend saves the uploaded image and triggers the GPTScript analysis.
+3. GPTScript Vision analyzes the image to identify the ingredients.
+4. The identified ingredients are used to generate a recipe suggestion.
+5. The generated recipe is then displayed to the user on the web page.
+
+This workflow provides a novel way for users to get recipe ideas based on the groceries they have on hand, simply by taking a picture of their ingredients.
+
+## Entry points
+The main entry point for the application is the `app.py` file, which sets up the Flask server and defines the routes for the web application. The `index()` function renders the main page, while the `upload_file()` function handles the image upload and recipe generation process.
+
+The frontend is defined in the `templates/index.html` file, which provides the user interface for uploading images and displaying the generated recipes.
+
+The data flow in the application is as follows:
+1. User input (image upload) -&gt; `app.py`
+2. `app.py` -&gt; GPTScript (`recipegenerator.gpt` and `tools.gpt`)
+3. GPTScript -&gt; `response.json` and `recipe.md`
+4. `app.py` reads `recipe.md` -&gt; Frontend (HTML)
+
+## Key Files
+1. `app.py`: The main Flask application file that handles routing, file uploads, and interaction with GPTScript.
+2. `templates/index.html`: The HTML template for the web interface, including JavaScript for handling file uploads and displaying results.
+3. `recipegenerator.gpt` and `tools.gpt`: GPTScript files for image analysis and recipe generation (not provided in the summary, but mentioned in the README).
+4. `README.md`: Provides an overview of the application, installation instructions, and usage guidelines.
+
+## Dependencies
+The application relies on several key dependencies:
+
+1. Python 3.8 or later
+2. Flask: A lightweight WSGI web application framework in Python.
+3. Node.js and npm: For managing JavaScript dependencies.
+4. OpenAI API: Requires an API key for GPTScript functionality.
+5. Bootstrap 5.3.2: For responsive design and styling of the web interface.
+6. Showdown 1.9.0: A JavaScript library for converting Markdown to HTML.
+
+Other Python and Node.js dependencies are listed in `requirements.txt` and `package.json` respectively, although these files are not provided in the summary.
+
+## Configuration
+The application requires the following configuration:
+
+1. Environment variable: `OPENAI_API_KEY` must be set with a valid OpenAI API key.
+2. Flask configuration:
+   - `UPLOAD_FOLDER`: Set to the current working directory for storing uploaded images.
+   - `MAX_CONTENT_LENGTH`: Limits the maximum allowed payload to 16 megabytes.
+
+3. File paths:
+   - `GPTSCRIPT_PATH`: Path to the GPTScript executable.
+   - `RECIPE_FILE`: Path to the output recipe file (`recipe.md`).
+
+Here's a code snippet from `app.py` showing the configuration setup:
+
+```python
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = os.getcwd()
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 megabytes
+
+GPTSCRIPT_PATH = "./recipegenerator.gpt"
+RECIPE_FILE = "recipe.md"
+```
+
+The application also uses a `response.json` file to store the identified ingredients from the image analysis, which is then used for recipe generation.
+
+In summary, this recipe generator application provides an innovative way to suggest recipes based on image input, leveraging AI technologies for image analysis and recipe creation. It demonstrates the integration of web technologies with AI services to create a user-friendly and practical tool for cooking enthusiasts.

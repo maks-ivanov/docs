@@ -1,0 +1,114 @@
+---
+title: "workflow.yaml"
+---
+
+## High-level description
+This GitHub Actions workflow file defines an automated process for reviewing pull requests using GPTScript. It triggers on pull request events, retrieves PR details, runs a code review using GPTScript, and posts the review results as a comment on the pull request.
+
+## Code Structure
+The workflow consists of a single job named `pr_review` with multiple steps that execute sequentially to perform the code review process.
+
+## Symbols
+
+### `pr_review` (job)
+#### Description
+This job runs the entire PR review process on an Ubuntu latest runner.
+
+#### Internal Logic
+1. Checks out the repository
+2. Retrieves PR details
+3. Installs GPTScript
+4. Runs GPTScript for code review
+5. Posts the review comment
+6. Sets PR status based on the review outcome
+
+### `Get PR Details` (step)
+#### Description
+Extracts relevant information about the pull request from the GitHub event payload.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PR_URL | string | The URL of the pull request |
+| PR_NUMBER | integer | The number of the pull request |
+| PR_FILES | integer | The number of changed files in the pull request |
+
+#### Internal Logic
+Uses `jq` to parse the GitHub event JSON and extract PR details, then sets them as environment variables.
+
+### `Install GPTScript` (step)
+#### Description
+Installs GPTScript using a curl command that downloads and executes an installation script.
+
+### `Run GPTScript for Code Review` (step)
+#### Description
+Executes GPTScript to perform the code review on the pull request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| OPENAI_API_KEY | secret | API key for OpenAI services |
+| GH_TOKEN | secret | GitHub token for authentication |
+| PR_URL | string | The URL of the pull request to review |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| REVIEW | string | The generated code review content |
+
+#### Internal Logic
+Runs the `gptscript` command with the `codereview.gpt` script, passing the PR_URL as an argument. The output is captured and stored in the REVIEW environment variable.
+
+### `Post Review Comment` (step)
+#### Description
+Posts the generated code review as a comment on the pull request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| GITHUB_TOKEN | secret | GitHub token for authentication |
+| REVIEW | string | The generated code review content |
+
+#### Internal Logic
+Uses the `gh` CLI tool to post a comment on the pull request with the content of the REVIEW variable.
+
+### `Set PR Status Fail` (step)
+#### Description
+Sets the PR status to fail if the review requires changes.
+
+#### Internal Logic
+Checks if the REVIEW content contains "Require Changes". If true, it prints a message and exits with a non-zero status code, causing the workflow to fail.
+
+### `Set PR Status Pass` (step)
+#### Description
+Sets the PR status to pass if the review approves the changes.
+
+#### Internal Logic
+Checks if the REVIEW content contains "Approved". If true, it prints a message indicating approval.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v2 | Checks out the repository code |
+| jq | Parses JSON data from GitHub event payload |
+| curl | Downloads the GPTScript installation script |
+| gptscript | Performs the code review |
+| gh CLI | Posts comments on the pull request |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| OPENAI_API_KEY | secret | N/A | API key for OpenAI services |
+| GH_TOKEN | secret | N/A | GitHub token for authentication |
+
+## Error Handling
+The workflow includes basic error handling:
+- If the GPTScript review requires changes, the workflow will fail (exit code 1).
+- If the GPTScript review approves the changes, the workflow will pass.
+
+## API/Interface Reference
+| Trigger | Event | Description |
+|:--------|:------|:------------|
+| pull_request | opened, synchronize, reopened | Triggers the workflow when a PR is opened, updated, or reopened |
+
+This workflow interacts with the GitHub API through the `gh` CLI tool to post comments on pull requests.

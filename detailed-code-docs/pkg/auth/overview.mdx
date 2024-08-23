@@ -1,0 +1,92 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `auth` package provides authorization functionality for the GPTScript project. It includes functions to authorize tool execution, determine if a tool is safe, and generate confirmation messages for user approval.
+
+## Code Structure
+The main symbols in this code are:
+1. `Authorize`: Function to handle authorization of tool execution.
+2. `IsSafe`: Function to determine if a tool is considered safe.
+3. `ConfirmMessage`: Function to generate a confirmation message for user approval.
+
+These functions work together to provide a comprehensive authorization mechanism for the GPTScript system.
+
+## Symbols
+
+### `Authorize`
+#### Description
+This function handles the authorization process for tool execution. It checks if the tool is safe and, if not, prompts the user for confirmation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | engine.Context | The context of the engine execution |
+| input | string | The input for the tool execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.AuthorizerResponse | struct | The authorization response containing acceptance status and message |
+| error | error | Any error encountered during the authorization process |
+
+#### Internal Logic
+1. Defers the execution of a pause function obtained from the context.
+2. Checks if the tool is safe using the `IsSafe` function.
+3. If safe, returns an accepted authorization response.
+4. If not safe, prompts the user for confirmation using the `survey` package.
+5. Returns the authorization response based on user input.
+
+### `IsSafe`
+#### Description
+Determines if a tool is considered safe based on predefined criteria.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | engine.Context | The context of the engine execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | Whether the tool is considered safe or not |
+
+#### Internal Logic
+1. Checks if the tool is a command.
+2. If not a command, considers it safe.
+3. If a command, checks if it's in the `builtin.SafeTools` map.
+
+### `ConfirmMessage`
+#### Description
+Generates a confirmation message for user approval of tool execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | engine.Context | The context of the engine execution |
+| input | string | The input for the tool execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The formatted confirmation message |
+
+#### Internal Logic
+1. Determines the location of the tool source.
+2. Extracts the interpreter from the tool instructions.
+3. Formats a message containing the tool description, interpreter, source, and input.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | String formatting |
+| path/filepath | File path manipulation |
+| strings | String manipulation |
+| github.com/AlecAivazis/survey/v2 | User input prompts |
+| github.com/gptscript-ai/gptscript/pkg/builtin | Access to built-in safe tools |
+| github.com/gptscript-ai/gptscript/pkg/context | Context-related utilities |
+| github.com/gptscript-ai/gptscript/pkg/engine | Engine-related types and functions |
+| github.com/gptscript-ai/gptscript/pkg/runner | Runner-related types |
+
+This code provides a crucial security layer for the GPTScript system by implementing authorization checks and user confirmations for potentially unsafe tool executions.

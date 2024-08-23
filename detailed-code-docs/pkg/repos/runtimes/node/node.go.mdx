@@ -1,0 +1,123 @@
+---
+title: "node.go"
+---
+
+## High-level description
+This code defines a Node.js runtime implementation for the GPTScript project. It handles the setup, download, and execution of Node.js environments, including npm package management. The runtime is designed to work across different operating systems and architectures.
+
+## Code Structure
+The main `Runtime` struct represents a Node.js runtime with a specific version. It implements methods for identifying supported commands, setting up the environment, and managing Node.js installations. The code interacts with the file system, downloads Node.js binaries, and executes npm commands.
+
+## References
+This code references other parts of the GPTScript project, including:
+- `pkg/debugcmd`: For running commands with debug output
+- `pkg/env`: For environment variable management
+- `pkg/hash`: For generating unique identifiers
+- `pkg/repos/download`: For downloading and extracting Node.js binaries
+- `pkg/types`: For common type definitions
+
+## Symbols
+
+### `Runtime`
+#### Description
+Represents a Node.js runtime with a specific version and default status.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Version | string | The Node.js version (e.g., "16.14") |
+| Default | bool | Whether this is the default version |
+
+### `Runtime.ID()`
+#### Description
+Generates a unique identifier for the runtime.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | The runtime identifier (e.g., "node16.14") |
+
+### `Runtime.Supports(tool types.Tool, cmd []string)`
+#### Description
+Checks if the runtime supports the given command.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool being checked |
+| cmd | []string | The command being checked |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| supports | bool | Whether the runtime supports the command |
+
+### `Runtime.Setup(ctx context.Context, tool types.Tool, dataRoot, toolSource string, env []string)`
+#### Description
+Sets up the Node.js runtime environment, including downloading the runtime if necessary and running npm install.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| tool | types.Tool | The tool being set up |
+| dataRoot | string | The root directory for data storage |
+| toolSource | string | The source directory of the tool |
+| env | []string | The initial environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| newEnv | []string | The updated environment variables |
+| err | error | Any error that occurred during setup |
+
+#### Internal Logic
+1. Get the runtime binary path
+2. Append the binary path to the environment
+3. Run npm install if necessary
+4. Set additional environment variables based on the tool configuration
+
+### `Runtime.getRuntime(ctx context.Context, cwd string)`
+#### Description
+Downloads and extracts the Node.js runtime if not already present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| cwd | string | The current working directory |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| binPath | string | The path to the Node.js binary directory |
+| err | error | Any error that occurred during the process |
+
+#### Internal Logic
+1. Get the release URL and SHA256 digest
+2. Check if the runtime is already downloaded
+3. If not, download and extract the runtime
+4. Locate the binary directory within the extracted files
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| bufio | For reading release data |
+| bytes | For working with byte slices |
+| context | For context management |
+| errors | For error handling |
+| fmt | For string formatting |
+| io/fs | For file system operations |
+| os | For operating system interactions |
+| path/filepath | For file path manipulations |
+| runtime | For getting OS and architecture information |
+| strings | For string manipulations |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where appropriate. It also uses `errors.Is()` for checking specific error types, particularly for file system operations.
+
+## Logging
+The code uses a custom logging package (likely defined elsewhere in the project) for informational and debug logging.
+
+## TODOs
+There are no explicit TODOs in the code.

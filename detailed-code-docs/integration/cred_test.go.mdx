@@ -1,0 +1,69 @@
+---
+title: "cred_test.go"
+---
+
+## High-level description
+This Go file contains integration tests for credential-related functionality in GPTScript. It tests credential scopes, expiration times, and the execution of credential-related scripts.
+
+## Symbols
+
+### TestGPTScriptCredential
+#### Description
+This function tests the execution of a GPTScript named "cred" and verifies that the output contains the string "CREDENTIAL".
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for running the test and making assertions |
+
+#### Internal Logic
+1. Executes the "cred" GPTScript using the `GPTScriptExec` function.
+2. Checks that there is no error returned from the execution.
+3. Verifies that the output contains the string "CREDENTIAL".
+
+### TestCredentialScopes
+#### Description
+This function tests the scoping of credentials in GPTScript by running a script with different sub-tools and verifying the output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for running the test and making assertions |
+
+#### Internal Logic
+1. Runs the "scripts/cred_scopes.gpt" script three times with different sub-tool arguments: "oneOne", "twoOne", and "twoTwo".
+2. For each run, it checks that there is no error and that the output contains the string "good".
+
+### TestCredentialExpirationEnv
+#### Description
+This function tests the expiration time of credentials in GPTScript by running a script with two credentials that expire at different times and verifying that the expiration time is set to the nearest expiration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for running the test and making assertions |
+
+#### Internal Logic
+1. Runs the "scripts/cred_expiration.gpt" script.
+2. Parses the output to find the expiration timestamp.
+3. Verifies that the expiration time is less than one hour from the current time.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| strings | Used for string manipulation and parsing |
+| testing | Provides testing infrastructure |
+| time | Used for time-related operations |
+| github.com/stretchr/testify/require | Used for test assertions |
+
+## Error Handling
+The tests use the `require` package from testify to handle errors. If any assertion fails, the test will immediately fail and stop execution.
+
+## References
+The code references external scripts and functions that are not defined in this file:
+- `GPTScriptExec`: Used to execute GPTScripts
+- `RunScript`: Used to run specific GPTScripts with arguments
+- "scripts/cred_scopes.gpt": A script used for testing credential scopes
+- "scripts/cred_expiration.gpt": A script used for testing credential expiration
+
+These references suggest that there are other parts of the codebase responsible for script execution and credential management.

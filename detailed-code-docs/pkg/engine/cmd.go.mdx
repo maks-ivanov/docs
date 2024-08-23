@@ -1,0 +1,117 @@
+---
+title: "cmd.go"
+---
+
+## High-level description
+This code defines an `Engine` struct and associated methods for executing commands and tools in a GPTScript environment. It handles command execution, environment setup, and progress reporting for both built-in functions and external commands.
+
+## Code Structure
+The main components are:
+1. `outputWriter`: Captures and reports command output.
+2. `Engine` methods: `runCommand`, `newCommand`, and helper functions.
+3. Environment handling: Compressing, decompressing, and managing environment variables.
+4. Command execution: Setting up and running commands with proper environment and context.
+
+## Symbols
+
+### `outputWriter`
+#### Description
+A struct that implements the `io.Writer` interface to capture command output and send progress updates.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Unique identifier for the completion |
+| progress | chan&lt;- types.CompletionStatus | Channel to send progress updates |
+
+#### Internal Logic
+Writes output to an internal buffer and sends progress updates through the provided channel.
+
+### `compressEnv`
+#### Description
+Compresses large environment variable values to reduce their size.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| envs | []string | List of environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | []string | Compressed environment variables |
+
+#### Internal Logic
+Compresses environment variable values longer than 40,000 characters using gzip and base64 encoding.
+
+### `Engine.runCommand`
+#### Description
+Executes a command or built-in function and reports progress.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | Context | Execution context |
+| tool | types.Tool | Tool to be executed |
+| input | string | Input for the tool |
+| toolCategory | ToolCategory | Category of the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmdOut | string | Command output |
+| cmdErr | error | Error, if any |
+
+#### Internal Logic
+1. Handles built-in functions if present.
+2. Sets up command execution environment.
+3. Executes the command and captures output.
+4. Reports progress and handles errors.
+
+### `Engine.newCommand`
+#### Description
+Creates a new command with the appropriate environment and arguments.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the command |
+| extraEnv | []string | Additional environment variables |
+| tool | types.Tool | Tool to be executed |
+| input | string | Input for the tool |
+| useShell | bool | Whether to use a shell for execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *exec.Cmd | *exec.Cmd | Prepared command |
+| func() | func() | Cleanup function |
+| error | error | Error, if any |
+
+#### Internal Logic
+1. Prepares environment variables and command arguments.
+2. Handles platform-specific adjustments (e.g., Windows).
+3. Creates temporary files for script content if needed.
+4. Sets up the command with proper environment and arguments.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/google/shlex | Parsing shell-like syntax |
+| github.com/gptscript-ai/gptscript/pkg/counter | Generating unique identifiers |
+| github.com/gptscript-ai/gptscript/pkg/env | Environment variable handling |
+| github.com/gptscript-ai/gptscript/pkg/types | Type definitions |
+| github.com/gptscript-ai/gptscript/pkg/version | Version information |
+
+## Error Handling
+The code uses a combination of returned errors and error logging. Errors are propagated up the call stack and logged when appropriate. For user-facing errors, formatted error messages are returned.
+
+## Logging
+The code uses a global `log` variable for logging, with debug logging enabled conditionally.
+
+## Performance Considerations
+1. Environment variable compression for large values to reduce memory usage.
+2. Use of `sync.WaitGroup` for managing concurrent operations.
+3. Efficient handling of command output using `io.MultiWriter`.
+
+This code is crucial for executing tools and commands in the GPTScript environment, handling various execution scenarios, and managing the execution context and environment.

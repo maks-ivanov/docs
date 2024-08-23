@@ -1,0 +1,96 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains OpenAPI (formerly known as Swagger) specification files for a simple Pet Store API. The specifications are provided in both JSON and YAML formats, covering OpenAPI versions 2.0 and 3.0.0. These files define the structure, endpoints, request/response formats, and data models for a basic pet management system.
+
+## What does it do?
+The OpenAPI specifications in this directory describe a Pet Store API that allows users to:
+
+1. List all pets (with optional pagination)
+2. Create a new pet
+3. Retrieve information about a specific pet
+
+These specifications serve as a contract between the API provider and consumers, facilitating easier integration and understanding of the API's capabilities. They provide a standardized way to describe RESTful APIs, including details about:
+
+- Available endpoints and operations
+- Operation parameters for input and output
+- Authentication methods
+- Contact information, license, and other metadata
+
+While these files don't implement the actual functionality, they provide a clear blueprint for developers to build or consume the API.
+
+## Key Files
+1. `openapi_v2.json`: OpenAPI 2.0 specification in JSON format
+2. `openapi_v2.yaml`: OpenAPI 2.0 specification in YAML format
+3. `openapi_v3.yaml`: OpenAPI 3.0.0 specification in YAML format
+4. `openapi_v3_no_operation_ids.yaml`: OpenAPI 3.0.0 specification in YAML format, without operation IDs
+
+These files contain similar information but use different versions of the OpenAPI specification and different formats (JSON vs YAML). The `openapi_v3_no_operation_ids.yaml` file is likely used for testing purposes to ensure that systems can handle specifications without operation IDs.
+
+## API/Interface Reference
+All specifications define the following endpoints:
+
+| Endpoint | Method | Description |
+|:---------|:-------|:------------|
+| /pets | GET | List all pets with optional pagination |
+| /pets | POST | Create a new pet |
+| /pets/{petId} | GET | Retrieve information about a specific pet |
+
+### `/pets` (GET)
+- **Input**: Optional query parameter `limit` (integer) to specify the maximum number of items to return
+- **Output**: 
+  - 200: A paged array of pets
+  - default: Unexpected error
+
+### `/pets` (POST)
+- **Input**: Pet object in the request body
+- **Output**:
+  - 201: Null response (successful creation)
+  - default: Unexpected error
+
+### `/pets/{petId}` (GET)
+- **Input**: Path parameter `petId` (string) to specify the ID of the pet to retrieve
+- **Output**:
+  - 200: Pet object
+  - default: Unexpected error
+
+## Dependencies
+The specifications rely on the OpenAPI (Swagger) standard, with versions 2.0 and 3.0.0 being used in different files. No other external dependencies are explicitly defined, as these are specification files rather than executable code.
+
+## Configuration
+The API configurations are defined within the specifications:
+
+| Option | Description |
+|:-------|:------------|
+| host/servers | Specifies the API host (e.g., "petstore.swagger.io") |
+| basePath | Defines the base path for API endpoints (e.g., "/v1") |
+| schemes | Lists supported transfer protocols (e.g., ["http"]) |
+| consumes | Specifies supported request content types (e.g., ["application/json"]) |
+| produces | Specifies supported response content types (e.g., ["application/json"]) |
+
+## Data Models
+The specifications define the following main data models:
+
+### Pet
+Represents a pet in the system.
+
+| Property | Type | Required | Description |
+|:---------|:-----|:---------|:------------|
+| id | integer (int64) | Yes | The pet's unique identifier |
+| name | string | Yes | The pet's name |
+| tag | string | No | An optional tag for the pet |
+
+### Pets
+An array of Pet objects, typically with a maximum of 100 items.
+
+### Error
+Represents an error response.
+
+| Property | Type | Required | Description |
+|:---------|:-----|:---------|:------------|
+| code | integer (int32) | Yes | The error code |
+| message | string | Yes | The error message |
+
+These OpenAPI specifications provide a comprehensive and standardized description of the Pet Store API, enabling developers to understand the API's structure, capabilities, and expected behavior without needing to examine the actual implementation code.

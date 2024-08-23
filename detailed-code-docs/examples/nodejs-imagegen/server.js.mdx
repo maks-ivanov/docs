@@ -1,0 +1,95 @@
+---
+title: "server.js"
+---
+
+## High-level description
+This Node.js server application provides an API for generating logo designs based on user descriptions using AI-powered image generation. It also manages artist data and allows for the creation of new artist profiles. The server uses Express.js for routing and integrates with the GPTScript library for AI-powered content generation.
+
+## Code Structure
+The main components of the code are:
+1. Server setup and middleware configuration
+2. Artist data management
+3. Route handlers for serving static files, generating logos, creating new artists, and retrieving artist data
+4. Integration with GPTScript for AI-powered content generation
+
+## Symbols
+
+### `app`
+#### Description
+An Express.js application instance that handles routing and middleware configuration.
+
+### `getArtistsData()`
+#### Description
+A function that returns the current set of artist data, either from the default JSON file or from newly generated data.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| artists | Object | An object containing artist data |
+
+### `/generate-logo` route
+#### Description
+Handles POST requests to generate logo designs based on user descriptions using AI.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| description | string | User-provided description for logo generation |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| submissions | Array | An array of objects containing generated logo URLs and artist names |
+
+#### Internal Logic
+1. Retrieves artist data
+2. Constructs instructions for the AI tool
+3. Executes the GPTScript tool with the instructions
+4. Processes and returns the AI-generated response
+
+### `/new-artists` route
+#### Description
+Handles POST requests to generate new artist profiles using AI.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| artists | Array | An array of objects containing new artist profiles |
+
+#### Internal Logic
+1. Constructs instructions for the AI tool
+2. Executes the GPTScript tool with the instructions
+3. Processes and stores the AI-generated artist profiles
+4. Returns the new artist data
+
+### `/artists` route
+#### Description
+Handles GET requests to retrieve the current set of artist data.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| artists | Object | An object containing artist data |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| express | Web application framework for Node.js |
+| body-parser | Middleware to parse incoming request bodies |
+| @gptscript-ai/gptscript | Library for AI-powered content generation |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| PORT | number | 3000 | The port number on which the server listens |
+
+## Error Handling
+The code implements basic error handling for AI tool execution, logging errors to the console and sending error messages in the response.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| / | GET | - | HTML | Serves the main HTML page |
+| /generate-logo | POST | { description: string } | { submissions: Array } | Generates logo designs based on user description |
+| /new-artists | POST | - | { artists: Array } | Generates new artist profiles |
+| /artists | GET | - | { artists: Array } | Retrieves current artist data |

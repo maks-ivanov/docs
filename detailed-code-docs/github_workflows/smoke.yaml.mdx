@@ -1,0 +1,61 @@
+---
+title: "smoke.yaml"
+---
+
+## High-level description
+This GitHub Actions workflow, named "smoke", is designed to run smoke tests on different AI models for the gptscript-ai project. It triggers on pull requests to the main branch, pushes to the main branch, and manual workflow dispatches. The workflow checks for organization membership or specific labels before running the tests on various AI models.
+
+## Code Structure
+The workflow consists of multiple jobs: a check-label job to determine if smoke tests should run, and separate jobs for each AI model (gpt-4o-2024-05-13, gpt-4-turbo-2024-04-09, claude-3-5-sonnet-20240620, and mistral-large-2402). Each model job depends on the check-label job and follows a similar structure for running the smoke tests.
+
+## Symbols
+
+### check-label
+#### Description
+This job determines whether the smoke tests should be run based on the event type, organization membership, or the presence of a specific label.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| run_smoke_tests | boolean | Indicates whether smoke tests should be run |
+
+#### Internal Logic
+1. For push events or manual workflow dispatches, it sets `run_smoke_tests` to true.
+2. For pull request events:
+   - Checks if the PR author is a member of the "gptscript-ai" organization.
+   - Checks if the PR has the "run-smoke" label.
+   - Sets `run_smoke_tests` to true if either condition is met, false otherwise.
+
+### gpt-4o-2024-05-13, gpt-4-turbo-2024-04-09, claude-3-5-sonnet-20240620, mistral-large-2402
+#### Description
+These jobs run smoke tests for their respective AI models. They are conditionally executed based on the output of the check-label job.
+
+#### Internal Logic
+1. Checkout the repository (base or PR code depending on the event type).
+2. Set up Go environment.
+3. Set environment variables, including API keys and model-specific configurations.
+4. Run the smoke test using the `make smoke` command.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | Checking out the repository code |
+| actions/setup-go@v5 | Setting up the Go environment |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| OPENAI_API_KEY | secret | - | API key for OpenAI models |
+| ANTHROPIC_API_KEY | secret | - | API key for Anthropic models |
+| MISTRAL_API_KEY | secret | - | API key for Mistral models |
+| GPTSCRIPT_DEFAULT_MODEL | environment variable | varies | Specifies the AI model to use for the test |
+| GPTSCRIPT_CREDENTIAL_OVERRIDE | environment variable | varies | Overrides the credential for specific providers |
+
+## Error Handling
+The workflow does not implement specific error handling mechanisms. It relies on GitHub Actions' default behavior for handling job failures.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| /orgs/{org}/members/{username} | GET | - | 204 if member | Checks if a user is a member of the organization |
+| /repos/{owner}/{repo}/issues/{issue_number}/labels | GET | - | JSON array of labels | Retrieves labels for a pull request |

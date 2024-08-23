@@ -1,0 +1,63 @@
+---
+title: "script.js"
+---
+
+## High-level description
+This JavaScript file (script.js) is responsible for handling client-side interactions in a web application that generates logos based on user descriptions. It fetches and displays artist information, allows users to request new artists, and submits logo generation requests to the server.
+
+## Code Structure
+The code is structured around three main functions: `fetchArtists()`, `attachEventListeners()`, and `resetSubmissions()`. These functions work together to manage the user interface, handle user interactions, and communicate with the server.
+
+## Symbols
+
+### DOMContentLoaded Event Listener
+#### Description
+This event listener ensures that the DOM is fully loaded before executing the main functionality of the script.
+
+#### Internal Logic
+1. Calls `fetchArtists()` to initially populate the artists section.
+2. Calls `attachEventListeners()` to set up event handlers for user interactions.
+
+### fetchArtists()
+#### Description
+Fetches artist data from the server and displays it on the page.
+
+#### Internal Logic
+1. Sends a GET request to '/artists' endpoint.
+2. Parses the JSON response.
+3. Clears the existing content in the artists section.
+4. For each artist in the response, creates and inserts an HTML card with the artist's information.
+
+### attachEventListeners()
+#### Description
+Sets up event listeners for user interactions, specifically for fetching new artists and submitting logo generation requests.
+
+#### Internal Logic
+1. Adds a click event listener to the "New Artists" link:
+   - Prevents default link behavior.
+   - Calls `resetSubmissions()` to clear previous submissions.
+   - Sends a POST request to '/new-artists' endpoint.
+   - Calls `fetchArtists()` to update the displayed artists.
+
+2. Adds a click event listener to the submit button:
+   - Calls `resetSubmissions()` to clear previous submissions.
+   - Shows a loading spinner.
+   - Sends a POST request to '/generate-logo' endpoint with the user's logo description.
+   - Processes the response and displays generated logos for each artist.
+
+### resetSubmissions()
+#### Description
+Clears previous submissions and resets the UI state.
+
+#### Internal Logic
+1. Clears the content of the artist response section.
+2. Adds a hidden spinner element.
+
+## Dependencies
+This script relies on the DOM API and the Fetch API for making HTTP requests to the server.
+
+## Error Handling
+The script includes basic error handling for fetch requests, logging errors to the console.
+
+## Performance Considerations
+The script uses efficient DOM manipulation techniques, such as `insertAdjacentHTML` and creating elements before appending them, which can help optimize performance when updating the UI.

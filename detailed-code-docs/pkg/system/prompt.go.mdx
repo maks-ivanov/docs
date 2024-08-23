@@ -1,0 +1,101 @@
+---
+title: "prompt.go"
+---
+
+## High-level description
+This Go package, named "system", provides functionality related to prompts and schemas for a GPTScript system. It defines constants, variables, and functions for handling system prompts, file suffixes, and JSON schemas for tools and chat interactions.
+
+## Code Structure
+The code defines several constants and variables, including `Suffix`, `InternalSystemPrompt`, `DefaultPromptParameter`, `DefaultToolSchema`, and `DefaultChatSchema`. It also includes an `init()` function and a utility function `IsDefaultPrompt()`.
+
+## Symbols
+
+### `Suffix`
+#### Description
+A constant string representing the default suffix for GPTScript files.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Suffix | string | The default file extension for GPTScript files (".gpt") |
+
+### `InternalSystemPrompt`
+#### Description
+A variable containing the default system prompt added to all threads. It defines the behavior and characteristics of the AI system.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| InternalSystemPrompt | string | The default system prompt for the AI |
+
+### `DefaultPromptParameter`
+#### Description
+A constant string used as a key in JSON maps to indicate that the content is pure text rather than a structured JSON object.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| DefaultPromptParameter | string | The key used in JSON maps for default prompts |
+
+### `DefaultToolSchema`
+#### Description
+An `openapi3.Schema` object defining the schema for default tool interactions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| DefaultToolSchema | openapi3.Schema | The schema for default tool interactions |
+
+### `DefaultChatSchema`
+#### Description
+An `openapi3.Schema` object defining the schema for default chat interactions.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| DefaultChatSchema | openapi3.Schema | The schema for default chat interactions |
+
+### `init()`
+#### Description
+An initialization function that sets the `InternalSystemPrompt` based on an environment variable if it exists.
+
+#### Internal Logic
+1. Check if the environment variable "GPTSCRIPT_INTERNAL_SYSTEM_PROMPT" is set
+2. If set, update the `InternalSystemPrompt` with its value
+
+### `IsDefaultPrompt()`
+#### Description
+A function that checks if the given content is a JSON blob containing the `DefaultPromptParameter`. If so, it extracts and returns the value.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | string | The input string to check and potentially parse |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The extracted prompt or original content |
+| bool | bool | True if the content was a default prompt, false otherwise |
+
+#### Internal Logic
+1. Check if the content contains the `DefaultPromptParameter` and starts with "{"
+2. If so, attempt to unmarshal the content as JSON
+3. If successful and the resulting map has only one entry, extract the value associated with `DefaultPromptParameter`
+4. Return the extracted value and true if successful, otherwise return the original content and false
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | For JSON parsing and manipulation |
+| os | For accessing environment variables |
+| strings | For string manipulation |
+| github.com/getkin/kin-openapi/openapi3 | For OpenAPI 3.0 schema definitions |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| GPTSCRIPT_INTERNAL_SYSTEM_PROMPT | string | (see InternalSystemPrompt) | Environment variable to override the default internal system prompt |
+
+## Side Effects
+The `init()` function may modify the `InternalSystemPrompt` variable based on the environment variable "GPTSCRIPT_INTERNAL_SYSTEM_PROMPT".

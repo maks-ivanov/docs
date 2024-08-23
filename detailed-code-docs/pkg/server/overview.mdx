@@ -1,0 +1,75 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This code defines a server package for a GPTScript application. It provides structures and functions for managing execution contexts, run IDs, and events in a distributed system. The package facilitates the creation and retrieval of unique run identifiers within execution contexts.
+
+## Code Structure
+The main components of this code are:
+1. `Event` struct: Represents an event in the system, embedding `runner.Event` and adding additional fields.
+2. `execKey` type: A private type used as a key for storing run IDs in the context.
+3. `ContextWithNewRunID` function: Creates a new context with a unique run ID.
+4. `RunIDFromContext` function: Retrieves the run ID from a given context.
+
+## Symbols
+
+### `Event`
+#### Description
+A struct that represents an event in the system. It embeds `runner.Event` and adds additional fields for run ID, program, input, output, and error information.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| RunID | string | Unique identifier for the run |
+| Program | *types.Program | Pointer to the program associated with the event |
+| Input | string | Input data for the event |
+| Output | string | Output data from the event |
+| Err | string | Error information, if any |
+
+### `ContextWithNewRunID`
+#### Description
+Creates a new context with a unique run ID using the `counter.Next()` function.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The parent context |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | context.Context | A new context with the run ID added |
+
+#### Internal Logic
+1. Generates a new run ID using `counter.Next()`.
+2. Creates a new context with the run ID stored using the `execKey{}` as the key.
+
+### `RunIDFromContext`
+#### Description
+Retrieves the run ID from a given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context to extract the run ID from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | string | The run ID stored in the context, or an empty string if not found |
+
+#### Internal Logic
+1. Attempts to retrieve the value associated with `execKey{}` from the context.
+2. Performs a type assertion to convert the value to a string.
+3. Returns the run ID if found, or an empty string otherwise.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides the Context type for managing execution contexts |
+| github.com/gptscript-ai/gptscript/pkg/counter | Used for generating unique run IDs |
+| github.com/gptscript-ai/gptscript/pkg/runner | Provides the base Event type |
+| github.com/gptscript-ai/gptscript/pkg/types | Provides the Program type |
+
+This server package provides essential functionality for managing execution contexts and run IDs in a GPTScript application. It allows for the creation of unique identifiers for each run and the ability to store and retrieve these identifiers within contexts, which is crucial for tracking and managing distributed operations in the system.

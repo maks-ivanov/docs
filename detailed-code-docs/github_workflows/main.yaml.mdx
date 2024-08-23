@@ -1,0 +1,115 @@
+---
+title: "main.yaml"
+---
+
+## High-level description
+This GitHub Actions workflow, named "main", is designed to automate the release process for a Go project. It runs on pushes to the main branch or manual triggers, and performs tasks such as building the project, creating a release, and uploading artifacts to an S3-compatible storage.
+
+## Code Structure
+The workflow consists of a single job named "release-main" with multiple steps that handle different aspects of the release process, including checkout, Go setup, running GoReleaser, and uploading artifacts to S3.
+
+## Symbols
+
+### Workflow: main
+#### Description
+This GitHub Actions workflow automates the release process for a Go project.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| push to main branch | event | Triggers the workflow when code is pushed to the main branch |
+| workflow_dispatch | event | Allows manual triggering of the workflow |
+
+#### Internal Logic
+1. Sets up concurrency to cancel any in-progress workflows when a new one is triggered.
+2. Defines permissions for contents and packages.
+3. Runs a single job "release-main" with multiple steps:
+   - Checks out the repository
+   - Sets up Go environment
+   - Runs GoReleaser to create a release
+   - Uploads release artifacts to an S3-compatible storage
+
+### Job: release-main
+#### Description
+This job performs the main release tasks for the project.
+
+#### Internal Logic
+1. Runs on Ubuntu 22.04
+2. Executes a series of steps:
+   - Checkout: Fetches the repository code
+   - Set up Go: Prepares the Go environment
+   - Run GoReleaser: Creates a release snapshot
+   - Upload to S3: Syncs release artifacts to S3-compatible storage
+
+### Step: Checkout
+#### Description
+Checks out the repository code.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fetch-depth | integer | Specifies the number of commits to fetch (0 for all) |
+
+### Step: Set up Go
+#### Description
+Sets up the Go environment for the project.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cache | boolean | Disables Go module caching |
+| go-version | string | Specifies the Go version to use ("1.23") |
+
+### Step: Run GoReleaser
+#### Description
+Runs GoReleaser to create a release snapshot.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| distribution | string | Specifies the GoReleaser distribution to use |
+| version | string | Sets the version of GoReleaser to use |
+| args | string | Provides arguments for the GoReleaser command |
+
+#### Environment Variables
+| Name | Description |
+|:-----|:------------|
+| GITHUB_TOKEN | GitHub token for authentication |
+| TAP_GITHUB_TOKEN | Token for updating Homebrew tap |
+
+### Step: Upload to S3
+#### Description
+Uploads release artifacts to an S3-compatible storage.
+
+#### Environment Variables
+| Name | Description |
+|:-----|:------------|
+| SOURCE_DIR | Directory containing files to upload |
+| DEST_DIR | Destination directory in the S3 bucket |
+| AWS_REGION | Region of the S3-compatible storage |
+| AWS_S3_BUCKET | Name of the S3 bucket |
+| AWS_ACCESS_KEY_ID | Access key for S3 authentication |
+| AWS_SECRET_ACCESS_KEY | Secret key for S3 authentication |
+| AWS_S3_ENDPOINT | Endpoint URL for the S3-compatible storage |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | Checks out the repository |
+| actions/setup-go@v5 | Sets up the Go environment |
+| goreleaser/goreleaser-action@v6 | Runs GoReleaser for creating releases |
+| jakejarvis/s3-sync-action@v0.5.1 | Syncs files to S3-compatible storage |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| concurrency.group | string | "main" | Defines the concurrency group for the workflow |
+| concurrency.cancel-in-progress | boolean | true | Cancels in-progress workflows when a new one is triggered |
+
+## Error Handling
+The workflow does not implement explicit error handling. It relies on GitHub Actions' default behavior of stopping the workflow if any step fails.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| /actions/runs | POST | N/A | N/A | Triggered on push to main branch or manual dispatch |

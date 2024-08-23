@@ -1,0 +1,77 @@
+---
+title: "proxy.go"
+---
+
+## High-level description
+This code implements a proxy server for OpenAI API requests. It handles authentication, forwards requests to the appropriate OpenAI client, and manages the reverse proxy functionality. The proxy is designed to work within a larger system that manages different LLM (Language Model) clients.
+
+## Code Structure
+The main components are:
+1. `ProxyInfo` method: Sets up the proxy server.
+2. `ServeHTTP` method: Handles incoming HTTP requests.
+3. `getClient` method (not shown, but referenced): Retrieves the appropriate OpenAI client.
+
+## Symbols
+
+### Registry.ProxyInfo
+#### Description
+This method initializes and starts the proxy server, returning the proxy token and URL.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| proxyToken | string | Authentication token for the proxy |
+| proxyURL | string | URL of the proxy server |
+| error | error | Any error encountered during setup |
+
+#### Internal Logic
+1. Checks if a proxy URL already exists.
+2. If not, it creates a new TCP listener on a random port.
+3. Starts an HTTP server in a goroutine.
+4. Sets the proxy URL to the listener's address.
+
+### Registry.ServeHTTP
+#### Description
+This method handles incoming HTTP requests to the proxy server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| w | http.ResponseWriter | HTTP response writer |
+| req | *http.Request | Incoming HTTP request |
+
+#### Internal Logic
+1. Validates the authorization token.
+2. Reads and parses the request body.
+3. Determines the OpenAI model to use.
+4. Retrieves the appropriate OpenAI client.
+5. Gets proxy information from the OpenAI client.
+6. Sets up a reverse proxy to forward the request to the OpenAI API.
+
+## Side Effects
+- Creates and manages a TCP listener and HTTP server.
+- Modifies incoming HTTP requests before forwarding them.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| net/http | HTTP server and client functionality |
+| net/http/httputil | Reverse proxy implementation |
+| github.com/gptscript-ai/gptscript/pkg/builtin | Default model information |
+| github.com/gptscript-ai/gptscript/pkg/openai | OpenAI client implementation |
+
+## Error Handling
+The code includes error handling for various scenarios, such as:
+- Authorization failures
+- Issues reading the request body
+- Failures in retrieving the OpenAI client
+- Problems setting up the reverse proxy
+
+Errors are typically returned as HTTP error responses with appropriate status codes.
+
+## Performance Considerations
+- The proxy server is started on-demand and listens on a random port.
+- It uses a reverse proxy to efficiently forward requests to the OpenAI API.
+- The server runs in a separate goroutine to handle concurrent requests.
+
+This implementation provides a flexible and secure way to proxy OpenAI API requests, allowing for centralized management of authentication and client selection within a larger system.

@@ -1,0 +1,70 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/monitor` directory contains code for monitoring and logging the execution of GPTScript programs. It provides functionality to track and display various events during program execution, manage the state of calls, and handle program output. The package includes components for console-based monitoring, file-based logging, and a centralized logging system.
+
+## What does it do?
+This package implements a comprehensive monitoring system for GPTScript program execution. It allows developers and users to:
+
+1. Track and display real-time progress of program execution in the console.
+2. Log detailed events to files or file descriptors for later analysis.
+3. Manage the state of function calls and their relationships.
+4. Record and display program input, output, and any errors encountered.
+5. Optionally dump the final state of the execution for debugging purposes.
+
+The monitoring system can be used to provide insights into the execution flow, help with debugging, and generate logs for auditing or analysis purposes.
+
+## Entry points
+The main entry points for this package are:
+
+1. `display.go`: Contains the `Console` struct and related functions for console-based monitoring.
+2. `fd.go`: Implements file-based monitoring through the `fileFactory` and `fd` structs.
+3. `log.go`: Sets up a package-level logger for use throughout the monitor package.
+
+The workflow typically starts with creating a monitor (either console or file-based) using the respective factory methods. Then, events are logged throughout the program execution using the `Event` method. Finally, the monitoring session is concluded with the `Stop` method.
+
+## Key Files
+
+### display.go
+This file contains the core functionality for console-based monitoring. Key components include:
+
+- `Console` struct: The main interface for monitoring.
+- `display` struct: Handles detailed tracking and display of events.
+- `livePrinter` struct: Manages real-time printing of progress information.
+- `Start`, `Event`, and `Stop` methods: Control the lifecycle of the monitoring process.
+
+### fd.go
+This file implements file-based monitoring. Key components include:
+
+- `fileFactory` struct: Manages the creation and lifecycle of file-based monitors.
+- `fd` struct: Represents a file descriptor-based monitor for writing events.
+- `Event` struct: Represents an event occurring during program execution.
+
+### log.go
+This file sets up the package-level logger used throughout the monitor package.
+
+## Dependencies
+The package relies on several external and internal dependencies:
+
+1. `github.com/fatih/color`: Used for colored console output.
+2. `github.com/gptscript-ai/gptscript/pkg/counter`: For generating unique IDs.
+3. `github.com/gptscript-ai/gptscript/pkg/engine`: For engine-related types and functions.
+4. `github.com/gptscript-ai/gptscript/pkg/runner`: For runner-related types and functions.
+5. `github.com/gptscript-ai/gptscript/pkg/types`: For common types used in the project.
+6. `github.com/gptscript-ai/gptscript/pkg/mvl`: For minimal verbosity logging.
+
+## Configuration
+The package uses a `Complete` function to merge multiple `Options` structs, allowing for flexible configuration of the monitoring system. Configuration options include:
+
+- Dump state settings
+- Message printing options
+- Call locking mechanisms
+
+Environment variables and input strings are also used to configure the monitoring process for each program run.
+
+## Error Handling
+The package uses error returns to propagate errors up the call stack. It also logs errors in some cases using the package-level logger. The `Stop` method in both console and file-based monitors handles final error reporting for the program execution.
+
+In summary, the `pkg/monitor` package provides a robust and flexible system for monitoring and logging GPTScript program execution, offering both real-time console output and detailed file-based logging options.

@@ -1,0 +1,83 @@
+---
+title: "print.go"
+---
+
+## High-level description
+This code defines a method `runEcho` for the `Engine` struct in the `engine` package. Its primary purpose is to handle and process echo tools, which are used to output predefined text. The function extracts the text to be echoed, generates a unique ID, and sends a progress update through a channel.
+
+## Code Structure
+The `runEcho` method is part of the `Engine` struct and interacts with the `types` and `counter` packages to process echo tools and generate unique IDs.
+
+## References
+- `github.com/gptscript-ai/gptscript/pkg/counter`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+## Symbols
+
+### `func (e *Engine) runEcho(tool types.Tool) (cmdOut *Return, cmdErr error)`
+#### Description
+This method processes an echo tool by extracting the text to be echoed, generating a unique ID, and sending a progress update through a channel. It then returns the echoed text as a result.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The echo tool to be processed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmdOut | *Return | A pointer to a Return struct containing the echoed text |
+| cmdErr | error | An error value, which is always nil in this implementation |
+
+#### Internal Logic
+1. Generate a unique ID using `counter.Next()`.
+2. Extract the text to be echoed by trimming the `types.EchoPrefix` and a newline character from the tool's instructions.
+3. Send a progress update through the `Progress` channel with the unique ID and the extracted text.
+4. Return a `Return` struct containing the echoed text and a nil error.
+
+## Side Effects
+The method sends a progress update through the `Engine`'s `Progress` channel, which may be consumed by other parts of the application.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| strings | Used for string manipulation (TrimPrefix) |
+| github.com/gptscript-ai/gptscript/pkg/counter | Provides unique ID generation |
+| github.com/gptscript-ai/gptscript/pkg/types | Defines types used in the function |
+
+## Error Handling
+This function does not implement any specific error handling. It always returns a nil error.
+
+## Related Code: pkg/counter/counter.go
+
+### `func Next() string`
+#### Description
+This function generates and returns the next unique identifier as a string.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| - | string | A unique identifier as a string |
+
+#### Internal Logic
+1. Atomically increments the `counter` variable.
+2. Converts the incremented value to a string.
+3. Returns the string representation of the counter.
+
+#### Performance Considerations
+The use of atomic operations ensures thread-safety when generating unique identifiers, making this function suitable for concurrent use.
+
+### `func Reset(i int32)`
+#### Description
+This function resets the counter to a specified value.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| i | int32 | The value to reset the counter to |
+
+#### Internal Logic
+Atomically stores the provided value in the `counter` variable.
+
+### Package Initialization
+The `counter` package initializes the `counter` variable with the current Unix timestamp, ensuring a reasonably unique starting point for the counter.

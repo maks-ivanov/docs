@@ -1,0 +1,66 @@
+---
+title: "sha256.go"
+---
+
+## High-level description
+This code provides two hash-related functions: `ID` for generating a unique identifier from multiple string parts, and `Digest` for creating a hash digest of various data types. Both functions use the SHA-256 algorithm and return the result as a hexadecimal string.
+
+## Symbols
+
+### `ID`
+#### Description
+The `ID` function generates a unique identifier by concatenating multiple string parts and hashing them using SHA-256.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| parts | ...string | Variable number of string parts to be hashed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | string | Hexadecimal representation of the SHA-256 hash |
+
+#### Internal Logic
+1. Initialize a new SHA-256 hash object.
+2. Iterate through the input parts:
+   - If it's not the first part, write a null byte (0x00) as a separator.
+   - Write the bytes of the current part to the hash object.
+3. Compute the final hash.
+4. Convert the hash to a hexadecimal string and return it.
+
+### `Digest`
+#### Description
+The `Digest` function creates a SHA-256 hash digest of various data types, including byte slices, strings, and other objects that can be encoded using Go's `gob` package.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | any | The object to be hashed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | string | Hexadecimal representation of the SHA-256 hash |
+
+#### Internal Logic
+1. Initialize a new SHA-256 hash object.
+2. Switch on the type of the input object:
+   - For byte slices: Write the bytes directly to the hash object.
+   - For strings: Convert the string to bytes and write them to the hash object.
+   - For other types: Use `gob` encoding to serialize the object and write the result to the hash object.
+3. Compute the final hash.
+4. Convert the hash to a hexadecimal string and return it.
+
+#### Error Handling
+The `Digest` function will panic if it encounters an error while encoding an object using `gob`. This is a design choice that assumes encoding errors are unexpected and should be treated as fatal.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| crypto/sha256 | Provides SHA-256 hashing functionality |
+| encoding/gob | Used for encoding arbitrary Go objects |
+| encoding/hex | Used for converting binary hashes to hexadecimal strings |
+
+## References
+The `sha256.go` file is referenced in the `pkg/repos/download/extract.go` file, which uses SHA-256 hashing to verify the integrity of downloaded files. However, it uses the standard library's `crypto/sha256` package directly instead of the functions defined in this file.

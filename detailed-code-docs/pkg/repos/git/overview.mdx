@@ -1,0 +1,50 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains Go code for interacting with Git repositories, providing functionality for cloning, fetching, and checking out specific commits. It offers both a pure Go implementation and the ability to use system Git commands, allowing for flexibility in different environments.
+
+## What does it do?
+The code in this directory enables developers to perform Git operations programmatically. It can:
+
+1. List remote references of a Git repository
+2. Clone repositories
+3. Fetch specific commits
+4. Check out commits to a local directory
+5. Manage Git worktrees
+
+The implementation is designed to work across different platforms and can switch between using a pure Go implementation (using the go-git library) and external Git commands based on the environment and available tools.
+
+## Entry points
+The main entry point for most operations is the `Checkout` function in `git.go`. This function orchestrates the process of fetching a repository and checking out a specific commit to a target directory. Other key functions include:
+
+- `LsRemote` in `cmd.go`: Retrieves the commit hash for a given reference in a remote repository.
+- `fetch` in `git.go`: Fetches a specific commit from a repository, cloning it if necessary.
+- `lsRemotePureGo` and `checkoutPureGo` in `git_go.go`: Provide pure Go implementations of Git operations using the go-git library.
+
+The code is organized to separate the pure Go implementation (`git_go.go`) from the command-line Git operations (`cmd.go`), with `git.go` serving as the main orchestrator.
+
+## Dependencies
+1. go-git/go-git (v5): Used for the pure Go implementation of Git operations.
+2. gptscript-ai/gptscript/pkg/debugcmd: Used for wrapping and debugging command execution.
+3. gptscript-ai/gptscript/pkg/hash: Used for generating a digest of repository URLs.
+4. gptscript-ai/gptscript/pkg/mvl: Used for logging purposes.
+
+## Configuration
+The code uses environment variables for configuration:
+
+- `GPTSCRIPT_PURE_GO_GIT`: When set to "true", forces the use of the pure Go implementation instead of system Git commands.
+
+Additionally, the code checks for the presence of Git command-line tools:
+- On macOS, it verifies if Xcode command-line tools are installed.
+- On other platforms, it checks if the `git` command is available in the system PATH.
+
+## Key Files
+1. `git.go`: Contains the main `Checkout` function and orchestrates the Git operations.
+2. `cmd.go`: Implements Git operations using system Git commands.
+3. `git_go.go`: Provides pure Go implementations of Git operations using the go-git library.
+4. `git_test.go`: Contains unit tests for the Git operations.
+5. `log.go`: Sets up logging for the package.
+
+The code is designed to be flexible and efficient, allowing for Git operations to be performed in various environments, whether using system Git commands or a pure Go implementation. This makes it suitable for use in different scenarios, from local development to server-side applications where system Git might not be available.

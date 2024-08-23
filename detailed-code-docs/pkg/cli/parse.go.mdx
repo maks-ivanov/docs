@@ -1,0 +1,85 @@
+---
+title: "parse.go"
+---
+
+## High-level description
+This code defines a `Parse` struct and its associated methods for parsing GPTScript content. It provides functionality to read input from a specified location, parse it using a custom parser, and output the result as JSON.
+
+## Code Structure
+The `Parse` struct contains configuration options and a reference to a `GPTScript` object. The `Customize` method sets up command-line argument requirements, while the `Run` method performs the actual parsing and output.
+
+## References
+This code references other parts of the codebase, including:
+- `github.com/gptscript-ai/gptscript/pkg/input`
+- `github.com/gptscript-ai/gptscript/pkg/parser`
+- `github.com/spf13/cobra`
+
+## Symbols
+
+### Parse
+#### Description
+A struct that represents the parsing command and its options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| PrettyPrint | bool | Flag to enable indented JSON output |
+| gptscript | *GPTScript | Pointer to a GPTScript object |
+
+### Customize
+#### Description
+Configures the Cobra command to expect exactly one argument.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *cobra.Command | Pointer to a Cobra command object |
+
+### locationName
+#### Description
+A helper function that returns an empty string if the input is "-", otherwise returns the input unchanged.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| l | string | Location string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | Processed location name |
+
+### Run
+#### Description
+Executes the parsing operation, reading input, parsing it, and outputting the result as JSON.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | *cobra.Command | Unused Cobra command object |
+| args | []string | Command-line arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| err | error | Error, if any occurred during execution |
+
+#### Internal Logic
+1. Reads content from the specified location using `input.FromLocation`.
+2. Parses the content using `parser.Parse` with custom options.
+3. Creates a JSON encoder for stdout.
+4. If PrettyPrint is enabled, sets indentation for the encoder.
+5. Encodes and outputs the parsed documents as JSON.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding of parsed documents |
+| os | Standard output operations |
+| strings | String manipulation (NewReader) |
+| github.com/gptscript-ai/gptscript/pkg/input | Input handling from various locations |
+| github.com/gptscript-ai/gptscript/pkg/parser | Parsing of GPTScript content |
+| github.com/spf13/cobra | Command-line interface framework |
+
+## Error Handling
+The code uses Go's standard error handling mechanism. Errors are returned from the `Run` method and are expected to be handled by the caller.

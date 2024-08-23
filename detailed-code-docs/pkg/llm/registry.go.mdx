@@ -1,0 +1,125 @@
+---
+title: "registry.go"
+---
+
+## High-level description
+This code defines a Registry struct and associated methods for managing and interacting with different LLM (Language Model) clients. It provides functionality to add clients, list models, and make calls to language models while handling caching and error scenarios.
+
+## Code Structure
+The main symbol is the Registry struct, which contains a list of Client interfaces. The Registry methods interact with these clients to perform operations like listing models and making calls to language models. The code also includes helper functions for handling specific scenarios and optimizations.
+
+## Symbols
+
+### `Client` (interface)
+#### Description
+Defines the interface for LLM clients, specifying methods for making calls, listing models, and checking model support.
+
+#### Methods
+- `Call`: Makes a call to the language model
+- `ListModels`: Lists available models
+- `Supports`: Checks if a specific model is supported
+
+### `Registry` (struct)
+#### Description
+Manages a collection of LLM clients and provides methods to interact with them.
+
+#### Fields
+- `proxyToken`: String for proxy authentication
+- `proxyURL`: URL for the proxy server
+- `proxyLock`: Mutex for thread-safe proxy operations
+- `clients`: Slice of Client interfaces
+
+### `NewRegistry` (function)
+#### Description
+Creates and initializes a new Registry instance.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | *Registry | Newly created Registry instance |
+
+### `AddClient` (method)
+#### Description
+Adds a new client to the Registry's list of clients.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | Client | The client to be added |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | error | Error, if any |
+
+### `ListModels` (method)
+#### Description
+Lists all models supported by the registered clients.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| providers | ...string | Optional list of providers to filter models |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | []string | List of supported models |
+| (return value) | error | Error, if any |
+
+### `fastPath` (method)
+#### Description
+Optimizes client selection for specific scenarios to avoid listing models.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| modelName | string | Name of the model |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | Client | Selected client, if optimization is possible |
+
+### `getClient` (method)
+#### Description
+Retrieves the appropriate client for a given model, handling authentication errors.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| modelName | string | Name of the model |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | Client | Selected client |
+| (return value) | error | Error, if any |
+
+### `Call` (method)
+#### Description
+Makes a call to the appropriate language model client based on the request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| messageRequest | types.CompletionRequest | Request details |
+| status | chan&lt;- types.CompletionStatus | Channel for status updates |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | *types.CompletionMessage | Completion message result |
+| (return value) | error | Error, if any |
+
+## Error Handling
+The code implements error handling throughout its methods, often aggregating errors from multiple clients and joining them together. It also includes special handling for OpenAI authentication errors, prompting for API key retrieval when necessary.
+
+## Performance Considerations
+The `fastPath` method is an optimization to avoid listing models in specific scenarios, potentially improving performance for common use cases.
+
+## Dependencies
+The code relies on several internal packages from the `github.com/gptscript-ai/gptscript` module, as well as standard Go libraries.

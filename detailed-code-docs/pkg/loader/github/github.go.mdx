@@ -1,0 +1,160 @@
+---
+title: "github.go"
+---
+
+Here's a detailed documentation of the `github.go` file:
+
+## High-level description
+This file implements a GitHub loader for the GPTScript project. It provides functionality to load GPTScript programs from GitHub repositories, handling authentication, commit resolution, and file downloading.
+
+## Code Structure
+The main components of this code are:
+1. `Config` struct: Holds configuration for GitHub interactions.
+2. `Load` function: The main entry point for loading GitHub content.
+3. `LoadWithConfig` function: Implements the core logic for loading content from GitHub.
+4. Helper functions: `getCommit`, `getCommitLsRemote`, and `LoaderForPrefix` support the main loading process.
+
+## Symbols
+
+### `Config`
+#### Description
+Defines the configuration structure for GitHub interactions.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Prefix | string | Prefix for GitHub URLs |
+| RepoURL | string | URL format for Git repositories |
+| DownloadURL | string | URL format for raw file content |
+| CommitURL | string | URL format for commit information |
+| AuthToken | string | Authentication token for GitHub API |
+
+### `Load`
+#### Description
+Main entry point for loading GitHub content using default configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| c | *cache.Client | Cache client |
+| urlName | string | URL of the content to load |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Download URL |
+| string | string | Auth token |
+| *types.Repo | *types.Repo | Repository information |
+| bool | bool | Success flag |
+| error | error | Error, if any |
+
+#### Internal Logic
+Calls `LoadWithConfig` with the default GitHub configuration.
+
+### `LoadWithConfig`
+#### Description
+Core logic for loading content from GitHub.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| _ | *cache.Client | Unused cache client |
+| urlName | string | URL of the content to load |
+| config | *Config | GitHub configuration |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Download URL |
+| string | string | Auth token |
+| *types.Repo | *types.Repo | Repository information |
+| bool | bool | Success flag |
+| error | error | Error, if any |
+
+#### Internal Logic
+1. Parses the input URL to extract account, repo, path, and reference.
+2. Resolves the commit hash using `getCommit`.
+3. Constructs the download URL for the file.
+4. Handles default files if the path is empty or a directory.
+5. Returns the download URL, auth token, and repository information.
+
+### `getCommit`
+#### Description
+Resolves a reference (branch, tag, or commit) to a full commit hash.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| account | string | GitHub account name |
+| repo | string | Repository name |
+| ref | string | Reference (branch, tag, or commit) |
+| config | *Config | GitHub configuration |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Full commit hash |
+| error | error | Error, if any |
+
+#### Internal Logic
+1. Checks if the input is already a full commit hash.
+2. If not, makes an API call to GitHub to resolve the reference.
+3. Falls back to `git ls-remote` if the API call fails.
+
+### `getCommitLsRemote`
+#### Description
+Fallback method to resolve a reference using `git ls-remote`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| account | string | GitHub account name |
+| repo | string | Repository name |
+| ref | string | Reference (branch, tag, or commit) |
+| config | *Config | GitHub configuration |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Full commit hash |
+| error | error | Error, if any |
+
+### `LoaderForPrefix`
+#### Description
+Creates a loader function for a specific GitHub Enterprise prefix.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prefix | string | GitHub Enterprise prefix |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| func | function | Loader function for the specified prefix |
+
+#### Internal Logic
+Returns a function that calls `LoadWithConfig` with a custom configuration for the given prefix.
+
+## Dependencies
+- Various standard library packages (context, crypto/tls, encoding/json, fmt, io, net/http, os, path, regexp, strings)
+- Internal packages from the gptscript-ai/gptscript project (cache, loader, mvl, repos/git, types)
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors when operations fail. It includes detailed error messages for various failure scenarios.
+
+## Logging
+The code uses a logger (`log`) from the `mvl` package for debug logging.
+
+## Configuration
+The code uses environment variables for configuration:
+- `GITHUB_AUTH_TOKEN`: For GitHub authentication
+- `GH_ENTERPRISE_TOKEN`: For GitHub Enterprise authentication
+- `GH_ENTERPRISE_SKIP_VERIFY`: To skip TLS verification for GitHub Enterprise
+
+## TODOs
+There are no explicit TODOs in the code.

@@ -1,0 +1,53 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the implementation of a GitHub loader for the GPTScript project. It provides functionality to load GPTScript programs from GitHub repositories, handling authentication, commit resolution, and file downloading. The directory includes the main implementation file (`github.go`) and a corresponding test file (`github_test.go`).
+
+## What does it do?
+The GitHub loader allows the GPTScript project to fetch and load scripts directly from GitHub repositories. Here's a simplified explanation of its functionality:
+
+1. It takes a GitHub URL as input, which points to a specific file or directory in a repository.
+2. The loader parses this URL to extract important information like the account name, repository name, file path, and the specific version (branch, tag, or commit) of the file.
+3. It then communicates with GitHub's servers to get the exact version of the file, converting branch names or tags into specific commit hashes.
+4. Once it has the exact version, it constructs a URL that points directly to the raw content of the file.
+5. The loader also handles authentication, using GitHub tokens when necessary, especially for private repositories or GitHub Enterprise setups.
+6. If the URL points to a directory instead of a file, the loader looks for default files like `tool.gpt` or `agent.gpt`.
+7. Finally, it returns the URL for downloading the file, along with any necessary authentication information and details about the repository.
+
+This process allows GPTScript to seamlessly integrate with GitHub, enabling users to reference and use scripts stored in GitHub repositories.
+
+## Key Files
+
+### github.go
+This is the main implementation file for the GitHub loader. It contains the following key components:
+
+1. `Config` struct: Defines the configuration for GitHub interactions, including URL formats and authentication tokens.
+2. `Load` function: The main entry point for loading GitHub content using default configuration.
+3. `LoadWithConfig` function: Implements the core logic for loading content from GitHub, including URL parsing, commit resolution, and URL construction.
+4. Helper functions: `getCommit`, `getCommitLsRemote`, and `LoaderForPrefix` support the main loading process by handling commit resolution and creating custom loaders for GitHub Enterprise.
+
+### github_test.go
+This file contains unit tests for the GitHub loader functionality. It includes:
+
+1. `TestLoad`: Tests the `Load` function's ability to correctly parse and load GPT script files from public GitHub repositories.
+2. `TestLoad_GithubEnterprise`: Tests the `LoadWithConfig` function's ability to load GPT script files from a GitHub Enterprise instance, using a mock server to simulate the GitHub Enterprise API.
+
+## Dependencies
+The GitHub loader relies on the following external libraries and internal packages:
+
+1. Standard library packages: `context`, `crypto/tls`, `encoding/json`, `fmt`, `io`, `net/http`, `os`, `path`, `regexp`, `strings`
+2. Internal packages from the gptscript-ai/gptscript project: `cache`, `loader`, `mvl`, `repos/git`, `types`
+3. Testing libraries: `github.com/hexops/autogold/v2`, `github.com/stretchr/testify/assert`, `github.com/stretchr/testify/require`
+
+## Configuration
+The GitHub loader uses the following environment variables for configuration:
+
+1. `GITHUB_AUTH_TOKEN`: Authentication token for public GitHub
+2. `GH_ENTERPRISE_TOKEN`: Authentication token for GitHub Enterprise
+3. `GH_ENTERPRISE_SKIP_VERIFY`: When set to "true", skips TLS verification for GitHub Enterprise connections
+
+These environment variables allow for flexible configuration of authentication and security settings, especially when dealing with GitHub Enterprise instances.
+
+In summary, this directory provides a crucial component for the GPTScript project, enabling it to interact with GitHub repositories and load scripts directly from them. The implementation is flexible enough to handle both public GitHub and GitHub Enterprise setups, with comprehensive test coverage to ensure reliability.

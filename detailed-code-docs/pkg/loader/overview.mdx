@@ -1,0 +1,62 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/loader` directory contains the implementation of a loader system for the GPTScript project. This loader is responsible for fetching, parsing, and caching GPTScript programs and tools from various sources, including local files, remote URLs, GitHub repositories, and OpenAPI specifications.
+
+## What does it do?
+The loader package provides functionality to:
+
+1. Load GPTScript programs from different sources (local files, remote URLs, GitHub repositories).
+2. Parse and convert OpenAPI specifications (both v2 and v3) into GPTScript tool definitions.
+3. Cache loaded content to improve performance for frequently accessed resources.
+4. Handle authentication for GitHub and GitHub Enterprise repositories.
+5. Resolve references between tools and link them together.
+6. Support loading of default files when a directory is specified instead of a specific file.
+
+This system allows GPTScript to seamlessly integrate with various sources of scripts and API definitions, enabling users to reference and use tools stored in different locations and formats.
+
+## Entry points
+The main entry points for the loader package are:
+
+1. `Program` function in `loader.go`: Loads a GPTScript program from a given name or path.
+2. `ProgramFromSource` function in `loader.go`: Loads a GPTScript program from a given source content string.
+3. `ContentFromURL` function in `url.go`: Fetches content from a URL, optionally using caching.
+
+The flow of control typically starts with one of these functions and then proceeds through various helper functions to resolve, parse, and assemble the program or tools.
+
+## Key Files
+
+### loader.go
+Contains the core logic for loading and assembling GPTScript programs. It includes functions for resolving tool sources, parsing content, and linking tools together.
+
+### github/github.go
+Implements the GitHub loader, which handles fetching content from GitHub repositories, including authentication and commit resolution.
+
+### openapi.go
+Provides functionality to parse OpenAPI specifications and convert them into GPTScript tool definitions.
+
+### url.go
+Handles loading and caching of remote resources via URLs, including support for version control systems.
+
+## Dependencies
+The loader package relies on several external libraries and internal packages:
+
+1. `github.com/getkin/kin-openapi/openapi3`: For parsing OpenAPI specifications.
+2. `github.com/gptscript-ai/gptscript/pkg/cache`: For caching loaded content.
+3. `github.com/gptscript-ai/gptscript/pkg/types`: For common type definitions used in the project.
+4. `github.com/gptscript-ai/gptscript/pkg/parser`: For parsing GPTScript content.
+5. Standard library packages like `net/http`, `encoding/json`, and `crypto/tls`.
+
+## Configuration
+The loader system uses several environment variables for configuration:
+
+1. `GITHUB_AUTH_TOKEN`: Authentication token for public GitHub.
+2. `GH_ENTERPRISE_TOKEN`: Authentication token for GitHub Enterprise.
+3. `GH_ENTERPRISE_SKIP_VERIFY`: When set to "true", skips TLS verification for GitHub Enterprise connections.
+4. `GPTSCRIPT_OPENAPI_REVAMP`: When set to "true", enables a new OpenAPI parsing logic.
+
+These environment variables allow for flexible configuration of authentication, security settings, and feature flags.
+
+In summary, the `pkg/loader` directory provides a crucial component for the GPTScript project, enabling it to load and parse programs and tools from various sources. It handles the complexities of different file formats, remote resources, and API specifications, providing a unified interface for working with GPTScript content.

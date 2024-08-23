@@ -1,0 +1,76 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `cliconfig.go` file defines structures and functions for managing GPTScript CLI configuration, including authentication and credential storage. It provides functionality to read, write, and manipulate configuration data, with a focus on handling authentication for various tools and services.
+
+## Code Structure
+The main symbols in this code are:
+1. `AuthConfig`: A struct representing authentication configuration.
+2. `CLIConfig`: A struct holding the overall CLI configuration.
+3. `ReadCLIConfig`: A function to read and parse the CLI configuration file.
+
+These symbols are interconnected, with `CLIConfig` containing a map of `AuthConfig` instances. The `ReadCLIConfig` function creates and populates a `CLIConfig` struct.
+
+## Symbols
+
+### `AuthConfig`
+#### Description
+A struct that represents authentication configuration, derived from `types.AuthConfig`.
+
+#### Internal Logic
+- Implements custom `MarshalJSON` and `UnmarshalJSON` methods to handle encoding and decoding of authentication data.
+- Encodes username and password into a base64-encoded `Auth` field during marshaling.
+- Decodes the `Auth` field back into username and password during unmarshaling.
+
+### `CLIConfig`
+#### Description
+A struct that holds the overall CLI configuration, including authentication data and other settings.
+
+#### Internal Logic
+- Manages a map of `AuthConfig` instances for different server addresses.
+- Implements methods for sanitizing, saving, and retrieving authentication configurations.
+- Uses a mutex for thread-safe operations on the `auths` map.
+
+### `ReadCLIConfig`
+#### Description
+A function that reads and parses the CLI configuration file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| gptscriptConfigFile | string | Path to the configuration file |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *CLIConfig | *CLIConfig | Pointer to the parsed CLI configuration |
+| error | error | Error, if any occurred during reading or parsing |
+
+#### Internal Logic
+1. Determines the configuration file path based on input, environment variable, or default location.
+2. Reads the configuration file.
+3. Unmarshals the JSON data into a `CLIConfig` struct.
+4. Sets a default credential store if none is specified.
+5. Validates the credential store setting.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/base64 | For encoding/decoding authentication data |
+| encoding/json | For marshaling/unmarshaling JSON data |
+| github.com/adrg/xdg | For handling XDG Base Directory Specification |
+| github.com/docker/cli/cli/config/types | For Docker CLI configuration types |
+
+## Error Handling
+The code implements error checking and returns errors for various scenarios, such as file reading failures, JSON unmarshaling errors, and invalid credential store settings.
+
+## Configuration
+The code defines configuration options for credential stores based on the operating system:
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| CredentialsStore | string | OS-dependent | The credential store to use (e.g., "osxkeychain", "wincred", "secretservice") |
+
+## Performance Considerations
+The code uses a mutex (`authsLock`) to ensure thread-safe access to the `auths` map in the `CLIConfig` struct, which is important for concurrent operations on the configuration data.

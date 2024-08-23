@@ -1,0 +1,147 @@
+---
+title: "client.go"
+---
+
+Here's a high-level description and documentation of the `pkg/openai/client.go` file:
+
+## High-level description
+
+This file implements an OpenAI client for the GPTScript project. It provides functionality to interact with OpenAI's API, including making completion requests, listing models, and handling authentication. The client supports caching, custom base URLs, and various configuration options.
+
+## Code Structure
+
+The main symbols in the code are:
+
+1. `Client`: The primary struct that encapsulates the OpenAI client functionality.
+2. `Options`: A struct for configuring the client.
+3. `Complete`: A function for merging multiple `Options`.
+4. `NewClient`: A function for creating a new `Client` instance.
+5. Various methods on `Client` for interacting with the OpenAI API.
+
+The `Client` struct uses the `openai.Client` from the `github.com/gptscript-ai/chat-completion-client` package for making API calls. It also integrates with other parts of the GPTScript project, such as caching and credential management.
+
+## Symbols
+
+### `Client` struct
+
+#### Description
+The `Client` struct represents an OpenAI client with various configuration options and internal state.
+
+#### Internal Logic
+- Manages authentication state
+- Handles caching of API responses
+- Supports custom base URLs and API keys
+- Integrates with a credential store for managing API keys
+
+### `Options` struct
+
+#### Description
+The `Options` struct holds configuration options for creating a new `Client`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| BaseURL | string | Custom base URL for the OpenAI API |
+| APIKey | string | OpenAI API key |
+| OrgID | string | OpenAI organization ID |
+| DefaultModel | string | Default LLM model to use |
+| ConfigFile | string | Path to GPTScript config file |
+| SetSeed | bool | Whether to set a seed for reproducibility |
+| CacheKey | string | Custom cache key |
+| Cache | *cache.Client | Cache client instance |
+
+### `Complete` function
+
+#### Description
+Merges multiple `Options` instances, with later options taking precedence.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | ...Options | Variable number of Options instances |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Options | Merged Options instance |
+
+### `NewClient` function
+
+#### Description
+Creates a new `Client` instance with the given options and credential store.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| credStore | credentials.CredentialStore | Credential store for managing API keys |
+| opts | ...Options | Configuration options for the client |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Client | *Client | New Client instance |
+| error | error | Error, if any occurred during creation |
+
+### `Client.Call` method
+
+#### Description
+Makes a completion request to the OpenAI API.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| messageRequest | types.CompletionRequest | Request details |
+| status | chan&lt;- types.CompletionStatus | Channel for sending status updates |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *types.CompletionMessage | *types.CompletionMessage | Completion response |
+| error | error | Error, if any occurred during the call |
+
+#### Internal Logic
+1. Validates authentication
+2. Prepares the request, including handling context and system prompts
+3. Checks the cache for a previous response
+4. Makes the API call if not cached
+5. Processes and returns the response
+
+### `Client.ListModels` method
+
+#### Description
+Lists available models from the OpenAI API.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| providers | ...string | Optional list of providers to filter models |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []string | []string | List of available model names |
+| error | error | Error, if any occurred during the operation |
+
+## Dependencies
+The code relies on several external packages and internal GPTScript packages:
+
+- `github.com/gptscript-ai/chat-completion-client`: For the underlying OpenAI API client
+- `github.com/gptscript-ai/gptscript/pkg/cache`: For caching API responses
+- `github.com/gptscript-ai/gptscript/pkg/credentials`: For managing API keys
+- `github.com/gptscript-ai/gptscript/pkg/types`: For various type definitions
+
+## Error Handling
+The code includes custom error types (e.g., `InvalidAuthError`) and extensive error checking throughout the methods. Errors are propagated up the call stack and often include context about the operation that failed.
+
+## Configuration
+The client can be configured through the `Options` struct, which allows for customization of various parameters such as the API key, base URL, and default model. The `Complete` function provides a way to merge multiple `Options` instances, allowing for flexible configuration.
+
+## Performance Considerations
+- The client implements caching to reduce API calls for repeated requests
+- It supports setting a seed for reproducible results
+- The code uses goroutines for concurrent operations in some methods
+
+This documentation provides an overview of the main components and functionality of the OpenAI client implementation in the GPTScript project. For more detailed information about specific methods or behaviors, refer to the inline comments and method implementations in the source code.

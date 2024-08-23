@@ -1,0 +1,88 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This code defines a `Judge` struct and associated methods for comparing expected and actual values of a generic type `T`. It uses OpenAI's GPT-4 model to determine if the actual value is equivalent to the expected value based on specified criteria. The judge is designed to be flexible and can be used with various data types.
+
+## Code Structure
+The main symbol is the `Judge` struct, which contains a method `Equal` for comparing values. The `New` function creates and initializes a new `Judge` instance. The code also defines helper types like `comparison` and `ruling` for structuring the input and output of the GPT-4 model.
+
+## Symbols
+
+### `Judge[T any]`
+#### Description
+A generic struct that holds an OpenAI client and a comparison schema for judging equivalence between expected and actual values of type `T`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | *openai.Client | OpenAI client for making API calls |
+| comparisonSchema | string | JSON schema for the comparison object |
+
+### `New[T any]`
+#### Description
+Creates and initializes a new `Judge[T]` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | *openai.Client | OpenAI client for making API calls |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| judge | *Judge[T] | Initialized Judge instance |
+| err | error | Error, if any occurred during initialization |
+
+#### Internal Logic
+1. Generates a JSON schema for the `comparison[T]` struct using `openapi3gen`.
+2. Marshals the generated schema to a JSON string.
+3. Creates and returns a new `Judge[T]` instance with the client and marshaled schema.
+
+### `Equal`
+#### Description
+Compares expected and actual values of type `T` using the GPT-4 model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| expected | T | Expected value |
+| actual | T | Actual value |
+| criteria | string | Criteria for determining equivalence |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| equal | bool | Whether the values are considered equivalent |
+| reasoning | string | Explanation of the equivalence determination |
+| err | error | Error, if any occurred during the comparison |
+
+#### Internal Logic
+1. Marshals the comparison object (expected and actual values) to JSON.
+2. Constructs a chat completion request with instructions, comparison schema, and the marshaled comparison.
+3. Sends the request to the OpenAI API.
+4. Unmarshals the API response into a `ruling` struct.
+5. Returns the equivalence result and reasoning.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for cancellation and timeouts |
+| encoding/json | JSON encoding and decoding |
+| fmt | Formatting and error handling |
+| github.com/getkin/kin-openapi/openapi3gen | Generating OpenAPI schemas |
+| github.com/gptscript-ai/chat-completion-client | OpenAI API client |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are returned from functions and methods when they occur, with additional context added using `fmt.Errorf`.
+
+## API/Interface Reference
+The main public interface is the `Equal` method of the `Judge` struct:
+
+| Method | Inputs | Outputs | Description |
+|:-------|:-------|:--------|:------------|
+| Equal | ctx, expected, actual, criteria | equal, reasoning, err | Compares expected and actual values using GPT-4 |
+
+This interface allows for flexible comparison of various data types, with the comparison logic determined by the GPT-4 model based on the provided criteria.

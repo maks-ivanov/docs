@@ -1,0 +1,97 @@
+---
+title: "get.go"
+---
+
+## High-level description
+This code defines a `Manager` struct and associated methods for managing repositories and runtimes in the GPTScript project. It handles repository checkout, runtime setup, and credential helper management for various tools and environments.
+
+## Code Structure
+The main `Manager` struct interacts with different `Runtime` implementations to set up and manage tool environments. It uses a file-based caching mechanism to store setup states and avoid redundant operations. The code also includes credential helper management and Git operations.
+
+## Symbols
+
+### `Runtime` interface
+#### Description
+Defines the interface for different runtime environments that can be used to set up and run tools.
+
+#### Methods
+- `ID()`: Returns the runtime identifier.
+- `Supports(tool types.Tool, cmd []string) bool`: Checks if the runtime supports a given tool and command.
+- `Binary(ctx context.Context, tool types.Tool, dataRoot, toolSource string, env []string) (bool, []string, error)`: Handles binary-based tool setup.
+- `Setup(ctx context.Context, tool types.Tool, dataRoot, toolSource string, env []string) ([]string, error)`: Sets up the runtime environment for a tool.
+- `GetHash(tool types.Tool) (string, error)`: Generates a hash for the tool configuration.
+
+### `Manager` struct
+#### Description
+Manages repository checkouts, runtime setups, and credential helpers.
+
+#### Fields
+- `storageDir`: Root directory for storing repository data.
+- `gitDir`: Directory for Git repositories.
+- `runtimeDir`: Directory for runtime-specific data.
+- `credHelperDirs`: Directories for credential helpers.
+- `runtimes`: Slice of available runtimes.
+- `credHelperConfig`: Configuration for credential helpers.
+
+### `Manager.New(cacheDir string, runtimes ...Runtime) *Manager`
+#### Description
+Creates a new Manager instance with the specified cache directory and runtimes.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cacheDir | string | Base directory for caching |
+| runtimes | ...Runtime | Variable number of Runtime implementations |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Manager | *Manager | Pointer to the new Manager instance |
+
+### `Manager.EnsureCredentialHelpers(ctx context.Context) error`
+#### Description
+Ensures that credential helpers are set up correctly.
+
+### `Manager.SetUpCredentialHelpers(_ context.Context, cliCfg *config.CLIConfig) error`
+#### Description
+Initializes the credential helper configuration.
+
+### `Manager.GetContext(ctx context.Context, tool types.Tool, cmd, env []string) (string, []string, error)`
+#### Description
+Sets up the context for running a tool, including working directory and environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| tool | types.Tool | Tool to set up |
+| cmd | []string | Command to run |
+| env | []string | Initial environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Working directory |
+| []string | []string | Updated environment variables |
+| error | error | Any error encountered |
+
+## Dependencies
+- `github.com/BurntSushi/locker`
+- `github.com/gptscript-ai/gptscript/pkg/config`
+- `github.com/gptscript-ai/gptscript/pkg/credentials`
+- `github.com/gptscript-ai/gptscript/pkg/env`
+- `github.com/gptscript-ai/gptscript/pkg/hash`
+- `github.com/gptscript-ai/gptscript/pkg/repos/git`
+- `github.com/gptscript-ai/gptscript/pkg/repos/runtimes/golang`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where appropriate. It also includes some error logging using a `log` package (not shown in the provided code).
+
+## Logging
+The code uses a `log` package for debugging and information logging, particularly in the credential helper setup process.
+
+## Performance Considerations
+- The code uses file-based caching to avoid redundant setup operations.
+- It implements locking mechanisms to ensure thread-safety when setting up environments.
+- The credential helper setup checks for updates only once every 24 hours to reduce unnecessary network operations.

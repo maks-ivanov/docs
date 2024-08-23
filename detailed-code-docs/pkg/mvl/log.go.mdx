@@ -1,0 +1,143 @@
+---
+title: "log.go"
+---
+
+## High-level description
+This code defines a minimally viable logger package named `mvl` that provides a simple logging interface. It uses the `logrus` library for logging implementation and offers customizable formatting, log levels, and context-aware logging capabilities.
+
+## Code Structure
+The package defines a `Logger` struct and several utility functions for creating and configuring loggers. The main components are the `formatter` struct for custom log formatting, the `Logger` struct for actual logging operations, and various helper functions for setting up and using the logger.
+
+## Symbols
+
+### `SetSimpleFormat`
+#### Description
+Sets a simple log format with an option to truncate long outputs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| trunc | bool | Whether to truncate long outputs |
+
+#### Internal Logic
+Creates a new `formatter` instance and sets it as the logrus formatter.
+
+### `formatter`
+#### Description
+A custom formatter for log entries that includes various fields in a specific format.
+
+#### Internal Logic
+Formats log entries by including fields like input, output, request, response, etc., in a specific string format. It can truncate long outputs if configured.
+
+### `SetDebug`
+#### Description
+Sets the logger to debug level and uses JSON formatting.
+
+#### Internal Logic
+Sets the logrus formatter to JSONFormatter and the log level to DebugLevel.
+
+### `SetError`
+#### Description
+Sets the logger to error level.
+
+#### Internal Logic
+Sets the logrus log level to ErrorLevel.
+
+### `Package`
+#### Description
+Creates a new logger with the package name derived from the caller's location.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | Logger | A new Logger instance |
+
+#### Internal Logic
+Uses runtime.Caller to get the caller's file path, extracts the package name, and creates a new Logger with it.
+
+### `NewWithFields`
+#### Description
+Creates a new Logger with predefined fields.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| fields | logrus.Fields | Predefined fields for the logger |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | Logger | A new Logger instance |
+
+### `NewWithID`
+#### Description
+Creates a new Logger with an "id" field.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | ID to be used as a field in the logger |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | Logger | A new Logger instance |
+
+### `New`
+#### Description
+Creates a new Logger with an optional name.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | Name to be used as a "logger" field |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | Logger | A new Logger instance |
+
+### `SetOutput`
+#### Description
+Sets the output destination for the logger.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| out | io.Writer | The output destination |
+
+### `Logger`
+#### Description
+The main struct for logging operations, wrapping a logrus.Logger and additional fields.
+
+#### Internal Logic
+Provides methods for logging at different levels (Info, Error, Debug, etc.) and for adding fields to log entries.
+
+### `WithInfo`
+#### Description
+Adds an InfoLogger to the context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context to add the logger to |
+| logger | InfoLogger | The logger to be added |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | context.Context | A new context with the logger added |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/sirupsen/logrus | Underlying logging library |
+
+## Error Handling
+The package doesn't implement specific error handling mechanisms beyond what's provided by the logrus library.
+
+## Logging
+This entire package is dedicated to logging. It provides various logging levels (Debug, Info, Error, etc.) and allows for structured logging with fields.
+
+## Performance Considerations
+The package includes an option to truncate long outputs in the formatter, which can help manage log size and performance for verbose logs.

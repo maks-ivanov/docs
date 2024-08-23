@@ -1,0 +1,89 @@
+---
+title: "chat.go"
+---
+
+## High-level description
+The `chat.go` file implements a chat interface for the GPTScript system. It defines structures and functions to manage interactive conversations with AI models, handle user inputs, and process responses.
+
+## Code Structure
+The code defines interfaces `Prompter` and `Chatter`, and implements the main `Start` function which orchestrates the chat loop. It uses these interfaces along with other types like `ChatState` and `ChatResponse` to manage the conversation flow.
+
+## Symbols
+
+### `Prompter` interface
+#### Description
+Defines methods for reading input, printing output, setting prompts, and closing the prompter.
+
+#### Methods
+- `Readline() (string, bool, error)`
+- `Printf(format string, args ...interface{}) (int, error)`
+- `SetPrompt(p string)`
+- `Close() error`
+
+### `Chatter` interface
+#### Description
+Defines a method for conducting a chat interaction.
+
+#### Methods
+- `Chat(ctx context.Context, prevState runner.ChatState, prg types.Program, env []string, input string) (resp runner.ChatResponse, err error)`
+
+### `GetProgram` type
+#### Description
+A function type that returns a `types.Program` and an error.
+
+### `getPrompt` function
+#### Description
+Generates a prompt string based on the program and chat response.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prg | types.Program | The program being executed |
+| resp | runner.ChatResponse | The chat response |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prompt | string | The generated prompt string |
+
+### `Start` function
+#### Description
+The main function that starts and manages the chat loop.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the chat session |
+| prevState | runner.ChatState | The previous chat state |
+| chatter | Chatter | The chatter interface implementation |
+| prg | GetProgram | Function to get the program |
+| env | []string | Environment variables |
+| startInput | string | Initial input for the chat |
+| chatStateSaveFile | string | File to save chat state |
+
+#### Internal Logic
+1. Initialize the prompter
+2. Enter a loop to handle chat interactions
+3. Get the program and set the prompt
+4. Read input from the user or use the start input
+5. Call the chatter's Chat method
+6. Handle the response, including saving state and printing output
+7. Update the previous state and response for the next iteration
+
+## Side Effects
+- Writes to the console for user interaction
+- May write to a file if `chatStateSaveFile` is specified
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling context in asynchronous operations |
+| os | For file operations and environment variables |
+| github.com/fatih/color | For colored console output |
+| github.com/gptscript-ai/gptscript/pkg/runner | For chat-related types and functions |
+| github.com/gptscript-ai/gptscript/pkg/types | For program-related types |
+
+## Error Handling
+The function returns errors for various failure scenarios, such as initialization errors or chat interaction errors.
+
+This code implements a flexible chat interface that can be used with different prompters and chatters, allowing for customization of the chat experience while maintaining a consistent flow of conversation.

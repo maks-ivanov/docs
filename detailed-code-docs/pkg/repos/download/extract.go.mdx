@@ -1,0 +1,57 @@
+---
+title: "extract.go"
+---
+
+## High-level description
+This code defines a package `download` that provides functionality to download and extract files from a URL. The main function `Extract` downloads a file from a given URL, verifies its integrity using a SHA256 digest, and extracts its contents to a specified target directory.
+
+## Code Structure
+The `Extract` function is the main entry point of this package. It uses various standard library packages and a third-party archiver package to handle the download, verification, and extraction process.
+
+## Symbols
+
+### `Extract`
+#### Description
+This function downloads a file from a given URL, verifies its integrity, and extracts its contents to a specified target directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| downloadURL | string | The URL to download the file from |
+| digest | string | The expected SHA256 digest of the downloaded file |
+| targetDir | string | The directory where the contents should be extracted |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | An error if any step of the process fails |
+
+#### Internal Logic
+1. Remove the target directory if it exists
+2. Create the target directory
+3. Create a temporary file for downloading
+4. Download the file from the URL
+5. Calculate the SHA256 digest of the downloaded file
+6. Verify the calculated digest matches the expected digest
+7. Determine if the downloaded file is an executable or an archive
+8. If it's an executable, copy it to the target directory
+9. If it's an archive, extract its contents to the target directory
+10. Handle various file types (directories, symlinks, regular files) during extraction
+11. Set appropriate permissions and timestamps for extracted files
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/mholt/archiver/v4 | Used for archive extraction |
+
+## Error Handling
+The function returns an error if any step of the process fails, including directory creation, file download, digest verification, or extraction.
+
+## Performance Considerations
+- The function uses `io.TeeReader` to calculate the digest while downloading, which avoids reading the file twice.
+- It uses a temporary file for downloading, which helps manage memory usage for large files.
+
+## Side Effects
+- Creates and removes directories and files on the local filesystem
+- Downloads files from the internet

@@ -1,0 +1,64 @@
+---
+title: "busybox_test.go"
+---
+
+## High-level description
+This file contains a unit test for the `Runtime` struct in the `busybox` package. The test checks if the `Setup` method of the `Runtime` struct correctly sets up the busybox environment on non-Windows systems.
+
+## Symbols
+
+### `firstPath`
+#### Description
+This function extracts the first path from a slice of environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s | []string | A slice of strings representing environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The first path extracted from the input |
+
+#### Internal Logic
+1. Takes the first element of the input slice
+2. Splits it by "=" and takes the second part (the value)
+3. Splits the value by the OS-specific path separator and returns the first element
+
+### `TestRuntime`
+#### Description
+This function tests the `Setup` method of the `Runtime` struct for non-Windows systems.
+
+#### Internal Logic
+1. Skips the test if the operating system is Windows
+2. Creates a new `Runtime` instance
+3. Calls the `Setup` method with test parameters
+4. Checks if the `busybox.exe` or `busybox` file exists in the expected location
+5. Asserts that no errors occurred during the setup and file checking process
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for cancellation and timeouts |
+| errors | Used for error handling and comparison |
+| io/fs | Provides file system-related functionality |
+| os | Used for environment variables and file operations |
+| path/filepath | Used for file path manipulations |
+| runtime | Used to check the operating system |
+| strings | Used for string manipulation |
+| testing | Provides testing framework |
+| github.com/adrg/xdg | Used for XDG Base Directory Specification |
+| github.com/gptscript-ai/gptscript/pkg/types | Provides custom types |
+| github.com/samber/lo | Provides utility functions |
+| github.com/stretchr/testify/require | Provides assertion functions for testing |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| testCacheHome | string | (dynamically set) | The cache directory used for testing |
+
+## Notes
+- The test is skipped on Windows systems, indicating that this test is specifically for non-Windows environments.
+- The test checks for both `busybox.exe` and `busybox` files, suggesting cross-platform compatibility.
+- The use of `xdg.CacheFile` indicates adherence to the XDG Base Directory Specification for determining cache locations.

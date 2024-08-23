@@ -1,0 +1,90 @@
+---
+title: "parallel.go"
+---
+
+## High-level description
+This code defines interfaces and implementations for dispatching and running functions concurrently or serially. It provides two types of dispatchers: a serial dispatcher that runs functions sequentially, and a parallel dispatcher that runs functions concurrently using Go's errgroup package.
+
+## Code Structure
+The code defines an interface `dispatcher` with two methods: `Run` and `Wait`. Two structs, `serialDispatcher` and `parallelDispatcher`, implement this interface, providing different execution strategies for running functions.
+
+## Symbols
+
+### `dispatcher`
+#### Description
+An interface that defines the contract for dispatchers, with methods to run functions and wait for their completion.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Run | func(func(context.Context) error) | Method to run a function |
+| Wait | func() error | Method to wait for completion and return any error |
+
+### `serialDispatcher`
+#### Description
+Implements the `dispatcher` interface for serial execution of functions.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for function execution |
+
+#### Internal Logic
+- Stores the context and any error that occurs during function execution.
+- `Run` method executes functions sequentially, stopping if an error occurs.
+- `Wait` method returns the stored error, if any.
+
+### `newSerialDispatcher`
+#### Description
+Creates and returns a new `serialDispatcher` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for function execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | *serialDispatcher | A new serial dispatcher instance |
+
+### `parallelDispatcher`
+#### Description
+Implements the `dispatcher` interface for parallel execution of functions using errgroup.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for function execution |
+| eg | *errgroup.Group | The errgroup for managing concurrent execution |
+
+#### Internal Logic
+- Uses errgroup to manage concurrent execution of functions.
+- `Run` method launches each function in a separate goroutine.
+- `Wait` method waits for all functions to complete and returns any error.
+
+### `newParallelDispatcher`
+#### Description
+Creates and returns a new `parallelDispatcher` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for function execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | *parallelDispatcher | A new parallel dispatcher instance |
+
+#### Internal Logic
+Creates a new errgroup with the given context and initializes a parallelDispatcher with it.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling cancellation and deadlines |
+| golang.org/x/sync/errgroup | For managing groups of goroutines |
+
+## Error Handling
+Error handling is managed through the `Wait` method of both dispatcher types. For the `serialDispatcher`, it returns the first error encountered during sequential execution. For the `parallelDispatcher`, it relies on errgroup's error handling, which returns the first non-nil error from any of the goroutines.

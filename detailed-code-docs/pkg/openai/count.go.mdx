@@ -1,0 +1,60 @@
+---
+title: "count.go"
+---
+
+## High-level description
+This code provides functionality to manage and count tokens in chat completion messages for OpenAI's API. It includes two main functions: `dropMessagesOverCount` to trim messages that exceed a token limit, and `countMessage` to estimate the token count of a single message.
+
+## Symbols
+
+### `dropMessagesOverCount`
+#### Description
+This function trims a list of chat completion messages to fit within a specified token budget. It preserves system messages and prioritizes recent messages.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| maxTokens | int | The maximum number of tokens allowed |
+| msgs | []openai.ChatCompletionMessage | The list of chat completion messages |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | []openai.ChatCompletionMessage | The trimmed list of messages |
+
+#### Internal Logic
+1. Initialize variables for tracking system messages, budget, and messages within budget.
+2. Set the budget to either 3 times the `maxTokens` or 300,000 if `maxTokens` is 0.
+3. Preserve all system messages at the beginning of the list.
+4. Iterate through messages from the end, counting tokens until the budget is exceeded.
+5. If all non-system messages would be dropped, return the original list.
+6. Return a new list with preserved system messages and messages within the budget.
+
+### `countMessage`
+#### Description
+This function estimates the token count of a single chat completion message by summing the lengths of various components and dividing by 3.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| msg | openai.ChatCompletionMessage | The message to count |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| count | int | The estimated token count |
+
+#### Internal Logic
+1. Sum the lengths of the message's role and content.
+2. Add lengths of text in MultiContent.
+3. Add lengths of function names and arguments in ToolCalls.
+4. Add length of ToolCallID.
+5. Divide the total by 3 to estimate the token count.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/gptscript-ai/chat-completion-client | Provides the OpenAI chat completion client and related types |
+
+## Performance Considerations
+The `countMessage` function uses a simple heuristic (dividing by 3) to estimate token count, which may not be accurate for all cases but is likely faster than precise counting.

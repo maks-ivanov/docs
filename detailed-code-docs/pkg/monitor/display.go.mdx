@@ -1,0 +1,109 @@
+---
+title: "display.go"
+---
+
+## High-level description
+This code defines a `Console` struct and related functions for monitoring and displaying the execution of a GPTScript program. It provides functionality to track and log various events during the execution, manage the state of calls, and handle the output of the program.
+
+## Code Structure
+The main components of this code are:
+1. `Console` struct: Manages the overall monitoring process.
+2. `display` struct: Handles the detailed tracking and display of events.
+3. `livePrinter` struct: Manages real-time printing of progress information.
+4. Various helper types and functions for formatting and managing the execution state.
+
+These components work together to provide a comprehensive monitoring and logging system for GPTScript execution.
+
+## Symbols
+
+### `Complete`
+#### Description
+This function completes the `Options` struct by merging multiple option sets.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | ...Options | Variable number of Options structs |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Options | Merged Options struct |
+
+#### Internal Logic
+It iterates through the provided options, setting values in the result struct based on the first non-zero value encountered for each field.
+
+### `Console`
+#### Description
+The `Console` struct represents the main monitoring interface.
+
+#### Internal Logic
+It manages the overall state of the monitoring process, including dump state, message printing, and call locking.
+
+### `Start`
+#### Description
+Initializes a new monitoring session for a program run.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | context.Context | Context (unused) |
+| prg | *types.Program | Program to be monitored |
+| _ | []string | Environment variables (unused) |
+| input | string | Input for the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.Monitor | Interface | Initialized monitor |
+| error | Error | Any error encountered |
+
+#### Internal Logic
+Creates a new `display` instance, initializes it with the program details, and logs the start of the run.
+
+### `Event`
+#### Description
+Handles various events during the program execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| event | runner.Event | Event to be processed |
+
+#### Internal Logic
+Updates the internal state based on the event type, manages the call stack, and handles logging and display of event information.
+
+### `Stop`
+#### Description
+Finalizes the monitoring session and handles the program output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | context.Context | Context (unused) |
+| output | string | Program output |
+| err | error | Any error encountered |
+
+#### Internal Logic
+Logs the end of the run, records usage statistics, and optionally dumps the state to a file.
+
+## Side Effects
+- Writes to standard error for live progress updates.
+- Optionally writes state dump to a file.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/fatih/color | For colored output |
+| github.com/gptscript-ai/gptscript/pkg/counter | For generating unique IDs |
+| github.com/gptscript-ai/gptscript/pkg/engine | For engine-related types and functions |
+| github.com/gptscript-ai/gptscript/pkg/runner | For runner-related types and functions |
+| github.com/gptscript-ai/gptscript/pkg/types | For common types used in the project |
+
+## Error Handling
+The code uses error returns to propagate errors up the call stack. It also logs errors in some cases.
+
+## Logging
+The code uses a global `log` variable for logging, which is likely initialized elsewhere in the package.
+
+This documentation provides an overview of the main components and functionality of the `display.go` file. The code is quite extensive, so this summary focuses on the key aspects and main structures. For more detailed information about specific functions or methods, you may need to refer to the actual code or ask for more specific details.

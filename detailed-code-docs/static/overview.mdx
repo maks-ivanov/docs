@@ -1,0 +1,36 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This code defines an embedded filesystem containing UI-related files for a Go application. It uses the `embed` package to include static files directly into the compiled binary, making them accessible at runtime without external file dependencies.
+
+## Symbols
+
+### `UI`
+#### Description
+`UI` is a variable of type `embed.FS` (embedded filesystem) that contains the contents of all files in the current directory and the `ui/_nuxt/*` subdirectory. This allows the application to access these files at runtime without needing to distribute them separately from the binary.
+
+#### Inputs
+This symbol doesn't have explicit inputs as it's a variable declaration.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| UI | embed.FS | An embedded filesystem containing UI-related files |
+
+#### Internal Logic
+The `//go:embed * ui/_nuxt/*` directive tells the Go compiler to include all files from the current directory and the `ui/_nuxt/*` subdirectory into the `UI` variable as an embedded filesystem.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| embed | Provides functionality for embedding static files into the Go binary |
+
+## Performance Considerations
+Using embedded filesystems can increase the size of the compiled binary, as all embedded files are included in the executable. However, it improves deployment simplicity and ensures that required static files are always available to the application.
+
+## References
+The embedded filesystem defined here (`UI`) is likely used in other parts of the application to access UI-related files. The exact usage would depend on other parts of the codebase not shown here.
+
+While not directly related, the provided snippet from `pkg/embedded/embed.go` shows a pattern for optionally using embedded filesystems in the application, which might be relevant to how `UI` is utilized in the broader context of the application.

@@ -1,0 +1,127 @@
+---
+title: "monitor.go"
+---
+
+## High-level description
+This code defines a `SessionFactory` and `Session` struct for managing and monitoring the execution of GPTScript programs. It integrates with a broader system for running AI-powered tools and handles event broadcasting, program execution, and state management.
+
+## Code Structure
+The `SessionFactory` creates `Session` instances, which implement the `runner.Monitor` interface. The `Session` struct manages the execution state and broadcasts events related to program execution. The code interacts with other packages like `engine`, `runner`, and `gserver` to coordinate program execution and event handling.
+
+## Symbols
+
+### SessionFactory
+#### Description
+A factory struct that creates `Session` instances for monitoring program execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| events | *broadcaster.Broadcaster[event] | Event broadcaster for sending execution events |
+
+#### Internal Logic
+- Creates new `Session` instances with the provided event broadcaster
+
+### NewSessionFactory
+#### Description
+Constructor function for creating a new `SessionFactory`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| events | *broadcaster.Broadcaster[event] | Event broadcaster for sending execution events |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *SessionFactory | *SessionFactory | Newly created SessionFactory instance |
+
+### SessionFactory.Start
+#### Description
+Starts a new monitoring session for a program execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Execution context |
+| prg | *types.Program | Program to be executed |
+| env | []string | Environment variables |
+| input | string | Input for the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.Monitor | runner.Monitor | Monitor interface for the session |
+| error | error | Error, if any occurred during session creation |
+
+#### Internal Logic
+- Retrieves the run ID and tool category from the context
+- Broadcasts a run start event if the category is not `NoCategory`
+- Creates and returns a new `Session` instance
+
+### Session
+#### Description
+Represents a monitoring session for a program execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Unique identifier for the session |
+| prj | *types.Program | Program being executed |
+| env | []string | Environment variables |
+| events | *broadcaster.Broadcaster[event] | Event broadcaster |
+
+### Session.Event
+#### Description
+Broadcasts an event during program execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| e | runner.Event | Event to be broadcasted |
+
+#### Internal Logic
+- Locks the session to ensure thread-safety
+- Broadcasts the event with additional session information
+
+### Session.Stop
+#### Description
+Stops the monitoring session and broadcasts a finish event.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Execution context |
+| output | string | Final output of the program |
+| err | error | Error, if any occurred during execution |
+
+#### Internal Logic
+- Checks if the tool category is not `NoCategory`
+- Creates and broadcasts a run finish event with the output and any error
+
+### Session.Pause
+#### Description
+Pauses the session by acquiring a lock and returns a function to resume.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| func() | function | Function to resume the session |
+
+#### Internal Logic
+- Acquires the session lock
+- Returns a function that releases the lock when called
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling execution contexts |
+| sync | For synchronization primitives |
+| time | For timestamp handling |
+| github.com/gptscript-ai/broadcaster | For event broadcasting |
+| github.com/gptscript-ai/gptscript/pkg/engine | For program execution engine |
+| github.com/gptscript-ai/gptscript/pkg/runner | For program runner interfaces |
+| github.com/gptscript-ai/gptscript/pkg/server | For server-related utilities |
+| github.com/gptscript-ai/gptscript/pkg/types | For common type definitions |
+
+This code is part of a larger system for executing and monitoring AI-powered tools and scripts. It provides the necessary structures and methods to create monitoring sessions, handle events, and manage the execution state of programs within the GPTScript ecosystem.

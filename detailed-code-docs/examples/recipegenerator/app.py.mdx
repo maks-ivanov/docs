@@ -1,0 +1,84 @@
+---
+title: "app.py"
+---
+
+## High-level description
+This Flask application serves as a recipe generator that processes uploaded grocery images. It uses GPTScript to analyze the images, identify ingredients, and generate a recipe based on those ingredients. The app provides a web interface for users to upload images and receive recipe suggestions.
+
+## Code Structure
+The main components of this code are:
+1. Flask application setup
+2. File upload handling
+3. Recipe generation using GPTScript
+4. Error handling and response formatting
+
+## Symbols
+
+### Flask Application Setup
+#### Description
+Initializes the Flask application and sets up configuration variables.
+
+#### Internal Logic
+- Creates a Flask app instance
+- Sets the base directory and upload folder
+- Defines paths for the GPTScript and output files
+
+### `index()` function
+#### Description
+Renders the main page of the web application.
+
+#### Inputs
+None
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| HTML | string | Rendered HTML template for the index page |
+
+### `upload_file()` function
+#### Description
+Handles file uploads, processes images, generates a recipe, and returns the result.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| images | File | One or more image files uploaded by the user |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| JSON | dict | Contains either the generated recipe or an error message |
+
+#### Internal Logic
+1. Checks if files are present in the request
+2. Saves uploaded files with incrementing numbers (e.g., grocery1.png, grocery2.png)
+3. Executes the GPTScript to generate a recipe
+4. Reads the generated recipe from the output file
+5. Returns the recipe content as JSON
+6. Handles errors and returns appropriate error messages
+
+## Side Effects
+- Saves uploaded files to the server's file system
+- Executes an external GPTScript process
+- Creates and modifies files on the server (recipe.md)
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Flask | Web framework for the application |
+| subprocess | For executing the GPTScript |
+| os | For file and path operations |
+
+## Error Handling
+The code implements basic error handling:
+- Checks for missing files in the request
+- Handles exceptions during recipe generation
+- Returns appropriate HTTP status codes and error messages
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| / | GET | None | HTML | Renders the main page |
+| /upload | POST | Multipart form data with 'images' field | JSON | Processes uploaded images and returns a recipe |
+
+Note: This application is designed to be run in a development environment. For production use, additional security measures and optimizations would be necessary.

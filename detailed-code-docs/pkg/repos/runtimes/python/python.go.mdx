@@ -1,0 +1,137 @@
+---
+title: "python.go"
+---
+
+## High-level description
+This file defines the Python runtime for GPTScript. It provides functionality to set up and manage Python environments, install dependencies, and execute Python tools within the GPTScript ecosystem.
+
+## Code Structure
+The main symbol is the `Runtime` struct, which implements methods for setting up Python environments, installing dependencies, and managing the runtime. It interacts with other packages like `debugcmd`, `env`, `hash`, `download`, and `types` to provide its functionality.
+
+## Symbols
+
+### `Runtime`
+#### Description
+Represents a Python runtime environment with a specific version.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Version | string | The Python version (e.g., "3.12") |
+| Default | bool | Whether this is the default Python version |
+
+#### Internal Logic
+- Implements methods to support tool execution, environment setup, and dependency management.
+- Uses embedded release data to download and set up the appropriate Python version.
+- Manages virtual environments and package installation using `uv`.
+
+### `Runtime.ID()`
+#### Description
+Returns a unique identifier for the runtime.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ID | string | The runtime identifier (e.g., "python3.12") |
+
+### `Runtime.Supports(tool types.Tool, cmd []string) bool`
+#### Description
+Checks if the runtime supports a given tool and command.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to check |
+| cmd | []string | The command to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| supports | bool | Whether the runtime supports the tool and command |
+
+### `Runtime.Setup(ctx context.Context, tool types.Tool, dataRoot, toolSource string, env []string) ([]string, error)`
+#### Description
+Sets up the Python environment for a tool, including creating a virtual environment and installing dependencies.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the setup operation |
+| tool | types.Tool | The tool being set up |
+| dataRoot | string | The root directory for data storage |
+| toolSource | string | The source of the tool |
+| env | []string | The environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| newEnv | []string | The updated environment variables |
+| err | error | Any error that occurred during setup |
+
+#### Internal Logic
+1. Gets the runtime path
+2. Creates a virtual environment
+3. Installs dependencies using `uv pip`
+4. Sets up environment variables for the virtual environment
+
+### `Runtime.Binary(ctx context.Context, tool types.Tool, dataRoot, toolSource string, env []string) (bool, []string, error)`
+#### Description
+Placeholder method for binary execution (not implemented for Python runtime).
+
+### `Runtime.GetHash(tool types.Tool) (string, error)`
+#### Description
+Generates a hash for the tool based on its requirements file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to hash |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hash | string | The generated hash |
+| err | error | Any error that occurred |
+
+### `Runtime.getRuntime(ctx context.Context, cwd string) (string, error)`
+#### Description
+Downloads and sets up the Python runtime if not already present.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| cwd | string | The current working directory |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| binDir | string | The path to the Python binary directory |
+| err | error | Any error that occurred |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| embed | For embedded python.json |
+| encoding/json | JSON parsing and encoding |
+| errors | Error handling |
+| fmt | Formatted I/O |
+| io | I/O primitives |
+| io/fs | Filesystem operations |
+| os | Operating system functionality |
+| path/filepath | Filepath manipulations |
+| runtime | Go runtime information |
+| github.com/gptscript-ai/gptscript/pkg/debugcmd | Debug command execution |
+| github.com/gptscript-ai/gptscript/pkg/env | Environment variable handling |
+| github.com/gptscript-ai/gptscript/pkg/hash | Hashing functionality |
+| github.com/gptscript-ai/gptscript/pkg/repos/download | Downloading functionality |
+| github.com/gptscript-ai/gptscript/pkg/types | Common types |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where appropriate. It also uses the `errors.Is()` function to check for specific error types.
+
+## Logging
+The code uses a `log` variable for logging, which is likely initialized in another part of the package.
+
+## TODOs
+There are no explicit TODOs in the code.

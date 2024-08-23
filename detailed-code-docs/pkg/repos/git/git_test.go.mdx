@@ -1,0 +1,56 @@
+---
+title: "git_test.go"
+---
+
+## High-level description
+This file contains unit tests for Git operations in the `git` package. It tests the `fetch` and `Checkout` functions, which are responsible for fetching a specific commit from a Git repository and checking out that commit to a local directory.
+
+## Symbols
+
+### `TestFetch`
+#### Description
+This function tests the `fetch` operation, which retrieves a specific commit from a Git repository.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for reporting test failures |
+
+#### Internal Logic
+1. Calls the `fetch` function with a background context, test cache home directory, a GitHub repository URL, and a specific commit hash.
+2. Asserts that no error is returned from the `fetch` operation.
+
+### `TestCheckout`
+#### Description
+This function tests the `Checkout` operation, which checks out a specific commit to a local directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for reporting test failures |
+
+#### Internal Logic
+1. Constructs the path for the commit directory.
+2. Removes the commit directory if it exists.
+3. Calls the `Checkout` function with a background context, test cache home directory, a GitHub repository URL, the test commit hash, and the commit directory path.
+4. Asserts that no error is returned from the `Checkout` operation.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides the Context type for managing cancellation and deadlines |
+| os | Used for file system operations |
+| path/filepath | Used for manipulating file paths |
+| testing | Provides testing infrastructure |
+| github.com/adrg/xdg | Used to get the cache file path |
+| github.com/samber/lo | Provides utility functions (lo.Must) |
+| github.com/stretchr/testify/require | Provides assertion functions for testing |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| testCacheHome | string | (dynamically generated) | The cache directory path for testing |
+| testCommit | string | "f9d0ca6559d0b7c78da7f413fc4faf87ae9b8919" | The specific Git commit hash used for testing |
+
+## Error Handling
+The tests use `require.NoError(t, err)` to assert that no errors occur during the operations. If an error is returned, the test will fail.

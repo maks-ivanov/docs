@@ -1,0 +1,104 @@
+---
+title: "openapi.go"
+---
+
+## High-level description
+This code implements functionality for running OpenAPI tools within the GPTScript engine. It provides two main methods: `runOpenAPIRevamp` and `runOpenAPI`, which handle different aspects of OpenAPI operations such as listing, getting schemas, and executing API calls based on OpenAPI specifications.
+
+## Code Structure
+The main symbols in this code are methods of the `Engine` struct: `runOpenAPIRevamp` and `runOpenAPI`. These methods interact with the `openapi` package to perform various operations. The `runOpenAPI` method is the primary implementation, while `runOpenAPIRevamp` is an alternative implementation that can be enabled via an environment variable.
+
+## References
+This code references the following packages:
+- `github.com/gptscript-ai/gptscript/pkg/env`
+- `github.com/gptscript-ai/gptscript/pkg/openapi`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+- `github.com/tidwall/gjson`
+
+## Symbols
+
+### `runOpenAPIRevamp`
+#### Description
+This method is an alternative implementation for running OpenAPI tools. It supports three operations: listing tools, getting schemas, and running operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to be executed |
+| input | string | The input for the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Return | *Return | The result of the operation |
+| error | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Parse the tool instructions to extract command, source, and filter.
+2. Based on the command (list, getSchema, or run), perform the corresponding operation using the `openapi` package.
+3. Handle filtering of operations if a filter is specified.
+4. Return the result as a JSON string.
+
+### `runOpenAPI`
+#### Description
+This is the main method for running OpenAPI tools. It constructs and executes HTTP requests based on the OpenAPI specification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to be executed |
+| input | string | The input for the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Return | *Return | The result of the operation |
+| error | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Extract and parse the OpenAPI instructions from the tool.
+2. Construct an HTTP request based on the instructions, handling path parameters, query parameters, headers, and cookies.
+3. Handle authentication if required.
+4. Handle the request body based on the content type (JSON, plain text, or multipart form-data).
+5. Execute the HTTP request and return the response.
+
+#### Performance Considerations
+The method uses `http.DefaultClient` for making HTTP requests, which may not be optimal for high-performance scenarios. Consider using a custom HTTP client with appropriate timeout and connection pool settings for production use.
+
+### `ptr`
+#### Description
+A generic helper function that returns a pointer to the provided value.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | T | The value to create a pointer for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *T | *T | A pointer to the input value |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding and decoding |
+| net/http | Making HTTP requests |
+| net/url | URL parsing and manipulation |
+| github.com/tidwall/gjson | JSON parsing and querying |
+| github.com/gptscript-ai/gptscript/pkg/openapi | OpenAPI operations |
+| github.com/gptscript-ai/gptscript/pkg/types | Custom types |
+| github.com/gptscript-ai/gptscript/pkg/env | Environment variable handling |
+
+## Error Handling
+The code uses idiomatic Go error handling, returning errors when operations fail. It wraps errors with additional context using `fmt.Errorf` to provide more informative error messages.
+
+## Configuration
+The code checks for an environment variable `GPTSCRIPT_OPENAPI_REVAMP` to determine whether to use the revamped OpenAPI implementation.
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| GPTSCRIPT_OPENAPI_REVAMP | string | "false" | If set to "true", uses the revamped OpenAPI implementation |
+
+## TODOs
+There are no explicit TODOs in the code.

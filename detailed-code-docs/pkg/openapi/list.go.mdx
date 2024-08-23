@@ -1,0 +1,90 @@
+---
+title: "list.go"
+---
+
+## High-level description
+This code defines functionality for listing and filtering operations from an OpenAPI specification. It provides structures and functions to extract operation information and filter operations based on user-defined criteria.
+
+## Code Structure
+The code defines two main structures: `OperationList` and `Operation`. The primary function `List` processes an OpenAPI specification and filters operations based on a given filter string. The `MatchFilters` function is used to support wildcard matching for operation IDs.
+
+## Symbols
+
+### `OperationList`
+#### Description
+A structure that holds a map of operations, where the key is the operation ID and the value is an `Operation` struct.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Operations | map[string]Operation | A map of operation IDs to Operation structs |
+
+### `Operation`
+#### Description
+A structure that represents an individual operation in the OpenAPI specification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Description | string | The description of the operation |
+| Summary | string | A summary of the operation |
+
+### `List`
+#### Description
+This function processes an OpenAPI specification and filters operations based on a given filter string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *openapi3.T | A pointer to the OpenAPI specification |
+| filter | string | A filter string to match against operation IDs |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| OperationList | OperationList | A list of filtered operations |
+| error | error | An error, if any occurred during processing |
+
+#### Internal Logic
+1. Iterate through all paths and operations in the OpenAPI specification.
+2. For each operation, check if it matches the given filter:
+   - If the filter is empty or "&lt;none&gt;", include all operations.
+   - If the filter contains a wildcard (*), use `MatchFilters` function.
+   - Otherwise, perform an exact match on the operation ID.
+3. If the operation matches, add it to the `operations` map.
+4. Return the `OperationList` containing all matched operations.
+
+### `MatchFilters`
+#### Description
+This function checks if an operation ID matches any of the given filter patterns, supporting wildcard matching.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filters | []string | A slice of filter patterns |
+| operationID | string | The operation ID to match against |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | True if the operation ID matches any filter, false otherwise |
+| error | error | An error, if any occurred during matching |
+
+#### Internal Logic
+1. Iterate through each filter pattern.
+2. Use `filepath.Match` to check if the operation ID matches the current filter pattern.
+3. If a match is found, return true immediately.
+4. If no match is found after checking all filters, return false.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| path/filepath | Used for wildcard matching in `MatchFilters` function |
+| strings | Used for string manipulation and comparison |
+| github.com/getkin/kin-openapi/openapi3 | Provides OpenAPI v3 specification types and utilities |
+
+## Error Handling
+The code returns errors from the `MatchFilters` function if there's an issue with the filter pattern. These errors are propagated up to the caller of the `List` function.
+
+## Performance Considerations
+The `List` function iterates through all paths and operations in the OpenAPI specification, which could be potentially slow for very large specifications. The use of a map for storing matched operations ensures constant-time lookups and insertions.

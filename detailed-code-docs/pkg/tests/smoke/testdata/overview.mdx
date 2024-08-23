@@ -1,0 +1,98 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+This directory contains test data for smoke tests that simulate interactions between various AI models and a tool named "Bob". The test data is organized into two subdirectories: "Bob" and "BobAsShell", each containing JSON files that log the expected outputs from different AI models when given a specific task involving the Bob tool.
+
+## What does it do?
+
+The test data in this directory serves to verify the correct functioning and consistency of various AI models when interacting with external tools. The workflow captured in these logs typically follows this pattern:
+
+1. An AI model (e.g., Claude 3.5 Sonnet, GPT-4 Turbo, GPT-4o, or Mistral Large) is given a task to interact with the Bob tool.
+2. The AI model processes the instruction and decides to use the Bob tool.
+3. The Bob tool is invoked with a specific question.
+4. The AI model receives and processes Bob's response.
+5. The AI model generates a final output based on Bob's reply.
+
+This process is logged in detail, capturing every step from system initialization to the final output. The logs are used to ensure that each AI model behaves correctly and consistently when interacting with external tools across different model versions and providers.
+
+## Key Files
+
+Both the "Bob" and "BobAsShell" subdirectories contain four key JSON files, each corresponding to a different AI model:
+
+1. `claude-3-5-sonnet-20240620-expected.json`: Expected output for the Claude 3.5 Sonnet model.
+2. `gpt-4-turbo-2024-04-09-expected.json`: Expected behavior of the GPT-4 Turbo model.
+3. `gpt-4o-2024-05-13-expected.json`: Expected interaction for the GPT-4o model.
+4. `mistral-large-2402-expected.json`: Expected output for the Mistral Large model.
+
+These files contain detailed logs of the entire conversation flow, including run starts, API calls, tool invocations, and run completions.
+
+## Dependencies
+
+The test data relies on the following AI models and providers:
+
+1. Claude 3.5 Sonnet (20240620) from Anthropic
+2. GPT-4 Turbo (2024-04-09) from OpenAI
+3. GPT-4o (2024-05-13) from OpenAI
+4. Mistral Large (2402) from Mistral AI
+
+Provider references include:
+- `github.com/gptscript-ai/claude3-anthropic-provider` for Claude
+- `github.com/gptscript-ai/mistral-laplateforme-provider` for Mistral
+
+The "Bob" tool is a custom component used across all tests, simulating an external tool that the AI models interact with. In the "BobAsShell" subdirectory, Bob is specifically implemented as a shell script.
+
+## Configuration
+
+While there are no separate configuration files, each JSON log contains embedded configuration details within the event objects. These include:
+
+1. Model names and versions
+2. Available tools (primarily the "Bob" tool)
+3. System instructions or prompts
+4. Token usage limits
+
+For example, a typical configuration snippet looks like this:
+
+```json
+{
+  "time": "2024-06-20T12:00:00Z",
+  "type": "runStart",
+  "callContext": {
+    "model": "claude-3-5-sonnet-20240620",
+    "provider": "github.com/gptscript-ai/claude3-anthropic-provider",
+    "tools": [
+      {
+        "name": "bob",
+        "description": "Bob is a helpful assistant.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "question"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful AI assistant."
+      },
+      {
+        "role": "user",
+        "content": "Ask Bob how he's doing and repeat his reply exactly."
+      }
+    ]
+  }
+}
+```
+
+The main difference between the "Bob" and "BobAsShell" subdirectories is the implementation of the Bob tool. In "BobAsShell", Bob is specifically implemented as a shell script, which adds an extra layer of complexity to the test scenario by involving shell script execution.
+
+In summary, this directory provides comprehensive test data for verifying the behavior of various AI models when interacting with external tools. By comparing actual outputs against these expected results, developers can ensure the reliability and consistency of the system across different AI providers and tool implementations.

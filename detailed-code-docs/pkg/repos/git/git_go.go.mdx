@@ -1,0 +1,88 @@
+---
+title: "git_go.go"
+---
+
+## High-level description
+This code provides Git operations functionality using both pure Go implementation and external Git commands. It includes functions for checking out repositories, listing remote references, and determining whether to use the pure Go implementation or external Git commands.
+
+## Code Structure
+The code is structured around two main functions: `lsRemotePureGo` and `checkoutPureGo`, which implement Git operations using the go-git library. The `usePureGo` function determines whether to use the pure Go implementation or external Git commands.
+
+## Symbols
+
+### `usePureGo`
+#### Description
+Determines whether to use the pure Go implementation of Git operations or external Git commands.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return value | bool | True if pure Go implementation should be used, false otherwise |
+
+#### Internal Logic
+1. Checks if the environment variable `GPTSCRIPT_PURE_GO_GIT` is set to "true".
+2. Uses a `sync.Once` to ensure the check for external Git is performed only once.
+3. On macOS, checks if Xcode command-line tools are installed.
+4. On other platforms, checks if the `git` command is available in the system PATH.
+
+### `lsRemotePureGo`
+#### Description
+Lists remote references for a given Git repository and returns the hash of a specific reference.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | context.Context | Context (unused) |
+| repo | string | URL of the Git repository |
+| ref | string | Name of the reference to look for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Hash of the specified reference |
+| error | error | Error if any occurred during the operation |
+
+#### Internal Logic
+1. Creates a new in-memory remote for the given repository.
+2. Lists all references in the remote repository.
+3. Searches for the specified reference and returns its hash if found.
+
+### `checkoutPureGo`
+#### Description
+Clones a Git repository and checks out a specific commit using pure Go implementation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| _ | string | Unused parameter |
+| repo | string | URL of the Git repository |
+| commit | string | Commit hash to checkout |
+| toDir | string | Directory to clone the repository into |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Error if any occurred during the operation |
+
+#### Internal Logic
+1. Clones the repository into the specified directory without checking out any branch.
+2. Fetches the specific commit.
+3. Checks out the specified commit in the working directory.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/go-git/go-git/v5 | Pure Go implementation of Git |
+| os | Operating system functions |
+| os/exec | Execution of external commands |
+| runtime | Runtime information (GOOS) |
+| sync | Synchronization primitives |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are propagated up the call stack and wrapped with additional context using `fmt.Errorf`.
+
+## Logging
+The code uses a `log` package (not shown in the provided code) for logging information about the checkout process.
+
+This code provides a flexible approach to Git operations, allowing the use of either a pure Go implementation or external Git commands based on the environment and available tools. It's designed to work across different platforms and handle various Git operations efficiently.

@@ -1,0 +1,145 @@
+---
+title: ".goreleaser.yml"
+---
+
+## High-level description
+This `.goreleaser.yml` file configures GoReleaser, a tool for automating the build, release, and distribution process for Go projects. It defines the build settings, archive formats, changelog generation, and release process for the GPTScript CLI tool, including Homebrew formula creation.
+
+## Code Structure
+The YAML file is structured into several main sections, each configuring different aspects of the release process:
+- `builds`: Defines the build configurations for the GPTScript binary.
+- `universal_binaries`: Specifies the creation of a universal macOS binary.
+- `archives`: Configures how the built binaries are archived.
+- `changelog`: Sets up automatic changelog generation from GitHub.
+- `release`: Configures the GitHub release process.
+- `brews`: Defines the Homebrew formula creation and publication.
+
+## Symbols
+
+### version
+#### Description
+Specifies the configuration version for GoReleaser.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| version | integer | The version number of the GoReleaser configuration |
+
+### dist
+#### Description
+Specifies the directory where release artifacts will be stored.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dist | string | The name of the directory for release artifacts |
+
+### snapshot
+#### Description
+Configures the naming template for snapshot releases.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name_template | string | The template for naming snapshot releases |
+
+### builds
+#### Description
+Defines the build configurations for the GPTScript binary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Identifier for the build configuration |
+| binary | string | Name of the output binary |
+| env | list of strings | Environment variables for the build process |
+| goarch | list of strings | Target architectures for the build |
+| flags | list of strings | Additional build flags |
+| ldflags | list of strings | Linker flags for the build |
+
+### universal_binaries
+#### Description
+Specifies the creation of a universal macOS binary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Identifier for the universal binary |
+| ids | list of strings | IDs of builds to combine into a universal binary |
+| replace | boolean | Whether to replace the original builds with the universal binary |
+
+### archives
+#### Description
+Configures how the built binaries are archived.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| id | string | Identifier for the archive configuration |
+| builds | list of strings | IDs of builds to include in the archive |
+| name_template | string | Template for naming the archive files |
+| format_overrides | list of objects | Overrides for archive formats based on OS |
+
+### checksum
+#### Description
+Configures the generation of checksums for the release artifacts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name_template | string | Template for naming the checksum file |
+
+### changelog
+#### Description
+Sets up automatic changelog generation from GitHub.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| use | string | The source for changelog generation |
+| sort | string | The sorting order for changelog entries |
+| filters | object | Filters for excluding certain commit messages |
+
+### release
+#### Description
+Configures the GitHub release process.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| github | object | GitHub-specific release configuration |
+| prerelease | string | Configuration for prerelease behavior |
+
+### brews
+#### Description
+Defines the Homebrew formula creation and publication.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | Name of the Homebrew formula |
+| description | string | Description of the formula |
+| install | string | Installation instructions for the formula |
+| homepage | string | Homepage URL for the project |
+| skip_upload | boolean | Whether to skip uploading the formula |
+| directory | string | Directory to store the formula in the tap repository |
+| repository | object | Configuration for the Homebrew tap repository |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| GoReleaser | Automates the build and release process for Go projects |
+| GitHub | Used for release hosting and changelog generation |
+| Homebrew | Used for creating and publishing a Homebrew formula |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| CGO_ENABLED | integer | 0 | Disables CGO for the build process |
+| TAP_GITHUB_TOKEN | string | N/A | GitHub token for publishing to the Homebrew tap repository |
+
+## Error Handling
+This configuration file does not implement specific error handling mechanisms. Errors during the release process would be handled by GoReleaser itself.
+
+## API/Interface Reference
+This configuration file does not define an API or public interface. It is used to configure the GoReleaser tool for the GPTScript project's release process.

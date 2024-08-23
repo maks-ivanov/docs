@@ -1,0 +1,82 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains implementations of various runtime environments for the GPTScript project, including Busybox, Python, Node.js, and Go. These runtimes provide the necessary infrastructure to execute commands and run tools in different programming languages and environments within the GPTScript ecosystem.
+
+## What does it do?
+The runtimes in this directory enable the following functionalities:
+
+1. Busybox Runtime:
+   - Provides Unix-like shell commands on Windows systems.
+   - Downloads and installs the latest Busybox release if not present.
+   - Verifies package integrity using SHA256 checksums.
+   - Sets up the Busybox environment and adds it to the system PATH.
+
+2. Python Runtime:
+   - Sets up Python environments for versions 3.10, 3.11, and 3.12.
+   - Creates virtual environments for Python tools.
+   - Installs dependencies using the `uv` package manager.
+   - Manages downloads of pre-built standalone Python installations.
+
+3. Node.js Runtime:
+   - Sets up Node.js environments for specific versions.
+   - Manages npm package installations for tools.
+   - Configures environment variables for Node.js applications.
+   - Handles cross-platform compatibility for different OS and architectures.
+
+4. Go Runtime:
+   - Manages installation of specific Go versions.
+   - Sets up the Go environment, including PATH and other variables.
+   - Downloads and installs credential helpers for Git-based tools.
+   - Builds Go tools from source when necessary.
+
+5. Default Runtime Configuration:
+   - Provides a default configuration for all supported runtimes.
+   - Offers a function to create a new RuntimeManager with predefined runtimes.
+
+## Key Files
+
+1. `busybox/busybox.go`: Implements the Busybox runtime functionality.
+2. `python/python.go`: Contains the core implementation of the Python runtime.
+3. `node/node.go`: Implements the Node.js runtime functionality.
+4. `golang/golang.go`: Contains the main implementation of the Go runtime.
+5. `default.go`: Defines the default runtime configurations and provides a function to create a RuntimeManager.
+
+## Dependencies
+The runtimes rely on several external libraries and internal packages:
+
+1. Standard Go libraries: Various standard libraries for file operations, HTTP requests, and more.
+2. Internal GPTScript packages:
+   - `pkg/debugcmd`: For running commands with debug output.
+   - `pkg/env`: For environment variable management.
+   - `pkg/hash`: For hashing operations.
+   - `pkg/repos/download`: For downloading and extracting binaries.
+   - `pkg/types`: For common type definitions.
+   - `pkg/mvl`: For logging functionality.
+3. External libraries:
+   - `github.com/adrg/xdg`: For XDG Base Directory Specification.
+   - `github.com/samber/lo`: Provides utility functions.
+   - `github.com/stretchr/testify`: For testing assertions.
+
+## Configuration
+Each runtime uses specific configuration approaches:
+
+1. Busybox: Uses an embedded `SHASUMS256.txt` file for release information and checksums.
+2. Python: Utilizes a `python.json` file containing download URLs and SHA256 digests for standalone Python builds.
+3. Node.js: Configures based on specified Node.js versions and tool-specific requirements.
+4. Go: Uses environment variables like `GOROOT` and `PATH` for configuration.
+
+The `default.go` file provides a centralized configuration point for all runtimes, allowing easy management and initialization through a single `Default` function call.
+
+Example of creating a default RuntimeManager:
+
+```go
+cacheDir := "/path/to/cache"
+runtimeManager := Default(cacheDir)
+```
+
+This code creates a RuntimeManager with predefined configurations for Busybox, Python (versions 3.12, 3.11, 3.10), Node.js (version 20), and Go (version 1.23.0).
+
+In summary, the `pkg/repos/runtimes` directory provides a comprehensive set of runtime implementations that enable the GPTScript project to execute commands and tools across various programming languages and environments. These runtimes handle the complexities of version management, environment setup, and cross-platform compatibility, providing a flexible and robust foundation for the GPTScript ecosystem.

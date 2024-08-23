@@ -1,0 +1,60 @@
+---
+title: "builtin_test.go"
+---
+
+## High-level description
+This file contains unit tests for the builtin package in the GPTScript project. It specifically tests the `SysGetenv` function and ensures that all tools in the package can be displayed correctly.
+
+## Symbols
+
+### TestSysGetenv
+#### Description
+This function tests the `SysGetenv` function, which retrieves environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for running the test and making assertions |
+
+#### Internal Logic
+1. Sets up a progress tracker (discarded in this case).
+2. Tests retrieving an existing environment variable:
+   - Sets "MAGIC=VALUE" in the environment.
+   - Calls `SysGetenv` with a JSON input requesting the "MAGIC" variable.
+   - Verifies that the returned value is "VALUE".
+3. Tests retrieving a non-existent environment variable:
+   - Calls `SysGetenv` with a JSON input requesting the "MAGIC2" variable.
+   - Verifies that the returned value indicates the variable is not set.
+
+### TestDisplayCoverage
+#### Description
+This function tests the ability to display all tools in the builtin package.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object for running the test and making assertions |
+
+#### Internal Logic
+1. Iterates over all tools returned by `ListTools()`.
+2. For each tool, attempts to convert its ID to a display string using `types.ToSysDisplayString`.
+3. Verifies that no errors occur during this process.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for function calls |
+| testing | Provides testing framework |
+| github.com/gptscript-ai/gptscript/pkg/types | Used for type conversions |
+| github.com/hexops/autogold/v2 | Used for test assertions |
+| github.com/stretchr/testify/require | Used for test assertions |
+
+## Error Handling
+The tests use `require.NoError(t, err)` to ensure that no errors occur during the execution of the tested functions. If an error occurs, the test will fail.
+
+## References
+The tests reference the following functions from the builtin package:
+- `SysGetenv`: Used to retrieve environment variables.
+- `ListTools`: Used to get a list of all available tools.
+
+Additionally, it uses `types.ToSysDisplayString` from the types package to convert tool IDs to display strings.

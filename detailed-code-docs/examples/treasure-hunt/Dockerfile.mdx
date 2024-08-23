@@ -1,0 +1,71 @@
+---
+title: "Dockerfile"
+---
+
+## High-level description
+This Dockerfile defines the environment and configuration for a Python Flask application, specifically for a treasure hunt game. It sets up a lightweight Python 3.9 container, installs dependencies, copies the application code, and configures the Flask server to run the app.
+
+## Code Structure
+The Dockerfile follows a typical structure for building a Python application container:
+1. Base image selection
+2. Working directory setup
+3. Dependency installation
+4. Application code copying
+5. Port exposure
+6. Environment variable configuration
+7. Command to run the application
+
+## Symbols
+
+### FROM python:3.9-slim
+#### Description
+Specifies the base image for the Docker container, using the official Python 3.9 slim version.
+
+### WORKDIR /app
+#### Description
+Sets the working directory inside the container to `/app`.
+
+### COPY requirements.txt .
+#### Description
+Copies the `requirements.txt` file from the host to the current directory in the container.
+
+### RUN pip install --no-cache-dir -r requirements.txt
+#### Description
+Installs Python dependencies listed in `requirements.txt` without caching the downloaded packages.
+
+### COPY . .
+#### Description
+Copies all files from the current directory on the host to the working directory in the container.
+
+### EXPOSE 5000
+#### Description
+Informs Docker that the container will listen on port 5000 at runtime.
+
+### ENV FLASK_APP=app.py
+#### Description
+Sets the environment variable `FLASK_APP` to `app.py`, specifying the main application file for Flask.
+
+### ENV FLASK_DEBUG=False
+#### Description
+Sets the `FLASK_DEBUG` environment variable to `False`, disabling Flask's debug mode.
+
+### CMD ["flask", "run", "--host=0.0.0.0"]
+#### Description
+Specifies the command to run when the container starts, launching the Flask application and binding it to all network interfaces.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| Python 3.9 | Runtime environment for the application |
+| Flask | Web framework for the application (inferred from the use of `flask` command) |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| FLASK_DEBUG | Boolean | False | Enables/disables Flask debug mode |
+
+## Notes
+- The Dockerfile is designed for a production-like environment, with debugging disabled by default.
+- The application is set to listen on all network interfaces (`0.0.0.0`), making it accessible from outside the container.
+- Dependencies are installed from a `requirements.txt` file, which should be present in the same directory as the Dockerfile.
+- The main application file is expected to be named `app.py`.

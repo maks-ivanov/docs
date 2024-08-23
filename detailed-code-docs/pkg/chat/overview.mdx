@@ -1,0 +1,102 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/chat` directory contains the implementation of a chat interface for the GPTScript system. It provides functionality for managing interactive conversations with AI models, handling user inputs, and processing responses. The directory consists of two main files: `chat.go` and `readline.go`, which work together to create a flexible and feature-rich chat experience.
+
+## What does it do?
+This package enables users to interact with AI models through a command-line interface. It manages the flow of conversation by:
+
+1. Presenting a prompt to the user
+2. Reading user input
+3. Sending the input to an AI model for processing
+4. Displaying the AI's response
+5. Repeating the process for continuous interaction
+
+The system supports features like command history, line editing, and customizable prompts. It also handles saving and loading chat states, allowing for persistent conversations across sessions.
+
+## Entry points
+The main entry point for this package is the `Start` function in `chat.go`. This function orchestrates the entire chat process, including:
+
+- Initializing the chat environment
+- Managing the chat loop
+- Handling user input and AI responses
+- Saving chat states
+
+The `chat.go` file defines the core interfaces and structures, while `readline.go` provides the implementation for the command-line interface using the `readline` library.
+
+## Key Files
+
+1. `chat.go`:
+   - Defines the `Prompter` and `Chatter` interfaces
+   - Implements the `Start` function for managing the chat loop
+   - Handles chat state management and response processing
+
+2. `readline.go`:
+   - Implements the `readlinePrompter` struct, which provides the command-line interface
+   - Manages user input, command history, and prompt customization
+
+The data flow in this package typically follows this pattern:
+User Input -&gt; readlinePrompter -&gt; Start function -&gt; Chatter interface -&gt; AI model -&gt; Start function -&gt; Console output
+
+## Dependencies
+The package relies on several external libraries:
+
+1. `github.com/chzyer/readline` (version not specified):
+   - Provides advanced command-line input functionality
+   - Chosen for its features like command history and line editing
+
+2. `github.com/fatih/color` (version not specified):
+   - Enables colored console output
+   - Enhances the user interface with visual cues
+
+3. `github.com/adrg/xdg` (version not specified):
+   - Ensures compliance with XDG Base Directory specification
+   - Used for managing configuration and cache directories
+
+4. `github.com/gptscript-ai/gptscript/pkg/runner` (internal package):
+   - Provides chat-related types and functions
+
+5. `github.com/gptscript-ai/gptscript/pkg/types` (internal package):
+   - Defines program-related types
+
+6. `github.com/gptscript-ai/gptscript/pkg/hash` (internal package):
+   - Used for generating unique identifiers
+
+7. `github.com/gptscript-ai/gptscript/pkg/mvl` (internal package):
+   - Handles logging and output redirection
+
+## Configuration
+The package uses environment variables for configuration, which are passed to the `Start` function as the `env` parameter. Additionally, it supports a chat state save file, specified by the `chatStateSaveFile` parameter in the `Start` function.
+
+The `readlinePrompter` uses a history file to maintain command history across sessions. The path for this file is generated using the XDG cache directory and a hash of the program's entry tool ID.
+
+Key configurable aspects include:
+
+1. Chat state persistence:
+   ```go
+   chatStateSaveFile string
+   ```
+
+2. Environment variables:
+   ```go
+   env []string
+   ```
+
+3. Initial input for the chat:
+   ```go
+   startInput string
+   ```
+
+4. Readline configuration:
+   ```go
+   rl, err := readline.NewEx(&readline.Config{
+       Prompt:          "&gt; ",
+       HistoryFile:     historyFile,
+       InterruptPrompt: "^C",
+       EOFPrompt:       "exit",
+   })
+   ```
+
+The package is designed to be flexible and can be integrated into larger systems that require interactive chat functionality with AI models. It provides a solid foundation for building more complex chat-based applications within the GPTScript ecosystem.

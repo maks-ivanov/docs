@@ -1,0 +1,140 @@
+---
+title: "runner.go"
+---
+
+Here's a comprehensive documentation of the `pkg/runner/runner.go` file:
+
+## High-level description
+This file implements the core functionality for executing GPTScript programs. It defines the `Runner` struct, which manages the execution of tools and handles chat-based interactions. The runner coordinates between different components like the LLM model, credential management, and monitoring.
+
+## Code Structure
+The main symbols in the code are:
+- `Runner`: The central struct that manages program execution.
+- `MonitorFactory` and `Monitor`: Interfaces for creating and using monitoring capabilities.
+- `Options`: Configuration options for the Runner.
+- `AuthorizerFunc`: A function type for authorizing tool executions.
+- `ChatResponse`: Represents the response from a chat interaction.
+- Various event-related types and constants for tracking execution progress.
+
+The `Runner` uses the `MonitorFactory` to create `Monitor` instances for each execution. It interacts with an `engine.Model` for LLM operations and uses a `credentials.CredentialStore` for managing credentials.
+
+## Symbols
+
+### `Options`
+#### Description
+Defines configuration options for creating a `Runner`.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| MonitorFactory | MonitorFactory | Factory for creating monitors |
+| RuntimeManager | engine.RuntimeManager | Manager for runtime operations |
+| StartPort | int64 | Starting port for network operations |
+| EndPort | int64 | Ending port for network operations |
+| CredentialOverrides | []string | Overrides for credentials |
+| Sequential | bool | Whether to run operations sequentially |
+| Authorizer | AuthorizerFunc | Function for authorizing operations |
+
+### `Complete`
+#### Description
+Merges multiple `Options` instances, with later options taking precedence.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | ...Options | Variable number of Options to merge |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Options | Merged Options |
+
+### `Runner`
+#### Description
+The main struct responsible for executing GPTScript programs and managing chat interactions.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| c | engine.Model | The LLM model client |
+| auth | AuthorizerFunc | Function for authorizing operations |
+| factory | MonitorFactory | Factory for creating monitors |
+| runtimeManager | engine.RuntimeManager | Manager for runtime operations |
+| credMutex | sync.Mutex | Mutex for thread-safe credential operations |
+| credOverrides | []string | Credential overrides |
+| credStore | credentials.CredentialStore | Store for managing credentials |
+| sequential | bool | Whether to run operations sequentially |
+
+### `New`
+#### Description
+Creates a new `Runner` instance with the given configuration.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | engine.Model | The LLM model client |
+| credStore | credentials.CredentialStore | Store for managing credentials |
+| opts | ...Options | Configuration options |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Runner | *Runner | New Runner instance |
+| error | error | Error, if any |
+
+### `Chat`
+#### Description
+Executes a chat interaction with the given program and input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| prevState | ChatState | Previous chat state, if any |
+| prg | types.Program | The program to execute |
+| env | []string | Environment variables |
+| input | string | Input for the chat |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| resp | ChatResponse | The chat response |
+| err | error | Error, if any |
+
+### `Run`
+#### Description
+Executes a program with the given input and returns the output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| prg | types.Program | The program to execute |
+| env | []string | Environment variables |
+| input | string | Input for the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | The program output |
+| err | error | Error, if any |
+
+## Dependencies
+The code relies on several external packages and internal modules:
+- Standard Go libraries: `context`, `encoding/json`, `errors`, `fmt`, `sort`, `strings`, `sync`, `time`
+- Internal packages: `builtin`, `context2`, `credentials`, `engine`, `types`
+- External package: `golang.org/x/exp/maps`
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are propagated up the call stack and often wrapped with additional context using `fmt.Errorf`.
+
+## Logging
+The code doesn't implement explicit logging. However, the `Monitor` interface provides a mechanism for event tracking, which can be used for logging purposes.
+
+## Performance Considerations
+- The `sequential` field in `Runner` allows for controlling whether operations are executed sequentially or concurrently.
+- Credential operations are protected by a mutex to ensure thread safety.
+- The code uses goroutines for potential concurrent execution of sub-calls.
+
+## TODOs
+There are no explicit TODOs in the code.

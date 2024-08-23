@@ -1,0 +1,66 @@
+---
+title: "github_test.go"
+---
+
+## High-level description
+This file contains unit tests for the GitHub loader functionality in the gptscript project. It tests the ability to load GPT script files from GitHub repositories, including support for GitHub Enterprise configurations.
+
+## Symbols
+
+### `TestLoad`
+#### Description
+This function tests the `Load` function's ability to correctly parse and load GPT script files from GitHub repositories.
+
+#### Internal Logic
+1. Tests loading a tool script file:
+   - Calls `Load` with a GitHub URL for a tool script
+   - Verifies the returned URL, repository information, and success status
+2. Tests loading an agent script file:
+   - Repeats the process for an agent script
+3. Tests loading from a repository with both tool and agent scripts:
+   - Verifies that the correct script (agent.gpt) is loaded
+
+For each test case, it uses `autogold.Expect` to compare the actual results with expected values.
+
+### `TestLoad_GithubEnterprise`
+#### Description
+This function tests the `LoadWithConfig` function's ability to load GPT script files from a GitHub Enterprise instance.
+
+#### Internal Logic
+1. Sets up environment variables for GitHub Enterprise:
+   - Sets `GH_ENTERPRISE_SKIP_VERIFY` to "true"
+   - Sets `GH_ENTERPRISE_TOKEN` to a test token
+2. Creates a mock HTTP server to simulate GitHub Enterprise API:
+   - Responds to commit SHA requests
+3. Tests loading a tool script file from the mock GitHub Enterprise server:
+   - Calls `LoadWithConfig` with the mock server URL
+   - Verifies the returned URL, repository information, token, and success status
+4. Tests loading agent and both tool/agent scripts from the public GitHub:
+   - Calls `Load` with public GitHub URLs
+   - Verifies that the correct information is returned and no token is used
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for cancellation and request scoping |
+| fmt | String formatting |
+| net/http | HTTP client and server implementations |
+| net/http/httptest | Utilities for HTTP testing |
+| os | Operating system functionality, used for environment variables |
+| testing | Go testing framework |
+| github.com/gptscript-ai/gptscript/pkg/types | Custom types for the gptscript project |
+| github.com/hexops/autogold/v2 | Testing utility for comparing actual and expected values |
+| github.com/stretchr/testify/assert | Assertion functions for testing |
+| github.com/stretchr/testify/require | Required assertion functions for testing |
+
+## Error Handling
+The tests use `require.NoError(t, err)` to ensure that no errors occur during the loading process. If an error occurs, the test will fail immediately.
+
+## Configuration
+The tests set the following environment variables for GitHub Enterprise testing:
+| Option | Type | Value | Description |
+|:-------|:-----|:------|:------------|
+| GH_ENTERPRISE_SKIP_VERIFY | string | "true" | Skips SSL verification for GitHub Enterprise |
+| GH_ENTERPRISE_TOKEN | string | "mytoken" | Authentication token for GitHub Enterprise |
+
+These configurations are used to simulate a GitHub Enterprise environment for testing purposes.

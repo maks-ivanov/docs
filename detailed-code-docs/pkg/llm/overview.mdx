@@ -1,0 +1,45 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the implementation of a Language Model (LLM) client registry and proxy server for managing interactions with various LLM providers, primarily focusing on OpenAI's API. The code is designed to provide a flexible and extensible system for handling LLM requests, supporting multiple clients, and managing authentication and routing of API calls.
+
+## What does it do?
+The code in this directory accomplishes several key tasks:
+
+1. It manages a registry of LLM clients, allowing the system to interact with multiple LLM providers through a unified interface.
+2. It provides methods to list available models across all registered clients, supporting optional filtering by provider.
+3. It implements a proxy server that intercepts and forwards OpenAI API requests, handling authentication and client selection.
+4. It offers a mechanism to make calls to language models, automatically selecting the appropriate client based on the requested model.
+5. It includes optimizations for common scenarios to improve performance, such as fast-path client selection for specific models.
+6. It handles error scenarios, including special treatment for OpenAI authentication errors, prompting for API key retrieval when necessary.
+
+## Entry points
+The main entry points for this directory are:
+
+1. `Registry` struct in `registry.go`: This is the central component that manages LLM clients and provides methods for interacting with them. Developers would typically start by creating a new Registry using the `NewRegistry` function and then adding clients to it using the `AddClient` method.
+
+2. `ProxyInfo` method in `proxy.go`: This method sets up the proxy server for OpenAI API requests. It would be called to initialize the proxy functionality within the larger system.
+
+The data flow typically starts with either a request to list models or a call to a language model. These requests are processed by the Registry, which then delegates to the appropriate client. For OpenAI requests, the proxy server intercepts and forwards the requests to the actual OpenAI API.
+
+## Key Files
+1. `registry.go`: Contains the core `Registry` struct and associated methods for managing LLM clients, listing models, and making calls to language models. It also includes optimizations and error handling logic.
+
+2. `proxy.go`: Implements the proxy server functionality for OpenAI API requests, including request interception, authentication, and forwarding.
+
+## Dependencies
+The code relies on several internal packages from the `github.com/gptscript-ai/gptscript` module, as well as standard Go libraries. Key dependencies include:
+
+1. `net/http` and `net/http/httputil`: Used for HTTP server implementation and reverse proxy functionality.
+2. `github.com/gptscript-ai/gptscript/pkg/builtin`: Provides default model information.
+3. `github.com/gptscript-ai/gptscript/pkg/openai`: Implements the OpenAI client.
+
+## Configuration
+The code does not explicitly use configuration files, but it does rely on environment variables and runtime configuration:
+
+1. OpenAI API key: While not directly visible in the provided code, the system is designed to handle OpenAI authentication, suggesting that an API key is required and possibly stored in an environment variable.
+2. Proxy settings: The `ProxyInfo` method sets up a proxy server with a randomly assigned port, generating a proxy token and URL at runtime.
+
+In summary, this directory implements a flexible and extensible system for managing LLM clients, with a focus on OpenAI API integration. It provides a unified interface for interacting with multiple LLM providers, handles authentication and request routing, and includes optimizations for improved performance in common scenarios.

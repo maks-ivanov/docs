@@ -1,0 +1,108 @@
+---
+title: "readline.go"
+---
+
+## High-level description
+This code defines a `readlinePrompter` struct and its associated methods, which implement a command-line interface for user input in a chat-like application. It utilizes the `readline` library to provide features such as command history, line editing, and prompt customization.
+
+## Code Structure
+The main symbol is the `readlinePrompter` struct, which implements the `Prompter` interface. The `newReadlinePrompter` function creates and initializes a new instance of `readlinePrompter`. Other methods of `readlinePrompter` implement the required functionality for the `Prompter` interface.
+
+## Symbols
+
+### `readlinePrompter`
+#### Description
+A struct that encapsulates a `readline.Instance` to provide a command-line interface for user input.
+
+#### Internal Logic
+- Stores a pointer to a `readline.Instance`
+- Implements methods for reading input, printing output, and managing the prompt
+
+### `newReadlinePrompter`
+#### Description
+Creates and initializes a new `readlinePrompter` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prg | GetProgram | A function that returns the target program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *readlinePrompter | *readlinePrompter | A pointer to the newly created readlinePrompter |
+| error | error | An error if initialization fails |
+
+#### Internal Logic
+1. Calls the provided `prg` function to get the target program
+2. Generates a history file path using XDG cache directory and a hash of the program's entry tool ID
+3. Creates a new `readline.Instance` with custom configuration
+4. Sets up signal capture and output redirection
+5. Returns a new `readlinePrompter` instance
+
+### `Printf`
+#### Description
+Prints formatted output to the readline instance's stdout.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| format | string | Format string |
+| args | ...interface{} | Arguments for the format string |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| int | int | Number of bytes written |
+| error | error | Error if writing fails |
+
+### `Readline`
+#### Description
+Reads a line of input from the user.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The input line |
+| bool | bool | True if input was read successfully |
+| error | error | Error if reading fails |
+
+#### Internal Logic
+- Handles interrupt and EOF conditions
+- Trims whitespace from the input
+
+### `SetPrompt`
+#### Description
+Sets the prompt string for the readline instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| prompt | string | The new prompt string |
+
+### `Close`
+#### Description
+Closes the readline instance.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Error if closing fails |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/adrg/xdg | For XDG Base Directory specification compliance |
+| github.com/chzyer/readline | For readline functionality |
+| github.com/fatih/color | For colored output |
+| github.com/gptscript-ai/gptscript/pkg/hash | For generating unique identifiers |
+| github.com/gptscript-ai/gptscript/pkg/mvl | For logging and output redirection |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are propagated up the call stack and returned from functions that may fail.
+
+## Performance Considerations
+The use of a history file allows for persistent command history across sessions, which may have a small impact on I/O performance but greatly enhances user experience.
+
+## TODOs
+There are no explicit TODOs in the code.

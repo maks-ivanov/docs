@@ -1,0 +1,110 @@
+---
+title: "git.go"
+---
+
+## High-level description
+This code provides functionality for managing Git repositories, specifically for checking out specific commits to a directory. It includes operations like cloning, fetching, and checking out repositories, with support for both pure Go implementation and external Git commands.
+
+## Code Structure
+The main functions in this file (`Checkout`, `fetch`, `gitDir`) work together to manage Git repositories. The `exists` function is a utility used by other functions to check for directory existence. The code also references external functions (`checkoutPureGo`, `usePureGo`, `gitWorktreeAdd`, `cloneBare`, `fetchCommit`) that are likely defined in related files.
+
+## Symbols
+
+### `exists`
+#### Description
+Checks if a directory exists.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| dir | string | The directory path to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | True if the directory exists, false otherwise |
+| error | error | Any error encountered during the check |
+
+#### Internal Logic
+Uses `os.Stat` to check if the directory exists. Returns `false` if the directory doesn't exist, and `true` if it does. Any other errors are returned.
+
+### `Checkout`
+#### Description
+Checks out a specific commit of a repository to a target directory.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| base | string | The base directory for Git operations |
+| repo | string | The repository URL |
+| commit | string | The commit hash to checkout |
+| toDir | string | The target directory for the checkout |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error encountered during the checkout process |
+
+#### Internal Logic
+1. Checks if the target directory already exists.
+2. Creates the parent directory of the target if it doesn't exist.
+3. Determines whether to use pure Go implementation or external Git commands.
+4. Fetches the repository and commit.
+5. Checks out the specified commit to the target directory.
+
+### `gitDir`
+#### Description
+Generates the path for the Git directory based on the base path and repository URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| base | string | The base directory for Git operations |
+| repo | string | The repository URL |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The path to the Git directory |
+
+### `fetch`
+#### Description
+Fetches a specific commit from a repository, cloning it if necessary.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| base | string | The base directory for Git operations |
+| repo | string | The repository URL |
+| commit | string | The commit hash to fetch |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error encountered during the fetch process |
+
+#### Internal Logic
+1. Determines the Git directory path.
+2. Checks if the Git directory exists.
+3. If it doesn't exist, clones the repository.
+4. Fetches the specified commit.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling context in asynchronous operations |
+| fmt | For formatting and printing |
+| os | For file system operations |
+| path/filepath | For file path manipulations |
+| github.com/gptscript-ai/gptscript/pkg/hash | For generating a digest of the repository URL |
+
+## Error Handling
+The code uses Go's standard error handling mechanism, returning errors from functions when they occur. It also includes some custom error messages, such as when the target directory already exists.
+
+## Logging
+The code uses a `log` package (not shown in the provided code) for logging information about the Git operations being performed.
+
+## TODOs
+There are no explicit TODOs in the provided code.

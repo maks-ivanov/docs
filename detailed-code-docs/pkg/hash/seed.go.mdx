@@ -1,0 +1,48 @@
+---
+title: "seed.go"
+---
+
+## High-level description
+This code defines a `Seed` function in the `hash` package that generates a deterministic integer hash value for any given input. It uses JSON encoding and the FNV-1a hash algorithm to create a consistent seed value from various input types.
+
+## Symbols
+
+### `Seed`
+#### Description
+The `Seed` function takes any input and returns an integer hash value. It achieves this by first encoding the input as JSON and then applying the FNV-1a hash algorithm to the encoded data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input | any | The value to be hashed. Can be of any type that is JSON-encodable. |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | int | The resulting 32-bit hash value, converted to an int. |
+
+#### Internal Logic
+1. Create a new 32-bit FNV-1a hash object.
+2. Create a JSON encoder that writes to the hash object.
+3. Encode the input as JSON, writing directly to the hash object.
+4. If encoding fails, panic with the error.
+5. Compute the final 32-bit hash value and convert it to an int.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | Used to encode the input into JSON format |
+| hash/fnv | Provides the FNV-1a hash algorithm implementation |
+
+## Error Handling
+The function panics if it encounters an error during JSON encoding. This approach assumes that JSON encoding should always succeed for valid inputs, and any failure is considered a critical error.
+
+## Performance Considerations
+1. The function uses FNV-1a, which is generally fast and has good distribution properties for most use cases.
+2. JSON encoding may introduce some overhead, especially for complex structures. However, it provides a consistent way to handle various input types.
+3. The function allocates a new hash object for each call, which could be inefficient for high-frequency use cases.
+
+## Side Effects
+The function may panic if the input cannot be JSON encoded, which could potentially terminate the program if not caught by the caller.
+
+This `Seed` function provides a way to generate consistent hash values for various input types, which can be useful for tasks such as sharding, load balancing, or creating deterministic random number generators. However, users should be aware of the potential for panics and consider implementing error handling if needed in their specific use case.

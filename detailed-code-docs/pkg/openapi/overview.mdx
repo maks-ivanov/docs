@@ -1,0 +1,63 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/openapi` directory contains a set of Go packages that provide functionality for working with OpenAPI specifications. These packages offer tools for loading, parsing, and executing OpenAPI operations, as well as handling security schemes and listing operations.
+
+## What does it do?
+This directory provides a comprehensive set of tools for interacting with OpenAPI specifications:
+
+1. Loading and parsing OpenAPI documents from various sources (URLs, local files).
+2. Extracting schema information and operation details from OpenAPI specifications.
+3. Listing and filtering operations based on user-defined criteria.
+4. Executing OpenAPI operations by constructing and sending HTTP requests.
+5. Handling various authentication methods and security schemes defined in OpenAPI specifications.
+
+These functionalities allow developers to work with API definitions, extract relevant information, and interact with APIs described by OpenAPI specifications.
+
+## Entry points
+The main entry points for this directory are:
+
+1. `getschema.go`: Provides the `GetSchema` function for extracting JSONSchema and operation information from an OpenAPI specification.
+2. `list.go`: Offers the `List` function for listing and filtering operations from an OpenAPI specification.
+3. `load.go`: Contains the `Load` function for loading and parsing OpenAPI specifications from various sources.
+4. `run.go`: Implements the `Run` function for executing OpenAPI operations by constructing and sending HTTP requests.
+
+The flow of data typically starts with loading an OpenAPI specification using `load.go`, then either extracting schema information with `getschema.go`, listing operations with `list.go`, or executing operations with `run.go`.
+
+## Key Files
+1. `getschema.go`: Extracts schema information and operation details from OpenAPI specifications.
+2. `list.go`: Provides functionality for listing and filtering operations in OpenAPI specifications.
+3. `load.go`: Handles loading and parsing of OpenAPI specifications from various sources.
+4. `run.go`: Implements the execution of OpenAPI operations by constructing and sending HTTP requests.
+5. `security.go`: Defines structures and methods for handling security schemes in OpenAPI specifications.
+
+## Dependencies
+The `pkg/openapi` directory relies on several external libraries:
+
+1. `github.com/getkin/kin-openapi/openapi3` (version not specified): Used for parsing and manipulating OpenAPI 3.0 specifications.
+2. `github.com/tidwall/gjson` (version not specified): Efficient JSON parsing and querying.
+3. `github.com/xeipuuv/gojsonschema` (version not specified): JSON Schema validation.
+4. `gopkg.in/yaml.v3` (version not specified): YAML parsing and manipulation.
+5. `sigs.k8s.io/yaml` (version not specified): YAML parsing and manipulation (Kubernetes-specific implementation).
+
+These dependencies were chosen to provide robust support for working with OpenAPI specifications, JSON data, and YAML formats, which are common in API definitions and configurations.
+
+## Configuration
+The `pkg/openapi` directory does not appear to use specific configuration files. However, it does utilize environment variables for handling authentication and other configurable aspects of API interactions. The `security.go` file, in particular, generates environment variable names based on security schemes defined in OpenAPI specifications.
+
+Key configurable aspects include:
+1. Default host for API operations
+2. Environment variables for authentication (e.g., API keys, usernames, passwords)
+3. Filter strings for listing operations
+
+Example of generating an environment variable name for an API key:
+
+```go
+envVar := env.ToEnvLike(fmt.Sprintf("%s_%s_API_KEY", hostname, s.Name))
+```
+
+This code demonstrates how the package generates environment-friendly variable names for storing API credentials, combining the hostname and security scheme name.
+
+In summary, the `pkg/openapi` directory provides a comprehensive toolkit for working with OpenAPI specifications, offering functionality for loading, parsing, extracting information, and executing API operations. It handles various aspects of API interactions, including authentication and parameter processing, making it a valuable resource for developers working with API definitions and integrations.

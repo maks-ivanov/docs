@@ -1,0 +1,145 @@
+---
+title: "daemon.go"
+---
+
+## High-level description
+This code defines a package `engine` that implements functionality for managing and executing daemon processes in a GPTScript environment. It provides mechanisms for starting, stopping, and interacting with daemon processes, as well as managing port allocation for these processes.
+
+## Code Structure
+The main components of this code are:
+1. `Ports` struct: Manages port allocation and tracking of running daemons.
+2. `IsDaemonRunning`, `SetPorts`, `CloseDaemons`: Functions for interacting with the global `ports` variable.
+3. `nextPort`: Function for allocating new ports.
+4. `getPath`: Helper function for parsing daemon instructions.
+5. `startDaemon`: Method of `Engine` for starting a new daemon process.
+6. `runDaemon`: Method of `Engine` for running a daemon tool.
+
+## Symbols
+
+### `Ports` struct
+#### Description
+Manages port allocation and tracking of running daemons.
+
+#### Internal Logic
+- Uses maps to track daemon ports and running daemons
+- Implements a port range and allocation system
+- Uses synchronization primitives for thread-safety
+
+### `IsDaemonRunning` function
+#### Description
+Checks if a daemon is running at a given URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The URL to check for a running daemon |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| running | bool | Whether the daemon is running |
+
+### `SetPorts` function
+#### Description
+Sets the range of ports to be used for daemons.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| start | int64 | The start of the port range |
+| end | int64 | The end of the port range |
+
+### `CloseDaemons` function
+#### Description
+Closes all running daemons.
+
+### `nextPort` function
+#### Description
+Allocates the next available port for a daemon.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| port | int64 | The allocated port number |
+
+### `getPath` function
+#### Description
+Parses the daemon instructions to extract the path.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| instructions | string | The daemon instructions to parse |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rest | string | The remaining instructions after extracting the path |
+| path | string | The extracted path |
+
+### `startDaemon` method
+#### Description
+Starts a new daemon process for a given tool.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to start as a daemon |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | The URL of the started daemon |
+| err | error | Any error that occurred during startup |
+
+#### Internal Logic
+1. Parses the tool instructions
+2. Allocates a port for the daemon
+3. Prepares the command to run the daemon
+4. Starts the daemon process
+5. Waits for the daemon to be ready
+
+### `runDaemon` method
+#### Description
+Runs a daemon tool by starting it and then executing an HTTP request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prg | *types.Program | The program containing the tool |
+| tool | types.Tool | The tool to run as a daemon |
+| input | string | The input for the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmdRet | *Return | The return value from the command |
+| cmdErr | error | Any error that occurred during execution |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling cancellation and timeouts |
+| fmt | For string formatting and printing |
+| io | For I/O operations |
+| math/rand | For generating random numbers |
+| net/http | For making HTTP requests |
+| os | For interacting with the operating system |
+| strings | For string manipulation |
+| sync | For synchronization primitives |
+| time | For time-related operations |
+| github.com/gptscript-ai/gptscript/pkg/system | For system-related operations |
+| github.com/gptscript-ai/gptscript/pkg/types | For custom types used in the package |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where appropriate. It also implements some custom error handling, such as retrying HTTP requests and timing out if a daemon doesn't start within a certain period.
+
+## Logging
+The code uses a global `log` variable for logging, which is not shown in this file but is likely defined elsewhere in the package.
+
+## Performance Considerations
+The port allocation system uses a simple randomized approach, which may become inefficient with a large number of ports. The code also includes a comment acknowledging this: "This is pretty simple and inefficient approach, but also never releases ports".
+
+## TODOs
+There are no explicit TODOs in the code, but the comment about the port allocation efficiency suggests that this might be an area for future improvement.

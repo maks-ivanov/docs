@@ -1,0 +1,72 @@
+---
+title: "python_test.go"
+---
+
+## High-level description
+This Go code defines a test for the Python runtime setup in the `gptscript` project. It verifies that the Python runtime can be correctly set up and that the Python executable is present in the expected location after setup.
+
+## Symbols
+
+### `TestRuntime`
+#### Description
+This function is a test case that verifies the setup of the Python runtime.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | The testing object provided by Go's testing framework |
+
+#### Internal Logic
+1. Creates a `Runtime` struct with Python version 3.12.
+2. Calls the `Setup` method of the `Runtime` struct with necessary parameters.
+3. Checks if the Python executable exists in the expected location after setup.
+4. Uses `require.NoError` to ensure no errors occur during the setup and file checking process.
+
+#### Side Effects
+- Creates temporary files and directories in the test cache home directory.
+
+### `firstPath`
+#### Description
+A helper function that extracts the first path from a slice of environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s | []string | A slice of strings representing environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The first path extracted from the input slice |
+
+#### Internal Logic
+1. Takes the first element of the input slice.
+2. Splits it by "=" and takes the second part (the value).
+3. Splits the value by the OS-specific path separator and returns the first element.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for the runtime setup |
+| errors | Used for error handling and comparison |
+| os | Provides OS-specific functionality and environment variables |
+| path/filepath | Used for file path manipulation |
+| strings | Used for string manipulation |
+| testing | Go's testing framework |
+| github.com/adrg/xdg | Used to get the cache file path |
+| github.com/gptscript-ai/gptscript/pkg/types | Provides the `Tool` type used in setup |
+| github.com/samber/lo | Used for error handling in `lo.Must` |
+| github.com/stretchr/testify/require | Provides assertion functions for testing |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| testCacheHome | string | (dynamically set) | The cache directory used for testing |
+
+## Error Handling
+The test uses `require.NoError` to check for errors during the setup process and when checking for the existence of the Python executable. If any error occurs, the test will fail.
+
+## Notes
+- The test is designed to work on multiple platforms (Windows and Unix-like systems) by checking for both "python.exe" and "python" executables.
+- The test uses a specific cache directory for testing purposes, separate from the regular application cache.
+- The Python version is hardcoded to 3.12 in this test, which should be kept in sync with the project's requirements.

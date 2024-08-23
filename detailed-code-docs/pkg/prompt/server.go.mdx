@@ -1,0 +1,71 @@
+---
+title: "server.go"
+---
+
+## High-level description
+This code implements a server for handling prompts in a GPTScript system. It creates an HTTP server that listens on a random port, authenticates requests using a token, and processes prompt requests by calling a `sysPrompt` function.
+
+## Code Structure
+The main function `NewServer` sets up the HTTP server and returns environment variables for the server URL and authentication token. The server handles incoming requests, validates the token, decodes the prompt request, and calls `sysPrompt` to process it.
+
+## Symbols
+
+### `NewServer`
+#### Description
+Creates and starts an HTTP server for handling prompt requests, returning environment variables for the server URL and authentication token.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the server operation |
+| envs | []string | A list of environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []string | []string | New environment variables for server URL and token |
+| error | error | Any error encountered during server setup |
+
+#### Internal Logic
+1. Checks if prompt URL or token are already set in the environment variables.
+2. Creates a TCP listener on a random port.
+3. Generates a new UUID for the authentication token.
+4. Sets up an HTTP server with a handler function that:
+   - Validates the authentication token
+   - Decodes the incoming prompt request
+   - Calls `sysPrompt` to process the request
+   - Sends the response back to the client
+5. Starts the server in a separate goroutine.
+6. Returns new environment variables for the server URL and token.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For managing request context and server lifecycle |
+| encoding/json | For JSON encoding/decoding of requests and responses |
+| errors | For error handling |
+| fmt | For string formatting |
+| net | For network operations |
+| net/http | For HTTP server implementation |
+| strings | For string manipulation |
+| github.com/google/uuid | For generating unique tokens |
+| github.com/gptscript-ai/gptscript/pkg/types | For custom types used in the application |
+
+## Error Handling
+The code implements basic error handling:
+- Returns errors encountered during server setup.
+- Sends appropriate HTTP status codes and error messages for unauthorized access, bad requests, and internal server errors.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| / | POST | JSON-encoded `types.Prompt` | JSON response from `sysPrompt` | Processes a prompt request |
+
+Authentication: Bearer token in the `Authorization` header.
+
+## Side Effects
+- Creates a network listener on a random port.
+- Starts an HTTP server in a separate goroutine.
+
+## Performance Considerations
+The server uses a goroutine to handle incoming requests concurrently, allowing for multiple simultaneous connections.

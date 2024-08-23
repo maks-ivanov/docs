@@ -1,0 +1,66 @@
+---
+title: "node_test.go"
+---
+
+## High-level description
+This code defines a test for the Node.js runtime setup in the `gptscript` project. It verifies that the `Setup` method of the `Runtime` struct correctly installs and configures a Node.js environment, ensuring that the `node` executable is present in the expected location.
+
+## Symbols
+
+### `firstPath`
+#### Description
+This helper function extracts the first path from a slice of environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s | []string | A slice of strings representing environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The first path extracted from the input |
+
+#### Internal Logic
+1. Takes the first element of the input slice
+2. Splits it by "=" and takes the second part (the value)
+3. Splits the value by the OS-specific path separator and returns the first element
+
+### `TestRuntime`
+#### Description
+This function tests the `Setup` method of the `Runtime` struct for Node.js.
+
+#### Internal Logic
+1. Creates a `Runtime` instance with version "20"
+2. Calls the `Setup` method with test parameters
+3. Checks if the `node` executable exists in the expected location
+4. If not found with `.exe` extension, checks without the extension (for non-Windows systems)
+5. Asserts that no errors occurred during the process
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for cancellation and timeouts |
+| errors | Used for error handling and comparison |
+| io/fs | Provides file system-related functionality |
+| os | Used for environment variables and file operations |
+| path/filepath | Used for file path manipulations |
+| strings | Used for string operations |
+| testing | Provides testing framework |
+| github.com/adrg/xdg | Used for XDG Base Directory Specification |
+| github.com/gptscript-ai/gptscript/pkg/types | Provides types used in the gptscript project |
+| github.com/samber/lo | Provides utility functions |
+| github.com/stretchr/testify/require | Provides assertion functions for testing |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| testCacheHome | string | (dynamically set) | The cache directory used for testing |
+
+## Error Handling
+The test uses `require.NoError(t, err)` to assert that no errors occur during the runtime setup and file checks. If an error occurs, the test will fail with an appropriate error message.
+
+## Notes
+- The test is designed to work on both Windows and non-Windows systems by checking for both "node.exe" and "node" executables.
+- The test uses a specific cache directory for testing purposes, separate from the regular application cache.
+- The `Runtime` struct is not fully defined in this file, suggesting it's imported from another package or defined elsewhere in the project.

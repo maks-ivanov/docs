@@ -1,0 +1,139 @@
+---
+title: "golang.go"
+---
+
+## High-level description
+This code defines a Go runtime package that manages the installation, setup, and execution of Go tools within the GPTScript project. It handles downloading specific Go versions, setting up the environment, and running Go builds for tools.
+
+## Code Structure
+The main `Runtime` struct represents a Go runtime with a specific version. It implements methods for identifying, setting up, and executing Go-based tools. The code also includes helper functions for downloading binaries, checking checksums, and managing releases.
+
+## Symbols
+
+### `Runtime` struct
+#### Description
+Represents a Go runtime with a specific version.
+
+#### Fields
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Version | string | The version of the Go runtime (e.g., "1.22.1") |
+
+### `ID() string`
+#### Description
+Returns the identifier for the Go runtime.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | string | The runtime ID in the format "go&lt;version&gt;" |
+
+### `GetHash(tool types.Tool) (string, error)`
+#### Description
+Returns an empty hash for the given tool.
+
+### `Supports(tool types.Tool, cmd []string) bool`
+#### Description
+Checks if the runtime supports the given tool and command.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to check |
+| cmd | []string | The command to check |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| return | bool | True if the tool is supported, false otherwise |
+
+### `Binary(ctx context.Context, tool types.Tool, _, toolSource string, _ []string) (bool, []string, error)`
+#### Description
+Downloads the binary for the given tool if it's a Git-based tool.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| tool | types.Tool | The tool to download the binary for |
+| toolSource | string | The source directory for the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | True if the binary was downloaded successfully |
+| []string | []string | Empty slice |
+| error | error | Error if any occurred during the process |
+
+### `Setup(ctx context.Context, _ types.Tool, dataRoot, toolSource string, env []string) ([]string, error)`
+#### Description
+Sets up the Go runtime environment and builds the tool.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| dataRoot | string | The root directory for data |
+| toolSource | string | The source directory for the tool |
+| env | []string | The current environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []string | []string | Updated environment variables |
+| error | error | Error if any occurred during the setup |
+
+### `DownloadCredentialHelper(ctx context.Context, tool types.Tool, helperName, distInfo, suffix string, binDir string) error`
+#### Description
+Downloads a credential helper for the given tool.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| tool | types.Tool | The tool to download the helper for |
+| helperName | string | The name of the credential helper |
+| distInfo | string | Distribution information |
+| suffix | string | File suffix |
+| binDir | string | The binary directory |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Error if any occurred during the download |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| bufio | For reading and scanning text |
+| bytes | For working with byte slices |
+| context | For handling cancellation and deadlines |
+| crypto/sha256 | For computing SHA256 hashes |
+| encoding/hex | For hexadecimal encoding |
+| encoding/json | For JSON parsing |
+| errors | For error handling |
+| fmt | For formatted I/O |
+| io | For I/O operations |
+| io/fs | For filesystem operations |
+| net/http | For HTTP client operations |
+| os | For operating system functionality |
+| path/filepath | For file path manipulations |
+| runtime | For runtime information |
+| strings | For string manipulations |
+| github.com/gptscript-ai/gptscript/pkg/debugcmd | For debug command execution |
+| github.com/gptscript-ai/gptscript/pkg/env | For environment variable handling |
+| github.com/gptscript-ai/gptscript/pkg/hash | For hashing operations |
+| github.com/gptscript-ai/gptscript/pkg/repos/download | For downloading and extracting files |
+| github.com/gptscript-ai/gptscript/pkg/types | For custom types used in the project |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions where appropriate. It also includes some custom error formatting, such as in the `Binary` method where download errors are ignored to continue execution.
+
+## Logging
+The code uses a custom logging mechanism, as evidenced by the `log.InfofCtx` calls. This likely comes from a project-specific logging package.
+
+## Performance Considerations
+The code implements caching mechanisms for downloaded Go runtimes and binaries, which can improve performance by avoiding unnecessary downloads. It also uses goroutines for concurrent operations in some cases.
+
+## TODOs
+There are no explicit TODOs in the code.

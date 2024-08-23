@@ -1,0 +1,68 @@
+---
+title: "http.go"
+---
+
+## High-level description
+This code defines the `runHTTP` function within the `Engine` struct, which handles HTTP-based tool execution in the GPTScript engine. It processes HTTP requests, manages environment variables, and handles special cases for daemon URLs.
+
+## Code Structure
+The main function `runHTTP` interacts with other parts of the codebase, particularly the `Engine` struct and `types.Program`. It uses the `startDaemon` method (not shown in this file) and relies on the standard Go `http` package for making requests.
+
+## Symbols
+
+### `func (e *Engine) runHTTP(ctx context.Context, prg *types.Program, tool types.Tool, input string) (cmdRet *Return, cmdErr error)`
+
+#### Description
+This function executes an HTTP-based tool within the GPTScript engine. It handles environment variable expansion, URL parsing, and special cases for daemon URLs. It then makes an HTTP request and processes the response.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prg | *types.Program | The program containing the tool set |
+| tool | types.Tool | The tool to be executed |
+| input | string | The input for the tool |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmdRet | *Return | The result of the tool execution |
+| cmdErr | error | Any error encountered during execution |
+
+#### Internal Logic
+1. Process environment variables
+2. Extract and expand the tool URL from the instructions
+3. Parse the URL
+4. Handle special case for daemon URLs (ending with `.daemon.gptscript.local`)
+5. If the tool is blocking, return the URL without making a request
+6. Prepare and send an HTTP POST request
+7. Process the response, handling different content types
+8. Return the result or any encountered error
+
+## Side Effects
+- Makes HTTP requests to external URLs
+- May start a daemon process (via `e.startDaemon`)
+
+## Dependencies
+- `net/http`: For making HTTP requests
+- `encoding/json`: For JSON processing
+- `net/url`: For URL parsing
+- `os`: For environment variable expansion
+
+## Constants
+- `DaemonURLSuffix = ".daemon.gptscript.local"`: Used to identify daemon URLs
+
+## Error Handling
+The function returns errors for various scenarios, including URL parsing failures, HTTP request errors, and invalid tool references.
+
+## Performance Considerations
+The function makes network requests, which can be time-consuming. It also performs JSON unmarshaling, which may impact performance for large payloads.
+
+## TODOs
+There is a comment indicating a "dumb hack" for handling JSON-encoded strings, suggesting a potential area for improvement.
+
+```go
+// This is dumb hack when something returns a string in JSON format, just decode it to a string
+```
+
+This comment suggests that the current implementation might not be ideal and could be improved in the future.

@@ -1,0 +1,52 @@
+---
+title: "bin.go"
+---
+
+## High-level description
+This Go package provides functionality to manage and retrieve the path of the current executable binary. It defines an environment variable for storing the binary path and offers methods to set and get this path.
+
+## Symbols
+
+### `BinEnvVar`
+#### Description
+A constant string that defines the name of the environment variable used to store the path of the GPTScript binary.
+
+### `SetBinToSelf()`
+#### Description
+This function sets the environment variable `GPTSCRIPT_BIN` to the path of the current executable.
+
+#### Internal Logic
+1. Calls the `Bin()` function to get the current binary path.
+2. Uses `os.Setenv()` to set the `GPTSCRIPT_BIN` environment variable to this path.
+3. If setting the environment variable fails, it panics with the error.
+
+#### Side Effects
+- Modifies the environment variable `GPTSCRIPT_BIN`.
+- May panic if setting the environment variable fails.
+
+### `Bin()`
+#### Description
+This function returns the path of the GPTScript binary. It first checks the `GPTSCRIPT_BIN` environment variable and falls back to the current binary path if the variable is not set.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | string | The path of the GPTScript binary |
+
+#### Internal Logic
+1. Retrieves the value of the `GPTSCRIPT_BIN` environment variable.
+2. If the environment variable is set (non-empty), returns its value.
+3. If the environment variable is not set, calls `currentBin()` to get the current binary path.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| os | Used for environment variable operations |
+
+## References
+The code references a `currentBin()` function, which is not defined in this file. It's likely defined in another file within the same package and is responsible for determining the path of the currently running executable.
+
+## Notes
+- The `SetBinToSelf()` function uses a panic to handle errors, which might not be ideal for all use cases. Consider using a return error instead for better error handling in production code.
+- The `Bin()` function provides a fallback mechanism when the environment variable is not set, which adds flexibility to the system.
+- The use of an environment variable allows for easy overriding of the binary path, which can be useful for testing or specialized deployments.

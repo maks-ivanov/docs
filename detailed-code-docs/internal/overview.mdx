@@ -1,0 +1,64 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This code defines a simple file system interface in Go. It provides a default implementation of the `fs.FS` interface from the standard library, which allows for opening files using the operating system's default file operations.
+
+## Code Structure
+The code defines a package-level variable `FS` of type `fs.FS`, which is initialized with an instance of `defaultFS`. The `defaultFS` struct implements the `Open` method required by the `fs.FS` interface.
+
+## Symbols
+
+### `FS`
+#### Description
+`FS` is a package-level variable of type `fs.FS`. It provides a file system interface that can be used throughout the package for file operations.
+
+#### Inputs
+N/A (It's a variable, not a function)
+
+#### Outputs
+N/A (It's a variable, not a function)
+
+___
+
+### `defaultFS`
+#### Description
+`defaultFS` is a struct that implements the `fs.FS` interface. It provides a default implementation for file system operations.
+
+#### Inputs
+N/A (It's a struct, not a function)
+
+#### Outputs
+N/A (It's a struct, not a function)
+
+___
+
+### `defaultFS.Open`
+#### Description
+`Open` is a method of the `defaultFS` struct that implements the `Open` method required by the `fs.FS` interface. It opens the named file using the operating system's default file operations.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the file to open |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | fs.File | The opened file |
+| error | error | An error, if any occurred during the operation |
+
+#### Internal Logic
+The method simply calls `os.Open(name)` and returns its results. This means it uses the operating system's default file opening mechanism.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| io/fs | Provides the `fs.FS` and `fs.File` interfaces |
+| os | Used for opening files with the operating system's default mechanism |
+
+## Notes
+1. This implementation provides a thin wrapper around the operating system's file operations, allowing for easy file access within the package.
+2. The use of `fs.FS` interface allows for potential future extensions or replacements of the file system implementation without changing the code that uses it.
+3. The package-level `FS` variable can be reassigned if needed, allowing for easy testing or alternative implementations in different contexts.

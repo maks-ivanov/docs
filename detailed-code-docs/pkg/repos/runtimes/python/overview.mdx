@@ -1,0 +1,66 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the implementation of a Python runtime for the GPTScript project. It provides functionality to set up and manage Python environments, install dependencies, and execute Python tools within the GPTScript ecosystem. The code is primarily written in Go and includes configuration data for different Python versions and operating systems.
+
+## What does it do?
+The Python runtime in this directory performs the following main tasks:
+
+1. Generates a JSON file containing information about Python runtime releases from the `python-build-standalone` project.
+2. Sets up Python environments for specific versions (3.10, 3.11, 3.12) on different operating systems (macOS, Linux, Windows) and architectures (arm64, amd64).
+3. Creates virtual environments for Python tools.
+4. Installs dependencies using the `uv` package manager.
+5. Manages the download and setup of Python runtimes from pre-built standalone installations.
+6. Provides an interface for the GPTScript system to interact with Python tools and environments.
+
+## Entry points
+The main entry point for the Python runtime is the `Runtime` struct defined in `python.go`. This struct implements methods for setting up Python environments, installing dependencies, and managing the runtime. The `generate` directory contains a separate program for generating the `python.json` configuration file.
+
+## Key Files
+1. `python.go`: Contains the core implementation of the Python runtime, including the `Runtime` struct and its methods.
+2. `python.json`: A configuration file containing download URLs and SHA256 digests for standalone Python builds.
+3. `generate/main.go`: A program that generates the `python.json` file by fetching data from GitHub releases.
+4. `log.go`: Sets up logging for the Python package.
+5. `python_test.go`: Contains tests for the Python runtime setup.
+
+## Dependencies
+The Python runtime relies on several external libraries and tools:
+
+1. `github.com/gptscript-ai/gptscript/pkg/mvl`: Used for logging.
+2. `github.com/gptscript-ai/gptscript/pkg/debugcmd`: For debug command execution.
+3. `github.com/gptscript-ai/gptscript/pkg/env`: For environment variable handling.
+4. `github.com/gptscript-ai/gptscript/pkg/hash`: For hashing functionality.
+5. `github.com/gptscript-ai/gptscript/pkg/repos/download`: For downloading functionality.
+6. `github.com/gptscript-ai/gptscript/pkg/types`: For common types used in the project.
+7. `uv`: A Python package manager used for installing dependencies.
+
+## Configuration
+The `python.json` file serves as the main configuration source for Python runtime installations. It includes:
+
+- Download URLs for standalone Python builds from the `indygreg/python-build-standalone` GitHub repository.
+- SHA256 digests for verifying downloaded files.
+- Configurations for different operating systems (macOS, Linux, Windows), architectures (arm64, amd64), and Python versions (3.10, 3.11, 3.12).
+
+The `Runtime` struct in `python.go` also includes configuration options:
+
+- `Version`: The Python version to use (e.g., "3.12").
+- `Default`: A boolean indicating whether this is the default Python version.
+
+Environment variables and virtual environment paths are managed dynamically during the setup process.
+
+Here's an example of how the `Runtime` struct is used to set up a Python environment:
+
+```go
+runtime := &Runtime{Version: "3.12", Default: true}
+env, err := runtime.Setup(ctx, tool, dataRoot, toolSource, initialEnv)
+if err != nil {
+    // Handle error
+}
+// Use the updated environment variables
+```
+
+This code snippet demonstrates how to create a `Runtime` instance for Python 3.12, set it as the default, and then call the `Setup` method to prepare the Python environment for a specific tool.
+
+The Python runtime implementation in this directory provides a flexible and robust system for managing Python environments within the GPTScript project, ensuring that the correct versions and dependencies are available for executing Python-based tools and scripts.

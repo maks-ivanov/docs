@@ -1,0 +1,129 @@
+---
+title: "cache.go"
+---
+
+## High-level description
+This file defines a cache package that provides functionality for caching data, particularly for LLM API responses. It includes methods for storing and retrieving cached data, as well as options for configuring the cache behavior.
+
+## Code Structure
+The main symbols in the code are:
+
+1. `Client`: The primary struct that handles caching operations.
+2. `Options`: A struct for configuring cache options.
+3. `Complete`: A function that completes the cache options.
+4. Various utility functions for handling cache keys and paths.
+
+The `Client` struct uses the `Options` to configure its behavior, and the `Complete` function ensures that all necessary options are set.
+
+## Symbols
+
+### `Client`
+#### Description
+The `Client` struct represents a cache client that can store and retrieve data.
+
+#### Internal Logic
+- Uses a directory to store cached data
+- Can be configured to be a no-op (disabled) cache
+
+### `Options`
+#### Description
+The `Options` struct defines configuration options for the cache.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| DisableCache | bool | Flag to disable caching |
+| CacheDir | string | Directory to store cache |
+
+### `Complete`
+#### Description
+Completes the cache options by setting default values if not provided.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | ...Options | Variadic Options to complete |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | Options | Completed Options |
+
+### `New`
+#### Description
+Creates a new `Client` instance with the given options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| opts | ...Options | Variadic Options for configuring the client |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Client | *Client | Pointer to the new Client instance |
+| error | error | Error, if any occurred during creation |
+
+### `Store`
+#### Description
+Stores a value in the cache for a given key.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| key | any | Key to store the value under |
+| value | any | Value to store |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Error, if any occurred during storage |
+
+### `Get`
+#### Description
+Retrieves a value from the cache for a given key.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | Context for the operation |
+| key | any | Key to retrieve the value for |
+| out | any | Pointer to store the retrieved value |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | Whether the value was found in the cache |
+| error | error | Error, if any occurred during retrieval |
+
+## Dependencies
+The code relies on several external libraries and internal packages:
+
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling context in operations |
+| crypto/sha256 | For generating hash keys |
+| encoding/gob | For encoding/decoding cached data |
+| encoding/hex | For encoding hash keys |
+| encoding/json | For JSON encoding of cache keys |
+| errors | For error handling |
+| io/fs | For file system operations |
+| os | For file and directory operations |
+| os/user | For user home directory resolution |
+| path/filepath | For file path manipulations |
+| strings | For string operations |
+| github.com/adrg/xdg | For XDG Base Directory support |
+| github.com/getkin/kin-openapi/openapi3 | For OpenAPI schema support |
+| github.com/gptscript-ai/chat-completion-client | For chat completion client support |
+| github.com/gptscript-ai/gptscript/pkg/types | For custom types |
+| github.com/gptscript-ai/gptscript/pkg/version | For version information |
+
+## Error Handling
+The code uses standard Go error handling practices, returning errors from functions where appropriate. It also uses the `errors.Is` function for checking specific error types.
+
+## Logging
+There is no explicit logging implemented in this file.
+
+## TODOs
+There are no TODOs or other notes left in the code.

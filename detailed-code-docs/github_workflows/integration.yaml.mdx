@@ -1,0 +1,61 @@
+---
+title: "integration.yaml"
+---
+
+## High-level description
+This GitHub Actions workflow file defines an integration testing process for a Go project. It runs on both Ubuntu and Windows environments, triggered by pushes to the main branch and pull requests, excluding changes to documentation and tools.
+
+## Code Structure
+The workflow consists of a single job named "integration" that runs on multiple operating systems. It includes steps for checking out the code, setting up Go, building the project, and running integration tests.
+
+## Symbols
+
+### Workflow: integration
+#### Description
+This workflow automates the integration testing process for the project.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| push | event | Triggered on pushes to the main branch |
+| pull_request | event | Triggered on pull requests to the main branch |
+
+#### Internal Logic
+1. Defines the trigger events (push and pull request) and paths to ignore.
+2. Sets up a matrix strategy for running on multiple operating systems.
+3. Checks out the code repository.
+4. Sets up the Go environment.
+5. Builds the project (different commands for Ubuntu and Windows).
+6. Runs integration tests.
+
+### Job: integration
+#### Description
+Defines the steps for running integration tests on multiple operating systems.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| matrix.os | string | Operating system to run the job on |
+
+#### Internal Logic
+1. Uses a matrix strategy to run on Ubuntu 22.04 and Windows.
+2. Checks out the code with a fetch depth of 1.
+3. Sets up Go version 1.23 without caching.
+4. Builds the project using different commands based on the OS.
+5. Runs integration tests using the `make integration` command.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | Checks out the repository code |
+| actions/setup-go@v5 | Sets up the Go environment |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| fetch-depth | integer | 1 | Depth of git fetch for checkout |
+| cache | boolean | false | Disables caching for Go setup |
+| go-version | string | "1.23" | Specifies the Go version to use |
+
+## Performance Considerations
+The workflow uses a matrix strategy to run tests on multiple operating systems in parallel, which can improve overall execution time.

@@ -1,0 +1,131 @@
+---
+title: "routes.go"
+---
+
+## High-level description
+This code defines the structure and functionality of an SDK server for GPTScript. It sets up HTTP routes for various operations like health checks, version information, tool listing, model listing, execution, evaluation, loading, parsing, and formatting of GPTScript documents.
+
+## Code Structure
+The main `server` struct contains configuration and state for the SDK server. The `addRoutes` method sets up the HTTP endpoints, while individual handler methods implement the logic for each endpoint. The code interacts with other packages like `gptscript`, `cache`, `openai`, and `runner` to perform operations.
+
+## Symbols
+
+### `server` struct
+#### Description
+Represents the SDK server, holding configuration and state.
+
+#### Internal Logic
+- Manages waiting channels for confirmations and prompts
+- Holds client and event broadcaster instances
+
+### `addRoutes` method
+#### Description
+Sets up HTTP routes for the server.
+
+#### Internal Logic
+- Defines endpoints for health checks, version info, tool and model listing, execution, evaluation, loading, parsing, and formatting
+
+### `health` method
+#### Description
+Handles health check requests.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]string | A simple "ok" message |
+
+### `version` method
+#### Description
+Returns the GPTScript version.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]any | Version information |
+
+### `listTools` method
+#### Description
+Lists available tools.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]any | List of tools |
+
+### `listModels` method
+#### Description
+Lists available models.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| providers | []string | (Optional) List of providers to query |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]any | List of models |
+
+### `execHandler` method
+#### Description
+Handles execution and evaluation requests.
+
+#### Internal Logic
+- Parses request body
+- Sets up execution context and options
+- Calls `execAndStream` to perform the operation
+
+### `load` method
+#### Description
+Loads a GPTScript program.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file/content | string | Source of the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]any | Loaded program |
+
+### `parse` method
+#### Description
+Parses a GPTScript document.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file/content | string | Source of the document |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]any | Parsed document nodes |
+
+### `fmtDocument` method
+#### Description
+Formats a GPTScript document.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| document | parser.Document | Document to format |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | map[string]string | Formatted document |
+
+## Dependencies
+- `github.com/gptscript-ai/gptscript/pkg/cache`
+- `github.com/gptscript-ai/gptscript/pkg/gptscript`
+- `github.com/gptscript-ai/gptscript/pkg/openai`
+- `github.com/gptscript-ai/gptscript/pkg/runner`
+- `github.com/gptscript-ai/gptscript/pkg/version`
+
+## Error Handling
+The code uses a combination of returning errors and writing error responses to the HTTP writer. It includes error checking for various operations like JSON parsing, file loading, and execution.
+
+## Logging
+The code uses a logger obtained from the request context for logging operations.

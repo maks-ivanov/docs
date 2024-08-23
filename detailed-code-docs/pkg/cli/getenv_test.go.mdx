@@ -1,0 +1,48 @@
+---
+title: "getenv_test.go"
+---
+
+## High-level description
+This file contains unit tests for the `getEnv` function in the `cli` package. The tests verify the behavior of `getEnv` under different scenarios, including when no environment variable is set, when a regular value is set, and when a compressed value is set.
+
+## Symbols
+
+### `TestGetEnv`
+#### Description
+This function is the main test function that runs multiple test cases for the `getEnv` function. It uses table-driven tests to cover different scenarios.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | Testing object provided by Go's testing package |
+
+#### Internal Logic
+1. Sets up a deferred cleanup function to restore the original environment variable value after the tests.
+2. Defines a slice of test cases, each with a name, key, default value, environment value, and expected result.
+3. Iterates through the test cases, running each as a subtest.
+4. For each subtest:
+   - Sets the environment variable to the test value
+   - Calls the `getEnv` function with the test key and default value
+   - Compares the result with the expected value
+   - Fails the test if the result doesn't match the expected value
+
+#### Test Cases
+1. "NoValueUseDefault": Tests when no environment variable is set, expecting the default value to be returned.
+2. "ValueExistsNoCompress": Tests when a regular (uncompressed) value is set in the environment variable.
+3. "ValueExistsCompressed": Tests when a compressed value is set in the environment variable, expecting it to be decompressed.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| os | Used to set and get environment variables |
+| testing | Go's built-in testing framework |
+
+## Error Handling
+The test function uses `t.Errorf` to report failures when the actual result doesn't match the expected result.
+
+## Notes
+1. The test uses a deferred function to clean up the environment variable after the tests, ensuring it doesn't affect other tests or the system state.
+2. The compressed value test case suggests that the `getEnv` function being tested has the ability to decompress values stored in environment variables.
+3. The `getEnv` function itself is not defined in this file, indicating it's likely defined in another file within the same package.
+
+This test file demonstrates good testing practices, including table-driven tests, cleanup of test environment, and testing of edge cases (no value, regular value, and compressed value).

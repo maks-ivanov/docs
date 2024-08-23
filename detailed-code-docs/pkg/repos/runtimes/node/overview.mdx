@@ -1,0 +1,89 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the implementation of a Node.js runtime for the GPTScript project. It provides functionality to set up, download, and execute Node.js environments, including npm package management. The runtime is designed to work across different operating systems and architectures, supporting various Node.js versions.
+
+## What does it do?
+The Node.js runtime in this directory performs the following main functions:
+
+1. Identifies and supports specific Node.js commands and tools.
+2. Sets up the Node.js environment by downloading the appropriate version of Node.js if it's not already present.
+3. Manages the installation of npm packages for tools that require them.
+4. Configures the environment variables necessary for running Node.js applications.
+5. Provides a unique identifier for each Node.js runtime based on its version.
+6. Handles cross-platform compatibility, ensuring the runtime works on different operating systems and architectures.
+
+This runtime allows the GPTScript project to execute Node.js code and manage Node.js-based tools efficiently, abstracting away the complexities of version management and environment setup.
+
+## Key Files
+
+1. `node.go`: This is the main file implementing the Node.js runtime functionality. It defines the `Runtime` struct and its methods, including setup, version management, and command execution.
+
+2. `log.go`: This file sets up logging for the Node.js runtime package, utilizing a custom logging package from the GPTScript project.
+
+3. `node_test.go`: Contains unit tests for the Node.js runtime implementation, verifying the correct setup and configuration of the Node.js environment.
+
+4. `testdata/package.json`: A sample `package.json` file used for testing purposes, representing a basic Node.js project configuration.
+
+## Dependencies
+The Node.js runtime implementation relies on several external packages and internal GPTScript modules:
+
+1. Standard Go libraries:
+   - `context`: For managing cancellation and timeouts.
+   - `os`, `io/fs`, `path/filepath`: For file system operations and path manipulations.
+   - `runtime`: For obtaining OS and architecture information.
+
+2. GPTScript internal packages:
+   - `pkg/debugcmd`: For running commands with debug output.
+   - `pkg/env`: For environment variable management.
+   - `pkg/hash`: For generating unique identifiers.
+   - `pkg/repos/download`: For downloading and extracting Node.js binaries.
+   - `pkg/types`: For common type definitions.
+   - `pkg/mvl`: For logging (Minimal Viable Logging).
+
+3. External libraries:
+   - `github.com/adrg/xdg`: Used for XDG Base Directory Specification in tests.
+   - `github.com/samber/lo`: Provides utility functions used in tests.
+   - `github.com/stretchr/testify/require`: For assertions in unit tests.
+
+## Configuration
+The Node.js runtime uses the following configuration approaches:
+
+1. Version specification: The `Runtime` struct allows specifying a Node.js version and whether it's the default version.
+
+2. Environment variables: The runtime manages and updates environment variables to ensure proper Node.js execution.
+
+3. Data root directory: A data root directory is used for storing downloaded Node.js binaries and managing tool-specific data.
+
+4. Tool-specific configuration: The runtime supports tool-specific configurations, including custom environment variables and npm package installation.
+
+Here's an example of how the `Runtime` struct is configured:
+
+```go
+type Runtime struct {
+    Version string
+    Default bool
+}
+```
+
+The `Setup` method of the `Runtime` struct is responsible for configuring the environment:
+
+```go
+func (r *Runtime) Setup(ctx context.Context, tool types.Tool, dataRoot, toolSource string, env []string) ([]string, error) {
+    // ... (implementation details)
+}
+```
+
+This method sets up the Node.js environment, including downloading the runtime if necessary, running npm install for tool dependencies, and configuring environment variables.
+
+The runtime also uses a custom logging setup defined in `log.go`:
+
+```go
+var log = mvl.Package()
+```
+
+This logger is used throughout the package for consistent logging of runtime operations and debugging information.
+
+In summary, this Node.js runtime implementation provides a flexible and robust way to manage Node.js environments within the GPTScript project, handling version management, dependency installation, and cross-platform compatibility.

@@ -1,0 +1,109 @@
+---
+title: "completion.go"
+---
+
+## High-level description
+This code defines various types and structures related to completion requests and responses, likely for an AI-powered chat or completion system. It includes definitions for request parameters, message structures, tool calls, and utility functions for handling and formatting these structures.
+
+## Code Structure
+The code defines several interconnected types, including `CompletionRequest`, `CompletionMessage`, `CompletionTool`, and `CompletionToolCall`. These types are used to structure the input and output of completion operations, with methods provided for convenience and formatting.
+
+## Symbols
+
+### `CompletionRequest`
+#### Description
+Represents a request for a completion operation, containing various parameters to control the behavior of the AI model.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Model | string | The AI model to use |
+| InternalSystemPrompt | *bool | Whether to use an internal system prompt |
+| Tools | []CompletionTool | List of tools available for the completion |
+| Messages | []CompletionMessage | The conversation history or prompt |
+| MaxTokens | int | Maximum number of tokens in the response |
+| Chat | bool | Whether this is a chat completion |
+| Temperature | *float32 | Controls randomness in the output |
+| JSONResponse | bool | Whether to return a JSON response |
+| Cache | *bool | Whether to use caching |
+
+### `GetCache`
+#### Description
+A method of `CompletionRequest` that returns the caching preference, defaulting to true if not specified.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cache | bool | Whether caching should be used |
+
+### `CompletionMessage`
+#### Description
+Represents a message in the completion process, which can be from the user, system, assistant, or a tool.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Role | CompletionMessageRoleType | The role of the message sender |
+| Content | []ContentPart | The content of the message |
+| ToolCall | *CompletionToolCall | Information about a tool call, if applicable |
+| Usage | Usage | Token usage information |
+
+### `ChatText`
+#### Description
+A method of `CompletionMessage` that concatenates all text content parts into a single string.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | string | Concatenated text content of the message |
+
+### `IsToolCall`
+#### Description
+A method of `CompletionMessage` that checks if the message contains a tool call.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| isToolCall | bool | Whether the message contains a tool call |
+
+### `Text`
+#### Description
+A utility function that creates a `[]ContentPart` from a single string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| text | string | The text to convert |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | []ContentPart | A slice containing a single ContentPart with the input text |
+
+### `String`
+#### Description
+A method of `CompletionMessage` that formats the message content as a string, including tool calls if present.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| formatted | string | Formatted string representation of the message |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | For string formatting |
+| strings | For string manipulation |
+| github.com/fatih/color | For colored console output |
+| github.com/getkin/kin-openapi/openapi3 | For OpenAPI schema definitions |
+
+## Constants
+The code defines constants for different message role types:
+| Constant | Value |
+|:---------|:------|
+| CompletionMessageRoleTypeUser | "user" |
+| CompletionMessageRoleTypeSystem | "system" |
+| CompletionMessageRoleTypeAssistant | "assistant" |
+| CompletionMessageRoleTypeTool | "tool" |
+
+These constants are used to specify the role of a `CompletionMessage`.

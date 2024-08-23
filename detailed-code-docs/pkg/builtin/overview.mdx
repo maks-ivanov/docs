@@ -1,0 +1,71 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/builtin` directory contains the implementation of built-in tools and functions for the GPTScript system. It provides a set of system-level operations, utility functions, and manages default settings for the GPTScript environment. This package serves as a core component of the GPTScript project, offering essential functionality for file I/O, HTTP requests, command execution, and interaction with the GPT model.
+
+## What does it do?
+The `pkg/builtin` package provides a collection of tools that enable GPTScript to perform various system-level operations and interact with external resources. Here's a simplified explanation of its main functionalities:
+
+1. File Operations: It allows reading, writing, appending, and deleting files, as well as listing directory contents and finding files matching specific patterns.
+
+2. System Interaction: The package enables executing system commands and retrieving environment variables.
+
+3. Network Operations: It provides tools for making HTTP GET and POST requests, downloading files from URLs, and converting HTML content to plain text.
+
+4. GPT Model Interaction: The package includes functions for managing chat history, retrieving the current chat dialog, and concluding conversations with the GPT model.
+
+5. Utility Functions: It offers tools for prompting users for input, getting the current date and time, and managing the execution context.
+
+6. Configuration Management: The package handles default model settings and provides functions to get and set the default model for the GPTScript environment.
+
+## Entry points
+The main entry point for this package is the `Builtin` function in `builtin.go`. This function serves as a gateway to access all the available tools. Here's how the code is organized conceptually:
+
+1. Tool Registration: All available tools are registered in the `tools` map within `builtin.go`.
+
+2. Tool Access: The `Builtin` function allows retrieval of specific tools by name.
+
+3. Tool Execution: Each tool is implemented as a separate function (e.g., `SysFind`, `SysExec`, `SysRead`) within `builtin.go`.
+
+4. Default Settings: The `defaults.go` file manages the default model settings used across the tools.
+
+5. Logging: The `log.go` file sets up the logging mechanism for the package.
+
+The data flow typically starts with a call to `Builtin` to retrieve a specific tool, followed by the execution of that tool's function with the provided inputs.
+
+## Key Files
+1. `builtin.go`: This is the core file of the package, containing the implementation of all built-in tools and the main `Builtin` function for accessing these tools.
+
+2. `defaults.go`: Manages default settings for the GPTScript environment, particularly the default model used by the tools.
+
+3. `log.go`: Sets up the logging mechanism for the package.
+
+4. `builtin_test.go`: Contains unit tests for the package, ensuring the correct functionality of the implemented tools.
+
+## Dependencies
+The package relies on several external libraries and internal packages:
+
+1. `github.com/BurntSushi/locker`: Used for synchronization purposes.
+2. `github.com/jaytaylor/html2text`: Utilized for converting HTML content to plain text.
+3. `github.com/gptscript-ai/gptscript/pkg/engine`: Provides core functionality for the GPTScript engine.
+4. `github.com/gptscript-ai/gptscript/pkg/prompt`: Handles prompt-related operations.
+5. `github.com/gptscript-ai/gptscript/pkg/types`: Defines common types used across the project.
+6. `github.com/gptscript-ai/gptscript/pkg/openai`: Provides OpenAI-related constants and functionality.
+7. `github.com/gptscript-ai/gptscript/pkg/mvl`: Used for logging purposes.
+
+These dependencies were chosen to provide essential functionality for file operations, HTTP requests, HTML parsing, and integration with the GPTScript engine and OpenAI's GPT models.
+
+## Configuration
+The package uses a default model configuration, which can be accessed and modified using the following functions in `defaults.go`:
+
+1. `GetDefaultModel()`: Retrieves the current default model.
+2. `SetDefaultModel(model string)`: Sets a new default model.
+3. `SetDefaults(tool types.Tool) types.Tool`: Applies default settings to a given tool.
+
+The default model is initially set to `openai.DefaultModel`, which is defined in the related `pkg/openai/client.go` file as `openai.GPT4o`.
+
+Additionally, the package uses environment variables for certain operations, such as the `SysGetenv` function, which retrieves environment variables based on the provided input.
+
+In summary, the `pkg/builtin` package serves as a crucial component of the GPTScript system, providing a wide range of built-in tools and functions that enable interaction with the file system, network, and GPT models. It also manages default settings and configurations, ensuring consistent behavior across the GPTScript environment.

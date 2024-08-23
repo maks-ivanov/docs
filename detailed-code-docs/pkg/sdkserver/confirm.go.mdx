@@ -1,0 +1,79 @@
+---
+title: "confirm.go"
+---
+
+## High-level description
+This code implements a server-side authorization mechanism for GPTScript. It provides functionality to authorize tool calls, handle confirmation requests, and manage the state of waiting confirmations.
+
+## Code Structure
+The main components are the `authorize` and `confirm` methods of the `server` struct. These methods interact with a shared `waitingToConfirm` map to manage authorization requests and responses.
+
+## Symbols
+
+### `authorize`
+#### Description
+This method handles the authorization process for a given context and input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | engine.Context | The context of the current execution |
+| input | string | The input for the authorization request |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.AuthorizerResponse | struct | The response containing the authorization decision |
+| error | error | Any error that occurred during the process |
+
+#### Internal Logic
+1. Checks if the context is safe using `auth.IsSafe`.
+2. If not safe, it creates a channel for the authorization response.
+3. Sends an event to notify about the confirmation request.
+4. Waits for the confirmation response or context cancellation.
+
+### `confirm`
+#### Description
+This method handles the confirmation response for a given authorization request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| w | http.ResponseWriter | The HTTP response writer |
+| r | *http.Request | The HTTP request |
+
+#### Internal Logic
+1. Retrieves the confirmation ID from the request path.
+2. Checks if there's a waiting confirmation for the given ID.
+3. Decodes the authorization response from the request body.
+4. Attempts to send the response to the waiting channel.
+5. Sets appropriate HTTP status codes based on the outcome.
+
+## Side Effects
+- Modifies the shared `waitingToConfirm` map.
+- Sends events through the `events` channel.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | For JSON encoding/decoding |
+| fmt | For error formatting |
+| net/http | For HTTP request handling |
+| time | For timestamp generation |
+| github.com/gptscript-ai/gptscript/pkg/auth | For safety checks |
+| github.com/gptscript-ai/gptscript/pkg/context | For context management |
+| github.com/gptscript-ai/gptscript/pkg/engine | For engine-related types |
+| github.com/gptscript-ai/gptscript/pkg/runner | For runner-related types |
+| github.com/gptscript-ai/gptscript/pkg/server | For server-related types |
+
+## Error Handling
+The code uses error returns and HTTP status codes to handle various error scenarios, such as:
+- Multiple authorization requests for the same ID
+- Not found confirmation requests
+- Failed request body decoding
+
+## Logging
+The code uses a logger obtained from the request context for error logging.
+
+## Concurrency
+The code uses a read-write mutex (`lock`) to protect access to the shared `waitingToConfirm` map, ensuring thread-safety in concurrent scenarios.

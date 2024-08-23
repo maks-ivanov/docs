@@ -1,0 +1,73 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains test data and a test program for the GPTScript system, specifically focusing on the sys.context functionality. It includes a JSON file representing the context of a GPTScript tool call and a Go test program that demonstrates how to access and use the GPTSCRIPT_CONTEXT environment variable.
+
+## What does it do?
+The contents of this directory serve two main purposes:
+
+1. Context Representation: The context.json file provides a detailed snapshot of a GPTScript execution context. It includes information about the current tool call, the program structure, available tools, and configuration settings. This JSON representation is crucial for understanding the internal workings of the GPTScript system and can be used for debugging complex scenarios.
+
+2. Context Usage Demonstration: The test.go file shows how to work with the GPTScript context in a real application. It reads the GPTSCRIPT_CONTEXT environment variable, which contains the JSON representation of the context, and demonstrates how to extract and use information from it, specifically focusing on the agents in the agent group.
+
+Together, these files illustrate how context information is structured in GPTScript and how it can be accessed and utilized in a program, providing valuable insights for developers working with the GPTScript system.
+
+## Key Files
+
+1. context.json
+   - Purpose: Represents the context of a GPTScript tool call
+   - Content: Detailed JSON structure containing information about the current call, program structure, available tools, and configuration settings
+   - Role: Provides a comprehensive snapshot of the GPTScript execution context for internal processing and debugging
+
+2. test.go
+   - Purpose: Demonstrates how to access and use the GPTSCRIPT_CONTEXT environment variable
+   - Content: Go program that reads the context JSON, unmarshals it into a struct, and prints information about agents in the agent group
+   - Role: Serves as an example of how to work with GPTScript context in a real application
+
+## Dependencies
+The test.go file relies on the following external libraries:
+
+1. encoding/json (Go standard library)
+   - Purpose: For unmarshaling JSON data from the GPTSCRIPT_CONTEXT environment variable
+
+2. fmt (Go standard library)
+   - Purpose: For printing output to the console
+
+3. os (Go standard library)
+   - Purpose: For accessing environment variables
+
+4. github.com/gptscript-ai/gptscript/pkg/engine
+   - Purpose: For using the CallContext type, which represents the structure of the GPTScript context
+   - Version: Not specified in the provided code
+
+## Configuration
+The context.json file includes various configuration options for tools and the program:
+
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| modelName | string | "gpt-4o" | The GPT model used for the tools |
+| chat | boolean | true | Indicates if the tool uses chat mode (only for the main program tool) |
+| workingDir | string | "testdata/TestSysContext" | The working directory for the tools |
+
+Additionally, the context references external files:
+
+| File | Purpose |
+|:-----|:--------|
+| testdata/TestSysContext/file.gpt | Contains the "I am Superman Agent" tool definition |
+| testdata/TestSysContext/test.gpt | Contains the main program and "agents" tool definition |
+
+The test.go program expects the GPTSCRIPT_CONTEXT environment variable to contain valid JSON data that can be unmarshaled into the defined struct.
+
+Here's an example of how the context structure is defined in the test.go file:
+
+```go
+type contextData struct {
+    engine.CallContext
+}
+```
+
+This structure embeds the `engine.CallContext` type, allowing for potential expansion of the data structure in the future.
+
+In summary, this directory provides essential test data and examples for working with GPTScript contexts, demonstrating both the structure of the context information and how to programmatically access and use it in a Go application.

@@ -1,0 +1,64 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/input` directory contains code for handling input from various sources in the GPTScript tool. It provides functionality to read input from command-line arguments, files, URLs, and standard input. The package is designed to be flexible and support different input methods and formats, making it easier for users to interact with the GPTScript tool.
+
+## What does it do?
+This package acts as a versatile input handler for the GPTScript tool. It performs the following main functions:
+
+1. Reads input from command-line arguments by joining them into a single string.
+2. Handles input from files, including support for reading from standard input and directories.
+3. Retrieves content from URLs, with an option for caching to improve performance.
+4. Provides a command-line interface (CLI) input handler that prioritizes file input over arguments.
+5. Offers a flexible input retrieval function that can handle both file paths and URLs.
+
+These functionalities allow users to provide input to the GPTScript tool in various ways, such as typing directly in the command line, specifying a file path, or even providing a URL to fetch content from. The package handles the complexities of reading from different sources, making it easier for other parts of the application to work with user input regardless of its origin.
+
+## Key Files
+
+### input.go
+This file contains the core functionality of the input package. It defines several important functions:
+
+1. `FromArgs`: Joins command-line arguments into a single string.
+2. `FromCLI`: Handles input from the command-line interface, prioritizing file input over arguments.
+3. `FromFile`: Reads input from a file, supporting stdin ("-") and directory inputs.
+4. `FromLocation`: Retrieves content from a file path or URL, with caching support for URLs.
+
+These functions work together to provide a comprehensive input handling system. For example, `FromCLI` uses both `FromFile` and `FromArgs` to determine the appropriate input source and retrieve the content.
+
+### log.go
+This file sets up the logging mechanism for the input package. It initializes a logger using the `mvl` package, which is likely a custom logging solution for the GPTScript project. This logger can be used throughout the input package to log messages, errors, or other relevant information, ensuring consistent logging practices across the project.
+
+## Dependencies
+The input package relies on several external and internal dependencies:
+
+1. Standard Go libraries:
+   - `fmt`: For error formatting
+   - `io`: For I/O operations
+   - `io/fs`: For file system operations
+   - `os`: For operating system interactions
+   - `path/filepath`: For file path manipulations
+   - `strings`: For string operations
+
+2. Internal project dependencies:
+   - `github.com/gptscript-ai/gptscript/internal`: For internal file system access
+   - `github.com/gptscript-ai/gptscript/pkg/loader`: For URL content loading
+   - `github.com/gptscript-ai/gptscript/pkg/types`: For default file types
+   - `github.com/gptscript-ai/gptscript/pkg/mvl`: For logging functionality
+
+These dependencies are chosen to provide efficient file and URL handling, as well as integration with the project's custom logging system.
+
+## Configuration
+The input package uses some configuration options, primarily through function parameters:
+
+1. In the `FromLocation` function, there's a `disableCache` boolean parameter that allows users to disable URL caching if needed.
+
+2. The package uses a set of default files (defined in `types.DefaultFiles`) when searching for input in a directory. This configuration is likely defined elsewhere in the project.
+
+3. The logging configuration is not explicitly shown in the provided code, but it's likely set up at the application's entry point or in a central configuration file.
+
+While the package doesn't have a dedicated configuration file, these options provide flexibility in how input is handled and logged.
+
+In summary, the `pkg/input` directory contains a robust and flexible input handling system for the GPTScript tool, supporting various input sources and methods while providing efficient operations and integration with the project's logging system.

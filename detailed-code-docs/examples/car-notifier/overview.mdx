@@ -1,0 +1,90 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `examples/car-notifier` directory contains a simple yet practical application that demonstrates the use of GPTScript for automating web scraping and email notifications. The project is designed to fetch information about recently posted Toyota 4Runners on Phoenix Craigslist and send an email with this information. It's intended to be run as a daily cron job and requires a PostgreSQL database for storing data and SendGrid for sending emails.
+
+## What does it do?
+The car-notifier application performs the following tasks:
+
+1. Scrapes the Phoenix Craigslist website for recent Toyota 4Runner listings.
+2. Stores the scraped information in a PostgreSQL database.
+3. Compares the new listings with previously stored data to identify new entries.
+4. Generates an email containing information about the new Toyota 4Runner listings.
+5. Sends the email using the SendGrid API.
+
+This automation helps potential buyers stay informed about new 4Runner listings without manually checking Craigslist every day.
+
+## Key Files
+1. `car-notifier.gpt`: This is the main GPTScript file that contains the logic for scraping, data processing, and email sending. It's executed by the GPTScript runtime.
+
+2. `Dockerfile`: This file defines the container environment for running the car-notifier application. It sets up a lightweight Alpine-based container with the necessary dependencies and configurations.
+
+3. `README.md`: Provides instructions on how to set up and run the example, including prerequisites and environment variable setup.
+
+## Dependencies
+The project relies on the following key dependencies:
+
+1. GPTScript: The runtime used to execute the `car-notifier.gpt` script. It's installed in the Docker container using a custom installation script.
+
+2. PostgreSQL (version 16 client): Used for database interactions to store and retrieve car listing information. The `postgresql16-client` package is installed in the Docker container.
+
+3. SendGrid: An email delivery service used to send notification emails. The SendGrid API key is required as an environment variable.
+
+4. Alpine Linux: The base operating system for the Docker container, chosen for its small footprint and efficiency.
+
+5. curl: Used for downloading the GPTScript installer and potentially for making HTTP requests within the script.
+
+## Configuration
+The application requires the following configuration:
+
+1. PostgreSQL Connection URL: Set as an environment variable `PGURL`.
+2. SendGrid API Key: Set as an environment variable `SENDGRID_API_KEY`.
+3. Email Address and Name: These need to be manually edited in the `car-notifier.gpt` script before running or building the Docker image.
+
+Environment variables are set up as follows:
+
+```bash
+export PGURL=your-postgres-connection-url
+export SENDGRID_API_KEY=your-sendgrid-api-key
+```
+
+## Entry points
+The main entry point for this application is the `car-notifier.gpt` script. It's executed either directly using the GPTScript runtime or within the Docker container.
+
+To run the script directly:
+
+```bash
+gptscript --disable-cache car-notifier.gpt
+```
+
+To run the application using Docker:
+
+1. Build the Docker image:
+   ```
+   docker build -t car-notifier .
+   ```
+
+2. Run the container:
+   ```
+   docker run --env PGURL=your-postgres-url --env SENDGRID_API_KEY=your-sendgrid-key car-notifier
+   ```
+
+The Dockerfile sets up the environment and specifies the command to run the GPTScript:
+
+```dockerfile
+CMD ["gptscript", "--cache=false", "car-notifier.gpt"]
+```
+
+This command runs the `car-notifier.gpt` script using the GPTScript runtime with caching disabled.
+
+The application's workflow can be summarized as follows:
+
+1. The script connects to the PostgreSQL database using the provided connection URL.
+2. It scrapes the Craigslist website for Toyota 4Runner listings.
+3. New listings are identified by comparing with previously stored data.
+4. An email is composed with the new listing information.
+5. The email is sent using the SendGrid API.
+
+This process is designed to be run periodically (e.g., daily) to keep users updated on new car listings.

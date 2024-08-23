@@ -1,0 +1,108 @@
+---
+title: "Overview"
+---
+
+I'll provide a comprehensive documentation for the `runner.go` file, focusing on its main functionality and key components.
+
+## High-level description
+This file implements a Runner for executing GPTScript programs. It manages the execution flow, handles credentials, and provides a chat-like interface for interacting with the program. The Runner is responsible for coordinating tool calls, managing state, and handling input/output operations.
+
+## Code Structure
+The main struct is `Runner`, which contains methods for running and chatting with GPTScript programs. It uses a `Client` for model interactions, a `MonitorFactory` for monitoring execution, and a `RuntimeManager` for managing tool runtimes. The `State` struct is used to maintain the execution state between calls.
+
+## Symbols
+
+### Runner
+#### Description
+The `Runner` struct is the core component responsible for executing GPTScript programs. It manages the execution flow, handles credentials, and provides methods for running and chatting with programs.
+
+#### Internal Logic
+- Initializes with a model client, credential store, and various options
+- Manages execution state using the `State` struct
+- Coordinates tool calls and handles input/output operations
+- Provides methods for running programs and chatting with them
+
+### New
+#### Description
+Creates a new `Runner` instance with the provided options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| client | engine.Model | The model client for AI interactions |
+| credStore | credentials.CredentialStore | The credential store for managing credentials |
+| opts | ...Options | Optional configuration options |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Runner | *Runner | A new Runner instance |
+| error | error | Any error encountered during initialization |
+
+### Chat
+#### Description
+Executes a chat interaction with the GPTScript program, managing state between calls.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prevState | ChatState | The previous chat state |
+| prg | types.Program | The GPTScript program to execute |
+| env | []string | Environment variables |
+| input | string | User input for the chat |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ChatResponse | ChatResponse | The response from the chat interaction |
+| error | error | Any error encountered during execution |
+
+#### Internal Logic
+1. Initializes or resumes the chat state
+2. Starts or resumes the program execution
+3. Handles continuations and tool calls
+4. Returns the chat response or continues the conversation
+
+### Run
+#### Description
+Executes a GPTScript program and returns the output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prg | types.Program | The GPTScript program to execute |
+| env | []string | Environment variables |
+| input | string | Input for the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The output of the program execution |
+| error | error | Any error encountered during execution |
+
+#### Internal Logic
+1. Calls the `Chat` method to execute the program
+2. Returns the content of the chat response as the program output
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides context for cancellation and timeouts |
+| encoding/json | JSON encoding and decoding |
+| errors | Error handling |
+| fmt | Formatted I/O |
+| sort | Sorting utilities |
+| strings | String manipulation |
+| sync | Synchronization primitives |
+| time | Time-related functions |
+
+## Error Handling
+The code uses a combination of returned errors and the `require` package from `testify` for error handling. Errors are propagated up the call stack and often wrapped with additional context using `fmt.Errorf`.
+
+## Performance Considerations
+- The `Runner` can be configured to run tool calls sequentially or in parallel, which can affect performance depending on the nature of the tools being executed.
+- Credential handling is done sequentially to avoid race conditions when prompting users for input.
+
+This documentation provides an overview of the main components and functionality of the `runner.go` file. The file is complex and contains many helper functions and additional logic not covered in detail here due to space constraints.

@@ -1,0 +1,55 @@
+---
+title: "daemon.go"
+---
+
+## High-level description
+This code defines a `SysDaemon` function in the `daemon` package. Its primary purpose is to execute a command as a daemon process, handling input and output streams, and providing a mechanism for graceful termination.
+
+## Symbols
+
+### `SysDaemon`
+#### Description
+`SysDaemon` is a function that runs a specified command as a daemon process. It sets up context cancellation, handles standard input, and manages the execution of the command with proper output redirection.
+
+#### Inputs
+This function doesn't have any explicit input parameters.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Returns any error encountered during the execution of the command |
+
+#### Internal Logic
+1. Creates a cancellable context.
+2. Starts a goroutine to read from standard input and cancel the context when input ends.
+3. Prepares the command to be executed using `os.Args[2]` as the command and `os.Args[3:]` as its arguments.
+4. Sets up stdout and stderr redirection for the command.
+5. Defines a custom cancel function for the command, which handles process termination differently for Windows and other operating systems.
+6. Executes the command and returns any error encountered.
+
+## Side Effects
+- Reads from standard input (os.Stdin)
+- Writes to standard output (os.Stdout) and standard error (os.Stderr)
+- Executes a system command
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For creating a cancellable context |
+| io | For reading from standard input |
+| os | For accessing command-line arguments and standard I/O streams |
+| os/exec | For executing system commands |
+| runtime | For determining the operating system |
+
+## Error Handling
+The function returns any error encountered during the execution of the command. It does not implement any specific error handling mechanisms beyond this.
+
+## Performance Considerations
+The function uses a goroutine to handle reading from standard input, which allows for non-blocking I/O operations.
+
+## Platform-specific Behavior
+The `cmd.Cancel` function is defined differently based on the operating system:
+- On Windows, it kills the process.
+- On other operating systems, it sends an interrupt signal to the process.
+
+This distinction ensures proper termination behavior across different platforms.

@@ -1,0 +1,111 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains the public-facing assets for a web application that generates logos using AI. It includes an HTML file that defines the structure and appearance of the web page, and a JavaScript file that handles client-side interactions and communication with the server.
+
+## What does it do?
+The public directory serves as the front-end for an AI Logo Generator application. It provides a user interface where users can:
+
+1. View a selection of AI artists
+2. Request new artists if desired
+3. Input a description for a logo they want to generate
+4. Submit their request and view the generated logos from different AI artists
+
+The application fetches artist information from the server, allows users to refresh the artist selection, and sends logo generation requests to the server based on user input. The results are then displayed on the page, showing logos created by each artist based on the user's description.
+
+## Key Files
+
+1. index.html
+   - This file defines the structure and basic styling of the web page.
+   - It includes sections for displaying artist options, a form for logo description input, and an area for showing generated logo results.
+   - The file uses Tailwind CSS for styling and includes custom CSS for specific elements like a loading spinner.
+
+2. script.js
+   - This JavaScript file handles all client-side interactions and communication with the server.
+   - It includes functions for fetching and displaying artist information, handling user interactions (like requesting new artists or submitting logo generation requests), and updating the UI with generated logos.
+
+## Dependencies
+The application relies on the following external dependency:
+
+1. Tailwind CSS (v3.3.2)
+   - Purpose: Provides utility classes for styling the web page
+   - Loaded from a CDN in the HTML file
+
+The JavaScript code also depends on modern browser APIs:
+- Fetch API: For making HTTP requests to the server
+- DOM API: For manipulating the document structure and handling user interactions
+
+## Configuration
+There are no explicit configuration files in this directory. However, the JavaScript file interacts with several server endpoints, which are hardcoded:
+
+1. '/artists': GET request to fetch artist information
+2. '/new-artists': POST request to generate new artists
+3. '/generate-logo': POST request to generate logos based on user input
+
+These endpoints suggest that the application relies on a backend server to handle these requests and provide the necessary data and functionality.
+
+## Code Snippets and Examples
+
+1. Fetching and displaying artists:
+
+```javascript
+async function fetchArtists() {
+  try {
+    const response = await fetch('/artists');
+    const artists = await response.json();
+    const artistsSection = document.getElementById('artists');
+    artistsSection.innerHTML = '';
+    artists.forEach(artist =&gt; {
+      const artistCard = `
+        &lt;div class="bg-white p-4 rounded-lg shadow-md"&gt;
+          &lt;h3 class="text-lg font-semibold"&gt;${artist.name}&lt;/h3&gt;
+          &lt;p class="text-sm text-gray-600"&gt;${artist.description}&lt;/p&gt;
+        &lt;/div&gt;
+      `;
+      artistsSection.insertAdjacentHTML('beforeend', artistCard);
+    });
+  } catch (error) {
+    console.error('Error fetching artists:', error);
+  }
+}
+```
+
+2. Submitting a logo generation request:
+
+```javascript
+document.getElementById('submit-btn').addEventListener('click', async () =&gt; {
+  resetSubmissions();
+  document.getElementById('spinner').classList.remove('hidden');
+  const description = document.getElementById('logo-description').value;
+  try {
+    const response = await fetch('/generate-logo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ description }),
+    });
+    const result = await response.json();
+    const artistResponseSection = document.getElementById('artist-response');
+    result.forEach(artistResult =&gt; {
+      const resultCard = `
+        &lt;div class="bg-white p-4 rounded-lg shadow-md"&gt;
+          &lt;h3 class="text-lg font-semibold"&gt;${artistResult.artistName}&lt;/h3&gt;
+          &lt;img src="${artistResult.logoUrl}" alt="Generated Logo" class="mt-2 max-w-full h-auto"&gt;
+        &lt;/div&gt;
+      `;
+      artistResponseSection.insertAdjacentHTML('beforeend', resultCard);
+    });
+  } catch (error) {
+    console.error('Error generating logo:', error);
+  } finally {
+    document.getElementById('spinner').classList.add('hidden');
+  }
+});
+```
+
+These code snippets demonstrate how the application interacts with the server to fetch artist information and submit logo generation requests, as well as how it updates the UI with the received data.
+
+The public directory provides a clean and interactive user interface for the AI Logo Generator application, handling all client-side logic and presentation while relying on a server for the core functionality of artist management and logo generation.

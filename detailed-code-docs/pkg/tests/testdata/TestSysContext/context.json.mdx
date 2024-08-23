@@ -1,0 +1,59 @@
+---
+title: "context.json"
+---
+
+## High-level description
+This JSON file represents the context of a GPTScript tool call. It contains detailed information about the current call, including the tool being used, the agent group, and the program structure. This context is likely used for internal processing and debugging of GPTScript executions.
+
+## Symbols
+
+### Root Object
+#### Description
+The root object contains two main sections: "call" and "program", which provide comprehensive information about the current tool call and the program structure.
+
+#### Inputs
+This is a static JSON file, so it doesn't have inputs in the traditional sense.
+
+#### Outputs
+The entire JSON structure serves as the output, providing context information for the GPTScript system.
+
+### call
+#### Description
+This object contains information specific to the current tool call.
+
+#### Internal Logic
+- Identifies the tool being called (sys.context)
+- Specifies the agent group involved in the call
+- Provides details about the tool's category and name
+
+### program
+#### Description
+This object describes the structure of the GPTScript program, including its name, entry point, and available tools.
+
+#### Internal Logic
+- Defines the program name and entry tool ID
+- Lists all available tools in the toolSet, including system tools and user-defined tools
+- Provides detailed information about each tool, such as its name, model, instructions, and source location
+
+## Dependencies
+The context references several external files and tools:
+| Dependency | Purpose |
+|:-----------|:--------|
+| testdata/TestSysContext/file.gpt | Contains the "I am Superman Agent" tool definition |
+| testdata/TestSysContext/test.gpt | Contains the main program and "agents" tool definition |
+
+## Configuration
+The context includes various configuration options for tools and the program:
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| modelName | string | "gpt-4o" | The GPT model used for the tools |
+| chat | boolean | true | Indicates if the tool uses chat mode (only for the main program tool) |
+| workingDir | string | "testdata/TestSysContext" | The working directory for the tools |
+
+## API/Interface Reference
+The sys.context tool serves as an API for retrieving context information:
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| sys.context | N/A | Empty object | Context JSON | Retrieves the current internal GPTScript tool call context information |
+
+This JSON file provides a comprehensive snapshot of the GPTScript execution context, which is crucial for understanding the internal workings of the system and debugging complex scenarios.

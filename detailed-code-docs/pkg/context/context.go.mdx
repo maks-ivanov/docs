@@ -1,0 +1,159 @@
+---
+title: "context.go"
+---
+
+Here's a detailed documentation of the `context.go` file:
+
+## High-level description
+This file defines a package named `context` that provides utility functions for working with Go's `context.Context`. It primarily focuses on managing pause functions and request IDs within a context, as well as handling loggers and environment variables.
+
+## Code Structure
+The file defines several custom types (`pauseKey`, `reqIDKey`, `loggerKey`, `envKey`) used as context keys. It then provides functions to add and retrieve values associated with these keys from a context.
+
+## Symbols
+
+### `AddPauseFuncToCtx`
+#### Description
+Adds a pause function to the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The original context |
+| pauseF | func() func() | The pause function to be added |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | context.Context | A new context with the pause function added |
+
+#### Internal Logic
+Uses `context.WithValue` to create a new context with the pause function stored under the `pauseKey`.
+
+### `GetPauseFuncFromCtx`
+#### Description
+Retrieves the pause function from the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context to retrieve the pause function from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | func() func() | The retrieved pause function or a no-op function if not found |
+
+#### Internal Logic
+Attempts to retrieve the pause function from the context using the `pauseKey`. If not found, returns a no-op function.
+
+### `WithNewRequestID`
+#### Description
+Adds a new UUID as a request ID to the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The original context |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | context.Context | A new context with the request ID added |
+
+#### Internal Logic
+Generates a new UUID using `uuid.NewString()` and adds it to the context using `context.WithValue` with the `reqIDKey`.
+
+### `GetRequestID`
+#### Description
+Retrieves the request ID from the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context to retrieve the request ID from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | string | The retrieved request ID or an empty string if not found |
+
+#### Internal Logic
+Attempts to retrieve the request ID from the context using the `reqIDKey`.
+
+### `WithLogger`
+#### Description
+Adds a logger to the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The original context |
+| log | mvl.Logger | The logger to be added |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | context.Context | A new context with the logger added |
+
+#### Internal Logic
+Uses `context.WithValue` to create a new context with the logger stored under the `loggerKey`.
+
+### `GetLogger`
+#### Description
+Retrieves the logger from the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context to retrieve the logger from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | mvl.Logger | The retrieved logger or a new logger if not found |
+
+#### Internal Logic
+Attempts to retrieve the logger from the context using the `loggerKey`. If not found, returns a new logger created with `mvl.New("")`.
+
+### `WithEnv`
+#### Description
+Adds environment variables to the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The original context |
+| env | []string | The environment variables to be added |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | context.Context | A new context with the environment variables added |
+
+#### Internal Logic
+Uses `context.WithValue` to create a new context with the environment variables stored under the `envKey`.
+
+### `GetEnv`
+#### Description
+Retrieves the environment variables from the given context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context to retrieve the environment variables from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | []string | The retrieved environment variables or nil if not found |
+
+#### Internal Logic
+Attempts to retrieve the environment variables from the context using the `envKey`.
+
+## Dependencies
+- `context` from the Go standard library
+- `github.com/google/uuid` for generating UUIDs
+- `github.com/gptscript-ai/gptscript/pkg/mvl` for the Logger type
+
+This package provides a set of utility functions for managing context-specific data in a Go application, particularly focused on pause functions, request IDs, loggers, and environment variables. These functions can be useful in scenarios where you need to pass additional information through the context in a structured manner.

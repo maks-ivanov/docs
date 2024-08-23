@@ -1,0 +1,141 @@
+---
+title: "types.go"
+---
+
+Here's a comprehensive documentation of the `pkg/sdkserver/types.go` file:
+
+## High-level description
+This file defines various types and structures used in the SDK server implementation for the GPTScript project. It includes definitions for run states, tool definitions, request/response structures, and event handling mechanisms.
+
+## Code Structure
+The file defines several types and constants that are used throughout the SDK server implementation. The main structures are `runInfo`, `call`, and `event`, which are used to represent the state and progress of tool executions. These structures are interconnected, with `runInfo` containing a map of `call` objects.
+
+## Symbols
+
+### `runState`
+#### Description
+An enumeration representing the different states of a run.
+
+#### Internal Logic
+Defined states are:
+- `Creating`: Initial state when a run is being created
+- `Running`: The run is actively executing
+- `Continue`: The run is waiting for continuation
+- `Finished`: The run has completed
+- `Error`: An error occurred during the run
+
+### `toolDefs`
+#### Description
+A slice of `types.ToolDef` with a custom `String()` method for formatting.
+
+#### Internal Logic
+The `String()` method joins the string representations of individual tool definitions with newlines and separators.
+
+### `toolOrFileRequest`
+#### Description
+A struct representing a request for a tool or file operation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | `content` | Inline content |
+| file | `file` | Inline file information |
+| cacheOptions | `cacheOptions` | Cache options |
+| openAIOptions | `openAIOptions` | OpenAI options |
+| ToolDefs | `toolDefs` | Tool definitions |
+| SubTool | `string` | Sub-tool identifier |
+| Input | `string` | Input for the tool |
+| ChatState | `string` | Current chat state |
+| Workspace | `string` | Workspace identifier |
+| Env | `[]string` | Environment variables |
+| CredentialContext | `string` | Credential context |
+| CredentialOverrides | `[]string` | Credential overrides |
+| Confirm | `bool` | Confirmation flag |
+| Location | `string` | Location information |
+| ForceSequential | `bool` | Force sequential execution |
+| DefaultModelProvider | `string` | Default model provider |
+
+### `loadRequest`
+#### Description
+A struct representing a request to load a tool or file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | `content` | Inline content |
+| ToolDefs | `toolDefs` | Tool definitions |
+| DisableCache | `bool` | Flag to disable caching |
+| SubTool | `string` | Sub-tool identifier |
+| File | `string` | File path |
+
+### `parseRequest`
+#### Description
+A struct representing a request to parse a tool or file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Options | `parser.Options` | Parser options |
+| content | `content` | Inline content |
+| DisableCache | `bool` | Flag to disable caching |
+| File | `string` | File path |
+
+### `modelsRequest`
+#### Description
+A struct representing a request for model information.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Providers | `[]string` | List of providers |
+| Env | `[]string` | Environment variables |
+| CredentialOverrides | `[]string` | Credential overrides |
+
+### `runInfo`
+#### Description
+A struct representing information about a run.
+
+#### Internal Logic
+- Stores information about calls, program, input/output, state, and timing.
+- Provides methods to process events and update its state.
+
+### `call`
+#### Description
+A struct representing a single call within a run.
+
+#### Internal Logic
+- Stores information about the call context, type, timing, input/output, and LLM interactions.
+- Provides methods to set sub-calls and update output.
+
+### `event`
+#### Description
+A struct representing an event in the system.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Event | `gserver.Event` | Inline server event |
+| Prompt | `types.Prompt` | Inline prompt information |
+
+### `prompt`
+#### Description
+A struct representing a prompt event.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Prompt | `types.Prompt` | Inline prompt information |
+| ID | `string` | Prompt identifier |
+| Type | `runner.EventType` | Event type |
+| Time | `time.Time` | Timestamp |
+
+## Dependencies
+- `github.com/gptscript-ai/gptscript/pkg/cache`
+- `github.com/gptscript-ai/gptscript/pkg/engine`
+- `github.com/gptscript-ai/gptscript/pkg/openai`
+- `github.com/gptscript-ai/gptscript/pkg/parser`
+- `github.com/gptscript-ai/gptscript/pkg/runner`
+- `github.com/gptscript-ai/gptscript/pkg/server`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+This file serves as a central definition for various data structures and types used in the SDK server implementation, providing a foundation for request handling, state management, and event processing in the GPTScript system.

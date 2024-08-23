@@ -1,0 +1,73 @@
+---
+title: "main.go"
+---
+
+## High-level description
+This Go program generates Markdown documentation for the GPTScript command-line interface (CLI). It uses the Cobra library to generate documentation for the CLI commands and their subcommands, and customizes the output format and file naming.
+
+## Code Structure
+The main function sets up the Cobra command, removes existing documentation files, and then generates new documentation using custom file prepender and link handler functions.
+
+## Symbols
+
+### `main`
+#### Description
+The main function of the program that orchestrates the documentation generation process.
+
+#### Internal Logic
+1. Creates a new Cobra command using `gptscript.New()`.
+2. Disables auto-generation tags.
+3. Removes existing documentation files.
+4. Generates new Markdown documentation using custom functions.
+
+### `filePrepender`
+#### Description
+A function that prepends front matter to each generated Markdown file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| filename | string | The name of the file being processed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The front matter to be prepended to the file |
+
+#### Internal Logic
+1. Extracts the base name of the file.
+2. Removes the file extension.
+3. Replaces underscores with spaces in the title.
+4. Returns a formatted string with YAML front matter.
+
+### `linkHandler`
+#### Description
+A function that handles link generation for the documentation.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the link |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The processed link name |
+
+#### Internal Logic
+Simply returns the input name without modification.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | For string formatting |
+| log | For error logging |
+| os | For file system operations |
+| path | For file path manipulations |
+| path/filepath | For file path manipulations |
+| strings | For string operations |
+| github.com/gptscript-ai/gptscript/pkg/cli | For accessing the GPTScript CLI |
+| github.com/spf13/cobra/doc | For generating Cobra documentation |
+
+## Error Handling
+The program uses Go's standard error handling mechanisms. If an error occurs during file operations or documentation generation, it is logged using `log.Fatal()`, which will print the error and exit the program.

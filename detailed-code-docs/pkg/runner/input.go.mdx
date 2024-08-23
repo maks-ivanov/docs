@@ -1,0 +1,57 @@
+---
+title: "input.go"
+---
+
+## High-level description
+The `handleInput` function in the `runner` package processes input for a tool execution. It applies input filters defined for the tool, potentially modifying the input before it's used in the main tool execution.
+
+## Code Structure
+The `handleInput` function is part of the `Runner` struct and interacts with the `engine.Context` and `Monitor` types. It uses the `subCall` method of the `Runner` to execute input filter tools.
+
+## Symbols
+
+### `handleInput`
+#### Description
+This function processes the input for a tool execution by applying any input filters defined for the tool. It iterates through the input filter tools, executes them, and updates the input based on their results.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| callCtx | engine.Context | The context of the current tool call |
+| monitor | Monitor | An interface for monitoring the execution |
+| env | []string | Environment variables for the execution |
+| input | string | The initial input to be processed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The processed input after applying all input filters |
+| error | error | Any error encountered during the process |
+
+#### Internal Logic
+1. Retrieve the input filter tools for the current tool using `callCtx.Tool.GetInputFilterTools()`.
+2. Iterate through each input filter tool:
+   a. Marshal the current input into a JSON object.
+   b. Execute the input filter tool using `r.subCall()`.
+   c. Update the `input` with the result of the filter tool.
+3. Return the final processed input.
+
+## Side Effects
+The function modifies the `input` string based on the results of the input filter tools.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | For marshaling input data into JSON format |
+| fmt | For error formatting |
+| github.com/gptscript-ai/gptscript/pkg/engine | For using the `Context` type and related functionalities |
+
+## Error Handling
+The function returns an error in the following cases:
+- If there's an error retrieving input filter tools
+- If there's an error marshaling the input data
+- If there's an error during the execution of an input filter tool
+- If an input filter tool results in a chat continuation (which is considered an invalid state)
+
+## Performance Considerations
+The performance of this function depends on the number and complexity of the input filter tools. Each filter tool is executed sequentially, which could impact performance for tools with many input filters.

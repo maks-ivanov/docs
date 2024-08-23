@@ -1,0 +1,128 @@
+---
+title: "cmd.go"
+---
+
+## High-level description
+This code defines Git-related operations in Go, providing functions to interact with Git repositories. It includes functionality for listing remote references, cloning repositories, and managing worktrees, with an option to use either system Git commands or a pure Go implementation.
+
+## Code Structure
+The code defines several functions that wrap Git commands using the `debugcmd.WrappedCmd` type. These functions are designed to be used together to perform various Git operations, with `newGitCommand` serving as a helper function to create Git command instances.
+
+## Symbols
+
+### `newGitCommand`
+#### Description
+Creates a new `debugcmd.WrappedCmd` instance for executing Git commands.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for command execution |
+| args | ...string | Variable number of command arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *debugcmd.WrappedCmd | A wrapped command ready for execution |
+
+#### Internal Logic
+1. Logs the Git command if debug logging is enabled.
+2. Creates a new `debugcmd.WrappedCmd` instance with "git" as the command and the provided arguments.
+
+### `LsRemote`
+#### Description
+Retrieves the commit hash for a given reference in a remote repository.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for command execution |
+| repo | string | The URL or path of the remote repository |
+| ref | string | The reference (branch, tag, etc.) to look up |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The commit hash of the reference |
+| error | error | Any error encountered during the operation |
+
+#### Internal Logic
+1. Checks if pure Go implementation should be used.
+2. Executes `git ls-remote` command.
+3. Parses the output to find the matching reference.
+4. Returns the commit hash if found, or an error if not found.
+
+### `cloneBare`
+#### Description
+Performs a bare clone of a Git repository.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for command execution |
+| repo | string | The URL or path of the repository to clone |
+| toDir | string | The directory to clone into |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error encountered during the operation |
+
+#### Internal Logic
+Executes `git clone --bare --depth 1` command with the provided repository and target directory.
+
+### `gitWorktreeAdd`
+#### Description
+Adds a new worktree for a specific commit.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for command execution |
+| gitDir | string | The path to the Git directory |
+| commitDir | string | The directory for the new worktree |
+| commit | string | The commit hash to checkout |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error encountered during the operation |
+
+#### Internal Logic
+Executes `git worktree add` command with the `-f` flag used twice to force the creation of the worktree.
+
+### `fetchCommit`
+#### Description
+Fetches a specific commit from the origin.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for command execution |
+| gitDir | string | The path to the Git directory |
+| commit | string | The commit hash to fetch |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error encountered during the operation |
+
+#### Internal Logic
+Executes `git fetch` command to retrieve the specified commit from the origin.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling context in Go |
+| fmt | For formatting and error handling |
+| strings | For string manipulation |
+| github.com/gptscript-ai/gptscript/pkg/debugcmd | For wrapping and debugging command execution |
+
+## Error Handling
+The code uses Go's standard error handling mechanism. Each function that can encounter an error returns it as the last return value. The `LsRemote` function also includes a custom error message when the specified reference is not found.
+
+## Logging
+The code uses a `log` package (not shown in the provided code) for debug logging. It logs the Git command being executed when debug logging is enabled.
+
+## TODOs
+The code includes a reference to a `usePureGo()` function and a `lsRemotePureGo` function, which are not defined in the provided code. These suggest that there might be a pure Go implementation of some Git operations, possibly for environments where the Git command-line tool is not available.

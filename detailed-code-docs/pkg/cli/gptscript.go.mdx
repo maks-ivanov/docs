@@ -1,0 +1,93 @@
+---
+title: "gptscript.go"
+---
+
+## High-level description
+This code implements the main command-line interface (CLI) for GPTScript, a tool for running and managing AI-powered scripts. It provides various subcommands and options for executing GPTScript programs, managing credentials, and interacting with language models.
+
+## Code Structure
+The main `GPTScript` struct in `gptscript.go` defines the core functionality and options for the CLI. It uses the `cobra` library for command-line parsing and execution. The `Run` method is the entry point for executing GPTScript programs, while other methods handle specific aspects like input/output processing, chat functionality, and model interactions.
+
+## Symbols
+
+### `GPTScript` struct
+#### Description
+The main struct that encapsulates the CLI functionality for GPTScript.
+
+#### Internal Logic
+1. Parses command-line arguments and options
+2. Sets up the execution environment (workspace, credentials, etc.)
+3. Loads and executes GPTScript programs
+4. Handles input/output and chat interactions
+
+### `New() *cobra.Command`
+#### Description
+Creates and configures the root command for the GPTScript CLI.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| rootCommand | *cobra.Command | The configured root command for the CLI |
+
+#### Internal Logic
+1. Creates a new `GPTScript` instance
+2. Sets up subcommands (Eval, Credential, Parse, Fmt, Getenv, SDKServer)
+3. Configures global flags and options
+
+### `(r *GPTScript) Run(cmd *cobra.Command, args []string) error`
+#### Description
+The main execution method for GPTScript programs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *cobra.Command | The cobra command being executed |
+| args | []string | Command-line arguments |
+
+#### Internal Logic
+1. Sets up the GPTScript options and environment
+2. Handles special cases (UI mode, listing models/tools)
+3. Loads and executes the specified GPTScript program
+4. Manages chat sessions if applicable
+5. Handles output and error reporting
+
+### `(r *GPTScript) Chat(ctx context.Context, prevState runner.ChatState, prg types.Program, envs []string, input string) (runner.ChatResponse, error)`
+#### Description
+Manages chat interactions for GPTScript programs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| prevState | runner.ChatState | Previous chat state |
+| prg | types.Program | The GPTScript program |
+| envs | []string | Environment variables |
+| input | string | User input |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | runner.ChatResponse | The chat response |
+| err | error | Any error that occurred |
+
+#### Internal Logic
+1. Sets up the chat environment and monitor
+2. Handles chat state management and continuation
+3. Processes user input and generates responses
+4. Manages tool executions within the chat context
+
+## Dependencies
+- `github.com/spf13/cobra`: Command-line interface library
+- `github.com/gptscript-ai/gptscript/pkg/*`: Various GPTScript packages for program execution, chat handling, and model interactions
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are propagated up the call stack and often returned alongside results. The `Run` method is responsible for handling and reporting top-level errors.
+
+## Logging
+The code uses a custom logging package (`mvl`) for debug and error logging. Log levels can be controlled through command-line flags.
+
+## Configuration
+The `GPTScript` struct contains numerous fields for configuring the behavior of the CLI, including cache options, OpenAI options, display options, and various flags for controlling execution behavior.
+
+## TODOs
+There are no explicit TODOs in the provided code.

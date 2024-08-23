@@ -1,0 +1,98 @@
+---
+title: "prompt.go"
+---
+
+## High-level description
+This code defines a package called `prompt` that provides functionality for handling system prompts in a GPTScript environment. It includes functions for sending HTTP requests to a prompt server, processing user inputs, and managing prompt-related operations.
+
+## Code Structure
+The main symbols in this code are:
+1. `sysPromptHTTP`: A function to send HTTP requests to a prompt server.
+2. `SysPrompt`: The primary function for handling system prompts, which can either use an HTTP server or local input methods.
+3. `sysPrompt`: A helper function for processing local system prompts.
+
+These functions work together to provide a flexible system for handling prompts, with `SysPrompt` acting as the main entry point that decides whether to use HTTP or local methods.
+
+## Symbols
+
+### `sysPromptHTTP`
+#### Description
+Sends an HTTP POST request to a specified URL with prompt data and handles the response.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the HTTP request |
+| envs | []string | Environment variables |
+| url | string | The URL of the prompt server |
+| prompt | types.Prompt | The prompt data to be sent |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | string | The response from the prompt server |
+| err | error | Any error that occurred during the process |
+
+#### Internal Logic
+1. Marshals the prompt data to JSON.
+2. Creates a new HTTP POST request with the JSON data.
+3. Sets the "Content-Type" header to "application/json".
+4. Checks for a prompt token in the environment variables and sets it as a Bearer token if found.
+5. Sends the request and reads the response.
+6. Returns the response as a string.
+
+### `SysPrompt`
+#### Description
+The main function for handling system prompts. It decides whether to use an HTTP server or local input methods based on the environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| envs | []string | Environment variables |
+| input | string | JSON-encoded input parameters |
+| _ | chan&lt;- string | Unused channel parameter |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | string | The response from the prompt operation |
+| err | error | Any error that occurred during the process |
+
+#### Internal Logic
+1. Unmarshals the input JSON into a params struct.
+2. Checks for a prompt URL in the environment variables.
+3. If a URL is found, it calls `sysPromptHTTP` with the appropriate parameters.
+4. If no URL is found, it returns an error indicating no prompt server was found.
+
+### `sysPrompt`
+#### Description
+Handles local system prompts by interacting with the user through the console.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| req | types.Prompt | The prompt request data |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| response | string | JSON-encoded response from the prompt operation |
+| err | error | Any error that occurred during the process |
+
+#### Internal Logic
+1. Handles different prompt scenarios (message-only, single field, multiple fields).
+2. Uses the `survey` package to prompt the user for input.
+3. Collects user responses and formats them as a JSON string.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding and decoding |
+| github.com/AlecAivazis/survey/v2 | User input prompts |
+| github.com/gptscript-ai/gptscript/pkg/context | Context-related utilities |
+| github.com/gptscript-ai/gptscript/pkg/types | Custom types used in the package |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are propagated up the call stack and returned alongside the response strings.

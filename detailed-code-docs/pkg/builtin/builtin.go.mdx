@@ -1,0 +1,141 @@
+---
+title: "builtin.go"
+---
+
+## High-level description
+This code defines a set of built-in tools and functions for the GPTScript system. It provides various system-level operations such as file I/O, HTTP requests, command execution, and interaction with the GPT model. The code also includes utility functions for handling prompts and managing the execution context.
+
+## Code Structure
+The main symbols in the code are organized into a map of tools, each with its own functionality. These tools are accessed through the `Builtin` function, which returns a `types.Tool` struct containing the tool's definition and implementation. The code also includes several helper functions for common operations and error handling.
+
+## Symbols
+
+### `SafeTools`
+#### Description
+A map of tool names that are considered safe to use.
+
+### `tools`
+#### Description
+A map of all available built-in tools, each associated with a `types.Tool` struct containing the tool's definition and implementation.
+
+### `ListTools()`
+#### Description
+Returns a sorted list of all available tools.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| result | []types.Tool | Sorted list of all available tools |
+
+### `Builtin(name string)`
+#### Description
+Retrieves a tool by name and returns it with default values set.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| name | string | The name of the tool to retrieve |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The retrieved tool with default values set |
+| ok | bool | Whether the tool was found |
+
+### `SysFind`
+#### Description
+Implements the `sys.find` tool for traversing directories and finding files matching a pattern.
+
+### `SysExec`
+#### Description
+Implements the `sys.exec` tool for executing system commands.
+
+### `SysLs`
+#### Description
+Implements the `sys.ls` tool for listing directory contents.
+
+### `SysRead`
+#### Description
+Implements the `sys.read` tool for reading file contents.
+
+### `SysWrite`
+#### Description
+Implements the `sys.write` tool for writing content to a file.
+
+### `SysAppend`
+#### Description
+Implements the `sys.append` tool for appending content to a file.
+
+### `SysHTTPGet`
+#### Description
+Implements the `sys.http.get` tool for making HTTP GET requests.
+
+### `SysHTTPHtml2Text`
+#### Description
+Implements the `sys.http.html2text` tool for fetching HTML content and converting it to plain text.
+
+### `SysHTTPPost`
+#### Description
+Implements the `sys.http.post` tool for making HTTP POST requests.
+
+### `SysGetenv`
+#### Description
+Implements the `sys.getenv` tool for retrieving environment variables.
+
+### `SysDownload`
+#### Description
+Implements the `sys.download` tool for downloading files from URLs.
+
+### `SysRemove`
+#### Description
+Implements the `sys.remove` tool for removing files.
+
+### `SysStat`
+#### Description
+Implements the `sys.stat` tool for getting file information.
+
+### `SysPrompt`
+#### Description
+Implements the `sys.prompt` tool for prompting users for input.
+
+### `SysChatHistory`
+#### Description
+Implements the `sys.chat.history` tool for retrieving chat history.
+
+### `SysChatCurrent`
+#### Description
+Implements the `sys.chat.current` tool for retrieving the current chat dialog.
+
+### `SysChatFinish`
+#### Description
+Implements the `sys.chat.finish` tool for concluding a conversation.
+
+### `SysAbort`
+#### Description
+Implements the `sys.abort` tool for aborting execution.
+
+### `SysContext`
+#### Description
+Implements the `sys.context` tool for retrieving the current internal GPTScript tool call context information.
+
+### `SysModelProviderCredential`
+#### Description
+Implements the `sys.model.provider.credential` tool for setting model provider credentials.
+
+### `SysTimeNow`
+#### Description
+Implements the `sys.time.now` tool for getting the current date and time.
+
+## Dependencies
+The code relies on several external libraries and internal packages:
+- `github.com/BurntSushi/locker`
+- `github.com/gptscript-ai/gptscript/pkg/engine`
+- `github.com/gptscript-ai/gptscript/pkg/prompt`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+- `github.com/jaytaylor/html2text`
+
+## Error Handling
+The code uses a combination of returned error values and custom error types (e.g., `ErrChatFinish`) for error handling. Many functions return both a string result and an error, allowing for more detailed error information to be passed back to the caller.
+
+## Logging
+The code uses a global `log` variable for debugging purposes, which is likely defined in another file within the package.

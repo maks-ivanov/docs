@@ -1,0 +1,116 @@
+---
+title: "openapi.go"
+---
+
+## High-level description
+This code defines the `loader` package, which is responsible for parsing OpenAPI definitions and generating a set of tools from them. It provides functionality to convert OpenAPI operations into GPTScript tool definitions, handling various aspects such as authentication, parameters, and request bodies.
+
+## Code Structure
+The main function `getOpenAPITools` processes an OpenAPI specification and generates tool definitions. It uses helper functions like `parseServer`, `instructionString`, and `getOpenAPIToolsRevamp` to handle different aspects of the conversion process. The code also includes utility functions for handling OpenAPI-specific details.
+
+## Symbols
+
+### getOpenAPITools
+#### Description
+This function parses an OpenAPI definition and generates a set of tools from it. Each operation in the OpenAPI spec becomes a tool definition.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *openapi3.T | The OpenAPI specification |
+| defaultHost | string | Default host to use if not specified in the OpenAPI spec |
+| source | string | Source of the OpenAPI spec |
+| targetToolName | string | Target tool name |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []types.Tool | []types.Tool | A slice of generated tool definitions |
+| error | error | Any error encountered during the process |
+
+#### Internal Logic
+1. Checks for a feature flag to use a revamped version of the function.
+2. Determines the default server from the OpenAPI spec.
+3. Processes global security schemes.
+4. Iterates through paths and operations in the OpenAPI spec.
+5. Generates tool definitions for each operation, handling parameters, request bodies, and security requirements.
+6. Creates a special export tool that lists all other generated tools.
+
+### parseServer
+#### Description
+Parses an OpenAPI server object and returns the server URL with variables resolved.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| server | *openapi3.Server | The OpenAPI server object to parse |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The resolved server URL |
+| error | error | Any error encountered during parsing |
+
+### instructionString
+#### Description
+Generates an instruction string for a tool based on the OpenAPI operation details.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| server | string | The server URL |
+| method | string | HTTP method |
+| path | string | API path |
+| bodyMIME | string | MIME type of the request body |
+| queryParameters | []openapi.Parameter | Query parameters |
+| pathParameters | []openapi.Parameter | Path parameters |
+| headerParameters | []openapi.Parameter | Header parameters |
+| cookieParameters | []openapi.Parameter | Cookie parameters |
+| infos | [][]openapi.SecurityInfo | Security information |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The generated instruction string |
+| error | error | Any error encountered during generation |
+
+### getOpenAPIToolsRevamp
+#### Description
+An alternative implementation for generating tools from an OpenAPI spec, activated by a feature flag.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *openapi3.T | The OpenAPI specification |
+| source | string | Source of the OpenAPI spec |
+| targetToolName | string | Target tool name |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []types.Tool | []types.Tool | A slice of generated tool definitions |
+| error | error | Any error encountered during the process |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding and decoding |
+| fmt | Formatted I/O |
+| net/url | URL parsing |
+| os | Operating system functionality |
+| regexp | Regular expressions |
+| slices | Slice manipulation |
+| sort | Sorting |
+| strings | String manipulation |
+| time | Time-related functions |
+| github.com/getkin/kin-openapi/openapi3 | OpenAPI v3 parsing and manipulation |
+| github.com/gptscript-ai/gptscript/pkg/openapi | Custom OpenAPI-related functionality |
+| github.com/gptscript-ai/gptscript/pkg/types | Custom types for the GPTScript project |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors from functions when they occur. It includes specific error checks for scenarios such as invalid server URLs or missing OpenAPI information.
+
+## Logging
+The code includes debug logging for performance measurement of OpenAPI tool loading, using a custom `log` package (not shown in the provided code).
+
+This documentation provides an overview of the main components and functionality of the `loader` package, focusing on its role in processing OpenAPI specifications and generating tool definitions for the GPTScript project.

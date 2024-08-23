@@ -1,0 +1,108 @@
+---
+title: "input.go"
+---
+
+## High-level description
+The `input` package in `pkg/input/input.go` provides functions for handling input from various sources such as command-line arguments, files, and URLs. It offers flexibility in reading input for the GPTScript tool, supporting different input methods and formats.
+
+## Code Structure
+The package defines several functions that work together to handle input from different sources. The main functions are `FromArgs`, `FromCLI`, `FromFile`, and `FromLocation`, each serving a specific purpose in input handling.
+
+## Symbols
+
+### `FromArgs`
+#### Description
+This function joins command-line arguments into a single string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args | []string | Slice of command-line arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | string | Joined string of arguments |
+
+### `FromCLI`
+#### Description
+Handles input from the command-line interface, prioritizing file input over arguments.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | string | File path for input |
+| args | []string | Command-line arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| toolInput | string | Input content |
+| err | error | Error, if any |
+
+#### Internal Logic
+1. Attempts to read input from the specified file using `FromFile`.
+2. If file input is empty or fails, falls back to using command-line arguments (excluding the first argument) via `FromArgs`.
+
+### `FromFile`
+#### Description
+Reads input from a file, supporting stdin ("-") and directory inputs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| file | string | File path or "-" for stdin |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | string | File content |
+| err | error | Error, if any |
+
+#### Internal Logic
+1. If input is "-", reads from stdin.
+2. For directory inputs, searches for default files (defined in `types.DefaultFiles`).
+3. Reads file content using `fs.ReadFile` from `internal.FS`.
+
+### `FromLocation`
+#### Description
+Retrieves content from a file path or URL, with caching support for URLs.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| s | string | File path or URL |
+| disableCache | bool | Flag to disable URL caching |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| content | string | File or URL content |
+| err | error | Error, if any |
+
+#### Internal Logic
+1. Attempts to read from file using `FromFile`.
+2. If file read fails, tries to load content from URL using `loader.ContentFromURL`.
+3. Returns an error if both file and URL loading fail.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | Error formatting |
+| io | I/O operations |
+| io/fs | File system operations |
+| os | Operating system interactions |
+| path/filepath | File path manipulations |
+| strings | String operations |
+| github.com/gptscript-ai/gptscript/internal | Internal file system access |
+| github.com/gptscript-ai/gptscript/pkg/loader | URL content loading |
+| github.com/gptscript-ai/gptscript/pkg/types | Default file types |
+
+## Error Handling
+The package uses Go's standard error handling mechanisms. Errors are returned for file reading failures, URL loading issues, and when neither file nor URL content can be retrieved.
+
+## Logging
+The package uses a `log` object for debug logging, particularly when reading from stdin or files.
+
+## Performance Considerations
+The package uses efficient I/O operations and supports caching for URL content, which can improve performance for repeated URL accesses.

@@ -1,0 +1,72 @@
+---
+title: "Overview"
+---
+
+## High-level description
+
+This directory contains the implementation of an OpenAI client for the GPTScript project. It provides functionality to interact with OpenAI's API, including making completion requests, listing models, and handling authentication. The client supports caching, custom base URLs, and various configuration options. Additionally, it includes utility functions for managing token counts in chat completion messages.
+
+## What does it do?
+
+The code in this directory enables GPTScript to communicate with OpenAI's language models. Here's a breakdown of its main functionalities:
+
+1. It allows users to send requests to OpenAI's API for text completions, which means getting AI-generated responses based on given prompts or conversations.
+
+2. It manages authentication with OpenAI, handling API keys and organization IDs.
+
+3. It implements caching to store and reuse API responses, potentially reducing API calls and improving performance.
+
+4. It provides a way to list available AI models from OpenAI.
+
+5. It includes utility functions to manage token counts, which are important for staying within OpenAI's usage limits. These functions can trim conversations to fit within token budgets and estimate the token count of messages.
+
+6. It supports customization through various options, such as using custom base URLs or setting specific models as defaults.
+
+## Key Files
+
+1. `client.go`: This is the core file implementing the OpenAI client. It defines the `Client` struct and its methods for interacting with the OpenAI API, including making completion requests and listing models.
+
+2. `count.go`: This file contains utility functions for managing token counts in chat completion messages. It includes functions to trim messages that exceed a token limit and to estimate the token count of individual messages.
+
+3. `client_test.go`: This file contains unit tests for the client implementation, specifically testing the `appendMessage` function which handles the conversion of OpenAI's response format to GPTScript's internal format.
+
+## Dependencies
+
+The code relies on several external packages:
+
+1. `github.com/gptscript-ai/chat-completion-client`: This is used for the underlying OpenAI API client functionality.
+
+2. `github.com/gptscript-ai/gptscript/pkg/cache`: Used for caching API responses.
+
+3. `github.com/gptscript-ai/gptscript/pkg/credentials`: Used for managing API keys.
+
+4. `github.com/gptscript-ai/gptscript/pkg/types`: Provides various type definitions used throughout the project.
+
+5. `github.com/hexops/autogold/v2` and `github.com/hexops/valast`: Used in testing for creating and comparing test expectations.
+
+## Configuration
+
+The OpenAI client can be configured through the `Options` struct, which allows for customization of various parameters:
+
+- Base URL for the OpenAI API
+- API key
+- Organization ID
+- Default model
+- Configuration file path
+- Seed setting for reproducibility
+- Cache key and cache client
+
+The `Complete` function provides a way to merge multiple `Options` instances, allowing for flexible configuration.
+
+## Error Handling
+
+The code includes custom error types (e.g., `InvalidAuthError`) and extensive error checking throughout the methods. Errors are propagated up the call stack and often include context about the operation that failed.
+
+## Performance Considerations
+
+- The client implements caching to reduce API calls for repeated requests.
+- It supports setting a seed for reproducible results.
+- The code uses goroutines for concurrent operations in some methods.
+- The token counting function uses a simple heuristic (dividing by 3) to estimate token count, which may not be accurate for all cases but is likely faster than precise counting.
+
+In summary, this directory provides a robust and flexible OpenAI client implementation for the GPTScript project, handling API interactions, authentication, caching, and token management, with a focus on configurability and performance.

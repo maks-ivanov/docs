@@ -1,0 +1,91 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains integration tests and helper functions for GPTScript, focusing on credential-related functionality and script execution. It includes tests for credential scopes, expiration times, and the execution of credential-related scripts, as well as helper functions to run GPTScript in different environments.
+
+## What does it do?
+The integration directory provides a suite of tests and utilities to ensure that GPTScript's credential management and script execution work correctly across different scenarios. It tests:
+
+1. Execution of credential-related scripts
+2. Proper scoping of credentials within different sub-tools
+3. Correct handling of credential expiration times
+
+Additionally, it offers helper functions that abstract the process of running GPTScript executables, making it easier to write and maintain integration tests across different operating systems.
+
+## Key Files
+
+1. cred_test.go
+   - Contains integration tests for credential functionality
+   - Tests credential scopes, expiration times, and script execution
+   - Utilizes external scripts to verify credential behavior
+
+2. helpers.go
+   - Provides utility functions for executing GPTScript in tests
+   - Handles platform-specific differences (e.g., Windows vs. Unix-like systems)
+   - Offers a simplified interface for running scripts with various options
+
+## Dependencies
+The integration tests rely on the following external libraries:
+
+1. github.com/stretchr/testify/require (version not specified)
+   - Used for test assertions and error handling
+   - Chosen for its comprehensive set of assertion functions and clear error messages
+
+Standard library dependencies include:
+- strings: For string manipulation and parsing
+- testing: Provides the testing infrastructure
+- time: Used for time-related operations
+- os/exec: For executing external commands
+- runtime: For determining the operating system
+
+## Configuration
+The integration tests use external scripts located in a "scripts" directory:
+- scripts/cred_scopes.gpt: Used for testing credential scopes
+- scripts/cred_expiration.gpt: Used for testing credential expiration
+
+These scripts are not included in the provided files but are crucial for the tests to function correctly.
+
+The `GPTScriptExec` function in helpers.go assumes a specific location for the GPTScript binary:
+- On non-Windows systems: "../gptscript"
+- On Windows systems: "../gptscript.exe"
+
+Ensure that the GPTScript binary is located in the correct path relative to the integration tests for proper execution.
+
+## Code Examples
+
+Here's an example of how the `RunScript` function from helpers.go is used in the integration tests:
+
+```go
+output, err := RunScript("scripts/cred_scopes.gpt", "oneOne")
+require.NoError(t, err)
+require.Contains(t, output, "good")
+```
+
+This code runs the "cred_scopes.gpt" script with the "oneOne" argument and checks that the output contains the string "good" and that no error occurred.
+
+The `TestCredentialExpirationEnv` function in cred_test.go demonstrates how to parse and verify the expiration time of credentials:
+
+```go
+func TestCredentialExpirationEnv(t *testing.T) {
+    output, err := RunScript("scripts/cred_expiration.gpt")
+    require.NoError(t, err)
+    lines := strings.Split(output, "\n")
+    for _, line := range lines {
+        if strings.HasPrefix(line, "EXPIRATION:") {
+            parts := strings.Split(line, ":")
+            require.Len(t, parts, 2)
+            expiration, err := time.Parse(time.RFC3339, strings.TrimSpace(parts[1]))
+            require.NoError(t, err)
+            require.Less(t, time.Until(expiration), 1*time.Hour)
+            return
+        }
+    }
+    require.Fail(t, "Did not find EXPIRATION: in output")
+}
+```
+
+This test runs a script that outputs credential expiration information, parses the output to extract the expiration timestamp, and verifies that it's less than one hour in the future.
+
+These integration tests and helper functions play a crucial role in ensuring the reliability and correctness of GPTScript's credential management and script execution capabilities across different environments and use cases.

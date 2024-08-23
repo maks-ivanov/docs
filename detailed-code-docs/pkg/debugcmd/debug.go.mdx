@@ -1,0 +1,107 @@
+---
+title: "debug.go"
+---
+
+## High-level description
+This code defines a `WrappedCmd` struct and associated methods for executing and managing external commands in a Go program. It provides functionality for running commands, capturing their output, and handling errors in a controlled manner.
+
+## Code Structure
+The main symbols in the code are:
+1. `WrappedCmd`: The primary struct that encapsulates an `exec.Cmd` and provides additional functionality.
+2. `recorder`: A helper struct used to record command output.
+3. `writer`: A helper struct used to write command output.
+
+These symbols are interconnected, with `WrappedCmd` using `recorder` to capture output, and `writer` being used to write output to the `recorder`.
+
+## Symbols
+
+### `WrappedCmd`
+#### Description
+A struct that wraps an `exec.Cmd` and provides additional functionality for running commands and capturing their output.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| c | *exec.Cmd | The underlying exec.Cmd |
+| r | recorder | A recorder for capturing output |
+| Env | []string | Environment variables for the command |
+| Dir | string | Working directory for the command |
+
+#### Methods
+
+##### `Stdout() string`
+Returns the captured standard output of the command.
+
+##### `Run() error`
+Executes the command and returns any error encountered.
+
+#### Internal Logic
+- Sets up the command environment and working directory if specified.
+- Runs the command and captures its output.
+- If an error occurs, it includes the captured output in the error message.
+
+### `New(ctx context.Context, arg string, args ...string) *WrappedCmd`
+#### Description
+Creates a new `WrappedCmd` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the command |
+| arg | string | The command to run |
+| args | ...string | Additional arguments for the command |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *WrappedCmd | *WrappedCmd | A new WrappedCmd instance |
+
+#### Internal Logic
+- Creates a new `exec.Cmd` with the given context and arguments.
+- Calls `setupDebug` to configure output capturing.
+
+### `recorder`
+#### Description
+A struct used to record command output.
+
+#### Methods
+
+##### `Stdout() string`
+Returns the captured standard output.
+
+##### `dump() string`
+Writes the captured output to stdout/stderr and returns error messages.
+
+### `writer`
+#### Description
+A struct that implements `io.Writer` to capture command output.
+
+#### Method
+
+##### `Write(data []byte) (int, error)`
+Writes data to the recorder, differentiating between stdout and stderr.
+
+### `setupDebug(w *WrappedCmd)`
+#### Description
+Configures the output capturing for a `WrappedCmd` based on debug settings.
+
+#### Internal Logic
+- If debug logging is enabled, sets stdout and stderr to os.Stdout and os.Stderr.
+- Otherwise, sets up custom writers to capture output in the recorder.
+
+## Side Effects
+- The code interacts with the file system through `os.Stdout` and `os.Stderr`.
+- It may modify the environment and working directory of the executed command.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling command contexts |
+| fmt | For formatting strings and errors |
+| os | For interacting with the operating system |
+| os/exec | For executing external commands |
+| strings | For string manipulation |
+| sync | For synchronization primitives |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors from command execution are wrapped with additional context (captured output) when returned.

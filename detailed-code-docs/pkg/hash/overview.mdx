@@ -1,0 +1,78 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains hash-related functionality implemented in Go. It provides two main files: `seed.go` and `sha256.go`, which offer different hashing capabilities for various use cases. The package aims to provide consistent and deterministic hashing methods for different types of inputs.
+
+## What does it do?
+The `hash` package offers two primary functionalities:
+
+1. Seed Generation: It provides a way to generate a deterministic integer hash (seed) from any JSON-encodable input. This is useful for creating consistent random number generators or for sharding and load balancing purposes.
+
+2. SHA-256 Hashing: It offers methods to create unique identifiers and hash digests using the SHA-256 algorithm. This can be used for generating unique IDs from multiple string parts or creating hash digests of various data types, including byte slices, strings, and complex objects.
+
+These functionalities can be used in various scenarios where deterministic hashing is required, such as data integrity verification, unique identifier generation, or creating reproducible randomization.
+
+## Key Files
+
+### seed.go
+This file contains the `Seed` function, which generates a deterministic integer hash value for any given input. It uses JSON encoding and the FNV-1a hash algorithm to create a consistent seed value from various input types.
+
+Key features:
+- Accepts any JSON-encodable input
+- Uses FNV-1a hash algorithm
+- Returns a 32-bit integer hash value
+
+Example usage:
+```go
+seed := hash.Seed("example input")
+```
+
+### sha256.go
+This file provides two main functions: `ID` and `Digest`, both using the SHA-256 hashing algorithm.
+
+1. `ID` function:
+   - Generates a unique identifier by concatenating and hashing multiple string parts
+   - Returns a hexadecimal representation of the SHA-256 hash
+
+   Example usage:
+   ```go
+   id := hash.ID("part1", "part2", "part3")
+   ```
+
+2. `Digest` function:
+   - Creates a SHA-256 hash digest of various data types (byte slices, strings, and other objects)
+   - Uses `gob` encoding for complex objects
+   - Returns a hexadecimal representation of the SHA-256 hash
+
+   Example usage:
+   ```go
+   digest := hash.Digest(someObject)
+   ```
+
+## Dependencies
+The package relies on several standard Go libraries:
+
+1. `encoding/json`: Used in `seed.go` for JSON encoding of inputs.
+2. `hash/fnv`: Provides the FNV-1a hash algorithm implementation used in `seed.go`.
+3. `crypto/sha256`: Used in `sha256.go` for SHA-256 hashing functionality.
+4. `encoding/gob`: Used in `sha256.go` for encoding arbitrary Go objects.
+5. `encoding/hex`: Used in `sha256.go` for converting binary hashes to hexadecimal strings.
+
+## Error Handling
+Both files in this package use panic for error handling in certain situations:
+
+- In `seed.go`, the `Seed` function panics if it encounters an error during JSON encoding.
+- In `sha256.go`, the `Digest` function panics if it encounters an error while encoding an object using `gob`.
+
+This approach assumes that these errors are unexpected and should be treated as fatal. Users of this package should be aware of this behavior and implement appropriate error handling if needed in their specific use cases.
+
+## Performance Considerations
+1. The `Seed` function in `seed.go` uses FNV-1a, which is generally fast and has good distribution properties for most use cases. However, the JSON encoding step may introduce some overhead, especially for complex structures.
+
+2. The `ID` and `Digest` functions in `sha256.go` use SHA-256, which is a cryptographically secure hash function. While it provides strong security properties, it may be slower than simpler hash functions for large inputs or high-frequency use cases.
+
+3. The `Digest` function uses `gob` encoding for complex objects, which can be less efficient than more specialized serialization methods for specific types.
+
+Users should consider these performance characteristics when choosing which function to use for their specific requirements, balancing between speed, security, and consistency needs.

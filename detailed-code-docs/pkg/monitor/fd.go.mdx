@@ -1,0 +1,114 @@
+---
+title: "fd.go"
+---
+
+## High-level description
+This code defines a package called `monitor` that implements a monitoring system for tracking and logging events during the execution of a program. It provides functionality to write events to a file or file descriptor, allowing for real-time monitoring and logging of program execution.
+
+## Code Structure
+The main components of this code are:
+1. `Event` struct: Represents an event that occurs during program execution.
+2. `fileFactory` struct: Manages the creation and lifecycle of file-based monitors.
+3. `fd` struct: Represents a file descriptor-based monitor for writing events.
+
+These components work together to create a monitoring system that can write events to different types of outputs (files, file descriptors, or named pipes).
+
+## Symbols
+
+### `Event`
+#### Description
+A struct that represents an event occurring during program execution. It embeds the `runner.Event` struct and adds additional fields for program details, input, output, and errors.
+
+### `fileFactory`
+#### Description
+A struct that manages the creation and lifecycle of file-based monitors. It handles the opening and closing of files or file descriptors for writing events.
+
+### `NewFileFactory`
+#### Description
+A function that creates a new `fileFactory` instance based on the provided location string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| loc | string | The location string specifying where to write events |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.MonitorFactory | interface | The created monitor factory |
+| error | error | Any error that occurred during creation |
+
+#### Internal Logic
+1. Creates a new `fileFactory` instance with the provided location.
+2. Returns the factory and a nil error.
+
+### `fileFactory.Start`
+#### Description
+Starts a new monitor for a program execution.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | context.Context | Context (unused) |
+| prg | *types.Program | The program being monitored |
+| env | []string | Environment variables |
+| input | string | Input to the program |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| runner.Monitor | interface | The created monitor |
+| error | error | Any error that occurred during creation |
+
+#### Internal Logic
+1. Increments the running count and opens the file if it's the first monitor.
+2. Creates a new `fd` instance.
+3. Writes an initial event for the run start.
+4. Returns the created monitor.
+
+### `fd`
+#### Description
+A struct representing a file descriptor-based monitor for writing events.
+
+### `fd.Event`
+#### Description
+Writes an event to the monitor's file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| event | runner.Event | The event to be written |
+
+#### Internal Logic
+1. Locks the monitor to ensure thread-safety.
+2. Marshals the event to JSON.
+3. Writes the JSON data to the file, followed by two newline characters.
+
+### `fd.Stop`
+#### Description
+Stops the monitor and writes a final event.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | context.Context | Context (unused) |
+| output | string | The final output of the program |
+| err | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Creates a final event with the run finish type.
+2. Writes the event to the file.
+3. Closes the file through the factory.
+
+## Side Effects
+- The code opens and writes to files or file descriptors, which can have I/O side effects.
+- It uses locks to ensure thread-safety when writing events, which can affect concurrency.
+
+## Dependencies
+The code depends on several standard Go libraries and custom packages from the `gptscript-ai/gptscript` project.
+
+## Error Handling
+The code uses error returns to propagate errors up the call stack. It also logs errors when closing files in the `fileFactory.close` method.
+
+## Logging
+The code uses a global `log` variable for logging errors, but the implementation of this logger is not shown in the provided code.

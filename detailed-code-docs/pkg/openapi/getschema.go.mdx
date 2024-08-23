@@ -1,0 +1,89 @@
+---
+title: "getschema.go"
+---
+
+## High-level description
+This code defines functions and structures for working with OpenAPI specifications. It primarily focuses on extracting schema information and operation details from an OpenAPI document, supporting various parameter types, request bodies, and security schemes.
+
+## Code Structure
+The main function `GetSchema` processes an OpenAPI specification to extract JSONSchema and OperationInfo for a specific operation. It utilizes helper functions like `parseServer` and `removeRefs` to handle server URLs and schema references, respectively.
+
+## Symbols
+
+### `GetSchema`
+#### Description
+Extracts JSONSchema and OperationInfo for a specific operation from an OpenAPI specification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| operationID | string | The ID of the operation to extract |
+| defaultHost | string | Default host to use if not specified in the OpenAPI document |
+| t | *openapi3.T | The OpenAPI specification object |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | JSONSchema for the operation |
+| OperationInfo | OperationInfo | Detailed information about the operation |
+| bool | bool | Indicates if the operation was found |
+| error | error | Any error encountered during processing |
+
+#### Internal Logic
+1. Initializes an `arguments` schema and `OperationInfo` structure.
+2. Determines the default server URL.
+3. Processes global security schemes.
+4. Iterates through paths and operations to find the specified operation.
+5. Processes parameters (query, path, header, cookie) and request body.
+6. Handles security schemes for the operation.
+7. Marshals the arguments schema to JSON.
+
+### `parseServer`
+#### Description
+Parses a server object from the OpenAPI specification, resolving variables in the URL.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| server | *openapi3.Server | Server object from OpenAPI spec |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Parsed server URL |
+| error | error | Any error encountered during parsing |
+
+### `removeRefs`
+#### Description
+Recursively removes references from a schema object to flatten the structure.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| r | *openapi3.SchemaRef | Schema reference to process |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON marshaling and unmarshaling |
+| fmt | Formatting and error handling |
+| slices | Slice operations |
+| strings | String manipulation |
+| github.com/getkin/kin-openapi/openapi3 | OpenAPI 3 parsing and manipulation |
+
+## Constants and Variables
+- `supportedMIMETypes`: List of supported MIME types for request bodies
+- `supportedSecurityTypes`: List of supported security scheme types
+- `GetSchemaTool`: Constant string "get-schema"
+
+## Error Handling
+The code uses Go's standard error handling mechanisms, returning errors when encountering issues such as unsupported MIME types or invalid server URLs.
+
+## API/Interface Reference
+| Function | Description |
+|:---------|:------------|
+| GetSupportedMIMETypes() | Returns the list of supported MIME types |
+| GetSupportedSecurityTypes() | Returns the list of supported security types |
+| GetSchema() | Main function to extract schema and operation info from OpenAPI spec |
+
+This code provides a robust way to extract and process OpenAPI specifications, focusing on schema extraction and operation details. It handles various aspects of OpenAPI documents, including parameters, request bodies, and security schemes, making it a valuable tool for working with API definitions.

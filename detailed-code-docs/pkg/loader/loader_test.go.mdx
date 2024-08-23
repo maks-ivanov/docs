@@ -1,0 +1,71 @@
+---
+title: "loader_test.go"
+---
+
+## High-level description
+This file contains unit tests for the loader package, which is responsible for loading and parsing GPTScript programs and OpenAPI specifications. The tests cover various scenarios including local and remote file loading, OpenAPI version detection, and program structure validation.
+
+## Code Structure
+The file consists of several test functions that use the `testing` package to verify different aspects of the loader functionality. These tests interact with the `Program` function from the loader package and the `IsOpenAPI` function from the openapi package.
+
+## Symbols
+
+### `toString`
+#### Description
+A helper function that converts any object to a pretty-printed JSON string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | any | The object to be converted to JSON |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | string | Pretty-printed JSON string representation of the input object |
+
+### `TestLocalRemote`
+#### Description
+Tests the loading of local and remote GPTScript files.
+
+#### Internal Logic
+1. Sets up a mock HTTP server
+2. Creates temporary local files
+3. Calls the `Program` function with a local file path
+4. Checks for errors
+
+### `TestIsOpenAPI`
+#### Description
+Tests the `IsOpenAPI` function for detecting OpenAPI versions in YAML and JSON formats.
+
+#### Internal Logic
+1. Reads test OpenAPI files
+2. Calls `IsOpenAPI` function on each file
+3. Asserts the correct version detection
+
+### `TestHelloWorld`
+#### Description
+Tests the loading of a remote GPTScript program and verifies its structure.
+
+#### Internal Logic
+1. Loads a program from a GitHub raw content URL
+2. Verifies the loaded program structure using autogold expectations
+
+### `TestDefault`
+#### Description
+Tests the loading of local GPTScript programs with different structures.
+
+#### Internal Logic
+1. Loads programs from local test directories
+2. Verifies the loaded program structures using autogold expectations
+
+## Dependencies
+- `github.com/gptscript-ai/gptscript/pkg/openapi`
+- `github.com/hexops/autogold/v2`
+- `github.com/stretchr/testify/require`
+
+## Error Handling
+The tests use the `require` package from testify to assert expectations and handle errors. If any assertion fails, the test will stop and report the failure.
+
+## Performance Considerations
+These tests are not specifically optimized for performance, as they are primarily focused on correctness. However, they do use efficient libraries like `autogold` for comparing complex structures.

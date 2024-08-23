@@ -1,0 +1,97 @@
+---
+title: "run.go"
+---
+
+## High-level description
+This code implements the `Run` function in the `openapi` package, which executes an OpenAPI operation by constructing and sending an HTTP request based on the operation's parameters and security requirements. It handles various parameter types, authentication methods, and request body formats.
+
+## Code Structure
+The main `Run` function orchestrates the entire process, calling helper functions to handle different aspects of the request construction. These helper functions include `HandleAuths`, `HandlePathParameters`, `HandleQueryParameters`, `HandleHeaderParameters`, and `HandleCookieParameters`.
+
+## Symbols
+
+### Run
+#### Description
+Executes an OpenAPI operation by constructing and sending an HTTP request based on the provided operation ID, default host, arguments, OpenAPI specification, and environment variables.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| operationID | string | The ID of the OpenAPI operation to execute |
+| defaultHost | string | The default host for the API |
+| args | string | JSON-encoded arguments for the operation |
+| t | *openapi3.T | The OpenAPI specification |
+| envs | []string | Environment variables |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The response body as a string |
+| bool | bool | Indicates if the operation was executed successfully |
+| error | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Parse environment variables
+2. Validate arguments against the operation's schema
+3. Construct the HTTP request URL
+4. Handle authentication
+5. Process path, query, header, and cookie parameters
+6. Handle the request body
+7. Send the HTTP request
+8. Return the response
+
+### HandleAuths
+#### Description
+Sets up the request with the necessary authentication information based on the security requirements defined in the OpenAPI specification.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| req | *http.Request | The HTTP request to be authenticated |
+| envMap | map[string]string | Environment variables map |
+| infoSets | [][]SecurityInfo | Sets of security options |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred during authentication setup |
+
+#### Internal Logic
+1. Iterate through security option sets
+2. Check for required environment variables
+3. Apply authentication based on the security scheme (API key, HTTP Basic, HTTP Bearer)
+
+### HandlePathParameters
+#### Description
+Extracts path parameters from the input JSON and replaces their placeholders in the URL path.
+
+### HandleQueryParameters
+#### Description
+Extracts query parameters from the input JSON and adds them to the URL query.
+
+### HandleHeaderParameters
+#### Description
+Extracts header parameters from the input JSON and adds them to the request headers.
+
+### HandleCookieParameters
+#### Description
+Extracts cookie parameters from the input JSON and adds them to the request cookies.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding and decoding |
+| io | I/O operations |
+| mime/multipart | Handling multipart form data |
+| net/http | HTTP client and request handling |
+| net/url | URL parsing and manipulation |
+| github.com/getkin/kin-openapi/openapi3 | OpenAPI 3.0 specification handling |
+| github.com/gptscript-ai/gptscript/pkg/env | Environment variable handling |
+| github.com/tidwall/gjson | JSON parsing and querying |
+| github.com/xeipuuv/gojsonschema | JSON Schema validation |
+
+## Error Handling
+The code uses error wrapping to provide context for errors that occur during the execution of the OpenAPI operation. It returns errors for various scenarios, such as invalid arguments, authentication failures, and HTTP request errors.
+
+## Performance Considerations
+The code uses `gjson` for efficient JSON parsing and querying, which can improve performance when working with large JSON payloads. However, the overall performance will depend on the complexity of the OpenAPI operation and the responsiveness of the target API.

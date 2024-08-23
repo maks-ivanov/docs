@@ -1,0 +1,83 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/prompt` directory contains code for handling system prompts in a GPTScript environment. It provides functionality for managing credentials, processing user inputs, and running a prompt server. The package includes mechanisms for both local and remote (HTTP-based) prompt handling, as well as credential management for model providers.
+
+## What does it do?
+This package serves several key functions in the GPTScript system:
+
+1. Credential Management: It provides a way to securely store and retrieve credentials (like API keys) for model providers. If a credential doesn't exist, it prompts the user to input it and then stores it securely.
+
+2. System Prompts: It handles system prompts, which are interactions with the user to gather input. These prompts can be processed locally (through the console) or remotely via an HTTP server.
+
+3. Prompt Server: It implements an HTTP server that can handle prompt requests. This server listens on a random port and uses token-based authentication for security.
+
+4. Logging: It sets up a logging mechanism for the entire prompt package, ensuring consistent logging across all files.
+
+The workflow typically involves:
+1. Checking for existing credentials or prompting for new ones.
+2. Processing system prompts either locally or by sending them to a remote server.
+3. If using the HTTP server, it handles incoming prompt requests, authenticates them, and processes them using the local prompt handling logic.
+
+## Entry points
+The main entry points for this package are:
+
+1. `GetModelProviderCredential` in `credential.go`: This function is used to retrieve or set up credentials for model providers.
+
+2. `SysPrompt` in `prompt.go`: This is the primary function for handling system prompts. It determines whether to use local or remote (HTTP) processing based on environment variables.
+
+3. `NewServer` in `server.go`: This function sets up and starts the HTTP server for handling remote prompt requests.
+
+The data flow typically starts with a call to `SysPrompt`, which then either processes the prompt locally or sends it to the HTTP server (if configured). The HTTP server, when used, authenticates incoming requests and uses the local `sysPrompt` function to process them.
+
+## Key Files
+
+1. `credential.go`: Manages the retrieval and storage of model provider credentials.
+
+2. `prompt.go`: Contains the core logic for processing system prompts, including both local and HTTP-based methods.
+
+3. `server.go`: Implements the HTTP server for handling remote prompt requests.
+
+4. `log.go`: Sets up the logging mechanism for the entire package.
+
+## Dependencies
+The package relies on several external libraries:
+
+1. `github.com/tidwall/gjson` (version not specified): Used for parsing JSON responses in credential management.
+   - Chosen for its simplicity and efficiency in handling JSON data.
+
+2. `github.com/AlecAivazis/survey/v2` (version not specified): Used for creating interactive command-line prompts.
+   - Chosen for its rich set of prompt types and user-friendly interface.
+
+3. `github.com/google/uuid` (version not specified): Used for generating unique tokens for server authentication.
+   - Chosen for its reliable generation of universally unique identifiers.
+
+4. `github.com/gptscript-ai/gptscript/pkg/mvl`: A custom logging package used throughout the GPTScript project.
+   - Chosen for consistency with the rest of the project and potentially custom logging features.
+
+## Configuration
+The package uses environment variables for configuration:
+
+1. Credential-related environment variables:
+   - The specific names are not hardcoded but passed as parameters to `GetModelProviderCredential`.
+
+2. Prompt server configuration:
+   - `GPTSCRIPT_PROMPT_URL`: The URL of the prompt server (if using remote prompts).
+   - `GPTSCRIPT_PROMPT_TOKEN`: The authentication token for the prompt server.
+
+These environment variables can be set externally or are returned by the `NewServer` function when starting a new prompt server.
+
+The package also uses a `CredentialStore` interface (likely defined in `pkg/credentials/credential.go`) for managing credentials, allowing for flexible implementation of credential storage.
+
+Code snippet demonstrating the use of environment variables in `SysPrompt`:
+
+```go
+promptURL := context.GetEnv(ctx, envs, "GPTSCRIPT_PROMPT_URL")
+if promptURL != "" {
+    return sysPromptHTTP(ctx, envs, promptURL, prompt)
+}
+```
+
+This package plays a crucial role in managing user interactions and secure credential handling in the GPTScript system, providing both local and remote options for prompt processing.

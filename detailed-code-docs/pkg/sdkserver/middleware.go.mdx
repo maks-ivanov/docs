@@ -1,0 +1,119 @@
+---
+title: "middleware.go"
+---
+
+## High-level description
+This file, `middleware.go`, defines middleware functions for an HTTP server in the `sdkserver` package. It provides utility functions for applying middleware, setting content types, logging requests, adding request IDs, and adding loggers to the request context.
+
+## Code Structure
+The code defines several middleware functions that can be applied to HTTP handlers. The `apply` function is used to chain multiple middleware functions together. Other functions like `contentType`, `logRequest`, `addRequestID`, and `addLogger` are specific middleware implementations.
+
+## Symbols
+
+### `middleware`
+#### Description
+A type alias for a function that takes an `http.Handler` and returns an `http.Handler`. This is the basic structure for all middleware functions in this file.
+
+### `apply`
+#### Description
+A function that applies multiple middleware functions to an HTTP handler in reverse order.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| h | http.Handler | The base HTTP handler |
+| m | ...func(http.Handler) http.Handler | Variadic list of middleware functions |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| http.Handler | http.Handler | The resulting HTTP handler with all middleware applied |
+
+#### Internal Logic
+The function iterates through the middleware functions in reverse order, applying each one to the handler. This ensures that the first middleware in the list is the outermost wrapper.
+
+### `contentType`
+#### Description
+A middleware factory function that returns a middleware for setting content types on the response.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| contentTypes | ...string | Variadic list of content types to be set |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| middleware | func(http.Handler) http.Handler | A middleware function that sets the specified content types |
+
+#### Internal Logic
+The returned middleware adds the specified content types to the response header before calling the next handler.
+
+### `logRequest`
+#### Description
+A middleware function that logs the incoming request, handles panics, and logs the completion of request handling.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| h | http.Handler | The next HTTP handler in the chain |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| http.Handler | http.Handler | A new HTTP handler that includes logging functionality |
+
+#### Internal Logic
+1. Retrieves the logger from the request context.
+2. Sets up a deferred function to catch and log any panics.
+3. Logs the incoming request details.
+4. Calls the next handler.
+5. Logs the completion of request handling.
+
+### `addRequestID`
+#### Description
+A middleware function that adds a new request ID to the request context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| next | http.Handler | The next HTTP handler in the chain |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| http.Handler | http.Handler | A new HTTP handler that includes a request ID in the context |
+
+#### Internal Logic
+Creates a new context with a new request ID and passes it to the next handler.
+
+### `addLogger`
+#### Description
+A middleware function that adds a logger to the request context.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| next | http.Handler | The next HTTP handler in the chain |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| http.Handler | http.Handler | A new HTTP handler that includes a logger in the context |
+
+#### Internal Logic
+Creates a new logger with the request ID and adds it to the request context before calling the next handler.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| net/http | For HTTP server and handler functionality |
+| runtime/debug | For stack trace in panic recovery |
+| github.com/gptscript-ai/gptscript/pkg/context | For context-related utilities |
+| github.com/gptscript-ai/gptscript/pkg/mvl | For logging functionality |
+
+## Error Handling
+The `logRequest` middleware includes panic recovery, which logs the stack trace and returns a 500 Internal Server Error response with a generic error message.
+
+## Logging
+Logging is implemented using the `context.GetLogger` function to retrieve a logger from the request context. The `logRequest` middleware logs the start and end of request handling, as well as any panics that occur during request processing.

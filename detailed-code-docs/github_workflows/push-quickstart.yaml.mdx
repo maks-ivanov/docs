@@ -1,0 +1,56 @@
+---
+title: "push-quickstart.yaml"
+---
+
+## High-level description
+This GitHub Actions workflow, named "push-quickstart", is designed to automatically copy specific files to an S3-compatible storage (likely Cloudflare R2) when changes are pushed to the main branch or when manually triggered. It specifically targets the "scripts/install.sh" and "examples/echo.gpt" files.
+
+## Code Structure
+The workflow consists of a single job with two main steps: checking out the repository and copying files to S3.
+
+## Symbols
+
+### Workflow: push-quickstart
+#### Description
+This workflow is triggered on pushes to the main branch that modify specific files or can be manually dispatched. It runs on the latest Ubuntu runner and performs file copying operations to an S3-compatible storage.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| workflow_dispatch | event | Allows manual triggering of the workflow |
+| push | event | Triggers on pushes to the main branch, specifically for changes in "scripts/install.sh" and "examples/echo.gpt" |
+
+#### Internal Logic
+1. Checks out the repository with a fetch depth of 1.
+2. Sets up AWS CLI environment variables using GitHub secrets.
+3. Lists the current directory contents.
+4. Copies "scripts/install.sh" to the S3 bucket.
+5. Copies "examples/echo.gpt" to the S3 bucket.
+
+### Job: push-quickstart
+#### Description
+This job performs the actual file copying operations.
+
+#### Steps
+1. **checkout**: Uses actions/checkout@v4 to fetch the repository.
+2. **Copy files to S3**: Sets up AWS CLI environment and copies files to S3.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | To check out the repository |
+| AWS CLI | To interact with S3-compatible storage |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| AWS_ENDPOINT_URL | string | N/A | S3-compatible endpoint URL (likely Cloudflare R2) |
+| AWS_ACCESS_KEY_ID | string | N/A | Access key for S3-compatible storage |
+| AWS_SECRET_ACCESS_KEY | string | N/A | Secret key for S3-compatible storage |
+| AWS_DEFAULT_REGION | string | auto | AWS region for S3 operations |
+
+## Error Handling
+The workflow does not implement explicit error handling. It relies on GitHub Actions' default behavior of stopping the workflow if any step fails.
+
+## Logging
+The workflow includes a `ls -la` command to list directory contents, which can be useful for debugging purposes.

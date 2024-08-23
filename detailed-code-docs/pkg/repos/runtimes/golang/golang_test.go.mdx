@@ -1,0 +1,54 @@
+---
+title: "golang_test.go"
+---
+
+## High-level description
+This file contains unit tests for the Golang runtime setup functionality. It primarily tests the `Setup` method of the `Runtime` struct, ensuring that the Golang runtime is correctly installed and configured in a test environment.
+
+## Symbols
+
+### `TestRuntime`
+#### Description
+This function is a unit test that verifies the correct setup of the Golang runtime. It tests the `Setup` method of the `Runtime` struct, checking if the Golang tools are properly installed and accessible.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| t | *testing.T | The testing object provided by Go's testing framework |
+
+#### Internal Logic
+1. Sets up a cleanup function to remove the "testdata/bin" directory after the test.
+2. Creates a `Runtime` struct with a specific Golang version.
+3. Calls the `Setup` method with test parameters and environment.
+4. Parses the returned PATH environment variable.
+5. Checks if the `gofmt` tool (or `gofmt.exe` on Windows) exists in the specified path.
+
+#### Performance Considerations
+The test involves file system operations, which can be slower than in-memory operations. However, this is acceptable for a unit test.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | Provides the Context type for managing cancellation and deadlines |
+| errors | Used for error handling and comparison |
+| io/fs | Provides file system-related functionality |
+| os | Used for file system operations and environment variables |
+| path/filepath | Used for manipulating file paths |
+| strings | Used for string manipulation |
+| testing | Go's built-in testing framework |
+| github.com/adrg/xdg | Used to get the cache file path |
+| github.com/gptscript-ai/gptscript/pkg/types | Provides the Tool type |
+| github.com/samber/lo | Used for its Must function |
+| github.com/stretchr/testify/assert | Provides assertion functions for testing |
+| github.com/stretchr/testify/require | Provides requirement functions for testing |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| testCacheHome | string | (dynamically set) | The cache directory used for testing |
+
+## Error Handling
+The test uses `require.NoError` to ensure that the `Setup` method doesn't return an error. It also checks for the existence of the `gofmt` tool, handling potential `fs.ErrNotExist` errors.
+
+## TODOs
+There are no explicit TODOs in the code.

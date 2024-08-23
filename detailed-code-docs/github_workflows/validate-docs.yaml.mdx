@@ -1,0 +1,67 @@
+---
+title: "validate-docs.yaml"
+---
+
+## High-level description
+This GitHub Actions workflow, named "Validate docs build", is designed to validate the documentation build process for a project. It runs on push events to the main branch and on pull requests targeting the main branch, ensuring that documentation changes are validated before merging.
+
+## Code Structure
+The workflow consists of a single job named "validate-docs" with a series of steps that set up the environment, install dependencies, and run validation commands for the project's documentation.
+
+## Symbols
+
+### `validate-docs` (job)
+#### Description
+This job runs on the latest Ubuntu runner and executes a series of steps to validate the documentation build process.
+
+#### Internal Logic
+1. Checks out the repository
+2. Sets up Go programming language
+3. Initializes documentation dependencies
+4. Validates the documentation build
+
+### Steps
+#### 1. Checkout repository
+```yaml
+- uses: actions/checkout@v4
+  with:
+    fetch-depth: 0
+```
+This step checks out the entire repository history using the `actions/checkout@v4` action.
+
+#### 2. Setup Go
+```yaml
+- uses: actions/setup-go@v5
+  with:
+    cache: false
+    go-version: "1.23"
+```
+This step sets up the Go programming language environment using version 1.23, with caching disabled.
+
+#### 3. Initialize documentation
+```yaml
+- run: make init-docs
+```
+This step runs a make command to initialize the documentation dependencies.
+
+#### 4. Validate documentation
+```yaml
+- run: make validate-docs
+```
+This step runs a make command to validate the documentation build.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| actions/checkout@v4 | To check out the repository |
+| actions/setup-go@v5 | To set up the Go programming language environment |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| fetch-depth | integer | 0 | Fetches all history for all branches and tags |
+| cache | boolean | false | Disables caching for Go setup |
+| go-version | string | "1.23" | Specifies the version of Go to use |
+
+## TODOs
+- The workflow uses Go version "1.23", which is not a valid Go version as of the current date. This should be updated to a valid and appropriate Go version for the project.

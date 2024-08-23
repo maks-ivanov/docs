@@ -1,0 +1,96 @@
+---
+title: "toolname.go"
+---
+
+## High-level description
+This code defines functions for normalizing and manipulating tool names in the context of a GPTScript system. It provides utilities for standardizing tool names, splitting tool references, and selecting unique tool names from a set of existing names.
+
+## Code Structure
+The code defines several functions that work together to handle tool naming conventions:
+- `ToolNormalizer`: Normalizes a given tool name.
+- `SplitToolRef`: Splits a tool reference into its components.
+- `PickToolName`: Selects a unique tool name from a set of existing names.
+
+These functions use regular expressions and string manipulation to achieve their purposes.
+
+## Symbols
+
+### `ToolNormalizer`
+#### Description
+This function normalizes a given tool name by applying a series of transformations to ensure it meets certain criteria.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | string | The input tool name to be normalized |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | string | The normalized tool name |
+
+#### Internal Logic
+1. Splits the input tool name and extracts the last part.
+2. Handles special cases like "tool.gpt" suffix and system suffix.
+3. Trims prefixes and applies length restrictions.
+4. Replaces invalid characters with underscores.
+5. Applies camel case formatting to the resulting parts.
+6. Joins the parts and returns the final normalized name.
+
+### `SplitToolRef`
+#### Description
+This function splits a tool reference into its toolName and subTool components.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| targetToolName | string | The input tool reference to be split |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| toolName | string | The main tool name |
+| subTool | string | The sub-tool name, if present |
+
+#### Internal Logic
+1. Splits the input string into fields.
+2. Searches for the "from" keyword to separate toolName and subTool.
+3. Calls `SplitArg` on the toolName (implementation not provided in this file).
+
+### `PickToolName`
+#### Description
+This function selects a unique tool name from a set of existing names, appending "0" if necessary to avoid conflicts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| toolName | string | The initial tool name |
+| existing | map[string]struct{} | A map of existing tool names |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (unnamed) | string | A unique tool name |
+
+#### Internal Logic
+1. Normalizes the input tool name.
+2. Checks if the normalized name exists in the set of existing names.
+3. If it exists, appends "0" and checks again until a unique name is found.
+4. Adds the unique name to the existing set and returns it.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| path/filepath | Used for file path manipulation |
+| regexp | Used for regular expression operations |
+| slices | Used for slice operations |
+| strings | Used for string manipulation |
+| github.com/gptscript-ai/gptscript/pkg/system | Used for system-related constants |
+
+## Error Handling
+This code does not implement explicit error handling. It assumes that the input strings and regular expressions are valid.
+
+## Performance Considerations
+The `PickToolName` function uses a loop to find a unique name, which could potentially be slow if there are many conflicts. However, for most practical uses, this should not be a significant issue.
+
+The use of regular expressions in `ToolNormalizer` might have some performance impact for very large inputs, but for typical tool names, this should not be a concern.

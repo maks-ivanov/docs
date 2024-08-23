@@ -1,0 +1,115 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This file defines a `Client` struct and associated methods for interacting with remote LLM (Language Model) providers. It provides functionality for making API calls, listing available models, and managing credentials for different providers.
+
+## Code Structure
+The `Client` struct is the main component, containing methods for interacting with remote LLM providers. It uses a cache system, a runner for executing tools, and a credential store for managing API keys. The `Call` method is the primary interface for making requests to the LLM provider.
+
+## Symbols
+
+### `Client` struct
+#### Description
+Represents a client for interacting with remote LLM providers.
+
+#### Internal Logic
+- Manages connections to different LLM providers
+- Handles caching of responses
+- Manages credentials for different providers
+
+### `New` function
+#### Description
+Creates a new `Client` instance.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| credStore | credentials.CredentialStore | Store for managing credentials |
+| opts | ...Options | Configuration options for the client |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *Client | *Client | The newly created Client instance |
+| error | error | Any error encountered during creation |
+
+### `Call` method
+#### Description
+Makes a call to the LLM provider with the given completion request.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| messageRequest | types.CompletionRequest | The request to send to the LLM |
+| status | chan&lt;- types.CompletionStatus | Channel for sending status updates |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *types.CompletionMessage | *types.CompletionMessage | The response from the LLM |
+| error | error | Any error encountered during the call |
+
+#### Internal Logic
+1. Validates authentication
+2. Prepares the request
+3. Checks the cache for a previous response
+4. Makes the API call if not cached
+5. Processes and returns the response
+
+### `ListModels` method
+#### Description
+Lists available models from the LLM provider.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| providers | ...string | Optional list of providers to filter |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []string | []string | List of available model names |
+| error | error | Any error encountered during the operation |
+
+### `Supports` method
+#### Description
+Checks if a given model is supported by the client.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the operation |
+| modelString | string | The model to check for support |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| bool | bool | Whether the model is supported |
+| error | error | Any error encountered during the check |
+
+## Dependencies
+- `github.com/gptscript-ai/gptscript/pkg/cache`
+- `github.com/gptscript-ai/gptscript/pkg/context`
+- `github.com/gptscript-ai/gptscript/pkg/credentials`
+- `github.com/gptscript-ai/gptscript/pkg/engine`
+- `github.com/gptscript-ai/gptscript/pkg/env`
+- `github.com/gptscript-ai/gptscript/pkg/loader`
+- `github.com/gptscript-ai/gptscript/pkg/openai`
+- `github.com/gptscript-ai/gptscript/pkg/prompt`
+- `github.com/gptscript-ai/gptscript/pkg/runner`
+- `github.com/gptscript-ai/gptscript/pkg/types`
+
+## Error Handling
+The code uses error returns throughout to propagate errors up the call stack. It also includes custom error types like `InvalidAuthError` for specific error conditions.
+
+## Logging
+The code uses a custom logging package `mvl` for logging operations.
+
+## Performance Considerations
+- The code implements caching to reduce unnecessary API calls
+- It uses a mutex (`clientsLock`) to ensure thread-safe access to the clients map

@@ -1,0 +1,98 @@
+---
+title: "parser.go"
+---
+
+## High-level description
+This code defines a parser package for processing GPTScript tools. It provides functionality to parse input, extract tool parameters, and create structured representations of GPTScript documents and tools.
+
+## Code Structure
+The main components of this code are:
+1. Helper functions for parsing and normalizing input
+2. The `Parse` and `ParseTools` functions that process the input and create structured representations
+3. Data structures like `Document`, `Node`, `TextNode`, and `ToolNode` to represent the parsed content
+4. A context struct and methods to manage the parsing state
+
+## Symbols
+
+### `Parse`
+#### Description
+Parses the input reader and returns a `Document` structure representing the GPTScript content.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input | io.Reader | The input source to be parsed |
+| opts | ...Options | Optional configuration for parsing |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Document | Document | The parsed document structure |
+| error | error | Any error encountered during parsing |
+
+#### Internal Logic
+1. Calls `parse` to get initial nodes
+2. Applies location information if provided
+3. Assigns metadata to nodes
+4. Optionally assigns global model and tools
+5. Returns the final `Document` structure
+
+### `ParseTools`
+#### Description
+Parses the input reader and returns a slice of `types.Tool` structures.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input | io.Reader | The input source to be parsed |
+| opts | ...Options | Optional configuration for parsing |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []types.Tool | []types.Tool | Slice of parsed tools |
+| error | error | Any error encountered during parsing |
+
+#### Internal Logic
+1. Calls `Parse` to get the document structure
+2. Extracts `ToolNode` items from the document
+3. Returns the slice of tools
+
+### `parse`
+#### Description
+Internal function that performs the actual parsing of the input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| input | io.Reader | The input source to be parsed |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| []Node | []Node | Slice of parsed nodes |
+| error | error | Any error encountered during parsing |
+
+#### Internal Logic
+1. Scans the input line by line
+2. Processes parameters and instructions
+3. Handles separators and special cases (e.g., comments, blank lines)
+4. Builds up the context and creates nodes
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/getkin/kin-openapi/openapi3 | Used for OpenAPI schema definitions |
+| github.com/gptscript-ai/gptscript/pkg/types | Provides types for GPTScript tools |
+
+## Error Handling
+The code uses custom `ErrLine` struct to provide detailed error information, including file path and line number where the error occurred.
+
+## Side Effects
+The parsing process modifies the internal state of the `context` struct as it processes the input.
+
+## Performance Considerations
+The parser uses a line-by-line scanning approach, which can be memory-efficient for large inputs. However, it builds up strings in memory, which could be optimized for very large inputs if needed.
+
+## TODOs
+There are no explicit TODOs in the code.

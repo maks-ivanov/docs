@@ -1,0 +1,62 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/runner` directory contains the core implementation of the GPTScript runner, which is responsible for executing GPTScript programs, managing chat interactions, and coordinating various components such as LLM models, credential management, and monitoring. It provides functionality for parsing credential overrides, handling input and output processing, managing parallel execution, and interfacing with the runtime environment.
+
+## What does it do?
+The runner package orchestrates the execution of GPTScript programs. It handles the following main tasks:
+
+1. Parsing and managing credential overrides for secure execution.
+2. Processing input for tool executions, applying input filters as needed.
+3. Executing GPTScript programs and managing chat-based interactions.
+4. Handling output from tool executions, including applying output filters.
+5. Coordinating parallel or sequential execution of functions.
+6. Providing a runtime manager with logging capabilities.
+7. Interfacing with an LLM model for natural language processing tasks.
+8. Managing monitoring and event tracking throughout the execution process.
+
+## Entry points
+The main entry point for this package is the `Runner` struct defined in `runner.go`. It provides methods like `Chat` and `Run` for executing GPTScript programs and managing chat interactions. The `New` function in `runner.go` is used to create a new `Runner` instance with the necessary configuration.
+
+The flow of execution typically involves:
+1. Creating a `Runner` instance with appropriate options.
+2. Using the `Chat` or `Run` methods to execute GPTScript programs.
+3. The runner then coordinates between various components, handling input processing, tool execution, output processing, and monitoring.
+
+## Key Files
+1. `runner.go`: Defines the core `Runner` struct and its methods for executing GPTScript programs and managing chat interactions.
+2. `input.go` and `output.go`: Handle the processing of input and output for tool executions, including applying filters.
+3. `credentials.go`: Provides functionality for parsing and managing credential overrides.
+4. `parallel.go`: Implements dispatchers for running functions concurrently or serially.
+5. `runtimemanager.go`: Defines a runtime manager logger that wraps an existing runtime manager, adding logging functionality.
+
+## Dependencies
+The package relies on several external and internal dependencies:
+
+1. Standard Go libraries: `context`, `encoding/json`, `errors`, `fmt`, `os`, `sort`, `strings`, `sync`, `time`
+2. Internal packages:
+   - `github.com/gptscript-ai/gptscript/pkg/engine`
+   - `github.com/gptscript-ai/gptscript/pkg/types`
+   - `github.com/gptscript-ai/gptscript/pkg/credentials`
+   - `github.com/gptscript-ai/gptscript/pkg/mvl`
+3. External packages:
+   - `golang.org/x/exp/maps`
+   - `golang.org/x/sync/errgroup`
+
+## Configuration
+The `Runner` can be configured using the `Options` struct defined in `runner.go`. This allows for setting up:
+
+1. A monitor factory for creating execution monitors
+2. A runtime manager for handling runtime operations
+3. Port range for network operations
+4. Credential overrides
+5. Sequential or parallel execution mode
+6. An authorizer function for operation authorization
+
+Environment variables are used in various parts of the package, particularly for credential management and tool execution contexts.
+
+The package uses a logging system provided by the `mvl` (Minimal Verbose Logging) package, which is initialized in `log.go`.
+
+Overall, this package forms the core execution engine for GPTScript, providing a flexible and extensible system for running AI-powered scripts and managing interactions with language models.

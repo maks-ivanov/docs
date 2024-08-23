@@ -1,0 +1,92 @@
+---
+title: "Overview"
+---
+
+## High-level description
+This directory contains a Node.js application that demonstrates the use of AI-powered image generation for logo design. The application allows users to generate logo designs based on their descriptions using a selection of AI-generated artist profiles. It showcases the integration of GPTScript, a library for AI-powered content generation, with a web application.
+
+## What does it do?
+The application provides a web interface where users can:
+1. View a set of AI-generated artist profiles
+2. Request new artist profiles to be generated
+3. Input a description for a logo they want to create
+4. Submit their request to generate logo designs based on their description
+5. View the generated logo designs created by different AI artists
+
+Behind the scenes, the application uses GPTScript to interact with AI models (likely leveraging DALL-E) for both generating new artist profiles and creating logo designs based on user input. The server handles these AI interactions and serves the results back to the client.
+
+## Entry points
+The main entry point for the application is `server.js`. This file sets up an Express.js server that handles the following key functionalities:
+
+1. Serving static files from the `public` directory
+2. Managing artist data (both pre-defined and newly generated)
+3. Handling requests to generate new artist profiles
+4. Processing requests to generate logo designs based on user descriptions
+
+The client-side entry point is `public/index.html`, which provides the user interface and loads `public/script.js` to handle client-side interactions and communication with the server.
+
+## Key Files
+1. `server.js`: The main server file that sets up routes and handles AI interactions
+2. `artists.json`: Contains pre-defined artist profiles
+3. `public/index.html`: The main HTML file for the user interface
+4. `public/script.js`: Handles client-side logic and communication with the server
+
+## Dependencies
+The project relies on the following key dependencies:
+
+1. Express.js (version not specified): A web application framework for Node.js
+   - Used for setting up the server and handling routes
+
+2. @gptscript-ai/gptscript (version not specified): A library for AI-powered content generation
+   - Used for interacting with AI models to generate artist profiles and logo designs
+
+3. Tailwind CSS (v3.3.2): A utility-first CSS framework
+   - Used for styling the user interface
+
+## Configuration
+The application uses the following configuration:
+
+1. Environment Variables:
+   - `OPENAI_API_KEY`: Required for GPTScript to interact with OpenAI's models
+   - `PORT`: Optional, defaults to 3000, specifies the port on which the server runs
+
+2. Artist Data:
+   - Initial artist profiles are stored in `artists.json`
+   - New artist profiles can be generated and stored in memory during runtime
+
+## Code Snippets and Examples
+
+1. Generating a logo design:
+
+```javascript
+app.post('/generate-logo', async (req, res) =&gt; {
+  const { description } = req.body;
+  const artists = getArtistsData();
+  const submissions = [];
+
+  for (const artist of artists) {
+    const instructions = `
+      You are ${artist.name}. ${artist.description}
+      Create a logo based on the following description: ${description}
+      Respond with only a JSON object with a single key 'logo_url' and the value being the URL of the generated image.
+    `;
+
+    try {
+      const result = await gptscript.run('image-generation', instructions);
+      const parsedResult = JSON.parse(result);
+      submissions.push({
+        artistName: artist.name,
+        logoUrl: parsedResult.logo_url
+      });
+    } catch (error) {
+      console.error('Error generating logo:', error);
+    }
+  }
+
+  res.json(submissions);
+});
+```
+
+This code snippet demonstrates how the server handles requests to generate logo designs. It uses the GPTScript library to interact with the AI model, passing instructions that include the artist's profile and the user's description. The generated logo URLs are then collected and sent back to the client.
+
+The application showcases an interesting use case for AI in creative design, allowing users to get multiple AI-generated logo options based on their descriptions, each influenced by different AI-generated artist profiles. It demonstrates the integration of AI capabilities into a web application, handling both text-based (artist profiles) and image-based (logo designs) AI-generated content.

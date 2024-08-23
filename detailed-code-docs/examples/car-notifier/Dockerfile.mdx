@@ -1,0 +1,59 @@
+---
+title: "Dockerfile"
+---
+
+## High-level description
+This Dockerfile creates a lightweight Alpine-based container for running the car-notifier application. It sets up the necessary environment, installs required dependencies, and configures the container to execute the car-notifier.gpt script using the GPTScript runtime.
+
+## Symbols
+
+### FROM
+#### Description
+Specifies the base image for the Docker container.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| alpine:latest | string | The latest version of the Alpine Linux base image |
+
+### COPY
+#### Description
+Copies the car-notifier.gpt script from the host machine into the Docker container.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| car-notifier.gpt | file | The GPTScript file for the car-notifier application |
+| ./ | string | The destination directory in the container (root directory) |
+
+### RUN
+#### Description
+Executes commands to set up the container environment. It updates the package manager, installs necessary dependencies, downloads and installs GPTScript, and sets up a writable cache directory.
+
+#### Internal Logic
+1. Updates the package manager index
+2. Installs curl and PostgreSQL client version 16
+3. Downloads and runs the GPTScript installation script
+4. Creates a .cache directory in the root and sets its permissions to be writable
+
+### CMD
+#### Description
+Specifies the command to run when the container starts.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| gptscript | string | The GPTScript runtime command |
+| --cache=false | string | A flag to disable caching |
+| car-notifier.gpt | string | The GPTScript file to execute |
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| alpine:latest | Base operating system for the container |
+| curl | Used for downloading the GPTScript installer |
+| postgresql16-client | PostgreSQL client for database interactions |
+| GPTScript | Runtime for executing the car-notifier.gpt script |
+
+## Performance Considerations
+The use of Alpine Linux as the base image ensures a small container size, which can lead to faster deployments and reduced resource usage. The `--no-cache` option in the `apk add` command helps keep the image size smaller by not storing the package cache.

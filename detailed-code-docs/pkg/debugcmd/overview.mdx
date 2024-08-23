@@ -1,0 +1,77 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/debugcmd` directory contains code for executing and managing external commands in a Go program, with a focus on debugging capabilities. It provides a wrapper around Go's standard `exec.Cmd` with additional functionality for capturing command output and handling errors in a controlled manner.
+
+## What does it do?
+This package allows developers to run external commands within their Go programs while providing enhanced debugging capabilities. Here's a simplified explanation of its functionality:
+
+1. It lets you run any command-line program from within your Go code.
+2. It captures everything the command prints out (both normal output and error messages).
+3. If something goes wrong when running the command, it gives you detailed information about what happened, including the command's output.
+4. It allows you to set up the environment for the command, like specifying which folder it should run in or what environment variables it should use.
+5. It provides options for controlling how the output is handled - either capturing it for later use or printing it out immediately.
+
+This is particularly useful when you need to run external tools as part of your program and want to have fine-grained control over how they're executed and how their output is handled, especially when debugging issues.
+
+## Key Files
+
+### debug.go
+This file contains the core functionality of the package. It defines the following key components:
+
+1. `WrappedCmd`: The main struct that encapsulates an `exec.Cmd` and provides additional functionality. It allows for executing commands, capturing their output, and handling errors.
+
+2. `recorder`: A helper struct used to record command output.
+
+3. `writer`: A helper struct used to write command output.
+
+4. `New`: A function to create a new `WrappedCmd` instance.
+
+5. `setupDebug`: A function to configure output capturing for a `WrappedCmd` based on debug settings.
+
+The `WrappedCmd` struct provides methods like `Stdout()` to retrieve captured output and `Run()` to execute the command. It handles setting up the command environment, working directory, and capturing output.
+
+### log.go
+This file sets up logging for the package. It defines a package-level variable `log` initialized using the `mvl.Package()` function from an external package. This logging mechanism is likely used throughout the package for debugging and error reporting purposes.
+
+## Dependencies
+The package relies on several standard Go libraries and one external package:
+
+1. `context`: For handling command contexts
+2. `fmt`: For formatting strings and errors
+3. `os`: For interacting with the operating system
+4. `os/exec`: For executing external commands
+5. `strings`: For string manipulation
+6. `sync`: For synchronization primitives
+7. `github.com/gptscript-ai/gptscript/pkg/mvl`: Used for setting up logging
+
+The use of these dependencies suggests that the package is designed to work with Go's standard libraries for most of its functionality, with the addition of a custom logging solution.
+
+## Configuration
+The package uses environment variables and working directory settings to configure the execution environment for commands. These can be set through the `WrappedCmd` struct:
+
+```go
+wrappedCmd.Env = []string{"KEY=VALUE"}
+wrappedCmd.Dir = "/path/to/working/directory"
+```
+
+Additionally, debug settings affect how output is captured and displayed. The `setupDebug` function configures this based on some unspecified debug settings, potentially controlled by environment variables or other configuration mechanisms not visible in the provided code.
+
+## Error Handling
+The package employs Go's standard error handling mechanisms. Notably, when an error occurs during command execution, the `WrappedCmd.Run()` method includes the captured command output in the error message. This provides valuable context for debugging command execution failures.
+
+For example:
+
+```go
+err := wrappedCmd.Run()
+if err != nil {
+    // err will include both the original error and the command's output
+    fmt.Println("Command failed:", err)
+}
+```
+
+This approach to error handling makes it easier to diagnose issues with external command execution by providing both the error and the command's output in a single error message.
+
+In conclusion, the `pkg/debugcmd` package provides a robust solution for executing and debugging external commands within Go programs. It offers enhanced control over command execution, output capturing, and error handling, making it a valuable tool for developers working with external processes in their Go applications.

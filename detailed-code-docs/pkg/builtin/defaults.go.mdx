@@ -1,0 +1,66 @@
+---
+title: "defaults.go"
+---
+
+## High-level description
+This code defines default settings and utility functions for managing the default model in the GPTScript project. It provides functions to get and set the default model, as well as a function to set default values for a tool if they are not already specified.
+
+## Code Structure
+The code defines a package-level variable `defaultModel` and three functions: `GetDefaultModel()`, `SetDefaultModel()`, and `SetDefaults()`. These functions work together to manage the default model setting for the GPTScript tools.
+
+## References
+This code references the `openai` and `types` packages from the `github.com/gptscript-ai/gptscript` project.
+
+## Symbols
+
+### `defaultModel`
+#### Description
+A package-level variable that stores the default model value. It is initialized with the value of `openai.DefaultModel`.
+
+### `GetDefaultModel()`
+#### Description
+A function that returns the current value of the default model.
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | string | The current default model |
+
+### `SetDefaultModel(model string)`
+#### Description
+A function that sets the default model to the provided value.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| model | string | The new default model to be set |
+
+### `SetDefaults(tool types.Tool) types.Tool`
+#### Description
+A function that sets default values for a given tool if they are not already specified.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tool | types.Tool | The tool to set defaults for |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| (return value) | types.Tool | The tool with defaults set |
+
+#### Internal Logic
+1. Check if the tool's `ModelName` is empty.
+2. If it is empty, set it to the value returned by `GetDefaultModel()`.
+3. Return the modified tool.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/gptscript-ai/gptscript/pkg/openai | Provides the default model constant |
+| github.com/gptscript-ai/gptscript/pkg/types | Defines the Tool type used in the SetDefaults function |
+
+## Notes
+1. The `defaultModel` variable is initialized with `openai.DefaultModel`, which is defined in the related `pkg/openai/client.go` file as `openai.GPT4o`.
+2. The `SetDefaults` function only modifies the `ModelName` parameter of the tool if it's not already set. This allows for easy application of default values without overriding explicitly set values.
+3. This code provides a centralized way to manage the default model across the GPTScript project, allowing for easy updates and consistent use of the default model throughout the codebase.

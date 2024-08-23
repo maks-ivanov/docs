@@ -1,0 +1,63 @@
+---
+title: "output.go"
+---
+
+## High-level description
+The `handleOutput` function in the `runner` package is responsible for processing the output of a tool execution in the GPTScript system. It applies output filters, handles chat completions, and manages the state of the execution, including continuations and results.
+
+## Code Structure
+The `handleOutput` function is a method of the `Runner` struct. It interacts with the `engine.Context`, `Monitor`, and `State` types to process the output and apply any necessary filters.
+
+## Symbols
+
+### `Runner.handleOutput`
+#### Description
+This method processes the output of a tool execution, applying any defined output filters and managing the execution state.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| callCtx | engine.Context | The context of the current call |
+| monitor | Monitor | Used for monitoring the execution |
+| env | []string | Environment variables |
+| state | *State | The current state of the execution |
+| retErr | error | Any error returned from the tool execution |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *State | *State | The updated state after processing |
+| error | error | Any error encountered during output handling |
+
+#### Internal Logic
+1. Retrieve output filter tools from the current tool.
+2. If no output filters are defined, return the current state and error.
+3. Determine the output type (chat finish, continuation, or regular result).
+4. For each output filter:
+   - Marshal the output data into JSON.
+   - Make a sub-call to the output filter tool.
+   - Update the output with the filter result.
+5. Update the state based on the output type (chat finish, continuation, or regular result).
+6. Return the updated state and any errors.
+
+## Side Effects
+- Modifies the `State` object, potentially updating `Continuation.Result` or `Result`.
+- Makes sub-calls to output filter tools, which may have their own side effects.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | Used for JSON marshaling of input data for output filters |
+| errors | Used for error handling and type assertions |
+| fmt | Used for error formatting |
+| github.com/gptscript-ai/gptscript/pkg/engine | Provides the Context and ErrChatFinish types |
+
+## Error Handling
+The function handles various error cases:
+- Errors from getting output filter tools
+- JSON marshaling errors
+- Errors from sub-calls to output filter tools
+- Invalid states (e.g., output tool resulting in a chat continuation)
+
+## API/Interface Reference
+This function is part of the `Runner` type and is likely called internally within the GPTScript execution flow. It's not exposed as a public API endpoint.

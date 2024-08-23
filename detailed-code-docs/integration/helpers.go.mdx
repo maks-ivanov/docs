@@ -1,0 +1,59 @@
+---
+title: "helpers.go"
+---
+
+## High-level description
+This Go package provides helper functions for executing GPTScript in integration tests. It includes functions to run the GPTScript executable and execute scripts with various options, accommodating different operating systems.
+
+## Symbols
+
+### `GPTScriptExec`
+#### Description
+This function executes the GPTScript binary with the provided arguments, handling platform-specific differences for Windows.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| args | ...string | Variable number of string arguments to pass to the GPTScript executable |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | The combined stdout and stderr output of the executed command |
+| err | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Creates an `exec.Command` with the path to the GPTScript binary and the provided arguments.
+2. Checks if the operating system is Windows and adjusts the command path accordingly.
+3. Executes the command and captures the combined output.
+4. Returns the output as a string and any error that occurred.
+
+### `RunScript`
+#### Description
+This function is a wrapper around `GPTScriptExec` that simplifies running a GPTScript with additional options.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| script | string | The script to be executed |
+| options | ...string | Optional additional arguments to pass to the GPTScript executable |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | The combined stdout and stderr output of the executed script |
+| err | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Appends the `--quiet` flag and the script to the provided options.
+2. Calls `GPTScriptExec` with the combined arguments.
+3. Returns the output and error from `GPTScriptExec`.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| os/exec | For executing external commands |
+| runtime | For determining the operating system |
+
+## Performance Considerations
+The `GPTScriptExec` function uses `CombinedOutput()`, which waits for the command to complete and returns all output at once. For large outputs or long-running scripts, this might consume significant memory. Consider using streaming output methods for such cases if they become problematic.

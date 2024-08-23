@@ -1,0 +1,126 @@
+---
+title: "server.go"
+---
+
+## High-level description
+This code defines the server component of a GPTScript SDK. It provides functionality to run GPTScript programs, handle chat interactions, manage credentials, and process events. The server can be run as a standalone process or embedded within another application.
+
+## Code Structure
+The main symbols in the code are:
+1. `Options`: Defines configuration options for the server.
+2. `Run`: Starts the server and blocks until it's shut down.
+3. `EmbeddedStart`: Starts the server as an embedded process.
+4. `server`: Represents the server instance and its methods.
+5. `run`: The main function that sets up and runs the server.
+
+These symbols are interconnected, with `Run` and `EmbeddedStart` using the `run` function to start the server, and `run` creating and using a `server` instance.
+
+## Symbols
+
+### `Options`
+#### Description
+Defines the configuration options for the SDK server, extending `gptscript.Options`.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ListenAddress | string | The address to listen on |
+| Debug | bool | Enable debug mode |
+| DisableServerErrorLogging | bool | Disable server error logging |
+
+### `Run`
+#### Description
+Starts the server and blocks until it's shut down.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the server |
+| opts | Options | The server options |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred during server startup or running |
+
+#### Internal Logic
+1. Creates a new listener using the provided options.
+2. Writes the listener address to stderr.
+3. Sets up signal handling for graceful shutdown.
+4. Calls the `run` function to start the server.
+
+### `EmbeddedStart`
+#### Description
+Starts the server as an embedded process that may use Stdin for input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the server |
+| options | ...Options | Variable number of option sets |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The address the server is listening on |
+| error | error | Any error that occurred during server startup |
+
+#### Internal Logic
+1. Completes the options using the `complete` function.
+2. Creates a new listener.
+3. Starts the server in a goroutine using the `run` function.
+4. Returns the listener address.
+
+### `run`
+#### Description
+The main function that sets up and runs the server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| ctx | context.Context | The context for the server |
+| listener | net.Listener | The network listener |
+| opts | Options | The server options |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred during server setup or running |
+
+#### Internal Logic
+1. Sets up debug mode if enabled.
+2. Creates a new broadcaster for events.
+3. Sets up the GPTScript client.
+4. Creates a new server instance.
+5. Sets up HTTP routes and middleware.
+6. Starts the HTTP server and waits for it to finish or for the context to be canceled.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For handling context and cancellation |
+| errors | For error handling |
+| fmt | For formatting strings |
+| io | For I/O operations |
+| log | For logging |
+| net | For network operations |
+| net/http | For HTTP server functionality |
+| os | For operating system interactions |
+| os/signal | For signal handling |
+| syscall | For system call constants |
+| time | For time-related operations |
+| github.com/google/uuid | For generating UUIDs |
+| github.com/gptscript-ai/broadcaster | For event broadcasting |
+| github.com/gptscript-ai/gptscript/pkg/gptscript | For GPTScript functionality |
+| github.com/gptscript-ai/gptscript/pkg/mvl | For logging |
+| github.com/gptscript-ai/gptscript/pkg/runner | For running GPTScript programs |
+| github.com/gptscript-ai/gptscript/pkg/types | For common types |
+| github.com/rs/cors | For handling CORS |
+
+## Error Handling
+The code uses Go's standard error handling mechanisms. Errors are propagated up the call stack and logged when appropriate. The `run` function specifically handles the `http.ErrServerClosed` error to distinguish between normal server shutdown and other errors.
+
+## Logging
+Logging is done using the `mvl` package. Debug logging can be enabled through the `Options.Debug` flag. Server error logging can be disabled using the `Options.DisableServerErrorLogging` flag.
+
+Your response should not exceed 3000 words or 4000 tokens. Focus on providing clear, concise information that can be directly inferred from the code. Include optional sections only when they provide significant value for understanding the code.

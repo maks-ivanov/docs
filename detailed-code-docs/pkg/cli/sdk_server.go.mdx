@@ -1,0 +1,69 @@
+---
+title: "sdk_server.go"
+---
+
+## High-level description
+This code defines a `SDKServer` struct and its methods for implementing a command-line interface (CLI) command for running a GPTScript SDK server. It utilizes the Cobra library for CLI functionality and integrates with the `sdkserver` package to run the server.
+
+## Code Structure
+The `SDKServer` struct embeds a `*GPTScript` and provides two main methods: `Customize` for setting up the command, and `Run` for executing the server.
+
+## Symbols
+
+### `SDKServer`
+#### Description
+A struct that represents the SDK server command, embedding the `*GPTScript` type.
+
+### `Customize`
+#### Description
+Configures the Cobra command for the SDK server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *cobra.Command | The Cobra command to be customized |
+
+#### Internal Logic
+- Sets the command's use to "sys.sdkserver"
+- Configures the command to accept no arguments
+- Adds "sdkserver" as an alias
+- Hides the command from the default help output
+
+### `Run`
+#### Description
+Executes the SDK server.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *cobra.Command | The Cobra command being run |
+| _ | []string | Unused slice of strings (command arguments) |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error encountered during execution |
+
+#### Internal Logic
+1. Creates new GPTScript options
+2. Sets up the context:
+   - Uses `context.Background()` by default
+   - If stdin is a terminal, uses the command's context to support CTRL+C
+3. Calls `sdkserver.Run` with the prepared context and options
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| context | For managing execution context |
+| os | For interacting with the operating system |
+| github.com/gptscript-ai/gptscript/pkg/sdkserver | For running the SDK server |
+| github.com/spf13/cobra | For CLI command functionality |
+| golang.org/x/term | For terminal-related operations |
+
+## Error Handling
+The `Run` method returns any error encountered during the creation of GPTScript options or the execution of the SDK server.
+
+## Performance Considerations
+The code checks if stdin is a terminal to determine whether to support CTRL+C, which may have slight performance implications in non-terminal environments.
+
+This documentation provides a comprehensive overview of the `pkg/cli/sdk_server.go` file, explaining its purpose, structure, and key components without exceeding the specified length limits.

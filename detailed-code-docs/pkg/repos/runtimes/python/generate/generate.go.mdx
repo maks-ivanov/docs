@@ -1,0 +1,111 @@
+---
+title: "generate.go"
+---
+
+## High-level description
+This Go program generates a JSON file containing information about Python runtime releases from the `python-build-standalone` project. It fetches data from GitHub releases, processes it to extract relevant information for specific Python versions and operating systems, and outputs a structured JSON file with download URLs and checksums.
+
+## Code Structure
+The main functionality is implemented in the `mainErr` function, which orchestrates the data fetching and processing. It uses helper functions like `toJSON` and `getData` to interact with external APIs and process the responses. The program defines several data structures and constants to support its operation.
+
+## Symbols
+
+### `main`
+#### Description
+The entry point of the program. It sets up command-line flag parsing and calls `mainErr` with the specified output file.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | File path to write the output JSON |
+
+#### Internal Logic
+1. Parse command-line flags
+2. Call `mainErr` with the output file path
+3. Log a fatal error if `mainErr` returns an error
+
+### `toJSON`
+#### Description
+Fetches JSON data from a given URL and unmarshals it into the provided object. It handles pagination by following the "next" link in the response headers.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| obj | any | Pointer to the object to unmarshal the JSON into |
+| url | string | URL to fetch the JSON data from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Error if any occurred during the process |
+
+#### Internal Logic
+1. Send a GET request to the URL with the "Accept: application/json" header
+2. Read the response body
+3. Check for pagination links in the response header
+4. If a "next" link exists, fetch and append the data from the next page
+5. Unmarshal the combined JSON data into the provided object
+
+### `getData`
+#### Description
+Fetches data from a given URL and returns it as a trimmed string.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| url | string | URL to fetch the data from |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | Trimmed content of the response |
+| error | error | Error if any occurred during the process |
+
+### `mainErr`
+#### Description
+The main logic of the program. It fetches release information, processes assets, and generates a JSON file with Python runtime release data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| output | string | File path to write the output JSON |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Error if any occurred during the process |
+
+#### Internal Logic
+1. Fetch the latest release information
+2. Fetch assets for the latest release
+3. Process assets to extract relevant information for specified Python versions and operating systems
+4. Generate `Release` structs with download URLs and checksums
+5. Write the generated data as JSON to the specified output file
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| encoding/json | JSON encoding and decoding |
+| flag | Command-line flag parsing |
+| fmt | Formatted I/O |
+| io | I/O primitives |
+| log | Logging |
+| net/http | HTTP client and server implementations |
+| os | Operating system functionality |
+| strings | String manipulation |
+
+## Configuration
+| Option | Type | Default | Description |
+|:-------|:-----|:--------|:------------|
+| versions | []string | ["3.10", "3.11", "3.12"] | Python versions to process |
+| osKeyMap | map[osKey]string | (various mappings) | Mapping of OS/architecture combinations to asset suffixes |
+
+## Error Handling
+The program uses Go's standard error handling mechanism. Errors are propagated up the call stack and logged as fatal errors in the `main` function if they occur.
+
+## API/Interface Reference
+| Endpoint | Method | Request | Response | Description |
+|:---------|:-------|:--------|:---------|:------------|
+| latestReleaseURL | GET | N/A | JSON | Fetches latest release information |
+| assetsURL | GET | N/A | JSON | Fetches assets for a specific release |
+| asset.BrowserDownloadURL | GET | N/A | Raw | Fetches checksum for an asset |

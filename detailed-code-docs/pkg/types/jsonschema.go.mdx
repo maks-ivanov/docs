@@ -1,0 +1,38 @@
+---
+title: "jsonschema.go"
+---
+
+## High-level description
+This code defines a function `ObjectSchema` that creates and returns an OpenAPI 3.0 schema object. The function is designed to simplify the creation of object schemas with string properties, using a flexible key-value pair input system.
+
+## Symbols
+
+### `ObjectSchema`
+#### Description
+`ObjectSchema` is a function that generates an OpenAPI 3.0 schema object representing a JSON object with string properties. It takes a variable number of string arguments, which are interpreted as alternating key-value pairs where the key is the property name and the value is the property description.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| kv | ...string | Variable number of strings representing alternating key-value pairs |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| *openapi3.Schema | *openapi3.Schema | Pointer to an OpenAPI 3.0 schema object |
+
+#### Internal Logic
+1. Initialize a new `openapi3.Schema` object with type "object" and an empty `Properties` map.
+2. Iterate through the input strings, processing them in pairs.
+3. For each pair, use the first string as the property name and the second as the property description.
+4. Create a new `openapi3.SchemaRef` for each property, setting its type to "string" and its description to the provided value.
+5. Add the created `SchemaRef` to the `Properties` map of the schema object.
+6. Return the completed schema object.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| github.com/getkin/kin-openapi/openapi3 | Provides OpenAPI 3.0 schema types and structures |
+
+## Performance Considerations
+The function uses a slice iteration to process the input key-value pairs, which has a time complexity of O(n) where n is the number of input strings. Memory usage grows linearly with the number of properties added to the schema.

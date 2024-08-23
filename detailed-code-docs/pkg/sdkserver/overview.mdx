@@ -1,0 +1,63 @@
+---
+title: "Overview"
+---
+
+## High-level description
+The `pkg/sdkserver` directory contains the implementation of a server component for the GPTScript SDK. This server provides functionality for executing GPTScript programs, handling chat interactions, managing credentials, and processing events. It can be run as a standalone process or embedded within another application.
+
+## What does it do?
+The SDK server performs the following main functions:
+
+1. Executes GPTScript programs and tools
+2. Handles authorization and confirmation requests
+3. Manages prompts and responses
+4. Streams execution events to clients
+5. Provides health checks and version information
+6. Lists available tools and models
+7. Loads, parses, and formats GPTScript documents
+8. Manages chat state and interactions
+
+The server uses HTTP endpoints to communicate with clients, supporting both synchronous requests and server-sent events for real-time updates during program execution.
+
+## Entry points
+The main entry points for the SDK server are:
+
+1. `Run` function in `server.go`: Starts the server as a standalone process.
+2. `EmbeddedStart` function in `server.go`: Starts the server as an embedded process within another application.
+
+These functions set up the server configuration, create a listener, and call the internal `run` function to start the server.
+
+## Key Files
+1. `server.go`: Contains the main server setup and run logic.
+2. `routes.go`: Defines HTTP routes and handlers for various server operations.
+3. `run.go`: Implements the core functionality for executing GPTScript programs and streaming results.
+4. `confirm.go`: Handles authorization and confirmation requests.
+5. `prompt.go`: Manages prompt interactions between the server and clients.
+6. `monitor.go`: Implements session monitoring for program execution.
+7. `middleware.go`: Defines middleware functions for request processing.
+8. `types.go`: Defines various types and structures used throughout the server implementation.
+
+## Dependencies
+The SDK server relies on several external and internal packages:
+
+1. Standard Go libraries: `net/http`, `context`, `encoding/json`, etc.
+2. `github.com/gptscript-ai/gptscript/pkg/gptscript`: Core GPTScript functionality
+3. `github.com/gptscript-ai/gptscript/pkg/runner`: For running GPTScript programs
+4. `github.com/gptscript-ai/gptscript/pkg/types`: Common type definitions
+5. `github.com/gptscript-ai/gptscript/pkg/auth`: For authentication and authorization
+6. `github.com/gptscript-ai/gptscript/pkg/cache`: For caching functionality
+7. `github.com/gptscript-ai/gptscript/pkg/openai`: For OpenAI-specific functionality
+8. `github.com/gptscript-ai/broadcaster`: For event broadcasting
+9. `github.com/rs/cors`: For handling Cross-Origin Resource Sharing (CORS)
+
+## Configuration
+The server can be configured using the `Options` struct defined in `server.go`. Key configuration options include:
+
+- `ListenAddress`: The address on which the server listens for incoming connections
+- `Debug`: Enable debug mode for additional logging
+- `DisableServerErrorLogging`: Option to disable server error logging
+- Various GPTScript-specific options inherited from `gptscript.Options`
+
+Configuration is typically provided when starting the server through the `Run` or `EmbeddedStart` functions.
+
+In summary, the `pkg/sdkserver` directory implements a flexible and feature-rich server component for the GPTScript SDK, providing a wide range of functionality for executing and managing GPTScript programs and interactions.

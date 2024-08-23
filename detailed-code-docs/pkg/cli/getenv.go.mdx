@@ -1,0 +1,83 @@
+---
+title: "getenv.go"
+---
+
+## High-level description
+This code implements a CLI command `getenv` that retrieves the value of an environment variable. It supports a default value and handles special cases where the environment variable contains compressed and base64-encoded data.
+
+## Code Structure
+The code defines a `Getenv` struct with `Customize` and `Run` methods, which are likely part of a larger CLI framework. The `getEnv` function is the core logic for retrieving and processing environment variables.
+
+## Symbols
+
+### `Getenv` struct
+#### Description
+Represents the `getenv` command in the CLI application.
+
+### `Customize` method
+#### Description
+Configures the `cobra.Command` for the `getenv` command, setting its usage, short description, and argument requirements.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| cmd | *cobra.Command | The command to be customized |
+
+### `Run` method
+#### Description
+Executes the `getenv` command, retrieving the environment variable value and printing it.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| _ | *cobra.Command | Unused command parameter |
+| args | []string | Command-line arguments |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| error | error | Any error that occurred during execution |
+
+#### Internal Logic
+1. Extract the environment variable key from `args[0]`.
+2. If provided, extract the default value from `args[1]`.
+3. Call `getEnv` to retrieve the environment variable value.
+4. Print the retrieved value.
+
+### `getEnv` function
+#### Description
+Retrieves an environment variable value, handling special cases of compressed and encoded data.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| key | string | The name of the environment variable |
+| def | string | The default value if the environment variable is not set |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| string | string | The value of the environment variable or the default value |
+
+#### Internal Logic
+1. Retrieve the environment variable value using `os.Getenv`.
+2. If the value is empty, return the default value.
+3. Check if the value is in the format `{"_gz":"..."}`.
+4. If so, decode the base64 content, decompress it using gzip, and return the resulting string.
+5. If any step in the decoding process fails, return the original value.
+6. If the value is not in the special format, return it as-is.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| bytes | Provides buffer for working with byte slices |
+| compress/gzip | Used for decompressing gzip data |
+| encoding/base64 | Used for decoding base64-encoded data |
+| fmt | Used for printing output |
+| io | Provides I/O utilities |
+| os | Used for accessing environment variables |
+| strings | Used for string manipulation |
+| github.com/spf13/cobra | Provides CLI framework |
+
+## Error Handling
+The code handles potential errors during the base64 decoding and gzip decompression process by returning the original value if any error occurs.

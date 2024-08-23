@@ -1,0 +1,72 @@
+---
+title: "security.go"
+---
+
+## High-level description
+This code defines and implements security-related functionality for OpenAPI specifications in the GPTScript project. It provides structures and methods to handle different types of security schemes, such as HTTP authentication and API keys, and generates credential tool strings for user input.
+
+## Code Structure
+The main symbol is the `SecurityInfo` struct, which represents a security scheme in OpenAPI. It has methods to generate credential tool strings and map credential names to environment variables.
+
+## Symbols
+
+### `SecurityInfo`
+#### Description
+A struct that represents a security scheme in OpenAPI, containing fields for the scheme's name, type, and other relevant details.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| Name | string | Name of the security scheme |
+| Type | string | Type of the security scheme (e.g., "http" or "apiKey") |
+| Scheme | string | Authentication scheme for HTTP type (e.g., "bearer" or "basic") |
+| APIKeyName | string | Name of the API key for apiKey type |
+| In | string | Location of the API key (e.g., "header", "query", or "cookie") |
+
+### `SecurityInfo.GetCredentialToolStrings`
+#### Description
+Generates credential tool strings for the security scheme, which are used to prompt users for input.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hostname | string | The hostname for which the credentials are being generated |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| tools | []string | A slice of credential tool strings |
+
+#### Internal Logic
+1. Calls `getCredentialNamesAndEnvVars` to get a map of credential names and environment variables.
+2. Iterates through the map, creating a tool string for each credential.
+3. Determines the appropriate field name based on the security scheme type and details.
+4. Constructs and appends the tool string to the `tools` slice.
+
+### `SecurityInfo.getCredentialNamesAndEnvVars`
+#### Description
+Generates a map of credential names and corresponding environment variable names based on the security scheme.
+
+#### Inputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| hostname | string | The hostname for which the credentials are being generated |
+
+#### Outputs
+| Name | Type | Description |
+|:-----|:-----|:------------|
+| map[string]string | map | A map of credential names to environment variable names |
+
+#### Internal Logic
+1. For HTTP basic authentication, generates separate username and password entries.
+2. For other types, generates a single entry.
+3. Uses the `env.ToEnvLike` function to convert names to environment variable-friendly formats.
+
+## Dependencies
+| Dependency | Purpose |
+|:-----------|:--------|
+| fmt | String formatting |
+| strings | String manipulation |
+| github.com/gptscript-ai/gptscript/pkg/env | Environment variable handling |
+
+This code is part of the OpenAPI package in the GPTScript project and is designed to work with other components of the system to handle security schemes in OpenAPI specifications.
